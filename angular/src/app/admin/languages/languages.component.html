@@ -1,0 +1,27 @@
+﻿<div [@routerTransition]>
+    <div class="row margin-bottom-5">
+        <div class="col-xs-6">
+            <div class="page-head">
+                <div class="page-title">
+                    <h1>
+                        <span>{{l("Languages")}}</span> <small>{{l("LanguagesHeaderInfo")}}</small>
+                    </h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 text-right">
+            <button *ngIf="isGranted('Pages.Administration.Languages.Create')" (click)="createOrEditLanguageModal.show()" class="btn btn-primary blue"><i class="fa fa-plus"></i> {{l("CreateNewLanguage")}}</button>
+        </div>
+    </div>
+
+    <div class="portlet light margin-bottom-0">
+        <div class="portlet-body">
+            <div id="LanguagesTable" #languagesTable></div>
+            <p class="margin-top-20" *ngIf="appSession.tenantId">
+                * {{l("CanNotEditOrDeleteDefaultLanguages")}}
+            </p>
+        </div>
+    </div>
+
+    <createOrEditLanguageModal #createOrEditLanguageModal (modalSave)="getLanguages()"></createOrEditLanguageModal>
+</div>

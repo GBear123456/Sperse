@@ -1,0 +1,92 @@
+﻿<div class="row margin-bottom-5">
+    <div class="col-xs-6">
+        <div class="page-head">
+            <div class="page-title">
+                <h1>
+                    <span>{{l("LanguageTexts")}}</span> <small>{{l("LanguageTextsHeaderInfo")}}</small>
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-6 text-right">
+        
+    </div>
+</div>
+
+<div class="portlet light margin-bottom-0">
+    <div class="portlet-title portlet-title-filter">
+        <div class="inputs inputs-full-width">
+            <div class="portlet-input">
+                <form>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-3">
+                            <div class="form-group">
+                                <label for="TextBaseLanguageSelectionCombobox">{{l("BaseLanguage")}}</label>
+                                <select id="TextBaseLanguageSelectionCombobox"
+                                        name="baseLanguageName"
+                                        class="form-control bs-select"
+                                        [(ngModel)]="baseLanguageName"
+                                        [attr.data-live-search]="true"
+                                        jq-plugin="selectpicker"
+                                        jq-options='{ "iconBase": "famfamfam-flag", "tickIcon": "fa fa-check" }'>
+                                    <option *ngFor="let language of languages" [value]="language.name" [attr.data-icon]="language.icon">{{language.displayName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <div class="form-group">
+                                <label for="TextTargetLanguageSelectionCombobox">{{l("TargetLanguage")}}</label>
+                                <select id="TextTargetLanguageSelectionCombobox"
+                                        name="targetLanguageName"
+                                        class="form-control bs-select"
+                                        [(ngModel)]="targetLanguageName"
+                                        [attr.data-live-search]="true"
+                                        jq-plugin="selectpicker"
+                                        jq-options='{ "iconBase": "famfamfam-flag", "tickIcon": "fa fa-check" }'>
+                                    <option *ngFor="let language of languages" [value]="language.name" [attr.data-icon]="language.icon">{{language.displayName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <div class="form-group">
+                                <label for="TextSourceSelectionCombobox">{{l("Source")}}</label>
+                                <select id="TextSourceSelectionCombobox"
+                                        name="sourceName"
+                                        class="form-control bs-select"
+                                        [(ngModel)]="sourceName"
+                                        [attr.data-live-search]="true"
+                                        jq-plugin="selectpicker">
+                                    <option *ngFor="let sourceName of sourceNames" [value]="sourceName">{{sourceName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <div class="form-group">
+                                <label for="TargetValueFilterSelectionCombobox">{{l("TargetValue")}}</label>
+                                <select id="TargetValueFilterSelectionCombobox"
+                                        name="targetValueFilter"
+                                        class="form-control bs-select"
+                                        [(ngModel)]="targetValueFilter"
+                                        jq-plugin="selectpicker">
+                                    <option value="ALL">{{l("All")}}</option>
+                                    <option value="EMPTY">{{l("EmptyOnes")}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input [(ngModel)]="filterText" name="filterText" autoFocus class="form-control" placeholder="{{'SearchWithThreeDot'}}" type="text">
+                        <span class="input-group-btn">
+                            <button (click)="applyFilters()" class="btn default" type="submit"><i class="icon-refresh"></i> {{l("Refresh")}}</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="portlet-body">
+        <div id="LanguageTextsTable" #textsTable></div>
+    </div>
+</div>
+
+<editTextModal #editTextModal (modalSave)="refreshTextValueFromModal()"></editTextModal>

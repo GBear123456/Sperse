@@ -1,0 +1,72 @@
+<div [@routerTransition]>
+    <div class="row margin-bottom-5">
+        <div class="col-xs-6">
+            <div class="page-head">
+                <div class="page-title">
+                    <h1>
+                        <span>{{l("Users")}}</span> <small>{{l("UsersHeaderInfo")}}</small>
+                    </h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 text-right">
+            <button (click)="exportToExcel()" class="btn btn-default"><i class="fa fa-file-excel-o"></i> {{l("ExportToExcel")}}</button>
+            <button (click)="createUser()" *ngIf="isGranted('Pages.Administration.Users.Create')" class="btn btn-primary blue"><i class="fa fa-plus"></i> {{l("CreateNewUser")}}</button>
+        </div>
+    </div>
+
+    <div class="portlet light margin-bottom-0">
+        <div class="portlet-body">
+
+            <div class="form">
+                <form class="horizontal-form">
+                    <div class="form-body">
+                        <div class="row margin-bottom-10">
+                            <div class="col-md-12">
+                                <div class="inputs inputs-full-width">
+                                    <div class="portlet-input">
+                                        <div class="input-group">
+                                            <input [(ngModel)]="filterText" name="filterText" autoFocus class="form-control" [placeholder]="l('SearchWithThreeDot')" type="text">
+                                            <span class="input-group-btn">
+                                                <button (click)="getUsers()" class="btn default" type="submit"><i class="icon-magnifier"></i></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row margin-bottom-10" [hidden]="!advancedFiltersAreShown">
+                            <div [ngClass]="{'col-md-6': isGranted('Pages.Administration.Roles'), 'col-md-12':!isGranted('Pages.Administration.Roles')}">
+                                <div class="form-group">
+                                    <permission-combo [(selectedPermission)]="selectedPermission"></permission-combo>
+                                </div>
+                            </div>
+                            <div class="col-md-6" *ngIf="isGranted('Pages.Administration.Roles')">
+                                <div class="form-group">
+                                    <role-combo [(selectedRole)]="role" emptyText="{{l('FilterByRole')}}"></role-combo>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row margin-bottom-10" *ngIf="advancedFiltersAreShown">
+                        <div class="col-sm-12 text-right">
+                            <button class="btn blue" (click)="getUsers()"><i class="fa fa-refresh"></i> {{l("Refresh")}}</button>
+                        </div>
+                    </div>
+                    <div class="row margin-bottom-10">
+                        <div class="col-sm-12">
+                            <span class="clickable-item text-muted" *ngIf="!advancedFiltersAreShown" (click)="advancedFiltersAreShown=!advancedFiltersAreShown"><i class="fa fa-angle-down"></i> {{l("ShowAdvancedFilters")}}</span>
+                            <span class="clickable-item text-muted" *ngIf="advancedFiltersAreShown" (click)="advancedFiltersAreShown=!advancedFiltersAreShown"><i class="fa fa-angle-up"></i> {{l("HideAdvancedFilters")}}</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div id="UsersTable"></div>
+        </div>
+    </div>
+
+    <createOrEditUserModal #createOrEditUserModal (modalSave)="getUsers()"></createOrEditUserModal>
+
+    <editUserPermissionsModal #editUserPermissionsModal></editUserPermissionsModal>
+</div>

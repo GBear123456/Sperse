@@ -1,0 +1,28 @@
+{
+  "version": "1.0.0.0-*",
+
+  "dependencies": {
+    "Abp": "1.2.2",
+    "Abp.AutoMapper": "1.2.2",
+    "Abp.EntityFramework": "1.2.2",
+    "Abp.Zero": "1.2.0",
+    "Abp.Zero.Ldap": "1.2.0",
+    "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.1.0",
+    "Microsoft.Extensions.Configuration.Json": "1.1.0",
+    "Microsoft.Extensions.Configuration.UserSecrets": "1.1.0"
+  },
+
+  "frameworks": {
+    "net461": {
+    }
+  },
+
+  "buildOptions": {
+    "embed": {
+      "include": [
+        "Localization/CRM/*.xml",
+        "Emailing/EmailTemplates/default.html"
+      ]
+    }
+  }
+}

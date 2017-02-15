@@ -1,0 +1,42 @@
+﻿<div bsModal #createOrEditModal="bs-modal" (onShown)="onShown()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal"
+     aria-hidden="true" [config]="{backdrop: 'static'}">
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <form *ngIf="active" #roleForm="ngForm" novalidate (ngSubmit)="save()">
+
+                <div class="modal-header">
+                    <button type="button" class="close" (click)="close()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">
+                        <span *ngIf="edition.id">{{l("EditEdition")}}: {{edition.displayName}}</span>
+                        <span *ngIf="!edition.id">{{l("CreateNewEdition")}}</span>
+                    </h4>
+                </div>
+
+                <div class="modal-body">
+                    <tabset class="tab-container tabbable-line">
+                        <tab heading="{{l('EditionProperties')}}">
+                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                                <input #editionNameInput class="form-control" type="text" name="EditionDisplayName" [ngClass]="{'edited':edition.displayName}" [(ngModel)]="edition.displayName" required maxlength="64">
+                                <label>{{l("EditionName")}}</label>
+                            </div>
+                        </tab> 
+                        <tab heading="{{l('Features')}}">
+                            <feature-tree #featureTree></feature-tree>
+                        </tab>
+                    </tabset>
+                </div>
+
+                <div class="modal-footer">
+                    <button [disabled]="saving" type="button" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
+                    <button type="submit" class="btn btn-primary blue" [disabled]="!roleForm.form.valid" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>

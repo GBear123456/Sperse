@@ -1,0 +1,22 @@
+﻿<div class="portlet light">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject bold uppercase">
+                {{l("Members")}}
+            </span>
+        </div>
+        <div class="actions" *ngIf="organizationUnit">
+            <a *ngIf="isGranted('Pages.Administration.OrganizationUnits.ManageMembers')" (click)="openAddModal()" class="btn btn-circle btn-default">
+                <i class="fa fa-plus"></i> {{l("AddMember")}}
+            </a>
+        </div>
+    </div>
+    <div class="portlet-body">
+        <div [hidden]="!organizationUnit" id="OrganizationUnitMembersTable"></div>
+        <div *ngIf="!organizationUnit" class="text-muted">
+            {{l("SelectAnOrganizationUnitToSeeMembers")}}
+        </div>
+    </div>
+</div>
+
+<commonLookupModal #memberLookupModal (itemSelected)="addModalMemberSelected($event)"></commonLookupModal>

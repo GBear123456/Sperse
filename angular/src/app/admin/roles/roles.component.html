@@ -1,0 +1,42 @@
+<div [@routerTransition]>
+    <div class="row margin-bottom-5">
+        <div class="col-xs-6">
+            <div class="page-head">
+                <div class="page-title">
+                    <h1>
+                        <span>{{l("Roles")}}</span> <small>{{l("RolesHeaderInfo")}}</small>
+                    </h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 text-right">
+            <button (click)="createRole()" *ngIf="isGranted('Pages.Administration.Roles.Create')" class="btn btn-primary blue"><i class="fa fa-plus"></i> {{l("CreateNewRole")}}</button>
+        </div>
+    </div>
+
+    <div class="portlet light margin-bottom-0">
+        <div class="portlet-title portlet-title-filter">
+            <div class="inputs inputs-full-width">
+                <div class="portlet-input">
+                    <form>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <permission-combo [(selectedPermission)]="selectedPermission"></permission-combo>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <button class="btn btn-default" style="display: block; width: 100%" (click)="getRoles()"><i class="fa fa-refresh"></i> {{l("Refresh")}}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <div id="RolesTable"></div>
+        </div>
+    </div>
+
+    <createOrEditRoleModal #createOrEditRoleModal (modalSave)="getRoles()"></createOrEditRoleModal>
+</div>
