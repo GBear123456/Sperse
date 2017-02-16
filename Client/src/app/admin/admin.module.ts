@@ -1,4 +1,3 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +8,6 @@ import { AdminRoutingModule } from './admin-routing.module'
 import { UtilsModule } from '@shared/utils/utils.module'
 import { AppCommonModule } from '@app/shared/common/app-common.module'
 
-import { AdminComponent } from './admin.component'
 import { UsersComponent } from './users/users.component'
 import { PermissionComboComponent } from './shared/permission-combo.component';
 import { RoleComboComponent } from './shared/role-combo.component';
@@ -45,7 +43,6 @@ import { TenantSettingsComponent } from './settings/tenant-settings.component'
 
 @NgModule({
     imports: [
-        BrowserModule,
         FormsModule,
         CommonModule,
 
@@ -58,7 +55,6 @@ import { TenantSettingsComponent } from './settings/tenant-settings.component'
         AppCommonModule
     ],
     declarations: [
-        AdminComponent,
         UsersComponent,
         PermissionComboComponent,
         RoleComboComponent,

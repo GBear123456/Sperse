@@ -1,6 +1,7 @@
 using System;
 using Abp.AspNetCore;
 using Abp.Castle.Logging.Log4Net;
+using Abp.Extensions;
 using Abp.Hangfire;
 using Abp.Owin;
 using Abp.Timing;
@@ -18,9 +19,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Owin.Cors;
 using Sperse.CRM.Authorization;
 using Sperse.CRM.Web.Configuration;
-using Sperse.CRM.Web.MultiTenancy;
 using Sperse.CRM.Web.Owin;
 using Owin;
+using Owin.Security.AesDataProtectorProvider;
 using PaulMiami.AspNetCore.Mvc.Recaptcha;
 
 namespace Sperse.CRM.Web.Startup
@@ -44,12 +45,12 @@ namespace Sperse.CRM.Web.Startup
                 options.Filters.Add(new CorsAuthorizationFilterFactory(DefaultCorsPolicyName));
             });
 
-            //Configure CORS!
+            //Configure CORS for angular2 UI
             services.AddCors(options =>
             {
                 options.AddPolicy(DefaultCorsPolicyName, p =>
                 {
-                    p.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+                    p.WithOrigins(_appConfiguration["App:WebSiteRootAddress"].RemovePostFix("/")).AllowAnyHeader().AllowAnyMethod();
                 });
             });
 
@@ -76,10 +77,8 @@ namespace Sperse.CRM.Web.Startup
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseAbp(); //Initializes ABP framework.
-
+            
             app.UseCors(DefaultCorsPolicyName); //Enable CORS!
-
-            app.UseTenantIdAccessorInitialization();
 
             AuthConfigurer.Configure(app, _appConfiguration);
 
@@ -110,6 +109,7 @@ namespace Sperse.CRM.Web.Startup
             app.Properties["host.AppName"] = "CRM";
 
             app.UseAbp();
+            app.UseAesDataProtectorProvider();
 
             app.Map("/signalr", map =>
             {

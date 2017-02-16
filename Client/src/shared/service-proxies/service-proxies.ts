@@ -3865,6 +3865,69 @@ export class TenantDashboardServiceProxy {
 }
 
 @Injectable()
+export class TenantRegistrationServiceProxy {
+    private http: Http = null; 
+    private baseUrl: string = undefined; 
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http; 
+        this.baseUrl = baseUrl ? baseUrl : ""; 
+    }
+
+    /**
+     * @return Success
+     */
+    registerTenant(input: RegisterTenantInput): Observable<RegisterTenantOutput> {
+        let url_ = this.baseUrl + "/api/services/app/TenantRegistration/RegisterTenant";
+
+        const content_ = JSON.stringify(input ? input.toJS() : null);
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processRegisterTenant(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processRegisterTenant(response));
+                } catch (e) {
+                    return <Observable<RegisterTenantOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<RegisterTenantOutput>><any>Observable.throw(response);
+        });
+    }
+
+    protected processRegisterTenant(response: Response): RegisterTenantOutput {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: RegisterTenantOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? RegisterTenantOutput.fromJS(resultData200) : new RegisterTenantOutput();
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    protected throwException(message: string, status: number, response: string, result?: any): any {
+        if(result !== null && result !== undefined)
+            throw result;
+        else
+            throw new SwaggerException(message, status, response);
+    }
+}
+
+@Injectable()
 export class TenantSettingsServiceProxy {
     private http: Http = null; 
     private baseUrl: string = undefined; 
@@ -9304,6 +9367,97 @@ export class GetMemberActivityOutput {
     }
 }
 
+export class RegisterTenantInput { 
+    tenancyName: string; 
+    name: string; 
+    adminEmailAddress: string; 
+    adminPassword: string; 
+    captchaResponse: string;
+
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.tenancyName = data["tenancyName"] !== undefined ? data["tenancyName"] : null;
+            this.name = data["name"] !== undefined ? data["name"] : null;
+            this.adminEmailAddress = data["adminEmailAddress"] !== undefined ? data["adminEmailAddress"] : null;
+            this.adminPassword = data["adminPassword"] !== undefined ? data["adminPassword"] : null;
+            this.captchaResponse = data["captchaResponse"] !== undefined ? data["captchaResponse"] : null;
+        }
+    }
+
+    static fromJS(data: any): RegisterTenantInput {
+        return new RegisterTenantInput(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["tenancyName"] = this.tenancyName !== undefined ? this.tenancyName : null;
+        data["name"] = this.name !== undefined ? this.name : null;
+        data["adminEmailAddress"] = this.adminEmailAddress !== undefined ? this.adminEmailAddress : null;
+        data["adminPassword"] = this.adminPassword !== undefined ? this.adminPassword : null;
+        data["captchaResponse"] = this.captchaResponse !== undefined ? this.captchaResponse : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new RegisterTenantInput(JSON.parse(json));
+    }
+}
+
+export class RegisterTenantOutput { 
+    tenantId: number; 
+    tenancyName: string; 
+    name: string; 
+    userName: string; 
+    emailAddress: string; 
+    isTenantActive: boolean; 
+    isActive: boolean; 
+    isEmailConfirmationRequired: boolean;
+
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.tenantId = data["tenantId"] !== undefined ? data["tenantId"] : null;
+            this.tenancyName = data["tenancyName"] !== undefined ? data["tenancyName"] : null;
+            this.name = data["name"] !== undefined ? data["name"] : null;
+            this.userName = data["userName"] !== undefined ? data["userName"] : null;
+            this.emailAddress = data["emailAddress"] !== undefined ? data["emailAddress"] : null;
+            this.isTenantActive = data["isTenantActive"] !== undefined ? data["isTenantActive"] : null;
+            this.isActive = data["isActive"] !== undefined ? data["isActive"] : null;
+            this.isEmailConfirmationRequired = data["isEmailConfirmationRequired"] !== undefined ? data["isEmailConfirmationRequired"] : null;
+        }
+    }
+
+    static fromJS(data: any): RegisterTenantOutput {
+        return new RegisterTenantOutput(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["tenantId"] = this.tenantId !== undefined ? this.tenantId : null;
+        data["tenancyName"] = this.tenancyName !== undefined ? this.tenancyName : null;
+        data["name"] = this.name !== undefined ? this.name : null;
+        data["userName"] = this.userName !== undefined ? this.userName : null;
+        data["emailAddress"] = this.emailAddress !== undefined ? this.emailAddress : null;
+        data["isTenantActive"] = this.isTenantActive !== undefined ? this.isTenantActive : null;
+        data["isActive"] = this.isActive !== undefined ? this.isActive : null;
+        data["isEmailConfirmationRequired"] = this.isEmailConfirmationRequired !== undefined ? this.isEmailConfirmationRequired : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new RegisterTenantOutput(JSON.parse(json));
+    }
+}
+
 export class TenantSettingsEditDto { 
     general: GeneralSettingsEditDto; 
     userManagement: TenantUserManagementSettingsEditDto = new TenantUserManagementSettingsEditDto(); 
@@ -9504,6 +9658,7 @@ export class AuthenticateModel {
 
 export class AuthenticateResultModel { 
     accessToken: string; 
+    encryptedAccessToken: string; 
     expireInSeconds: number; 
     shouldResetPassword: boolean; 
     passwordResetCode: string; 
@@ -9515,6 +9670,7 @@ export class AuthenticateResultModel {
     constructor(data?: any) {
         if (data !== undefined) {
             this.accessToken = data["accessToken"] !== undefined ? data["accessToken"] : null;
+            this.encryptedAccessToken = data["encryptedAccessToken"] !== undefined ? data["encryptedAccessToken"] : null;
             this.expireInSeconds = data["expireInSeconds"] !== undefined ? data["expireInSeconds"] : null;
             this.shouldResetPassword = data["shouldResetPassword"] !== undefined ? data["shouldResetPassword"] : null;
             this.passwordResetCode = data["passwordResetCode"] !== undefined ? data["passwordResetCode"] : null;
@@ -9536,6 +9692,7 @@ export class AuthenticateResultModel {
     toJS(data?: any) {
         data = data === undefined ? {} : data;
         data["accessToken"] = this.accessToken !== undefined ? this.accessToken : null;
+        data["encryptedAccessToken"] = this.encryptedAccessToken !== undefined ? this.encryptedAccessToken : null;
         data["expireInSeconds"] = this.expireInSeconds !== undefined ? this.expireInSeconds : null;
         data["shouldResetPassword"] = this.shouldResetPassword !== undefined ? this.shouldResetPassword : null;
         data["passwordResetCode"] = this.passwordResetCode !== undefined ? this.passwordResetCode : null;
@@ -9594,11 +9751,13 @@ export class SendTwoFactorAuthCodeModel {
 
 export class ImpersonatedAuthenticateResultModel { 
     accessToken: string; 
+    encryptedAccessToken: string; 
     expireInSeconds: number;
 
     constructor(data?: any) {
         if (data !== undefined) {
             this.accessToken = data["accessToken"] !== undefined ? data["accessToken"] : null;
+            this.encryptedAccessToken = data["encryptedAccessToken"] !== undefined ? data["encryptedAccessToken"] : null;
             this.expireInSeconds = data["expireInSeconds"] !== undefined ? data["expireInSeconds"] : null;
         }
     }
@@ -9610,6 +9769,7 @@ export class ImpersonatedAuthenticateResultModel {
     toJS(data?: any) {
         data = data === undefined ? {} : data;
         data["accessToken"] = this.accessToken !== undefined ? this.accessToken : null;
+        data["encryptedAccessToken"] = this.encryptedAccessToken !== undefined ? this.encryptedAccessToken : null;
         data["expireInSeconds"] = this.expireInSeconds !== undefined ? this.expireInSeconds : null;
         return data; 
     }
@@ -9626,11 +9786,13 @@ export class ImpersonatedAuthenticateResultModel {
 
 export class SwitchedAccountAuthenticateResultModel { 
     accessToken: string; 
+    encryptedAccessToken: string; 
     expireInSeconds: number;
 
     constructor(data?: any) {
         if (data !== undefined) {
             this.accessToken = data["accessToken"] !== undefined ? data["accessToken"] : null;
+            this.encryptedAccessToken = data["encryptedAccessToken"] !== undefined ? data["encryptedAccessToken"] : null;
             this.expireInSeconds = data["expireInSeconds"] !== undefined ? data["expireInSeconds"] : null;
         }
     }
@@ -9642,6 +9804,7 @@ export class SwitchedAccountAuthenticateResultModel {
     toJS(data?: any) {
         data = data === undefined ? {} : data;
         data["accessToken"] = this.accessToken !== undefined ? this.accessToken : null;
+        data["encryptedAccessToken"] = this.encryptedAccessToken !== undefined ? this.encryptedAccessToken : null;
         data["expireInSeconds"] = this.expireInSeconds !== undefined ? this.expireInSeconds : null;
         return data; 
     }
@@ -9725,12 +9888,14 @@ export class ExternalAuthenticateModel {
 
 export class ExternalAuthenticateResultModel { 
     accessToken: string; 
+    encryptedAccessToken: string; 
     expireInSeconds: number; 
     waitingForActivation: boolean;
 
     constructor(data?: any) {
         if (data !== undefined) {
             this.accessToken = data["accessToken"] !== undefined ? data["accessToken"] : null;
+            this.encryptedAccessToken = data["encryptedAccessToken"] !== undefined ? data["encryptedAccessToken"] : null;
             this.expireInSeconds = data["expireInSeconds"] !== undefined ? data["expireInSeconds"] : null;
             this.waitingForActivation = data["waitingForActivation"] !== undefined ? data["waitingForActivation"] : null;
         }
@@ -9743,6 +9908,7 @@ export class ExternalAuthenticateResultModel {
     toJS(data?: any) {
         data = data === undefined ? {} : data;
         data["accessToken"] = this.accessToken !== undefined ? this.accessToken : null;
+        data["encryptedAccessToken"] = this.encryptedAccessToken !== undefined ? this.encryptedAccessToken : null;
         data["expireInSeconds"] = this.expireInSeconds !== undefined ? this.expireInSeconds : null;
         data["waitingForActivation"] = this.waitingForActivation !== undefined ? this.waitingForActivation : null;
         return data; 

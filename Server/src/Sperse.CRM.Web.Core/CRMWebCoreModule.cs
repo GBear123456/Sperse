@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using Abp.AspNetCore;
 using Abp.AspNetCore.Configuration;
+using Abp.Configuration.Startup;
 using Abp.Hangfire;
 using Abp.Hangfire.Configuration;
 using Abp.IO;
@@ -59,13 +60,15 @@ namespace Sperse.CRM.Web
                     typeof(CRMApplicationModule).Assembly
                 );
 
+            Configuration.Modules.AbpWebCommon().MultiTenancy.DomainFormat = _appConfiguration["App:WebSiteRootAddress"] ?? "http://localhost:62114/";
+
             Configuration.Caching.Configure(TwoFactorCodeCacheItem.CacheName, cache =>
             {
                 cache.DefaultAbsoluteExpireTime = TimeSpan.FromMinutes(2);
             });
 
             ConfigureTokenAuth();
-
+            
             //Uncomment this line to use Redis cache instead of in-memory cache.
             //See app.config for Redis configuration and connection string
             //Configuration.Caching.UseRedis(options =>

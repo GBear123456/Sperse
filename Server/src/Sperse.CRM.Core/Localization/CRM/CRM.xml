@@ -157,7 +157,7 @@
     <text name="TenantInformations" value="Tenant informations" />
     <text name="PersonalInformations" value="Personal information" />
     <text name="AccountSettings" value="Account settings" />
-    <text name="Captha_Hint" value="Please enter the security code shown in the picture below:" />
+    <text name="Captha_Hint" value="Please proof that you are not a robot" />
     <text name="Back" value="Back" />
     <text name="Submit" value="Submit" />
     <text name="SignUp" value="Sign up" />
@@ -489,5 +489,7 @@
     <text name="LeaveEmptyToSwitchToHost">Leave empty to switch to the host</text>
     <text name="PleaseWaitToConfirmYourEmailMessage">Please wait while confirming your email address...</text>
     <text name="ChatIsConnecting">Chat is connecting...</text>
+    <text name="Note_RefreshPageForPermissionChanges">If you are changing your own permissions, you may need to refresh page (F5) to take effect of permission changes on your own screen!</text>
+
   </texts>
 </localizationDictionary>

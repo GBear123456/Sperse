@@ -24,7 +24,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn btn-success uppercase" [disabled]="!loginForm.form.valid">{{l("LogIn")}}</button>
-            <a routerLink="/forgot-password" id="forget-password" class="forget-password">{{l("ForgotPassword")}}</a>
+            <a routerLink="/account/forgot-password" id="forget-password" class="forget-password">{{l("ForgotPassword")}}</a>
         </div>
     </form>
 
@@ -41,11 +41,15 @@
 
     <div class="create-account">
         <p>
-            <span *ngIf="isSelfRegistrationAllowed">
-                <a routerLink="/register" id="register-btn" class="uppercase">{{l("CreateAnAccount")}}</a>
+            <span *ngIf="!multiTenancySideIsTeanant">
+                <a routerLink="/account/register-tenant" id="register-btn" class="uppercase">{{l("NewTenant")}}</a>
                 <span class="pipe-divider"> | </span>
             </span>
-            <a routerLink="/email-activation" id="email-activation-btn" class="uppercase">{{l("EmailActivation")}}</a>
+            <span *ngIf="isSelfRegistrationAllowed">
+                <a routerLink="/account/register" id="register-btn" class="uppercase">{{l("CreateAnAccount")}}</a>
+                <span class="pipe-divider"> | </span>
+            </span>
+            <a routerLink="/account/email-activation" id="email-activation-btn" class="uppercase">{{l("EmailActivation")}}</a>
         </p>
     </div>
 </div>

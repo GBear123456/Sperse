@@ -7,7 +7,7 @@
     "EPPlus": "4.1.0",
     "SharpZipLib": "0.86.0",
     "System.Linq.Dynamic": "1.0.7",
-    "Abp.AutoMapper": "1.2.2"
+    "Abp.AutoMapper": "1.4.2"
   },
 
   "frameworks": {

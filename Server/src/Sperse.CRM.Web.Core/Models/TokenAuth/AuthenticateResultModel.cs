@@ -6,6 +6,8 @@ namespace Sperse.CRM.Web.Models.TokenAuth
     {
         public string AccessToken { get; set; }
 
+        public string EncryptedAccessToken { get; set; }
+
         public int ExpireInSeconds { get; set; }
 
         public bool ShouldResetPassword { get; set; }

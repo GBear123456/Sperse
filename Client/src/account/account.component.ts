@@ -1,12 +1,10 @@
 import { Component, ViewContainerRef, OnInit, ViewEncapsulation } from '@angular/core';
-import { AccountModule } from './account.module';
 import { LoginService } from './login/login.service';
 import { AppConsts } from '@shared/AppConsts';
 
 import * as moment from 'moment';
 
 @Component({
-    selector: 'app-root',
     templateUrl: './account.component.html',
     styleUrls: [
         './account.component.less'
@@ -32,6 +30,7 @@ export class AccountComponent implements OnInit {
 
     ngOnInit(): void {
         this._loginService.init();
+        $('body').attr('class', 'page-md login');
     }
 
     private supportsTenancyNameInUrl() {

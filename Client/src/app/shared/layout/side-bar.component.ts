@@ -16,18 +16,18 @@ export class SideBarComponent extends AppComponentBase {
     }
     
     menu: SideBarMenu = new SideBarMenu("MainMenu", "MainMenu", [
-        new SideBarMenuItem("Dashboard", "Pages.Tenant.Dashboard", "icon-home", "/dashboard"),
-        new SideBarMenuItem("Tenants", "Pages.Tenants", "icon-globe", "/admin/tenants"),
-        new SideBarMenuItem("Editions", "Pages.Editions", "icon-grid", "/admin/editions"),
+        new SideBarMenuItem("Dashboard", "Pages.Tenant.Dashboard", "icon-home", "/app/main/dashboard"),
+        new SideBarMenuItem("Tenants", "Pages.Tenants", "icon-globe", "/app/admin/tenants"),
+        new SideBarMenuItem("Editions", "Pages.Editions", "icon-grid", "/app/admin/editions"),
         new SideBarMenuItem("Administration", "", "icon-wrench", "", [
-            new SideBarMenuItem("OrganizationUnits", "Pages.Administration.OrganizationUnits", "icon-layers", "/admin/organization-units"),
-            new SideBarMenuItem("Roles", "Pages.Administration.Roles", "icon-briefcase", "/admin/roles"),
-            new SideBarMenuItem("Users", "Pages.Administration.Users", "icon-people", "/admin/users"),
-            new SideBarMenuItem("Languages", "Pages.Administration.Languages", "icon-flag", "/admin/languages"),
-            new SideBarMenuItem("AuditLogs", "Pages.Administration.AuditLogs", "icon-lock", "/admin/auditLogs"),
-            new SideBarMenuItem("Maintenance", "Pages.Administration.Host.Maintenance", "icon-wrench", "/admin/maintenance"),
-            new SideBarMenuItem("Settings", "Pages.Administration.Host.Settings", "icon-settings", "/admin/hostSettings"),
-            new SideBarMenuItem("Settings", "Pages.Administration.Tenant.Settings", "icon-settings", "/admin/tenantSettings")
+            new SideBarMenuItem("OrganizationUnits", "Pages.Administration.OrganizationUnits", "icon-layers", "/app/admin/organization-units"),
+            new SideBarMenuItem("Roles", "Pages.Administration.Roles", "icon-briefcase", "/app/admin/roles"),
+            new SideBarMenuItem("Users", "Pages.Administration.Users", "icon-people", "/app/admin/users"),
+            new SideBarMenuItem("Languages", "Pages.Administration.Languages", "icon-flag", "/app/admin/languages"),
+            new SideBarMenuItem("AuditLogs", "Pages.Administration.AuditLogs", "icon-lock", "/app/admin/auditLogs"),
+            new SideBarMenuItem("Maintenance", "Pages.Administration.Host.Maintenance", "icon-wrench", "/app/admin/maintenance"),
+            new SideBarMenuItem("Settings", "Pages.Administration.Host.Settings", "icon-settings", "/app/admin/hostSettings"),
+            new SideBarMenuItem("Settings", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/tenantSettings")
         ])
     ]);
 

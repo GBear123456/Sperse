@@ -3,10 +3,8 @@ import './polyfills.ts';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { enableProdMode, ChangeDetectorRef } from '@angular/core';
 import { environment } from './environments/environment';
-import { AccountModule } from './account/account.module';
-import { AppConsts } from './shared/AppConsts';
-import { AppPreBootstrap } from './AppPreBootstrap';
-import { AppModule } from './app/app.module';
+import { RootModule } from './root.module';
+import { hmrBootstrap } from './hmr';
 
 import * as moment from 'moment';
 
@@ -17,20 +15,21 @@ if (environment.production) {
     enableProdMode();
 }
 
-abp.ui.setBusy();
-AppPreBootstrap.run(() => {
-    if (abp.session.userId) {
-        $('body').attr('class', 'page-md page-header-fixed page-sidebar-closed-hide-logo');
-        AppPreBootstrap.bootstrap(AppModule).then(() => {
-            abp.ui.clearBusy();
-        });
-    } else {
-        $('body').attr('class', 'page-md login');
-        AppPreBootstrap.bootstrap(AccountModule).then(() => {
-            abp.ui.clearBusy();
-        });
-    }
-});
+const bootstrap = () => {
+    return platformBrowserDynamic().bootstrapModule(RootModule);
+};
 
-//A workaround to make angular-cli finding the startup module!
-var b = false; if (b) { platformBrowserDynamic().bootstrapModule(AccountModule); }
+/* "Hot Module Replacement" is enabled as described on
+ * https://medium.com/@beeman/tutorial-enable-hrm-in-angular-cli-apps-1b0d13b80130#.sa87zkloh
+ */
+
+if (environment.hmr) {
+    if (module['hot']) {
+        hmrBootstrap(module, bootstrap); //HMR enabled bootstrap
+    } else {
+        console.error('HMR is not enabled for webpack-dev-server!');
+        console.log('Are you using the --hmr flag for ng serve?');
+    }
+} else {
+    bootstrap(); //Regular bootstrap
+}

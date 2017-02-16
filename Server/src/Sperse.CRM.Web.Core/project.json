@@ -6,18 +6,18 @@
     "Sperse.CRM.Application": "1.0.0.0-*",
     "Swashbuckle": "6.0.0-beta902",
     "PaulMiami.AspNetCore.Mvc.Recaptcha": "1.1.1",
-    "Hangfire.SqlServer": "1.6.7",
     "Microsoft.AspNetCore.Authentication.JwtBearer": "1.1.0",
     "Microsoft.AspNetCore.Authentication.Facebook": "1.1.0",
     "Microsoft.AspNetCore.Authentication.Google": "1.1.0",
     "Microsoft.AspNetCore.Authentication.MicrosoftAccount": "1.1.0",
     "Microsoft.AspNetCore.Owin": "1.1.0",
-    "Abp.Zero.AspNetCore": "1.2.0",
-    "Abp.AspNetCore": "1.2.2",
-    "Abp.HangFire": "1.2.2",
-    "Abp.Owin": "1.2.2",
-    "Abp.RedisCache": "1.2.2",
-    "Abp.Web.SignalR": "1.2.2"
+    "Abp.AspNetCore": "1.4.2",
+    "Abp.HangFire": "1.4.2",
+    "Abp.Owin": "1.4.2",
+    "Abp.RedisCache": "1.4.2",
+    "Abp.Web.SignalR": "1.4.2",
+    "Abp.Zero.AspNetCore": "1.4.2",
+    "Hangfire.SqlServer": "1.6.8"
   },
 
   "frameworks": {

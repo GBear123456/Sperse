@@ -14,7 +14,6 @@
     },
     "Castle.LoggingFacility.MsLogging": "1.1.0",
     "Microsoft.AspNetCore.Diagnostics": "1.1.0",
-    "Microsoft.AspNetCore.Mvc": "1.1.0",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.1.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.1.0",
     "Microsoft.AspNetCore.StaticFiles": "1.1.0",
@@ -22,7 +21,10 @@
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.1.0",
     "Microsoft.Owin.Cors": "3.0.1",
-    "Abp.Castle.Log4Net": "1.2.2"  },
+    "Abp.Castle.Log4Net": "1.4.2",
+    "Microsoft.AspNetCore.Mvc": "1.1.1",
+    "Owin.Security.AesDataProtectorProvider": "1.1.0"
+  },
   "tools": {
     "Microsoft.Extensions.SecretManager.Tools": "1.1.0-preview4-final",
     "Microsoft.AspNetCore.Razor.Tools": "1.1.0-preview4-final",

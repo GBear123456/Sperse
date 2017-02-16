@@ -1,16 +1,24 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import * as ngCommon from '@angular/common';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { AbpModule } from '@abp/abp.module';
 
 import { AppSessionService } from './session/app-session.service';
+import { AppUrlService } from './nav/app-url.service';
 
 @NgModule({
     imports: [
-        BrowserModule,
+        ngCommon.CommonModule,
         AbpModule
-    ],
-    providers: [
-        AppSessionService
     ]
 })
-export class CommonModule { }
+export class CommonModule {
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: CommonModule,
+            providers: [
+                AppSessionService,
+                AppUrlService
+            ]
+        }
+    }
+}

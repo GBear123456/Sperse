@@ -15,6 +15,10 @@
         defaultLocalizationSourceName: 'CRM'
     };
 
+    static readonly authorization = {
+        encrptedAuthTokenName: 'enc_auth_token'
+    };
+
     static readonly grid = {
         defaultPageSize: 10
     }

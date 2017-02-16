@@ -42,7 +42,7 @@ export class ValidateTwoFactorCodeComponent extends AppComponentBase implements 
             this.remainingSeconds = this.remainingSeconds - 1;
             if (this.remainingSeconds <= 0) {
                 this.message.warn(this.l('TimeoutPleaseTryAgain')).done(() => {
-                    this._router.navigate(['login']);
+                    this._router.navigate(['account/login']);
                 });
             }
         });

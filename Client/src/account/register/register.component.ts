@@ -27,6 +27,12 @@ export class RegisterComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
+        //Prevent to register new users in the host context
+        if (this.appSession.tenant == null) {
+            this._router.navigate(['account/login']);
+            return;
+        }
+
         this._profileService.getPasswordComplexitySetting().subscribe(result => {
             this.passwordComplexitySetting = result.setting;
         });
@@ -34,10 +40,6 @@ export class RegisterComponent extends AppComponentBase implements OnInit {
 
     get useCaptcha(): boolean {
         return this.setting.getBoolean('App.UserManagement.UseCaptchaOnRegistration');
-    }
-
-    back(): void {
-        this._router.navigate(['/login']);
     }
 
     save(): void {
@@ -52,7 +54,7 @@ export class RegisterComponent extends AppComponentBase implements OnInit {
             .subscribe((result) => {
                 if (!result.canLogin) {
                     this.notify.success(this.l('SuccessfullyRegistered'));
-                    this._router.navigate(['/login']);
+                    this._router.navigate(['account/login']);
                     return;
                 }
 

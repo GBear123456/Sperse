@@ -1,5 +1,5 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
+import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpModule, JsonpModule } from '@angular/http';
 
@@ -24,8 +24,6 @@ import { AbpModule, ABP_HTTP_PROVIDER } from '@abp/abp.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { AppCommonModule } from './shared/common/app-common.module';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
-import { MainModule } from './main/main.module';
-import { AdminModule } from './admin/admin.module';
 
 import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
@@ -62,7 +60,7 @@ import { QuickSideBarChat } from '@app/shared/layout/chat/QuickSideBarChat';
         NotificationSettingsModalCompoent
     ],
     imports: [
-        BrowserModule,
+        ngCommon.CommonModule,
         FormsModule,
         HttpModule,
         JsonpModule,
@@ -76,26 +74,15 @@ import { QuickSideBarChat } from '@app/shared/layout/chat/QuickSideBarChat';
         AppRoutingModule,
 
         UtilsModule,
-        AppCommonModule,
-        ServiceProxyModule,
-        MainModule,
-        AdminModule
+        AppCommonModule.forRoot(),
+        ServiceProxyModule
     ],
     providers: [
-        ABP_HTTP_PROVIDER,
-        { provide: API_BASE_URL, useFactory: () => { return AppConsts.remoteServiceBaseUrl; } },
-        {
-            provide: APP_INITIALIZER,
-            useFactory: (appSessionService: AppSessionService) => () => appSessionService.init(),
-            deps: [AppSessionService],
-            multi: true
-        },
         ImpersonationService,
         LinkedAccountService,
         UserNotificationHelper,
         ChatSignalrService,
         QuickSideBarChat
-    ],
-    bootstrap: [AppComponent]
+    ]
 })
 export class AppModule { }

@@ -72,6 +72,7 @@ export class TenantFeaturesModalComponent extends AppComponentBase {
 
         this.resettingFeatures = true;
         this._tenantService.resetTenantSpecificFeatures(input)
+            .finally(() => this.resettingFeatures = false)
             .subscribe(() => {
                 this.notify.info(this.l('ResetSuccessfully'));
                 this.loadFeatures();

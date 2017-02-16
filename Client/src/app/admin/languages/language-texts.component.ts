@@ -13,7 +13,13 @@ import * as _ from 'lodash';
 })
 export class LanguageTextsComponent extends AppComponentBase implements AfterViewInit, OnInit {
 
+    @ViewChild('targetLanguageNameCombobox') targetLanguageNameCombobox: ElementRef;
+    @ViewChild('baseLanguageNameCombobox') baseLanguageNameCombobox: ElementRef;
+    @ViewChild('sourceNameCombobox') sourceNameCombobox: ElementRef;
+    @ViewChild('targetValueFilterCombobox') targetValueFilterCombobox: ElementRef;
+
     @ViewChild('textsTable') textsTable: ElementRef;
+
     @ViewChild('editTextModal') editTextModal: EditTextModalComponent;
 
     sourceNames: string[] = [];
@@ -114,11 +120,18 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
         });
 
         this._activatedRoute.params.subscribe((params: Params) => {
+            this.baseLanguageName = params['baseLanguageName'] || abp.localization.currentLanguage.name;
             this.targetLanguageName = params['name'];
             this.sourceName = params['sourceName'] || 'CRM';
-            this.baseLanguageName = params['baseLanguageName'] || abp.localization.currentLanguage.name;
             this.targetValueFilter = params['targetValueFilter'] || 'ALL';
             this.filterText = params['filterText'] || '';
+
+            setTimeout(() => {
+                $(this.baseLanguageNameCombobox.nativeElement).selectpicker('refresh');
+                $(this.targetLanguageNameCombobox.nativeElement).selectpicker('refresh');
+                $(this.sourceNameCombobox.nativeElement).selectpicker('refresh');
+                $(this.targetValueFilterCombobox.nativeElement).selectpicker('refresh');
+            }, 0);
 
             this.getTexts();
         });
@@ -129,7 +142,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     }
 
     applyFilters(): void {
-        this._router.navigate(['admin/languages', this.targetLanguageName, 'texts', {
+        this._router.navigate(['app/admin/languages', this.targetLanguageName, 'texts', {
             sourceName: this.sourceName,
             baseLanguageName: this.baseLanguageName,
             targetValueFilter: this.targetValueFilter,

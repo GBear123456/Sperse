@@ -20,7 +20,13 @@ export class LanguageSwitchComponent extends AppComponentBase implements OnInit 
     }
 
     changeLanguage(language: abp.localization.ILanguageInfo) {
-        abp.utils.setCookieValue("Abp.Localization.CultureName", language.name);
+        abp.utils.setCookieValue(
+            "Abp.Localization.CultureName",
+            language.name,
+            new Date(new Date().getTime() + 5 * 365 * 86400000), //5 year
+            abp.appPath
+        );
+
         location.reload();
     }
 }

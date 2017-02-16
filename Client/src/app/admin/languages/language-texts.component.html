@@ -22,7 +22,7 @@
                         <div class="col-sm-6 col-md-3">
                             <div class="form-group">
                                 <label for="TextBaseLanguageSelectionCombobox">{{l("BaseLanguage")}}</label>
-                                <select id="TextBaseLanguageSelectionCombobox"
+                                <select #baseLanguageNameCombobox
                                         name="baseLanguageName"
                                         class="form-control bs-select"
                                         [(ngModel)]="baseLanguageName"
@@ -36,7 +36,7 @@
                         <div class="col-sm-6 col-md-3">
                             <div class="form-group">
                                 <label for="TextTargetLanguageSelectionCombobox">{{l("TargetLanguage")}}</label>
-                                <select id="TextTargetLanguageSelectionCombobox"
+                                <select #targetLanguageNameCombobox
                                         name="targetLanguageName"
                                         class="form-control bs-select"
                                         [(ngModel)]="targetLanguageName"
@@ -50,7 +50,7 @@
                         <div class="col-sm-6 col-md-3">
                             <div class="form-group">
                                 <label for="TextSourceSelectionCombobox">{{l("Source")}}</label>
-                                <select id="TextSourceSelectionCombobox"
+                                <select #sourceNameCombobox
                                         name="sourceName"
                                         class="form-control bs-select"
                                         [(ngModel)]="sourceName"
@@ -63,7 +63,7 @@
                         <div class="col-sm-6 col-md-3">
                             <div class="form-group">
                                 <label for="TargetValueFilterSelectionCombobox">{{l("TargetValue")}}</label>
-                                <select id="TargetValueFilterSelectionCombobox"
+                                <select #targetValueFilterCombobox
                                         name="targetValueFilter"
                                         class="form-control bs-select"
                                         [(ngModel)]="targetValueFilter"
@@ -75,7 +75,7 @@
                         </div>
                     </div>
                     <div class="input-group">
-                        <input [(ngModel)]="filterText" name="filterText" autoFocus class="form-control" placeholder="{{'SearchWithThreeDot'}}" type="text">
+                        <input [(ngModel)]="filterText" name="filterText" autoFocus class="form-control" placeholder="{{l('SearchWithThreeDot')}}" type="text">
                         <span class="input-group-btn">
                             <button (click)="applyFilters()" class="btn default" type="submit"><i class="icon-refresh"></i> {{l("Refresh")}}</button>
                         </span>

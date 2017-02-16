@@ -1,7 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { AccountServiceProxy, ImpersonateInput, ImpersonateOutput } from '@shared/service-proxies/service-proxies';
-import { AppUrlService } from '@app/shared/common/nav/app-url.service';
 import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
+import { AppUrlService } from '@shared/common/nav/app-url.service';
 
 @Injectable()
 export class ImpersonationService {

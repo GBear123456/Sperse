@@ -2,7 +2,8 @@
     <div class="portlet-title">
         <div class="caption">
             <span class="caption-subject bold uppercase">
-                {{l("Members")}}
+                <span *ngIf="organizationUnit">{{organizationUnit.displayName}}</span>
+                <span *ngIf="!organizationUnit">{{l("Members")}}</span>
             </span>
         </div>
         <div class="actions" *ngIf="organizationUnit">

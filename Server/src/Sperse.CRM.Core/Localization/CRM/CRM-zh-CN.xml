@@ -280,5 +280,211 @@
     <text name="LookingForMpaVersion" value="查找多页面应用版本号" />
     <text name="LookingForSpaVersion" value="查找单页面应用版本号" />
     <text name="ThisLanguageAlreadyExists" value="这种语言已经存在!" />
+    <text name="OrganizationUnits" value="组织机构" />
+    <text name="OrganizationUnitsHeaderInfo" value="应用组织机构和行政区划到用户和实体" />
+    <text name="OrganizationTree" value="组织结构树" />
+    <text name="Members" value="组织成员" />
+    <text name="SelectAnOrganizationUnitToSeeMembers" value="选择一个组织成员。" />
+    <text name="OrganizationUnitDeleteWarningMessage" value="您确定删除组织机构 {0}?" />
+    <text name="AddSubUnit" value="添加子组织" />
+    <text name="AddMember" value="添加成员" />
+    <text name="SuccessfullyAdded" value="添加成功" />
+    <text name="RemoveUserFromOuWarningMessage" value="您确定要从组织机构 {1} 中删除成员 {0} ?" />
+    <text name="SuccessfullyRemoved" value="删除成功" />
+    <text name="SelectAnItem" value="选择一个项目" />
+    <text name="NewOrganizationUnit" value="新建组织机构" />
+    <text name="SelectAUser" value="选择一个用户" />
+    <text name="Select" value="选择" />
+    <text name="UserIsAlreadyInTheOrganizationUnit" value="这个用户已经在组织机构中!" />
+    <text name="AddRootUnit" value="添加根组织" />
+    <text name="AddUser" value="添加用户" />
+    <text name="NoOrganizationUnitDefinedYet" value="没有定义组织机构." />
+    <text name="OrganizationUnitMoveConfirmMessage" value="请确认移动 {0} 到 {1}." />
+    <text name="Root" value="根" />
+    <text name="SuccessfullyMoved" value="移动成功" />
+    <text name="AddedTime" value="添加时间" />
+    <text name="ManagingMembers" value="管理成员" />
+    <text name="ManagingOrganizationTree" value="管理组织机构树" />
+    <text name="LoginForUsers" value="用户登录" />
+    <text name="LoginAsThisUser" value="使用这个用户登录" />
+    <text name="BackToMyAccount" value="返回我的账户" />
+    <text name="LoginForTenants" value="租户登录" />
+    <text name="LoginAsThisTenant" value="使用这个租户登录" />
+    <text name="AuditLogImpersonatedOperationInfo" value="注意:此操作是由另一个用户代表该用户." />
+    <text name="CustomData" value="自定义数据" />
+    <text name="None" value="没有" />
+    <text name="YouCanBackToYourAccount" value="点击此返回我的账户." />
+    <text name="CascadeImpersonationErrorMessage" value="不能多次模拟登录,这已经是模拟登录!" />
+    <text name="FromTenantToHostImpersonationErrorMessage" value="不能从租户中模拟本地用户!" />
+    <text name="DifferentTenantImpersonationErrorMessage" value="不能模拟不同租户的用户!" />
+    <text name="ImpersonationTokenErrorMessage" value="模拟认证无效或过期" />
+    <text name="NotImpersonatedLoginErrorMessage" value="这不是模拟登录!" />
+    <text name="YouCannotLinkToSameAccount">您不能链接到相同的帐户!</text>
+    <text name="ChangePasswordBeforeLinkToAnAccount">您必须改变这个帐户的密码!</text>
+    <text name="LinkedAccounts">关联账户</text>
+    <text name="ManageAccounts">账户管理</text>
+    <text name="LinkNewAccount">创建关联账户</text>
+    <text name="SuccessfullyUnlinked">关联成功</text>
+    <text name="LinkedUserDeleteWarningMessage">用户的关联 { 0 } 将被删除。</text>
+    <text name="SwitchToLinkedAccountTokenErrorMessage" value="模拟令牌无效或过期!" />
+    <text name="WelcomeToTheApplicationNotificationMessage" value="欢迎来到我们的应用 !通知系统是用来告诉您事件。您可以选择您想要哪种类型的通知收到通知设置。" />
+    <text name="NewUserRegisteredNotificationDefinition" value="新用户注册。" />
+    <text name="NewUserRegisteredNotificationMessage" value="新用户注册成功。用户名:{ userName },邮件地址:{ emailAddress }。" />
+    <text name="SeeAllNotifications" value="看到所有的通知" />
+    <text name="SetAsRead" value="设置为已读" />
+    <text name="SetAllAsRead" value="设置所有为已读" />
+    <text name="NotificationSettings" value="通知设置" />
+    <text name="ReceiveNotifications" value="接收通知" />
+    <text name="ReceiveNotifications_Definition" value="这个选项可以用来完全启用/禁用接收通知。" />
+    <text name="NotificationTypes" value="通知类型" />
+    <text name="ReceiveNotifications_DisableInfo" value="您完全禁用接收通知,您可以启用它并选择您想收到通知类型。" />
+    <text name="Notifications" value="通知" />
+    <text name="ThereIsNoNotification" value="没有通知。" />
+    <text name="Unread" value="未读的" />
+    <text name="YouCanNotDeleteOwnAccount" value="您不能删除自己的用户帐户!" />
+    <text name="On" value="启用" />
+    <text name="Off" value="禁用" />
+    <text name="Maintenance">维护</text>
+    <text name="Caches">缓存</text>
+    <text name="CacheSuccessfullyCleared">清除缓存成功。</text>
+    <text name="AllCachesSuccessfullyCleared">所有缓存清除成功。</text>
+    <text name="ClearAll">全部清除</text>
+    <text name="Clear">清除</text>
+    <text name="CachesHeaderInfo">您可以在本页中清除应用程序缓存。</text>
+    <text name="TestEmailSettingsHeader">测试邮件设置</text>
+    <text name="SendTestEmail">发送测试邮件</text>
+    <text name="TestEmail_Subject">测试电子邮件</text>
+    <text name="TestEmail_Body">这是一个测试邮件。</text>
+    <text name="TestEmailSentSuccessfully">成功发送测试邮件。</text>
+    <text name="WebSiteLogs">网站日志</text>
+    <text name="WebSiteLogsHeaderInfo">您可以看到最新的日志，或下载所有日志的压缩文件。</text>
+    <text name="DownloadAll">全部下载</text>
+    <text name="TenantManagement">租户管理</text>
+    <text name="AllowTenantsToRegisterThemselves" value="允许租户注册到系统。" />
+    <text name="AllowTenantsToRegisterThemselves_Hint" value="如果您禁用此，创建租户只能在租户管理页，并且需要管理员权限 " />
+    <text name="NewRegisteredTenantsIsActiveByDefault" value="新注册的默认租户。" />
+    <text name="NewRegisteredTenantsIsActiveByDefault_Hint" value="如果您禁用这个，新的租户将不启用（和不能登录），直到管理员手动激活帐户。" />
+    <text name="TenantSignUp">注册租户</text>
+    <text name="NewTenantRegisteredNotificationDefinition" value="申请注册的一个新租户。" />
+    <text name="NewTenantRegisteredNotificationMessage" value="申请注册的新租户。租户的名称: {tenancyName}." />
+    <text name="LoginAttempts">登录记录</text>
+    <text name="Failed">失败</text>
+    <text name="NewTenant">新租户</text>
+    <text name="ResizedProfilePicture_Warn_SizeLimit" value="，图片大小不能超过100KB。请调整图片大小后再试一次。" />
+    <text name="RegisterFormUserNameInvalidMessage">请不要使用包含用户名的电子邮件地址。</text>
+    <text name="UseHostDatabase" value="使用Host数据库" />
+    <text name="DatabaseConnectionString" value="数据库连接字符串" />
+    <text name="TenantDatabaseConnectionStringChangeWarningMessage" value="通知：在更改租户的数据库连接字符串之前，应将租户数据库移到新的位置。更改连接字符串并不会移动数据库。" />
+    <text name="Timezone">时区</text>
+    <text name="HasOwnDatabase">使用自己的数据库</text>
+    <text name="TimeZoneSettingChangedRefreshPageNotification">时区设置改变。单击“确定”按钮刷新页面，并使更改生效。</text>
+    <text name="Ok">Ok</text>
+    <text name="Permission">许可</text>
+    <text name="Role">角色</text>
+    <text name="Security">安全</text>
+    <text name="PasswordComplexity">密码复杂性</text>
+    <text name="MinPasswordLength">最小密码长度</text>
+    <text name="MaxPasswordLength">最大密码长度</text>
+    <text name="UseNumbers">在密码中使用数字</text>
+    <text name="UseUpperCaseLetters">在密码中使用大写字母</text>
+    <text name="UseLowerCaseLetters">在密码中使用小写字母</text>
+    <text name="UsePunctuations">在密码中使用特殊字符</text>
+    <text name="UseDefaultSettings">使用默认设置</text>
+    <text name="PasswordComplexityNotSatisfied">过于简单的密码。</text>
+    <text name="PasswordComplexity_MinLength_Hint">密码必须包含 {0} 个字符</text>
+    <text name="PasswordComplexity_MaxLength_Hint">密码不能大于 {0} 个字符</text>
+    <text name="PasswordComplexity_UseNumbers_Hint">密码必须包含数字</text>
+    <text name="PasswordComplexity_UseUpperCaseLetters_Hint">密码必须包含一个大写字母</text>
+    <text name="PasswordComplexity_UseLowerCaseLetters_Hint">密码必须包含一个小写字母</text>
+    <text name="PasswordComplexity_UsePunctuations_Hint">密码必须包含一个特殊字符</text>
+    <text name="YouAlreadySentAFriendshipRequestToThisUser">您已经添加了这个用户。</text>
+    <text name="YouCannotBeFriendWithYourself">您不能邀请自己做朋友</text>
+    <text name="NewChatMessageEmail_Title">消息详情</text>
+    <text name="NewChatMessageEmail_SubTitle"></text>
+    <text name="NewChatMessageEmail_Subject">您有一个新的消息</text>
+    <text name="Sender">发送人</text>
+    <text name="Message">消息</text>
+    <text name="UserBlocked">用户锁定成功。</text>
+    <text name="UserUnblocked">用户解锁成功。</text>
+    <text name="BlockUser">锁定用户</text>
+    <text name="UnblockUser">解锁用户</text>
+    <text name="FriendshipRequestAccepted">对方已成为您的朋友</text>
+    <text name="UserSendYouAFriendshipRequest">{0} 想添加您为朋友。</text>
+    <text name="Friends">朋友</text>
+    <text name="Others">其他</text>
+    <text name="BlockedUsers">锁定的用户</text>
+    <text name="YouDontHaveAnyFriend">您没有任何朋友。请填写一个用户名到上面的输入框，然后单击“添加朋友”按钮。</text>
+    <text name="YouDontHaveAnyBlockedFriend">您没有任何被锁定的用户。如果想锁定一个朋友，请从下拉框中选择一个朋友。</text>
+    <text name="ChatUserSearch_Hint">
+      <![CDATA[
+      填写租户用户的唯一用户名， <br>
+      其它租户的用户为 <strong>[租户名称]\[用户名称]</strong><br><br>
+      例如: <br>
+      .\admin -> 宿主管理员 <br>
+      Test\admin -> Test租户的管理员 <br>
+      admin -> 您的租户管理员
+      ]]>
+    </text>
+    <text name="AddFriend">添加朋友</text>
+    <text name="TypeAMessageHere">请在这里输入消息...</text>
+    <text name="Chat">聊天</text>
+    <text name="ChatFeature">聊天</text>
+    <text name="ChatFeatureIsNotEnabledForSender">您没有启用聊天功能。</text>
+    <text name="ChatFeatureIsNotEnabledForReceiver">租户没有启用聊天功能。</text>
+    <text name="UserIsBlocked">用户已锁定。</text>
+    <text name="ChatIsNotConnectedWarning">聊天还没有链接。</text>
+    <text name="Demo_SampleChatMessage">您好，这是一个测试消息。请在不同的浏览器中登录和退出来测试聊天功能。</text>
+    <text name="TenantToTenantChatFeatureIsNotEnabledForSender">您没有启用与其他租户聊天的功能。</text>
+    <text name="TenantToTenantChatFeatureIsNotEnabledForReceiver">当前租户没有启用与其他租户聊天功能。</text>
+    <text name="TenantToHostChatFeatureIsNotEnabledForSender">您没有启用与宿主聊天的功能。</text>
+    <text name="TenantToHostChatFeatureIsNotEnabledForReceiver">当前租户没有启用与宿主聊天功能。</text>
+    <text name="TenantToTenantChatFeature">与其他租户聊天</text>
+    <text name="TenantToHostChatFeature">与宿主聊天</text>
+    <text name="FilterByPermission">按许可搜索</text>
+    <text name="FilterByRole">按角色搜索</text>
+    <text name="FilterOrAddUser">搜索/添加 用户</text>
+    <text name="HangfireDashboard" value="Hangfire 仪表盘" />
+    <text name="TargetUserNotFoundProbablyDeleted">找不到目标用户。他可能已被删除。</text>
+    <text name="UserLockedOutMessage">用户帐户已被锁定。请稍后再试。</text>
+    <text name="SendSecurityCode">发送安全代码。</text>
+    <text name="SendSecurityCode_Information">您必须通过验证才能登录。请选择一个验证类型。根据选定的验证类型发送代码。</text>
+    <text name="SendSecurityCodeErrorMessage">无法发送安全代码！</text>
+    <text name="VerifySecurityCodeNotLoggedInErrorMessage">您应该在登录后再验证！可能您的登录已超时。请转到登录页，然后重新尝试。</text>
+    <text name="VerificationCode">验证码</text>
+    <text name="VerifySecurityCode">安全代码</text>
+    <text name="VerifySecurityCode_Information">请输入发送给您的验证码。</text>
+    <text name="RememberThisBrowser">记住这个浏览器</text>
+    <text name="InvalidSecurityCode">无效的安全代码！</text>
+    <text name="PhoneNumber">电话号码</text>
+    <text name="Unlock">解锁</text>
+    <text name="UnlockedTheUser">解锁用户 {0}</text>
+    <text name="UserLockOut">用户锁定</text>
+    <text name="EnableUserAccountLockingOnFailedLoginAttemts">登录失败后启用用户的帐户锁定</text>
+    <text name="MaxFailedAccessAttemptsBeforeLockout">在锁定帐户之前的累计登录失败的最大数量</text>
+    <text name="DefaultAccountLockoutDurationAsSeconds">帐户锁定持续时间（秒）</text>
+    <text name="TwoFactorLogin">两步认证登录</text>
+    <text name="EnableTwoFactorLogin">启用两步认证登录</text>
+    <text name="IsEmailVerificationEnabled">启用电子邮件验证。</text>
+    <text name="IsSmsVerificationEnabled">启用短信验证。</text>
+    <text name="AllowToRememberBrowserForTwoFactorLogin">允许记住浏览器。如果您允许，用户可以选择记住浏览器，以跳过在同一个浏览器中的再次两步认证登录。</text>
+    <text name="CurrentTenant">当前租户</text>
+    <text name="NotSelected">未选择</text>
+    <text name="Change">修改</text>
+    <text name="ChangeTenant">修改租户</text>
+    <text name="UnknownTenantId{0}" value="未知租户ID：{0}" />
+    <text name="TenantIdIsNotActive{0}" value="未激活的租户ID：{0}" />
+    <text name="TimeoutPleaseTryAgain">操作超时！请再试一次。</text>
+    <text name="RemainingTime">生育时间</text>
+    <text name="SecondShort{0}">{0} 秒</text>
+    <text name="ResetCode">重置代码</text>
+    <text name="IsTwoFactorEnabled">是否启用双因素身份验证？</text>
+    <text name="IsLockoutEnabled">是否启用锁定？</text>
+    <text name="IsLockoutEnabled_Hint">在一定数量的失败登录尝试后，用户将被锁定一段时间。</text>
+    <text name="TenantRegistrationLoginInfo">单击此处登录</text>
+    <text name="CouldNotValidateExternalUser">无法验证外部用户登录</text>
+    <text name="LeaveEmptyToSwitchToHost">想要切换到宿主请留空</text>
+    <text name="PleaseWaitToConfirmYourEmailMessage">正在确认您的电子邮件地址，请稍后...</text>
+    <text name="ChatIsConnecting">正在连接聊天...</text>
+    <text name="Note_RefreshPageForPermissionChanges">如果您正在更改自己的权限，则可能需要刷新页面（F5），以在您所做的权限更改生效！</text>
   </texts>
 </localizationDictionary>

@@ -100,7 +100,13 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         input.languageName = languageName;
 
         this.userServiceProxy.changeLanguage(input).subscribe(() => {
-            abp.utils.setCookieValue("Abp.Localization.CultureName", languageName);
+            abp.utils.setCookieValue(
+                "Abp.Localization.CultureName",
+                languageName,
+                new Date(new Date().getTime() + 5 * 365 * 86400000), //5 year
+                abp.appPath
+            );
+
             window.location.reload();
         });
     }

@@ -14,6 +14,7 @@ using Abp.Configuration;
 using Abp.Extensions;
 using Abp.Notifications;
 using Abp.Runtime.Caching;
+using Abp.Runtime.Security;
 using Abp.Runtime.Session;
 using Abp.Timing;
 using Abp.UI;
@@ -65,8 +66,8 @@ namespace Sperse.CRM.Web.Controllers
             IOptions<JwtBearerOptions> jwtOptions,
             IExternalAuthConfiguration externalAuthConfiguration,
             IExternalAuthManager externalAuthManager,
-            UserRegistrationManager userRegistrationManager, 
-            IImpersonationManager impersonationManager, 
+            UserRegistrationManager userRegistrationManager,
+            IImpersonationManager impersonationManager,
             IUserLinkManager userLinkManager,
             IAppNotifier appNotifier)
         {
@@ -133,9 +134,11 @@ namespace Sperse.CRM.Web.Controllers
             }
 
             //Login!
+            var accessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity));
             return new AuthenticateResultModel
             {
-                AccessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity)),
+                AccessToken = accessToken,
+                EncryptedAccessToken = GetEncrpyedAccessToken(accessToken),
                 ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds,
                 TwoFactorRememberClientToken = twoFactorRememberClientToken
             };
@@ -174,9 +177,12 @@ namespace Sperse.CRM.Web.Controllers
         public async Task<ImpersonatedAuthenticateResultModel> ImpersonatedAuthenticate(string impersonationToken)
         {
             var result = await _impersonationManager.GetImpersonatedUserAndIdentity(impersonationToken, "JwtBearer"); //JwtBearer is not important here
+            var accessToken = CreateAccessToken(CreateJwtClaims(result.Identity));
+
             return new ImpersonatedAuthenticateResultModel
             {
-                AccessToken = CreateAccessToken(CreateJwtClaims(result.Identity)),
+                AccessToken = accessToken,
+                EncryptedAccessToken = GetEncrpyedAccessToken(accessToken),
                 ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds
             };
         }
@@ -185,9 +191,12 @@ namespace Sperse.CRM.Web.Controllers
         public async Task<SwitchedAccountAuthenticateResultModel> LinkedAccountAuthenticate(string switchAccountToken)
         {
             var result = await _userLinkManager.GetSwitchedUserAndIdentity(switchAccountToken, "JwtBearer"); //JwtBearer is not important here
+            var accessToken = CreateAccessToken(CreateJwtClaims(result.Identity));
+
             return new SwitchedAccountAuthenticateResultModel
             {
-                AccessToken = CreateAccessToken(CreateJwtClaims(result.Identity)),
+                AccessToken = accessToken,
+                EncryptedAccessToken = GetEncrpyedAccessToken(accessToken),
                 ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds
             };
         }
@@ -208,24 +217,46 @@ namespace Sperse.CRM.Web.Controllers
             switch (loginResult.Result)
             {
                 case AbpLoginResultType.Success:
-                    return new ExternalAuthenticateResultModel
                     {
-                        AccessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity)),
-                        ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds
-                    };
-                case AbpLoginResultType.UnknownExternalLogin:
-                    var newUser = await RegisterExternalUserAsync(externalUser);
-                    if (!newUser.IsActive)
-                    {
+                        var accessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity));
                         return new ExternalAuthenticateResultModel
                         {
-                            WaitingForActivation = true
+                            AccessToken = accessToken,
+                            EncryptedAccessToken = GetEncrpyedAccessToken(accessToken),
+                            ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds
                         };
                     }
+                case AbpLoginResultType.UnknownExternalLogin:
+                    {
+                        var newUser = await RegisterExternalUserAsync(externalUser);
+                        if (!newUser.IsActive)
+                        {
+                            return new ExternalAuthenticateResultModel
+                            {
+                                WaitingForActivation = true
+                            };
+                        }
 
-                    //Try to login again with newly registered user!
-                    loginResult = await _logInManager.LoginAsync(new UserLoginInfo(model.AuthProvider, model.ProviderKey), GetTenancyNameOrNull());
-                    if (loginResult.Result != AbpLoginResultType.Success)
+                        //Try to login again with newly registered user!
+                        loginResult = await _logInManager.LoginAsync(new UserLoginInfo(model.AuthProvider, model.ProviderKey), GetTenancyNameOrNull());
+                        if (loginResult.Result != AbpLoginResultType.Success)
+                        {
+                            throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(
+                                loginResult.Result,
+                                model.ProviderKey,
+                                GetTenancyNameOrNull()
+                            );
+                        }
+
+                        var accessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity));
+                        return new ExternalAuthenticateResultModel
+                        {
+                            AccessToken = accessToken,
+                            EncryptedAccessToken = GetEncrpyedAccessToken(accessToken),
+                            ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds
+                        };
+                    }
+                default:
                     {
                         throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(
                             loginResult.Result,
@@ -233,18 +264,6 @@ namespace Sperse.CRM.Web.Controllers
                             GetTenancyNameOrNull()
                         );
                     }
-
-                    return new ExternalAuthenticateResultModel
-                    {
-                        AccessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity)),
-                        ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds
-                    };
-                default:
-                    throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(
-                        loginResult.Result,
-                        model.ProviderKey,
-                        GetTenancyNameOrNull()
-                    );
             }
         }
 
@@ -462,6 +481,11 @@ namespace Sperse.CRM.Web.Controllers
             );
 
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+        }
+
+        private string GetEncrpyedAccessToken(string accessToken)
+        {
+            return SimpleStringCipher.Instance.Encrypt(accessToken, AppConsts.DefaultPassPhrase);
         }
 
         private static List<Claim> CreateJwtClaims(ClaimsIdentity identity)

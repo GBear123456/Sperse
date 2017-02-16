@@ -12,7 +12,7 @@
   },
 
   "dependencies": {
-    "Abp.Castle.Log4Net": "1.2.2",
+    "Abp.Castle.Log4Net": "1.4.2",
     "Sperse.CRM.EntityFramework": "1.0.0.0-*"
   },
 

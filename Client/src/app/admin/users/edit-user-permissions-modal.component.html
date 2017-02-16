@@ -14,11 +14,15 @@
       </div>
 
       <div class="modal-body">
-        <permission-tree #permissionTree></permission-tree>
+          <permission-tree #permissionTree></permission-tree>
+          
+          <div class="note note-warning" style="margin-bottom: 0; margin-top: 15px">
+              <em>{{l('Note_RefreshPageForPermissionChanges')}}</em>
+          </div>
       </div>
 
       <div class="modal-footer">
-        <button [disabled]="saving" [buttonBusy]="resettingPermissions" [busyText]="l('SavingWithThreeDot')" type="button" class="btn btn-default pull-left" (click)="resetPermissions()" [tooltip]="l('ResetPermissionsTooltip')" tooltipPlacement="top"><span>{{l("ResetSpecialPermissions")}}</span></button>
+        <button [disabled]="saving" [buttonBusy]="resettingPermissions" [busyText]="l('SavingWithThreeDot')" type="button" class="btn btn-default pull-left" (click)="resetPermissions()" [tooltip]="l('ResetPermissionsTooltip')" placement="top"><span>{{l("ResetSpecialPermissions")}}</span></button>
         <button [disabled]="saving || resettingPermissions" type="button" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
         <button type="submit" class="btn btn-primary blue" [disabled]="!userForm.form.valid || resettingPermissions" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
       </div>

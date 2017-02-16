@@ -5,7 +5,7 @@ import { AccountServiceProxy, ResetPasswordInput, ResetPasswordOutput } from '@s
 import { AuthenticateModel, AuthenticateResultModel, PasswordComplexitySetting, ProfileServiceProxy } from '@shared/service-proxies/service-proxies';
 import { LoginService } from '../login/login.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { AppUrlService } from '@app/shared/common/nav/app-url.service';
+import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 
 @Component({
@@ -52,7 +52,7 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
             .finally(() => { this.saving = false; })
             .subscribe((result: ResetPasswordOutput) => {
                 if (!result.canLogin) {
-                    this._router.navigate(['/login']);
+                    this._router.navigate(['account/login']);
                     return;
                 }
 

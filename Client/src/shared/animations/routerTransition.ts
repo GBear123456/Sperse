@@ -8,7 +8,7 @@ export function accountModuleAnimation() {
     return slideFromUp();
 }
 
-function slideFromBottom() {
+export function slideFromBottom() {
     return trigger('routerTransition', [
         state('void', style({ 'padding-top': '20px', opacity: '0' })),
         state('*', style({ 'padding-top': '0px', opacity: '1' })),
@@ -18,7 +18,7 @@ function slideFromBottom() {
     ]);
 }
 
-function slideFromUp() {
+export function slideFromUp() {
     return trigger('routerTransition', [
         state('void', style({ 'margin-top': '-10px', opacity: '0' })),
         state('*', style({ 'margin-top': '0px', opacity: '1' })),

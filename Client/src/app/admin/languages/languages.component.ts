@@ -36,8 +36,6 @@ export class LanguagesComponent extends AppComponentBase implements AfterViewIni
 
                 title: this.l('Languages'),
 
-                paging: false,
-                sorting: true,
                 multiSorting: true,
 
                 actions: {
@@ -152,7 +150,7 @@ export class LanguagesComponent extends AppComponentBase implements AfterViewIni
     }
 
     changeTexts(language: ApplicationLanguageListDto): void {
-        this._router.navigate(['admin/languages', language.name, 'texts']);
+        this._router.navigate(['app/admin/languages', language.name, 'texts']);
     }
 
     setAsDefaultLanguage(language: ApplicationLanguageListDto): void {

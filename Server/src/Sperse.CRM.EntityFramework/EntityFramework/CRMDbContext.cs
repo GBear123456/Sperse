@@ -13,6 +13,14 @@ using Sperse.CRM.Web;
 
 namespace Sperse.CRM.EntityFramework
 {
+    /* Constructors of this DbContext is important and each one has it's own use case.
+     * - Default constructor is used by EF tooling on development time.
+     * - constructor(nameOrConnectionString) is used by ABP on runtime.
+     * - constructor(existingConnection) is used by unit tests.
+     * - constructor(existingConnection,contextOwnsConnection) can be used by ABP if DbContextEfTransactionStrategy is used.
+     * See http://www.aspnetboilerplate.com/Pages/Documents/EntityFramework-Integration for more.
+     */
+
     [DbConfigurationType(typeof(CRMDbConfiguration))]
     public class CRMDbContext : AbpZeroDbContext<Tenant, Role, User>
     {
@@ -24,15 +32,17 @@ namespace Sperse.CRM.EntityFramework
 
         public virtual IDbSet<ChatMessage> ChatMessages { get; set; }
 
-        /* Default constructor is needed for EF command line tool. */
         public CRMDbContext()
             : base(GetConnectionString())
         {
-            
+
         }
 
         private static string GetConnectionString()
         {
+            //Notice that; this logic only works on development time.
+            //It is used to get connection string from appsettings.json in the Web project.
+
             var configuration = AppConfigurations.Get(
                 WebContentDirectoryFinder.CalculateContentRootFolder()
                 );
@@ -42,18 +52,20 @@ namespace Sperse.CRM.EntityFramework
                 );
         }
 
-        /* This constructor is used by ABP to pass connection string defined in CRMDataModule.PreInitialize.
-         * Notice that, actually you will not directly create an instance of CRMDbContext since ABP automatically handles it.
-         */
         public CRMDbContext(string nameOrConnectionString)
             : base(nameOrConnectionString)
         {
 
         }
 
-        /* This constructor is used in tests to pass a fake/mock connection. */
-        public CRMDbContext(DbConnection dbConnection)
-            : base(dbConnection, true)
+        public CRMDbContext(DbConnection existingConnection)
+            : base(existingConnection, false)
+        {
+
+        }
+
+        public CRMDbContext(DbConnection existingConnection, bool contextOwnsConnection)
+            : base(existingConnection, contextOwnsConnection)
         {
 
         }

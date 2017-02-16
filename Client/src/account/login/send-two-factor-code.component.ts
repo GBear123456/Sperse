@@ -50,7 +50,7 @@ export class SendTwoFactorCodeComponent extends AppComponentBase implements CanA
             .sendTwoFactorAuthCode(model)
             .finally(() => this.submitting = false)
             .subscribe(() => {
-                this._router.navigate(['verify-code']);
+                this._router.navigate(['account/verify-code']);
             });
     }
 }

@@ -1,28 +1,28 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
+import * as ngCommon from '@angular/common';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule, JsonpModule } from '@angular/http';
 import { RecaptchaModule } from 'ng2-recaptcha';
 import { ModalModule } from 'ng2-bootstrap/modal';
 
-import { AbpModule, ABP_HTTP_PROVIDER } from '@abp/abp.module';
+import { AbpModule } from '@abp/abp.module';
 
 import { AccountRoutingModule } from './account-routing.module';
 
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
-import { API_BASE_URL } from "@shared/service-proxies/service-proxies";
 
 import { AppConsts } from '@shared/AppConsts';
-import { AppSessionService } from '@shared/common/session/app-session.service';
-import { AppUrlService } from '@app/shared/common/nav/app-url.service';
 import { UtilsModule } from '@shared/utils/utils.module';
+import { CommonModule } from '@shared/common/common.module';
 
 import { AccountComponent } from './account.component';
 import { TenantChangeComponent } from './shared/tenant-change.component';
 import { TenantChangeModalComponent } from './shared/tenant-change-modal.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { RegisterTenantComponent } from './register/register-tenant.component';
+import { RegisterTenantResultComponent } from './register/register-tenant-result.component';
+import { TenantRegistrationHelperService } from './register/tenant-registration-helper.service';
 import { ForgotPasswordComponent } from './password/forgot-password.component';
 import { ResetPasswordComponent } from './password/reset-password.component';
 import { EmailActivationComponent } from './email-activation/email-activation.component';
@@ -32,18 +32,9 @@ import { SendTwoFactorCodeComponent } from './login/send-two-factor-code.compone
 import { ValidateTwoFactorCodeComponent } from './login/validate-two-factor-code.component';
 import { LanguageSwitchComponent } from './language-switch.component';
 
-export function appInitializerFactory(appSessionService: AppSessionService): () => Promise<boolean> {
-    return () => appSessionService.init();
-}
-
-export function apiBaseUrlFactory(): string {
-    return AppConsts.remoteServiceBaseUrl;
-}
-
 @NgModule({
     imports: [
-        CommonModule,
-        BrowserModule,
+        ngCommon.CommonModule,
         FormsModule,
         HttpModule,
         JsonpModule,
@@ -52,6 +43,9 @@ export function apiBaseUrlFactory(): string {
         ModalModule.forRoot(),
 
         AbpModule,
+
+        CommonModule,
+
         UtilsModule,
         ServiceProxyModule,
         AccountRoutingModule
@@ -62,6 +56,8 @@ export function apiBaseUrlFactory(): string {
         TenantChangeModalComponent,
         LoginComponent,
         RegisterComponent,
+        RegisterTenantComponent,
+        RegisterTenantResultComponent,
         ForgotPasswordComponent,
         ResetPasswordComponent,
         EmailActivationComponent,
@@ -71,19 +67,9 @@ export function apiBaseUrlFactory(): string {
         LanguageSwitchComponent
     ],
     providers: [
-        {
-            provide: APP_INITIALIZER,
-            useFactory: appInitializerFactory,
-            deps: [AppSessionService],
-            multi: true
-        },
-        ABP_HTTP_PROVIDER,
-        { provide: API_BASE_URL, useFactory: apiBaseUrlFactory },
         LoginService,
-        AppSessionService,
-        AppUrlService
-    ],
-    bootstrap: [AccountComponent]
+        TenantRegistrationHelperService
+    ]
 })
 export class AccountModule {
 

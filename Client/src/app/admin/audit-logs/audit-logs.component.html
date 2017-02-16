@@ -15,7 +15,7 @@
     <div class="portlet light margin-bottom-0">
         <div class="portlet-body">
             <div class="form">
-                <form id="AuditLogFilterForm" class="horizontal-form">
+                <form class="horizontal-form" #auditFilterForm="ngForm" (ngSubmit)="getAuditLogs()">
                     <div class="form-body">
                         <div class="row">
                             <div class="col-md-6">
@@ -88,8 +88,8 @@
                             <span class="clickable-item text-muted" *ngIf="advancedFiltersAreShown" (click)="advancedFiltersAreShown=!advancedFiltersAreShown"><i class="fa fa-angle-up"></i> {{l("HideAdvancedFilters")}}</span>
                         </div>
                         <div class="col-sm-6 text-right">
-                            <button id="ExportAuditLogsToExcelButton" class="btn btn-default" (click)="exportToExcel()"><i class="fa fa-file-excel-o"></i> {{l("ExportToExcel")}}</button>
-                            <button id="RefreshAuditLogsButton" class="btn blue" (click)="getAuditLogs()"><i class=" fa fa-refresh"></i> {{l("Refresh")}}</button>
+                            <button type="button" class="btn btn-default" (click)="exportToExcel()"><i class="fa fa-file-excel-o"></i> {{l("ExportToExcel")}}</button>
+                            <button type="submit" class="btn blue"><i class="fa fa-refresh"></i> {{l("Refresh")}}</button>
                         </div>
                     </div>
                 </form>

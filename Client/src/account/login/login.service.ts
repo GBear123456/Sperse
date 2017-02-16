@@ -103,7 +103,7 @@ export class LoginService {
         if (authenticateResult.shouldResetPassword) {
             //Password reset
 
-            this._router.navigate(['reset-password'], {
+            this._router.navigate(['account/reset-password'], {
                 queryParams: {
                     userId: authenticateResult.userId,
                     tenantId: abp.session.tenantId,
@@ -116,26 +116,36 @@ export class LoginService {
         } else if (authenticateResult.requiresTwoFactorVerification) {
             //Two factor authentication
 
-            this._router.navigate(['send-code']);
+            this._router.navigate(['account/send-code']);
 
         } else if (authenticateResult.accessToken) {
             //Successfully logged in
 
-            this.login(authenticateResult.accessToken, authenticateResult.expireInSeconds, this.rememberMe, authenticateResult.twoFactorRememberClientToken);
+            this.login(authenticateResult.accessToken, authenticateResult.encryptedAccessToken, authenticateResult.expireInSeconds, this.rememberMe, authenticateResult.twoFactorRememberClientToken);
 
         } else {
             //Unexpected result!
 
             this._logService.warn('Unexpected authenticateResult!');
-            this._router.navigate(['login']);
+            this._router.navigate(['account/login']);
 
         }
     }
 
-    private login(accessToken: string, expireInSeconds: number, rememberMe?: boolean, twoFactorRememberClientToken?: string): void {
+    private login(accessToken: string, encryptedAccessToken: string, expireInSeconds: number, rememberMe?: boolean, twoFactorRememberClientToken?: string): void {
+
+        var tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
+
         this._tokenService.setToken(
             accessToken,
-            rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined
+            tokenExpireDate
+        );
+
+        this._utilsService.setCookieValue(
+            AppConsts.authorization.encrptedAuthTokenName,
+            encryptedAccessToken,
+            tokenExpireDate,
+            abp.appPath
         );
 
         if (twoFactorRememberClientToken) {
@@ -143,7 +153,7 @@ export class LoginService {
                 LoginService.twoFactorRememberClientTokenName,
                 twoFactorRememberClientToken,
                 new Date(new Date().getTime() + 365 * 86400000), //1 year
-                AppConsts.appBaseUrl
+                abp.appPath
             );
         }
 
@@ -232,7 +242,7 @@ export class LoginService {
                         return;
                     }
 
-                    this.login(result.accessToken, result.expireInSeconds);
+                    this.login(result.accessToken, result.encryptedAccessToken, result.expireInSeconds);
                 });
         }
     }
@@ -250,7 +260,7 @@ export class LoginService {
                         return;
                     }
 
-                    this.login(result.accessToken, result.expireInSeconds);
+                    this.login(result.accessToken, result.encryptedAccessToken, result.expireInSeconds);
                 });
         }
     }
@@ -271,7 +281,7 @@ export class LoginService {
                     return;
                 }
 
-                this.login(result.accessToken, result.expireInSeconds);
+                this.login(result.accessToken, result.encryptedAccessToken, result.expireInSeconds);
             });
     }
 }

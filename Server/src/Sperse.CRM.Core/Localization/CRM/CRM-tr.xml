@@ -157,7 +157,7 @@
     <text name="TenantInformations" value="Müşteri bilgileri" />
     <text name="PersonalInformations" value="Kişisel bilgiler" />
     <text name="AccountSettings" value="Hesap ayarları" />
-    <text name="Captha_Hint" value="Lütfen aşağıdaki resimde görünen güvenlik kodunu giriniz:" />
+    <text name="Captha_Hint" value="Lütfen robot olmadığınızı kanıtlayın" />
     <text name="Back" value="Geri" />
     <text name="Submit" value="Gönder" />
     <text name="SignUp" value="Üye ol" />
@@ -489,5 +489,6 @@
     <text name="LeaveEmptyToSwitchToHost">Üst kullanıcıya geçiş için boş değer girin.</text>
     <text name="PleaseWaitToConfirmYourEmailMessage">E-posta adresiniz doğrulanıyor, lütfen bekleyin...</text>
     <text name="ChatIsConnecting">Sohbet bağlanıyor...</text>
+    <text name="Note_RefreshPageForPermissionChanges">Kendi izinlerinizde değişiklik yapıyorsanız, değişikliklerin sizin arayüzünüzdeki etkisini görebilmek için sayfası yenilemeniz (F5) gerekebilir!</text>
   </texts>
 </localizationDictionary>

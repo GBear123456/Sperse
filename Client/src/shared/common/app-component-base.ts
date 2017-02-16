@@ -44,7 +44,8 @@ export abstract class AppComponentBase {
             return localizedText;
         }
 
-        return abp.utils.formatString(localizedText, args);
+        args.unshift(localizedText);
+        return abp.utils.formatString.apply(this, args);
     }
 
     isGranted(permissionName: string): boolean {

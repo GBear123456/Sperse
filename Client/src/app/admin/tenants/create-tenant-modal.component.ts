@@ -31,11 +31,11 @@ export class CreateTenantModalComponent extends AppComponentBase {
         private _commonLookupService: CommonLookupServiceProxy
     ) {
         super(injector);
-        this.init();
     }
 
     show() {
         this.active = true;
+        this.init();
         this.modal.show();
     }
 

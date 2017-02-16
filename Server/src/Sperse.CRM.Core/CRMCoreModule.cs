@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Reflection;
 using Abp.AutoMapper;
-using Abp.Configuration.Startup;
 using Abp.Dependency;
 using Abp.Modules;
 using Abp.Net.Mail;
-using Abp.Runtime.Session;
 using Abp.Timing;
 using Abp.Zero;
 using Abp.Zero.Configuration;
@@ -21,7 +19,6 @@ using Sperse.CRM.Friendships.Cache;
 using Sperse.CRM.Localization;
 using Sperse.CRM.MultiTenancy;
 using Sperse.CRM.Notifications;
-using Sperse.CRM.Runtime.Session;
 using Sperse.CRM.Timing;
 
 namespace Sperse.CRM
@@ -66,8 +63,6 @@ namespace Sperse.CRM
                 //Disabling email sending in debug mode
                 IocManager.Register<IEmailSender, NullEmailSender>(DependencyLifeStyle.Transient);
             }
-
-            Configuration.ReplaceService<IAbpSession, AspNetZeroAbpSession>();
 
             Configuration.Caching.Configure(FriendCacheItem.CacheName, cache =>
             {

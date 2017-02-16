@@ -6,9 +6,10 @@ import * as _ from 'lodash';
 import { SubdomainTenancyNameFinder } from '@shared/helpers/SubdomainTenancyNameFinder';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Type, CompilerOptions, NgModuleRef } from '@angular/core';
+import { UtilsService } from '@abp/utils/utils.service';
 
 export class AppPreBootstrap {
-    
+
     static run(callback: () => void): void {
         AppPreBootstrap.getApplicationConfig(() => {
             const queryStringObj = UrlHelper.getQueryParameters();
@@ -73,6 +74,7 @@ export class AppPreBootstrap {
             }
         }).done(result => {
             abp.auth.setToken(result.accessToken);
+            AppPreBootstrap.setEncryptedTokenCookie(result.encryptedAccessToken);
             location.search = '';
             callback();
         });
@@ -90,6 +92,7 @@ export class AppPreBootstrap {
             }
         }).done(result => {
             abp.auth.setToken(result.accessToken);
+            AppPreBootstrap.setEncryptedTokenCookie(result.encryptedAccessToken);
             location.search = '';
             callback();
         });
@@ -117,5 +120,13 @@ export class AppPreBootstrap {
 
             LocalizedResourcesHelper.loadResources(callback);
         });
+    }
+
+    private static setEncryptedTokenCookie(encryptedToken: string) {
+        new UtilsService().setCookieValue(AppConsts.authorization.encrptedAuthTokenName,
+            encryptedToken,
+            new Date(new Date().getTime() + 365 * 86400000), //1 year
+            abp.appPath
+        );
     }
 }

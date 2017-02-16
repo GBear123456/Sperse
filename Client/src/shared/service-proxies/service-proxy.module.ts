@@ -27,7 +27,8 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.UserLoginServiceProxy,
         ApiServiceProxies.WebLogServiceProxy,
         ApiServiceProxies.AccountServiceProxy,
-        ApiServiceProxies.TokenAuthServiceProxy
+        ApiServiceProxies.TokenAuthServiceProxy,
+        ApiServiceProxies.TenantRegistrationServiceProxy
     ]
 })
 export class ServiceProxyModule { }

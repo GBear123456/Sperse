@@ -179,7 +179,6 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
 
     private contextMenu(node: any, self: OrganizationTreeComponent) {
         let canManageOrganizationTree = self.isGranted('Pages.Administration.OrganizationUnits.ManageOrganizationTree');
-        let canManageMembers = self.isGranted('Pages.Administration.OrganizationUnits.ManageMembers');
 
         var items = {
             editUnit: {
@@ -213,9 +212,9 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                         isConfirmed => {
                             if (isConfirmed) {
                                 this._organizationUnitService.deleteOrganizationUnit(node.id).subscribe(() => {
+                                    this.selectedOu = null;
                                     this.notify.success(this.l('SuccessfullyDeleted'));
                                     instance.delete_node(node);
-                                    //vm.organizationTree.refreshUnitCount();
                                 });
                             }
                         }

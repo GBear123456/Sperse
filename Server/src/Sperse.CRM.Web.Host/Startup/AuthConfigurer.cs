@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Extensions;
+using Abp.Runtime.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -100,16 +101,14 @@ namespace Sperse.CRM.Web.Startup
 
                 Events = new JwtBearerEvents
                 {
-                    OnMessageReceived = CookieTokenResolver
+                    OnMessageReceived = QueryStringTokenResolver
                 }
             };
         }
 
-        /* This methos is needed to authorize SignalR javascript client.
-         * SignalR can not send authorization header. So, we are getting it from cookie.
-         * But we also don't want to only trust cookies (because of potential CSRF attach) and
-         * also checking token in the querystring. */
-        private static Task CookieTokenResolver(MessageReceivedContext context)
+        /* This method is needed to authorize SignalR javascript client.
+         * SignalR can not send authorization header. So, we are getting it from query string as an encrypted text. */
+        private static Task QueryStringTokenResolver(MessageReceivedContext context)
         {
             if (!context.HttpContext.Request.Path.HasValue ||
                 !context.HttpContext.Request.Path.Value.StartsWith("/signalr"))
@@ -117,29 +116,16 @@ namespace Sperse.CRM.Web.Startup
                 //We are just looking for signalr clients
                 return Task.CompletedTask;
             }
-            
-            if (!context.HttpContext.Request.Cookies.ContainsKey("Abp.AuthToken"))
-            {
-                //Cookie not sent
-                return Task.CompletedTask;
-            }
 
-            var cookieAuthToken = context.HttpContext.Request.Cookies["Abp.AuthToken"];
-            if (cookieAuthToken.IsNullOrEmpty())
-            {
-                //Cookie is empty
-                return Task.CompletedTask;
-            }
-
-            var qsAuthTokenPart = context.HttpContext.Request.Query["auth_token"].FirstOrDefault();
-            if (qsAuthTokenPart == null || qsAuthTokenPart.Length < 64 || !cookieAuthToken.StartsWith(qsAuthTokenPart))
+            var qsAuthToken = context.HttpContext.Request.Query["enc_auth_token"].FirstOrDefault();
+            if (qsAuthToken == null)
             {
                 //Cookie value does not matches to querystring value
                 return Task.CompletedTask;
             }
 
             //Set auth token from cookie
-            context.Token = cookieAuthToken;
+            context.Token = SimpleStringCipher.Instance.Decrypt(qsAuthToken, AppConsts.DefaultPassPhrase);
             return Task.CompletedTask;
         }
     }

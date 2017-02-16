@@ -40,7 +40,9 @@ export class OrganizationUnitMembersComponent extends AppComponentBase implement
         }
 
         this._organizationUnit = ou;
-        this.refreshMembers();
+        if (ou) {
+            this.refreshMembers();
+        }
     }
 
     ngOnInit(): void {
@@ -80,7 +82,7 @@ export class OrganizationUnitMembersComponent extends AppComponentBase implement
         this._$table = $('#OrganizationUnitMembersTable');
         this._$table.jtable({
 
-            title: this._organizationUnit.displayName,
+            title: this.l('Members'),
 
             paging: true,
             sorting: true,

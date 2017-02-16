@@ -10,7 +10,7 @@ import {
 } from '@angular/router';
 
 @Injectable()
-export class AuthRouteGuard implements CanActivate, CanActivateChild {
+export class AppRouteGuard implements CanActivate, CanActivateChild {
 
     constructor(
         private _permissionChecker: PermissionCheckerService,
@@ -19,6 +19,11 @@ export class AuthRouteGuard implements CanActivate, CanActivateChild {
     ) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+        if (!this._sessionService.user) {
+            this._router.navigate(['/account/login']);
+            return false;
+        }
+
         if (!route.data || !route.data["permission"]) {
             return true;
         }
@@ -27,12 +32,7 @@ export class AuthRouteGuard implements CanActivate, CanActivateChild {
             return true;
         }
 
-        const bestRoute = this.selectBestRoute();
-        if (!bestRoute) {
-            return true;
-        }
-
-        this._router.navigate([bestRoute]);
+        this._router.navigate([this.selectBestRoute()]);
         return false;
     }
 
@@ -42,21 +42,21 @@ export class AuthRouteGuard implements CanActivate, CanActivateChild {
 
     selectBestRoute(): string {
         if (!this._sessionService.user) {
-            return '/login';
+            return '/account/login';
         }
 
         if (this._permissionChecker.isGranted('Pages.Tenant.Dashboard')) {
-            return '/dashboard';
+            return '/app/main/dashboard';
         }
 
         if (this._permissionChecker.isGranted('Pages.Tenants')) {
-            return '/admin/tenants';
+            return '/app/admin/tenants';
         }
 
         if (this._permissionChecker.isGranted('Pages.Administration.Users')) {
-            return '/admin/users';
+            return '/app/admin/users';
         }
 
-        return null;
+        return '/app/notifications';
     }
 }

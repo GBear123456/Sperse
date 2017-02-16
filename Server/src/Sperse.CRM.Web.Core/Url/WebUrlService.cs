@@ -63,31 +63,5 @@ namespace Sperse.CRM.Web //TODO: Rename namespaces
 
             return siteRootFormat.Replace(TenancyNamePlaceHolder, tenancyName + ".");
         }
-
-        public string ExtractTenancyNameFromUrl(string url)
-        {
-            if (!SupportsTenancyNameInUrl)
-            {
-                return null;
-            }
-
-            string[] values;
-            if (!FormattedStringValueExtracter.IsMatch(url, WebSiteRootAddressFormat, out values, true))
-            {
-                return null;
-            }
-
-            if (values.Length <= 0)
-            {
-                return null;
-            }
-
-            if (string.Equals(values[0], "www", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return null;
-            }
-
-            return values[0];
-        }
     }
 }
