@@ -47,11 +47,11 @@ namespace Sperse.CRM.Migrations.Seed.Host
                         UserName = User.AdminUserName,
                         Name = "admin",
                         Surname = "admin",
-                        EmailAddress = "admin@aspnetzero.com",
+                        EmailAddress = "admin@sperse.com",
                         IsEmailConfirmed = true,
-                        ShouldChangePasswordOnNextLogin = true,
+                        ShouldChangePasswordOnNextLogin = false,
                         IsActive = true,
-                        Password = "AM4OLBpptxBYmM79lGOX9egzZk3vIQU3d/gFCJzaBjAPXzYIK3tQ2N7X4fcrHtElTw==" //123qwe
+                        Password = "AC9l7uG1i2e8O8SYTo2ZAXB8362F6KkJLFfpXI/5gk81H3cyIkTEUKlXzwCvjOydmg=="
                     });
                 _context.SaveChanges();
 

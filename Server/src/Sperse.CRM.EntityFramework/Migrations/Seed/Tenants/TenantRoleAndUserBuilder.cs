@@ -72,10 +72,10 @@ namespace Sperse.CRM.Migrations.Seed.Tenants
             var adminUser = _context.Users.FirstOrDefault(u => u.TenantId == _tenantId && u.UserName == User.AdminUserName);
             if (adminUser == null)
             {
-                adminUser = User.CreateTenantAdminUser(_tenantId, "admin@defaulttenant.com");
-                adminUser.Password = new PasswordHasher().HashPassword("123qwe");
+                adminUser = User.CreateTenantAdminUser(_tenantId, "admin@sperse.com");
+                adminUser.Password = new PasswordHasher().HashPassword("Qwertyuiop1");
                 adminUser.IsEmailConfirmed = true;
-                adminUser.ShouldChangePasswordOnNextLogin = true;
+                adminUser.ShouldChangePasswordOnNextLogin = false;
                 adminUser.IsActive = true;
 
                 _context.Users.Add(adminUser);
