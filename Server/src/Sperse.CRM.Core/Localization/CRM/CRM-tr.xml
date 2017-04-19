@@ -490,5 +490,21 @@
     <text name="PleaseWaitToConfirmYourEmailMessage">E-posta adresiniz doğrulanıyor, lütfen bekleyin...</text>
     <text name="ChatIsConnecting">Sohbet bağlanıyor...</text>
     <text name="Note_RefreshPageForPermissionChanges">Kendi izinlerinizde değişiklik yapıyorsanız, değişikliklerin sizin arayüzünüzdeki etkisini görebilmek için sayfası yenilemeniz (F5) gerekebilir!</text>
+    <text name="ApplicationLogo">Uygulama Logosu</text>
+    <text name="CustomCSS">Özel CSS</text>
+    <text name="Upload">Yükle</text>
+    <text name="Download">İndir</text>
+    <text name="UploadLogo_Info">Lütfen en fazla 30KB boyutunda ve 168x33 piksel çözünürlüğünde bir JPG/JPEG/PNG/GIF dosyası seçin.</text>
+    <text name="UploadCSS_Info">Lütfen en fazla 1MB boyutunda bir .css dosyası seçin.</text>
+    <text name="Browse">Gözat</text>
+    <text name="Appearance">Görünüm</text>
+    <text name="ClearedSuccessfully">Başarıyla temizlendi</text>
+    <text name="File_Empty_Error">Lütfen bir dosya seçin!</text>
+    <text name="File_SizeLimit_Error">Dosyanın boyutu izin verilen sınırın üzerindedir!</text>
+    <text name="File_Invalid_Type_Error">Geçersiz dosya türü!</text>
+    <text name="MaximumUserCount">Kullanıcı sayısı limiti (0 = limitsiz)</text>
+    <text name="MaximumUserCount_Error_Message">İzin verilen kullanıcı sayısına ulaşıldı!</text>
+    <text name="MaximumUserCount_Error_Detail">Bu müşteri için en fazla {0} kullanıcı oluşturulabilir.</text>
+    <text name="UnlockedTenandAdmin">{0} isimli müşterinin admin kullanıcısının giriş kilidi kaldırıldı.</text>
   </texts>
 </localizationDictionary>

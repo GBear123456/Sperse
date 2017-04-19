@@ -1,4 +1,4 @@
-<div class="page-sidebar navbar-collapse collapse">
+﻿<div class="page-sidebar navbar-collapse collapse">
     <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
     <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
     <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
@@ -7,7 +7,7 @@
     <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
     <ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
         
-        <template ngFor let-menuItem [ngForOf]="menu.items" let-mainMenuItemIndex="index">
+        <ng-template ngFor let-menuItem [ngForOf]="menu.items" let-mainMenuItemIndex="index">
             <li *ngIf="showMenuItem(menuItem)" routerLinkActive="active" [ngClass]="{'start': mainMenuItemIndex == 0}">
                 <a [routerLink]="[menuItem.route]" *ngIf="!menuItem.items.length">
                     <i class="{{menuItem.icon}}"></i>
@@ -20,7 +20,7 @@
                 </a>
                 <ul class="sub-menu" *ngIf="menuItem.items.length">
                     <!-- Menu Level 2 -->
-                    <template ngFor let-childMenuItem [ngForOf]="menuItem.items" let-mainMenuItemIndex="index">
+                    <ng-template ngFor let-childMenuItem [ngForOf]="menuItem.items" let-mainMenuItemIndex="index">
                         <li *ngIf="showMenuItem(childMenuItem)" routerLinkActive="active" [ngClass]="{'start': childMenuItemIndex == 0}">
                             <a [routerLink]="[childMenuItem.route]" *ngIf="!childMenuItem.items.length">
                                 <i class="{{childMenuItem.icon}}"></i>
@@ -33,7 +33,7 @@
                             </a>
                             <ul class="sub-menu" *ngIf="childMenuItem.items.length">
                                 <!-- Menu Level 3 -->
-                                <template ngFor let-childOfChildMenuItem [ngForOf]="childMenuItem.items" let-childOfChildMenuItemIndex="index">
+                                <ng-template ngFor let-childOfChildMenuItem [ngForOf]="childMenuItem.items" let-childOfChildMenuItemIndex="index">
                                     <li *ngIf="showMenuItem(childOfChildMenuItem)" routerLinkActive="active" [ngClass]="{'start': childOfChildMenuItemIndex == 0}">
                                         <a [routerLink]="[childOfChildMenuItem.route]" *ngIf="!childOfChildMenuItem.items.length">
                                             <i class="{{childOfChildMenuItem.icon}}"></i>
@@ -46,23 +46,23 @@
                                         </a>
                                         <ul class="sub-menu" *ngIf="childOfChildMenuItem.items.length">
                                             <!-- Menu Level 4 -->
-                                            <template ngFor let-childOfChildOfChildMenuItem [ngForOf]="childOfChildMenuItem.items" let-childOfChildMenuItemIndex="index">
+                                            <ng-template ngFor let-childOfChildOfChildMenuItem [ngForOf]="childOfChildMenuItem.items" let-childOfChildMenuItemIndex="index">
                                                 <li *ngIf="showMenuItem(childOfChildOfChildMenuItem)" routerLinkActive="active" [ngClass]="{'start': childOfChildMenuItemIndex == 0}">
                                                     <a [routerLink]="[childOfChildOfChildMenuItem.route]">
                                                         <i class="{{childOfChildOfChildMenuItem.icon}}"></i>
                                                         <span class="title">{{l(childOfChildOfChildMenuItem.name)}}</span>
                                                     </a>
                                                 </li>
-                                            </template>
+                                            </ng-template>
                                         </ul>
                                     </li>
-                                </template>
+                                </ng-template>
                             </ul>
                         </li>
-                    </template>
+                    </ng-template>
                 </ul>
             </li>
-        </template>
+        </ng-template>
     </ul>
 
 </div>

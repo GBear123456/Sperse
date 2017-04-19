@@ -1,5 +1,7 @@
 ﻿using Abp.Dependency;
+using Abp.Extensions;
 using Abp.MultiTenancy;
+using Sperse.CRM.Url;
 
 namespace Sperse.CRM.Web.Url
 {
@@ -30,7 +32,7 @@ namespace Sperse.CRM.Web.Url
 
         public string CreateEmailActivationUrlFormat(string tenancyName)
         {
-            var activationLink = WebUrlService.GetSiteRootAddress(tenancyName) + EmailActivationRoute + "?userId={userId}&confirmationCode={confirmationCode}";
+            var activationLink = WebUrlService.GetSiteRootAddress(tenancyName).EnsureEndsWith('/') + EmailActivationRoute + "?userId={userId}&confirmationCode={confirmationCode}";
 
             if (tenancyName != null)
             {
@@ -42,7 +44,7 @@ namespace Sperse.CRM.Web.Url
 
         public string CreatePasswordResetUrlFormat(string tenancyName)
         {
-            var resetLink = WebUrlService.GetSiteRootAddress(tenancyName) + PasswordResetRoute + "?userId={userId}&resetCode={resetCode}";
+            var resetLink = WebUrlService.GetSiteRootAddress(tenancyName).EnsureEndsWith('/') + PasswordResetRoute + "?userId={userId}&resetCode={resetCode}";
 
             if (tenancyName != null)
             {

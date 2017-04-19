@@ -6,7 +6,7 @@ using Abp.Zero.Configuration;
 using Castle.MicroKernel.Registration;
 using Sperse.CRM.EntityFramework;
 using Sperse.CRM.Tests.Url;
-using Sperse.CRM.Web.Url;
+using Sperse.CRM.Url;
 using NSubstitute;
 
 namespace Sperse.CRM.Tests

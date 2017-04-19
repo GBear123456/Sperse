@@ -1,4 +1,4 @@
-import { CRMPage } from './app.po';
+﻿import { CRMPage } from './app.po';
 
 describe('abp-zero-template App', function() {
   let page: CRMPage;
@@ -9,6 +9,6 @@ describe('abp-zero-template App', function() {
 
   it('should display message saying app works', () => {
     page.navigateTo();
-    expect(page.getParagraphText()).toEqual('app works!');
+    expect(page.getCopyright()).toEqual(new Date().getFullYear() + ' © CRM.');
   });
 });

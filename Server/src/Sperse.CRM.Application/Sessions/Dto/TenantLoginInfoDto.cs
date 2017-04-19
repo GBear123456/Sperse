@@ -1,4 +1,5 @@
-﻿using Abp.Application.Services.Dto;
+﻿using System;
+using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
 using Sperse.CRM.MultiTenancy;
 
@@ -12,5 +13,11 @@ namespace Sperse.CRM.Sessions.Dto
         public string Name { get; set; }
 
         public string EditionDisplayName { get; set; }
+
+        public Guid? LogoId { get; set; }
+
+        public string LogoFileType { get; set; }
+
+        public Guid? CustomCssId { get; set; }
     }
 }

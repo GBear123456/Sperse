@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { ModalModule, TabsModule, TooltipModule } from 'ng2-bootstrap';
+import { FileUploadModule } from '@node_modules/ng2-file-upload';
 
 import { AdminRoutingModule } from './admin-routing.module'
 import { UtilsModule } from '@shared/utils/utils.module'
@@ -46,6 +47,7 @@ import { TenantSettingsComponent } from './settings/tenant-settings.component'
         FormsModule,
         CommonModule,
 
+        FileUploadModule,
         ModalModule.forRoot(),
         TabsModule.forRoot(),
         TooltipModule.forRoot(),

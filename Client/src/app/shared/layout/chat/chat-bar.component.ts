@@ -55,6 +55,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     loadingPreviousUserMessages: boolean = false;
     userNameFilter: string = '';
     serverClientTimeDifference: number = 0;
+    isMultiTenancyEnabled: boolean = this.multiTenancy.isEnabled;
 
     _isOpen: boolean;
     set isOpen(newValue: boolean) {
@@ -112,6 +113,10 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     getShownUserName(tenanycName: string, userName: string): string {
+        if (!this.isMultiTenancyEnabled) {
+            return userName;
+        }
+
         return (tenanycName ? tenanycName : '.') + '\\' + userName;
     }
 

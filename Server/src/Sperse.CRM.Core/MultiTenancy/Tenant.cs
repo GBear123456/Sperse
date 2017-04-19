@@ -1,4 +1,6 @@
-﻿using Abp.MultiTenancy;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using Abp.MultiTenancy;
 using Sperse.CRM.Authorization.Users;
 
 namespace Sperse.CRM.MultiTenancy
@@ -10,7 +12,16 @@ namespace Sperse.CRM.MultiTenancy
     /// </summary>
     public class Tenant : AbpTenant<User>
     {
+        public const int MaxLogoMimeTypeLength = 64;
+
         //Can add application specific tenant properties here
+
+        public virtual Guid? CustomCssId { get; set; }
+
+        public virtual Guid? LogoId { get; set; }
+
+        [MaxLength(MaxLogoMimeTypeLength)]
+        public virtual string LogoFileType { get; set; }
 
         protected Tenant()
         {
@@ -21,6 +32,17 @@ namespace Sperse.CRM.MultiTenancy
             : base(tenancyName, name)
         {
 
+        }
+
+        public virtual bool HasLogo()
+        {
+            return LogoId != null && LogoFileType != null;
+        }
+
+        public void ClearLogo()
+        {
+            LogoId = null;
+            LogoFileType = null;
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+﻿import { Component, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { RoleServiceProxy, RoleListDto } from '@shared/service-proxies/service-proxies';
@@ -59,30 +59,29 @@ export class RolesComponent extends AppComponentBase implements AfterViewInit {
                         list: false
                     },
                     actions: {
-                        title: self.l('Actions'),
+                        title: this.l('Actions'),
                         width: '30%',
                         sorting: false,
-                        display: function (data: JTableFieldOptionDisplayData<RoleListDto>) {
-                            var $span = $('<span></span>');
-
-                            if (self.isGranted("Pages.Administration.Roles.Edit")) {
-                                $('<button class="btn btn-default btn-xs" title="' + self.l('Edit') + '"><i class="fa fa-edit"></i></button>')
-                                    .appendTo($span)
-                                    .click(function () {
-                                        self.createOrEditRoleModal.show(data.record.id);
-                                    });
+                        type: 'record-actions',
+                        cssClass: 'btn btn-xs btn-primary blue',
+                        text: '<i class="fa fa-cog"></i> ' + this.l('Actions') + ' <span class="caret"></span>',
+                        items: [{
+                            text: this.l('Edit'),
+                            visible: (): boolean => {
+                                return self.isGranted('Pages.Administration.Roles.Edit');
+                            },
+                            action(data) {
+                                self.createOrEditRoleModal.show(data.record.id);
                             }
-
-                            if (!data.record.isStatic && self.isGranted("Pages.Administration.Roles.Delete")) {
-                                $('<button class="btn btn-default btn-xs" title="' + self.l('Delete') + '"><i class="fa fa-trash-o"></i></button>')
-                                    .appendTo($span)
-                                    .click(function () {
-                                        self.deleteRole(data.record);
-                                    });
+                        }, {
+                            text: this.l('Delete'),
+                            visible: (): boolean => {
+                                return self.isGranted('Pages.Administration.Roles.Delete');
+                            },
+                            action(data) {
+                                self.deleteRole(data.record);
                             }
-
-                            return $span;
-                        }
+                        }]
                     },
                     displayName: {
                         title: self.l('RoleName'),

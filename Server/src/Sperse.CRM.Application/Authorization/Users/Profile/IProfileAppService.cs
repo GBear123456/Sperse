@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Abp.Application.Services;
+using Sperse.CRM.Authorization.Users.Dto;
 using Sperse.CRM.Authorization.Users.Profile.Dto;
 
 namespace Sperse.CRM.Authorization.Users.Profile
@@ -22,5 +23,7 @@ namespace Sperse.CRM.Authorization.Users.Profile
         Task<GetProfilePictureOutput> GetProfilePictureById(Guid profilePictureId);
 
         Task<GetProfilePictureOutput> GetFriendProfilePictureById(GetFriendProfilePictureByIdInput input);
+
+        Task ChangeLanguage(ChangeUserLanguageDto input);
     }
 }

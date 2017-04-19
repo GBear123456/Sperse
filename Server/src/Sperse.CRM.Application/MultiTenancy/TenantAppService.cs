@@ -12,9 +12,10 @@ using Abp.Extensions;
 using Abp.Linq.Extensions;
 using Abp.Runtime.Security;
 using Sperse.CRM.Authorization;
+using Sperse.CRM.Authorization.Users;
 using Sperse.CRM.Editions.Dto;
 using Sperse.CRM.MultiTenancy.Dto;
-using Sperse.CRM.Web.Url;
+using Sperse.CRM.Url;
 
 namespace Sperse.CRM.MultiTenancy
 {
@@ -22,7 +23,7 @@ namespace Sperse.CRM.MultiTenancy
     public class TenantAppService : CRMAppServiceBase, ITenantAppService
     {
         public IAppUrlService AppUrlService { get; set; }
-
+        
         public TenantAppService()
         {
             AppUrlService = NullAppUrlService.Instance;
@@ -112,6 +113,18 @@ namespace Sperse.CRM.MultiTenancy
         public async Task ResetTenantSpecificFeatures(EntityDto input)
         {
             await TenantManager.ResetAllFeaturesAsync(input.Id);
+        }
+
+        public async Task UnlockTenantAdmin(EntityDto input)
+        {
+            using (CurrentUnitOfWork.SetTenantId(input.Id))
+            {
+                var tenantAdmin = await UserManager.FindByNameAsync(User.AdminUserName);
+                if (tenantAdmin != null)
+                {
+                    tenantAdmin.Unlock();
+                }
+            }
         }
     }
 }

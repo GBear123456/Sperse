@@ -1,32 +1,3 @@
-## ASP.NET ZERO - Angular 2 UI
+﻿## ASP.NET ZERO - Angular 2 UI
 
-This is Angular 2 UI for AspNet Zero. It's in PREVIEW state and is constantly being improved and changed.
-So, don't use it in production, but you can test it and check source to prepare to the coming release.
-
-### Prerequirements
-
-* nodejs
-* npm
-* angular-cli v1.0.0-beta.17 (tested in this version, but may work in later versions too).
-* typescript 2.0 (v2.1 recommended).
-
-### IDE
-
-Project is IDE and OS independent. That means you can develop in Windows/Linux/Mac with any editor.
-We developed it with Visual Studio 2015 and Visual Studio Code.
-We are best comfortable with Visual Studio 2015 with Resharper 2016.3 EAP.
-
-### How To Run?
-
-UI uses AspNet Zero (ASP.NET Core version) as backend. So, you should first run it:
-
-* Open AspNet Zero AspNet Core project in Visual Studio.
-* Set ``.Web.Host`` as startup project.
-* Go to the root folder of EntityFramework project and run ``dotnet ef database update`` from command line.
-* Run the application. You will see the Swagger UI (https://www.aspnetzero.com/Documents/Development-Guide-Core#swagger-ui).
-
-Once server side is ready, you can run the Angular2 application:
-
-* Go to root folder of the Angular2 project (the folder contains package.json file) and run ``npm install`` from command line one time to restore all packages.
-* Run ``npm start`` from command line to run angular-cli server. Wait webpack to finish it's work.
-* Visit ``http://localhost:4200`` in your browser.
+See documentation: https://www.aspnetzero.com/Documents/Getting-Started-Angular

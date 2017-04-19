@@ -1,9 +1,10 @@
-import { Component, Injector, OnInit } from '@angular/core';
+﻿import { Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AccountServiceProxy, RegisterInput, PasswordComplexitySetting, ProfileServiceProxy } from '@shared/service-proxies/service-proxies'
+import { AccountServiceProxy, PasswordComplexitySetting, ProfileServiceProxy } from '@shared/service-proxies/service-proxies'
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LoginService } from '../login/login.service';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
+import { RegisterModel } from './register.model';
 
 @Component({
     templateUrl: './register.component.html',
@@ -11,7 +12,7 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 })
 export class RegisterComponent extends AppComponentBase implements OnInit {
 
-    model: RegisterInput = new RegisterInput();
+    model: RegisterModel = new RegisterModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
 
     saving: boolean = false;

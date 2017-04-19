@@ -60,8 +60,6 @@ namespace Sperse.CRM.Web
                     typeof(CRMApplicationModule).Assembly
                 );
 
-            Configuration.Modules.AbpWebCommon().MultiTenancy.DomainFormat = _appConfiguration["App:WebSiteRootAddress"] ?? "http://localhost:62114/";
-
             Configuration.Caching.Configure(TwoFactorCodeCacheItem.CacheName, cache =>
             {
                 cache.DefaultAbsoluteExpireTime = TimeSpan.FromMinutes(2);

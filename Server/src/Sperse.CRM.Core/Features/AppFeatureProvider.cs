@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Features;
 using Abp.Localization;
+using Abp.Runtime.Validation;
 using Abp.UI.Inputs;
 
 namespace Sperse.CRM.Features
@@ -11,6 +12,13 @@ namespace Sperse.CRM.Features
     {
         public override void SetFeatures(IFeatureDefinitionContext context)
         {
+            context.Create(
+                AppFeatures.MaxUserCount,
+                defaultValue: "0", //0 = unlimited
+                displayName: L("MaximumUserCount"),
+                inputType: new SingleLineStringInputType(new NumericValueValidator(0, int.MaxValue))
+            );
+
             var chatFeature = context.Create(
                   AppFeatures.ChatFeature,
                   defaultValue: "false",

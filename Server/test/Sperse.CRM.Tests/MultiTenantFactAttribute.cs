@@ -1,7 +1,4 @@
-﻿using System;
-using Sperse.CRM.Configuration;
-using Xunit;
-using Abp.Reflection.Extensions;
+﻿using Xunit;
 
 namespace Sperse.CRM.Tests
 {
@@ -9,12 +6,7 @@ namespace Sperse.CRM.Tests
     {
         public MultiTenantFactAttribute()
         {
-            var config = AppConfigurations.Get(
-                 typeof(CRMTestModule).Assembly.GetDirectoryPathOrNull()
-             );
-
-            var multiTenancyConfig = config["MultiTenancyEnabled"];
-            if (multiTenancyConfig != null && multiTenancyConfig.Equals("false", StringComparison.OrdinalIgnoreCase))
+            if (!CRMConsts.MultiTenancyEnabled)
             {
                 Skip = "MultiTenancy is disabled.";
             }

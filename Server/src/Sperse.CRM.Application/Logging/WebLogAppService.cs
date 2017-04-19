@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Abp.Authorization;
+using Abp.IO;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using Sperse.CRM.Authorization;
@@ -70,6 +72,11 @@ namespace Sperse.CRM.Logging
 
         public FileDto DownloadWebLogs()
         {
+            //Create temporary copy of logs
+            var tempLogDirectory = CopyAllLogFilesToTempDirectory();
+            var logFiles = new DirectoryInfo(tempLogDirectory).GetFiles("*.txt", SearchOption.TopDirectoryOnly).ToList();
+
+            //Create the zip file
             var zipFileDto = new FileDto("WebSiteLogs.zip", MimeTypeNames.ApplicationZip);
             var outputZipFilePath = Path.Combine(_appFolders.TempFileDownloadFolder, zipFileDto.FileToken);
 
@@ -77,16 +84,14 @@ namespace Sperse.CRM.Logging
             {
                 using (var zipStream = new ZipOutputStream(outputZipFileStream))
                 {
-                    var directory = new DirectoryInfo(_appFolders.WebLogsFolder);
-                    var logFiles = directory.GetFiles("*.txt", SearchOption.AllDirectories).ToList();
+                    zipStream.IsStreamOwner = true; // Makes the Close also Close the underlying stream
 
                     foreach (var logFile in logFiles)
                     {
-                        var logFileInfo = new FileInfo(logFile.FullName);
                         var logZipEntry = new ZipEntry(logFile.Name)
                         {
-                            DateTime = logFileInfo.LastWriteTime,
-                            Size = logFileInfo.Length
+                            DateTime = logFile.LastWriteTime,
+                            Size = logFile.Length
                         };
 
                         zipStream.PutNextEntry(logZipEntry);
@@ -98,13 +103,33 @@ namespace Sperse.CRM.Logging
 
                         zipStream.CloseEntry();
                     }
-
-                    // Makes the Close also Close the underlying stream
-                    zipStream.IsStreamOwner = true;
                 }
             }
 
+            //Delete temporary copied logs
+            Directory.Delete(tempLogDirectory, true);
+
             return zipFileDto;
+        }
+
+        private string CopyAllLogFilesToTempDirectory()
+        {
+            var tempDirectoryPath = Path.Combine(_appFolders.TempFileDownloadFolder, Guid.NewGuid().ToString("N").Substring(16));
+            DirectoryHelper.CreateIfNotExists(tempDirectoryPath);
+
+            foreach (var file in GetAllLogFiles())
+            {
+                var destinationFilePath = Path.Combine(tempDirectoryPath, file.Name);
+                File.Copy(file.FullName, destinationFilePath, true);
+            }
+
+            return tempDirectoryPath;
+        }
+
+        private List<FileInfo> GetAllLogFiles()
+        {
+            var directory = new DirectoryInfo(_appFolders.WebLogsFolder);
+            return directory.GetFiles("*.txt", SearchOption.TopDirectoryOnly).ToList();
         }
     }
 }

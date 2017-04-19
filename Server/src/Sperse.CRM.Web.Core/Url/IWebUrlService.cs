@@ -1,4 +1,4 @@
-﻿namespace Sperse.CRM.Web
+﻿namespace Sperse.CRM.Web.Url
 {
     public interface IWebUrlService
     {

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { TokenAuthServiceProxy, AuthenticateModel, AuthenticateResultModel, ExternalLoginProviderInfoModel, ExternalAuthenticateModel, ExternalAuthenticateResultModel } from '@shared/service-proxies/service-proxies';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
@@ -65,7 +65,7 @@ export class LoginService {
         this.clear();
     }
 
-    authenticate(finallyCallback?: () => void): void {
+    authenticate(finallyCallback?: () => void, redirectUrl?: string): void {
         finallyCallback = finallyCallback || (() => { });
 
         //We may switch to localStorage instead of cookies
@@ -75,7 +75,7 @@ export class LoginService {
             .authenticate(this.authenticateModel)
             .finally(finallyCallback)
             .subscribe((result: AuthenticateResultModel) => {
-                this.processAuthenticateResult(result);
+                this.processAuthenticateResult(result, redirectUrl);
             });
     }
 
@@ -97,7 +97,7 @@ export class LoginService {
         this.initExternalLoginProviders();
     }
 
-    private processAuthenticateResult(authenticateResult: AuthenticateResultModel) {
+    private processAuthenticateResult(authenticateResult: AuthenticateResultModel, redirectUrl?: string) {
         this.authenticateResult = authenticateResult;
 
         if (authenticateResult.shouldResetPassword) {
@@ -121,7 +121,7 @@ export class LoginService {
         } else if (authenticateResult.accessToken) {
             //Successfully logged in
 
-            this.login(authenticateResult.accessToken, authenticateResult.encryptedAccessToken, authenticateResult.expireInSeconds, this.rememberMe, authenticateResult.twoFactorRememberClientToken);
+            this.login(authenticateResult.accessToken, authenticateResult.encryptedAccessToken, authenticateResult.expireInSeconds, this.rememberMe, authenticateResult.twoFactorRememberClientToken, redirectUrl);
 
         } else {
             //Unexpected result!
@@ -132,7 +132,7 @@ export class LoginService {
         }
     }
 
-    private login(accessToken: string, encryptedAccessToken: string, expireInSeconds: number, rememberMe?: boolean, twoFactorRememberClientToken?: string): void {
+    private login(accessToken: string, encryptedAccessToken: string, expireInSeconds: number, rememberMe?: boolean, twoFactorRememberClientToken?: string, redirectUrl?: string): void {
 
         var tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
 
@@ -158,11 +158,16 @@ export class LoginService {
         }
 
         var initialUrl = UrlHelper.initialUrl;
+
         if (initialUrl.indexOf('/login') > 0) {
             initialUrl = AppConsts.appBaseUrl;
         }
 
-        location.href = initialUrl;
+        if (redirectUrl) {
+            location.href = redirectUrl;
+        } else {
+            location.href = initialUrl;
+        }
     }
 
     private clear(): void {
@@ -209,7 +214,10 @@ export class LoginService {
                             clientId: loginProvider.clientId,
                             scope: 'openid profile email'
                         }).then(() => {
-                            gapi.auth2.getAuthInstance().isSignedIn.listen(this.googleLoginStatusChangeCallback);
+                            gapi.auth2.getAuthInstance().isSignedIn.listen((isSignedIn) => {
+                                this.googleLoginStatusChangeCallback(isSignedIn);
+                            });
+
                             this.googleLoginStatusChangeCallback(gapi.auth2.getAuthInstance().isSignedIn.get());
                         });
 

@@ -26,7 +26,7 @@ using Sperse.CRM.Authorization.Users.Dto;
 using Sperse.CRM.Authorization.Users.Exporting;
 using Sperse.CRM.Dto;
 using Sperse.CRM.Notifications;
-using Sperse.CRM.Web.Url;
+using Sperse.CRM.Url;
 
 namespace Sperse.CRM.Authorization.Users
 {
@@ -43,6 +43,7 @@ namespace Sperse.CRM.Authorization.Users
         private readonly IRepository<RolePermissionSetting, long> _rolePermissionRepository;
         private readonly IRepository<UserPermissionSetting, long> _userPermissionRepository;
         private readonly IRepository<UserRole, long> _userRoleRepository;
+        private readonly IUserPolicy _userPolicy;
 
         public UserAppService(
             RoleManager roleManager,
@@ -52,8 +53,8 @@ namespace Sperse.CRM.Authorization.Users
             IAppNotifier appNotifier,
             IRepository<RolePermissionSetting, long> rolePermissionRepository,
             IRepository<UserPermissionSetting, long> userPermissionRepository,
-            IRepository<UserRole, long> userRoleRepository
-            )
+            IRepository<UserRole, long> userRoleRepository,
+            IUserPolicy userPolicy)
         {
             _roleManager = roleManager;
             _userEmailer = userEmailer;
@@ -63,6 +64,7 @@ namespace Sperse.CRM.Authorization.Users
             _rolePermissionRepository = rolePermissionRepository;
             _userPermissionRepository = userPermissionRepository;
             _userRoleRepository = userRoleRepository;
+            _userPolicy = userPolicy;
 
             AppUrlService = NullAppUrlService.Instance;
         }
@@ -233,16 +235,7 @@ namespace Sperse.CRM.Authorization.Users
             var user = await UserManager.GetUserByIdAsync(input.Id);
             user.Unlock();
         }
-
-        public async Task ChangeLanguage(ChangeUserLanguageDto input)
-        {
-            await SettingManager.ChangeSettingForUserAsync(
-                    AbpSession.ToUserIdentifier(),
-                    LocalizationSettingNames.DefaultLanguage,
-                    input.LanguageName
-                );
-        }
-
+        
         [AbpAuthorize(AppPermissions.Pages_Administration_Users_Edit)]
         protected virtual async Task UpdateUserAsync(CreateOrUpdateUserInput input)
         {
@@ -282,6 +275,11 @@ namespace Sperse.CRM.Authorization.Users
         [AbpAuthorize(AppPermissions.Pages_Administration_Users_Create)]
         protected virtual async Task CreateUserAsync(CreateOrUpdateUserInput input)
         {
+            if (AbpSession.TenantId.HasValue)
+            {
+                await _userPolicy.CheckMaxUserCountAsync(AbpSession.GetTenantId());
+            }
+
             var user = input.User.MapTo<User>(); //Passwords is not mapped (see mapping configuration)
             user.TenantId = AbpSession.TenantId;
 

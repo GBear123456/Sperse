@@ -30,6 +30,8 @@ export class LanguagesComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngAfterViewInit(): void {
+        let self = this;
+
         const initTable = () => {
             this._$languagesTable = $(this.languagesTable.nativeElement);
             this._$languagesTable.jtable({
@@ -52,43 +54,44 @@ export class LanguagesComponent extends AppComponentBase implements AfterViewIni
                     actions: {
                         title: this.l('Actions'),
                         width: '30%',
-                        display: (data: JTableFieldOptionDisplayData<ApplicationLanguageListDto>) => {
-                            const $span = $('<span></span>');
-
-                            if (this.isGranted('Pages.Administration.Languages.Edit') && data.record.tenantId === this.appSession.tenantId) {
-                                $('<button class="btn btn-default btn-xs" title="' + this.l('Edit') + '"><i class="fa fa-edit"></i></button>')
-                                    .appendTo($span)
-                                    .click(() => {
-                                        this.createOrEditLanguageModal.show(data.record.id);
-                                    });
+                        sorting: false,
+                        type: 'record-actions',
+                        cssClass: 'btn btn-xs btn-primary blue',
+                        text: '<i class="fa fa-cog"></i> ' + this.l('Actions') + ' <span class="caret"></span>',
+                        items: [{
+                            text: this.l('Edit'),
+                            visible: (): boolean => {
+                                return self.isGranted('Pages.Administration.Languages.Edit');
+                            },
+                            action(data) {
+                                self.createOrEditLanguageModal.show(data.record.id);
                             }
-
-                            if (this.isGranted('Pages.Administration.Languages.ChangeTexts')) {
-                                $('<a class="btn btn-default btn-xs" title="' + this.l('ChangeTexts') + '"><i class="fa fa-bars"></i></a>')
-                                    .appendTo($span)
-                                    .click(() => {
-                                        this.changeTexts(data.record);
-                                    });
+                        }, {
+                            text: this.l('ChangeTexts'),
+                            visible: (): boolean => {
+                                return self.isGranted('Pages.Administration.Languages.ChangeTexts');
+                            },
+                            action(data) {
+                                self.changeTexts(data.record);
+                                self._$languagesTable.find('div.dropdown').dropdown('toggle');
                             }
-
-                            if (this.isGranted('Pages.Administration.Languages.Edit')) {
-                                $('<button class="btn btn-default btn-xs" title="' + this.l('SetAsDefaultLanguage') + '"><i class="fa fa-check"></i></button>')
-                                    .appendTo($span)
-                                    .click(() => {
-                                        this.setAsDefaultLanguage(data.record);
-                                    });
+                        }, {
+                            text: this.l('SetAsDefaultLanguage'),
+                            visible: (): boolean => {
+                                return self.isGranted('Pages.Administration.Languages.Edit');
+                            },
+                            action(data) {
+                                self.setAsDefaultLanguage(data.record);
                             }
-
-                            if (this.isGranted('Pages.Administration.Languages.Delete') && data.record.tenantId === this.appSession.tenantId) {
-                                $('<button class="btn btn-default btn-xs" title="' + this.l('Delete') + '"><i class="fa fa-trash-o"></i></button>')
-                                    .appendTo($span)
-                                    .click(() => {
-                                        this.deleteLanguage(data.record);
-                                    });
+                        }, {
+                            text: this.l('Delete'),
+                            visible: (): boolean => {
+                                return self.isGranted('Pages.Administration.Languages.Delete');
+                            },
+                            action(data) {
+                                self.deleteLanguage(data.record);
                             }
-
-                            return $span;
-                        }
+                        }]
                     },
                     displayName: {
                         title: this.l('Name'),

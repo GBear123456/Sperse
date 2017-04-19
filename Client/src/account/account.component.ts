@@ -1,6 +1,7 @@
-import { Component, ViewContainerRef, OnInit, ViewEncapsulation } from '@angular/core';
+﻿import { Component, ViewContainerRef, OnInit, Injector, ViewEncapsulation } from '@angular/core';
 import { LoginService } from './login/login.service';
 import { AppConsts } from '@shared/AppConsts';
+import { AppComponentBase } from '@shared/common/app-component-base';
 
 import * as moment from 'moment';
 
@@ -11,16 +12,20 @@ import * as moment from 'moment';
     ],
     encapsulation: ViewEncapsulation.None
 })
-export class AccountComponent implements OnInit {
+export class AccountComponent extends AppComponentBase implements OnInit {
 
     private viewContainerRef: ViewContainerRef;
 
     currentYear: number = moment().year();
+    remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
 
     public constructor(
+        injector: Injector,
         private _loginService: LoginService,
         viewContainerRef: ViewContainerRef
     ) {
+        super(injector);
+
         this.viewContainerRef = viewContainerRef; // We need this small hack in order to catch application root view container ref for modals
     }
 

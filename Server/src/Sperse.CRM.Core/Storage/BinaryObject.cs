@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Abp;
 using Abp.Domain.Entities;
 
 namespace Sperse.CRM.Storage
@@ -15,7 +16,7 @@ namespace Sperse.CRM.Storage
 
         public BinaryObject()
         {
-            Id = Guid.NewGuid();
+            Id = SequentialGuidGenerator.Instance.Create();
         }
 
         public BinaryObject(int? tenantId, byte[] bytes)

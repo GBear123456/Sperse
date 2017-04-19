@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TenantServiceProxy, TenantListDto, NameValueDto, CommonLookupServiceProxy, FindUsersInput } from '@shared/service-proxies/service-proxies';
+import { TenantServiceProxy, TenantListDto, NameValueDto, CommonLookupServiceProxy, FindUsersInput, EntityDtoOfInt64 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { Observable } from 'rxjs/Observable';
 import { CreateTenantModalComponent } from './create-tenant-modal.component';
@@ -88,52 +88,58 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
                         list: false
                     },
                     actions: {
-                        title: self.l('Actions'),
+                        title: this.l('Actions'),
                         width: '15%',
                         sorting: false,
+                        type: 'record-actions',
+                        cssClass: 'btn btn-xs btn-primary blue',
+                        text: '<i class="fa fa-cog"></i> ' + this.l('Actions') + ' <span class="caret"></span>',
                         list: self.permission.isGranted('Pages.Tenants.Edit') || self.permission.isGranted('Pages.Tenants.Delete'),
-                        display: (data: JTableFieldOptionDisplayData<TenantListDto>) => {
-                            var $span = $('<span></span>');
 
-                            if (self.permission.isGranted("Pages.Tenants.Impersonation")) {
-                                var $impersonateButton = $('<button class="btn btn-default btn-xs" title="' + self.l('LoginAsThisTenant') + '"><i class="fa fa-sign-in"></i></button>');
-                                $impersonateButton.appendTo($span)
-                                    .click(() => {
-                                        this.impersonateUserLookupModal.tenantId = data.record.id;
-                                        this.impersonateUserLookupModal.show();
-                                    });
-
-                                if (!data.record.isActive) {
-                                    $impersonateButton.attr("disabled", "disabled");
-                                }
+                        items: [{
+                            text: this.l('LoginAsThisTenant'),
+                            visible: (): boolean => {
+                                return self.permission.isGranted("Pages.Tenants.Impersonation");
+                            },
+                            enabled(data) {
+                                return data.record.isActive;
+                            },
+                            action(data) {
+                                self.impersonateUserLookupModal.tenantId = data.record.id;
+                                self.impersonateUserLookupModal.show();
                             }
-
-                            if (self.permission.isGranted("Pages.Tenants.Edit")) {
-                                $('<button class="btn btn-default btn-xs" title="' + self.l('Edit') + '"><i class="fa fa-edit"></i></button>')
-                                    .appendTo($span)
-                                    .click(() => {
-                                        self.editTenantModal.show(data.record.id);
-                                    });
+                        }, {
+                            text: this.l('Edit'),
+                            visible: (): boolean => {
+                                return self.permission.isGranted("Pages.Tenants.Edit");
+                            },
+                            action(data) {
+                                self.editTenantModal.show(data.record.id);
                             }
-
-                            if (self.permission.isGranted("Pages.Tenants.ChangeFeatures")) {
-                                $('<button class="btn btn-default btn-xs" title="' + self.l('Features') + '"><i class="fa fa-list"></i></button>')
-                                    .appendTo($span)
-                                    .click(() => {
-                                        self.tenantFeaturesModal.show(data.record.id, data.record.name);
-                                    });
+                        }, {
+                            text: this.l('Features'),
+                            visible: (): boolean => {
+                                return self.permission.isGranted("Pages.Tenants.ChangeFeatures");
+                            },
+                            action(data) {
+                                self.tenantFeaturesModal.show(data.record.id, data.record.name);
                             }
-
-                            if (self.permission.isGranted("Pages.Tenants.Delete")) {
-                                $('<button class="btn btn-default btn-xs" title="' + self.l('Delete') + '"><i class="fa fa-trash-o"></i></button>')
-                                    .appendTo($span)
-                                    .click(() => {
-                                        self.deleteTenant(data.record);
-                                    });
+                        }, {
+                            text: this.l('Delete'),
+                            visible: (): boolean => {
+                                return self.permission.isGranted("Pages.Tenants.Delete");
+                            },
+                            action(data) {
+                                self.deleteTenant(data.record);
                             }
-
-                            return $span;
-                        }
+                        }, {
+                            text: this.l('Unlock'),
+                            action(data) {
+                                self._tenantService.unlockTenantAdmin(new EntityDtoOfInt64({ id: data.record.id })).subscribe(() => {
+                                    self.notify.success(self.l('UnlockedTenandAdmin', data.record.name));
+                                });
+                            }
+                        }]
                     },
                     tenancyName: {
                         title: self.l('TenancyCodeName'),

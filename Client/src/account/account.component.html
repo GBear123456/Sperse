@@ -1,6 +1,7 @@
-<div class="logo">
-    <a href="~/">
-        <img src="/assets/common/images/app-logo-on-dark.png" alt="" width="149" height="35" />
+﻿<div class="logo">
+    <a routerLink="/">
+      <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/common/images/app-logo-on-dark.png" alt="logo" width="168" height="33" />
+      <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetLogo?id=' + appSession.tenant.logoId" alt="logo" width="168" height="33" />
     </a>
 </div>
 
@@ -15,5 +16,5 @@
 <languageSwitch></languageSwitch>
 
 <div class="copyright">
-    {{currentYear}} ?? CRM.
+    {{currentYear}} © CRM.
 </div>

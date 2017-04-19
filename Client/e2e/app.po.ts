@@ -1,11 +1,11 @@
-import { browser, element, by } from 'protractor';
+﻿import { browser, element, by } from 'protractor';
 
 export class CRMPage {
   navigateTo() {
     return browser.get('/');
   }
 
-  getParagraphText() {
-    return element(by.css('app-root h1')).getText();
+  getCopyright() {
+    return element(by.css('app-root div.copyright')).getText();
   }
 }

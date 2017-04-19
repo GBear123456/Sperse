@@ -115,5 +115,6 @@ Backup*/
 UpgradeLog*.XML
 src/.vs/config/applicationhost.config
 
-/src/Sperse.CRM.Web/wwwroot/Temp/Downloads
-/src/Sperse.CRM.Web.Mvc/Properties/PublishProfiles
+/aspnet-core/src/Sperse.CRM.Web.Host/wwwroot/Temp/Downloads
+/aspnet-core/src/Sperse.CRM.Web.Mvc/wwwroot/Temp/Downloads
+/aspnet-core/src/Sperse.CRM.Web.Mvc/Properties/PublishProfiles

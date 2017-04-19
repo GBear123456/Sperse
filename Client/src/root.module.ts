@@ -1,4 +1,5 @@
 ﻿import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, Injector, APP_INITIALIZER } from '@angular/core';
 
 import { AbpModule, ABP_HTTP_PROVIDER } from '@abp/abp.module';
@@ -20,12 +21,20 @@ export function appInitializerFactory(injector: Injector) {
         abp.ui.setBusy();
         return new Promise<boolean>((resolve, reject) => {
             AppPreBootstrap.run(() => {
-                injector.get(AppSessionService).init().then(
+                var appSessionService: AppSessionService = injector.get(AppSessionService);
+                appSessionService.init().then(
                     (result) => {
+
+                        //Css classes based on the layout
                         if (abp.session.userId) {
                             $('body').attr('class', 'page-md page-header-fixed page-sidebar-closed-hide-logo');
                         } else {
                             $('body').attr('class', 'page-md login');
+                        }
+
+                        //tenant specific custom css
+                        if (appSessionService.tenant && appSessionService.tenant.customCssId) {
+                            $('head').append('<link id="TenantCustomCss" href="' + AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + appSessionService.tenant.customCssId + '" rel="stylesheet"/>');
                         }
 
                         abp.ui.clearBusy();
@@ -48,6 +57,7 @@ export function getRemoteServiceBaseUrl(): string {
 @NgModule({
     imports: [
         BrowserModule,
+        BrowserAnimationsModule,
         AppModule,
         CommonModule.forRoot(),
         AbpModule,

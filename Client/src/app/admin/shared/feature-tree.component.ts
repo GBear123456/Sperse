@@ -41,17 +41,23 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     getGrantedFeatures(): NameValueDto[] {
-        let self = this;
         if (!this._$tree || !this._createdTreeBefore) {
             return [];
         }
 
         var selectedFeatures = this._$tree.jstree('get_selected', true);
 
-        return _.map(this._editData.features, function (item) {
+        return _.map(this._editData.features, item => {
             let feature = new NameValueDto();
+
             feature.name = item.name;
-            feature.value = _.some(selectedFeatures, { original: { id: item.name } }) ? "true" : "false";
+
+            if (!item.inputType || item.inputType.name == 'CHECKBOX') {
+                feature.value = _.some(selectedFeatures, { original: { id: item.name } }) ? "true" : "false";
+            } else {
+                feature.value = this.getFeatureValueByName(item.name);
+            }
+            
             return feature;
         });
     }
@@ -378,13 +384,21 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     setFeatureValueByName(featureName: string, value: string): void {
-        let self = this;
-        var featureValue = _.find(self._editData.featureValues, f => f.name === featureName);
+        var featureValue = _.find(this._editData.featureValues, f => f.name === featureName);
         if (!featureValue) {
             return;
         }
 
         featureValue.value = value;
+    }
+
+    getFeatureValueByName(featureName: string): string {
+        var featureValue = _.find(this._editData.featureValues, f => f.name === featureName);
+        if (!featureValue) {
+            return null;
+        }
+
+        return featureValue.value;
     }
 
     isFeatureEnabled(featureName: string): boolean {

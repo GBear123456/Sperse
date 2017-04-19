@@ -13,7 +13,7 @@ using Sperse.CRM.Configuration;
 using Sperse.CRM.Debugging;
 using Sperse.CRM.MultiTenancy;
 using Sperse.CRM.Security.Recaptcha;
-using Sperse.CRM.Web.Url;
+using Sperse.CRM.Url;
 
 namespace Sperse.CRM.Authorization.Accounts
 {
