@@ -1,13 +1,17 @@
 using System;
+using System.Linq;
 using Abp.AspNetCore;
 using Abp.Castle.Logging.Log4Net;
+using Abp.Dependency;
 using Abp.Extensions;
 using Abp.Hangfire;
 using Abp.Owin;
 using Abp.Timing;
+using Abp.Web.SignalR;
 using Castle.Facilities.Logging;
 using Hangfire;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -48,9 +52,13 @@ namespace Sperse.CRM.Web.Startup
             //Configure CORS for angular2 UI
             services.AddCors(options =>
             {
-                options.AddPolicy(DefaultCorsPolicyName, p =>
+                options.AddPolicy(DefaultCorsPolicyName, builder =>
                 {
-                    p.WithOrigins(_appConfiguration["App:WebSiteRootAddress"].RemovePostFix("/")).AllowAnyHeader().AllowAnyMethod();
+                    //App:CorsOrigins in appsettings.json can contain more than one address with splitted by comma.
+                    builder
+                        .WithOrigins(_appConfiguration["App:CorsOrigins"].Split(",", StringSplitOptions.RemoveEmptyEntries).Select(o => o.RemovePostFix("/")).ToArray())
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
                 });
             });
 
@@ -77,7 +85,7 @@ namespace Sperse.CRM.Web.Startup
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseAbp(); //Initializes ABP framework.
-            
+
             app.UseCors(DefaultCorsPolicyName); //Enable CORS!
 
             AuthConfigurer.Configure(app, _appConfiguration);
@@ -106,6 +114,7 @@ namespace Sperse.CRM.Web.Startup
 
         private static void ConfigureOwinServices(IAppBuilder app)
         {
+            GlobalHost.DependencyResolver.Register(typeof(IAssemblyLocator), () => new SignalRAssemblyLocator());
             app.Properties["host.AppName"] = "CRM";
 
             app.UseAbp();
@@ -114,10 +123,12 @@ namespace Sperse.CRM.Web.Startup
             app.Map("/signalr", map =>
             {
                 map.UseCors(CorsOptions.AllowAll);
+
                 var hubConfiguration = new HubConfiguration
                 {
                     EnableJSONP = true
                 };
+
                 map.RunSignalR(hubConfiguration);
             });
 

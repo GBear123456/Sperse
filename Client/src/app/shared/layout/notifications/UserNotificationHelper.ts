@@ -31,7 +31,7 @@ export class UserNotificationHelper extends AppComponentBase {
     getUrl(userNotification: abp.notifications.IUserNotification): string {
         switch (userNotification.notification.notificationName) {
             case 'App.NewUserRegistered':
-                return '/admin/users?filterText=' + userNotification.notification.data.properties.emailAddress;
+                return '/app/admin/users?filterText=' + userNotification.notification.data.properties.emailAddress;
             case 'App.NewTenantRegistered':
                 return '/admin/tenants?filterText=' + userNotification.notification.data.properties.tenancyName;
             //Add your custom notification names to navigate to a URL when user clicks to a notification.
@@ -79,6 +79,8 @@ export class UserNotificationHelper extends AppComponentBase {
     }
 
     show(userNotification: abp.notifications.IUserNotification): void {
+
+        //Application notification
         abp.notifications.showUiNotifyForUserNotification(userNotification, {
             'onclick': () => {
                 //Take action when user clicks to live toastr notification
@@ -86,6 +88,17 @@ export class UserNotificationHelper extends AppComponentBase {
                 if (url) {
                     location.href = url;
                 }
+            }
+        });
+
+        //Desktop notification
+        Push.create("CRM", {
+            body: this.format(userNotification).text,
+            icon: abp.appPath + 'assets/common/images/app-logo-small.png',
+            timeout: 6000,
+            onClick: function () {
+                window.focus();
+                this.close();
             }
         });
     }

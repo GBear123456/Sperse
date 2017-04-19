@@ -11,7 +11,7 @@ export class SignalRHelper {
             var encryptedAuthToken = new UtilsService().getCookieValue(AppConsts.authorization.encrptedAuthTokenName);
             $.connection.hub.qs = AppConsts.authorization.encrptedAuthTokenName + "=" + encodeURIComponent(encryptedAuthToken);
 
-            jQuery.getScript(AppConsts.appBaseUrl + '/assets/temp/abp.signalr.js');
+            jQuery.getScript(AppConsts.appBaseUrl + '/assets/abp/abp.signalr.js');
 
             callback();
         });

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+﻿import { Component, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { AuditLogServiceProxy, AuditLogListDto } from '@shared/service-proxies/service-proxies';
@@ -34,6 +34,7 @@ export class AuditLogsComponent extends AppComponentBase implements AfterViewIni
     public maxExecutionDuration: number;
 
     private _$auditLogsTable: JQuery;
+    advancedFiltersAreShown: boolean = false;
 
     constructor(
         injector: Injector,

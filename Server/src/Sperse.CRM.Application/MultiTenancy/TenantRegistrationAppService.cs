@@ -10,7 +10,7 @@ using Sperse.CRM.Editions;
 using Sperse.CRM.MultiTenancy.Dto;
 using Sperse.CRM.Notifications;
 using Sperse.CRM.Security.Recaptcha;
-using Sperse.CRM.Web.Url;
+using Sperse.CRM.Url;
 
 namespace Sperse.CRM.MultiTenancy
 {

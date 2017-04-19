@@ -4,7 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
     selector: 'role-combo',
-    template: 
+    template:
     `<select #RoleCombobox
         class="form-control"
         [(ngModel)]="selectedRole"
@@ -15,12 +15,12 @@ import { AppComponentBase } from '@shared/common/app-component-base';
             <option *ngFor="let role of roles" [value]="role.id">{{role.displayName}}</option>
     </select>`
 })
-export class RoleComboComponent extends AppComponentBase implements OnInit, AfterViewChecked {
+export class RoleComboComponent extends AppComponentBase implements OnInit {
 
     @ViewChild('RoleCombobox') roleComboboxElement: ElementRef;
 
     roles: RoleListDto[] = [];
-    
+
     @Input() selectedRole: string = undefined;
     @Output() selectedRoleChange: EventEmitter<string> = new EventEmitter<string>();
 
@@ -33,12 +33,12 @@ export class RoleComboComponent extends AppComponentBase implements OnInit, Afte
     }
 
     ngOnInit(): void {
+        let self = this;
         this._roleService.getRoles(undefined).subscribe(result => {
             this.roles = result.items;
+            setTimeout(() => {
+                $(self.roleComboboxElement.nativeElement).selectpicker('refresh');
+            }, 0);
         });
-    }
-
-    ngAfterViewChecked(): void{
-        $(this.roleComboboxElement.nativeElement).selectpicker('refresh');
     }
 }

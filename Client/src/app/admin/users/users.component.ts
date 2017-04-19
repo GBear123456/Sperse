@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+﻿import { Component, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
@@ -51,11 +51,12 @@ export class UsersComponent extends AppComponentBase implements AfterViewInit {
 
     ngAfterViewInit(): void {
 
+        let self = this;
         this.filterText = this._activatedRoute.snapshot.queryParams['filterText'] || '';
-
+        
         var initUsersTable = () => {
             this._$usersTable = $('#UsersTable');
-
+            
             this._$usersTable.jtable({
 
                 title: this.l('Users'),
@@ -86,51 +87,49 @@ export class UsersComponent extends AppComponentBase implements AfterViewInit {
                         title: this.l('Actions'),
                         width: '15%',
                         sorting: false,
-                        display: (data: JTableFieldOptionDisplayData<UserListDto>) => {
-                            var $span = $('<span></span>');
-
-                            if (this.isGranted('Pages.Administration.Users.Impersonation') && data.record.id !== this.appSession.userId) {
-                                $('<button class="btn btn-default btn-xs" title="' + this.l('LoginAsThisUser') + '"><i class="fa fa-sign-in"></i></button>')
-                                    .appendTo($span)
-                                    .click(() => {
-                                        this._impersonationService.impersonate(data.record.id, this.appSession.tenantId);
-                                    });
+                        type: 'record-actions',
+                        cssClass: 'btn btn-xs btn-primary blue',
+                        text: '<i class="fa fa-cog"></i> ' + this.l('Actions') + ' <span class="caret"></span>',
+                        items: [{
+                            text: this.l('LoginAsThisUser'),
+                            visible: data => {
+                                return self.isGranted('Pages.Administration.Users.Impersonation') && data.record.id !== self.appSession.userId;
+                            },
+                            action(data) {
+                                self._impersonationService.impersonate(data.record.id, self.appSession.tenantId);
                             }
-
-                            if (this.isGranted('Pages.Administration.Users.Edit')) {
-                                $('<button class="btn btn-default btn-xs" title="' + this.l('Edit') + '"><i class="fa fa-edit"></i></button>')
-                                    .appendTo($span)
-                                    .click(() => {
-                                        this.createOrEditUserModal.show(data.record.id);
-                                    });
+                        }, {
+                            text: this.l('Edit'),
+                            visible: (): boolean => {
+                                return self.isGranted('Pages.Administration.Users.Edit');
+                            },
+                            action(data) {
+                                self.createOrEditUserModal.show(data.record.id);
                             }
-
-                            if (this.isGranted('Pages.Administration.Users.ChangePermissions')) {
-                                $('<button class="btn btn-default btn-xs" title="' + this.l('Permissions') + '"><i class="fa fa-list"></i></button>')
-                                    .appendTo($span)
-                                    .click(() => {
-                                        this.editUserPermissionsModal.show(data.record.id, data.record.userName);
-                                    });
+                        }, {
+                            text: this.l('Permissions'),
+                            visible: (): boolean => {
+                                return self.isGranted('Pages.Administration.Users.ChangePermissions');
+                            },
+                            action(data) {
+                                self.editUserPermissionsModal.show(data.record.id, data.record.userName);
                             }
-
-                            $('<button class="btn btn-default btn-xs" title="' + this.l('Unlock') + '"><i class="fa fa-unlock"></i></button>')
-                                .appendTo($span)
-                                .click(() => {
-                                    this._userServiceProxy.unlockUser(new EntityDtoOfInt64({ id: data.record.id })).subscribe(() => {
-                                        this.notify.success(this.l('UnlockedTheUser', data.record.userName));
-                                    });
+                        }, {
+                            text: this.l('Unlock'),
+                            action(data) {
+                                self._userServiceProxy.unlockUser(new EntityDtoOfInt64({ id: data.record.id })).subscribe(() => {
+                                    self.notify.success(self.l('UnlockedTheUser', data.record.userName));
                                 });
-
-                            if (this.isGranted('Pages.Administration.Users.Delete')) {
-                                $('<button class="btn btn-default btn-xs" title="' + this.l('Delete') + '"><i class="fa fa-trash-o"></i></button>')
-                                    .appendTo($span)
-                                    .click(() => {
-                                        this.deleteUser(data.record);
-                                    });
                             }
-
-                            return $span;
-                        }
+                        }, {
+                            text: this.l('Delete'),
+                            visible: (): boolean => {
+                                return self.isGranted('Pages.Administration.Users.Delete');
+                            },
+                            action(data) {
+                                self.deleteUser(data.record);
+                            }
+                        }]
                     },
                     userName: {
                         title: this.l('UserName'),

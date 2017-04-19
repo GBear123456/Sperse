@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Abp.Configuration.Startup;
 using Abp.Modules;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +18,11 @@ namespace Sperse.CRM.Web.Startup
         {
             _env = env;
             _appConfiguration = env.GetAppConfiguration();
+        }
+
+        public override void PreInitialize()
+        {
+            Configuration.Modules.AbpWebCommon().MultiTenancy.DomainFormat = _appConfiguration["App:ServerRootAddress"] ?? "http://localhost:22742/";
         }
 
         public override void Initialize()

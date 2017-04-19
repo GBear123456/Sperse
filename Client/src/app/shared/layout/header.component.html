@@ -1,8 +1,9 @@
-<div class="page-header navbar navbar-fixed-top md-shadow-zero-light">
+﻿<div class="page-header navbar navbar-fixed-top md-shadow-zero-light">
     <div class="page-header-inner">
         <div class="page-logo">
             <a routerLink="/" target="_blank">
-                <img src="/assets/common/images/app-logo-on-light.png" alt="logo" class="logo-default" width="200" height="60" />
+                <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/common/images/app-logo-on-light.png" alt="logo" class="logo-default" width="200" height="60" />
+                <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetLogo?id=' + appSession.tenant.logoId" alt="logo" class="logo-default" width="200" height="60" />
             </a>
             <div class="menu-toggler sidebar-toggler">
                 <!-- DOC: Remove the above "hide" to enable the sidebar toggler button on header -->
@@ -33,7 +34,7 @@
                     <li class="separator hide"> </li>
                     <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
                     <li class="dropdown dropdown-user dropdown-dark">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" title="{{showUserNameTitle}}">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
                             <span class="username username-hide-on-mobile">
                                 <i *ngIf="isImpersonatedLogin" class="icon-action-undo font-red-sunglo"></i>
                                 {{shownLoginName}}

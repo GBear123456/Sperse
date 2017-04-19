@@ -1,9 +1,10 @@
 ﻿import { Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { TenantRegistrationServiceProxy, RegisterTenantInput, RegisterTenantOutput, PasswordComplexitySetting, ProfileServiceProxy } from '@shared/service-proxies/service-proxies'
+import { TenantRegistrationServiceProxy, RegisterTenantOutput, PasswordComplexitySetting, ProfileServiceProxy } from '@shared/service-proxies/service-proxies'
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { TenantRegistrationHelperService } from './tenant-registration-helper.service';
+import { RegisterTenantModel } from './register-tenant.model';
 
 @Component({
     templateUrl: './register-tenant.component.html',
@@ -11,7 +12,7 @@ import { TenantRegistrationHelperService } from './tenant-registration-helper.se
 })
 export class RegisterTenantComponent extends AppComponentBase implements OnInit {
 
-    model: RegisterTenantInput = new RegisterTenantInput();
+    model: RegisterTenantModel = new RegisterTenantModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
 
     saving: boolean = false;

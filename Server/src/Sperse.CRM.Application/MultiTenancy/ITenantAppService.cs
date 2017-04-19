@@ -22,5 +22,7 @@ namespace Sperse.CRM.MultiTenancy
         Task UpdateTenantFeatures(UpdateTenantFeaturesInput input);
 
         Task ResetTenantSpecificFeatures(EntityDto input);
+
+        Task UnlockTenantAdmin(EntityDto input);
     }
 }

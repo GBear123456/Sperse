@@ -4,12 +4,14 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using Abp.Extensions;
 using Abp.IO.Extensions;
 using Abp.Runtime.Session;
 using Abp.UI;
 using Abp.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Sperse.CRM.IO;
+using Sperse.CRM.Web.Helpers;
 
 namespace Sperse.CRM.Web.Controllers
 {
@@ -45,19 +47,9 @@ namespace Sperse.CRM.Web.Controllers
                     fileBytes = stream.GetAllBytes();
                 }
 
-                //Check file type & format
-                using (var ms = new MemoryStream(fileBytes))
+                if (!ImageFormatHelper.GetRawImageFormat(fileBytes).IsIn(ImageFormat.Jpeg, ImageFormat.Png, ImageFormat.Gif))
                 {
-                    var fileImage = Image.FromStream(ms);
-                    var acceptedFormats = new List<ImageFormat>
-                    {
-                        ImageFormat.Jpeg, ImageFormat.Png, ImageFormat.Gif
-                    };
-
-                    if (!acceptedFormats.Contains(fileImage.RawFormat))
-                    {
-                        throw new ApplicationException("Uploaded file is not an accepted image file !");
-                    }
+                    throw new ApplicationException("Uploaded file is not an accepted image file !");
                 }
 
                 //Delete old temp profile pictures

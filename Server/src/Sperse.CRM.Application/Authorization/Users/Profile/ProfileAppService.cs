@@ -3,16 +3,17 @@ using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using Abp;
-using Abp.Application.Services.Dto;
 using Abp.Auditing;
 using Abp.Authorization;
 using Abp.AutoMapper;
 using Abp.Configuration;
 using Abp.Extensions;
 using Abp.IO;
+using Abp.Localization;
 using Abp.Runtime.Session;
 using Abp.Timing;
 using Abp.UI;
+using Sperse.CRM.Authorization.Users.Dto;
 using Sperse.CRM.Authorization.Users.Profile.Dto;
 using Sperse.CRM.Configuration;
 using Sperse.CRM.Friendships;
@@ -180,6 +181,15 @@ namespace Sperse.CRM.Authorization.Users.Profile
         public async Task<GetProfilePictureOutput> GetProfilePictureById(Guid profilePictureId)
         {
             return await GetProfilePictureByIdInternal(profilePictureId);
+        }
+
+        public async Task ChangeLanguage(ChangeUserLanguageDto input)
+        {
+            await SettingManager.ChangeSettingForUserAsync(
+                    AbpSession.ToUserIdentifier(),
+                    LocalizationSettingNames.DefaultLanguage,
+                    input.LanguageName
+                );
         }
 
         private async Task CheckPasswordComplexity(string password)

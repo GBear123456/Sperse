@@ -28,6 +28,7 @@ namespace Sperse.CRM.Authorization.Users
         private readonly IUserEmailer _userEmailer;
         private readonly INotificationSubscriptionManager _notificationSubscriptionManager;
         private readonly IAppNotifier _appNotifier;
+        private readonly IUserPolicy _userPolicy;
 
         public UserRegistrationManager(
             TenantManager tenantManager, 
@@ -35,7 +36,8 @@ namespace Sperse.CRM.Authorization.Users
             RoleManager roleManager, 
             IUserEmailer userEmailer, 
             INotificationSubscriptionManager notificationSubscriptionManager, 
-            IAppNotifier appNotifier)
+            IAppNotifier appNotifier, 
+            IUserPolicy userPolicy)
         {
             _tenantManager = tenantManager;
             _userManager = userManager;
@@ -43,6 +45,7 @@ namespace Sperse.CRM.Authorization.Users
             _userEmailer = userEmailer;
             _notificationSubscriptionManager = notificationSubscriptionManager;
             _appNotifier = appNotifier;
+            _userPolicy = userPolicy;
 
             AbpSession = NullAbpSession.Instance;
         }
@@ -54,6 +57,8 @@ namespace Sperse.CRM.Authorization.Users
 
             var tenant = await GetActiveTenantAsync();
             var isNewRegisteredUserActiveByDefault = await SettingManager.GetSettingValueAsync<bool>(AppSettings.UserManagement.IsNewRegisteredUserActiveByDefault);
+
+            await _userPolicy.CheckMaxUserCountAsync(tenant.Id);
 
             var user = new User
             {

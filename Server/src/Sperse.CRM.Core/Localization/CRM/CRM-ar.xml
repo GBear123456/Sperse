@@ -464,5 +464,36 @@
     <text name="IsEmailVerificationEnabled">تمكين التوثيق عن طريق البريد الإلكتروني.</text>
     <text name="IsSmsVerificationEnabled">تمكين التوثيق عن طريق الرسائل الهاتفية - أس أم أس.</text>
     <text name="AllowToRememberBrowserForTwoFactorLogin">السماح بتذكر المتصفح. إذا تم تمكين هذه، يمكن للمستخدم اختيار تذكر المتصفح لتخطي التوثيق ذوعاملين عند تسجيل الدخول بنفس المتصفح للمرة الثانية.</text>
+    <text name="CurrentTenant">العميل الحالي</text>
+    <text name="NotSelected">لم يتم اختياره</text>
+    <text name="Change">تغيير</text>
+    <text name="ChangeTenant">تغيير العميل</text>
+    <text name="UnknownTenantId{0}" value="عميل غير معرّف رقم : {0}" />
+    <text name="TenantIdIsNotActive{0}" value="عميل غير نشط رقم : {0}" />
+    <text name="TimeoutPleaseTryAgain">نفذ الوقت! حاول مرة اخرى.</text>
+    <text name="RemainingTime">الوقت المتبقي</text>
+    <text name="SecondShort{0}">{0} ث</text>
+    <text name="ResetCode">كود إعادة تعيين</text>
+    <text name="IsTwoFactorEnabled">تمكين التوثيق ذو عاملين</text>
+    <text name="IsLockoutEnabled">تمكين قفل الحسابات</text>
+    <text name="IsLockoutEnabled_Hint">تم قفل حساب المستخدم لفترة من الوقت بعد كمية من محاولات الدخول الفاشلة.</text>
+    <text name="TenantRegistrationLoginInfo">إضغط هنا لتسجيل الدخول</text>
+    <text name="CouldNotValidateExternalUser">لم نتمكن من التحقق من صحة تسجيل دخول المستخدم الخارجي</text>
+    <text name="LeaveEmptyToSwitchToHost">اتركه فارغا للتبديل إلى المضيف</text>
+    <text name="PleaseWaitToConfirmYourEmailMessage">الرجاء الانتظار لحين تأكيد عنوان البريد الإلكتروني...</text>
+    <text name="ChatIsConnecting">جاري الإتصال بالدردشة....</text>
+    <text name="Note_RefreshPageForPermissionChanges">إذا كنت تقوم بتغيير الأذونات الخاصة بك، قد تحتاج لتحديث الصفحة (F5) لتصبح التغييرات نافذة المفعول على شاشتك!</text>
+    <text name="ApplicationLogo">شعار التطبيق</text>
+    <text name="CustomCSS">ملف Css خاص</text>
+    <text name="Upload">رفع</text>
+    <text name="Download">تحميل</text>
+    <text name="UploadLogo_Info">إختر ملف JPG / JPEG / PNG / GIF  بحجم 30 KB  كحد أقصى و 168X33  بكسل.</text>
+    <text name="UploadCSS_Info">إختر ملف CSS بحجم MB 1  كحد أقصى.</text>
+    <text name="Browse">تصفَح</text>
+    <text name="Appearance">المظهر</text>
+    <text name="ClearedSuccessfully">مسح بنجاح</text>
+    <text name="File_Empty_Error">الرجاء إختيار ملف !</text>
+    <text name="File_SizeLimit_Error">حجم الملف يتجاوز الحدود المسموح بها !</text>
+    <text name="File_Invalid_Type_Error">نوع الملف غير صالح !</text>
   </texts>
 </localizationDictionary>

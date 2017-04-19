@@ -14,6 +14,7 @@ using Sperse.CRM.Authorization;
 using Sperse.CRM.Configuration.Host.Dto;
 using Sperse.CRM.Configuration.Tenants.Dto;
 using Sperse.CRM.Security;
+using Sperse.CRM.Storage;
 using Sperse.CRM.Timing;
 using Newtonsoft.Json;
 
@@ -25,17 +26,19 @@ namespace Sperse.CRM.Configuration.Tenants
         private readonly IMultiTenancyConfig _multiTenancyConfig;
         private readonly IAbpZeroLdapModuleConfig _ldapModuleConfig;
         private readonly ITimeZoneService _timeZoneService;
-
-
+        private readonly IBinaryObjectManager _binaryObjectManager;
+        
         public TenantSettingsAppService(
             IMultiTenancyConfig multiTenancyConfig,
             IAbpZeroLdapModuleConfig ldapModuleConfig,
             ITimeZoneService timeZoneService,
-            IEmailSender emailSender) : base(emailSender)
+            IEmailSender emailSender, 
+            IBinaryObjectManager binaryObjectManager) : base(emailSender)
         {
             _multiTenancyConfig = multiTenancyConfig;
             _ldapModuleConfig = ldapModuleConfig;
             _timeZoneService = timeZoneService;
+            _binaryObjectManager = binaryObjectManager;
         }
 
         #region Get Settings
@@ -317,6 +320,46 @@ namespace Sperse.CRM.Configuration.Tenants
                 await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AbpZeroSettingNames.UserManagement.TwoFactorLogin.IsEmailProviderEnabled, settings.IsEmailProviderEnabled.ToString(CultureInfo.InvariantCulture).ToLower());
                 await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AbpZeroSettingNames.UserManagement.TwoFactorLogin.IsSmsProviderEnabled, settings.IsSmsProviderEnabled.ToString(CultureInfo.InvariantCulture).ToLower());
             }
+        }
+
+        #endregion
+
+        #region Others
+
+        public async Task ClearLogo()
+        {
+            var tenant = await GetCurrentTenantAsync();
+
+            if (!tenant.HasLogo())
+            {
+                return;
+            }
+
+            var logoObject = await _binaryObjectManager.GetOrNullAsync(tenant.LogoId.Value);
+            if (logoObject != null)
+            {
+                await _binaryObjectManager.DeleteAsync(tenant.LogoId.Value);
+            }
+
+            tenant.ClearLogo();
+        }
+
+        public async Task ClearCustomCss()
+        {
+            var tenant = await GetCurrentTenantAsync();
+
+            if (!tenant.CustomCssId.HasValue)
+            {
+                return;
+            }
+
+            var cssObject = await _binaryObjectManager.GetOrNullAsync(tenant.CustomCssId.Value);
+            if (cssObject != null)
+            {
+                await _binaryObjectManager.DeleteAsync(tenant.CustomCssId.Value);
+            }
+
+            tenant.CustomCssId = null;
         }
 
         #endregion

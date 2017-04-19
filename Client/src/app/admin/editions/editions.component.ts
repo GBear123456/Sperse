@@ -49,29 +49,29 @@ export class EditionsComponent extends AppComponentBase implements AfterViewInit
                         list: false
                     },
                     actions: {
-                        title: self.l('Actions'),
+                        title: this.l('Actions'),
                         width: '30%',
-                        display: function (data) {
-                            var $span = $('<span></span>');
-
-                            if (self.permission.isGranted("Pages.Editions.Edit")) {
-                                $('<button class="btn btn-default btn-xs" title="' + self.l('Edit') + '"><i class="fa fa-edit"></i></button>')
-                                    .appendTo($span)
-                                    .click(function () {
-                                        self.createOrEditEditionModal.show(data.record.id);
-                                    });
+                        sorting: false,
+                        type: 'record-actions',
+                        cssClass: 'btn btn-xs btn-primary blue',
+                        text: '<i class="fa fa-cog"></i> ' + this.l('Actions') + ' <span class="caret"></span>',
+                        items: [{
+                            text: this.l('Edit'),
+                            visible: (): boolean => {
+                                return self.isGranted('Pages.Editions.Edit');
+                            },
+                            action(data) {
+                                self.createOrEditEditionModal.show(data.record.id);
                             }
-
-                            if (self.permission.isGranted("Pages.Editions.Delete")) {
-                                $('<button class="btn btn-default btn-xs" title="' + self.l('Delete') + '"><i class="fa fa-trash-o"></i></button>')
-                                    .appendTo($span)
-                                    .click(function () {
-                                        self.deleteEdition(data.record);
-                                    });
+                        }, {
+                                text: this.l('Delete'),
+                            visible: (): boolean => {
+                                return self.isGranted('Pages.Editions.Delete');
+                            },
+                            action(data) {
+                                self.deleteEdition(data.record);
                             }
-
-                            return $span;
-                        }
+                        }]
                     },
                     displayName: {
                         title: self.l('EditionName'),

@@ -1,4 +1,4 @@
-<div bsModal #createOrEditModal="bs-modal" (onShown)="onShown()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal" aria-hidden="true" [config]="{backdrop: 'static'}">
+﻿<div bsModal #createOrEditModal="bs-modal" (onShown)="onShown()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal" aria-hidden="true" [config]="{backdrop: 'static'}">
   <div class="modal-dialog">
     
     <div class="modal-content">
@@ -124,9 +124,9 @@
 
             </tab>
             <tab>
-                <template tabHeading>
+                <ng-template tabHeading>
                     {{l('Roles')}} <b class="badge badge-primary">{{getAssignedRoleCount()}}</b>
-                </template>
+                </ng-template>
 
                 <div class="md-checkbox-list">
                     <div class="md-checkbox" *ngFor="let role of roles">

@@ -1,4 +1,4 @@
-﻿using Sperse.CRM.Web.Url;
+﻿using Sperse.CRM.Url;
 
 namespace Sperse.CRM.Tests.Url
 {

@@ -36,14 +36,13 @@ export class LocalizedResourcesHelper {
         }
 
         var currentCulture = abp.localization.currentLanguage.name;
-        var isDefaultLanguage = abp.localization.currentLanguage.isDefault;
 
-        var jTable = "/assets/temp/localization/jtable/jquery.jtable.{0}.js";
-        var bootstrapSelect = "/assets/temp/localization/bootstrap-select/defaults-{0}.js";
-        var jqueryTimeago = "/assets/temp/localization/jquery-timeago/jquery.timeago.{0}.js";
+        var jTable = "/assets/localization/jtable/jquery.jtable.{0}.js";
+        var bootstrapSelect = "/assets/localization/bootstrap-select/defaults-{0}.js";
+        var jqueryTimeago = "/assets/localization/jquery-timeago/jquery.timeago.{0}.js";
 
         return $.when(
-            (!isDefaultLanguage ? jQuery.getScript(abp.utils.formatString(jTable, currentCulture)) : $.Deferred().resolve()),
+            ((currentCulture !== 'en') ? jQuery.getScript(abp.utils.formatString(jTable, currentCulture)) : $.Deferred().resolve()),
             jQuery.getScript(abp.utils.formatString(bootstrapSelect, LocalizedResourcesHelper.findBootstrapSelectLocalization(currentCulture))),
             jQuery.getScript(abp.utils.formatString(jqueryTimeago, currentCulture))
         );

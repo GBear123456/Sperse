@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
@@ -16,12 +16,12 @@ import { LinkedAccountsModalComponent } from './linked-accounts-modal.component'
 import { ChangePasswordModalComponent } from './profile/change-password-modal.component';
 import { ChangeProfilePictureModalComponent } from './profile/change-profile-picture-modal.component';
 import { MySettingsModalComponent } from './profile/my-settings-modal.component'
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
 import { NotificationSettingsModalCompoent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     templateUrl: './header.component.html',
@@ -48,16 +48,17 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     recentlyLinkedUsers: LinkedUserDto[];
     unreadChatMessageCount = 0;
 
+    remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
+
     chatConnected = false;
 
     constructor(
         injector: Injector,
-        public appSessionService: AppSessionService,
-        private sessionService: AbpSessionService,
-        private abpMultiTenancyService: AbpMultiTenancyService,
-        private profileServiceProxy: ProfileServiceProxy,
-        private userLinkServiceProxy: UserLinkServiceProxy,
-        private userServiceProxy: UserServiceProxy,
+        private _sessionService: AbpSessionService,
+        private _abpMultiTenancyService: AbpMultiTenancyService,
+        private _profileServiceProxy: ProfileServiceProxy,
+        private _userLinkServiceProxy: UserLinkServiceProxy,
+        private _userServiceProxy: UserServiceProxy,
         private _authService: AppAuthService,
         private _impersonationService: ImpersonationService,
         private _linkedAccountService: LinkedAccountService,
@@ -71,7 +72,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
         this.languages = this.localization.languages;
         this.currentLanguage = this.localization.currentLanguage;
-        this.isImpersonatedLogin = this.sessionService.impersonatorUserId > 0;
+        this.isImpersonatedLogin = this._sessionService.impersonatorUserId > 0;
 
         this.shownLoginNameTitle = this.isImpersonatedLogin ? this.l("YouCanBackToYourAccount") : "";
         this.getCurrentLoginInformations();
@@ -99,7 +100,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         let input = new ChangeUserLanguageDto();
         input.languageName = languageName;
 
-        this.userServiceProxy.changeLanguage(input).subscribe(() => {
+        this._profileServiceProxy.changeLanguage(input).subscribe(() => {
             abp.utils.setCookieValue(
                 "Abp.Localization.CultureName",
                 languageName,
@@ -112,11 +113,11 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getCurrentLoginInformations(): void {
-        this.shownLoginName = this.appSessionService.getShownLoginName();
+        this.shownLoginName = this.appSession.getShownLoginName();
     }
 
     getShownUserName(linkedUser: LinkedUserDto): string {
-        if (!this.abpMultiTenancyService.isEnabled) {
+        if (!this._abpMultiTenancyService.isEnabled) {
             return linkedUser.username;
         }
 
@@ -124,7 +125,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getProfilePicture(): void {
-        this.profileServiceProxy.getProfilePicture().subscribe(result => {
+        this._profileServiceProxy.getProfilePicture().subscribe(result => {
             if (result && result.profilePicture) {
                 this.profilePicture = 'data:image/jpeg;base64,' + result.profilePicture;
             }
@@ -132,7 +133,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getRecentlyLinkedUsers(): void {
-        this.userLinkServiceProxy.getRecentlyUsedLinkedUsers().subscribe(result => {
+        this._userLinkServiceProxy.getRecentlyUsedLinkedUsers().subscribe(result => {
             this.recentlyLinkedUsers = result.items;
         });
     }
@@ -162,7 +163,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     onMySettingsModalSaved(): void {
-        this.shownLoginName = this.appSessionService.getShownLoginName();
+        this.shownLoginName = this.appSession.getShownLoginName();
     }
 
     backToMyAccount(): void {
@@ -174,6 +175,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     get chatEnabled(): boolean {
-        return !this.sessionService.tenantId || this.feature.isEnabled("App.ChatFeature");
+        return !this._sessionService.tenantId || this.feature.isEnabled("App.ChatFeature");
     }
 }

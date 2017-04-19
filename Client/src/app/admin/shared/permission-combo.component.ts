@@ -1,10 +1,10 @@
-import { Component, OnInit, AfterViewInit, AfterViewChecked, ElementRef, ViewChild, Injector, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { PermissionServiceProxy, FlatPermissionWithLevelDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
     selector: 'permission-combo',
-    template: 
+    template:
     `<select #PermissionCombobox
         class="form-control"
         [(ngModel)]="selectedPermission"
@@ -14,19 +14,19 @@ import { AppComponentBase } from '@shared/common/app-component-base';
             <option *ngFor="let permission of permissions" [value]="permission.name">{{permission.displayName}}</option>
     </select>`
 })
-export class PermissionComboComponent extends AppComponentBase implements OnInit, AfterViewInit, AfterViewChecked {
+export class PermissionComboComponent extends AppComponentBase implements OnInit, AfterViewInit {
 
     @ViewChild('PermissionCombobox') permissionComboboxElement: ElementRef;
 
     permissions: FlatPermissionWithLevelDto[] = [];
-    
+
     @Input() selectedPermission: string = undefined;
     @Output() selectedPermissionChange: EventEmitter<string> = new EventEmitter<string>();
 
     constructor(
         private _permissionService: PermissionServiceProxy,
         injector: Injector) {
-            super(injector)
+        super(injector)
     }
 
     ngOnInit(): void {
@@ -37,6 +37,9 @@ export class PermissionComboComponent extends AppComponentBase implements OnInit
             });
 
             this.permissions = result.items;
+            setTimeout(() => {
+                $(self.permissionComboboxElement.nativeElement).selectpicker('refresh');
+            }, 0);
         });
     }
 
@@ -45,9 +48,5 @@ export class PermissionComboComponent extends AppComponentBase implements OnInit
             iconBase: "famfamfam-flag",
             tickIcon: "fa fa-check"
         });
-    }
-
-    ngAfterViewChecked(): void{
-        $(this.permissionComboboxElement.nativeElement).selectpicker('refresh');
     }
 }

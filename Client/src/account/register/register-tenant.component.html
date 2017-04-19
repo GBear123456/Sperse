@@ -32,7 +32,7 @@
         <div class="form-group">
             <label class="control-label visible-ie8 visible-ie9">{{l("AdminPassword")}}</label>
             <input type="password" name="Password" class="form-control" [(ngModel)]="model.adminPassword" #Password="ngModel" placeholder="{{l('AdminPassword')}}" validateEqual="PasswordRepeat"
-                   reverse="true" [minlength]="passwordComplexitySetting.minLength" [maxlength]="passwordComplexitySetting.maxPasswordLength"
+                   reverse="true" [minlength]="passwordComplexitySetting.minLength" [maxlength]="passwordComplexitySetting.maxLength"
                    [useNumbers]="passwordComplexitySetting.useNumbers" [useUpperCaseLetters]="passwordComplexitySetting.useUpperCaseLetters"
                    [useLowerCaseLetters]="passwordComplexitySetting.useLowerCaseLetters" [usePunctuations]="passwordComplexitySetting.usePunctuations"
                    required>

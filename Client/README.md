@@ -1,4 +1,4 @@
-## ASP.NET ZERO - Angular 2 UI
+﻿## ASP.NET ZERO - Angular 2 UI
 
 This is Angular 2 UI for AspNet Zero. It's in PREVIEW state and is constantly being improved and changed.
 So, don't use it in production, but you can test it and check source to prepare to the coming release.

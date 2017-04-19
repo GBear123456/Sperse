@@ -25,7 +25,5 @@ namespace Sperse.CRM.Authorization.Users
         Task DeleteUser(EntityDto<long> input);
 
         Task UnlockUser(EntityDto<long> input);
-
-        Task ChangeLanguage(ChangeUserLanguageDto input);
     }
 }

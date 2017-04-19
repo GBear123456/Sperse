@@ -14,7 +14,7 @@ namespace Sperse.CRM.Localization
                     CRMConsts.LocalizationSourceName,
                     new XmlEmbeddedFileLocalizationDictionaryProvider(
                         Assembly.GetExecutingAssembly(),
-                        "Sperse.CRM.Core.Localization.CRM"
+                        "Sperse.CRM.Localization.CRM"
                     )
                 )
             );
