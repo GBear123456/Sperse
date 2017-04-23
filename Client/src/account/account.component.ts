@@ -35,7 +35,6 @@ export class AccountComponent extends AppComponentBase implements OnInit {
 
     ngOnInit(): void {
         this._loginService.init();
-        $('body').attr('class', 'page-md login');
     }
 
     private supportsTenancyNameInUrl() {

@@ -13,41 +13,26 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
 
-import { RootComponent } from './root.component';
+import { RootComponent,AppRootComponent } from './root.components';
 import { AppPreBootstrap } from './AppPreBootstrap';
 
 export function appInitializerFactory(injector: Injector) {
-    return () => {
-        abp.ui.setBusy();
-        return new Promise<boolean>((resolve, reject) => {
-            AppPreBootstrap.run(() => {
-                var appSessionService: AppSessionService = injector.get(AppSessionService);
-                appSessionService.init().then(
-                    (result) => {
+	var process = (method) => {
+		return (result) => {
+			abp.ui.clearBusy();
+			method(result);
+		};
+	};
 
-                        //Css classes based on the layout
-                        if (abp.session.userId) {
-                            $('body').attr('class', 'page-md page-header-fixed page-sidebar-closed-hide-logo');
-                        } else {
-                            $('body').attr('class', 'page-md login');
-                        }
-
-                        //tenant specific custom css
-                        if (appSessionService.tenant && appSessionService.tenant.customCssId) {
-                            $('head').append('<link id="TenantCustomCss" href="' + AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + appSessionService.tenant.customCssId + '" rel="stylesheet"/>');
-                        }
-
-                        abp.ui.clearBusy();
-                        resolve(result);
-                    },
-                    (err) => {
-                        abp.ui.clearBusy();
-                        reject(err);
-                    }
-                );
-            });
-        });
-    }
+	return () => {
+		abp.ui.setBusy();
+		return new Promise<boolean>((resolve, reject) => {
+			AppPreBootstrap.run(() => {
+            	injector.get(AppSessionService).init()
+					.then(process(resolve), process(reject));
+			});
+		});
+	}
 }
 
 export function getRemoteServiceBaseUrl(): string {
@@ -66,7 +51,7 @@ export function getRemoteServiceBaseUrl(): string {
         RootRoutingModule
     ],
     declarations: [
-        RootComponent
+        RootComponent, AppRootComponent
     ],
     providers: [
         ABP_HTTP_PROVIDER,
@@ -80,6 +65,5 @@ export function getRemoteServiceBaseUrl(): string {
     ],
     bootstrap: [RootComponent]
 })
-export class RootModule {
 
-}
+export class RootModule { }
