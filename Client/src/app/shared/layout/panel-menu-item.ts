@@ -1,11 +1,11 @@
-﻿export class SideBarMenuItem {
+﻿export class PanelMenuItem {
     name: string = '';
     permissionName: string = '';
     icon: string = '';
     route: string = '';
-    items: SideBarMenuItem[];
+    items: PanelMenuItem[];
 
-    constructor(name: string, permissionName: string, icon: string, route: string, items?: SideBarMenuItem[]) {
+    constructor(name: string, permissionName: string, icon: string, route: string, items?: PanelMenuItem[]) {
         this.name = name;
         this.permissionName = permissionName;
         this.icon = icon;

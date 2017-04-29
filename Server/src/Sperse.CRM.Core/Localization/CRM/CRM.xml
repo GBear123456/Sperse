@@ -80,6 +80,7 @@
     <text name="DeletingRole" value="Deleting role" />
     <text name="CreationTime" value="Creation time" />
     <text name="SearchWithThreeDot" value="Search..." />
+    <text name="SearchAllData" value="Search all data..." />
     <text name="ResetSpecialPermissions" value="Reset special permissions" />
     <text name="SavingWithThreeDot" value="Saving..." />
     <text name="Settings" value="Settings" />

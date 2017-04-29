@@ -5,11 +5,11 @@
                 <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/common/images/app-logo-on-light.png" alt="logo" class="logo-default" width="200" height="60" />
                 <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetLogo?id=' + appSession.tenant.logoId" alt="logo" class="logo-default" width="200" height="60" />
             </a>
-            <div class="menu-toggler sidebar-toggler">
+            <div class="menu-toggler sidebar-toggler hide">				
                 <!-- DOC: Remove the above "hide" to enable the sidebar toggler button on header -->
             </div>
         </div>
-        <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">
+        <a href="javascript:;" class="menu-toggler responsive-toggler hide" data-toggle="collapse" data-target=".navbar-collapse">
         </a>
         <div class="page-top">
             <div class="top-menu">
@@ -92,6 +92,7 @@
                 </ul>
             </div>
         </div>
+		<top-bar></top-bar>
     </div>
 </div>
 <loginAttemptsModal #loginAttemptsModal></loginAttemptsModal>

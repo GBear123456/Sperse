@@ -6,10 +6,11 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
-    templateUrl: './side-bar.component.html',
-    selector: 'side-bar'
+    templateUrl: './top-bar.component.html',
+	styleUrls: ['./top-bar.component.less'],
+    selector: 'top-bar'
 })
-export class SideBarComponent extends AppComponentBase {
+export class TopBarComponent extends AppComponentBase {
 
     constructor(injector: Injector, public permission: PermissionCheckerService) {
         super(injector);
@@ -31,35 +32,18 @@ export class SideBarComponent extends AppComponentBase {
         ])
     ]);
 
-    checkChildMenuItemPermission(menuItem): boolean {
+	private checkMenuItemPermission(item): boolean {
+        return (item.permissionName && this.permission.isGranted(item.permissionName)) ||
+			(item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permissionName);
+	}
 
-        for (var i = 0; i < menuItem.items.length; i++) {
-            var subMenuItem = menuItem.items[i];
-
-            if (subMenuItem.permissionName && this.permission.isGranted(subMenuItem.permissionName)) {
-                return true;
-            }
-            
-            if (subMenuItem.items && subMenuItem.items.length) {
-                return this.checkChildMenuItemPermission(subMenuItem);
-            } else if (!subMenuItem.permissionName) {
-                return true;
-            }
-        }
-
-        return false;
+    private checkChildMenuItemPermission(menu): boolean {
+		return menu.items.every((item) => {
+			return this.checkMenuItemPermission(item);
+		});
     }
 
-    showMenuItem(menuItem): boolean {
-        if (menuItem.permissionName) {
-            return this.permission.isGranted(menuItem.permissionName);
-        }
-
-        if (menuItem.items && menuItem.items.length) {
-            return this.checkChildMenuItemPermission(menuItem);
-        }
-
-        return true;
+    showMenuItem(item): boolean {
+        return this.checkMenuItemPermission(item);
     }
-
 }
