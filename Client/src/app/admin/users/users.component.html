@@ -11,7 +11,7 @@
         </div>
         <div class="col-xs-6 text-right">
             <button (click)="exportToExcel()" class="btn btn-default"><i class="fa fa-file-excel-o"></i> {{l("ExportToExcel")}}</button>
-            <button (click)="createUser()" *ngIf="isGranted('Pages.Administration.Users.Create')" class="btn btn-primary blue"><i class="fa fa-plus"></i> {{l("CreateNewUser")}}</button>
+            <button (click)="createUser()" *ngIf="isGranted('Pages.Administration.Users.Create')" class="btn btn-layout"><i class="fa fa-plus"></i> {{l("CreateNewUser")}}</button>
         </div>
     </div>
 

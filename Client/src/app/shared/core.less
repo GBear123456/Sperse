@@ -9,9 +9,13 @@
 }
 
 /* Portlet */
-.portlet.light > .portlet-title .inputs.inputs-full-width {
-    display: block;
-    float: none;
+.portlet.light {
+	margin-top: 20px;
+
+	> .portlet-title .inputs.inputs-full-width {
+	    display: block;
+    	float: none;
+	}
 }
 
 /* Tree */
@@ -45,22 +49,92 @@
 
 .jtable-main-container {
     overflow-x: auto;
+	font-family: Comfortaa !important;
+
+	.jtable-title {
+		height: 60px;
+		background-color: #ffffff !important;
+		border-bottom: solid 1px #dfdfdf;	
+	}
 
     .jtable {
+		border: none !important;
+		width: 97% !important;
+		min-width: 800px !important;
+		margin: auto;
+
+		thead {
+			background-color: #ffffff !important;			
+		}
+
+		.jtable-column-header-sortable .jtable-column-header-container {
+			-webkit-filter: brightness(0.15);
+		    filter: brightness(0.15);
+			background-position: left!important;
+		
+			.jtable-column-header-text{
+				padding-left: 20px;
+			}
+		}
+
         .jtable-column-header {
-            height: 32px;
+            height: 55px;
+			color: #202b35;
+			font-weight: 600;
         }
 
         .jtable-data-row {
             td {
-                height: 32px;
+                height: 55px;
+				border-bottom: 1px solid #dfdfdf!important;
+				border-right: none !important;
+				border-left: none !important;
+				border-left: none !important;
             }
+			&:last-child td {
+				border-bottom: none !important;
+			}
         }
     }
 
     .jtable-bottom-panel {
+		height: 60px;
+		background-color: #FFF!important;
+		color: #202b35!important;
+		padding-top: 17px;
+		border-top: 1px solid #dfdfdf!important;
+		border-right: none!important;
+		border-bottom: none!important;
+		border-left: none!important;
+		font-size: 14px!important;
+		font-weight: 600;
+
+		.jtable-page-list span {
+			background-color: #fff!important;
+		}
+	
+		.jtable-left-area {
+			float: right;
+			text-align: center;
+			position: relative;
+			right: 20px;
+			width: 90%;
+
+			.jtable-goto-page, .jtable-page-size-change {
+				float: right;
+			}			
+		}
+
+		.jtable-right-area {
+			float: left;
+			position: relative!important;
+			left: 20px;
+			
+		}
+	
         select {
-            color: black;
+            color: #202b35;
+			border: none;
         }
     }
 }
@@ -74,9 +148,19 @@
 }
 
 /* Portlets */
-.portlet.light > .portlet-title.portlet-title-filter {
-    border: none;
-    margin-bottom: 0;
+.portlet.light {	
+	&, .portlet-body {
+		padding: 0px!important;
+		.form {
+			display:none;
+		}
+	}
+
+	> .portlet-title.portlet-title-filter {
+    	border: none;
+	    margin-bottom: 0;
+		display: none;
+	}
 }
 
 /* Buttons */
@@ -89,6 +173,21 @@ button {
 
 .btn + .btn {
     margin-left: 5px;
+}
+
+.btn-layout {
+	height: 36px;
+	border-radius: 6px;
+	background-color: #33e504;
+
+	font-family: Comfortaa;
+	font-size: 15px;
+	line-height: 1.6;
+	color: #ffffff;
+
+	&:hover {
+		color: #ffffff;		
+	}
 }
 
 /* FamFamFam Flags */

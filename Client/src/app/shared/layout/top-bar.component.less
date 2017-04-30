@@ -1,7 +1,7 @@
 :host {
 	position: relative; 	
 
-	&:before, .hor-menu:after {
+	.top-bar-search:before, .hor-menu:after {
     	content: '';
 	    position: absolute;
     	width: 1px;
@@ -14,7 +14,11 @@
 		float: left;
 		height: 74px;
 		position: relative;
-		padding: 26px;
+		padding-left: 26px;
+
+		&:before {
+			left: 0px;
+		}
 		
 		i {
 			color: #9999A6;
@@ -28,10 +32,13 @@
 		}
 		
 		input {
-		    margin-left: 22px;
+			font-family: Comfortaa;
+		    margin-left: 30px;
+			margin-top: 20px;
+		    padding: 0px;
     		border: none;
 	    	font-size: 22px;
-	    	height: 20px;
+	    	height: 35px;			
 
 			&::placeholder {
 			  color: #9999A6;

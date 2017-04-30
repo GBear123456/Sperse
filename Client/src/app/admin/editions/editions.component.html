@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="col-xs-6 text-right">
-            <button *ngIf="permission.isGranted('Pages.Editions.Create')" class="btn btn-primary blue" (click)="createEdition()"><i class="fa fa-plus"></i> {{l("CreateNewEdition")}}</button>
+            <button *ngIf="permission.isGranted('Pages.Editions.Create')" class="btn btn-layout" (click)="createEdition()"><i class="fa fa-plus"></i> {{l("CreateNewEdition")}}</button>
         </div>
     </div>
 

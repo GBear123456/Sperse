@@ -1,17 +1,48 @@
-﻿.page-header.navbar .page-logo {
-	max-width: 246px;
+﻿.page-header.navbar {
+	border-bottom: 1px solid #dfdfdf !important;
+
+	&.navbar-fixed-top {
+ 	   z-index: 1000;
+	}
+	&.navbar-static-top {
+    	z-index: 1000;
+	}
+	.filter-toggle {
+		position: absolute;
+		top: 118px;
+		left: 20px;
+		color: #202b35;
+		font-size: 23px;
+		cursor: pointer;
+
+		&:hover {
+			opacity: 0.5
+		}
+	}
+	.page-logo {
+		max-width: 246px;
+	}
 }
 
-.page-header.navbar.navbar-fixed-top {
-    z-index: 1000;
-}
+.page-content {
+	.col-xs-6:first-child {
+		position: fixed;
+		left: 0px;
 
-.page-header.navbar.navbar-static-top {
-    z-index: 1000;
-}
+		.page-title span {
+			font-size: 26px;
+			color: #202b35;
+			font-weight: 600;
+			margin-left: 45px;
+		}
 
-.page-header.navbar {
-    border-bottom: 1px solid #dfdfdf !important;
+		.page-title small {
+			display: none;
+		}
+	}
+	.col-xs-6.text-right {
+		float: right;
+	}
 }
 
 .page-footer-inner {

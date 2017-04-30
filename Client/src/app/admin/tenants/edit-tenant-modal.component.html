@@ -48,7 +48,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" [disabled]="saving" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
-                    <button type="submit" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')" class="btn btn-primary blue" [disabled]="!tenantEditForm.form.valid || saving"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
+                    <button type="submit" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')" class="btn btn-layout" [disabled]="!tenantEditForm.form.valid || saving"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
                 </div>
             </form>
 
