@@ -1,4 +1,4 @@
-﻿/* General */
+/* General */
 
 .clickable-item {
     cursor: pointer;
@@ -9,12 +9,17 @@
 }
 
 /* Portlet */
-.portlet.light {
-	margin-top: 20px;
+.portlet {
+    box-shadow: none!important;
 
-	> .portlet-title .inputs.inputs-full-width {
-	    display: block;
-    	float: none;
+	&.light {
+		margin-top: 20px;
+		border: 1px solid #dfdfdf;
+
+		> .portlet-title .inputs.inputs-full-width {
+	    	display: block;
+	    	float: none;
+		}
 	}
 }
 
@@ -49,6 +54,7 @@
 
 .jtable-main-container {
     overflow-x: auto;
+	height: calc(~"100vh - 163px");
 	font-family: Comfortaa !important;
 
 	.jtable-title {
@@ -99,6 +105,7 @@
 
     .jtable-bottom-panel {
 		height: 60px;
+		width: 100%;
 		background-color: #FFF!important;
 		color: #202b35!important;
 		padding-top: 17px;
@@ -108,6 +115,8 @@
 		border-left: none!important;
 		font-size: 14px!important;
 		font-weight: 600;
+		position: absolute!important;
+	    bottom: 0px;
 
 		.jtable-page-list span {
 			background-color: #fff!important;
@@ -118,11 +127,28 @@
 			text-align: center;
 			position: relative;
 			right: 20px;
-			width: 90%;
+			width: 85%;
 
 			.jtable-goto-page, .jtable-page-size-change {
 				float: right;
 			}			
+
+			.jtable-page-number, .jtable-page-number-next, 
+			.jtable-page-number-last, .jtable-page-number-first,
+			.jtable-page-number-previous, .jtable-page-number-space {
+				color: #202b35!important;
+
+				&.jtable-page-number-disabled {
+					color: #ccc!important;
+				}
+				&.jtable-page-number-active {
+					background-color: #33e504!important;
+					color: #FFF!important;
+					width: 20px;
+					border-radius: 3px;
+					height: 20px;			
+				}
+			}
 		}
 
 		.jtable-right-area {

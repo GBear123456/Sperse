@@ -12,7 +12,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 export class TopBarComponent extends AppComponentBase {
 
-    constructor(injector: Injector, public permission: PermissionCheckerService) {
+    constructor(injector: Injector) {
         super(injector);
     }
     
@@ -33,7 +33,7 @@ export class TopBarComponent extends AppComponentBase {
     ]);
 
 	private checkMenuItemPermission(item): boolean {
-        return (item.permissionName && this.permission.isGranted(item.permissionName)) ||
+        return (item.permissionName && this.isGranted(item.permissionName)) ||
 			(item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permissionName);
 	}
 

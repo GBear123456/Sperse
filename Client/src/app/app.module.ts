@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 
 import { HeaderComponent } from './shared/layout/header.component';
 import { HeaderNotificationsComponent } from './shared/layout/notifications/header-notifications.component';
+import { SideBarComponent } from './shared/layout/side-bar.component';
 import { TopBarComponent } from './shared/layout/top-bar.component';
 import { FooterComponent } from './shared/layout/footer.component';
 
@@ -47,6 +48,7 @@ import { QuickSideBarChat } from '@app/shared/layout/chat/QuickSideBarChat';
         HeaderComponent,
         HeaderNotificationsComponent,
         TopBarComponent,
+        SideBarComponent,		
         FooterComponent,
         LoginAttemptsModalComponent,
         LinkedAccountsModalComponent,

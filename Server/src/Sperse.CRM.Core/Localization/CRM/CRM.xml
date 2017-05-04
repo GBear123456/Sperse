@@ -507,5 +507,8 @@
     <text name="MaximumUserCount_Error_Message">Reached to maximum allowed user count!</text>
     <text name="MaximumUserCount_Error_Detail">This tenant is allowed to have a maximum of {0} users.</text>
     <text name="UnlockedTenandAdmin">Unlocked admin user for {0}</text>
+    <text name="TabFilterAll">All</text>
+    <text name="TabFilterActive">Active</text>
+    <text name="TabFilterArchived">Archived</text>
   </texts>
 </localizationDictionary>

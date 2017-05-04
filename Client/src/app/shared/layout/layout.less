@@ -1,4 +1,19 @@
-﻿.page-header.navbar {
+﻿body.page-sidebar-closed {
+	.filter-toggle {
+		top: 30px!important;
+		left: 30px!important;
+	}
+	
+	.page-content .col-xs-6:first-child {
+		display: none;
+	}
+
+	.page-content-wrapper .page-content {
+    	margin-left: -20px !important;	
+	}
+}
+
+.page-header.navbar {
 	border-bottom: 1px solid #dfdfdf !important;
 
 	&.navbar-fixed-top {
@@ -25,6 +40,9 @@
 }
 
 .page-content {
+	.row {
+		margin-right: 0px;
+	}
 	.col-xs-6:first-child {
 		position: fixed;
 		left: 0px;
@@ -42,6 +60,42 @@
 	}
 	.col-xs-6.text-right {
 		float: right;
+		width: 100%;
+
+		.tab-filter {			
+			color: #9999A6;
+			font-size: 16px;
+			font-weight: 600;
+			line-height: 1.6;
+			letter-spacing: 0.3px;
+			display: inline-block;
+			position: absolute;
+			padding: 15px;
+			font-family: Comfortaa;
+			min-width: 115px;
+			z-index: 1;	
+			text-align: center;	
+			cursor: pointer;
+
+			&.tab-selected {
+				border: 1px solid #dfdfdf;
+				padding-bottom: 16px;
+				border-bottom: none;				
+			    background-color: #FFF;
+				color: #202b35;
+				cursor: default;
+				border-radius: 4px 4px 0px 0px;
+			}
+			&.tab-all {			
+				left: 15px;
+			}
+			&.tab-active {			
+				left: 120px;
+			}
+			&.tab-archived {			
+				left: 225px;
+			}
+		}
 	}
 }
 

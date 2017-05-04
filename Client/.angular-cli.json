@@ -78,6 +78,7 @@
         "../node_modules/jtable/lib/jquery.jtable.min.js",
         "../node_modules/jtable/lib/extensions/jquery.jtable.record-actions.js",
         "../external_libs/Jcrop/js/Jcrop.js",
+        "../external_libs/jTScroll/jquery.tscroll.js",
         "../node_modules/morris.js/morris.min.js",
         "../node_modules/raphael/raphael.min.js",
         "../node_modules/jquery-sparkline/jquery.sparkline.min.js",

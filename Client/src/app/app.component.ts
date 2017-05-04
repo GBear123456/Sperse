@@ -4,7 +4,8 @@ import { ChatSignalrService } from 'app/shared/layout/chat/chat-signalr.service'
 import { SignalRHelper } from 'shared/helpers/SignalRHelper';
 
 @Component({
-    templateUrl: './app.component.html'
+    templateUrl: './app.component.html',
+	styleUrls: ['./app.component.less']
 })
 export class AppComponent implements OnInit, AfterViewInit {
 
