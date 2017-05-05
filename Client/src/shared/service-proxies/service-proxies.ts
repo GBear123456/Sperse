@@ -29,7 +29,7 @@ export class AccountServiceProxy {
      * @return Success
      */
     isTenantAvailable(input: IsTenantAvailableInput): Observable<IsTenantAvailableOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Account/IsTenantAvailable";
+        let url_ = this.baseUrl + "/api/services/Platform/Account/IsTenantAvailable";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -73,7 +73,7 @@ export class AccountServiceProxy {
      * @return Success
      */
     register(input: RegisterInput): Observable<RegisterOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Account/Register";
+        let url_ = this.baseUrl + "/api/services/Platform/Account/Register";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -117,7 +117,7 @@ export class AccountServiceProxy {
      * @return Success
      */
     sendPasswordResetCode(input: SendPasswordResetCodeInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Account/SendPasswordResetCode";
+        let url_ = this.baseUrl + "/api/services/Platform/Account/SendPasswordResetCode";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -158,7 +158,7 @@ export class AccountServiceProxy {
      * @return Success
      */
     resetPassword(input: ResetPasswordInput): Observable<ResetPasswordOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Account/ResetPassword";
+        let url_ = this.baseUrl + "/api/services/Platform/Account/ResetPassword";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -202,7 +202,7 @@ export class AccountServiceProxy {
      * @return Success
      */
     sendEmailActivationLink(input: SendEmailActivationLinkInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Account/SendEmailActivationLink";
+        let url_ = this.baseUrl + "/api/services/Platform/Account/SendEmailActivationLink";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -243,7 +243,7 @@ export class AccountServiceProxy {
      * @return Success
      */
     activateEmail(input: ActivateEmailInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Account/ActivateEmail";
+        let url_ = this.baseUrl + "/api/services/Platform/Account/ActivateEmail";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -284,7 +284,7 @@ export class AccountServiceProxy {
      * @return Success
      */
     impersonate(input: ImpersonateInput): Observable<ImpersonateOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Account/Impersonate";
+        let url_ = this.baseUrl + "/api/services/Platform/Account/Impersonate";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -328,7 +328,7 @@ export class AccountServiceProxy {
      * @return Success
      */
     backToImpersonator(): Observable<ImpersonateOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Account/BackToImpersonator";
+        let url_ = this.baseUrl + "/api/services/Platform/Account/BackToImpersonator";
 
         const content_ = "";
         
@@ -372,7 +372,7 @@ export class AccountServiceProxy {
      * @return Success
      */
     switchToLinkedAccount(input: SwitchToLinkedAccountInput): Observable<SwitchToLinkedAccountOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Account/SwitchToLinkedAccount";
+        let url_ = this.baseUrl + "/api/services/Platform/Account/SwitchToLinkedAccount";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -435,7 +435,7 @@ export class AuditLogServiceProxy {
      * @return Success
      */
     getAuditLogs(startDate: moment.Moment, endDate: moment.Moment, userName: string, serviceName: string, methodName: string, browserInfo: string, hasException: boolean, minExecutionDuration: number, maxExecutionDuration: number, sorting: string, maxResultCount: number, skipCount: number): Observable<PagedResultDtoOfAuditLogListDto> {
-        let url_ = this.baseUrl + "/api/services/app/AuditLog/GetAuditLogs?";
+        let url_ = this.baseUrl + "/api/services/Platform/AuditLog/GetAuditLogs?";
         if (startDate !== undefined)
         
             url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
@@ -526,7 +526,7 @@ export class AuditLogServiceProxy {
      * @return Success
      */
     getAuditLogsToExcel(startDate: moment.Moment, endDate: moment.Moment, userName: string, serviceName: string, methodName: string, browserInfo: string, hasException: boolean, minExecutionDuration: number, maxExecutionDuration: number, sorting: string, maxResultCount: number, skipCount: number): Observable<FileDto> {
-        let url_ = this.baseUrl + "/api/services/app/AuditLog/GetAuditLogsToExcel?";
+        let url_ = this.baseUrl + "/api/services/Platform/AuditLog/GetAuditLogsToExcel?";
         if (startDate !== undefined)
         
             url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
@@ -636,7 +636,7 @@ export class CachingServiceProxy {
      * @return Success
      */
     getAllCaches(): Observable<ListResultDtoOfCacheDto> {
-        let url_ = this.baseUrl + "/api/services/app/Caching/GetAllCaches";
+        let url_ = this.baseUrl + "/api/services/Platform/Caching/GetAllCaches";
 
         const content_ = "";
         
@@ -680,7 +680,7 @@ export class CachingServiceProxy {
      * @return Success
      */
     clearCache(input: EntityDtoOfString): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Caching/ClearCache";
+        let url_ = this.baseUrl + "/api/services/Platform/Caching/ClearCache";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -721,7 +721,7 @@ export class CachingServiceProxy {
      * @return Success
      */
     clearAllCaches(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Caching/ClearAllCaches";
+        let url_ = this.baseUrl + "/api/services/Platform/Caching/ClearAllCaches";
 
         const content_ = "";
         
@@ -781,7 +781,7 @@ export class ChatServiceProxy {
      * @return Success
      */
     getUserChatFriendsWithSettings(): Observable<GetUserChatFriendsWithSettingsOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Chat/GetUserChatFriendsWithSettings";
+        let url_ = this.baseUrl + "/api/services/Platform/Chat/GetUserChatFriendsWithSettings";
 
         const content_ = "";
         
@@ -825,7 +825,7 @@ export class ChatServiceProxy {
      * @return Success
      */
     getUserChatMessages(tenantId: number, userId: number, minMessageId: number): Observable<ListResultDtoOfChatMessageDto> {
-        let url_ = this.baseUrl + "/api/services/app/Chat/GetUserChatMessages?";
+        let url_ = this.baseUrl + "/api/services/Platform/Chat/GetUserChatMessages?";
         if (tenantId !== undefined)
         
             url_ += "TenantId=" + encodeURIComponent("" + tenantId) + "&"; 
@@ -880,7 +880,7 @@ export class ChatServiceProxy {
      * @return Success
      */
     markAllUnreadMessagesOfUserAsRead(input: MarkAllUnreadMessagesOfUserAsReadInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Chat/MarkAllUnreadMessagesOfUserAsRead";
+        let url_ = this.baseUrl + "/api/services/Platform/Chat/MarkAllUnreadMessagesOfUserAsRead";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -926,6 +926,69 @@ export class ChatServiceProxy {
 }
 
 @Injectable()
+export class ClientServiceProxy {
+    private http: Http = null; 
+    private baseUrl: string = undefined; 
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http; 
+        this.baseUrl = baseUrl ? baseUrl : ""; 
+    }
+
+    /**
+     * @return Success
+     */
+    getClients(): Observable<ListResultDtoOfClientDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Client/GetClients";
+
+        const content_ = "";
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processGetClients(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processGetClients(response));
+                } catch (e) {
+                    return <Observable<ListResultDtoOfClientDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ListResultDtoOfClientDto>><any>Observable.throw(response);
+        });
+    }
+
+    protected processGetClients(response: Response): ListResultDtoOfClientDto {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: ListResultDtoOfClientDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ListResultDtoOfClientDto.fromJS(resultData200) : new ListResultDtoOfClientDto();
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    protected throwException(message: string, status: number, response: string, result?: any): any {
+        if(result !== null && result !== undefined)
+            throw result;
+        else
+            throw new SwaggerException(message, status, response);
+    }
+}
+
+@Injectable()
 export class CommonLookupServiceProxy {
     private http: Http = null; 
     private baseUrl: string = undefined; 
@@ -940,7 +1003,7 @@ export class CommonLookupServiceProxy {
      * @return Success
      */
     getEditionsForCombobox(): Observable<ListResultDtoOfComboboxItemDto> {
-        let url_ = this.baseUrl + "/api/services/app/CommonLookup/GetEditionsForCombobox";
+        let url_ = this.baseUrl + "/api/services/Platform/CommonLookup/GetEditionsForCombobox";
 
         const content_ = "";
         
@@ -984,7 +1047,7 @@ export class CommonLookupServiceProxy {
      * @return Success
      */
     findUsers(input: FindUsersInput): Observable<PagedResultDtoOfNameValueDto> {
-        let url_ = this.baseUrl + "/api/services/app/CommonLookup/FindUsers";
+        let url_ = this.baseUrl + "/api/services/Platform/CommonLookup/FindUsers";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -1028,7 +1091,7 @@ export class CommonLookupServiceProxy {
      * @return Success
      */
     getDefaultEditionName(): Observable<GetDefaultEditionNameOutput> {
-        let url_ = this.baseUrl + "/api/services/app/CommonLookup/GetDefaultEditionName";
+        let url_ = this.baseUrl + "/api/services/Platform/CommonLookup/GetDefaultEditionName";
 
         const content_ = "";
         
@@ -1091,7 +1154,7 @@ export class EditionServiceProxy {
      * @return Success
      */
     getEditions(): Observable<ListResultDtoOfEditionListDto> {
-        let url_ = this.baseUrl + "/api/services/app/Edition/GetEditions";
+        let url_ = this.baseUrl + "/api/services/Platform/Edition/GetEditions";
 
         const content_ = "";
         
@@ -1135,7 +1198,7 @@ export class EditionServiceProxy {
      * @return Success
      */
     getEditionForEdit(id: number): Observable<GetEditionForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Edition/GetEditionForEdit?";
+        let url_ = this.baseUrl + "/api/services/Platform/Edition/GetEditionForEdit?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&";
@@ -1182,7 +1245,7 @@ export class EditionServiceProxy {
      * @return Success
      */
     createOrUpdateEdition(input: CreateOrUpdateEditionDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Edition/CreateOrUpdateEdition";
+        let url_ = this.baseUrl + "/api/services/Platform/Edition/CreateOrUpdateEdition";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -1223,7 +1286,7 @@ export class EditionServiceProxy {
      * @return Success
      */
     deleteEdition(id: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Edition/DeleteEdition?";
+        let url_ = this.baseUrl + "/api/services/Platform/Edition/DeleteEdition?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&";
@@ -1267,7 +1330,7 @@ export class EditionServiceProxy {
      * @return Success
      */
     getEditionComboboxItems(selectedEditionId: number): Observable<ComboboxItemDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/Edition/GetEditionComboboxItems?";
+        let url_ = this.baseUrl + "/api/services/Platform/Edition/GetEditionComboboxItems?";
         if (selectedEditionId !== undefined)
         
             url_ += "selectedEditionId=" + encodeURIComponent("" + selectedEditionId) + "&";
@@ -1337,7 +1400,7 @@ export class FriendshipServiceProxy {
      * @return Success
      */
     createFriendshipRequest(input: CreateFriendshipRequestInput): Observable<FriendDto> {
-        let url_ = this.baseUrl + "/api/services/app/Friendship/CreateFriendshipRequest";
+        let url_ = this.baseUrl + "/api/services/Platform/Friendship/CreateFriendshipRequest";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -1381,7 +1444,7 @@ export class FriendshipServiceProxy {
      * @return Success
      */
     createFriendshipRequestByUserName(input: CreateFriendshipRequestByUserNameInput): Observable<FriendDto> {
-        let url_ = this.baseUrl + "/api/services/app/Friendship/CreateFriendshipRequestByUserName";
+        let url_ = this.baseUrl + "/api/services/Platform/Friendship/CreateFriendshipRequestByUserName";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -1425,7 +1488,7 @@ export class FriendshipServiceProxy {
      * @return Success
      */
     blockUser(input: BlockUserInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Friendship/BlockUser";
+        let url_ = this.baseUrl + "/api/services/Platform/Friendship/BlockUser";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -1466,7 +1529,7 @@ export class FriendshipServiceProxy {
      * @return Success
      */
     unblockUser(input: UnblockUserInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Friendship/UnblockUser";
+        let url_ = this.baseUrl + "/api/services/Platform/Friendship/UnblockUser";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -1507,7 +1570,7 @@ export class FriendshipServiceProxy {
      * @return Success
      */
     acceptFriendshipRequest(input: AcceptFriendshipRequestInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Friendship/AcceptFriendshipRequest";
+        let url_ = this.baseUrl + "/api/services/Platform/Friendship/AcceptFriendshipRequest";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -1567,7 +1630,7 @@ export class HostSettingsServiceProxy {
      * @return Success
      */
     getAllSettings(): Observable<HostSettingsEditDto> {
-        let url_ = this.baseUrl + "/api/services/app/HostSettings/GetAllSettings";
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/GetAllSettings";
 
         const content_ = "";
         
@@ -1611,7 +1674,7 @@ export class HostSettingsServiceProxy {
      * @return Success
      */
     updateAllSettings(input: HostSettingsEditDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/HostSettings/UpdateAllSettings";
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/UpdateAllSettings";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -1652,7 +1715,7 @@ export class HostSettingsServiceProxy {
      * @return Success
      */
     sendTestEmail(input: SendTestEmailInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/HostSettings/SendTestEmail";
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/SendTestEmail";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -1712,7 +1775,7 @@ export class LanguageServiceProxy {
      * @return Success
      */
     getLanguages(): Observable<GetLanguagesOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Language/GetLanguages";
+        let url_ = this.baseUrl + "/api/services/Platform/Language/GetLanguages";
 
         const content_ = "";
         
@@ -1756,7 +1819,7 @@ export class LanguageServiceProxy {
      * @return Success
      */
     getLanguageForEdit(id: number): Observable<GetLanguageForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Language/GetLanguageForEdit?";
+        let url_ = this.baseUrl + "/api/services/Platform/Language/GetLanguageForEdit?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&";
@@ -1803,7 +1866,7 @@ export class LanguageServiceProxy {
      * @return Success
      */
     createOrUpdateLanguage(input: CreateOrUpdateLanguageInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Language/CreateOrUpdateLanguage";
+        let url_ = this.baseUrl + "/api/services/Platform/Language/CreateOrUpdateLanguage";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -1844,7 +1907,7 @@ export class LanguageServiceProxy {
      * @return Success
      */
     deleteLanguage(id: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Language/DeleteLanguage?";
+        let url_ = this.baseUrl + "/api/services/Platform/Language/DeleteLanguage?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&";
@@ -1888,7 +1951,7 @@ export class LanguageServiceProxy {
      * @return Success
      */
     setDefaultLanguage(input: SetDefaultLanguageInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Language/SetDefaultLanguage";
+        let url_ = this.baseUrl + "/api/services/Platform/Language/SetDefaultLanguage";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -1929,7 +1992,7 @@ export class LanguageServiceProxy {
      * @return Success
      */
     getLanguageTexts(maxResultCount: number, skipCount: number, sorting: string, sourceName: string, baseLanguageName: string, targetLanguageName: string, targetValueFilter: string, filterText: string): Observable<PagedResultDtoOfLanguageTextListDto> {
-        let url_ = this.baseUrl + "/api/services/app/Language/GetLanguageTexts?";
+        let url_ = this.baseUrl + "/api/services/Platform/Language/GetLanguageTexts?";
         if (maxResultCount !== undefined)
         
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
@@ -2004,7 +2067,7 @@ export class LanguageServiceProxy {
      * @return Success
      */
     updateLanguageText(input: UpdateLanguageTextInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Language/UpdateLanguageText";
+        let url_ = this.baseUrl + "/api/services/Platform/Language/UpdateLanguageText";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -2050,6 +2113,69 @@ export class LanguageServiceProxy {
 }
 
 @Injectable()
+export class MemberServiceProxy {
+    private http: Http = null; 
+    private baseUrl: string = undefined; 
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http; 
+        this.baseUrl = baseUrl ? baseUrl : ""; 
+    }
+
+    /**
+     * @return Success
+     */
+    getMembers(): Observable<ListResultDtoOfMemberDto> {
+        let url_ = this.baseUrl + "/api/services/GetFunding/Member/GetMembers";
+
+        const content_ = "";
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processGetMembers(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processGetMembers(response));
+                } catch (e) {
+                    return <Observable<ListResultDtoOfMemberDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ListResultDtoOfMemberDto>><any>Observable.throw(response);
+        });
+    }
+
+    protected processGetMembers(response: Response): ListResultDtoOfMemberDto {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: ListResultDtoOfMemberDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ListResultDtoOfMemberDto.fromJS(resultData200) : new ListResultDtoOfMemberDto();
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    protected throwException(message: string, status: number, response: string, result?: any): any {
+        if(result !== null && result !== undefined)
+            throw result;
+        else
+            throw new SwaggerException(message, status, response);
+    }
+}
+
+@Injectable()
 export class NotificationServiceProxy {
     private http: Http = null; 
     private baseUrl: string = undefined; 
@@ -2064,7 +2190,7 @@ export class NotificationServiceProxy {
      * @return Success
      */
     getUserNotifications(state: State, maxResultCount: number, skipCount: number): Observable<GetNotificationsOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Notification/GetUserNotifications?";
+        let url_ = this.baseUrl + "/api/services/Platform/Notification/GetUserNotifications?";
         if (state !== undefined)
         
             url_ += "State=" + encodeURIComponent("" + state) + "&"; 
@@ -2119,7 +2245,7 @@ export class NotificationServiceProxy {
      * @return Success
      */
     setAllNotificationsAsRead(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Notification/SetAllNotificationsAsRead";
+        let url_ = this.baseUrl + "/api/services/Platform/Notification/SetAllNotificationsAsRead";
 
         const content_ = "";
         
@@ -2160,7 +2286,7 @@ export class NotificationServiceProxy {
      * @return Success
      */
     setNotificationAsRead(input: EntityDtoOfGuid): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Notification/SetNotificationAsRead";
+        let url_ = this.baseUrl + "/api/services/Platform/Notification/SetNotificationAsRead";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -2201,7 +2327,7 @@ export class NotificationServiceProxy {
      * @return Success
      */
     getNotificationSettings(): Observable<GetNotificationSettingsOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Notification/GetNotificationSettings";
+        let url_ = this.baseUrl + "/api/services/Platform/Notification/GetNotificationSettings";
 
         const content_ = "";
         
@@ -2245,7 +2371,7 @@ export class NotificationServiceProxy {
      * @return Success
      */
     updateNotificationSettings(input: UpdateNotificationSettingsInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Notification/UpdateNotificationSettings";
+        let url_ = this.baseUrl + "/api/services/Platform/Notification/UpdateNotificationSettings";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -2305,7 +2431,7 @@ export class OrganizationUnitServiceProxy {
      * @return Success
      */
     getOrganizationUnits(): Observable<ListResultDtoOfOrganizationUnitDto> {
-        let url_ = this.baseUrl + "/api/services/app/OrganizationUnit/GetOrganizationUnits";
+        let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/GetOrganizationUnits";
 
         const content_ = "";
         
@@ -2349,7 +2475,7 @@ export class OrganizationUnitServiceProxy {
      * @return Success
      */
     getOrganizationUnitUsers(id: number, sorting: string, maxResultCount: number, skipCount: number): Observable<PagedResultDtoOfOrganizationUnitUserListDto> {
-        let url_ = this.baseUrl + "/api/services/app/OrganizationUnit/GetOrganizationUnitUsers?";
+        let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/GetOrganizationUnitUsers?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
@@ -2408,7 +2534,7 @@ export class OrganizationUnitServiceProxy {
      * @return Success
      */
     createOrganizationUnit(input: CreateOrganizationUnitInput): Observable<OrganizationUnitDto> {
-        let url_ = this.baseUrl + "/api/services/app/OrganizationUnit/CreateOrganizationUnit";
+        let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/CreateOrganizationUnit";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -2452,7 +2578,7 @@ export class OrganizationUnitServiceProxy {
      * @return Success
      */
     updateOrganizationUnit(input: UpdateOrganizationUnitInput): Observable<OrganizationUnitDto> {
-        let url_ = this.baseUrl + "/api/services/app/OrganizationUnit/UpdateOrganizationUnit";
+        let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/UpdateOrganizationUnit";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -2496,7 +2622,7 @@ export class OrganizationUnitServiceProxy {
      * @return Success
      */
     moveOrganizationUnit(input: MoveOrganizationUnitInput): Observable<OrganizationUnitDto> {
-        let url_ = this.baseUrl + "/api/services/app/OrganizationUnit/MoveOrganizationUnit";
+        let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/MoveOrganizationUnit";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -2540,7 +2666,7 @@ export class OrganizationUnitServiceProxy {
      * @return Success
      */
     deleteOrganizationUnit(id: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/OrganizationUnit/DeleteOrganizationUnit?";
+        let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/DeleteOrganizationUnit?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&";
@@ -2584,7 +2710,7 @@ export class OrganizationUnitServiceProxy {
      * @return Success
      */
     addUserToOrganizationUnit(input: UserToOrganizationUnitInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/OrganizationUnit/AddUserToOrganizationUnit";
+        let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/AddUserToOrganizationUnit";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -2625,7 +2751,7 @@ export class OrganizationUnitServiceProxy {
      * @return Success
      */
     removeUserFromOrganizationUnit(userId: number, organizationUnitId: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/OrganizationUnit/RemoveUserFromOrganizationUnit?";
+        let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/RemoveUserFromOrganizationUnit?";
         if (userId !== undefined)
         
             url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
@@ -2673,7 +2799,7 @@ export class OrganizationUnitServiceProxy {
      * @return Success
      */
     isInOrganizationUnit(input: UserToOrganizationUnitInput): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/app/OrganizationUnit/IsInOrganizationUnit";
+        let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/IsInOrganizationUnit";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -2736,7 +2862,7 @@ export class PermissionServiceProxy {
      * @return Success
      */
     getAllPermissions(): Observable<ListResultDtoOfFlatPermissionWithLevelDto> {
-        let url_ = this.baseUrl + "/api/services/app/Permission/GetAllPermissions";
+        let url_ = this.baseUrl + "/api/services/Platform/Permission/GetAllPermissions";
 
         const content_ = "";
         
@@ -2799,7 +2925,7 @@ export class ProfileServiceProxy {
      * @return Success
      */
     getCurrentUserProfileForEdit(): Observable<CurrentUserProfileEditDto> {
-        let url_ = this.baseUrl + "/api/services/app/Profile/GetCurrentUserProfileForEdit";
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/GetCurrentUserProfileForEdit";
 
         const content_ = "";
         
@@ -2843,7 +2969,7 @@ export class ProfileServiceProxy {
      * @return Success
      */
     updateCurrentUserProfile(input: CurrentUserProfileEditDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Profile/UpdateCurrentUserProfile";
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/UpdateCurrentUserProfile";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -2884,7 +3010,7 @@ export class ProfileServiceProxy {
      * @return Success
      */
     changePassword(input: ChangePasswordInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Profile/ChangePassword";
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/ChangePassword";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -2925,7 +3051,7 @@ export class ProfileServiceProxy {
      * @return Success
      */
     updateProfilePicture(input: UpdateProfilePictureInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Profile/UpdateProfilePicture";
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/UpdateProfilePicture";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -2966,7 +3092,7 @@ export class ProfileServiceProxy {
      * @return Success
      */
     getPasswordComplexitySetting(): Observable<GetPasswordComplexitySettingOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Profile/GetPasswordComplexitySetting";
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/GetPasswordComplexitySetting";
 
         const content_ = "";
         
@@ -3010,7 +3136,7 @@ export class ProfileServiceProxy {
      * @return Success
      */
     getProfilePicture(): Observable<GetProfilePictureOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Profile/GetProfilePicture";
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/GetProfilePicture";
 
         const content_ = "";
         
@@ -3054,7 +3180,7 @@ export class ProfileServiceProxy {
      * @return Success
      */
     getFriendProfilePictureById(profilePictureId: string, userId: number, tenantId: number): Observable<GetProfilePictureOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Profile/GetFriendProfilePictureById?";
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/GetFriendProfilePictureById?";
         if (profilePictureId !== undefined)
         
             url_ += "ProfilePictureId=" + encodeURIComponent("" + profilePictureId) + "&"; 
@@ -3109,7 +3235,7 @@ export class ProfileServiceProxy {
      * @return Success
      */
     getProfilePictureById(profilePictureId: string): Observable<GetProfilePictureOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Profile/GetProfilePictureById?";
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/GetProfilePictureById?";
         if (profilePictureId !== undefined)
         
             url_ += "profilePictureId=" + encodeURIComponent("" + profilePictureId) + "&";
@@ -3156,7 +3282,7 @@ export class ProfileServiceProxy {
      * @return Success
      */
     changeLanguage(input: ChangeUserLanguageDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Profile/ChangeLanguage";
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/ChangeLanguage";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -3216,7 +3342,7 @@ export class RoleServiceProxy {
      * @return Success
      */
     getRoles(permission: string): Observable<ListResultDtoOfRoleListDto> {
-        let url_ = this.baseUrl + "/api/services/app/Role/GetRoles?";
+        let url_ = this.baseUrl + "/api/services/Platform/Role/GetRoles?";
         if (permission !== undefined)
         
             url_ += "Permission=" + encodeURIComponent("" + permission) + "&";
@@ -3263,7 +3389,7 @@ export class RoleServiceProxy {
      * @return Success
      */
     getRoleForEdit(id: number): Observable<GetRoleForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Role/GetRoleForEdit?";
+        let url_ = this.baseUrl + "/api/services/Platform/Role/GetRoleForEdit?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&";
@@ -3310,7 +3436,7 @@ export class RoleServiceProxy {
      * @return Success
      */
     createOrUpdateRole(input: CreateOrUpdateRoleInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Role/CreateOrUpdateRole";
+        let url_ = this.baseUrl + "/api/services/Platform/Role/CreateOrUpdateRole";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -3351,7 +3477,7 @@ export class RoleServiceProxy {
      * @return Success
      */
     deleteRole(id: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Role/DeleteRole?";
+        let url_ = this.baseUrl + "/api/services/Platform/Role/DeleteRole?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&";
@@ -3414,7 +3540,7 @@ export class SessionServiceProxy {
      * @return Success
      */
     getCurrentLoginInformations(): Observable<GetCurrentLoginInformationsOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Session/GetCurrentLoginInformations";
+        let url_ = this.baseUrl + "/api/services/Platform/Session/GetCurrentLoginInformations";
 
         const content_ = "";
         
@@ -3477,7 +3603,7 @@ export class TenantServiceProxy {
      * @return Success
      */
     getTenants(filter: string, sorting: string, maxResultCount: number, skipCount: number): Observable<PagedResultDtoOfTenantListDto> {
-        let url_ = this.baseUrl + "/api/services/app/Tenant/GetTenants?";
+        let url_ = this.baseUrl + "/api/services/Platform/Tenant/GetTenants?";
         if (filter !== undefined)
         
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
@@ -3536,7 +3662,7 @@ export class TenantServiceProxy {
      * @return Success
      */
     createTenant(input: CreateTenantInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Tenant/CreateTenant";
+        let url_ = this.baseUrl + "/api/services/Platform/Tenant/CreateTenant";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -3577,7 +3703,7 @@ export class TenantServiceProxy {
      * @return Success
      */
     getTenantForEdit(id: number): Observable<TenantEditDto> {
-        let url_ = this.baseUrl + "/api/services/app/Tenant/GetTenantForEdit?";
+        let url_ = this.baseUrl + "/api/services/Platform/Tenant/GetTenantForEdit?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&";
@@ -3624,7 +3750,7 @@ export class TenantServiceProxy {
      * @return Success
      */
     updateTenant(input: TenantEditDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Tenant/UpdateTenant";
+        let url_ = this.baseUrl + "/api/services/Platform/Tenant/UpdateTenant";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -3665,7 +3791,7 @@ export class TenantServiceProxy {
      * @return Success
      */
     deleteTenant(id: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Tenant/DeleteTenant?";
+        let url_ = this.baseUrl + "/api/services/Platform/Tenant/DeleteTenant?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&";
@@ -3709,7 +3835,7 @@ export class TenantServiceProxy {
      * @return Success
      */
     getTenantFeaturesForEdit(id: number): Observable<GetTenantFeaturesForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/Tenant/GetTenantFeaturesForEdit?";
+        let url_ = this.baseUrl + "/api/services/Platform/Tenant/GetTenantFeaturesForEdit?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&";
@@ -3756,7 +3882,7 @@ export class TenantServiceProxy {
      * @return Success
      */
     updateTenantFeatures(input: UpdateTenantFeaturesInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Tenant/UpdateTenantFeatures";
+        let url_ = this.baseUrl + "/api/services/Platform/Tenant/UpdateTenantFeatures";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -3797,7 +3923,7 @@ export class TenantServiceProxy {
      * @return Success
      */
     resetTenantSpecificFeatures(input: EntityDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Tenant/ResetTenantSpecificFeatures";
+        let url_ = this.baseUrl + "/api/services/Platform/Tenant/ResetTenantSpecificFeatures";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -3838,7 +3964,7 @@ export class TenantServiceProxy {
      * @return Success
      */
     unlockTenantAdmin(input: EntityDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Tenant/UnlockTenantAdmin";
+        let url_ = this.baseUrl + "/api/services/Platform/Tenant/UnlockTenantAdmin";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -3898,7 +4024,7 @@ export class TenantDashboardServiceProxy {
      * @return Success
      */
     getMemberActivity(): Observable<GetMemberActivityOutput> {
-        let url_ = this.baseUrl + "/api/services/app/TenantDashboard/GetMemberActivity";
+        let url_ = this.baseUrl + "/api/services/Platform/TenantDashboard/GetMemberActivity";
 
         const content_ = "";
         
@@ -3961,7 +4087,7 @@ export class TenantRegistrationServiceProxy {
      * @return Success
      */
     registerTenant(input: RegisterTenantInput): Observable<RegisterTenantOutput> {
-        let url_ = this.baseUrl + "/api/services/app/TenantRegistration/RegisterTenant";
+        let url_ = this.baseUrl + "/api/services/Platform/TenantRegistration/RegisterTenant";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -4024,7 +4150,7 @@ export class TenantSettingsServiceProxy {
      * @return Success
      */
     getAllSettings(): Observable<TenantSettingsEditDto> {
-        let url_ = this.baseUrl + "/api/services/app/TenantSettings/GetAllSettings";
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetAllSettings";
 
         const content_ = "";
         
@@ -4068,7 +4194,7 @@ export class TenantSettingsServiceProxy {
      * @return Success
      */
     updateAllSettings(input: TenantSettingsEditDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/TenantSettings/UpdateAllSettings";
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateAllSettings";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -4109,7 +4235,7 @@ export class TenantSettingsServiceProxy {
      * @return Success
      */
     clearLogo(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/TenantSettings/ClearLogo";
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/ClearLogo";
 
         const content_ = "";
         
@@ -4150,7 +4276,7 @@ export class TenantSettingsServiceProxy {
      * @return Success
      */
     clearCustomCss(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/TenantSettings/ClearCustomCss";
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/ClearCustomCss";
 
         const content_ = "";
         
@@ -4191,7 +4317,7 @@ export class TenantSettingsServiceProxy {
      * @return Success
      */
     sendTestEmail(input: SendTestEmailInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/TenantSettings/SendTestEmail";
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/SendTestEmail";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -4251,7 +4377,7 @@ export class TimingServiceProxy {
      * @return Success
      */
     getTimezones(defaultTimezoneScope: DefaultTimezoneScope): Observable<ListResultDtoOfNameValueDto> {
-        let url_ = this.baseUrl + "/api/services/app/Timing/GetTimezones?";
+        let url_ = this.baseUrl + "/api/services/Platform/Timing/GetTimezones?";
         if (defaultTimezoneScope !== undefined)
         
             url_ += "DefaultTimezoneScope=" + encodeURIComponent("" + defaultTimezoneScope) + "&";
@@ -4298,7 +4424,7 @@ export class TimingServiceProxy {
      * @return Success
      */
     getTimezoneComboboxItems(selectedTimezoneId: string): Observable<ComboboxItemDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/Timing/GetTimezoneComboboxItems?";
+        let url_ = this.baseUrl + "/api/services/Platform/Timing/GetTimezoneComboboxItems?";
         if (selectedTimezoneId !== undefined)
         
             url_ += "SelectedTimezoneId=" + encodeURIComponent("" + selectedTimezoneId) + "&";
@@ -4706,7 +4832,7 @@ export class UserServiceProxy {
      * @return Success
      */
     getUsers(filter: string, permission: string, role: number, sorting: string, maxResultCount: number, skipCount: number): Observable<PagedResultDtoOfUserListDto> {
-        let url_ = this.baseUrl + "/api/services/app/User/GetUsers?";
+        let url_ = this.baseUrl + "/api/services/Platform/User/GetUsers?";
         if (filter !== undefined)
         
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
@@ -4773,7 +4899,7 @@ export class UserServiceProxy {
      * @return Success
      */
     getUsersToExcel(): Observable<FileDto> {
-        let url_ = this.baseUrl + "/api/services/app/User/GetUsersToExcel";
+        let url_ = this.baseUrl + "/api/services/Platform/User/GetUsersToExcel";
 
         const content_ = "";
         
@@ -4817,7 +4943,7 @@ export class UserServiceProxy {
      * @return Success
      */
     getUserForEdit(id: number): Observable<GetUserForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/User/GetUserForEdit?";
+        let url_ = this.baseUrl + "/api/services/Platform/User/GetUserForEdit?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&";
@@ -4864,7 +4990,7 @@ export class UserServiceProxy {
      * @return Success
      */
     getUserPermissionsForEdit(id: number): Observable<GetUserPermissionsForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/app/User/GetUserPermissionsForEdit?";
+        let url_ = this.baseUrl + "/api/services/Platform/User/GetUserPermissionsForEdit?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&";
@@ -4911,7 +5037,7 @@ export class UserServiceProxy {
      * @return Success
      */
     resetUserSpecificPermissions(input: EntityDtoOfInt64): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/User/ResetUserSpecificPermissions";
+        let url_ = this.baseUrl + "/api/services/Platform/User/ResetUserSpecificPermissions";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -4952,7 +5078,7 @@ export class UserServiceProxy {
      * @return Success
      */
     updateUserPermissions(input: UpdateUserPermissionsInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/User/UpdateUserPermissions";
+        let url_ = this.baseUrl + "/api/services/Platform/User/UpdateUserPermissions";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -4993,7 +5119,7 @@ export class UserServiceProxy {
      * @return Success
      */
     createOrUpdateUser(input: CreateOrUpdateUserInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/User/CreateOrUpdateUser";
+        let url_ = this.baseUrl + "/api/services/Platform/User/CreateOrUpdateUser";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -5034,7 +5160,7 @@ export class UserServiceProxy {
      * @return Success
      */
     deleteUser(id: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/User/DeleteUser?";
+        let url_ = this.baseUrl + "/api/services/Platform/User/DeleteUser?";
         if (id !== undefined)
         
             url_ += "Id=" + encodeURIComponent("" + id) + "&";
@@ -5078,7 +5204,7 @@ export class UserServiceProxy {
      * @return Success
      */
     unlockUser(input: EntityDtoOfInt64): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/User/UnlockUser";
+        let url_ = this.baseUrl + "/api/services/Platform/User/UnlockUser";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -5138,7 +5264,7 @@ export class UserLinkServiceProxy {
      * @return Success
      */
     linkToUser(input: LinkToUserInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/UserLink/LinkToUser";
+        let url_ = this.baseUrl + "/api/services/Platform/UserLink/LinkToUser";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -5179,7 +5305,7 @@ export class UserLinkServiceProxy {
      * @return Success
      */
     getLinkedUsers(maxResultCount: number, skipCount: number, sorting: string): Observable<PagedResultDtoOfLinkedUserDto> {
-        let url_ = this.baseUrl + "/api/services/app/UserLink/GetLinkedUsers?";
+        let url_ = this.baseUrl + "/api/services/Platform/UserLink/GetLinkedUsers?";
         if (maxResultCount !== undefined)
         
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
@@ -5234,7 +5360,7 @@ export class UserLinkServiceProxy {
      * @return Success
      */
     getRecentlyUsedLinkedUsers(): Observable<ListResultDtoOfLinkedUserDto> {
-        let url_ = this.baseUrl + "/api/services/app/UserLink/GetRecentlyUsedLinkedUsers";
+        let url_ = this.baseUrl + "/api/services/Platform/UserLink/GetRecentlyUsedLinkedUsers";
 
         const content_ = "";
         
@@ -5278,7 +5404,7 @@ export class UserLinkServiceProxy {
      * @return Success
      */
     unlinkUser(input: UnlinkUserInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/UserLink/UnlinkUser";
+        let url_ = this.baseUrl + "/api/services/Platform/UserLink/UnlinkUser";
 
         const content_ = JSON.stringify(input ? input.toJS() : null);
         
@@ -5338,7 +5464,7 @@ export class UserLoginServiceProxy {
      * @return Success
      */
     getRecentUserLoginAttempts(): Observable<ListResultDtoOfUserLoginAttemptDto> {
-        let url_ = this.baseUrl + "/api/services/app/UserLogin/GetRecentUserLoginAttempts";
+        let url_ = this.baseUrl + "/api/services/Platform/UserLogin/GetRecentUserLoginAttempts";
 
         const content_ = "";
         
@@ -5401,7 +5527,7 @@ export class WebLogServiceProxy {
      * @return Success
      */
     getLatestWebLogs(): Observable<GetLatestWebLogsOutput> {
-        let url_ = this.baseUrl + "/api/services/app/WebLog/GetLatestWebLogs";
+        let url_ = this.baseUrl + "/api/services/Platform/WebLog/GetLatestWebLogs";
 
         const content_ = "";
         
@@ -5445,7 +5571,7 @@ export class WebLogServiceProxy {
      * @return Success
      */
     downloadWebLogs(): Observable<FileDto> {
-        let url_ = this.baseUrl + "/api/services/app/WebLog/DownloadWebLogs";
+        let url_ = this.baseUrl + "/api/services/Platform/WebLog/DownloadWebLogs";
 
         const content_ = "";
         
@@ -6338,6 +6464,97 @@ export class MarkAllUnreadMessagesOfUserAsReadInput {
     clone() {
         const json = this.toJSON();
         return new MarkAllUnreadMessagesOfUserAsReadInput(JSON.parse(json));
+    }
+}
+
+export class ListResultDtoOfClientDto { 
+    items: ClientDto[];
+    constructor(data?: any) {
+        if (data !== undefined) {
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(ClientDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ListResultDtoOfClientDto {
+        return new ListResultDtoOfClientDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJS());
+        }
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new ListResultDtoOfClientDto(JSON.parse(json));
+    }
+}
+
+export class ClientDto { 
+    tenantId: number; 
+    name: string; 
+    isDeleted: boolean; 
+    deleterUserId: number; 
+    deletionTime: moment.Moment; 
+    lastModificationTime: moment.Moment; 
+    lastModifierUserId: number; 
+    creationTime: moment.Moment; 
+    creatorUserId: number; 
+    id: number;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.tenantId = data["tenantId"] !== undefined ? data["tenantId"] : null;
+            this.name = data["name"] !== undefined ? data["name"] : null;
+            this.isDeleted = data["isDeleted"] !== undefined ? data["isDeleted"] : null;
+            this.deleterUserId = data["deleterUserId"] !== undefined ? data["deleterUserId"] : null;
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : null;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : null;
+            this.lastModifierUserId = data["lastModifierUserId"] !== undefined ? data["lastModifierUserId"] : null;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : null;
+            this.creatorUserId = data["creatorUserId"] !== undefined ? data["creatorUserId"] : null;
+            this.id = data["id"] !== undefined ? data["id"] : null;
+        }
+    }
+
+    static fromJS(data: any): ClientDto {
+        return new ClientDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["tenantId"] = this.tenantId !== undefined ? this.tenantId : null;
+        data["name"] = this.name !== undefined ? this.name : null;
+        data["isDeleted"] = this.isDeleted !== undefined ? this.isDeleted : null;
+        data["deleterUserId"] = this.deleterUserId !== undefined ? this.deleterUserId : null;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : null;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : null;
+        data["lastModifierUserId"] = this.lastModifierUserId !== undefined ? this.lastModifierUserId : null;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : null;
+        data["creatorUserId"] = this.creatorUserId !== undefined ? this.creatorUserId : null;
+        data["id"] = this.id !== undefined ? this.id : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new ClientDto(JSON.parse(json));
     }
 }
 
@@ -7255,20 +7472,18 @@ export class SecuritySettingsEditDto {
 }
 
 export class PasswordComplexitySetting { 
-    minLength: number; 
-    maxLength: number; 
-    useNumbers: boolean; 
-    useUpperCaseLetters: boolean; 
-    useLowerCaseLetters: boolean; 
-    usePunctuations: boolean;
+    requireDigit: boolean; 
+    requireLowercase: boolean; 
+    requireNonAlphanumeric: boolean; 
+    requireUppercase: boolean; 
+    requiredLength: number;
     constructor(data?: any) {
         if (data !== undefined) {
-            this.minLength = data["minLength"] !== undefined ? data["minLength"] : null;
-            this.maxLength = data["maxLength"] !== undefined ? data["maxLength"] : null;
-            this.useNumbers = data["useNumbers"] !== undefined ? data["useNumbers"] : null;
-            this.useUpperCaseLetters = data["useUpperCaseLetters"] !== undefined ? data["useUpperCaseLetters"] : null;
-            this.useLowerCaseLetters = data["useLowerCaseLetters"] !== undefined ? data["useLowerCaseLetters"] : null;
-            this.usePunctuations = data["usePunctuations"] !== undefined ? data["usePunctuations"] : null;
+            this.requireDigit = data["requireDigit"] !== undefined ? data["requireDigit"] : null;
+            this.requireLowercase = data["requireLowercase"] !== undefined ? data["requireLowercase"] : null;
+            this.requireNonAlphanumeric = data["requireNonAlphanumeric"] !== undefined ? data["requireNonAlphanumeric"] : null;
+            this.requireUppercase = data["requireUppercase"] !== undefined ? data["requireUppercase"] : null;
+            this.requiredLength = data["requiredLength"] !== undefined ? data["requiredLength"] : null;
         }
     }
 
@@ -7278,12 +7493,11 @@ export class PasswordComplexitySetting {
 
     toJS(data?: any) {
         data = data === undefined ? {} : data;
-        data["minLength"] = this.minLength !== undefined ? this.minLength : null;
-        data["maxLength"] = this.maxLength !== undefined ? this.maxLength : null;
-        data["useNumbers"] = this.useNumbers !== undefined ? this.useNumbers : null;
-        data["useUpperCaseLetters"] = this.useUpperCaseLetters !== undefined ? this.useUpperCaseLetters : null;
-        data["useLowerCaseLetters"] = this.useLowerCaseLetters !== undefined ? this.useLowerCaseLetters : null;
-        data["usePunctuations"] = this.usePunctuations !== undefined ? this.usePunctuations : null;
+        data["requireDigit"] = this.requireDigit !== undefined ? this.requireDigit : null;
+        data["requireLowercase"] = this.requireLowercase !== undefined ? this.requireLowercase : null;
+        data["requireNonAlphanumeric"] = this.requireNonAlphanumeric !== undefined ? this.requireNonAlphanumeric : null;
+        data["requireUppercase"] = this.requireUppercase !== undefined ? this.requireUppercase : null;
+        data["requiredLength"] = this.requiredLength !== undefined ? this.requiredLength : null;
         return data; 
     }
 
@@ -7746,6 +7960,97 @@ export class UpdateLanguageTextInput {
     clone() {
         const json = this.toJSON();
         return new UpdateLanguageTextInput(JSON.parse(json));
+    }
+}
+
+export class ListResultDtoOfMemberDto { 
+    items: MemberDto[];
+    constructor(data?: any) {
+        if (data !== undefined) {
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(MemberDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ListResultDtoOfMemberDto {
+        return new ListResultDtoOfMemberDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJS());
+        }
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new ListResultDtoOfMemberDto(JSON.parse(json));
+    }
+}
+
+export class MemberDto { 
+    tenantId: number; 
+    name: string; 
+    isDeleted: boolean; 
+    deleterUserId: number; 
+    deletionTime: moment.Moment; 
+    lastModificationTime: moment.Moment; 
+    lastModifierUserId: number; 
+    creationTime: moment.Moment; 
+    creatorUserId: number; 
+    id: number;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.tenantId = data["tenantId"] !== undefined ? data["tenantId"] : null;
+            this.name = data["name"] !== undefined ? data["name"] : null;
+            this.isDeleted = data["isDeleted"] !== undefined ? data["isDeleted"] : null;
+            this.deleterUserId = data["deleterUserId"] !== undefined ? data["deleterUserId"] : null;
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : null;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : null;
+            this.lastModifierUserId = data["lastModifierUserId"] !== undefined ? data["lastModifierUserId"] : null;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : null;
+            this.creatorUserId = data["creatorUserId"] !== undefined ? data["creatorUserId"] : null;
+            this.id = data["id"] !== undefined ? data["id"] : null;
+        }
+    }
+
+    static fromJS(data: any): MemberDto {
+        return new MemberDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["tenantId"] = this.tenantId !== undefined ? this.tenantId : null;
+        data["name"] = this.name !== undefined ? this.name : null;
+        data["isDeleted"] = this.isDeleted !== undefined ? this.isDeleted : null;
+        data["deleterUserId"] = this.deleterUserId !== undefined ? this.deleterUserId : null;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : null;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : null;
+        data["lastModifierUserId"] = this.lastModifierUserId !== undefined ? this.lastModifierUserId : null;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : null;
+        data["creatorUserId"] = this.creatorUserId !== undefined ? this.creatorUserId : null;
+        data["id"] = this.id !== undefined ? this.id : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new MemberDto(JSON.parse(json));
     }
 }
 
@@ -9053,11 +9358,19 @@ export class TenantLoginInfoDto {
 
 export class ApplicationInfoDto { 
     version: string; 
-    releaseDate: moment.Moment;
+    releaseDate: moment.Moment; 
+    features: { [key: string] : boolean; };
     constructor(data?: any) {
         if (data !== undefined) {
             this.version = data["version"] !== undefined ? data["version"] : null;
             this.releaseDate = data["releaseDate"] ? moment(data["releaseDate"].toString()) : null;
+            if (data["features"]) {
+                this.features = {};
+                for (let key in data["features"]) {
+                    if (data["features"].hasOwnProperty(key))
+                        this.features[key] = data["features"][key] !== undefined ? data["features"][key] : null;
+                }
+            }
         }
     }
 
@@ -9069,6 +9382,13 @@ export class ApplicationInfoDto {
         data = data === undefined ? {} : data;
         data["version"] = this.version !== undefined ? this.version : null;
         data["releaseDate"] = this.releaseDate ? this.releaseDate.toISOString() : null;
+        if (this.features) {
+            data["features"] = {};
+            for (let key in this.features) {
+                if (this.features.hasOwnProperty(key))
+                    data["features"][key] = this.features[key] !== undefined ? this.features[key] : null;
+            }
+        }
         return data; 
     }
 
