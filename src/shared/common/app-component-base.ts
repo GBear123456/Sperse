@@ -48,6 +48,8 @@ export abstract class AppComponentBase {
         return abp.utils.formatString.apply(this, args);
     }
 
+	capitalize = require('underscore.string/capitalize');
+
     isGranted(permissionName: string): boolean {
         return this.permission.isGranted(permissionName);
     }

@@ -1,12 +1,46 @@
 :host {
 	top: 86px;
 	position: absolute;
+	/deep/ * {
+		color: #202b35;
+		font-size: 16px;
+	}
 
-	.sidebar-filter {
+	.sidebar-filter-links {
 		border: 1px solid #dfdfdf;
 		width: 321px;
 		height: calc(~"100vh - 161px");
 		background-color: #fff;
 		padding: 25px;
+
+		b {
+			text-transform: uppercase;	
+		}
+
+		.filter-link {
+			margin: 0px 10px;
+
+			a {
+				display: block;
+				padding: 30px 0px 0px 20px;
+			}
+		}
+	}
+
+	.sidebar-filters {
+		position: absolute;
+		top: 0px;
+		left: 320px;
+		width: 20vw;
+		height: 100vh;
+		z-index: 1;
+		padding-left: 20px;
+		border: 1px solid #dfdfdf;
+		background-color: #fff;
+	}
+
+	.sidebar-filter-head {
+		padding: 20px 0px 20px 0px;
+		font-weight: bold;
 	}
 }

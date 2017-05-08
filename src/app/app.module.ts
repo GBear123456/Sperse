@@ -1,3 +1,4 @@
+import { DxCheckBoxModule } from 'devextreme-angular';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,6 +14,7 @@ import { HeaderComponent } from './shared/layout/header.component';
 import { HeaderNotificationsComponent } from './shared/layout/notifications/header-notifications.component';
 import { SideBarComponent } from './shared/layout/side-bar.component';
 import { TopBarComponent } from './shared/layout/top-bar.component';
+import { FilterStatusComponent } from './shared/layout/filters/status.component';	
 import { FooterComponent } from './shared/layout/footer.component';
 
 import { LoginAttemptsModalComponent } from '@app/shared/layout/login-attempts-modal.component';
@@ -50,6 +52,7 @@ import { QuickSideBarChat } from '@app/shared/layout/chat/QuickSideBarChat';
         TopBarComponent,
         SideBarComponent,		
         FooterComponent,
+		FilterStatusComponent,
         LoginAttemptsModalComponent,
         LinkedAccountsModalComponent,
         LinkAccountModalComponent,
@@ -62,6 +65,8 @@ import { QuickSideBarChat } from '@app/shared/layout/chat/QuickSideBarChat';
         NotificationSettingsModalCompoent
     ],
     imports: [
+		DxCheckBoxModule,
+
         ngCommon.CommonModule,
         FormsModule,
         HttpModule,

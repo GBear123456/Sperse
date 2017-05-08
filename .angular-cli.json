@@ -57,6 +57,9 @@
         "../src/app/shared/core.less",
         "../src/app/shared/layout/layout.less",
 
+        "../node_modules/devextreme/dist/css/dx.common.css", 
+        "../node_modules/devextreme/dist/css/dx.light.css", 
+
         "styles.css"
       ],
       "scripts": [

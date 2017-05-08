@@ -18,6 +18,7 @@ export class TopBarComponent extends AppComponentBase {
     
     menu: PanelMenu = new PanelMenu("MainMenu", "MainMenu", [
         new PanelMenuItem("Dashboard", "Pages.Tenant.Dashboard", "icon-home", "/app/main/dashboard"),
+        new PanelMenuItem("Clients", "Pages.Clients", "icon-globe", "/app/admin/clients"),
         new PanelMenuItem("Tenants", "Pages.Tenants", "icon-globe", "/app/admin/tenants"),
         new PanelMenuItem("Editions", "Pages.Editions", "icon-grid", "/app/admin/editions"),
         new PanelMenuItem("Administration", "", "icon-wrench", "", [

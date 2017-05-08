@@ -1,0 +1,7 @@
+<div class="wrapper">
+	<ng-template ngFor let-item [ngForOf]="current[section] || default" let-i="index">
+		<div class="dx-field">
+			<dx-check-box [(value)]="item.value"></dx-check-box><span>{{l('Status' + capitalize(item.name))}}</span>
+		</div>
+	</ng-template>
+</div>
