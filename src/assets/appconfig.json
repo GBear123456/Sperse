@@ -1,4 +1,4 @@
 ﻿{
-  "remoteServiceBaseUrl": "http://localhost:22742",
-  "appBaseUrl": "http://localhost:4200"
+  "remoteServiceBaseUrl": "http://sperseplatformwebhost.azurewebsites.net",
+  "appBaseUrl": "http://spersecrmangularui.azurewebsites.net"
 }
