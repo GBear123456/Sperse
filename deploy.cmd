@@ -97,10 +97,29 @@ IF /I "%IN_PLACE_DEPLOYMENT%" NEQ "1" (
 :: 2. Select node version
 call :SelectNodeVersion
 
-:: 3. Install npm packages
+:: 3. Install npm packages and build project
 IF EXIST "%DEPLOYMENT_TARGET%\package.json" (
   pushd "%DEPLOYMENT_TARGET%"
-  call :ExecuteCmd !NPM_CMD! install --production
+
+:: Yarn check
+  echo Checking yarn installation...
+  call yarn --version
+  IF !ERRORLEVEL! NEQ 0 (
+    echo Installing Yarn...
+    !NPM_CMD! install -g yarn
+    IF !ERRORLEVEL! NEQ 0 goto error
+  ) ELSE (
+    echo Yarn is installed
+  )
+
+:: Yarn install packages
+  call :ExecuteCmd yarn install
+
+:: ng build
+  call :ExecuteCmd "!NODE_EXE!" ./node_modules/@angular/cli/bin/ng build
+:: copy web.config
+  call :ExecuteCmd cp "%DEPLOYMENT_TARGET%"/web.config "%DEPLOYMENT_TARGET%"/dist/
+  
   IF !ERRORLEVEL! NEQ 0 goto error
   popd
 )
