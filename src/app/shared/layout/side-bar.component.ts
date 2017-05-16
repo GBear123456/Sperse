@@ -1,5 +1,7 @@
 import { Component, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { FilterMap } from './filters/filter-map';
+import { Router, NavigationEnd  } from '@angular/router';
 
 @Component({
     templateUrl: './side-bar.component.html',
@@ -10,25 +12,31 @@ import { AppComponentBase } from '@shared/common/app-component-base';
   	},
 })
 export class SideBarComponent extends AppComponentBase {
-	filters: String[] = [
-		'status', 'creation', 'name', 'type'
-	];
-	filterParams: Object = {}; 
-	displayFilter: String = '';
-
-    constructor(private _eref: ElementRef, injector: Injector) {
+	filters: Object[] = [];
+	activeFilter: String = '';
+	
+    constructor(
+		private _eref: ElementRef, 
+		injector: Injector, 
+		router: Router
+	) {
         super(injector);
+
+	    router.events.subscribe((event) => {
+			if (event instanceof NavigationEnd)
+				this.filters = FilterMap.resolve(event.url);
+		});
     }
 
 	showFilterDialog(event, type) {
 		if (this._eref.nativeElement.contains(event.target)) {
+			type && (this.activeFilter = type);
 			event.stopPropagation();
-			if (type)
-				this.displayFilter = type;
 		} else 
-			this.displayFilter = type;	
+			this.activeFilter = type;	
 	}
 
-	filterBy(event, type) {
+	filterBy(event) {
+		//type = event.target.tagName.split('-').pop();
 	}
 }

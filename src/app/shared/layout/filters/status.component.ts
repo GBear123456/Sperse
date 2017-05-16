@@ -4,7 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 @Component({
     templateUrl: './status.component.html',
 	styleUrls: ['./status.component.less'],
-    selector: 'filter-status-dialog'
+    selector: 'filter-status'
 })
 export class FilterStatusComponent extends AppComponentBase {
 	default: Array<Object> = [
