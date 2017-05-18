@@ -1,7 +1,7 @@
 ﻿body.page-sidebar-closed {
 	.filter-toggle {
-		top: 30px!important;
-		left: 30px!important;
+	    left: 15px;
+    	position: absolute;
 	}
 	
 	.page-content .col-xs-6:first-child {
@@ -11,6 +11,10 @@
 	.page-content-wrapper .page-content {
     	margin-left: -20px !important;	
 	}
+
+	.logo-layout, .page-sidebar-wrapper {
+		display: none;		
+	}	
 }
 
 .page-header.navbar {
@@ -23,19 +27,21 @@
     	z-index: 1000;
 	}
 	.filter-toggle {
-		position: absolute;
-		top: 118px;
-		left: 20px;
 		color: #202b35;
 		font-size: 23px;
 		cursor: pointer;
+		padding: 30px 0px 0px 15px;
 
 		&:hover {
 			opacity: 0.5
 		}
 	}
 	.page-logo {
-		max-width: 246px;
+		max-width: 285px;
+
+		.logo-layout {
+			margin: 5px 0px 0px 0px;
+		}
 	}
 }
 
@@ -47,11 +53,14 @@
 		position: fixed;
 		left: 0px;
 
+		/deep/ * {
+			color: #202b35;
+		}
+
 		.page-title span {
 			font-size: 26px;
-			color: #202b35;
 			font-weight: 600;
-			margin-left: 45px;
+			margin-left: 10px;
 		}
 
 		.page-title small {
@@ -76,24 +85,26 @@
 			z-index: 1;	
 			text-align: center;	
 			cursor: pointer;
+			border-radius: 4px 4px 0px 0px;
+			border: 1px solid #f3f5f9;
+			border-bottom: none;
 
 			&.tab-selected {
-				border: 1px solid #dfdfdf;
+				border-color: #dfdfdf;
 				padding-bottom: 16px;
 				border-bottom: none;				
 			    background-color: #FFF;
 				color: #202b35;
 				cursor: default;
-				border-radius: 4px 4px 0px 0px;
 			}
 			&.tab-all {			
 				left: 15px;
 			}
 			&.tab-active {			
-				left: 120px;
+				left: 130px;
 			}
 			&.tab-archived {			
-				left: 225px;
+				left: 245px;
 			}
 		}
 	}

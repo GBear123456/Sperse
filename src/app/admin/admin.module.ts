@@ -31,6 +31,7 @@ import { ImpersonationService } from './users/impersonation.service';
 import { LanguagesComponent } from './languages/languages.component';
 import { LanguageTextsComponent } from './languages/language-texts.component';
 import { CreateOrEditLanguageModalComponent } from './languages/create-or-edit-language-modal.component';
+import { ClientsComponent } from './clients/clients.component';
 import { TenantsComponent } from './tenants/tenants.component'
 import { CreateTenantModalComponent } from './tenants/create-tenant-modal.component'
 import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component'
@@ -42,10 +43,13 @@ import { OrganizationUnitMembersComponent } from './organization-units/organizat
 import { CreateOrEditUnitModalComponent } from './organization-units/create-or-edit-unit-modal.component';
 import { TenantSettingsComponent } from './settings/tenant-settings.component'
 
+import { DxDataGridModule } from 'devextreme-angular';
+
 @NgModule({
     imports: [
         FormsModule,
         CommonModule,
+		DxDataGridModule,
 
         FileUploadModule,
         ModalModule.forRoot(),
@@ -75,6 +79,7 @@ import { TenantSettingsComponent } from './settings/tenant-settings.component'
         LanguagesComponent,
         LanguageTextsComponent,
         CreateOrEditLanguageModalComponent,
+		ClientsComponent,
         TenantsComponent,
         CreateTenantModalComponent,
         EditTenantModalComponent,

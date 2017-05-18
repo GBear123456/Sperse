@@ -926,7 +926,7 @@ export class ChatServiceProxy {
 }
 
 @Injectable()
-export class ClientServiceProxy {
+export class OdataServiceProxy {
     private http: Http = null; 
     private baseUrl: string = undefined; 
     protected jsonParseReviver: (key: string, value: any) => any = undefined;
@@ -939,8 +939,8 @@ export class ClientServiceProxy {
     /**
      * @return Success
      */
-    getClients(): Observable<ListResultDtoOfClientDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/Client/GetClients";
+    clients(): Observable<Client[]> {
+        let url_ = this.baseUrl + "/odata/Clients";
 
         const content_ = "";
         
@@ -952,27 +952,31 @@ export class ClientServiceProxy {
 				"Accept": "application/json; charset=UTF-8"
             })
         }).map((response) => {
-            return this.processGetClients(response);
+            return this.processClients(response);
         }).catch((response: any, caught: any) => {
             if (response instanceof Response) {
                 try {
-                    return Observable.of(this.processGetClients(response));
+                    return Observable.of(this.processClients(response));
                 } catch (e) {
-                    return <Observable<ListResultDtoOfClientDto>><any>Observable.throw(e);
+                    return <Observable<Client[]>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<ListResultDtoOfClientDto>><any>Observable.throw(response);
+                return <Observable<Client[]>><any>Observable.throw(response);
         });
     }
 
-    protected processGetClients(response: Response): ListResultDtoOfClientDto {
+    protected processClients(response: Response): Client[] {
         const responseText = response.text();
         const status = response.status; 
 
         if (status === 200) {
-            let result200: ListResultDtoOfClientDto = null;
+            let result200: Client[] = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ListResultDtoOfClientDto.fromJS(resultData200) : new ListResultDtoOfClientDto();
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(Client.fromJS(item));
+            }
             return result200;
         } else if (status !== 200 && status !== 204) {
             this.throwException("An unexpected server error occurred.", status, responseText);
@@ -2098,69 +2102,6 @@ export class LanguageServiceProxy {
 
         if (status === 200) {
             return null;
-        } else if (status !== 200 && status !== 204) {
-            this.throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return null;
-    }
-
-    protected throwException(message: string, status: number, response: string, result?: any): any {
-        if(result !== null && result !== undefined)
-            throw result;
-        else
-            throw new SwaggerException(message, status, response);
-    }
-}
-
-@Injectable()
-export class MemberServiceProxy {
-    private http: Http = null; 
-    private baseUrl: string = undefined; 
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http; 
-        this.baseUrl = baseUrl ? baseUrl : ""; 
-    }
-
-    /**
-     * @return Success
-     */
-    getMembers(): Observable<ListResultDtoOfMemberDto> {
-        let url_ = this.baseUrl + "/api/services/GetFunding/Member/GetMembers";
-
-        const content_ = "";
-        
-        return this.http.request(url_, {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-				"Accept": "application/json; charset=UTF-8"
-            })
-        }).map((response) => {
-            return this.processGetMembers(response);
-        }).catch((response: any, caught: any) => {
-            if (response instanceof Response) {
-                try {
-                    return Observable.of(this.processGetMembers(response));
-                } catch (e) {
-                    return <Observable<ListResultDtoOfMemberDto>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<ListResultDtoOfMemberDto>><any>Observable.throw(response);
-        });
-    }
-
-    protected processGetMembers(response: Response): ListResultDtoOfMemberDto {
-        const responseText = response.text();
-        const status = response.status; 
-
-        if (status === 200) {
-            let result200: ListResultDtoOfMemberDto = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ListResultDtoOfMemberDto.fromJS(resultData200) : new ListResultDtoOfMemberDto();
-            return result200;
         } else if (status !== 200 && status !== 204) {
             this.throwException("An unexpected server error occurred.", status, responseText);
         }
@@ -6467,57 +6408,22 @@ export class MarkAllUnreadMessagesOfUserAsReadInput {
     }
 }
 
-export class ListResultDtoOfClientDto { 
-    items: ClientDto[];
-    constructor(data?: any) {
-        if (data !== undefined) {
-            if (data["items"] && data["items"].constructor === Array) {
-                this.items = [];
-                for (let item of data["items"])
-                    this.items.push(ClientDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): ListResultDtoOfClientDto {
-        return new ListResultDtoOfClientDto(data);
-    }
-
-    toJS(data?: any) {
-        data = data === undefined ? {} : data;
-        if (this.items && this.items.constructor === Array) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJS());
-        }
-        return data; 
-    }
-
-    toJSON() {
-        return JSON.stringify(this.toJS());
-    }
-
-    clone() {
-        const json = this.toJSON();
-        return new ListResultDtoOfClientDto(JSON.parse(json));
-    }
-}
-
-export class ClientDto { 
-    tenantId: number; 
+export class Client { 
+    id: number; 
     name: string; 
+    tenantId: number; 
     isDeleted: boolean; 
     deleterUserId: number; 
     deletionTime: moment.Moment; 
     lastModificationTime: moment.Moment; 
     lastModifierUserId: number; 
     creationTime: moment.Moment; 
-    creatorUserId: number; 
-    id: number;
+    creatorUserId: number;
     constructor(data?: any) {
         if (data !== undefined) {
-            this.tenantId = data["tenantId"] !== undefined ? data["tenantId"] : null;
+            this.id = data["id"] !== undefined ? data["id"] : null;
             this.name = data["name"] !== undefined ? data["name"] : null;
+            this.tenantId = data["tenantId"] !== undefined ? data["tenantId"] : null;
             this.isDeleted = data["isDeleted"] !== undefined ? data["isDeleted"] : null;
             this.deleterUserId = data["deleterUserId"] !== undefined ? data["deleterUserId"] : null;
             this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : null;
@@ -6525,18 +6431,18 @@ export class ClientDto {
             this.lastModifierUserId = data["lastModifierUserId"] !== undefined ? data["lastModifierUserId"] : null;
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : null;
             this.creatorUserId = data["creatorUserId"] !== undefined ? data["creatorUserId"] : null;
-            this.id = data["id"] !== undefined ? data["id"] : null;
         }
     }
 
-    static fromJS(data: any): ClientDto {
-        return new ClientDto(data);
+    static fromJS(data: any): Client {
+        return new Client(data);
     }
 
     toJS(data?: any) {
         data = data === undefined ? {} : data;
-        data["tenantId"] = this.tenantId !== undefined ? this.tenantId : null;
+        data["id"] = this.id !== undefined ? this.id : null;
         data["name"] = this.name !== undefined ? this.name : null;
+        data["tenantId"] = this.tenantId !== undefined ? this.tenantId : null;
         data["isDeleted"] = this.isDeleted !== undefined ? this.isDeleted : null;
         data["deleterUserId"] = this.deleterUserId !== undefined ? this.deleterUserId : null;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : null;
@@ -6544,7 +6450,6 @@ export class ClientDto {
         data["lastModifierUserId"] = this.lastModifierUserId !== undefined ? this.lastModifierUserId : null;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : null;
         data["creatorUserId"] = this.creatorUserId !== undefined ? this.creatorUserId : null;
-        data["id"] = this.id !== undefined ? this.id : null;
         return data; 
     }
 
@@ -6554,7 +6459,7 @@ export class ClientDto {
 
     clone() {
         const json = this.toJSON();
-        return new ClientDto(JSON.parse(json));
+        return new Client(JSON.parse(json));
     }
 }
 
@@ -7960,97 +7865,6 @@ export class UpdateLanguageTextInput {
     clone() {
         const json = this.toJSON();
         return new UpdateLanguageTextInput(JSON.parse(json));
-    }
-}
-
-export class ListResultDtoOfMemberDto { 
-    items: MemberDto[];
-    constructor(data?: any) {
-        if (data !== undefined) {
-            if (data["items"] && data["items"].constructor === Array) {
-                this.items = [];
-                for (let item of data["items"])
-                    this.items.push(MemberDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): ListResultDtoOfMemberDto {
-        return new ListResultDtoOfMemberDto(data);
-    }
-
-    toJS(data?: any) {
-        data = data === undefined ? {} : data;
-        if (this.items && this.items.constructor === Array) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJS());
-        }
-        return data; 
-    }
-
-    toJSON() {
-        return JSON.stringify(this.toJS());
-    }
-
-    clone() {
-        const json = this.toJSON();
-        return new ListResultDtoOfMemberDto(JSON.parse(json));
-    }
-}
-
-export class MemberDto { 
-    tenantId: number; 
-    name: string; 
-    isDeleted: boolean; 
-    deleterUserId: number; 
-    deletionTime: moment.Moment; 
-    lastModificationTime: moment.Moment; 
-    lastModifierUserId: number; 
-    creationTime: moment.Moment; 
-    creatorUserId: number; 
-    id: number;
-    constructor(data?: any) {
-        if (data !== undefined) {
-            this.tenantId = data["tenantId"] !== undefined ? data["tenantId"] : null;
-            this.name = data["name"] !== undefined ? data["name"] : null;
-            this.isDeleted = data["isDeleted"] !== undefined ? data["isDeleted"] : null;
-            this.deleterUserId = data["deleterUserId"] !== undefined ? data["deleterUserId"] : null;
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : null;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : null;
-            this.lastModifierUserId = data["lastModifierUserId"] !== undefined ? data["lastModifierUserId"] : null;
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : null;
-            this.creatorUserId = data["creatorUserId"] !== undefined ? data["creatorUserId"] : null;
-            this.id = data["id"] !== undefined ? data["id"] : null;
-        }
-    }
-
-    static fromJS(data: any): MemberDto {
-        return new MemberDto(data);
-    }
-
-    toJS(data?: any) {
-        data = data === undefined ? {} : data;
-        data["tenantId"] = this.tenantId !== undefined ? this.tenantId : null;
-        data["name"] = this.name !== undefined ? this.name : null;
-        data["isDeleted"] = this.isDeleted !== undefined ? this.isDeleted : null;
-        data["deleterUserId"] = this.deleterUserId !== undefined ? this.deleterUserId : null;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : null;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : null;
-        data["lastModifierUserId"] = this.lastModifierUserId !== undefined ? this.lastModifierUserId : null;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : null;
-        data["creatorUserId"] = this.creatorUserId !== undefined ? this.creatorUserId : null;
-        data["id"] = this.id !== undefined ? this.id : null;
-        return data; 
-    }
-
-    toJSON() {
-        return JSON.stringify(this.toJS());
-    }
-
-    clone() {
-        const json = this.toJSON();
-        return new MemberDto(JSON.parse(json));
     }
 }
 

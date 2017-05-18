@@ -1,19 +1,19 @@
-﻿<div class="sidebar-filter-links">
+﻿<div class="sidebar-filter-links" *ngIf="filters">
 	<b>{{l('SideBarFilterHeader')}}</b>
 	<div class="filter-link">
 	    <ng-template ngFor let-filter [ngForOf]="filters" let-i="index">
-			<a href="javascript:;" (click)="showFilterDialog($event, filter)">{{l('FilterBy' + capitalize(filter) + 'Header')}}</a>
+			<a href="javascript:;" (click)="showFilterDialog($event, filter.cnt)">{{l('FilterBy' + (filter.cpt || capitalize(filter.cnt)) + 'Header')}}</a>
 		</ng-template>
 	</div>
 </div>
 
-<div class="sidebar-filters" *ngIf="displayFilter">
+<div class="sidebar-filters" *ngIf="activeFilter">
 	<div class="sidebar-filter-head">
-		{{l('SideBarFilterHeader')}} {{l('FilterBy' + capitalize(displayFilter) + 'Header')}} 
+		{{l('SideBarFilterHeader')}} {{l('FilterBy' + capitalize(activeFilter) + 'Header')}} 
 	</div>
 
-	<filter-status-dialog
-		*ngIf="displayFilter == 'status'"
-		(onApply)="filterBy($event, 'status')"
-	></filter-status-dialog>
+	<filter-status 
+		*ngIf="activeFilter == 'status'"
+		(onApply)="filterBy($event)"
+	></filter-status>
 </div>
