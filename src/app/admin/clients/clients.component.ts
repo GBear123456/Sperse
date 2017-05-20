@@ -6,6 +6,8 @@ import { /* ClientServiceProxy, */ CommonLookupServiceProxy } from '@shared/serv
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
+import { DxDataGridComponent } from 'devextreme-angular';
+
 import 'devextreme/data/odata/store';
 
 import * as moment from "moment";
@@ -16,10 +18,8 @@ import * as moment from "moment";
     animations: [appModuleAnimation()]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, AfterViewInit {
-	dataSource: any;
-	tabSelected: Number = 0;
-	filterTabs: String[] = ['all', 'active', 'archived'];
-
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+	
     constructor(
         injector: Injector,
         //private _clientService: ClientServiceProxy,
@@ -32,23 +32,39 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 		this.dataSource = {
             store: {
                 type: 'odata',
-                url: ''
+                url: this.getODataURL('Clients')
             },
             select: [
-                'Name',
-                'Status',
-                'Amount',
-                'Percent',
-                'Creation'
-            ],
-            filter: []
+			//"id": 0,
+			//"tenantId": 0,
+			//"deleterUserId": 0,
+    		//"lastModifierUserId": 0,
+		    //"creatorUserId": 0
+				'Name',
+		    	'IsDeleted',
+				'DeletionTime',
+				'LastModificationTime',
+				'CreationTime'
+            ] //,
+            //filter: []
         }
     }
 
     ngOnInit(): void {
+		this.toolbarItems = [{
+    		widget: 'dxButton',
+	        options: {
+    	    	type: 'back',
+        	    text: 'Back'
+	        },
+    	    location: 'before'
+	    }];
+
+		this.filterTabs = [
+			'all', 'active', 'archived'
+		];
     }
 
     ngAfterViewInit(): void {
-        let self = this;
     }
 }
