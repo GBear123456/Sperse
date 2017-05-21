@@ -14,7 +14,6 @@ export abstract class AppComponentBase {
 
 	dataSource: any;
 	tabIndex: Number = 0;
-	toolbarItems: Object[] = [];
 	filterTabs: String[] = [];
     localization: LocalizationService;
     permission: PermissionCheckerService;

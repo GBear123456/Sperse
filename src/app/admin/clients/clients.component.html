@@ -21,15 +21,15 @@
         <div class="portlet-body">
             <div>
                 <div id="ClientsTable">
-
-                    <dx-toolbar [items]="toolbarItems"></dx-toolbar>
-
 					<dx-data-grid id="gridContainer" 
 						[dataSource]="dataSource" 
 						[allowColumnReordering]="true"  
 						[columnAutoWidth]="true" 
 						[allowColumnResizing]="true"
-						[hoverStateEnabled]="true">
+						[hoverStateEnabled]="true"
+						(onToolbarPreparing)="onToolbarPrepare($event)">
+
+						<dxo-column-chooser [enabled]="true"></dxo-column-chooser>
 
 					    <dxi-column dataField="Name" [width]="250"></dxi-column>
 					    <dxi-column dataField="IsDeleted" caption="{{l('Deleted')}}" dataType="number" format="boolean"></dxi-column>

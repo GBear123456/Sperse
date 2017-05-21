@@ -293,6 +293,42 @@ br {
 /* devExpress common styles */
 
 #gridContainer {
-	height: calc(~'100vh - 198px');
+	height: calc(~'100vh - 160px');
 	width: 100%;
+}
+
+.dx-datagrid-header-panel {
+	.dx-toolbar {
+		height: 100px;
+
+		.dx-toolbar-before {
+		    top: 60px;
+		    position: absolute;
+		}
+
+		.dx-toolbar-center {
+			float: left!important;
+			margin: 15px!important;
+		}
+
+		.dx-toolbar-after {
+			margin: 15px!important;
+		}
+
+		.dx-datagrid-group-panel {
+			margin: 5px 0px 0px 10px;
+		}
+
+		.dx-button {
+			height: 37px;
+
+			.dx-button-content {
+				padding: 8px 15px 8px 15px;
+			}
+	
+			.dx-button-text {
+				cursor: pointer;
+			}			
+		}
+	}
 }

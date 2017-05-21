@@ -7,6 +7,7 @@ import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import { DxDataGridComponent } from 'devextreme-angular';
+import query from 'devextreme/data/query';
 
 import 'devextreme/data/odata/store';
 
@@ -50,16 +51,55 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         }
     }
 
-    ngOnInit(): void {
-		this.toolbarItems = [{
-    		widget: 'dxButton',
-	        options: {
-    	    	type: 'back',
-        	    text: 'Back'
-	        },
-    	    location: 'before'
-	    }];
+	onToolbarPrepare(event) {
+		event.toolbarOptions.items.unshift({
+                location: 'center',
+                widget: 'dxButton',
+                options: {
+                    hint: 'Back',
+                    icon: 'back',
+                    onClick: Function
+                }
+            }, {
+                location: 'center',
+                widget: 'dxButton',
+                options: {
+                    text: 'Assign',
+                    icon: 'fa fa-user-o',
+                    onClick: Function()
+                }
+            },{
+                location: 'center',
+                widget: 'dxButton',
+                options: {
+                    text: 'Status',
+                    icon: 'fa fa-flag-o',
+                    onClick: Function()
+                }
+            },{
+                location: 'center',
+                widget: 'dxButton',
+                options: {
+                    text: 'Delete',
+                    icon: 'fa fa-trash-o',
+                    onClick: Function()
+                }
+            },{
+                location: 'after',
+                widget: 'dxButton',
+                options: {
+					hint: 'Refresh',
+                    icon: 'refresh',
+                    onClick: this.refreshDataGrid.bind(this)
+                }
+            });
+	}
 
+    refreshDataGrid() {
+        this.dataGrid.instance.refresh();
+    }
+
+    ngOnInit(): void {
 		this.filterTabs = [
 			'all', 'active', 'archived'
 		];
