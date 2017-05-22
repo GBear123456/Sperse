@@ -31,11 +31,13 @@
 
 						<dxo-column-chooser [enabled]="true"></dxo-column-chooser>
 
-					    <dxi-column dataField="Name" [width]="250"></dxi-column>
-					    <dxi-column dataField="IsDeleted" caption="{{l('Deleted')}}" dataType="number" format="boolean"></dxi-column>
+					    <dxi-column [width]="30" [fixed]="true" [fixedPosition]="'left'"></dxi-column>
+					    <dxi-column dataField="Name"></dxi-column>
+					    <dxi-column dataField="IsDeleted" caption="{{l('Deleted')}}" alignment="left"></dxi-column>
 						<dxi-column dataField="CreationTime" caption="{{l('CreationDate')}}" dataType="date" format="yyyy'-'MM'-'dd'T'HH':'mm':'ss"></dxi-column>
 						<dxi-column dataField="LastModificationTime" caption="{{l('ModificationDate')}}" dataType="datetime" format="yyyy'-'MM'-'dd'T'HH':'mm':'ss"></dxi-column>
 						<dxi-column dataField="DeletionTime" caption="{{l('DeletionDate')}}" dataType="datetime" format="yyyy'-'MM'-'dd'T'HH':'mm':'ss"></dxi-column>
+					    <dxi-column [width]="30" [fixed]="true" [fixedPosition]="'right'"></dxi-column>
 
 						<dxo-sorting mode="multiple"></dxo-sorting>
 						<dxo-paging [pageSize]="5"></dxo-paging>

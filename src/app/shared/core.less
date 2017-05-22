@@ -293,42 +293,114 @@ br {
 /* devExpress common styles */
 
 #gridContainer {
-	height: calc(~'100vh - 160px');
+	height: calc(~'100vh - 162px');
 	width: 100%;
-}
 
-.dx-datagrid-header-panel {
-	.dx-toolbar {
-		height: 100px;
+	@font-size: 16px;
 
-		.dx-toolbar-before {
-		    top: 60px;
-		    position: absolute;
+	.dx-datagrid-pager {
+		height: 60px;
+		border-top: 1px solid #ddd;
+
+		/deep/ * {
+			font-size: @font-size;
+			color: #202b35;
+			font-weight: 600;
 		}
 
-		.dx-toolbar-center {
-			float: left!important;
-			margin: 15px!important;
+		.dx-selection {
+			background-color: #33e504;
+			color: #FFF;
 		}
 
-		.dx-toolbar-after {
-			margin: 15px!important;
-		}
+		.dx-pages {
+			float: left;
+			padding-left: 20px;
+			width: calc(~'100% - 130px');
+            text-align: center;
 
-		.dx-datagrid-group-panel {
-			margin: 5px 0px 0px 10px;
-		}
-
-		.dx-button {
-			height: 37px;
-
-			.dx-button-content {
-				padding: 8px 15px 8px 15px;
+			.dx-info {
+				float: left;					
+				margin-top: 10px;
+				opacity: 1;
 			}
+		}
+		.dx-page-sizes {
+			float: right;
+			padding-right: 10px;
+		}
+	}
+
+	.dx-datagrid-headers {
+		.dx-datagrid-content {
+			border-bottom: 1px solid #ddd
+		}
+
+		.dx-column-lines {
+			/deep/ * {
+				font-size: @font-size;
+				color: #202b35;
+				font-weight: 600;
+			}
+
+			td {
+				height: 45px;
+				border: 0px;
+				vertical-align: middle;
+				text-align: left;
+			}
+		}
+	}
+
+	.dx-datagrid-rowsview {		
+		.dx-column-lines {
+			td {
+				height: 45px;
+    			border-left: 0px;
+				border-right: 0px;
+				vertical-align: middle;
+				border-bottom: 1px solid #ddd;
+			}
+
+			&.dx-freespace-row td, td:last-child, td:first-child {
+				border-bottom: 0px;
+			}
+		}
+	}
+
+	.dx-datagrid-header-panel {
+		.dx-toolbar {
+			height: 100px;
+
+			.dx-toolbar-before {
+			    top: 60px;
+			    position: absolute;
+			}
+		
+			.dx-toolbar-center {
+				float: left!important;
+				margin: 15px!important;
+			}
+
+			.dx-toolbar-after {
+				margin: 15px!important;
+			}
+
+			.dx-datagrid-group-panel {
+				margin: 5px 0px 0px 10px;
+			}
+
+			.dx-button {
+				height: 37px;
+
+				.dx-button-content {
+					padding: 8px 15px 8px 15px;
+				}
 	
-			.dx-button-text {
-				cursor: pointer;
-			}			
+				.dx-button-text {
+					cursor: pointer;
+				}			
+			}
 		}
 	}
 }
