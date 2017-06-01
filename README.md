@@ -33,12 +33,12 @@ UI uses AspNet Zero (ASP.NET Core version) as backend. So, you should first run 
 * Set ``.Web.Host`` as startup project.
 * Go to the root folder of EntityFramework project and run UpdateDB.cmd.
 * Run the application. You will see the Swagger UI (https://www.aspnetzero.com/Documents/Development-Guide-Core#swagger-ui).
-  http://localhost:22742
+  http://localhost:7000
 
 Once server side is ready, you can run the Angular2 application:
 
 * Go to root folder of the Angular2 project (the folder contains package.json file) and run ``yarn`` from command line one time to restore all packages (or RestorePackages.cmd).
 * Run ``npm start`` from command line to run angular-cli server. Wait webpack to finish it's work.
-* Visit ``http://localhost:4200`` in your browser.
+* Visit ``http://localhost:7200`` in your browser.
   User: admin
   Password: Qwertyuiop1

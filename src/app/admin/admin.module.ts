@@ -43,13 +43,16 @@ import { OrganizationUnitMembersComponent } from './organization-units/organizat
 import { CreateOrEditUnitModalComponent } from './organization-units/create-or-edit-unit-modal.component';
 import { TenantSettingsComponent } from './settings/tenant-settings.component'
 
-import { DxDataGridModule } from 'devextreme-angular';
+import { DxDataGridModule, DxToolbarModule, DxTemplateModule } from 'devextreme-angular';
 
 @NgModule({
     imports: [
         FormsModule,
         CommonModule,
+
 		DxDataGridModule,
+		DxToolbarModule,
+		DxTemplateModule,
 
         FileUploadModule,
         ModalModule.forRoot(),

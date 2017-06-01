@@ -6,6 +6,9 @@ import { /* ClientServiceProxy, */ CommonLookupServiceProxy } from '@shared/serv
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
+import { DxDataGridComponent } from 'devextreme-angular';
+import query from 'devextreme/data/query';
+
 import 'devextreme/data/odata/store';
 
 import * as moment from "moment";
@@ -16,10 +19,8 @@ import * as moment from "moment";
     animations: [appModuleAnimation()]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, AfterViewInit {
-	dataSource: any;
-	tabSelected: Number = 0;
-	filterTabs: String[] = ['all', 'active', 'archived'];
-
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+	
     constructor(
         injector: Injector,
         //private _clientService: ClientServiceProxy,
@@ -32,23 +33,78 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 		this.dataSource = {
             store: {
                 type: 'odata',
-                url: ''
+                url: this.getODataURL('Clients')
             },
             select: [
-                'Name',
-                'Status',
-                'Amount',
-                'Percent',
-                'Creation'
-            ],
-            filter: []
+			//"id": 0,
+			//"tenantId": 0,
+			//"deleterUserId": 0,
+    		//"lastModifierUserId": 0,
+		    //"creatorUserId": 0
+				'Name',
+		    	'IsDeleted',
+				'DeletionTime',
+				'LastModificationTime',
+				'CreationTime'
+            ] //,
+            //filter: []
         }
     }
 
+	onToolbarPrepare(event) {
+		event.toolbarOptions.items.unshift({
+                location: 'center',
+                widget: 'dxButton',
+                options: {
+                    hint: 'Back',
+                    icon: 'back',
+                    onClick: Function
+                }
+            }, {
+                location: 'center',
+                widget: 'dxButton',
+                options: {
+                    text: 'Assign',
+                    icon: 'fa fa-user-o',
+                    onClick: Function()
+                }
+            },{
+                location: 'center',
+                widget: 'dxButton',
+                options: {
+                    text: 'Status',
+                    icon: 'fa fa-flag-o',
+                    onClick: Function()
+                }
+            },{
+                location: 'center',
+                widget: 'dxButton',
+                options: {
+                    text: 'Delete',
+                    icon: 'fa fa-trash-o',
+                    onClick: Function()
+                }
+            },{
+                location: 'after',
+                widget: 'dxButton',
+                options: {
+					hint: 'Refresh',
+                    icon: 'refresh',
+                    onClick: this.refreshDataGrid.bind(this)
+                }
+            });
+	}
+
+    refreshDataGrid() {
+        this.dataGrid.instance.refresh();
+    }
+
     ngOnInit(): void {
+		this.filterTabs = [
+			'all', 'active', 'archived'
+		];
     }
 
     ngAfterViewInit(): void {
-        let self = this;
     }
 }

@@ -1,1 +1,39 @@
-﻿
+﻿:host {
+	/deep/ .dx-datagrid-header-panel {
+		.dx-toolbar {
+			.dx-toolbar-button {
+				padding: 0px;
+			}
+
+			.dx-button[aria-label="Assign"] {
+				margin-left: 40px;
+				border-right: 0px;
+				border-top-right-radius: 0px;
+				border-bottom-right-radius: 0px;
+			}
+
+			.dx-button[aria-label="Status"] {
+				border-right: 0px;
+				border-radius: 0px;
+			}
+
+			.dx-button[aria-label="Delete"] {
+				margin-right: 40px;
+				border-top-left-radius: 0px;
+				border-bottom-left-radius: 0px;
+			}
+
+			.dx-button[aria-label="refresh"] {
+				border-top-right-radius: 0px;
+				border-bottom-right-radius: 0px;
+			}
+
+			.dx-button[aria-label="Column Chooser"] {
+				border-left: 0px;
+				border-top-left-radius: 0px;
+				border-bottom-left-radius: 0px;
+			}
+
+		}
+	}
+}

@@ -10,9 +10,11 @@ import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.ser
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
 export abstract class AppComponentBase {
-
     localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
 
+	dataSource: any;
+	tabIndex: Number = 0;
+	filterTabs: String[] = [];
     localization: LocalizationService;
     permission: PermissionCheckerService;
     feature: FeatureCheckerService;
@@ -49,6 +51,10 @@ export abstract class AppComponentBase {
     }
 
 	capitalize = require('underscore.string/capitalize');
+
+	getODataURL = function(uri: String) {
+		return AppConsts.remoteServiceBaseUrl + '/odata/' + uri + '?$count=true';
+	}
 
     isGranted(permissionName: string): boolean {
         return this.permission.isGranted(permissionName);
