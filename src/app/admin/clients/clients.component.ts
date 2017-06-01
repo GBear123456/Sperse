@@ -1,6 +1,8 @@
-﻿import { Component, OnInit, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, AfterViewInit, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
+
+import { FiltersService } from '@shared/filters/filters.service';
 
 import { /* ClientServiceProxy, */ CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
@@ -23,15 +25,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 	
     constructor(
         injector: Injector,
+		private _filtersService: FiltersService,
         //private _clientService: ClientServiceProxy,
         private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy,
-        private _impersonationService: ImpersonationService
+        private _impersonationService: ImpersonationService,
+		
     ) {
         super(injector);
 
 		this.dataSource = {
             store: {
+				version: 4,
                 type: 'odata',
                 url: this.getODataURL('Clients')
             },
@@ -103,6 +108,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 		this.filterTabs = [
 			'all', 'active', 'archived'
 		];
+
+		this._filtersService.setup([
+			{cnt: 'status'},
+			{cnt: 'employee'}, 
+			{cnt: 'date', cpt: 'LeadDate', fld: 'lead_date'},
+			{cnt: 'partner'}
+		]);
     }
 
     ngAfterViewInit(): void {

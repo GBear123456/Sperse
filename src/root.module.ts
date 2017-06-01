@@ -16,6 +16,8 @@ import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
 import { RootComponent,AppRootComponent } from './root.components';
 import { AppPreBootstrap } from './AppPreBootstrap';
 
+import { FiltersModule } from '@shared/filters/filters.module';
+
 export function appInitializerFactory(injector: Injector) {
 	var process = (method) => {
 		return (result) => {
@@ -48,7 +50,8 @@ export function getRemoteServiceBaseUrl(): string {
         AbpModule,
         ServiceProxyModule,
 
-        RootRoutingModule
+        RootRoutingModule,
+		FiltersModule.forRoot()
     ],
     declarations: [
         RootComponent, AppRootComponent
@@ -65,5 +68,5 @@ export function getRemoteServiceBaseUrl(): string {
     ],
     bootstrap: [RootComponent]
 })
-
+            
 export class RootModule { }

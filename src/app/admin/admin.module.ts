@@ -8,6 +8,7 @@ import { FileUploadModule } from '@node_modules/ng2-file-upload';
 import { AdminRoutingModule } from './admin-routing.module'
 import { UtilsModule } from '@shared/utils/utils.module'
 import { AppCommonModule } from '@app/shared/common/app-common.module'
+import { FiltersModule } from '@shared/filters/filters.module';	
 
 import { UsersComponent } from './users/users.component'
 import { PermissionComboComponent } from './shared/permission-combo.component';
@@ -41,7 +42,7 @@ import { OrganizationUnitsComponent } from './organization-units/organization-un
 import { OrganizationTreeComponent } from './organization-units/organization-tree.component';
 import { OrganizationUnitMembersComponent } from './organization-units/organization-unit-members.component';
 import { CreateOrEditUnitModalComponent } from './organization-units/create-or-edit-unit-modal.component';
-import { TenantSettingsComponent } from './settings/tenant-settings.component'
+import { TenantSettingsComponent } from './settings/tenant-settings.component';
 
 import { DxDataGridModule, DxToolbarModule, DxTemplateModule } from 'devextreme-angular';
 
@@ -61,7 +62,8 @@ import { DxDataGridModule, DxToolbarModule, DxTemplateModule } from 'devextreme-
 
         AdminRoutingModule,
         UtilsModule,
-        AppCommonModule
+        AppCommonModule,
+		FiltersModule
     ],
     declarations: [
         UsersComponent,

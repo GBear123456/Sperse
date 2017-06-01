@@ -9,7 +9,7 @@ import * as _ from 'lodash';
     selector: 'notificationSettingsModal',
     templateUrl: './notification-settings-modal.component.html'
 })
-export class NotificationSettingsModalCompoent extends AppComponentBase {
+export class NotificationSettingsModalComponent extends AppComponentBase {
 
     @ViewChild('modal') modal: ModalDirective;
 
