@@ -1,4 +1,4 @@
 ﻿{
-  "remoteServiceBaseUrl": "http://localhost:22742",
-  "appBaseUrl": "http://localhost:4200"
+  "remoteServiceBaseUrl": "http://{TENANCY_NAME}.localhost:7000",
+  "appBaseUrl": "http://{TENANCY_NAME}.localhost:7200"
 }
