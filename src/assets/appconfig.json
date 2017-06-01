@@ -1,4 +1,4 @@
 ﻿{
-  "remoteServiceBaseUrl": "http://sperseplatformwebhost.azurewebsites.net",
-  "appBaseUrl": "http://spersecrmangularui.azurewebsites.net"
+  "remoteServiceBaseUrl": "http://{TENANCY_NAME}.sperseplatformwebhost.konopelskyy.com",
+  "appBaseUrl": "http://{TENANCY_NAME}.spersecrmangularui.konopelskyy.com"
 }
