@@ -41,7 +41,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             store: {
                 type: 'odata',
                 url: this.getODataURL('Customers'),
-                version: 4
+                version: 4,
+                beforeSend: function (request) {
+                    request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
+                    request.headers["Abp.TenantId"] = abp.multiTenancy.getTenantIdCookie();
+                }
             },
             select: [
                 'Name',
