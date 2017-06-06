@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+﻿import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { UsersComponent } from './users/users.component';
 import { RolesComponent } from './roles/roles.component';
@@ -19,7 +19,7 @@ import { OrganizationUnitsComponent } from './organization-units/organization-un
             {
                 path: '',
                 children: [
-                    { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.Clients' } },
+                    { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.Customers' } },
                     { path: 'users', component: UsersComponent, data: { permission: 'Pages.Administration.Users' } },
                     { path: 'roles', component: RolesComponent, data: { permission: 'Pages.Administration.Roles' } },
                     { path: 'auditLogs', component: AuditLogsComponent, data: { permission: 'Pages.Administration.AuditLogs' } },

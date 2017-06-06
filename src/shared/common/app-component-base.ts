@@ -53,7 +53,7 @@ export abstract class AppComponentBase {
 	capitalize = require('underscore.string/capitalize');
 
 	getODataURL = function(uri: String) {
-		return AppConsts.remoteServiceBaseUrl + '/odata/' + uri + '?$count=true';
+		return AppConsts.remoteServiceBaseUrl + '/odata/' + uri;
 	}
 
     isGranted(permissionName: string): boolean {

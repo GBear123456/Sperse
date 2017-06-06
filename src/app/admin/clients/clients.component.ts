@@ -1,4 +1,5 @@
 ﻿import { Component, OnInit, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+import { AppConsts } from '@shared/AppConsts';
 import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
@@ -30,24 +31,23 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     ) {
         super(injector);
 
+        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+
 		this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL('Clients')
+                url: this.getODataURL('Customers'),
+                version: 4
             },
             select: [
-			//"id": 0,
-			//"tenantId": 0,
-			//"deleterUserId": 0,
-    		//"lastModifierUserId": 0,
-		    //"creatorUserId": 0
-				'Name',
-		    	'IsDeleted',
-				'DeletionTime',
-				'LastModificationTime',
-				'CreationTime'
-            ] //,
-            //filter: []
+                'Name',
+                'PrimaryContact.FullName',
+                //'PrimaryContact.PrimaryAddress.State.Name',
+                //'PrimaryContact.PrimaryEmail.EmailAddress',
+                //'PrimaryContact.PrimaryPhone.PhoneNumber',
+                'Status.Name',
+                'CreationTime'
+            ]
         }
     }
 
