@@ -1,4 +1,4 @@
 ﻿{
-  "remoteServiceBaseUrl": "http://{TENANCY_NAME}.sperseplatformwebhost.konopelskyy.com",
-  "appBaseUrl": "http://{TENANCY_NAME}.spersecrmangularui.konopelskyy.com"
+  "remoteServiceBaseUrl": "http://{TENANCY_NAME}.apitest.sperse.com",
+  "appBaseUrl": "http://{TENANCY_NAME}.crmtest.sperse.com"
 }
