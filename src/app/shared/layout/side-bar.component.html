@@ -1,4 +1,4 @@
-﻿<div class="sidebar-filter-links" *ngIf="filters">
+﻿<div class="sidebar-filter-links" *ngIf="filters.length">
 	<b>{{l('SideBarFilterHeader')}}</b>
 	<div class="filter-link">
 	    <ng-template ngFor let-filter [ngForOf]="filters" let-i="index">

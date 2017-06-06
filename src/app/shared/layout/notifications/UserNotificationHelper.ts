@@ -1,7 +1,7 @@
 ﻿import { Injectable, Injector } from '@angular/core';
 import { NotificationServiceProxy, EntityDtoOfGuid } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { NotificationSettingsModalCompoent } from './notification-settings-modal.component';
+import { NotificationSettingsModalComponent } from './notification-settings-modal.component';
 
 import * as moment from 'moment';
 
@@ -19,7 +19,7 @@ export interface IFormattedUserNotification {
 @Injectable()
 export class UserNotificationHelper extends AppComponentBase {
 
-    settingsModal: NotificationSettingsModalCompoent;
+    settingsModal: NotificationSettingsModalComponent;
 
     constructor(
         injector: Injector,

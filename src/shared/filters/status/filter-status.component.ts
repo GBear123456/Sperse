@@ -2,8 +2,8 @@ import { Component, Injector, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
-    templateUrl: './status.component.html',
-	styleUrls: ['./status.component.less'],
+    templateUrl: './filter-status.component.html',
+	styleUrls: ['./filter-status.component.less'],
     selector: 'filter-status'
 })
 export class FilterStatusComponent extends AppComponentBase {

@@ -1,30 +1,35 @@
 import { Component, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FilterMap } from './filters/filter-map';
-import { Router, NavigationEnd  } from '@angular/router';
+import { FiltersService } from '@shared/filters/filters.service';
+import { Router, NavigationStart  } from '@angular/router';
 
 @Component({
     templateUrl: './side-bar.component.html',
 	styleUrls: ['./side-bar.component.less'],
     selector: 'side-bar',
 	host: {
-    	'(document:click)': "showFilterDialog($event)",
+    	'(document:click)': "showFilterDialog($event)"
   	},
 })
 export class SideBarComponent extends AppComponentBase {
 	filters: Object[] = [];
 	activeFilter: String = '';
-	
+
     constructor(
 		private _eref: ElementRef, 
-		injector: Injector, 
+		private _filtersService: FiltersService,
+		injector: Injector,
 		router: Router
 	) {
         super(injector);
 
+		_filtersService.update(filters => {
+			this.filters = filters;
+		});
+
 	    router.events.subscribe((event) => {
-			if (event instanceof NavigationEnd)
-				this.filters = FilterMap.resolve(event.url);
+			if (event instanceof NavigationStart)
+				this.filters = [];
 		});
     }
 
@@ -36,7 +41,8 @@ export class SideBarComponent extends AppComponentBase {
 			this.activeFilter = type;	
 	}
 
+/*
 	filterBy(event) {
-		//type = event.target.tagName.split('-').pop();
 	}
+*/
 }
