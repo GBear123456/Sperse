@@ -12,7 +12,8 @@
     };
 
     static readonly localization = {
-        defaultLocalizationSourceName: 'Platform'
+        defaultLocalizationSourceName: 'Platform',
+        CRMLocalizationSourceName: 'CRM'
     };
 
     static readonly authorization = {

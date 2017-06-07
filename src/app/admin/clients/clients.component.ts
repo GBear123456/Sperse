@@ -1,6 +1,9 @@
-﻿import { Component, OnInit, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, AfterViewInit, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
+import { AppConsts } from '@shared/AppConsts';
 import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
+
+import { FiltersService } from '@shared/filters/filters.service';
 
 import { /* ClientServiceProxy, */ CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
@@ -23,31 +26,36 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 	
     constructor(
         injector: Injector,
+		private _filtersService: FiltersService,
         //private _clientService: ClientServiceProxy,
         private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy,
-        private _impersonationService: ImpersonationService
+        private _impersonationService: ImpersonationService,
+		
     ) {
         super(injector);
+
+        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
 		this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL('Clients')
+                url: this.getODataURL('Customers'),
+                version: 4,
+                beforeSend: function (request) {
+                    request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
+                    request.headers["Abp.TenantId"] = abp.multiTenancy.getTenantIdCookie();
+                }
             },
             select: [
-			//"id": 0,
-			//"tenantId": 0,
-			//"deleterUserId": 0,
-    		//"lastModifierUserId": 0,
-		    //"creatorUserId": 0
-				'Name',
-		    	'IsDeleted',
-				'DeletionTime',
-				'LastModificationTime',
-				'CreationTime'
-            ] //,
-            //filter: []
+                'Name',
+                'PrimaryContact.FullName',
+                'PrimaryContact.PrimaryAddress.State.Name',
+                'PrimaryContact.PrimaryEmail.EmailAddress',
+                'PrimaryContact.PrimaryPhone.PhoneNumber',
+                'Status.Name',
+                'CreationTime'
+            ]
         }
     }
 
@@ -103,6 +111,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 		this.filterTabs = [
 			'all', 'active', 'archived'
 		];
+
+		this._filtersService.setup([
+			{cnt: 'status'},
+			{cnt: 'employee'}, 
+			{cnt: 'date', cpt: 'LeadDate', fld: 'lead_date'},
+			{cnt: 'partner'}
+		]);
     }
 
     ngAfterViewInit(): void {

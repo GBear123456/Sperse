@@ -5,7 +5,7 @@
                 <div class="page-title">
                     <h1>
 						<i class="icon-globe"></i>
-                        <span>{{l("Clients")}}</span>
+                        <span>{{l("Customers")}}</span>
                     </h1>
                 </div>
             </div>
@@ -32,12 +32,13 @@
 						<dxo-column-chooser [enabled]="true"></dxo-column-chooser>
 
 					    <dxi-column [width]="30" [fixed]="true" [fixedPosition]="'left'"></dxi-column>
-					    <dxi-column dataField="Name"></dxi-column>
-					    <dxi-column dataField="IsDeleted" caption="{{l('Deleted')}}" alignment="left"></dxi-column>
-						<dxi-column dataField="CreationTime" caption="{{l('CreationDate')}}" dataType="date" format="yyyy'-'MM'-'dd'T'HH':'mm':'ss"></dxi-column>
-						<dxi-column dataField="LastModificationTime" caption="{{l('ModificationDate')}}" dataType="datetime" format="yyyy'-'MM'-'dd'T'HH':'mm':'ss"></dxi-column>
-						<dxi-column dataField="DeletionTime" caption="{{l('DeletionDate')}}" dataType="datetime" format="yyyy'-'MM'-'dd'T'HH':'mm':'ss"></dxi-column>
-					    <dxi-column [width]="30" [fixed]="true" [fixedPosition]="'right'"></dxi-column>
+					    <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
+                        <dxi-column dataField="PrimaryContact.FullName" caption="{{l('Contact.FullName')}}"></dxi-column>
+                        <dxi-column dataField="PrimaryContact.PrimaryAddress.State.Name" caption="{{l('Contact.State')}}"></dxi-column>
+                        <dxi-column dataField="PrimaryContact.PrimaryEmail.EmailAddress" caption="{{l('Contact.Email')}}"></dxi-column>
+                        <dxi-column dataField="PrimaryContact.PrimaryPhone.PhoneNumber" caption="{{l('Contact.Phone')}}"></dxi-column>
+                        <dxi-column dataField="Status.Name" caption="{{l('Customer.Status')}}"></dxi-column>
+                        <dxi-column dataField="CreationTime" caption="{{l('Customer.CreationTime')}}" dataType="date" format="yyyy'-'MM'-'dd'"></dxi-column>
 
 						<dxo-sorting mode="multiple"></dxo-sorting>
 						<dxo-paging [pageSize]="5"></dxo-paging>

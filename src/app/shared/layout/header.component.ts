@@ -19,7 +19,7 @@ import { MySettingsModalComponent } from './profile/my-settings-modal.component'
 import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
-import { NotificationSettingsModalCompoent } from '@app/shared/layout/notifications/notification-settings-modal.component';
+import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -30,7 +30,7 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class HeaderComponent extends AppComponentBase implements OnInit {
 
-    @ViewChild('notificationSettingsModal') notificationSettingsModal: NotificationSettingsModalCompoent;
+    @ViewChild('notificationSettingsModal') notificationSettingsModal: NotificationSettingsModalComponent;
 
     @ViewChild('loginAttemptsModal') loginAttemptsModal: LoginAttemptsModalComponent;
     @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;

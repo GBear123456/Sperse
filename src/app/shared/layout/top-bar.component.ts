@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+﻿import { Component, Injector } from '@angular/core';
 import { PanelMenu } from './panel-menu';
 import { PanelMenuItem } from './panel-menu-item';
 
@@ -18,7 +18,7 @@ export class TopBarComponent extends AppComponentBase {
     
     menu: PanelMenu = new PanelMenu("MainMenu", "MainMenu", [
         new PanelMenuItem("Dashboard", "Pages.Tenant.Dashboard", "icon-home", "/app/main/dashboard"),
-        new PanelMenuItem("Clients", "Pages.Clients", "icon-globe", "/app/admin/clients"),
+        new PanelMenuItem("Customers", "Pages.Customers", "icon-globe", "/app/admin/clients"),
         new PanelMenuItem("Tenants", "Pages.Tenants", "icon-globe", "/app/admin/tenants"),
         new PanelMenuItem("Editions", "Pages.Editions", "icon-grid", "/app/admin/editions"),
         new PanelMenuItem("Administration", "", "icon-wrench", "", [
