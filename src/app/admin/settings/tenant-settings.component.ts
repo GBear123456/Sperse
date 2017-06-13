@@ -31,6 +31,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
     settings: TenantSettingsEditDto = undefined;
     idcsSettings: IdcsSettingsDto = undefined;
 
+    isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('CreditReportFeature');
+
     logoUploader: FileUploader;
     customCssUploader: FileUploader;
 
@@ -68,10 +70,12 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
                 }
             });
 
-        this._tenantSettingsCreditReportService.getIdcsSettings()
+        if (this.isCreditReportFeatureEnabled) {
+            this._tenantSettingsCreditReportService.getIdcsSettings()
             .subscribe((result: IdcsSettingsDto) => {
                 this.idcsSettings = result;
             });
+        }
     }
 
     initUploaders(): void {
@@ -143,9 +147,12 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
 
     saveAll(): void {
         this._tenantSettingsService.updateAllSettings(this.settings).subscribe(() => {
-            this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings).subscribe(() => {
-                this.notify.info(this.l('SavedSuccessfully'));
-            });
+            if (this.isCreditReportFeatureEnabled) {
+                this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings).subscribe(() => {
+                    this.notify.info(this.l('SavedSuccessfully'));
+                });
+            }
+            else this.notify.info(this.l('SavedSuccessfully'));
 
             if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone && this.initialTimeZone !== this.settings.general.timezone) {
                 this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
