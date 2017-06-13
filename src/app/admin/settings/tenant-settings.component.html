@@ -317,6 +317,30 @@
             </div>
           </div>
         </tab>
+        <tab heading="{{l('IDCS Config')}}" *ngIf="true">
+          <div>
+            <div class="form-group form-md-line-input form-md-floating-label no-hint">
+              <input type="text" name="RequestSource" class="form-control" [ngClass]="{'edited':idcsSettings.requestSource}" [(ngModel)]="idcsSettings.requestSource" maxlength="128">
+              <label>{{l("Request Source")}}</label>
+            </div>
+            <div class="form-group form-md-line-input form-md-floating-label no-hint">
+              <input type="text" name="PartnerCode" class="form-control" [ngClass]="{'edited':idcsSettings.partnerCode}" [(ngModel)]="idcsSettings.partnerCode" maxlength="128">
+              <label>{{l("Partner Code")}}</label>
+            </div>
+            <div class="form-group form-md-line-input form-md-floating-label no-hint">
+              <input type="text" name="PartnerAccount" class="form-control" [ngClass]="{'edited':idcsSettings.partnerAccount}" [(ngModel)]="idcsSettings.partnerAccount" maxlength="128">
+              <label>{{l("Partner Account")}}</label>
+            </div>
+            <div class="form-group form-md-line-input form-md-floating-label no-hint">
+              <input type="password" name="Password" class="form-control" [ngClass]="{'edited':idcsSettings.password}" [(ngModel)]="idcsSettings.password" maxlength="128">
+              <label>{{l("Password")}}</label>
+            </div>
+            <div class="form-group form-md-line-input form-md-floating-label no-hint">
+              <input type="text" name="Branding" class="form-control" [ngClass]="{'edited':idcsSettings.branding}" [(ngModel)]="idcsSettings.branding" maxlength="128">
+              <label>{{l("Branding")}}</label>
+            </div>
+          </div>
+        </tab>
       </tabset>
     </div>
   </div>

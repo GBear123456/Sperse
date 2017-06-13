@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { TenantSettingsServiceProxy, HostSettingsServiceProxy, DefaultTimezoneScope, TenantSettingsEditDto, SendTestEmailInput } from '@shared/service-proxies/service-proxies';
+import { TenantSettingsServiceProxy, HostSettingsServiceProxy, DefaultTimezoneScope, TenantSettingsEditDto, SendTestEmailInput, TenantSettingsCreditReportServiceProxy, IdcsSettingsDto } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -29,6 +29,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
     activeTabIndex: number = (abp.clock.provider.supportsMultipleTimezone) ? 0 : 1;
     loading: boolean = false;
     settings: TenantSettingsEditDto = undefined;
+    idcsSettings: IdcsSettingsDto = undefined;
 
     logoUploader: FileUploader;
     customCssUploader: FileUploader;
@@ -40,6 +41,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
     constructor(
         injector: Injector,
         private _tenantSettingsService: TenantSettingsServiceProxy,
+        private _tenantSettingsCreditReportService: TenantSettingsCreditReportServiceProxy,
         private _appSessionService: AppSessionService,
         private _tokenService: TokenService
     ) {
@@ -64,6 +66,11 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
                     this.initialTimeZone = this.settings.general.timezone;
                     this.usingDefaultTimeZone = this.settings.general.timezoneForComparison === abp.setting.values["Abp.Timing.TimeZone"];
                 }
+            });
+
+        this._tenantSettingsCreditReportService.getIdcsSettings()
+            .subscribe((result: IdcsSettingsDto) => {
+                this.idcsSettings = result;
             });
     }
 
@@ -136,7 +143,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
 
     saveAll(): void {
         this._tenantSettingsService.updateAllSettings(this.settings).subscribe(() => {
-            this.notify.info(this.l('SavedSuccessfully'));
+            this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings).subscribe(() => {
+                this.notify.info(this.l('SavedSuccessfully'));
+            });
 
             if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone && this.initialTimeZone !== this.settings.general.timezone) {
                 this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {

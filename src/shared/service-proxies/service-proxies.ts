@@ -926,73 +926,6 @@ export class ChatServiceProxy {
 }
 
 @Injectable()
-export class OdataServiceProxy {
-    private http: Http = null; 
-    private baseUrl: string = undefined; 
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http; 
-        this.baseUrl = baseUrl ? baseUrl : ""; 
-    }
-
-    /**
-     * @return Success
-     */
-    clients(): Observable<Client[]> {
-        let url_ = this.baseUrl + "/odata/Clients";
-
-        const content_ = "";
-        
-        return this.http.request(url_, {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-				"Accept": "application/json; charset=UTF-8"
-            })
-        }).map((response) => {
-            return this.processClients(response);
-        }).catch((response: any, caught: any) => {
-            if (response instanceof Response) {
-                try {
-                    return Observable.of(this.processClients(response));
-                } catch (e) {
-                    return <Observable<Client[]>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<Client[]>><any>Observable.throw(response);
-        });
-    }
-
-    protected processClients(response: Response): Client[] {
-        const responseText = response.text();
-        const status = response.status; 
-
-        if (status === 200) {
-            let result200: Client[] = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(Client.fromJS(item));
-            }
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            this.throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return null;
-    }
-
-    protected throwException(message: string, status: number, response: string, result?: any): any {
-        if(result !== null && result !== undefined)
-            throw result;
-        else
-            throw new SwaggerException(message, status, response);
-    }
-}
-
-@Injectable()
 export class CommonLookupServiceProxy {
     private http: Http = null; 
     private baseUrl: string = undefined; 
@@ -1128,6 +1061,175 @@ export class CommonLookupServiceProxy {
             let result200: GetDefaultEditionNameOutput = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
             result200 = resultData200 ? GetDefaultEditionNameOutput.fromJS(resultData200) : new GetDefaultEditionNameOutput();
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    protected throwException(message: string, status: number, response: string, result?: any): any {
+        if(result !== null && result !== undefined)
+            throw result;
+        else
+            throw new SwaggerException(message, status, response);
+    }
+}
+
+@Injectable()
+export class CreditReportServiceProxy {
+    private http: Http = null; 
+    private baseUrl: string = undefined; 
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http; 
+        this.baseUrl = baseUrl ? baseUrl : ""; 
+    }
+
+    /**
+     * @return Success
+     */
+    getLastCreditReport(dateTime: moment.Moment): Observable<CreditReportOutput> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetLastCreditReport?";
+        if (dateTime !== undefined)
+        
+            url_ += "DateTime=" + encodeURIComponent("" + dateTime.toJSON()) + "&";
+
+        const content_ = "";
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processGetLastCreditReport(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processGetLastCreditReport(response));
+                } catch (e) {
+                    return <Observable<CreditReportOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreditReportOutput>><any>Observable.throw(response);
+        });
+    }
+
+    protected processGetLastCreditReport(response: Response): CreditReportOutput {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: CreditReportOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreditReportOutput.fromJS(resultData200) : new CreditReportOutput();
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    /**
+     * @return Success
+     */
+    getAccountInfo(creditReport: number, accountIds: number[]): Observable<AccountInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetAccountInfo?";
+        if (creditReport !== undefined)
+        
+            url_ += "creditReport=" + encodeURIComponent("" + creditReport) + "&"; 
+        
+        if (accountIds !== undefined)
+        
+            accountIds.forEach(item => { url_ += "accountIds=" + encodeURIComponent("" + item) + "&"; });
+
+        const content_ = "";
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processGetAccountInfo(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processGetAccountInfo(response));
+                } catch (e) {
+                    return <Observable<AccountInfoDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<AccountInfoDto[]>><any>Observable.throw(response);
+        });
+    }
+
+    protected processGetAccountInfo(response: Response): AccountInfoDto[] {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: AccountInfoDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(AccountInfoDto.fromJS(item));
+            }
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    /**
+     * @return Success
+     */
+    loadAlerts(): Observable<AlertDto[]> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/LoadAlerts";
+
+        const content_ = "";
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processLoadAlerts(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processLoadAlerts(response));
+                } catch (e) {
+                    return <Observable<AlertDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<AlertDto[]>><any>Observable.throw(response);
+        });
+    }
+
+    protected processLoadAlerts(response: Response): AlertDto[] {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: AlertDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(AlertDto.fromJS(item));
+            }
             return result200;
         } else if (status !== 200 && status !== 204) {
             this.throwException("An unexpected server error occurred.", status, responseText);
@@ -1765,6 +1867,110 @@ export class HostSettingsServiceProxy {
 }
 
 @Injectable()
+export class KBAServiceProxy {
+    private http: Http = null; 
+    private baseUrl: string = undefined; 
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http; 
+        this.baseUrl = baseUrl ? baseUrl : ""; 
+    }
+
+    /**
+     * @return Success
+     */
+    requestKBA(input: RequestKBAInput): Observable<RequestKBAOutput> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/KBA/RequestKBA";
+
+        const content_ = JSON.stringify(input ? input.toJS() : null);
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processRequestKBA(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processRequestKBA(response));
+                } catch (e) {
+                    return <Observable<RequestKBAOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<RequestKBAOutput>><any>Observable.throw(response);
+        });
+    }
+
+    protected processRequestKBA(response: Response): RequestKBAOutput {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: RequestKBAOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? RequestKBAOutput.fromJS(resultData200) : new RequestKBAOutput();
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    /**
+     * @return Success
+     */
+    processKBAResponse(input: KBAResult): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/KBA/ProcessKBAResponse";
+
+        const content_ = JSON.stringify(input ? input.toJS() : null);
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processProcessKBAResponse(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processProcessKBAResponse(response));
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response);
+        });
+    }
+
+    protected processProcessKBAResponse(response: Response): void {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            return null;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    protected throwException(message: string, status: number, response: string, result?: any): any {
+        if(result !== null && result !== undefined)
+            throw result;
+        else
+            throw new SwaggerException(message, status, response);
+    }
+}
+
+@Injectable()
 export class LanguageServiceProxy {
     private http: Http = null; 
     private baseUrl: string = undefined; 
@@ -2097,6 +2303,110 @@ export class LanguageServiceProxy {
     }
 
     protected processUpdateLanguageText(response: Response): void {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            return null;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    protected throwException(message: string, status: number, response: string, result?: any): any {
+        if(result !== null && result !== undefined)
+            throw result;
+        else
+            throw new SwaggerException(message, status, response);
+    }
+}
+
+@Injectable()
+export class MemberServiceProxy {
+    private http: Http = null; 
+    private baseUrl: string = undefined; 
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http; 
+        this.baseUrl = baseUrl ? baseUrl : ""; 
+    }
+
+    /**
+     * @return Success
+     */
+    paymentAuthorize(input: PaymentAuthorizeRequestDto): Observable<PaymentAuthorizeResponseDto> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/Member/PaymentAuthorize";
+
+        const content_ = JSON.stringify(input ? input.toJS() : null);
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processPaymentAuthorize(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processPaymentAuthorize(response));
+                } catch (e) {
+                    return <Observable<PaymentAuthorizeResponseDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<PaymentAuthorizeResponseDto>><any>Observable.throw(response);
+        });
+    }
+
+    protected processPaymentAuthorize(response: Response): PaymentAuthorizeResponseDto {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: PaymentAuthorizeResponseDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PaymentAuthorizeResponseDto.fromJS(resultData200) : new PaymentAuthorizeResponseDto();
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    /**
+     * @return Success
+     */
+    registerMember(input: RegisterMemberRequest): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/Member/RegisterMember";
+
+        const content_ = JSON.stringify(input ? input.toJS() : null);
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processRegisterMember(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processRegisterMember(response));
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response);
+        });
+    }
+
+    protected processRegisterMember(response: Response): void {
         const responseText = response.text();
         const status = response.status; 
 
@@ -2773,6 +3083,69 @@ export class OrganizationUnitServiceProxy {
             let result200: boolean = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
             result200 = resultData200 !== undefined ? resultData200 : null;
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    protected throwException(message: string, status: number, response: string, result?: any): any {
+        if(result !== null && result !== undefined)
+            throw result;
+        else
+            throw new SwaggerException(message, status, response);
+    }
+}
+
+@Injectable()
+export class PackageServiceProxy {
+    private http: Http = null; 
+    private baseUrl: string = undefined; 
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http; 
+        this.baseUrl = baseUrl ? baseUrl : ""; 
+    }
+
+    /**
+     * @return Success
+     */
+    getAll(): Observable<ListResultDtoOfPackageDto> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/Package/GetAll";
+
+        const content_ = "";
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processGetAll(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processGetAll(response));
+                } catch (e) {
+                    return <Observable<ListResultDtoOfPackageDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ListResultDtoOfPackageDto>><any>Observable.throw(response);
+        });
+    }
+
+    protected processGetAll(response: Response): ListResultDtoOfPackageDto {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: ListResultDtoOfPackageDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ListResultDtoOfPackageDto.fromJS(resultData200) : new ListResultDtoOfPackageDto();
             return result200;
         } else if (status !== 200 && status !== 204) {
             this.throwException("An unexpected server error occurred.", status, responseText);
@@ -4304,6 +4677,110 @@ export class TenantSettingsServiceProxy {
 }
 
 @Injectable()
+export class TenantSettingsCreditReportServiceProxy {
+    private http: Http = null; 
+    private baseUrl: string = undefined; 
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http; 
+        this.baseUrl = baseUrl ? baseUrl : ""; 
+    }
+
+    /**
+     * @return Success
+     */
+    getIdcsSettings(): Observable<IdcsSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/TenantSettingsCreditReport/GetIdcsSettings";
+
+        const content_ = "";
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processGetIdcsSettings(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processGetIdcsSettings(response));
+                } catch (e) {
+                    return <Observable<IdcsSettingsDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<IdcsSettingsDto>><any>Observable.throw(response);
+        });
+    }
+
+    protected processGetIdcsSettings(response: Response): IdcsSettingsDto {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: IdcsSettingsDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? IdcsSettingsDto.fromJS(resultData200) : new IdcsSettingsDto();
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    /**
+     * @return Success
+     */
+    updateIdcsSettings(input: IdcsSettingsDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/TenantSettingsCreditReport/UpdateIdcsSettings";
+
+        const content_ = JSON.stringify(input ? input.toJS() : null);
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processUpdateIdcsSettings(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processUpdateIdcsSettings(response));
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response);
+        });
+    }
+
+    protected processUpdateIdcsSettings(response: Response): void {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            return null;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    protected throwException(message: string, status: number, response: string, result?: any): any {
+        if(result !== null && result !== undefined)
+            throw result;
+        else
+            throw new SwaggerException(message, status, response);
+    }
+}
+
+@Injectable()
 export class TimingServiceProxy {
     private http: Http = null; 
     private baseUrl: string = undefined; 
@@ -5454,6 +5931,72 @@ export class UserLoginServiceProxy {
 }
 
 @Injectable()
+export class ValidationServiceProxy {
+    private http: Http = null; 
+    private baseUrl: string = undefined; 
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http; 
+        this.baseUrl = baseUrl ? baseUrl : ""; 
+    }
+
+    /**
+     * @return Success
+     */
+    isEmailValidToRegister(email: string): Observable<EmailValidationDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/Validation/IsEmailValidToRegister?";
+        if (email !== undefined)
+        
+            url_ += "email=" + encodeURIComponent("" + email) + "&";
+
+        const content_ = "";
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processIsEmailValidToRegister(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processIsEmailValidToRegister(response));
+                } catch (e) {
+                    return <Observable<EmailValidationDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<EmailValidationDto>><any>Observable.throw(response);
+        });
+    }
+
+    protected processIsEmailValidToRegister(response: Response): EmailValidationDto {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: EmailValidationDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? EmailValidationDto.fromJS(resultData200) : new EmailValidationDto();
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    protected throwException(message: string, status: number, response: string, result?: any): any {
+        if(result !== null && result !== undefined)
+            throw result;
+        else
+            throw new SwaggerException(message, status, response);
+    }
+}
+
+@Injectable()
 export class WebLogServiceProxy {
     private http: Http = null; 
     private baseUrl: string = undefined; 
@@ -6408,61 +6951,6 @@ export class MarkAllUnreadMessagesOfUserAsReadInput {
     }
 }
 
-export class Client { 
-    id: number; 
-    name: string; 
-    tenantId: number; 
-    isDeleted: boolean; 
-    deleterUserId: number; 
-    deletionTime: moment.Moment; 
-    lastModificationTime: moment.Moment; 
-    lastModifierUserId: number; 
-    creationTime: moment.Moment; 
-    creatorUserId: number;
-    constructor(data?: any) {
-        if (data !== undefined) {
-            this.id = data["id"] !== undefined ? data["id"] : null;
-            this.name = data["name"] !== undefined ? data["name"] : null;
-            this.tenantId = data["tenantId"] !== undefined ? data["tenantId"] : null;
-            this.isDeleted = data["isDeleted"] !== undefined ? data["isDeleted"] : null;
-            this.deleterUserId = data["deleterUserId"] !== undefined ? data["deleterUserId"] : null;
-            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : null;
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : null;
-            this.lastModifierUserId = data["lastModifierUserId"] !== undefined ? data["lastModifierUserId"] : null;
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : null;
-            this.creatorUserId = data["creatorUserId"] !== undefined ? data["creatorUserId"] : null;
-        }
-    }
-
-    static fromJS(data: any): Client {
-        return new Client(data);
-    }
-
-    toJS(data?: any) {
-        data = data === undefined ? {} : data;
-        data["id"] = this.id !== undefined ? this.id : null;
-        data["name"] = this.name !== undefined ? this.name : null;
-        data["tenantId"] = this.tenantId !== undefined ? this.tenantId : null;
-        data["isDeleted"] = this.isDeleted !== undefined ? this.isDeleted : null;
-        data["deleterUserId"] = this.deleterUserId !== undefined ? this.deleterUserId : null;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : null;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : null;
-        data["lastModifierUserId"] = this.lastModifierUserId !== undefined ? this.lastModifierUserId : null;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : null;
-        data["creatorUserId"] = this.creatorUserId !== undefined ? this.creatorUserId : null;
-        return data; 
-    }
-
-    toJSON() {
-        return JSON.stringify(this.toJS());
-    }
-
-    clone() {
-        const json = this.toJSON();
-        return new Client(JSON.parse(json));
-    }
-}
-
 export class ListResultDtoOfComboboxItemDto { 
     items: ComboboxItemDto[];
     constructor(data?: any) {
@@ -6665,6 +7153,779 @@ export class GetDefaultEditionNameOutput {
     clone() {
         const json = this.toJSON();
         return new GetDefaultEditionNameOutput(JSON.parse(json));
+    }
+}
+
+export class CreditReportOutput { 
+    kbaPassed: boolean; 
+    creditReport: CreditReportDto;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.kbaPassed = data["kbaPassed"] !== undefined ? data["kbaPassed"] : null;
+            this.creditReport = data["creditReport"] ? CreditReportDto.fromJS(data["creditReport"]) : null;
+        }
+    }
+
+    static fromJS(data: any): CreditReportOutput {
+        return new CreditReportOutput(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["kbaPassed"] = this.kbaPassed !== undefined ? this.kbaPassed : null;
+        data["creditReport"] = this.creditReport ? this.creditReport.toJS() : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new CreditReportOutput(JSON.parse(json));
+    }
+}
+
+export class CreditReportDto { 
+    creditReportId: number; 
+    bureauReports: CreditBureauReportDto[]; 
+    accounts: AccountDto[]; 
+    alerts: AlertDto[]; 
+    recommendations: RecommendationDto[]; 
+    creditorContacts: CreditorContactDto[]; 
+    consumerStatements: ConsumerStatementDto[];
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.creditReportId = data["creditReportId"] !== undefined ? data["creditReportId"] : null;
+            if (data["bureauReports"] && data["bureauReports"].constructor === Array) {
+                this.bureauReports = [];
+                for (let item of data["bureauReports"])
+                    this.bureauReports.push(CreditBureauReportDto.fromJS(item));
+            }
+            if (data["accounts"] && data["accounts"].constructor === Array) {
+                this.accounts = [];
+                for (let item of data["accounts"])
+                    this.accounts.push(AccountDto.fromJS(item));
+            }
+            if (data["alerts"] && data["alerts"].constructor === Array) {
+                this.alerts = [];
+                for (let item of data["alerts"])
+                    this.alerts.push(AlertDto.fromJS(item));
+            }
+            if (data["recommendations"] && data["recommendations"].constructor === Array) {
+                this.recommendations = [];
+                for (let item of data["recommendations"])
+                    this.recommendations.push(RecommendationDto.fromJS(item));
+            }
+            if (data["creditorContacts"] && data["creditorContacts"].constructor === Array) {
+                this.creditorContacts = [];
+                for (let item of data["creditorContacts"])
+                    this.creditorContacts.push(CreditorContactDto.fromJS(item));
+            }
+            if (data["consumerStatements"] && data["consumerStatements"].constructor === Array) {
+                this.consumerStatements = [];
+                for (let item of data["consumerStatements"])
+                    this.consumerStatements.push(ConsumerStatementDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreditReportDto {
+        return new CreditReportDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["creditReportId"] = this.creditReportId !== undefined ? this.creditReportId : null;
+        if (this.bureauReports && this.bureauReports.constructor === Array) {
+            data["bureauReports"] = [];
+            for (let item of this.bureauReports)
+                data["bureauReports"].push(item.toJS());
+        }
+        if (this.accounts && this.accounts.constructor === Array) {
+            data["accounts"] = [];
+            for (let item of this.accounts)
+                data["accounts"].push(item.toJS());
+        }
+        if (this.alerts && this.alerts.constructor === Array) {
+            data["alerts"] = [];
+            for (let item of this.alerts)
+                data["alerts"].push(item.toJS());
+        }
+        if (this.recommendations && this.recommendations.constructor === Array) {
+            data["recommendations"] = [];
+            for (let item of this.recommendations)
+                data["recommendations"].push(item.toJS());
+        }
+        if (this.creditorContacts && this.creditorContacts.constructor === Array) {
+            data["creditorContacts"] = [];
+            for (let item of this.creditorContacts)
+                data["creditorContacts"].push(item.toJS());
+        }
+        if (this.consumerStatements && this.consumerStatements.constructor === Array) {
+            data["consumerStatements"] = [];
+            for (let item of this.consumerStatements)
+                data["consumerStatements"].push(item.toJS());
+        }
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new CreditReportDto(JSON.parse(json));
+    }
+}
+
+export class CreditBureauReportDto { 
+    bureau: string; 
+    creditScore: CreditScoreDto; 
+    creditSummary: CreditSummaryDto; 
+    personalInfo: PersonalInfoDto; 
+    inquiries: InquiryDto[]; 
+    scoreFactors: ScoreFactorDto[];
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.bureau = data["bureau"] !== undefined ? data["bureau"] : null;
+            this.creditScore = data["creditScore"] ? CreditScoreDto.fromJS(data["creditScore"]) : null;
+            this.creditSummary = data["creditSummary"] ? CreditSummaryDto.fromJS(data["creditSummary"]) : null;
+            this.personalInfo = data["personalInfo"] ? PersonalInfoDto.fromJS(data["personalInfo"]) : null;
+            if (data["inquiries"] && data["inquiries"].constructor === Array) {
+                this.inquiries = [];
+                for (let item of data["inquiries"])
+                    this.inquiries.push(InquiryDto.fromJS(item));
+            }
+            if (data["scoreFactors"] && data["scoreFactors"].constructor === Array) {
+                this.scoreFactors = [];
+                for (let item of data["scoreFactors"])
+                    this.scoreFactors.push(ScoreFactorDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreditBureauReportDto {
+        return new CreditBureauReportDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["bureau"] = this.bureau !== undefined ? this.bureau : null;
+        data["creditScore"] = this.creditScore ? this.creditScore.toJS() : null;
+        data["creditSummary"] = this.creditSummary ? this.creditSummary.toJS() : null;
+        data["personalInfo"] = this.personalInfo ? this.personalInfo.toJS() : null;
+        if (this.inquiries && this.inquiries.constructor === Array) {
+            data["inquiries"] = [];
+            for (let item of this.inquiries)
+                data["inquiries"].push(item.toJS());
+        }
+        if (this.scoreFactors && this.scoreFactors.constructor === Array) {
+            data["scoreFactors"] = [];
+            for (let item of this.scoreFactors)
+                data["scoreFactors"].push(item.toJS());
+        }
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new CreditBureauReportDto(JSON.parse(json));
+    }
+}
+
+export class AccountDto { 
+    accountIds: number[]; 
+    accountName: string; 
+    state: AccountDtoState; 
+    creditLimit: number; 
+    availableCredit: number; 
+    outstandingBalance: number; 
+    ratio: number;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            if (data["accountIds"] && data["accountIds"].constructor === Array) {
+                this.accountIds = [];
+                for (let item of data["accountIds"])
+                    this.accountIds.push(item);
+            }
+            this.accountName = data["accountName"] !== undefined ? data["accountName"] : null;
+            this.state = data["state"] !== undefined ? data["state"] : null;
+            this.creditLimit = data["creditLimit"] !== undefined ? data["creditLimit"] : null;
+            this.availableCredit = data["availableCredit"] !== undefined ? data["availableCredit"] : null;
+            this.outstandingBalance = data["outstandingBalance"] !== undefined ? data["outstandingBalance"] : null;
+            this.ratio = data["ratio"] !== undefined ? data["ratio"] : null;
+        }
+    }
+
+    static fromJS(data: any): AccountDto {
+        return new AccountDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        if (this.accountIds && this.accountIds.constructor === Array) {
+            data["accountIds"] = [];
+            for (let item of this.accountIds)
+                data["accountIds"].push(item);
+        }
+        data["accountName"] = this.accountName !== undefined ? this.accountName : null;
+        data["state"] = this.state !== undefined ? this.state : null;
+        data["creditLimit"] = this.creditLimit !== undefined ? this.creditLimit : null;
+        data["availableCredit"] = this.availableCredit !== undefined ? this.availableCredit : null;
+        data["outstandingBalance"] = this.outstandingBalance !== undefined ? this.outstandingBalance : null;
+        data["ratio"] = this.ratio !== undefined ? this.ratio : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new AccountDto(JSON.parse(json));
+    }
+}
+
+export class AlertDto { 
+    type: AlertDtoType; 
+    bureau: string; 
+    date: moment.Moment; 
+    text: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.type = data["type"] !== undefined ? data["type"] : null;
+            this.bureau = data["bureau"] !== undefined ? data["bureau"] : null;
+            this.date = data["date"] ? moment(data["date"].toString()) : null;
+            this.text = data["text"] !== undefined ? data["text"] : null;
+        }
+    }
+
+    static fromJS(data: any): AlertDto {
+        return new AlertDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["type"] = this.type !== undefined ? this.type : null;
+        data["bureau"] = this.bureau !== undefined ? this.bureau : null;
+        data["date"] = this.date ? this.date.toISOString() : null;
+        data["text"] = this.text !== undefined ? this.text : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new AlertDto(JSON.parse(json));
+    }
+}
+
+export class RecommendationDto { 
+    header: string; 
+    text: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.header = data["header"] !== undefined ? data["header"] : null;
+            this.text = data["text"] !== undefined ? data["text"] : null;
+        }
+    }
+
+    static fromJS(data: any): RecommendationDto {
+        return new RecommendationDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["header"] = this.header !== undefined ? this.header : null;
+        data["text"] = this.text !== undefined ? this.text : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new RecommendationDto(JSON.parse(json));
+    }
+}
+
+export class CreditorContactDto { 
+    name: string; 
+    address: AddressDto; 
+    phoneNumber: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.name = data["name"] !== undefined ? data["name"] : null;
+            this.address = data["address"] ? AddressDto.fromJS(data["address"]) : null;
+            this.phoneNumber = data["phoneNumber"] !== undefined ? data["phoneNumber"] : null;
+        }
+    }
+
+    static fromJS(data: any): CreditorContactDto {
+        return new CreditorContactDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["name"] = this.name !== undefined ? this.name : null;
+        data["address"] = this.address ? this.address.toJS() : null;
+        data["phoneNumber"] = this.phoneNumber !== undefined ? this.phoneNumber : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new CreditorContactDto(JSON.parse(json));
+    }
+}
+
+export class ConsumerStatementDto { 
+    bureau: string; 
+    date: moment.Moment; 
+    statement: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.bureau = data["bureau"] !== undefined ? data["bureau"] : null;
+            this.date = data["date"] ? moment(data["date"].toString()) : null;
+            this.statement = data["statement"] !== undefined ? data["statement"] : null;
+        }
+    }
+
+    static fromJS(data: any): ConsumerStatementDto {
+        return new ConsumerStatementDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["bureau"] = this.bureau !== undefined ? this.bureau : null;
+        data["date"] = this.date ? this.date.toISOString() : null;
+        data["statement"] = this.statement !== undefined ? this.statement : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new ConsumerStatementDto(JSON.parse(json));
+    }
+}
+
+export class CreditScoreDto { 
+    score: number; 
+    populationRank: number; 
+    qualitativeRank: number; 
+    scoreDate: moment.Moment; 
+    nextUpdate: number;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.score = data["score"] !== undefined ? data["score"] : null;
+            this.populationRank = data["populationRank"] !== undefined ? data["populationRank"] : null;
+            this.qualitativeRank = data["qualitativeRank"] !== undefined ? data["qualitativeRank"] : null;
+            this.scoreDate = data["scoreDate"] ? moment(data["scoreDate"].toString()) : null;
+            this.nextUpdate = data["nextUpdate"] !== undefined ? data["nextUpdate"] : null;
+        }
+    }
+
+    static fromJS(data: any): CreditScoreDto {
+        return new CreditScoreDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["score"] = this.score !== undefined ? this.score : null;
+        data["populationRank"] = this.populationRank !== undefined ? this.populationRank : null;
+        data["qualitativeRank"] = this.qualitativeRank !== undefined ? this.qualitativeRank : null;
+        data["scoreDate"] = this.scoreDate ? this.scoreDate.toISOString() : null;
+        data["nextUpdate"] = this.nextUpdate !== undefined ? this.nextUpdate : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new CreditScoreDto(JSON.parse(json));
+    }
+}
+
+export class CreditSummaryDto { 
+    totalAccounts: number; 
+    openAccounts: number; 
+    closedAccounts: number; 
+    deliquent: number; 
+    derogatory: number; 
+    balances: number; 
+    payments: number; 
+    publicRecords: number; 
+    inquiries2Years: number;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.totalAccounts = data["totalAccounts"] !== undefined ? data["totalAccounts"] : null;
+            this.openAccounts = data["openAccounts"] !== undefined ? data["openAccounts"] : null;
+            this.closedAccounts = data["closedAccounts"] !== undefined ? data["closedAccounts"] : null;
+            this.deliquent = data["deliquent"] !== undefined ? data["deliquent"] : null;
+            this.derogatory = data["derogatory"] !== undefined ? data["derogatory"] : null;
+            this.balances = data["balances"] !== undefined ? data["balances"] : null;
+            this.payments = data["payments"] !== undefined ? data["payments"] : null;
+            this.publicRecords = data["publicRecords"] !== undefined ? data["publicRecords"] : null;
+            this.inquiries2Years = data["inquiries2Years"] !== undefined ? data["inquiries2Years"] : null;
+        }
+    }
+
+    static fromJS(data: any): CreditSummaryDto {
+        return new CreditSummaryDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["totalAccounts"] = this.totalAccounts !== undefined ? this.totalAccounts : null;
+        data["openAccounts"] = this.openAccounts !== undefined ? this.openAccounts : null;
+        data["closedAccounts"] = this.closedAccounts !== undefined ? this.closedAccounts : null;
+        data["deliquent"] = this.deliquent !== undefined ? this.deliquent : null;
+        data["derogatory"] = this.derogatory !== undefined ? this.derogatory : null;
+        data["balances"] = this.balances !== undefined ? this.balances : null;
+        data["payments"] = this.payments !== undefined ? this.payments : null;
+        data["publicRecords"] = this.publicRecords !== undefined ? this.publicRecords : null;
+        data["inquiries2Years"] = this.inquiries2Years !== undefined ? this.inquiries2Years : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new CreditSummaryDto(JSON.parse(json));
+    }
+}
+
+export class PersonalInfoDto { 
+    name: string; 
+    doB: moment.Moment; 
+    currentAddress: AddressDto; 
+    previousAddresses: AddressDto[]; 
+    employers: EmployerDto[];
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.name = data["name"] !== undefined ? data["name"] : null;
+            this.doB = data["doB"] ? moment(data["doB"].toString()) : null;
+            this.currentAddress = data["currentAddress"] ? AddressDto.fromJS(data["currentAddress"]) : null;
+            if (data["previousAddresses"] && data["previousAddresses"].constructor === Array) {
+                this.previousAddresses = [];
+                for (let item of data["previousAddresses"])
+                    this.previousAddresses.push(AddressDto.fromJS(item));
+            }
+            if (data["employers"] && data["employers"].constructor === Array) {
+                this.employers = [];
+                for (let item of data["employers"])
+                    this.employers.push(EmployerDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PersonalInfoDto {
+        return new PersonalInfoDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["name"] = this.name !== undefined ? this.name : null;
+        data["doB"] = this.doB ? this.doB.toISOString() : null;
+        data["currentAddress"] = this.currentAddress ? this.currentAddress.toJS() : null;
+        if (this.previousAddresses && this.previousAddresses.constructor === Array) {
+            data["previousAddresses"] = [];
+            for (let item of this.previousAddresses)
+                data["previousAddresses"].push(item.toJS());
+        }
+        if (this.employers && this.employers.constructor === Array) {
+            data["employers"] = [];
+            for (let item of this.employers)
+                data["employers"].push(item.toJS());
+        }
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new PersonalInfoDto(JSON.parse(json));
+    }
+}
+
+export class InquiryDto { 
+    creditorName: string; 
+    industry: string; 
+    dateOfInquiry: moment.Moment;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.creditorName = data["creditorName"] !== undefined ? data["creditorName"] : null;
+            this.industry = data["industry"] !== undefined ? data["industry"] : null;
+            this.dateOfInquiry = data["dateOfInquiry"] ? moment(data["dateOfInquiry"].toString()) : null;
+        }
+    }
+
+    static fromJS(data: any): InquiryDto {
+        return new InquiryDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["creditorName"] = this.creditorName !== undefined ? this.creditorName : null;
+        data["industry"] = this.industry !== undefined ? this.industry : null;
+        data["dateOfInquiry"] = this.dateOfInquiry ? this.dateOfInquiry.toISOString() : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new InquiryDto(JSON.parse(json));
+    }
+}
+
+export class ScoreFactorDto { 
+    isPositive: boolean; 
+    text: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.isPositive = data["isPositive"] !== undefined ? data["isPositive"] : null;
+            this.text = data["text"] !== undefined ? data["text"] : null;
+        }
+    }
+
+    static fromJS(data: any): ScoreFactorDto {
+        return new ScoreFactorDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["isPositive"] = this.isPositive !== undefined ? this.isPositive : null;
+        data["text"] = this.text !== undefined ? this.text : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new ScoreFactorDto(JSON.parse(json));
+    }
+}
+
+export class AddressDto { 
+    line1: string; 
+    line2: string; 
+    line3: string; 
+    line4: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.line1 = data["line1"] !== undefined ? data["line1"] : null;
+            this.line2 = data["line2"] !== undefined ? data["line2"] : null;
+            this.line3 = data["line3"] !== undefined ? data["line3"] : null;
+            this.line4 = data["line4"] !== undefined ? data["line4"] : null;
+        }
+    }
+
+    static fromJS(data: any): AddressDto {
+        return new AddressDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["line1"] = this.line1 !== undefined ? this.line1 : null;
+        data["line2"] = this.line2 !== undefined ? this.line2 : null;
+        data["line3"] = this.line3 !== undefined ? this.line3 : null;
+        data["line4"] = this.line4 !== undefined ? this.line4 : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new AddressDto(JSON.parse(json));
+    }
+}
+
+export class EmployerDto { 
+    name: string; 
+    date: moment.Moment;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.name = data["name"] !== undefined ? data["name"] : null;
+            this.date = data["date"] ? moment(data["date"].toString()) : null;
+        }
+    }
+
+    static fromJS(data: any): EmployerDto {
+        return new EmployerDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["name"] = this.name !== undefined ? this.name : null;
+        data["date"] = this.date ? this.date.toISOString() : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new EmployerDto(JSON.parse(json));
+    }
+}
+
+export class AccountInfoDto { 
+    bureau: string; 
+    status: AccountInfoDtoStatus; 
+    totalCreditLimit: number; 
+    availableCredit: number; 
+    creditUtilization: number; 
+    accountName: string; 
+    accountNumber: string; 
+    balance: number; 
+    pastDue: number; 
+    dateOpened: moment.Moment; 
+    moPayment: number; 
+    paymentStatus: string; 
+    terms: string; 
+    comment: string; 
+    maxAccountHistoryDate: moment.Moment; 
+    twoYearHistory: AccountCreditHistoryDto[];
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.bureau = data["bureau"] !== undefined ? data["bureau"] : null;
+            this.status = data["status"] !== undefined ? data["status"] : null;
+            this.totalCreditLimit = data["totalCreditLimit"] !== undefined ? data["totalCreditLimit"] : null;
+            this.availableCredit = data["availableCredit"] !== undefined ? data["availableCredit"] : null;
+            this.creditUtilization = data["creditUtilization"] !== undefined ? data["creditUtilization"] : null;
+            this.accountName = data["accountName"] !== undefined ? data["accountName"] : null;
+            this.accountNumber = data["accountNumber"] !== undefined ? data["accountNumber"] : null;
+            this.balance = data["balance"] !== undefined ? data["balance"] : null;
+            this.pastDue = data["pastDue"] !== undefined ? data["pastDue"] : null;
+            this.dateOpened = data["dateOpened"] ? moment(data["dateOpened"].toString()) : null;
+            this.moPayment = data["moPayment"] !== undefined ? data["moPayment"] : null;
+            this.paymentStatus = data["paymentStatus"] !== undefined ? data["paymentStatus"] : null;
+            this.terms = data["terms"] !== undefined ? data["terms"] : null;
+            this.comment = data["comment"] !== undefined ? data["comment"] : null;
+            this.maxAccountHistoryDate = data["maxAccountHistoryDate"] ? moment(data["maxAccountHistoryDate"].toString()) : null;
+            if (data["twoYearHistory"] && data["twoYearHistory"].constructor === Array) {
+                this.twoYearHistory = [];
+                for (let item of data["twoYearHistory"])
+                    this.twoYearHistory.push(AccountCreditHistoryDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AccountInfoDto {
+        return new AccountInfoDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["bureau"] = this.bureau !== undefined ? this.bureau : null;
+        data["status"] = this.status !== undefined ? this.status : null;
+        data["totalCreditLimit"] = this.totalCreditLimit !== undefined ? this.totalCreditLimit : null;
+        data["availableCredit"] = this.availableCredit !== undefined ? this.availableCredit : null;
+        data["creditUtilization"] = this.creditUtilization !== undefined ? this.creditUtilization : null;
+        data["accountName"] = this.accountName !== undefined ? this.accountName : null;
+        data["accountNumber"] = this.accountNumber !== undefined ? this.accountNumber : null;
+        data["balance"] = this.balance !== undefined ? this.balance : null;
+        data["pastDue"] = this.pastDue !== undefined ? this.pastDue : null;
+        data["dateOpened"] = this.dateOpened ? this.dateOpened.toISOString() : null;
+        data["moPayment"] = this.moPayment !== undefined ? this.moPayment : null;
+        data["paymentStatus"] = this.paymentStatus !== undefined ? this.paymentStatus : null;
+        data["terms"] = this.terms !== undefined ? this.terms : null;
+        data["comment"] = this.comment !== undefined ? this.comment : null;
+        data["maxAccountHistoryDate"] = this.maxAccountHistoryDate ? this.maxAccountHistoryDate.toISOString() : null;
+        if (this.twoYearHistory && this.twoYearHistory.constructor === Array) {
+            data["twoYearHistory"] = [];
+            for (let item of this.twoYearHistory)
+                data["twoYearHistory"].push(item.toJS());
+        }
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new AccountInfoDto(JSON.parse(json));
+    }
+}
+
+export class AccountCreditHistoryDto { 
+    year: number; 
+    month: number; 
+    status: string; 
+    statusType: AccountCreditHistoryDtoStatusType;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.year = data["year"] !== undefined ? data["year"] : null;
+            this.month = data["month"] !== undefined ? data["month"] : null;
+            this.status = data["status"] !== undefined ? data["status"] : null;
+            this.statusType = data["statusType"] !== undefined ? data["statusType"] : null;
+        }
+    }
+
+    static fromJS(data: any): AccountCreditHistoryDto {
+        return new AccountCreditHistoryDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["year"] = this.year !== undefined ? this.year : null;
+        data["month"] = this.month !== undefined ? this.month : null;
+        data["status"] = this.status !== undefined ? this.status : null;
+        data["statusType"] = this.statusType !== undefined ? this.statusType : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new AccountCreditHistoryDto(JSON.parse(json));
     }
 }
 
@@ -7518,6 +8779,102 @@ export class SendTestEmailInput {
     }
 }
 
+export class RequestKBAInput { 
+    redirectUrl: string; 
+    cssUrl: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.redirectUrl = data["redirectUrl"] !== undefined ? data["redirectUrl"] : null;
+            this.cssUrl = data["cssUrl"] !== undefined ? data["cssUrl"] : null;
+        }
+    }
+
+    static fromJS(data: any): RequestKBAInput {
+        return new RequestKBAInput(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["redirectUrl"] = this.redirectUrl !== undefined ? this.redirectUrl : null;
+        data["cssUrl"] = this.cssUrl !== undefined ? this.cssUrl : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new RequestKBAInput(JSON.parse(json));
+    }
+}
+
+export class RequestKBAOutput { 
+    kbaAlreadyPassed: boolean; 
+    kbaUrl: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.kbaAlreadyPassed = data["kbaAlreadyPassed"] !== undefined ? data["kbaAlreadyPassed"] : null;
+            this.kbaUrl = data["kbaUrl"] !== undefined ? data["kbaUrl"] : null;
+        }
+    }
+
+    static fromJS(data: any): RequestKBAOutput {
+        return new RequestKBAOutput(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["kbaAlreadyPassed"] = this.kbaAlreadyPassed !== undefined ? this.kbaAlreadyPassed : null;
+        data["kbaUrl"] = this.kbaUrl !== undefined ? this.kbaUrl : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new RequestKBAOutput(JSON.parse(json));
+    }
+}
+
+export class KBAResult { 
+    memberId: string; 
+    passed: boolean; 
+    error: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.memberId = data["memberId"] !== undefined ? data["memberId"] : null;
+            this.passed = data["passed"] !== undefined ? data["passed"] : null;
+            this.error = data["error"] !== undefined ? data["error"] : null;
+        }
+    }
+
+    static fromJS(data: any): KBAResult {
+        return new KBAResult(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["memberId"] = this.memberId !== undefined ? this.memberId : null;
+        data["passed"] = this.passed !== undefined ? this.passed : null;
+        data["error"] = this.error !== undefined ? this.error : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new KBAResult(JSON.parse(json));
+    }
+}
+
 export class GetLanguagesOutput { 
     defaultLanguageName: string; 
     items: ApplicationLanguageListDto[];
@@ -7865,6 +9222,180 @@ export class UpdateLanguageTextInput {
     clone() {
         const json = this.toJSON();
         return new UpdateLanguageTextInput(JSON.parse(json));
+    }
+}
+
+export class PaymentAuthorizeRequestDto { 
+    registrationId: string; 
+    packageId: number; 
+    creditCard: CreditCardDto = new CreditCardDto();
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.registrationId = data["registrationId"] !== undefined ? data["registrationId"] : null;
+            this.packageId = data["packageId"] !== undefined ? data["packageId"] : null;
+            this.creditCard = data["creditCard"] ? CreditCardDto.fromJS(data["creditCard"]) : new CreditCardDto();
+        }
+    }
+
+    static fromJS(data: any): PaymentAuthorizeRequestDto {
+        return new PaymentAuthorizeRequestDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["registrationId"] = this.registrationId !== undefined ? this.registrationId : null;
+        data["packageId"] = this.packageId !== undefined ? this.packageId : null;
+        data["creditCard"] = this.creditCard ? this.creditCard.toJS() : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new PaymentAuthorizeRequestDto(JSON.parse(json));
+    }
+}
+
+export class CreditCardDto { 
+    holderName: string; 
+    number: string; 
+    expirationMonth: string; 
+    expirationYear: string; 
+    cvv: string; 
+    billingAddress: string; 
+    billingZip: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.holderName = data["holderName"] !== undefined ? data["holderName"] : null;
+            this.number = data["number"] !== undefined ? data["number"] : null;
+            this.expirationMonth = data["expirationMonth"] !== undefined ? data["expirationMonth"] : null;
+            this.expirationYear = data["expirationYear"] !== undefined ? data["expirationYear"] : null;
+            this.cvv = data["cvv"] !== undefined ? data["cvv"] : null;
+            this.billingAddress = data["billingAddress"] !== undefined ? data["billingAddress"] : null;
+            this.billingZip = data["billingZip"] !== undefined ? data["billingZip"] : null;
+        }
+    }
+
+    static fromJS(data: any): CreditCardDto {
+        return new CreditCardDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["holderName"] = this.holderName !== undefined ? this.holderName : null;
+        data["number"] = this.number !== undefined ? this.number : null;
+        data["expirationMonth"] = this.expirationMonth !== undefined ? this.expirationMonth : null;
+        data["expirationYear"] = this.expirationYear !== undefined ? this.expirationYear : null;
+        data["cvv"] = this.cvv !== undefined ? this.cvv : null;
+        data["billingAddress"] = this.billingAddress !== undefined ? this.billingAddress : null;
+        data["billingZip"] = this.billingZip !== undefined ? this.billingZip : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new CreditCardDto(JSON.parse(json));
+    }
+}
+
+export class PaymentAuthorizeResponseDto { 
+    success: boolean; 
+    errors: string[];
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.success = data["success"] !== undefined ? data["success"] : null;
+            if (data["errors"] && data["errors"].constructor === Array) {
+                this.errors = [];
+                for (let item of data["errors"])
+                    this.errors.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): PaymentAuthorizeResponseDto {
+        return new PaymentAuthorizeResponseDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["success"] = this.success !== undefined ? this.success : null;
+        if (this.errors && this.errors.constructor === Array) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new PaymentAuthorizeResponseDto(JSON.parse(json));
+    }
+}
+
+export class RegisterMemberRequest { 
+    registrationId: string; 
+    name: string; 
+    surname: string; 
+    email: string; 
+    password: string; 
+    phone: string; 
+    doB: moment.Moment; 
+    gender: RegisterMemberRequestGender; 
+    isUSCitizen: boolean; 
+    packageId: number;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.registrationId = data["registrationId"] !== undefined ? data["registrationId"] : null;
+            this.name = data["name"] !== undefined ? data["name"] : null;
+            this.surname = data["surname"] !== undefined ? data["surname"] : null;
+            this.email = data["email"] !== undefined ? data["email"] : null;
+            this.password = data["password"] !== undefined ? data["password"] : null;
+            this.phone = data["phone"] !== undefined ? data["phone"] : null;
+            this.doB = data["doB"] ? moment(data["doB"].toString()) : null;
+            this.gender = data["gender"] !== undefined ? data["gender"] : null;
+            this.isUSCitizen = data["isUSCitizen"] !== undefined ? data["isUSCitizen"] : null;
+            this.packageId = data["packageId"] !== undefined ? data["packageId"] : null;
+        }
+    }
+
+    static fromJS(data: any): RegisterMemberRequest {
+        return new RegisterMemberRequest(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["registrationId"] = this.registrationId !== undefined ? this.registrationId : null;
+        data["name"] = this.name !== undefined ? this.name : null;
+        data["surname"] = this.surname !== undefined ? this.surname : null;
+        data["email"] = this.email !== undefined ? this.email : null;
+        data["password"] = this.password !== undefined ? this.password : null;
+        data["phone"] = this.phone !== undefined ? this.phone : null;
+        data["doB"] = this.doB ? this.doB.toISOString() : null;
+        data["gender"] = this.gender !== undefined ? this.gender : null;
+        data["isUSCitizen"] = this.isUSCitizen !== undefined ? this.isUSCitizen : null;
+        data["packageId"] = this.packageId !== undefined ? this.packageId : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new RegisterMemberRequest(JSON.parse(json));
     }
 }
 
@@ -8525,6 +10056,115 @@ export class UserToOrganizationUnitInput {
     clone() {
         const json = this.toJSON();
         return new UserToOrganizationUnitInput(JSON.parse(json));
+    }
+}
+
+export class ListResultDtoOfPackageDto { 
+    items: PackageDto[];
+    constructor(data?: any) {
+        if (data !== undefined) {
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(PackageDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ListResultDtoOfPackageDto {
+        return new ListResultDtoOfPackageDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJS());
+        }
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new ListResultDtoOfPackageDto(JSON.parse(json));
+    }
+}
+
+export class PackageDto { 
+    tenantId: number; 
+    name: string; 
+    idcsPackageId: number; 
+    description: string; 
+    initialPaymentAmount: number; 
+    trialPeriodDays: number; 
+    monthlyPaymentAmount: number; 
+    isActive: boolean; 
+    isDeleted: boolean; 
+    deleterUserId: number; 
+    deletionTime: moment.Moment; 
+    lastModificationTime: moment.Moment; 
+    lastModifierUserId: number; 
+    creationTime: moment.Moment; 
+    creatorUserId: number; 
+    id: number;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.tenantId = data["tenantId"] !== undefined ? data["tenantId"] : null;
+            this.name = data["name"] !== undefined ? data["name"] : null;
+            this.idcsPackageId = data["idcsPackageId"] !== undefined ? data["idcsPackageId"] : null;
+            this.description = data["description"] !== undefined ? data["description"] : null;
+            this.initialPaymentAmount = data["initialPaymentAmount"] !== undefined ? data["initialPaymentAmount"] : null;
+            this.trialPeriodDays = data["trialPeriodDays"] !== undefined ? data["trialPeriodDays"] : null;
+            this.monthlyPaymentAmount = data["monthlyPaymentAmount"] !== undefined ? data["monthlyPaymentAmount"] : null;
+            this.isActive = data["isActive"] !== undefined ? data["isActive"] : null;
+            this.isDeleted = data["isDeleted"] !== undefined ? data["isDeleted"] : null;
+            this.deleterUserId = data["deleterUserId"] !== undefined ? data["deleterUserId"] : null;
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : null;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : null;
+            this.lastModifierUserId = data["lastModifierUserId"] !== undefined ? data["lastModifierUserId"] : null;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : null;
+            this.creatorUserId = data["creatorUserId"] !== undefined ? data["creatorUserId"] : null;
+            this.id = data["id"] !== undefined ? data["id"] : null;
+        }
+    }
+
+    static fromJS(data: any): PackageDto {
+        return new PackageDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["tenantId"] = this.tenantId !== undefined ? this.tenantId : null;
+        data["name"] = this.name !== undefined ? this.name : null;
+        data["idcsPackageId"] = this.idcsPackageId !== undefined ? this.idcsPackageId : null;
+        data["description"] = this.description !== undefined ? this.description : null;
+        data["initialPaymentAmount"] = this.initialPaymentAmount !== undefined ? this.initialPaymentAmount : null;
+        data["trialPeriodDays"] = this.trialPeriodDays !== undefined ? this.trialPeriodDays : null;
+        data["monthlyPaymentAmount"] = this.monthlyPaymentAmount !== undefined ? this.monthlyPaymentAmount : null;
+        data["isActive"] = this.isActive !== undefined ? this.isActive : null;
+        data["isDeleted"] = this.isDeleted !== undefined ? this.isDeleted : null;
+        data["deleterUserId"] = this.deleterUserId !== undefined ? this.deleterUserId : null;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : null;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : null;
+        data["lastModifierUserId"] = this.lastModifierUserId !== undefined ? this.lastModifierUserId : null;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : null;
+        data["creatorUserId"] = this.creatorUserId !== undefined ? this.creatorUserId : null;
+        data["id"] = this.id !== undefined ? this.id : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new PackageDto(JSON.parse(json));
     }
 }
 
@@ -9763,6 +11403,46 @@ export class LdapSettingsEditDto {
     }
 }
 
+export class IdcsSettingsDto { 
+    requestSource: string; 
+    partnerCode: string; 
+    partnerAccount: string; 
+    password: string; 
+    branding: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.requestSource = data["requestSource"] !== undefined ? data["requestSource"] : null;
+            this.partnerCode = data["partnerCode"] !== undefined ? data["partnerCode"] : null;
+            this.partnerAccount = data["partnerAccount"] !== undefined ? data["partnerAccount"] : null;
+            this.password = data["password"] !== undefined ? data["password"] : null;
+            this.branding = data["branding"] !== undefined ? data["branding"] : null;
+        }
+    }
+
+    static fromJS(data: any): IdcsSettingsDto {
+        return new IdcsSettingsDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["requestSource"] = this.requestSource !== undefined ? this.requestSource : null;
+        data["partnerCode"] = this.partnerCode !== undefined ? this.partnerCode : null;
+        data["partnerAccount"] = this.partnerAccount !== undefined ? this.partnerAccount : null;
+        data["password"] = this.password !== undefined ? this.password : null;
+        data["branding"] = this.branding !== undefined ? this.branding : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new IdcsSettingsDto(JSON.parse(json));
+    }
+}
+
 export class ListResultDtoOfNameValueDto { 
     items: NameValueDto[];
     constructor(data?: any) {
@@ -10797,6 +12477,37 @@ export class UserLoginAttemptDto {
     }
 }
 
+export class EmailValidationDto { 
+    result: boolean; 
+    message: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.result = data["result"] !== undefined ? data["result"] : null;
+            this.message = data["message"] !== undefined ? data["message"] : null;
+        }
+    }
+
+    static fromJS(data: any): EmailValidationDto {
+        return new EmailValidationDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["result"] = this.result !== undefined ? this.result : null;
+        data["message"] = this.message !== undefined ? this.message : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new EmailValidationDto(JSON.parse(json));
+    }
+}
+
 export class GetLatestWebLogsOutput { 
     latesWebLogLines: string[];
     constructor(data?: any) {
@@ -10863,6 +12574,41 @@ export enum ChatMessageDtoSide {
 export enum ChatMessageDtoReadState {
     _1 = 1, 
     _2 = 2, 
+}
+
+export enum AccountDtoState {
+    _0 = 0, 
+    _1 = 1, 
+}
+
+export enum AlertDtoType {
+    _0 = 0, 
+    _1 = 1, 
+}
+
+export enum AccountInfoDtoStatus {
+    _0 = 0, 
+    _1 = 1, 
+}
+
+export enum AccountCreditHistoryDtoStatusType {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+    _5 = 5, 
+    _6 = 6, 
+    _7 = 7, 
+    _8 = 8, 
+    _9 = 9, 
+    _10 = 10, 
+    _11 = 11, 
+}
+
+export enum RegisterMemberRequestGender {
+    _0 = 0, 
+    _1 = 1, 
 }
 
 export enum UserNotificationState {
