@@ -60,7 +60,16 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         this.loading = true;
         this._tenantSettingsService.getAllSettings()
             .finally(() => {
-                this.loading = false;
+                if (this.isCreditReportFeatureEnabled) {
+                    this._tenantSettingsCreditReportService.getIdcsSettings()
+                        .finally(() => this.loading = false)
+                        .subscribe((result: IdcsSettingsDto) => {
+                            this.idcsSettings = result;
+                        });
+                }
+                else {
+                    this.loading = false;
+                }
             })
             .subscribe((result: TenantSettingsEditDto) => {
                 this.settings = result;
@@ -69,13 +78,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
                     this.usingDefaultTimeZone = this.settings.general.timezoneForComparison === abp.setting.values["Abp.Timing.TimeZone"];
                 }
             });
-
-        if (this.isCreditReportFeatureEnabled) {
-            this._tenantSettingsCreditReportService.getIdcsSettings()
-            .subscribe((result: IdcsSettingsDto) => {
-                this.idcsSettings = result;
-            });
-        }
     }
 
     initUploaders(): void {
