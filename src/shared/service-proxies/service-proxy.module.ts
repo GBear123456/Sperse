@@ -21,6 +21,7 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.TenantServiceProxy,
         ApiServiceProxies.TenantDashboardServiceProxy,
         ApiServiceProxies.TenantSettingsServiceProxy,
+        ApiServiceProxies.TenantSettingsCreditReportServiceProxy,
         ApiServiceProxies.TimingServiceProxy,
         ApiServiceProxies.UserServiceProxy,
         ApiServiceProxies.UserLinkServiceProxy,
