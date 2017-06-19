@@ -1,4 +1,4 @@
 ﻿{
-  "remoteServiceBaseUrl": "http://{TENANCY_NAME}.apitest.sperse.com",
-  "appBaseUrl": "http://{TENANCY_NAME}.admintest.sperse.com"
+  "remoteServiceBaseUrl": "http://{TENANCY_NAME}.testapi.sperse.com",
+  "appBaseUrl": "http://{TENANCY_NAME}.testadmin.sperse.com"
 }
