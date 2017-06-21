@@ -2336,6 +2336,50 @@ export class MemberServiceProxy {
     /**
      * @return Success
      */
+    submitMemberInfo(memberInfo: MemberInfoDto): Observable<SubmitMemberInfoResultDto> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/Member/SubmitMemberInfo";
+
+        const content_ = JSON.stringify(memberInfo ? memberInfo.toJS() : null);
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processSubmitMemberInfo(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processSubmitMemberInfo(response));
+                } catch (e) {
+                    return <Observable<SubmitMemberInfoResultDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<SubmitMemberInfoResultDto>><any>Observable.throw(response);
+        });
+    }
+
+    protected processSubmitMemberInfo(response: Response): SubmitMemberInfoResultDto {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: SubmitMemberInfoResultDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SubmitMemberInfoResultDto.fromJS(resultData200) : new SubmitMemberInfoResultDto();
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    /**
+     * @return Success
+     */
     paymentAuthorize(input: PaymentAuthorizeRequestDto): Observable<PaymentAuthorizeResponseDto> {
         let url_ = this.baseUrl + "/api/services/CreditReport/Member/PaymentAuthorize";
 
@@ -2412,6 +2456,57 @@ export class MemberServiceProxy {
 
         if (status === 200) {
             return null;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    /**
+     * @return Success
+     */
+    getCountryStates(countryCode: string): Observable<CountryStateDto[]> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/Member/GetCountryStates?";
+        if (countryCode !== undefined)
+        
+            url_ += "countryCode=" + encodeURIComponent("" + countryCode) + "&";
+
+        const content_ = "";
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processGetCountryStates(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processGetCountryStates(response));
+                } catch (e) {
+                    return <Observable<CountryStateDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CountryStateDto[]>><any>Observable.throw(response);
+        });
+    }
+
+    protected processGetCountryStates(response: Response): CountryStateDto[] {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: CountryStateDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CountryStateDto.fromJS(item));
+            }
+            return result200;
         } else if (status !== 200 && status !== 204) {
             this.throwException("An unexpected server error occurred.", status, responseText);
         }
@@ -7158,11 +7253,13 @@ export class GetDefaultEditionNameOutput {
 
 export class CreditReportOutput { 
     kbaPassed: boolean; 
-    creditReport: CreditReportDto;
+    creditReport: CreditReportDto; 
+    updatable: boolean;
     constructor(data?: any) {
         if (data !== undefined) {
             this.kbaPassed = data["kbaPassed"] !== undefined ? data["kbaPassed"] : null;
             this.creditReport = data["creditReport"] ? CreditReportDto.fromJS(data["creditReport"]) : null;
+            this.updatable = data["updatable"] !== undefined ? data["updatable"] : null;
         }
     }
 
@@ -7174,6 +7271,7 @@ export class CreditReportOutput {
         data = data === undefined ? {} : data;
         data["kbaPassed"] = this.kbaPassed !== undefined ? this.kbaPassed : null;
         data["creditReport"] = this.creditReport ? this.creditReport.toJS() : null;
+        data["updatable"] = this.updatable !== undefined ? this.updatable : null;
         return data; 
     }
 
@@ -9225,6 +9323,86 @@ export class UpdateLanguageTextInput {
     }
 }
 
+export class MemberInfoDto { 
+    registrationId: string; 
+    name: string; 
+    surname: string; 
+    email: string; 
+    phone: string; 
+    doB: moment.Moment; 
+    gender: MemberInfoDtoGender; 
+    isUSCitizen: boolean; 
+    packageId: number;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.registrationId = data["registrationId"] !== undefined ? data["registrationId"] : null;
+            this.name = data["name"] !== undefined ? data["name"] : null;
+            this.surname = data["surname"] !== undefined ? data["surname"] : null;
+            this.email = data["email"] !== undefined ? data["email"] : null;
+            this.phone = data["phone"] !== undefined ? data["phone"] : null;
+            this.doB = data["doB"] ? moment(data["doB"].toString()) : null;
+            this.gender = data["gender"] !== undefined ? data["gender"] : null;
+            this.isUSCitizen = data["isUSCitizen"] !== undefined ? data["isUSCitizen"] : null;
+            this.packageId = data["packageId"] !== undefined ? data["packageId"] : null;
+        }
+    }
+
+    static fromJS(data: any): MemberInfoDto {
+        return new MemberInfoDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["registrationId"] = this.registrationId !== undefined ? this.registrationId : null;
+        data["name"] = this.name !== undefined ? this.name : null;
+        data["surname"] = this.surname !== undefined ? this.surname : null;
+        data["email"] = this.email !== undefined ? this.email : null;
+        data["phone"] = this.phone !== undefined ? this.phone : null;
+        data["doB"] = this.doB ? this.doB.toISOString() : null;
+        data["gender"] = this.gender !== undefined ? this.gender : null;
+        data["isUSCitizen"] = this.isUSCitizen !== undefined ? this.isUSCitizen : null;
+        data["packageId"] = this.packageId !== undefined ? this.packageId : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new MemberInfoDto(JSON.parse(json));
+    }
+}
+
+export class SubmitMemberInfoResultDto { 
+    paymentAuthorizationRequired: boolean;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.paymentAuthorizationRequired = data["paymentAuthorizationRequired"] !== undefined ? data["paymentAuthorizationRequired"] : null;
+        }
+    }
+
+    static fromJS(data: any): SubmitMemberInfoResultDto {
+        return new SubmitMemberInfoResultDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["paymentAuthorizationRequired"] = this.paymentAuthorizationRequired !== undefined ? this.paymentAuthorizationRequired : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new SubmitMemberInfoResultDto(JSON.parse(json));
+    }
+}
+
 export class PaymentAuthorizeRequestDto { 
     registrationId: string; 
     packageId: number; 
@@ -9345,11 +9523,11 @@ export class PaymentAuthorizeResponseDto {
 }
 
 export class RegisterMemberRequest { 
+    password: string; 
     registrationId: string; 
     name: string; 
     surname: string; 
     email: string; 
-    password: string; 
     phone: string; 
     doB: moment.Moment; 
     gender: RegisterMemberRequestGender; 
@@ -9357,11 +9535,11 @@ export class RegisterMemberRequest {
     packageId: number;
     constructor(data?: any) {
         if (data !== undefined) {
+            this.password = data["password"] !== undefined ? data["password"] : null;
             this.registrationId = data["registrationId"] !== undefined ? data["registrationId"] : null;
             this.name = data["name"] !== undefined ? data["name"] : null;
             this.surname = data["surname"] !== undefined ? data["surname"] : null;
             this.email = data["email"] !== undefined ? data["email"] : null;
-            this.password = data["password"] !== undefined ? data["password"] : null;
             this.phone = data["phone"] !== undefined ? data["phone"] : null;
             this.doB = data["doB"] ? moment(data["doB"].toString()) : null;
             this.gender = data["gender"] !== undefined ? data["gender"] : null;
@@ -9376,11 +9554,11 @@ export class RegisterMemberRequest {
 
     toJS(data?: any) {
         data = data === undefined ? {} : data;
+        data["password"] = this.password !== undefined ? this.password : null;
         data["registrationId"] = this.registrationId !== undefined ? this.registrationId : null;
         data["name"] = this.name !== undefined ? this.name : null;
         data["surname"] = this.surname !== undefined ? this.surname : null;
         data["email"] = this.email !== undefined ? this.email : null;
-        data["password"] = this.password !== undefined ? this.password : null;
         data["phone"] = this.phone !== undefined ? this.phone : null;
         data["doB"] = this.doB ? this.doB.toISOString() : null;
         data["gender"] = this.gender !== undefined ? this.gender : null;
@@ -9396,6 +9574,37 @@ export class RegisterMemberRequest {
     clone() {
         const json = this.toJSON();
         return new RegisterMemberRequest(JSON.parse(json));
+    }
+}
+
+export class CountryStateDto { 
+    code: string; 
+    name: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.code = data["code"] !== undefined ? data["code"] : null;
+            this.name = data["name"] !== undefined ? data["name"] : null;
+        }
+    }
+
+    static fromJS(data: any): CountryStateDto {
+        return new CountryStateDto(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["code"] = this.code !== undefined ? this.code : null;
+        data["name"] = this.name !== undefined ? this.name : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new CountryStateDto(JSON.parse(json));
     }
 }
 
@@ -12604,6 +12813,11 @@ export enum AccountCreditHistoryDtoStatusType {
     _9 = 9, 
     _10 = 10, 
     _11 = 11, 
+}
+
+export enum MemberInfoDtoGender {
+    _0 = 0, 
+    _1 = 1, 
 }
 
 export enum RegisterMemberRequestGender {
