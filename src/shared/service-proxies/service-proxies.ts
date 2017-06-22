@@ -9444,7 +9444,10 @@ export class CreditCardDto {
     expirationYear: string; 
     cvv: string; 
     billingAddress: string; 
-    billingZip: string;
+    billingZip: string; 
+    billingCity: string; 
+    billingStateCode: string; 
+    billingCountryCode: string;
     constructor(data?: any) {
         if (data !== undefined) {
             this.holderName = data["holderName"] !== undefined ? data["holderName"] : null;
@@ -9454,6 +9457,9 @@ export class CreditCardDto {
             this.cvv = data["cvv"] !== undefined ? data["cvv"] : null;
             this.billingAddress = data["billingAddress"] !== undefined ? data["billingAddress"] : null;
             this.billingZip = data["billingZip"] !== undefined ? data["billingZip"] : null;
+            this.billingCity = data["billingCity"] !== undefined ? data["billingCity"] : null;
+            this.billingStateCode = data["billingStateCode"] !== undefined ? data["billingStateCode"] : null;
+            this.billingCountryCode = data["billingCountryCode"] !== undefined ? data["billingCountryCode"] : null;
         }
     }
 
@@ -9470,6 +9476,9 @@ export class CreditCardDto {
         data["cvv"] = this.cvv !== undefined ? this.cvv : null;
         data["billingAddress"] = this.billingAddress !== undefined ? this.billingAddress : null;
         data["billingZip"] = this.billingZip !== undefined ? this.billingZip : null;
+        data["billingCity"] = this.billingCity !== undefined ? this.billingCity : null;
+        data["billingStateCode"] = this.billingStateCode !== undefined ? this.billingStateCode : null;
+        data["billingCountryCode"] = this.billingCountryCode !== undefined ? this.billingCountryCode : null;
         return data; 
     }
 
