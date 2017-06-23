@@ -7254,12 +7254,14 @@ export class GetDefaultEditionNameOutput {
 export class CreditReportOutput { 
     kbaPassed: boolean; 
     creditReport: CreditReportDto; 
-    updatable: boolean;
+    updatable: boolean; 
+    subscriptionCancelled: boolean;
     constructor(data?: any) {
         if (data !== undefined) {
             this.kbaPassed = data["kbaPassed"] !== undefined ? data["kbaPassed"] : null;
             this.creditReport = data["creditReport"] ? CreditReportDto.fromJS(data["creditReport"]) : null;
             this.updatable = data["updatable"] !== undefined ? data["updatable"] : null;
+            this.subscriptionCancelled = data["subscriptionCancelled"] !== undefined ? data["subscriptionCancelled"] : null;
         }
     }
 
@@ -7272,6 +7274,7 @@ export class CreditReportOutput {
         data["kbaPassed"] = this.kbaPassed !== undefined ? this.kbaPassed : null;
         data["creditReport"] = this.creditReport ? this.creditReport.toJS() : null;
         data["updatable"] = this.updatable !== undefined ? this.updatable : null;
+        data["subscriptionCancelled"] = this.subscriptionCancelled !== undefined ? this.subscriptionCancelled : null;
         return data; 
     }
 
@@ -9330,6 +9333,7 @@ export class MemberInfoDto {
     email: string; 
     phone: string; 
     doB: moment.Moment; 
+    ssn: string; 
     gender: MemberInfoDtoGender; 
     isUSCitizen: boolean; 
     packageId: number;
@@ -9341,6 +9345,7 @@ export class MemberInfoDto {
             this.email = data["email"] !== undefined ? data["email"] : null;
             this.phone = data["phone"] !== undefined ? data["phone"] : null;
             this.doB = data["doB"] ? moment(data["doB"].toString()) : null;
+            this.ssn = data["ssn"] !== undefined ? data["ssn"] : null;
             this.gender = data["gender"] !== undefined ? data["gender"] : null;
             this.isUSCitizen = data["isUSCitizen"] !== undefined ? data["isUSCitizen"] : null;
             this.packageId = data["packageId"] !== undefined ? data["packageId"] : null;
@@ -9359,6 +9364,7 @@ export class MemberInfoDto {
         data["email"] = this.email !== undefined ? this.email : null;
         data["phone"] = this.phone !== undefined ? this.phone : null;
         data["doB"] = this.doB ? this.doB.toISOString() : null;
+        data["ssn"] = this.ssn !== undefined ? this.ssn : null;
         data["gender"] = this.gender !== undefined ? this.gender : null;
         data["isUSCitizen"] = this.isUSCitizen !== undefined ? this.isUSCitizen : null;
         data["packageId"] = this.packageId !== undefined ? this.packageId : null;
@@ -9539,6 +9545,7 @@ export class RegisterMemberRequest {
     email: string; 
     phone: string; 
     doB: moment.Moment; 
+    ssn: string; 
     gender: RegisterMemberRequestGender; 
     isUSCitizen: boolean; 
     packageId: number;
@@ -9551,6 +9558,7 @@ export class RegisterMemberRequest {
             this.email = data["email"] !== undefined ? data["email"] : null;
             this.phone = data["phone"] !== undefined ? data["phone"] : null;
             this.doB = data["doB"] ? moment(data["doB"].toString()) : null;
+            this.ssn = data["ssn"] !== undefined ? data["ssn"] : null;
             this.gender = data["gender"] !== undefined ? data["gender"] : null;
             this.isUSCitizen = data["isUSCitizen"] !== undefined ? data["isUSCitizen"] : null;
             this.packageId = data["packageId"] !== undefined ? data["packageId"] : null;
@@ -9570,6 +9578,7 @@ export class RegisterMemberRequest {
         data["email"] = this.email !== undefined ? this.email : null;
         data["phone"] = this.phone !== undefined ? this.phone : null;
         data["doB"] = this.doB ? this.doB.toISOString() : null;
+        data["ssn"] = this.ssn !== undefined ? this.ssn : null;
         data["gender"] = this.gender !== undefined ? this.gender : null;
         data["isUSCitizen"] = this.isUSCitizen !== undefined ? this.isUSCitizen : null;
         data["packageId"] = this.packageId !== undefined ? this.packageId : null;
