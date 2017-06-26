@@ -4482,6 +4482,72 @@ export class TenantDashboardServiceProxy {
 }
 
 @Injectable()
+export class TenantHostsServiceProxy {
+    private http: Http = null; 
+    private baseUrl: string = undefined; 
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http; 
+        this.baseUrl = baseUrl ? baseUrl : ""; 
+    }
+
+    /**
+     * @return Success
+     */
+    getTenantApiHost(clientHostName: string): Observable<TenantApiHostOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantHosts/GetTenantApiHost?";
+        if (clientHostName !== undefined)
+        
+            url_ += "ClientHostName=" + encodeURIComponent("" + clientHostName) + "&";
+
+        const content_ = "";
+        
+        return this.http.request(url_, {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+				"Accept": "application/json; charset=UTF-8"
+            })
+        }).map((response) => {
+            return this.processGetTenantApiHost(response);
+        }).catch((response: any, caught: any) => {
+            if (response instanceof Response) {
+                try {
+                    return Observable.of(this.processGetTenantApiHost(response));
+                } catch (e) {
+                    return <Observable<TenantApiHostOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<TenantApiHostOutput>><any>Observable.throw(response);
+        });
+    }
+
+    protected processGetTenantApiHost(response: Response): TenantApiHostOutput {
+        const responseText = response.text();
+        const status = response.status; 
+
+        if (status === 200) {
+            let result200: TenantApiHostOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? TenantApiHostOutput.fromJS(resultData200) : new TenantApiHostOutput();
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            this.throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return null;
+    }
+
+    protected throwException(message: string, status: number, response: string, result?: any): any {
+        if(result !== null && result !== undefined)
+            throw result;
+        else
+            throw new SwaggerException(message, status, response);
+    }
+}
+
+@Injectable()
 export class TenantRegistrationServiceProxy {
     private http: Http = null; 
     private baseUrl: string = undefined; 
@@ -7254,12 +7320,14 @@ export class GetDefaultEditionNameOutput {
 export class CreditReportOutput { 
     kbaPassed: boolean; 
     creditReport: CreditReportDto; 
-    updatable: boolean;
+    updatable: boolean; 
+    isSubscriptionCancelled: boolean;
     constructor(data?: any) {
         if (data !== undefined) {
             this.kbaPassed = data["kbaPassed"] !== undefined ? data["kbaPassed"] : null;
             this.creditReport = data["creditReport"] ? CreditReportDto.fromJS(data["creditReport"]) : null;
             this.updatable = data["updatable"] !== undefined ? data["updatable"] : null;
+            this.isSubscriptionCancelled = data["isSubscriptionCancelled"] !== undefined ? data["isSubscriptionCancelled"] : null;
         }
     }
 
@@ -7272,6 +7340,7 @@ export class CreditReportOutput {
         data["kbaPassed"] = this.kbaPassed !== undefined ? this.kbaPassed : null;
         data["creditReport"] = this.creditReport ? this.creditReport.toJS() : null;
         data["updatable"] = this.updatable !== undefined ? this.updatable : null;
+        data["isSubscriptionCancelled"] = this.isSubscriptionCancelled !== undefined ? this.isSubscriptionCancelled : null;
         return data; 
     }
 
@@ -9330,6 +9399,7 @@ export class MemberInfoDto {
     email: string; 
     phone: string; 
     doB: moment.Moment; 
+    ssn: string; 
     gender: MemberInfoDtoGender; 
     isUSCitizen: boolean; 
     packageId: number;
@@ -9341,6 +9411,7 @@ export class MemberInfoDto {
             this.email = data["email"] !== undefined ? data["email"] : null;
             this.phone = data["phone"] !== undefined ? data["phone"] : null;
             this.doB = data["doB"] ? moment(data["doB"].toString()) : null;
+            this.ssn = data["ssn"] !== undefined ? data["ssn"] : null;
             this.gender = data["gender"] !== undefined ? data["gender"] : null;
             this.isUSCitizen = data["isUSCitizen"] !== undefined ? data["isUSCitizen"] : null;
             this.packageId = data["packageId"] !== undefined ? data["packageId"] : null;
@@ -9359,6 +9430,7 @@ export class MemberInfoDto {
         data["email"] = this.email !== undefined ? this.email : null;
         data["phone"] = this.phone !== undefined ? this.phone : null;
         data["doB"] = this.doB ? this.doB.toISOString() : null;
+        data["ssn"] = this.ssn !== undefined ? this.ssn : null;
         data["gender"] = this.gender !== undefined ? this.gender : null;
         data["isUSCitizen"] = this.isUSCitizen !== undefined ? this.isUSCitizen : null;
         data["packageId"] = this.packageId !== undefined ? this.packageId : null;
@@ -9444,7 +9516,12 @@ export class CreditCardDto {
     expirationYear: string; 
     cvv: string; 
     billingAddress: string; 
-    billingZip: string;
+    billingZip: string; 
+    billingCity: string; 
+    billingStateCode: string; 
+    billingState: string; 
+    billingCountryCode: string; 
+    billingCountry: string;
     constructor(data?: any) {
         if (data !== undefined) {
             this.holderName = data["holderName"] !== undefined ? data["holderName"] : null;
@@ -9454,6 +9531,11 @@ export class CreditCardDto {
             this.cvv = data["cvv"] !== undefined ? data["cvv"] : null;
             this.billingAddress = data["billingAddress"] !== undefined ? data["billingAddress"] : null;
             this.billingZip = data["billingZip"] !== undefined ? data["billingZip"] : null;
+            this.billingCity = data["billingCity"] !== undefined ? data["billingCity"] : null;
+            this.billingStateCode = data["billingStateCode"] !== undefined ? data["billingStateCode"] : null;
+            this.billingState = data["billingState"] !== undefined ? data["billingState"] : null;
+            this.billingCountryCode = data["billingCountryCode"] !== undefined ? data["billingCountryCode"] : null;
+            this.billingCountry = data["billingCountry"] !== undefined ? data["billingCountry"] : null;
         }
     }
 
@@ -9470,6 +9552,11 @@ export class CreditCardDto {
         data["cvv"] = this.cvv !== undefined ? this.cvv : null;
         data["billingAddress"] = this.billingAddress !== undefined ? this.billingAddress : null;
         data["billingZip"] = this.billingZip !== undefined ? this.billingZip : null;
+        data["billingCity"] = this.billingCity !== undefined ? this.billingCity : null;
+        data["billingStateCode"] = this.billingStateCode !== undefined ? this.billingStateCode : null;
+        data["billingState"] = this.billingState !== undefined ? this.billingState : null;
+        data["billingCountryCode"] = this.billingCountryCode !== undefined ? this.billingCountryCode : null;
+        data["billingCountry"] = this.billingCountry !== undefined ? this.billingCountry : null;
         return data; 
     }
 
@@ -9530,6 +9617,7 @@ export class RegisterMemberRequest {
     email: string; 
     phone: string; 
     doB: moment.Moment; 
+    ssn: string; 
     gender: RegisterMemberRequestGender; 
     isUSCitizen: boolean; 
     packageId: number;
@@ -9542,6 +9630,7 @@ export class RegisterMemberRequest {
             this.email = data["email"] !== undefined ? data["email"] : null;
             this.phone = data["phone"] !== undefined ? data["phone"] : null;
             this.doB = data["doB"] ? moment(data["doB"].toString()) : null;
+            this.ssn = data["ssn"] !== undefined ? data["ssn"] : null;
             this.gender = data["gender"] !== undefined ? data["gender"] : null;
             this.isUSCitizen = data["isUSCitizen"] !== undefined ? data["isUSCitizen"] : null;
             this.packageId = data["packageId"] !== undefined ? data["packageId"] : null;
@@ -9561,6 +9650,7 @@ export class RegisterMemberRequest {
         data["email"] = this.email !== undefined ? this.email : null;
         data["phone"] = this.phone !== undefined ? this.phone : null;
         data["doB"] = this.doB ? this.doB.toISOString() : null;
+        data["ssn"] = this.ssn !== undefined ? this.ssn : null;
         data["gender"] = this.gender !== undefined ? this.gender : null;
         data["isUSCitizen"] = this.isUSCitizen !== undefined ? this.isUSCitizen : null;
         data["packageId"] = this.packageId !== undefined ? this.packageId : null;
@@ -11403,6 +11493,34 @@ export class GetMemberActivityOutput {
     clone() {
         const json = this.toJSON();
         return new GetMemberActivityOutput(JSON.parse(json));
+    }
+}
+
+export class TenantApiHostOutput { 
+    hostName: string;
+    constructor(data?: any) {
+        if (data !== undefined) {
+            this.hostName = data["hostName"] !== undefined ? data["hostName"] : null;
+        }
+    }
+
+    static fromJS(data: any): TenantApiHostOutput {
+        return new TenantApiHostOutput(data);
+    }
+
+    toJS(data?: any) {
+        data = data === undefined ? {} : data;
+        data["hostName"] = this.hostName !== undefined ? this.hostName : null;
+        return data; 
+    }
+
+    toJSON() {
+        return JSON.stringify(this.toJS());
+    }
+
+    clone() {
+        const json = this.toJSON();
+        return new TenantApiHostOutput(JSON.parse(json));
     }
 }
 

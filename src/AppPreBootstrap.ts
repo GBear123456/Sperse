@@ -7,6 +7,7 @@ import { SubdomainTenancyNameFinder } from '@shared/helpers/SubdomainTenancyName
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Type, CompilerOptions, NgModuleRef } from '@angular/core';
 import { UtilsService } from '@abp/utils/utils.service';
+import { TenantApiHostOutput } from '@shared/service-proxies/service-proxies'
 
 export class AppPreBootstrap {
 
@@ -36,22 +37,39 @@ export class AppPreBootstrap {
                 'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
             }
         }).done(result => {
-
             let subdomainTenancyNameFinder = new SubdomainTenancyNameFinder();
             var tenancyName = subdomainTenancyNameFinder.getCurrentTenancyNameOrNull(result.appBaseUrl);
 
             AppConsts.appBaseUrlFormat = result.appBaseUrl;
             AppConsts.remoteServiceBaseUrlFormat = result.remoteServiceBaseUrl;
-            
+
             if (tenancyName == null) {
-                AppConsts.appBaseUrl = result.appBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "");
-                AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "");
+                var platformHostUrl = result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "");
+                
+                abp.ajax({
+                    url: platformHostUrl + '/api/services/Platform/TenantHosts/GetTenantApiHost?ClientHostName=' + window.location.host,
+                    method: 'GET',
+                    headers: {
+                        'Accept-Language': abp.utils.getCookieValue("Abp.Localization.CultureName")
+                    }
+                }).done((tenantApiHostOutput: TenantApiHostOutput) => {
+                    if (tenantApiHostOutput.hostName !== null) {
+                        AppConsts.remoteServiceBaseUrl = window.location.protocol + "//" + tenantApiHostOutput.hostName;
+                        AppConsts.appBaseUrl = window.location.protocol + "//" + window.location.host;
+                    }
+                    else
+                    {
+                        AppConsts.appBaseUrl = result.appBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "");
+                        AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "");
+                    }
+
+                    callback();
+                    });
             } else {
                 AppConsts.appBaseUrl = result.appBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl, tenancyName);
                 AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl, tenancyName);
+                callback();
             }
-
-            callback();
         });
     }
 
