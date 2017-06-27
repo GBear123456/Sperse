@@ -50,7 +50,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             select: [
                 'Name',
                 'PrimaryContact.FullName',
-                'PrimaryContact.PrimaryAddress.State.Name',
+                //'PrimaryContact.PrimaryAddress.State.Name',
                 'PrimaryContact.PrimaryEmail.EmailAddress',
                 'PrimaryContact.PrimaryPhone.PhoneNumber',
                 'Status.Name',
