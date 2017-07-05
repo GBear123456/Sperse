@@ -35,7 +35,7 @@ var Layout = function() {
             if (body.hasClass('page-sidebar-fixed')) {
                 height = _calculateFixedSidebarViewportHeight();
                 if (body.hasClass('page-footer-fixed') === false) {
-                    height = height - $('.page-footer').outerHeight();
+                    height = height - $('.page-footer').outerHeight() - 60;
                 }
             } else {
                 var headerHeight = $('.page-header').outerHeight();
@@ -48,7 +48,7 @@ var Layout = function() {
                 }
 
                 if ((height + headerHeight + footerHeight) <= App.getViewPort().height) {
-                    height = App.getViewPort().height - headerHeight - footerHeight;
+                    height = App.getViewPort().height - headerHeight - footerHeight - 60;
                 }
             }
             content.css('min-height', height);
@@ -521,7 +521,8 @@ var Layout = function() {
                 dataType: "html",
                 success: function (res) {    
                     App.stopPageLoading();
-                                    
+                    pageContent.html(res);
+
                     for (var i = 0; i < ajaxContentSuccessCallbacks.length; i++) {
                         ajaxContentSuccessCallbacks[i].call(res);
                     }
@@ -529,8 +530,7 @@ var Layout = function() {
                     if (sidebarMenuLink.size() > 0 && sidebarMenuLink.parents('li.open').size() === 0) {
                         $('.page-sidebar-menu > li.open > a').click();
                     }
-
-                    pageContent.html(res);
+                    
                     Layout.fixContentHeight(); // fix content height
                     App.initAjax(); // initialize core stuff
                 },
@@ -539,7 +539,7 @@ var Layout = function() {
                     pageContent.html('<h4>Could not load the requested content.</h4>');
 
                     for (var i = 0; i < ajaxContentErrorCallbacks.length; i++) {
-                        ajaxContentSuccessCallbacks[i].call(res);
+                        ajaxContentErrorCallbacks[i].call(res);
                     }                    
                 }
             });
@@ -576,3 +576,9 @@ var Layout = function() {
     };
 
 }();
+
+if (App.isAngularJsApp() === false) {
+    jQuery(document).ready(function() {    
+       Layout.init(); // init metronic core componets
+    });
+}

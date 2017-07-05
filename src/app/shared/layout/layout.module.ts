@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { ModalModule, TooltipModule } from 'ng2-bootstrap';
+import { ModalModule, TooltipModule } from 'ngx-bootstrap';
 
 import { HeaderComponent } from './header.component';
 import { HeaderNotificationsComponent } from './notifications/header-notifications.component';

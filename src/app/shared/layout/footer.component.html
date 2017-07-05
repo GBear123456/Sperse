@@ -1,7 +1,7 @@
-<div class="page-footer-inner">
+﻿<div class="page-footer-inner">
     <span class="text-muted">
         <small>
-            CRM<span *ngIf="appSession.tenant && appSession.tenant.editionDisplayName"> {{appSession.tenant.editionDisplayName}}</span> <br />
+            Platform<span *ngIf="appSession.tenant && appSession.tenant.edition && appSession.tenant.edition.displayName"> {{appSession.tenant.edition.displayName}}</span> <br />
             v{{appSession.application.version}} [{{releaseDate}}]
         </small>
     </span>

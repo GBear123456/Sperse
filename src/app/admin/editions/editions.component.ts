@@ -1,7 +1,6 @@
-﻿import { Component, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+﻿import { Component, AfterViewInit, Injector, ViewChild } from '@angular/core';
 import { EditionServiceProxy, EditionListDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { Observable } from 'rxjs/Observable';
 import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-modal.component';
 import { JTableHelper } from '@shared/helpers/JTableHelper';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -64,7 +63,7 @@ export class EditionsComponent extends AppComponentBase implements AfterViewInit
                                 self.createOrEditEditionModal.show(data.record.id);
                             }
                         }, {
-                                text: this.l('Delete'),
+                            text: this.l('Delete'),
                             visible: (): boolean => {
                                 return self.isGranted('Pages.Editions.Delete');
                             },
@@ -80,7 +79,7 @@ export class EditionsComponent extends AppComponentBase implements AfterViewInit
                     creationTime: {
                         title: self.l('CreationTime'),
                         width: '35%',
-                        display: function (data) {
+                        display: (data: JTableFieldOptionDisplayData<EditionListDto>) => {
                             return moment(data.record.creationTime).format('L');
                         }
                     }
@@ -99,19 +98,17 @@ export class EditionsComponent extends AppComponentBase implements AfterViewInit
     }
 
     createEdition(): void {
-        let self = this;
-        self.createOrEditEditionModal.show();
+        this.createOrEditEditionModal.show();
     };
 
     deleteEdition(edition: EditionListDto): void {
-        let self = this;
-        self.message.confirm(
-            self.l('EditionDeleteWarningMessage', edition.displayName),
-            function (isConfirmed) {
+        this.message.confirm(
+            this.l('EditionDeleteWarningMessage', edition.displayName),
+            isConfirmed => {
                 if (isConfirmed) {
-                    self._editionService.deleteEdition(edition.id).subscribe((resul) => {
-                        self.getEditions();
-                        self.notify.success(self.l('SuccessfullyDeleted'));
+                    this._editionService.deleteEdition(edition.id).subscribe(() => {
+                        this.getEditions();
+                        this.notify.success(this.l('SuccessfullyDeleted'));
                     });
                 }
             }

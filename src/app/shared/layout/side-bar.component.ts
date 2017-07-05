@@ -1,5 +1,6 @@
-import { Component, Injector, ElementRef } from '@angular/core';
+﻿import { Component, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { Router, NavigationStart  } from '@angular/router';
 
@@ -19,7 +20,8 @@ export class SideBarComponent extends AppComponentBase {
 		private _eref: ElementRef, 
 		private _filtersService: FiltersService,
 		injector: Injector,
-		router: Router
+		router: Router,
+		private _appSessionService: AppSessionService
 	) {
         super(injector);
 

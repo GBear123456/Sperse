@@ -4,6 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { NotificationSettingsModalComponent } from './notification-settings-modal.component';
 
 import * as moment from 'moment';
+import * as Push from 'push.js'; // if using ES6 
 
 export interface IFormattedUserNotification {
     userNotificationId: string;
@@ -33,7 +34,7 @@ export class UserNotificationHelper extends AppComponentBase {
             case 'App.NewUserRegistered':
                 return '/app/admin/users?filterText=' + userNotification.notification.data.properties.emailAddress;
             case 'App.NewTenantRegistered':
-                return '/admin/tenants?filterText=' + userNotification.notification.data.properties.tenancyName;
+                return '/app/admin/tenants?filterText=' + userNotification.notification.data.properties.tenancyName;
             //Add your custom notification names to navigate to a URL when user clicks to a notification.
         }
 
@@ -90,9 +91,9 @@ export class UserNotificationHelper extends AppComponentBase {
                 }
             }
         });
-
+        
         //Desktop notification
-        Push.create("CRM", {
+        Push.create("Platform", {
             body: this.format(userNotification).text,
             icon: abp.appPath + 'assets/common/images/app-logo-small.png',
             timeout: 6000,

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+﻿import { NgModule } from '@angular/core';
 
 import { LayoutModule } from './shared/layout/layout.module';
 import { AppCommonModule } from './shared/common/app-common.module';

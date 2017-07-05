@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, Injector, ElementRef } from '@angular/core';
-import { ModalDirective } from 'ng2-bootstrap';
+﻿import { Component, OnInit, ViewChild, Injector, ElementRef } from '@angular/core';
+import { ModalDirective } from 'ngx-bootstrap';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { ProfileServiceProxy, ChangePasswordInput, PasswordComplexitySetting } from '@shared/service-proxies/service-proxies'

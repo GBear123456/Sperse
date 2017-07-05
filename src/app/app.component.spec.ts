@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { RootModule } from '../root.module';
 import { APP_BASE_HREF } from '@angular/common';
 
-describe('App: CRM', () => {
+describe('App: Platform', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [

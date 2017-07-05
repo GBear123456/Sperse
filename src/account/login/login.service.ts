@@ -70,6 +70,8 @@ export class LoginService {
 
         //We may switch to localStorage instead of cookies
         this.authenticateModel.twoFactorRememberClientToken = this._utilsService.getCookieValue(LoginService.twoFactorRememberClientTokenName);
+        this.authenticateModel.singleSignIn = UrlHelper.getSingleSignIn();
+        this.authenticateModel.returnUrl = UrlHelper.getReturnUrl();
 
         this._tokenAuthService
             .authenticate(this.authenticateModel)
@@ -120,6 +122,9 @@ export class LoginService {
 
         } else if (authenticateResult.accessToken) {
             //Successfully logged in
+            if (authenticateResult.returnUrl && !redirectUrl) {
+                redirectUrl = authenticateResult.returnUrl;
+            }
 
             this.login(authenticateResult.accessToken, authenticateResult.encryptedAccessToken, authenticateResult.expireInSeconds, this.rememberMe, authenticateResult.twoFactorRememberClientToken, redirectUrl);
 
@@ -157,15 +162,15 @@ export class LoginService {
             );
         }
 
-        var initialUrl = UrlHelper.initialUrl;
-
-        if (initialUrl.indexOf('/login') > 0) {
-            initialUrl = AppConsts.appBaseUrl;
-        }
-
         if (redirectUrl) {
             location.href = redirectUrl;
         } else {
+            var initialUrl = UrlHelper.initialUrl;
+
+            if (initialUrl.indexOf('/account') > 0) {
+                initialUrl = AppConsts.appBaseUrl;
+            }
+
             location.href = initialUrl;
         }
     }
@@ -243,6 +248,9 @@ export class LoginService {
             model.authProvider = ExternalLoginProvider.FACEBOOK;
             model.providerAccessCode = resp.authResponse.accessToken;
             model.providerKey = resp.authResponse.userID;
+            model.singleSignIn = UrlHelper.getSingleSignIn();
+            model.returnUrl = UrlHelper.getReturnUrl();
+            
             this._tokenAuthService.externalAuthenticate(model)
                 .subscribe((result: ExternalAuthenticateResultModel) => {
                     if (result.waitingForActivation) {
@@ -250,7 +258,7 @@ export class LoginService {
                         return;
                     }
 
-                    this.login(result.accessToken, result.encryptedAccessToken, result.expireInSeconds);
+                    this.login(result.accessToken, result.encryptedAccessToken, result.expireInSeconds, false, '', result.returnUrl);
                 });
         }
     }
@@ -261,6 +269,9 @@ export class LoginService {
             model.authProvider = ExternalLoginProvider.GOOGLE;
             model.providerAccessCode = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
             model.providerKey = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getId();
+            model.singleSignIn = UrlHelper.getSingleSignIn();
+            model.returnUrl = UrlHelper.getReturnUrl();
+
             this._tokenAuthService.externalAuthenticate(model)
                 .subscribe((result: ExternalAuthenticateResultModel) => {
                     if (result.waitingForActivation) {
@@ -268,7 +279,7 @@ export class LoginService {
                         return;
                     }
 
-                    this.login(result.accessToken, result.encryptedAccessToken, result.expireInSeconds);
+                    this.login(result.accessToken, result.encryptedAccessToken, result.expireInSeconds, false, '', result.returnUrl);
                 });
         }
     }
@@ -282,6 +293,9 @@ export class LoginService {
         model.authProvider = ExternalLoginProvider.MICROSOFT;
         model.providerAccessCode = WL.getSession().access_token;
         model.providerKey = WL.getSession().id; //How to get id?
+        model.singleSignIn = UrlHelper.getSingleSignIn();
+        model.returnUrl = UrlHelper.getReturnUrl();
+
         this._tokenAuthService.externalAuthenticate(model)
             .subscribe((result: ExternalAuthenticateResultModel) => {
                 if (result.waitingForActivation) {
@@ -289,7 +303,7 @@ export class LoginService {
                     return;
                 }
 
-                this.login(result.accessToken, result.encryptedAccessToken, result.expireInSeconds);
+                this.login(result.accessToken, result.encryptedAccessToken, result.expireInSeconds, false, '', result.returnUrl);
             });
     }
 }

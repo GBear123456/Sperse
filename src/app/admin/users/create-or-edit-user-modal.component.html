@@ -1,6 +1,6 @@
 ﻿<div bsModal #createOrEditModal="bs-modal" (onShown)="onShown()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal" aria-hidden="true" [config]="{backdrop: 'static'}">
   <div class="modal-dialog">
-    
+
     <div class="modal-content">
 
     <form *ngIf="active" #userForm="ngForm" novalidate (ngSubmit)="save()">
@@ -64,15 +64,45 @@
                     </div>
                 </div>
 
-                <div class="form-group form-md-line-input form-md-floating-label no-hint" *ngIf="!setRandomPassword">
-                    <input #Password type="password" name="Password" class="form-control" [ngClass]="{'edited':user.password}" [(ngModel)]="user.password" [required]="!user.id && !setRandomPassword" maxlength="32" minlength="6" validateEqual="PasswordRepeat" reverse="true">
+              <div class="form-group form-md-line-input form-md-floating-label no-hint" [hidden]="setRandomPassword">
+                <div class="input-icon right">
+                  <input type="password" name="Password" #Password="ngModel" id="Password" class="form-control" [ngClass]="{'edited':user.password}" [(ngModel)]="user.password" [required]="!user.id && !setRandomPassword" maxlength="32"
+                         [requireDigit]="passwordComplexitySetting.requireDigit" [requireLowercase]="passwordComplexitySetting.requireLowercase"
+                         [requireUppercase]="passwordComplexitySetting.requireUppercase" [requireNonAlphanumeric]="passwordComplexitySetting.requireNonAlphanumeric" [requiredLength]="passwordComplexitySetting.requiredLength"
+                         validateEqual="PasswordRepeat" reverse="true">
                     <label>{{l("Password")}}</label>
                 </div>
+              </div>
+              
+              <div [hidden]="setRandomPassword || userForm.form.valid || userForm.form.pristine">
+                <ul class="help-block text-danger" *ngIf="userForm.controls['Password'] && userForm.controls['Password'].errors">
+                  <li [hidden]="!userForm.controls['Password'].errors.requireDigit">{{l("PasswordComplexity_RequireDigit_Hint")}}</li>
+                  <li [hidden]="!userForm.controls['Password'].errors.requireLowercase">{{l("PasswordComplexity_RequireLowercase_Hint")}}</li>
+                  <li [hidden]="!userForm.controls['Password'].errors.requireUppercase">{{l("PasswordComplexity_RequireUppercase_Hint")}}</li>
+                  <li [hidden]="!userForm.controls['Password'].errors.requireNonAlphanumeric">{{l("PasswordComplexity_RequireNonAlphanumeric_Hint")}}</li>
+                  <li [hidden]="!userForm.controls['Password'].errors.requiredLength">{{l("PasswordComplexity_RequiredLength_Hint", passwordComplexitySetting.requiredLength)}}</li>
+                </ul>
+              </div>
 
                 <div class="form-group form-md-line-input form-md-floating-label no-hint" *ngIf="!setRandomPassword">
-                    <input #PasswordRepeat type="password" name="PasswordRepeat" class="form-control" [ngClass]="{'edited':user.passwordRepeat}" [(ngModel)]="user.passwordRepeat" [required]="!user.id && !setRandomPassword" maxlength="32" minlength="6" validateEqual="Password" reverse="false">
+                <div class="input-icon right">
+                  <input type="password" name="PasswordRepeat" #PasswordRepeat="ngModel" class="form-control" [ngClass]="{'edited':user.passwordRepeat}" [(ngModel)]="user.passwordRepeat" [required]="!user.id && !setRandomPassword" maxlength="32"
+                         [requireDigit]="passwordComplexitySetting.requireDigit" [requireLowercase]="passwordComplexitySetting.requireLowercase"
+                         [requireUppercase]="passwordComplexitySetting.requireUppercase" [requireNonAlphanumeric]="passwordComplexitySetting.requireNonAlphanumeric" [requiredLength]="passwordComplexitySetting.requiredLength"
+                         validateEqual="Password" reverse="false">
                     <label>{{l("PasswordRepeat")}}</label>
                 </div>
+              </div>
+              
+              <div [hidden]="setRandomPassword || userForm.form.valid || userForm.form.pristine">
+                <ul class="help-block text-danger" *ngIf="userForm.controls['PasswordRepeat'] && userForm.controls['PasswordRepeat'].errors">
+                  <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requireDigit">{{l("PasswordComplexity_RequireDigit_Hint")}}</li>
+                  <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requireLowercase">{{l("PasswordComplexity_RequireLowercase_Hint")}}</li>
+                  <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requireUppercase">{{l("PasswordComplexity_RequireUppercase_Hint")}}</li>
+                  <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requireNonAlphanumeric">{{l("PasswordComplexity_RequireNonAlphanumeric_Hint")}}</li>
+                  <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requiredLength">{{l("PasswordComplexity_RequiredLength_Hint", passwordComplexitySetting.requiredLength)}}</li>
+                </ul>
+              </div>
 
                 <div class="md-checkbox-list">
                     <div class="md-checkbox">
@@ -151,6 +181,6 @@
 
     </form>
 
-    </div>    
+  </div>
   </div>
 </div>

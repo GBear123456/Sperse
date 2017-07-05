@@ -75,8 +75,8 @@ export class RolesComponent extends AppComponentBase implements AfterViewInit {
                             }
                         }, {
                             text: this.l('Delete'),
-                            visible: (): boolean => {
-                                return self.isGranted('Pages.Administration.Roles.Delete');
+                            visible: (data): boolean => {
+                                return !data.record.isStatic && self.isGranted('Pages.Administration.Roles.Delete');
                             },
                             action(data) {
                                 self.deleteRole(data.record);
@@ -86,7 +86,7 @@ export class RolesComponent extends AppComponentBase implements AfterViewInit {
                     displayName: {
                         title: self.l('RoleName'),
                         width: '35%',
-                        display: function (data) {
+                        display(data) {
                             var $span = $('<span></span>');
 
                             $span.append(data.record.displayName + " &nbsp; ");

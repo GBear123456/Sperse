@@ -64,7 +64,7 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
                 this._loginService.authenticateModel.password = this.model.password;
                 this._loginService.authenticate(() => {
                     this.saving = false;
-                }, AppConsts.appBaseUrl);
+                });
             });
     }
 

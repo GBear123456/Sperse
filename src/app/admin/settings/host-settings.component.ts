@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { HostSettingsServiceProxy, HostSettingsEditDto, CommonLookupServiceProxy, ComboboxItemDto, DefaultTimezoneScope, SendTestEmailInput } from '@shared/service-proxies/service-proxies';
@@ -48,7 +48,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit {
 
     loadEditions(): void {
         let self = this;
-        self._commonLookupService.getEditionsForCombobox().subscribe((result) => {
+        self._commonLookupService.getEditionsForCombobox(false).subscribe((result) => {
             self.editions = result.items;
 
             let notAssignedEdition = new ComboboxItemDto();

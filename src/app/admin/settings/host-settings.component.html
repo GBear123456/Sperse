@@ -1,4 +1,4 @@
-<div [@routerTransition]>
+﻿<div [@routerTransition]>
     <div class="row margin-bottom-5">
         <div class="col-xs-6">
             <div class="page-head">
@@ -95,77 +95,69 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                            <input type="number" name="MinPasswordLength" class="form-control" [ngClass]="{'edited':hostSettings.security.passwordComplexity.minLength}"
-                                   [(ngModel)]="hostSettings.security.passwordComplexity.minLength" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
-                            <input type="number" name="MinPasswordLength" class="form-control" [ngClass]="{'edited':hostSettings.security.defaultPasswordComplexity.minLength}"
-                                   [(ngModel)]="hostSettings.security.defaultPasswordComplexity.minLength" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
-                                   disabled>
-                            <label>{{l("MinPasswordLength")}}</label>
-                        </div>
-                        <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                            <input type="number" name="MaxPasswordLength" class="form-control" [ngClass]="{'edited':hostSettings.security.passwordComplexity.maxLength}"
-                                   [(ngModel)]="hostSettings.security.passwordComplexity.maxLength" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
-                            <input type="number" name="MaxPasswordLength" class="form-control" [ngClass]="{'edited':hostSettings.security.defaultPasswordComplexity.maxLength}"
-                                   [(ngModel)]="hostSettings.security.defaultPasswordComplexity.maxLength" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
-                                   disabled>
-                            <label>{{l("MaxPasswordLength")}}</label>
-                        </div>
                         <div class="md-checkbox-list">
                             <div class="md-checkbox">
-                                <input id="Setting_PasswordComplexity_UseNumbers" class="md-check" type="checkbox" name="Setting_PasswordComplexity_UseNumbers"
-                                       [(ngModel)]="hostSettings.security.passwordComplexity.useNumbers" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
-                                <input id="Setting_PasswordComplexity_UseNumbers" class="md-check" type="checkbox" name="Setting_PasswordComplexity_UseNumbers"
-                                       [(ngModel)]="hostSettings.security.defaultPasswordComplexity.useNumbers" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
+                <input id="Setting_PasswordComplexity_RequireDigit" class="md-check" type="checkbox" name="Setting_PasswordComplexity_RequireDigit"
+                       [(ngModel)]="hostSettings.security.passwordComplexity.requireDigit" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
+                <input id="Setting_PasswordComplexity_RequireDigit" class="md-check" type="checkbox" name="Setting_PasswordComplexity_RequireDigit"
+                       [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requireDigit" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
                                        disabled>
-                                <label for="Setting_PasswordComplexity_UseNumbers">
+                <label for="Setting_PasswordComplexity_RequireDigit">
                                     <span class="inc"></span>
                                     <span class="check"></span>
                                     <span class="box"></span>
-                                    {{l("UseNumbers")}}
+                  {{l("PasswordComplexity_RequireDigit")}}
                                 </label>
                             </div>
                             <div class="md-checkbox">
-                                <input id="Setting_PasswordComplexity_UseUpperCaseLetters" class="md-check" type="checkbox" name="Setting_PasswordComplexity_UseUpperCaseLetters"
-                                       [(ngModel)]="hostSettings.security.passwordComplexity.useUpperCaseLetters" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
-                                <input id="Setting_PasswordComplexity_UseUpperCaseLetters" class="md-check" type="checkbox" name="Setting_PasswordComplexity_UseUpperCaseLetters"
-                                       [(ngModel)]="hostSettings.security.defaultPasswordComplexity.useUpperCaseLetters" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
+                <input id="Setting_PasswordComplexity_RequireLowercase" class="md-check" type="checkbox" name="Setting_PasswordComplexity_RequireLowercase"
+                       [(ngModel)]="hostSettings.security.passwordComplexity.requireLowercase" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
+                <input id="Setting_PasswordComplexity_RequireLowercase" class="md-check" type="checkbox" name="Setting_PasswordComplexity_RequireLowercase"
+                       [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requireLowercase" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
                                        disabled>
-                                <label for="Setting_PasswordComplexity_UseUpperCaseLetters">
+                <label for="Setting_PasswordComplexity_RequireLowercase">
                                     <span class="inc"></span>
                                     <span class="check"></span>
                                     <span class="box"></span>
-                                    {{l("UseUpperCaseLetters")}}
+                  {{l("PasswordComplexity_RequireLowercase")}}
                                 </label>
                             </div>
                             <div class="md-checkbox">
-                                <input id="Setting_PasswordComplexity_UseLowerCaseLetters" class="md-check" type="checkbox" name="Setting_PasswordComplexity_UseLowerCaseLetters"
-                                       [(ngModel)]="hostSettings.security.passwordComplexity.useLowerCaseLetters" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
-                                <input id="Setting_PasswordComplexity_UseLowerCaseLetters" class="md-check" type="checkbox" name="Setting_PasswordComplexity_UseLowerCaseLetters"
-                                       [(ngModel)]="hostSettings.security.defaultPasswordComplexity.useLowerCaseLetters" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
+                <input id="Setting_PasswordComplexity_RequireNonAlphanumeric" class="md-check" type="checkbox" name="Setting_PasswordComplexity_RequireNonAlphanumeric"
+                       [(ngModel)]="hostSettings.security.passwordComplexity.requireNonAlphanumeric" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
+                <input id="Setting_PasswordComplexity_RequireNonAlphanumeric" class="md-check" type="checkbox" name="Setting_PasswordComplexity_RequireNonAlphanumeric"
+                       [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requireNonAlphanumeric" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
                                        disabled>
-                                <label for="Setting_PasswordComplexity_UseLowerCaseLetters">
+                <label for="Setting_PasswordComplexity_RequireNonAlphanumeric">
                                     <span class="inc"></span>
                                     <span class="check"></span>
                                     <span class="box"></span>
-                                    {{l("UseLowerCaseLetters")}}
+                  {{l("PasswordComplexity_RequireNonAlphanumeric")}}
                                 </label>
                             </div>
                             <div class="md-checkbox">
-                                <input id="Setting_PasswordComplexity_UsePunctuations" class="md-check" type="checkbox" name="Setting_PasswordComplexity_UsePunctuations"
-                                       [(ngModel)]="hostSettings.security.passwordComplexity.usePunctuations" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
-                                <input id="Setting_PasswordComplexity_UsePunctuations" class="md-check" type="checkbox" name="Setting_PasswordComplexity_UsePunctuations"
-                                       [(ngModel)]="hostSettings.security.defaultPasswordComplexity.usePunctuations" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
+                <input id="Setting_PasswordComplexity_RequireUppercase" class="md-check" type="checkbox" name="Setting_PasswordComplexity_RequireUppercase"
+                       [(ngModel)]="hostSettings.security.passwordComplexity.requireUppercase" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
+                <input id="Setting_PasswordComplexity_RequireUppercase" class="md-check" type="checkbox" name="Setting_PasswordComplexity_RequireUppercase"
+                       [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requireUppercase" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
                                        disabled>
-                                <label for="Setting_PasswordComplexity_UsePunctuations">
+                <label for="Setting_PasswordComplexity_RequireUppercase">
                                     <span class="inc"></span>
                                     <span class="check"></span>
                                     <span class="box"></span>
-                                    {{l("UsePunctuations")}}
+                  {{l("PasswordComplexity_RequireUppercase")}}
                                 </label>
                             </div>
                         </div>
+            <div class="form-group form-md-line-input form-md-floating-label no-hint">
+              <input type="number" name="RequiredLength" class="form-control" [ngClass]="{'edited':hostSettings.security.passwordComplexity.requiredLength}"
+                     [(ngModel)]="hostSettings.security.passwordComplexity.requiredLength" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
+              <input type="number" name="RequiredLength" class="form-control" [ngClass]="{'edited':hostSettings.security.defaultPasswordComplexity.requiredLength}"
+                     [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requiredLength" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
+                     disabled>
+              <label>{{l("PasswordComplexity_RequiredLength")}}</label>
                     </div>
+          </div>
                     <div>
                         <h4>{{l("UserLockOut")}}</h4>
                         <div class="md-checkbox-list">
@@ -238,7 +230,7 @@
                 <tab heading="{{l('EmailSmtp')}}" *ngIf="hostSettings.email">
                     <div class="form-group form-md-line-input form-md-floating-label no-hint">
                         <input type="email" name="DefaultFromAddress" class="form-control" [ngClass]="{'edited':hostSettings.email.defaultFromAddress}"
-                               [(ngModel)]="hostSettings.email.defaultFromAddress" maxlength="@Sperse.CRM.Authorization.Users.User.MaxEmailAddressLength">
+                   [(ngModel)]="hostSettings.email.defaultFromAddress" maxlength="@Sperse.Platform.Authorization.Users.User.MaxEmailAddressLength">
                         <label>{{l("DefaultFromAddress")}}</label>
                     </div>
                     <div class="form-group form-md-line-input form-md-floating-label no-hint">

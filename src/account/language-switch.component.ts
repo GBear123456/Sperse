@@ -1,5 +1,6 @@
 ﻿import { Injector, Component, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'languageSwitch',
@@ -15,7 +16,7 @@ export class LanguageSwitchComponent extends AppComponentBase implements OnInit 
     }
 
     ngOnInit(): void {
-        this.languages = abp.localization.languages;
+        this.languages = _.filter(abp.localization.languages, l => (<any>l).isDisabled == false);
         this.currentLanguage = abp.localization.currentLanguage;
     }
 

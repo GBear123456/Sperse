@@ -24,6 +24,7 @@ bin/
 /coverage/*
 /libpeerconnection.log
 npm-debug.log
+yarn-error.log
 testem.log
 /typings
 
@@ -36,7 +37,7 @@ testem.log
 Thumbs.db
 
 # VS files
-/CRM.AngularUI.csproj.user
+/Platform.AngularUI.csproj.user
 project.lock.json
 Properties/launchSettings.json
-/Sperse.CRM.AngularUI.xproj.user
+/Sperse.Platform.AngularUI.xproj.user

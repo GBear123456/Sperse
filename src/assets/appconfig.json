@@ -1,4 +1,5 @@
 ﻿{
   "remoteServiceBaseUrl": "http://{TENANCY_NAME}.localhost:7000",
-  "appBaseUrl": "http://{TENANCY_NAME}.localhost:7200"
-}
+  "appBaseUrl": "http://{TENANCY_NAME}.localhost:7200",
+  "recaptchaSiteKey": "6LfD-wUTAAAAACULAVXvL61K0w02RIsjhI8EyiS-",
+  "subscriptionExpireNootifyDayCount": 7}

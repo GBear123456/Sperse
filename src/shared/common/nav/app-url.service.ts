@@ -25,7 +25,7 @@ export class AppUrlService {
      * Returning url ends with '/'.
      */
     getAppRootUrlOfTenant(tenancyName?: string): string {
-        let baseUrl = this.ensureEndsWith(AppConsts.appBaseUrl, '/');
+        let baseUrl = this.ensureEndsWith(AppConsts.appBaseUrlFormat, '/');
 
         if (baseUrl.indexOf(AppUrlService.tenancyNamePlaceHolder) < 0) {
             return baseUrl;

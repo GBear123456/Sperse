@@ -1,5 +1,5 @@
 ﻿import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
-import { ModalDirective } from 'ng2-bootstrap';
+import { ModalDirective } from 'ngx-bootstrap';
 import { UserLinkServiceProxy, LinkToUserInput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';

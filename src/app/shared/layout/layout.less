@@ -131,7 +131,6 @@
     }
 
     > ul.dropdown-menu {
-
          margin-top: -5px !important;
 
         &:after {
@@ -148,6 +147,14 @@
     max-width: 320px;
     width: 320px;
 
+  @media (max-width: 767px) {
+    margin-right: -60px;
+
+    &:before, &:after {
+      margin-right: 70px;
+    }
+  }
+
     a.user-notification-item {
         cursor: default;
         color: #ccc;
@@ -161,10 +168,10 @@
 
             .notification-time {
                 color: #ccc;
-            }            
         }
+    }
 
-        &.user-notification-item-clickable{
+    &.user-notification-item-clickable {
             cursor: pointer;
         }
 
@@ -238,5 +245,19 @@
 .page-header.navbar .top-menu .navbar-nav {
     li.quick-sidebar-toggler > i.icon-speech:before {
         content: "\e02c";
+    }
+}
+
+.subscription-info {
+    clear: both;
+    padding: 5px;
+    background-color: #fffced;
+    font-size: 0.9em;
+    color: #755d2d;
+}
+
+@media only screen and (max-device-width: 640px) {
+    .edition-info-text {
+        display: none;
     }
 }

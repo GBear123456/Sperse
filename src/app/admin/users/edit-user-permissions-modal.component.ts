@@ -1,5 +1,5 @@
-import { Component, ViewChild, Injector } from '@angular/core';
-import { ModalDirective } from 'ng2-bootstrap';
+﻿import { Component, ViewChild, Injector } from '@angular/core';
+import { ModalDirective } from 'ngx-bootstrap';
 import { UserServiceProxy, GetUserPermissionsForEditOutput, UpdateUserPermissionsInput, EntityDtoOfInt64 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { PermissionTreeComponent } from '../shared/permission-tree.component';

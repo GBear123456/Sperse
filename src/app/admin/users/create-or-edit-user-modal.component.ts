@@ -1,6 +1,6 @@
-import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
-import { ModalDirective } from 'ng2-bootstrap';
-import { UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput, UserRoleDto } from '@shared/service-proxies/service-proxies';
+﻿import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
+import { ModalDirective } from 'ngx-bootstrap';
+import { UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput, UserRoleDto, PasswordComplexitySetting } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -9,8 +9,7 @@ import * as _ from "lodash";
 @Component({
     selector: 'createOrEditUserModal',
     templateUrl: './create-or-edit-user-modal.component.html',
-    styles: [
-        `.user-edit-dialog-profile-image {
+    styles: [`.user-edit-dialog-profile-image {
              margin-bottom: 20px;
         }`
     ]
@@ -27,11 +26,13 @@ export class CreateOrEditUserModalComponent extends AppComponentBase {
     canChangeUserName: boolean = true;
     isTwoFactorEnabled: boolean = this.setting.getBoolean("Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled");
     isLockoutEnabled: boolean = this.setting.getBoolean("Abp.Zero.UserManagement.UserLockOut.IsEnabled");
+    passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
 
     user: UserEditDto = new UserEditDto();
     roles: UserRoleDto[];
     sendActivationEmail: boolean = true;
     setRandomPassword: boolean = true;
+    passwordComplexityInfo: string = '';
     profilePicture: string;
 
     constructor(
@@ -43,11 +44,11 @@ export class CreateOrEditUserModalComponent extends AppComponentBase {
     }
 
     show(userId?: number): void {
-        this.active = true;
 
-        if (userId) {
-            this.setRandomPassword = false;
-            this.sendActivationEmail = false;
+        if (!userId) {
+            this.active = true;
+            this.setRandomPassword = true;
+            this.sendActivationEmail = true;
         }
 
         this._userService.getUserForEdit(userId).subscribe(result => {
@@ -57,19 +58,60 @@ export class CreateOrEditUserModalComponent extends AppComponentBase {
 
             this.getProfilePicture(result.profilePictureId);
 
-            this.modal.show();
+            if (userId) {
+                this.active = true;
+                this.setRandomPassword = false;
+                this.sendActivationEmail = false;
+            }
+
+            this._profileService.getPasswordComplexitySetting().subscribe(result => {
+                this.passwordComplexitySetting = result.setting;
+                this.setPasswordComplexityInfo();
+                this.modal.show();
+            });
         });
     }
 
-    getProfilePicture(profilePictureId: string): void {
-        this._profileService.getProfilePictureById(profilePictureId).subscribe(result => {
+    setPasswordComplexityInfo(): void {
 
-            if (result && result.profilePicture) {
-                this.profilePicture = 'data:image/jpeg;base64,' + result.profilePicture;
-            } else {
-                this.profilePicture = "/assets/common/images/default-profile-picture.png";
-            }
-        });
+        this.passwordComplexityInfo = '<ul>';
+
+        if (this.passwordComplexitySetting.requireDigit) {
+            this.passwordComplexityInfo += '<li>' + this.l("PasswordComplexity_RequireDigit_Hint") + '</li>';
+        }
+
+        if (this.passwordComplexitySetting.requireLowercase) {
+            this.passwordComplexityInfo += '<li>' + this.l("PasswordComplexity_RequireLowercase_Hint") + '</li>';
+        }
+
+        if (this.passwordComplexitySetting.requireUppercase) {
+            this.passwordComplexityInfo += '<li>' + this.l("PasswordComplexity_RequireUppercase_Hint") + '</li>';
+        }
+
+        if (this.passwordComplexitySetting.requireNonAlphanumeric) {
+            this.passwordComplexityInfo += '<li>' + this.l("PasswordComplexity_RequireNonAlphanumeric_Hint") + '</li>';
+        }
+
+        if (this.passwordComplexitySetting.requiredLength) {
+            this.passwordComplexityInfo += '<li>' + this.l("PasswordComplexity_RequiredLength_Hint", this.passwordComplexitySetting.requiredLength) + '</li>';
+        }
+
+        this.passwordComplexityInfo += '</ul>';
+    }
+
+    getProfilePicture(profilePictureId: string): void {
+        if (!profilePictureId) {
+            this.profilePicture = "/assets/common/images/default-profile-picture.png";
+        } else {
+            this._profileService.getProfilePictureById(profilePictureId).subscribe(result => {
+
+                if (result && result.profilePicture) {
+                    this.profilePicture = 'data:image/jpeg;base64,' + result.profilePicture;
+                } else {
+                    this.profilePicture = "/assets/common/images/default-profile-picture.png";
+                }
+            });
+        }
     }
 
     onShown(): void {
