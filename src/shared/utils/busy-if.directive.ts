@@ -1,34 +1,21 @@
-﻿import { Directive, ElementRef, Input, AfterViewInit } from '@angular/core';
+﻿import { Directive, ElementRef, Input } from '@angular/core';
 
 @Directive({
     selector: '[busyIf]'
 })
-export class BusyIfDirective implements AfterViewInit {
+export class BusyIfDirective   {
 
     @Input() set busyIf(isBusy: boolean) {
         this.refreshState(isBusy);
     }
 
-    private _$elm: JQuery;
-
-    constructor(
-        private _element: ElementRef
-    ) {
-    }
-
-    ngAfterViewInit(): void {
-        this._$elm = $(this._element.nativeElement);
-    }
+    constructor(private _element: ElementRef) {}
 
     refreshState(isBusy: boolean): void {
-        if (!this._$elm) {
-            return;
-        }
-
         if (isBusy) {
-            abp.ui.setBusy(this._$elm);
+            abp.ui.setBusy($(this._element.nativeElement));
         } else {
-            abp.ui.clearBusy(this._$elm);
+            abp.ui.clearBusy($(this._element.nativeElement));
         }
     }
 }

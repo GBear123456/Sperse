@@ -17,12 +17,94 @@
         <div class="portlet-title portlet-title-filter">
             <div class="inputs inputs-full-width">
                 <div class="portlet-input">
-                    <form (submit)="getTenants()">
-                        <div class="input-group">
-                            <input [(ngModel)]="filterText" name="filterText" autoFocus class="form-control" placeholder="{{l('SearchWithThreeDot')}}" type="text">
-                            <span class="input-group-btn">
-                                <button class="btn default" type="submit"><i class="icon-magnifier"></i></button>
-                            </span>
+                    <form (submit)="getTenants()" autocomplete="off">
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="TenantsTableFilter">{{l('TenantNameOrTenancyCode')}}</label>
+                                        <div class="input-group">
+                                            <input [(ngModel)]="filters.filterText" name="filterText" class="form-control" placeholder="{{l('SearchWithThreeDot')}}" type="text">
+                                            <span class="input-group-btn">
+                                                <button class="btn default" type="submit"><i class="icon-magnifier"></i></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="EditionDropdown">{{l('Edition')}}</label>
+                                    <edition-combo [(selectedEdition)]="filters.selectedEditionId"></edition-combo>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="md-checkbox-list">
+                                            <div class="md-checkbox">
+
+                                                <input class="md-check"
+                                                       type="checkbox"
+                                                       [(ngModel)]="filters.subscriptionEndDateRangeActive"
+                                                       id="TenantsTable_SubscriptionEndDateRangeActive"
+                                                       name="SubscriptionEndDateRangeActive"
+                                                       value="true">
+
+                                                <label for="TenantsTable_SubscriptionEndDateRangeActive">
+                                                    <span class="inc"></span>
+                                                    <span class="check"></span>
+                                                    <span class="box"></span>
+                                                    {{l('SubscriptionEndDate')}}
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <date-range-picker name="SubscriptionEndDateRange"
+                                                           [isDisabled]="!filters.subscriptionEndDateRangeActive"
+                                                           [(startDate)]="filters.subscriptionEndDateStart"
+                                                           [(endDate)]="filters.subscriptionEndDateEnd"
+                                                           [allowFutureDate]="true">
+                                        </date-range-picker>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="md-checkbox-list">
+                                            <div class="md-checkbox">
+                                                <input class="md-check"
+                                                       type="checkbox"
+                                                       [(ngModel)]="filters.creationDateRangeActive"
+                                                       id="TenantsTable_CreationDateRangeActive"
+                                                       name="CreationDateRangeActive"
+                                                       value="true">
+
+                                                <label for="TenantsTable_CreationDateRangeActive">
+                                                    <span class="inc"></span>
+                                                    <span class="check"></span>
+                                                    <span class="box"></span>
+                                                    {{l('CreationTime')}}
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <date-range-picker name="CreationDateRange"
+                                                           [isDisabled]="!filters.creationDateRangeActive"
+                                                           [(startDate)]="filters.creationDateStart"
+                                                           [(endDate)]="filters.creationDateEnd"
+                                                           [allowFutureDate]="false">
+                                        </date-range-picker>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-md-12 text-right">
+                                    <button name="RefreshButton" class="btn blue"><i class="fa fa-refresh"></i> {{l('Refresh')}}</button>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>

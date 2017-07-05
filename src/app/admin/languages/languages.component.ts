@@ -60,8 +60,8 @@ export class LanguagesComponent extends AppComponentBase implements AfterViewIni
                         text: '<i class="fa fa-cog"></i> ' + this.l('Actions') + ' <span class="caret"></span>',
                         items: [{
                             text: this.l('Edit'),
-                            visible: (): boolean => {
-                                return self.isGranted('Pages.Administration.Languages.Edit');
+                            visible: (data): boolean => {
+                                return self.isGranted('Pages.Administration.Languages.Edit') && data.record.tenantId === this.appSession.tenantId;
                             },
                             action(data) {
                                 self.createOrEditLanguageModal.show(data.record.id);
@@ -73,7 +73,6 @@ export class LanguagesComponent extends AppComponentBase implements AfterViewIni
                             },
                             action(data) {
                                 self.changeTexts(data.record);
-                                self._$languagesTable.find('div.dropdown').dropdown('toggle');
                             }
                         }, {
                             text: this.l('SetAsDefaultLanguage'),
@@ -85,8 +84,8 @@ export class LanguagesComponent extends AppComponentBase implements AfterViewIni
                             }
                         }, {
                             text: this.l('Delete'),
-                            visible: (): boolean => {
-                                return self.isGranted('Pages.Administration.Languages.Delete');
+                            visible: (data): boolean => {
+                                return self.isGranted('Pages.Administration.Languages.Delete') && data.record.tenantId === this.appSession.tenantId;
                             },
                             action(data) {
                                 self.deleteLanguage(data.record);
@@ -130,6 +129,17 @@ export class LanguagesComponent extends AppComponentBase implements AfterViewIni
                         title: this.l('CreationTime'),
                         width: '20%',
                         display: (data: JTableFieldOptionDisplayData<ApplicationLanguageListDto>) => moment(data.record.creationTime).format('L')
+                    },
+                    isEnabled: {
+                        title: this.l('IsEnabled'),
+                        width: '8%',
+                        display: (data: JTableFieldOptionDisplayData<ApplicationLanguageListDto>) => {
+                            if (!data.record.isDisabled) {
+                                return '<span class="label label-success">' + this.l('Yes') + '</span>';
+                            } else {
+                                return '<span class="label label-default">' + this.l('No') + '</span>';
+                            }
+                        }
                     }
                 },
 

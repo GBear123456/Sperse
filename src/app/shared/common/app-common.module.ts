@@ -1,7 +1,7 @@
-import * as ngCommon from '@angular/common';
+﻿import * as ngCommon from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ModalModule } from 'ng2-bootstrap';
+import { ModalModule } from 'ngx-bootstrap';
 
 import { UtilsModule } from '@shared/utils/utils.module';
 import { AbpModule } from '@abp/abp.module';
@@ -12,7 +12,10 @@ import { AppAuthService } from './auth/app-auth.service';
 import { JqPluginDirective } from './libs/jq-plugin.directive';
 import { CommonLookupModalComponent } from './lookup/common-lookup-modal.component';
 import { DateRangePickerComponent } from './timing/date-range-picker.component';
+import { DatePickerComponent } from './timing/date-picker.component';
 import { AppRouteGuard } from './auth/auth-route-guard';
+import { DateTimeService } from './timing/date-time.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @NgModule({
     imports: [
@@ -27,13 +30,19 @@ import { AppRouteGuard } from './auth/auth-route-guard';
         TimeZoneComboComponent,
         JqPluginDirective,
         CommonLookupModalComponent,
-        DateRangePickerComponent
+        DateRangePickerComponent,
+        DatePickerComponent
     ],
     exports: [
         TimeZoneComboComponent,
         JqPluginDirective,
         CommonLookupModalComponent,
-        DateRangePickerComponent
+        DateRangePickerComponent,
+        DatePickerComponent
+    ],
+    providers: [
+        DateTimeService,
+        AppLocalizationService
     ]
 })
 export class AppCommonModule {

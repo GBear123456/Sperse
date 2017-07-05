@@ -2,7 +2,6 @@
 import { ActivatedRoute } from '@angular/router';
 import { TenantServiceProxy, TenantListDto, NameValueDto, CommonLookupServiceProxy, FindUsersInput, EntityDtoOfInt64 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { Observable } from 'rxjs/Observable';
 import { CreateTenantModalComponent } from './create-tenant-modal.component';
 import { EditTenantModalComponent } from './edit-tenant-modal.component';
 import { TenantFeaturesModalComponent } from './tenant-features-modal.component'
@@ -10,7 +9,6 @@ import { JTableHelper } from '@shared/helpers/JTableHelper';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-
 import * as moment from "moment";
 
 @Component({
@@ -27,7 +25,16 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
     @ViewChild('tenantFeaturesModal') tenantFeaturesModal: TenantFeaturesModalComponent;
 
     private _$tenantsTable: JQuery;
-    filterText: string;
+    filters: {
+        filterText: string;
+        creationDateRangeActive: boolean;
+        subscriptionEndDateRangeActive: boolean;
+        subscriptionEndDateStart: moment.Moment;
+        subscriptionEndDateEnd: moment.Moment;
+        creationDateStart: moment.Moment;
+        creationDateEnd: moment.Moment;
+        selectedEditionId: number;
+    } = <any>{};
 
     constructor(
         injector: Injector,
@@ -37,9 +44,39 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
         private _impersonationService: ImpersonationService
     ) {
         super(injector);
+
+        if (this._activatedRoute.snapshot.queryParams['subscriptionEndDateStart'] != null) {
+            this.filters.subscriptionEndDateRangeActive = true;
+            this.filters.subscriptionEndDateStart = moment(this._activatedRoute.snapshot.queryParams['subscriptionEndDateStart']);
+        } else {
+            this.filters.subscriptionEndDateStart = moment().startOf('day');
+        }
+
+        if (this._activatedRoute.snapshot.queryParams['subscriptionEndDateEnd'] != null) {
+            this.filters.subscriptionEndDateRangeActive = true;
+            this.filters.subscriptionEndDateEnd = moment(this._activatedRoute.snapshot.queryParams['subscriptionEndDateEnd']);
+        } else {
+            this.filters.subscriptionEndDateEnd = moment().add(30, 'days').endOf('day');
+        }
+
+        if (this._activatedRoute.snapshot.queryParams['creationDateStart'] != null) {
+            this.filters.creationDateRangeActive = true;
+            this.filters.creationDateStart = moment(this._activatedRoute.snapshot.queryParams['creationDateStart']);
+        } else {
+            this.filters.creationDateStart = moment().add(-7, 'days').startOf('day')
+        }
+
+        if (this._activatedRoute.snapshot.queryParams['creationDateEnd'] != null) {
+            this.filters.creationDateRangeActive = true;
+            this.filters.creationDateEnd = moment(this._activatedRoute.snapshot.queryParams['creationDateEnd']);
+        } else {
+            this.filters.creationDateEnd = moment().endOf("day");
+        }
     }
 
     ngOnInit(): void {
+        this.filters.filterText = this._activatedRoute.snapshot.queryParams['filterText'] || '';
+
         this.impersonateUserLookupModal.configure({
             title: this.l('SelectAUser'),
             dataSource: (skipCount: number, maxResultCount: number, filter: string, tenantId?: number) => {
@@ -55,25 +92,25 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
 
     ngAfterViewInit(): void {
         let self = this;
-
-        this.filterText = this._activatedRoute.snapshot.queryParams['filterText'] || '';
-
+        
         var initTenantsTable = () => {
             self._$tenantsTable = $('#TenantsTable');
-
             self._$tenantsTable.jtable({
-
                 title: self.l('Tenants'),
-
                 paging: true,
                 sorting: true,
                 multiSorting: true,
-
                 actions: {
                     listAction(postData, jtParams: JTableParams) {
                         return JTableHelper.toJTableListAction(
                             self._tenantService.getTenants(
-                                self.filterText,
+                                self.filters.filterText,
+                                self.filters.subscriptionEndDateRangeActive ? self.filters.subscriptionEndDateStart : undefined,
+                                self.filters.subscriptionEndDateRangeActive ? self.filters.subscriptionEndDateEnd : undefined,
+                                self.filters.creationDateRangeActive ? self.filters.creationDateStart : undefined,
+                                self.filters.creationDateRangeActive ? self.filters.creationDateEnd : undefined,
+                                self.filters.selectedEditionId,
+                                self.filters.selectedEditionId !== undefined && (self.filters.selectedEditionId + "") !== "-1",
                                 jtParams.jtSorting,
                                 jtParams.jtPageSize,
                                 jtParams.jtStartIndex
@@ -81,7 +118,6 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
                         );
                     }
                 },
-
                 fields: {
                     id: {
                         key: true,
@@ -161,6 +197,17 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
                         title: self.l('Edition'),
                         width: '18%'
                     },
+                    subscriptionEndDateUtc: {
+                        title: this.l('SubscriptionEndDateUtc'),
+                        width: '15%',
+                        display(data) {
+                            if (data.record.subscriptionEndDateUtc) {
+                                return moment(data.record.subscriptionEndDateUtc).format('L');
+                            }
+
+                            return "";
+                        }
+                    },
                     isActive: {
                         title: self.l('Active'),
                         width: '9%',
@@ -180,7 +227,6 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
                         }
                     }
                 }
-
             });
 
             self.getTenants();
@@ -198,14 +244,13 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
     };
 
     deleteTenant(tenant: TenantListDto): void {
-        let self = this;
-        self.message.confirm(
-            self.l('TenantDeleteWarningMessage', tenant.tenancyName),
+        this.message.confirm(
+            this.l('TenantDeleteWarningMessage', tenant.tenancyName),
             isConfirmed => {
                 if (isConfirmed) {
-                    self._tenantService.deleteTenant(tenant.id).subscribe(() => {
-                        self.getTenants();
-                        self.notify.success(self.l('SuccessfullyDeleted'));
+                    this._tenantService.deleteTenant(tenant.id).subscribe(() => {
+                        this.getTenants();
+                        this.notify.success(this.l('SuccessfullyDeleted'));
                     });
                 }
             }

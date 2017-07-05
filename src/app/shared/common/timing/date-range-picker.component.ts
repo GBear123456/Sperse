@@ -7,7 +7,7 @@ import * as moment from 'moment';
 @Component({
     selector: 'date-range-picker',
     template:
-    `<input #DateRangePicker type="text" class="form-control" />`
+    `<input #DateRangePicker type="text" class="form-control" [disabled]="isDisabled"/>`
 })
 export class DateRangePickerComponent extends AppComponentBase implements AfterViewInit {
 
@@ -15,6 +15,10 @@ export class DateRangePickerComponent extends AppComponentBase implements AfterV
 
     _startDate: moment.Moment = moment().startOf('day');
     _endDate: moment.Moment = moment().startOf('day');
+
+    @Input() isDisabled: boolean = false;
+    @Input() allowFutureDate: boolean = false;
+    @Input() isSingleDatePicker: boolean = false;
 
     @Input() dateRangePickerOptions: any = undefined;
 
@@ -57,9 +61,11 @@ export class DateRangePickerComponent extends AppComponentBase implements AfterV
         };
 
         if (!this.dateRangePickerOptions) {
-            this.dateRangePickerOptions = {};
+            this.dateRangePickerOptions = {
+                singleDatePicker: this.isSingleDatePicker
+            };
         }
-
+      
         $element.daterangepicker(
             $.extend(true, this.createDateRangePickerOptions(), this.dateRangePickerOptions, _selectedDateRange), (start, end, label) => {
                 this.startDate = start;
@@ -69,28 +75,30 @@ export class DateRangePickerComponent extends AppComponentBase implements AfterV
 
     createDateRangePickerOptions(): any {
         let self = this;
-        var options = {
+        let options: any = {
             locale: {
                 format: 'L',
                 applyLabel: self.l('Apply'),
                 cancelLabel: self.l('Cancel'),
                 customRangeLabel: self.l('CustomRange')
             },
-            min: moment('2015-05-01'),
-            minDate: moment('2015-05-01'),
-            max: moment(),
-            maxDate: moment(),
             ranges: {}
         };
 
-        options.ranges[self.l('Today')] = [moment().startOf('day'), moment().endOf('day')];
-        options.ranges[self.l('Yesterday')] = [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')];
-        options.ranges[self.l('Last7Days')] = [moment().subtract(6, 'days').startOf('day'), moment().endOf('day')];
-        options.ranges[self.l('Last30Days')] = [moment().subtract(29, 'days').startOf('day'), moment().endOf('day')];
-        options.ranges[self.l('ThisMonth')] = [moment().startOf('month'), moment().endOf('month')];
-        options.ranges[self.l('LastMonth')] = [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')];
+        if (!this.isSingleDatePicker) {
+            if (!this.allowFutureDate) {
+                options.max = moment();
+                options.maxDate = moment();
+            }
+
+            options.ranges[self.l('Today')] = [moment().startOf('day'), moment().endOf('day')];
+            options.ranges[self.l('Yesterday')] = [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')];
+            options.ranges[self.l('Last7Days')] = [moment().subtract(6, 'days').startOf('day'), moment().endOf('day')];
+            options.ranges[self.l('Last30Days')] = [moment().subtract(29, 'days').startOf('day'), moment().endOf('day')];
+            options.ranges[self.l('ThisMonth')] = [moment().startOf('month'), moment().endOf('month')];
+            options.ranges[self.l('LastMonth')] = [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')];
+        }
 
         return options;
-
     }
 }

@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, AfterViewInit, Injector, Inject, Output, EventEmitter, ElementRef } from '@angular/core';
-import { ModalDirective } from 'ng2-bootstrap';
+﻿import { Component, OnInit, ViewChild, AfterViewInit, Injector, Inject, Output, EventEmitter, ElementRef } from '@angular/core';
+import { ModalDirective } from 'ngx-bootstrap';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FileUploader, FileUploaderOptions, Headers } from '@node_modules/ng2-file-upload';

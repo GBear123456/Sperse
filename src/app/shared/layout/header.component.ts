@@ -1,13 +1,16 @@
 ﻿import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
-import { LocalizationService } from '@abp/localization/localization.service';
 import { AbpSessionService } from '@abp/session/abp-session.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import {
     ProfileServiceProxy,
     UserLinkServiceProxy,
     UserServiceProxy,
     LinkedUserDto,
-    ChangeUserLanguageDto
+    ChangeUserLanguageDto,
+    TenantLoginInfoDto,
+    GetCurrentLoginInformationsOutput,
+    SessionServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
@@ -22,6 +25,10 @@ import { LinkedAccountService } from '@app/shared/layout/linked-account.service'
 import { NotificationSettingsModalCompoent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from '@shared/AppConsts';
+import { SubscriptionStartType, EditionPaymentType } from "@shared/AppEnums";
+
+import * as _ from 'lodash';
+import * as moment from 'moment';
 
 @Component({
     templateUrl: './header.component.html',
@@ -52,9 +59,13 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     chatConnected = false;
 
+    tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
+    subscriptionStartType = SubscriptionStartType;
+    editionPaymentType: typeof EditionPaymentType = EditionPaymentType;
+
     constructor(
         injector: Injector,
-        private _sessionService: AbpSessionService,
+        private _abpSessionService: AbpSessionService,
         private _abpMultiTenancyService: AbpMultiTenancyService,
         private _profileServiceProxy: ProfileServiceProxy,
         private _userLinkServiceProxy: UserLinkServiceProxy,
@@ -62,17 +73,23 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         private _authService: AppAuthService,
         private _impersonationService: ImpersonationService,
         private _linkedAccountService: LinkedAccountService,
-        private _userNotificationHelper: UserNotificationHelper
+        private _userNotificationHelper: UserNotificationHelper,
+        private _sessionService: SessionServiceProxy,
+        private _appSessionService: AppSessionService
     ) {
         super(injector);
+    }
+
+    get multiTenancySideIsTenant(): boolean {
+        return this._abpSessionService.tenantId > 0;
     }
 
     ngOnInit() {
         this._userNotificationHelper.settingsModal = this.notificationSettingsModal;
 
-        this.languages = this.localization.languages;
+        this.languages = _.filter(this.localization.languages, l => (<any>l).isDisabled == false);
         this.currentLanguage = this.localization.currentLanguage;
-        this.isImpersonatedLogin = this._sessionService.impersonatorUserId > 0;
+        this.isImpersonatedLogin = this._abpSessionService.impersonatorUserId > 0;
 
         this.shownLoginNameTitle = this.isImpersonatedLogin ? this.l("YouCanBackToYourAccount") : "";
         this.getCurrentLoginInformations();
@@ -114,6 +131,10 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     getCurrentLoginInformations(): void {
         this.shownLoginName = this.appSession.getShownLoginName();
+        this._sessionService.getCurrentLoginInformations()
+            .subscribe((result: GetCurrentLoginInformationsOutput) => {
+                this.tenant = result.tenant;
+            });
     }
 
     getShownUserName(linkedUser: LinkedUserDto): string {
@@ -175,6 +196,36 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     get chatEnabled(): boolean {
-        return !this._sessionService.tenantId || this.feature.isEnabled("App.ChatFeature");
+        return this.appSession.application.features['SignalR'] && (!this._abpSessionService.tenantId || this.feature.isEnabled("App.ChatFeature"));
+    }
+
+    subscriptionStatusBarVisible(): boolean {
+        return this._appSessionService.tenantId > 0 && (this._appSessionService.tenant.isInTrialPeriod || this.subscriptionIsExpiringSoon());
+    }
+
+    subscriptionIsExpiringSoon(): boolean {
+        if (this._appSessionService.tenant.subscriptionEndDateUtc) {
+            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days') >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
+        }
+
+        return false;
+    }
+
+    getSubscriptionExpiringDayCount(): number {
+        if (!this._appSessionService.tenant.subscriptionEndDateUtc) {
+            return 0;
+        }
+
+        return Math.round(moment(this._appSessionService.tenant.subscriptionEndDateUtc).diff(moment().utc(), 'days', true));
+    }
+
+    getTrialSubscriptionNotification(): string {
+        return abp.utils.formatString(this.l("TrialSubscriptionNotification"),
+            "<strong>" + this._appSessionService.tenant.edition.displayName + "</strong>",
+            "<a href='/account/buy?editionId=" + this._appSessionService.tenant.edition.id + "&editionPaymentType=" + this.editionPaymentType.BuyNow + "'>" + this.l("ClickHere") + "</a>");
+    }
+
+    getExpireNotification(localizationKey: string): string {
+        return abp.utils.formatString(this.l(localizationKey), this.getSubscriptionExpiringDayCount());
     }
 }

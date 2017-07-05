@@ -48,7 +48,12 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     }
 
     ngAfterViewInit(): void {
+        setTimeout(() => {
+            this.init();
+        });
+    }
 
+    init(): void {
         this._$textsTable = $(this.textsTable.nativeElement);
         this._$textsTable.jtable({
 
@@ -122,7 +127,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
         this._activatedRoute.params.subscribe((params: Params) => {
             this.baseLanguageName = params['baseLanguageName'] || abp.localization.currentLanguage.name;
             this.targetLanguageName = params['name'];
-            this.sourceName = params['sourceName'] || 'CRM';
+            this.sourceName = params['sourceName'] || 'Platform';
             this.targetValueFilter = params['targetValueFilter'] || 'ALL';
             this.filterText = params['filterText'] || '';
 
@@ -152,12 +157,12 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
 
     refreshTextValueFromModal(): void {
         this._$textsTable.jtable('updateRecord',
-        {
-            record: {
-                key: this.editTextModal.model.key,
-                targetValue: this.editTextModal.model.value
-            },
-            clientOnly: true
-        });
+            {
+                record: {
+                    key: this.editTextModal.model.key,
+                    targetValue: this.editTextModal.model.value
+                },
+                clientOnly: true
+            });
     }
 }

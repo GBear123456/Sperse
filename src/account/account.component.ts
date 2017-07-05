@@ -1,9 +1,11 @@
 ﻿import { Component, ViewContainerRef, OnInit, Injector, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoginService } from './login/login.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import * as moment from 'moment';
+import * as _ from 'lodash';
 
 @Component({
     templateUrl: './account.component.html',
@@ -18,9 +20,11 @@ export class AccountComponent extends AppComponentBase implements OnInit {
 
     currentYear: number = moment().year();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
+    tenantChangeDisabledRoutes: string[] = ["select-edition", "buy", "upgrade", "extend","register-tenant"];
 
     public constructor(
         injector: Injector,
+        private _router: Router,
         private _loginService: LoginService,
         viewContainerRef: ViewContainerRef
     ) {
@@ -30,6 +34,14 @@ export class AccountComponent extends AppComponentBase implements OnInit {
     }
 
     showTenantChange(): boolean {
+        if (!this._router.url) {
+            return false;
+        }
+        
+        if (_.filter(this.tenantChangeDisabledRoutes, route => this._router.url.indexOf('/account/' + route) >= 0).length) {
+            return false;
+        }
+
         return abp.multiTenancy.isEnabled && !this.supportsTenancyNameInUrl();
     }
 

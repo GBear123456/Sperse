@@ -4,10 +4,14 @@ import { AppConsts } from '@shared/AppConsts';
 @Injectable()
 export class AppAuthService {
 
-    logout(reload?: boolean): void {
+    logout(reload?: boolean, returnUrl?: string): void {
         abp.auth.clearToken();
         if (reload !== false) {
-            location.href = AppConsts.appBaseUrl;
+            if (returnUrl) {
+                location.href = returnUrl;
+            } else {
+                location.href = AppConsts.appBaseUrl;
+            }
         }
     }
 }

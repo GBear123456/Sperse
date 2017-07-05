@@ -56,7 +56,7 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
     getWebLogs(): void {
         let self = this;
         self._webLogService.getLatestWebLogs().subscribe((result) => {
-            self.logs = result.latesWebLogLines;
+            self.logs = result.latestWebLogLines;
             self.fixWebLogsPanelHeight();
         });
     };
@@ -135,9 +135,8 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
     }
 
     ngAfterViewInit(): void {
-        let self = this;
-        $(window).bind('resize', function () {
-            self.fixWebLogsPanelHeight();
+        $(window).bind('resize', () => {
+            this.fixWebLogsPanelHeight();
         });
     }
 

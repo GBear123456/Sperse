@@ -33,6 +33,7 @@ export class RegisterTenantResultComponent extends AppComponentBase implements O
         }
 
         this.model = this._tenantRegistrationHelper.registrationResult;
+        abp.multiTenancy.setTenantIdCookie(this.model.tenantId);
         this.tenantUrl = this._appUrlService.getAppRootUrlOfTenant(this.model.tenancyName);
     }
 }

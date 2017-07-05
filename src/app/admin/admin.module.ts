@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core';
+﻿import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { ModalModule, TabsModule, TooltipModule } from 'ng2-bootstrap';
+import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
 
 import { AdminRoutingModule } from './admin-routing.module'
@@ -41,17 +41,19 @@ import { OrganizationTreeComponent } from './organization-units/organization-tre
 import { OrganizationUnitMembersComponent } from './organization-units/organization-unit-members.component';
 import { CreateOrEditUnitModalComponent } from './organization-units/create-or-edit-unit-modal.component';
 import { TenantSettingsComponent } from './settings/tenant-settings.component'
+import { HostDashboardComponent } from './dashboard/host-dashboard.component'
+import { EditionComboComponent} from './shared/edition-combo.component';
+import { SubscriptionManagementComponent} from './subscription-management/subscription-management.component';
 
 @NgModule({
     imports: [
         FormsModule,
         CommonModule,
-
         FileUploadModule,
         ModalModule.forRoot(),
         TabsModule.forRoot(),
         TooltipModule.forRoot(),
-
+        PopoverModule.forRoot(),
         AdminRoutingModule,
         UtilsModule,
         AppCommonModule
@@ -85,7 +87,10 @@ import { TenantSettingsComponent } from './settings/tenant-settings.component'
         OrganizationTreeComponent,
         OrganizationUnitMembersComponent,
         CreateOrEditUnitModalComponent,
-        TenantSettingsComponent
+        TenantSettingsComponent,
+        HostDashboardComponent,
+        EditionComboComponent,
+        SubscriptionManagementComponent
     ],
     providers: [
         ImpersonationService
