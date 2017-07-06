@@ -59,6 +59,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         }
     }
 
+    onContentReady(event) {
+        event.component.columnOption('command:edit', {
+            visibleIndex: -1,
+            width: 40
+        });
+    }
+    
 	onToolbarPrepare(event) {
 		event.toolbarOptions.items.unshift({
                 location: 'center',
