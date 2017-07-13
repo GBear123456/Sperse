@@ -12,4 +12,15 @@ export class JTableHelper {
             });
         });
     }
+
+    static toJTableListActionWithData(records, totalRecordCount, originalResult): JQueryDeferred<any> {
+        return $.Deferred($dfd => {
+            $dfd.resolve({
+                "Result": "OK",
+                "Records": records,
+                "TotalRecordCount": totalRecordCount,
+                originalResult: originalResult
+            });
+        });
+    }
 }

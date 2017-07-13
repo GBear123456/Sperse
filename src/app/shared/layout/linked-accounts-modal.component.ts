@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit, ViewChild, Injector, AfterViewInit, Output, EventEmitter } from '@angular/core';
-import { ModalDirective } from 'ng2-bootstrap';
+import { ModalDirective } from 'ngx-bootstrap';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { JTableHelper } from '@shared/helpers/JTableHelper';

@@ -75,7 +75,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li *ngIf="!chatConnected" class="dropdown dropdown-extended">
+                    <li *ngIf="chatEnabled && !chatConnected" class="dropdown dropdown-extended">
                         <a href="javascript:;" class="dropdown-toggle">
                             <img *ngIf="!chatConnected" src="../../../assets/metronic/global/img/loading.gif" tooltip="{{l('ChatIsConnecting')}}" placement="left" />
                         </a>
@@ -89,6 +89,16 @@
             </div>
         </div>
 		<top-bar></top-bar>
+
+        <div *ngIf="subscriptionStatusBarVisible()"
+             [ngClass]="{'hidden': !subscriptionStatusBarVisible()}" class="alert hidden subscription-info">
+            <span *ngIf="tenant.isInTrialPeriod && !subscriptionIsExpiringSoon()" [innerHTML]="getTrialSubscriptionNotification()"></span>
+            <a *ngIf="subscriptionIsExpiringSoon()" routerLink="/app/admin/subscription-management">
+                <span *ngIf="subscriptionIsExpiringSoon() && tenant.isInTrialPeriod"><i class="fa fa-exclamation-circle"></i> {{getExpireNotification("TrialExpireNotification")}}</span>
+                <span *ngIf="subscriptionIsExpiringSoon() && !tenant.isInTrialPeriod"><i class="fa fa-exclamation-circle"></i> {{getExpireNotification("SubscriptionExpireNotification")}}</span>
+            </a>
+    </div>
+
     </div>
 </div>
 <loginAttemptsModal #loginAttemptsModal></loginAttemptsModal>

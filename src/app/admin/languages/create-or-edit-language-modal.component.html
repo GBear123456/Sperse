@@ -1,4 +1,4 @@
-<div bsModal #createOrEditModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal"
+﻿<div bsModal #createOrEditModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal"
      aria-hidden="true" [config]="{backdrop: 'static'}">
     <div class="modal-dialog">
 
@@ -41,6 +41,19 @@
                             <option value="">{{emptyText}}</option>
                             <option *ngFor="let flag of flags" [value]="flag.value" [attr.data-icon]="flag.value">{{flag.displayText}}</option>
                         </select>
+                    </div>
+                    
+                    <div class="md-checkbox-list">
+                        <div class="md-checkbox">
+                            <input id="EditLanguage_IsEnabled" class="md-check" type="checkbox" name="languageIsEnabled"
+                                   [(ngModel)]="language.isEnabled">
+                            <label for="EditLanguage_IsEnabled">
+                                <span class="inc"></span>
+                                <span class="check"></span>
+                                <span class="box"></span>
+                                {{l("IsEnabled")}}
+                            </label>
+                        </div>
                     </div>
 
                 </div>

@@ -1,6 +1,6 @@
 ﻿import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef, AfterViewInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ModalDirective } from 'ng2-bootstrap';
+import { ModalDirective } from 'ngx-bootstrap';
 import { Observable } from 'rxjs/Observable';
 import { PagedResultDtoOfNameValueDto, NameValueDto } from '@shared/service-proxies/service-proxies';
 import { JTableHelper } from '@shared/helpers/JTableHelper';

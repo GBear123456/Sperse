@@ -6,6 +6,8 @@
     static remoteServiceBaseUrlFormat: string;
     static appBaseUrl: string;
     static appBaseUrlFormat: string;
+    static recaptchaSiteKey: string;
+    static subscriptionExpireNootifyDayCount: number;
 
     static readonly userManagement = {
         defaultAdminUserName: 'admin'

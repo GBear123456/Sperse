@@ -1,4 +1,5 @@
-import { NgModule } from '@angular/core';
+﻿import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 
 import { LayoutModule } from './shared/layout/layout.module';
 import { AppCommonModule } from './shared/common/app-common.module';
@@ -15,7 +16,8 @@ import { ImpersonationService } from './admin/users/impersonation.service';
     imports: [
 		LayoutModule,
         AppRoutingModule,
-		AppCommonModule.forRoot()
+        AppCommonModule.forRoot(),
+        BrowserModule
     ],
     providers: [
         ImpersonationService

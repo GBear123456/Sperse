@@ -5,6 +5,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { LoginService } from '../login/login.service';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { RegisterModel } from './register.model';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     templateUrl: './register.component.html',
@@ -14,6 +15,7 @@ export class RegisterComponent extends AppComponentBase implements OnInit {
 
     model: RegisterModel = new RegisterModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
+    recaptchaSiteKey: string = AppConsts.recaptchaSiteKey;
 
     saving: boolean = false;
 

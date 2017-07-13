@@ -1,6 +1,6 @@
 ﻿import { browser, element, by } from 'protractor';
 
-export class CRMPage {
+export class PlatformPage {
   navigateTo() {
     return browser.get('/');
   }

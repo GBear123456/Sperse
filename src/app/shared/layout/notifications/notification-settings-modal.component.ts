@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
-import { ModalDirective } from 'ng2-bootstrap';
+import { ModalDirective } from 'ngx-bootstrap';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { NotificationServiceProxy, GetNotificationSettingsOutput, UpdateNotificationSettingsInput, NotificationSubscriptionDto } from '@shared/service-proxies/service-proxies';
 
