@@ -116,7 +116,7 @@ IF EXIST "%DEPLOYMENT_TARGET%\package.json" (
   call :ExecuteCmd yarn install
 
 :: ng build
-  call :ExecuteCmd "!NODE_EXE!" ./node_modules/@angular/cli/bin/ng build --prod --aot false
+  call :ExecuteCmd "!NODE_EXE!" --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng build --prod --aot false
 :: copy web.config
   call :ExecuteCmd cp "%DEPLOYMENT_TARGET%"/web.config "%DEPLOYMENT_TARGET%"/dist/
   
