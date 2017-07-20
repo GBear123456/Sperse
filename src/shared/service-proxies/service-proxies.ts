@@ -2740,6 +2740,56 @@ export class MemberServiceProxy {
         }
         return Observable.of<CountryStateDto[]>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    selectPackage(packageId: number): Observable<SelectPackageResponseDto> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/Member/SelectPackage?";
+        if (packageId !== undefined)
+            url_ += "packageId=" + encodeURIComponent("" + packageId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSelectPackage(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSelectPackage(response_);
+                } catch (e) {
+                    return <Observable<SelectPackageResponseDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<SelectPackageResponseDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSelectPackage(response: Response): Observable<SelectPackageResponseDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: SelectPackageResponseDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SelectPackageResponseDto.fromJS(resultData200) : new SelectPackageResponseDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<SelectPackageResponseDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -8593,6 +8643,8 @@ export interface IGetDefaultEditionNameOutput {
 }
 
 export class CreditReportOutput implements ICreditReportOutput {
+    memberExists: boolean;
+    uncompletedPackageId: number;
     kbaPassed: boolean;
     creditReport: CreditReportDto;
     updatable: boolean;
@@ -8609,6 +8661,8 @@ export class CreditReportOutput implements ICreditReportOutput {
 
     init(data?: any) {
         if (data) {
+            this.memberExists = data["memberExists"];
+            this.uncompletedPackageId = data["uncompletedPackageId"];
             this.kbaPassed = data["kbaPassed"];
             this.creditReport = data["creditReport"] ? CreditReportDto.fromJS(data["creditReport"]) : <any>undefined;
             this.updatable = data["updatable"];
@@ -8624,6 +8678,8 @@ export class CreditReportOutput implements ICreditReportOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["memberExists"] = this.memberExists;
+        data["uncompletedPackageId"] = this.uncompletedPackageId;
         data["kbaPassed"] = this.kbaPassed;
         data["creditReport"] = this.creditReport ? this.creditReport.toJSON() : <any>undefined;
         data["updatable"] = this.updatable;
@@ -8633,6 +8689,8 @@ export class CreditReportOutput implements ICreditReportOutput {
 }
 
 export interface ICreditReportOutput {
+    memberExists: boolean;
+    uncompletedPackageId: number;
     kbaPassed: boolean;
     creditReport: CreditReportDto;
     updatable: boolean;
@@ -12093,6 +12151,45 @@ export class CountryStateDto implements ICountryStateDto {
 export interface ICountryStateDto {
     code: string;
     name: string;
+}
+
+export class SelectPackageResponseDto implements ISelectPackageResponseDto {
+    registrationId: string;
+    memberInfo: MemberInfoDto;
+
+    constructor(data?: ISelectPackageResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.registrationId = data["registrationId"];
+            this.memberInfo = data["memberInfo"] ? MemberInfoDto.fromJS(data["memberInfo"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): SelectPackageResponseDto {
+        let result = new SelectPackageResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["registrationId"] = this.registrationId;
+        data["memberInfo"] = this.memberInfo ? this.memberInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ISelectPackageResponseDto {
+    registrationId: string;
+    memberInfo: MemberInfoDto;
 }
 
 export class GetNotificationsOutput implements IGetNotificationsOutput {
