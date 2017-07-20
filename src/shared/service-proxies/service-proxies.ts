@@ -3781,6 +3781,68 @@ export class PermissionServiceProxy {
 }
 
 @Injectable()
+export class PipelineServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getPipelineDefinition(pipelineId: number): Observable<PipelineDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinition?";
+        if (pipelineId !== undefined)
+            url_ += "PipelineId=" + encodeURIComponent("" + pipelineId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetPipelineDefinition(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetPipelineDefinition(response_);
+                } catch (e) {
+                    return <Observable<PipelineDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<PipelineDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetPipelineDefinition(response: Response): Observable<PipelineDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: PipelineDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PipelineDto.fromJS(resultData200) : new PipelineDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<PipelineDto>(<any>null);
+    }
+}
+
+@Injectable()
 export class ProfileServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -13465,6 +13527,163 @@ export interface IFlatPermissionWithLevelDto {
     displayName: string;
     description: string;
     isGrantedByDefault: boolean;
+}
+
+export class PipelineDto implements IPipelineDto {
+    id: number;
+    name: string;
+    purpose: string;
+    stages: StageDto[];
+
+    constructor(data?: IPipelineDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.purpose = data["purpose"];
+            if (data["stages"] && data["stages"].constructor === Array) {
+                this.stages = [];
+                for (let item of data["stages"])
+                    this.stages.push(StageDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PipelineDto {
+        let result = new PipelineDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["purpose"] = this.purpose;
+        if (this.stages && this.stages.constructor === Array) {
+            data["stages"] = [];
+            for (let item of this.stages)
+                data["stages"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPipelineDto {
+    id: number;
+    name: string;
+    purpose: string;
+    stages: StageDto[];
+}
+
+export class StageDto implements IStageDto {
+    id: number;
+    name: string;
+    color: string;
+    accessibleActions: ActionDto[];
+
+    constructor(data?: IStageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.color = data["color"];
+            if (data["accessibleActions"] && data["accessibleActions"].constructor === Array) {
+                this.accessibleActions = [];
+                for (let item of data["accessibleActions"])
+                    this.accessibleActions.push(ActionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): StageDto {
+        let result = new StageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["color"] = this.color;
+        if (this.accessibleActions && this.accessibleActions.constructor === Array) {
+            data["accessibleActions"] = [];
+            for (let item of this.accessibleActions)
+                data["accessibleActions"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IStageDto {
+    id: number;
+    name: string;
+    color: string;
+    accessibleActions: ActionDto[];
+}
+
+export class ActionDto implements IActionDto {
+    id: number;
+    name: string;
+    handlerName: string;
+    targetStageId: number;
+
+    constructor(data?: IActionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.handlerName = data["handlerName"];
+            this.targetStageId = data["targetStageId"];
+        }
+    }
+
+    static fromJS(data: any): ActionDto {
+        let result = new ActionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["handlerName"] = this.handlerName;
+        data["targetStageId"] = this.targetStageId;
+        return data; 
+    }
+}
+
+export interface IActionDto {
+    id: number;
+    name: string;
+    handlerName: string;
+    targetStageId: number;
 }
 
 export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
