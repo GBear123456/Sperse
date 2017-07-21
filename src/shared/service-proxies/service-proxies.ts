@@ -922,6 +922,68 @@ export class ChatServiceProxy {
 }
 
 @Injectable()
+export class ClientsServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getContactPersonalInfo(contactId: number): Observable<GetContactPersonalInfoResponse> {
+        let url_ = this.baseUrl + "/api/services/CRM/Clients/GetContactPersonalInfo?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetContactPersonalInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetContactPersonalInfo(response_);
+                } catch (e) {
+                    return <Observable<GetContactPersonalInfoResponse>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetContactPersonalInfoResponse>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetContactPersonalInfo(response: Response): Observable<GetContactPersonalInfoResponse> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: GetContactPersonalInfoResponse = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetContactPersonalInfoResponse.fromJS(resultData200) : new GetContactPersonalInfoResponse();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<GetContactPersonalInfoResponse>(<any>null);
+    }
+}
+
+@Injectable()
 export class CommonLookupServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -3777,6 +3839,68 @@ export class PermissionServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<ListResultDtoOfFlatPermissionWithLevelDto>(<any>null);
+    }
+}
+
+@Injectable()
+export class PipelineServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getPipelineDefinition(pipelineId: number): Observable<PipelineDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinition?";
+        if (pipelineId !== undefined)
+            url_ += "PipelineId=" + encodeURIComponent("" + pipelineId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetPipelineDefinition(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetPipelineDefinition(response_);
+                } catch (e) {
+                    return <Observable<PipelineDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<PipelineDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetPipelineDefinition(response: Response): Observable<PipelineDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: PipelineDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PipelineDto.fromJS(resultData200) : new PipelineDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<PipelineDto>(<any>null);
     }
 }
 
@@ -8382,6 +8506,380 @@ export class MarkAllUnreadMessagesOfUserAsReadInput implements IMarkAllUnreadMes
 export interface IMarkAllUnreadMessagesOfUserAsReadInput {
     tenantId: number;
     userId: number;
+}
+
+export class GetContactPersonalInfoResponse implements IGetContactPersonalInfoResponse {
+    firstName: string;
+    lastName: string;
+    photo: ContactPhotoDto;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+    comment: string;
+
+    constructor(data?: IGetContactPersonalInfoResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
+            if (data["emails"] && data["emails"].constructor === Array) {
+                this.emails = [];
+                for (let item of data["emails"])
+                    this.emails.push(ContactEmailDto.fromJS(item));
+            }
+            if (data["phones"] && data["phones"].constructor === Array) {
+                this.phones = [];
+                for (let item of data["phones"])
+                    this.phones.push(ContactPhoneDto.fromJS(item));
+            }
+            if (data["addresses"] && data["addresses"].constructor === Array) {
+                this.addresses = [];
+                for (let item of data["addresses"])
+                    this.addresses.push(ContactAddressDto.fromJS(item));
+            }
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(ContactLinkDto.fromJS(item));
+            }
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): GetContactPersonalInfoResponse {
+        let result = new GetContactPersonalInfoResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
+        if (this.emails && this.emails.constructor === Array) {
+            data["emails"] = [];
+            for (let item of this.emails)
+                data["emails"].push(item.toJSON());
+        }
+        if (this.phones && this.phones.constructor === Array) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item.toJSON());
+        }
+        if (this.addresses && this.addresses.constructor === Array) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IGetContactPersonalInfoResponse {
+    firstName: string;
+    lastName: string;
+    photo: ContactPhotoDto;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+    comment: string;
+}
+
+export class ContactPhotoDto implements IContactPhotoDto {
+    thumbnail: string;
+    source: string;
+    comment: string;
+
+    constructor(data?: IContactPhotoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.thumbnail = data["thumbnail"];
+            this.source = data["source"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): ContactPhotoDto {
+        let result = new ContactPhotoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["thumbnail"] = this.thumbnail;
+        data["source"] = this.source;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IContactPhotoDto {
+    thumbnail: string;
+    source: string;
+    comment: string;
+}
+
+export class ContactEmailDto implements IContactEmailDto {
+    id: number;
+    type: string;
+    emailAddress: string;
+    isConfirmed: boolean;
+    comment: string;
+
+    constructor(data?: IContactEmailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.type = data["type"];
+            this.emailAddress = data["emailAddress"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): ContactEmailDto {
+        let result = new ContactEmailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["emailAddress"] = this.emailAddress;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IContactEmailDto {
+    id: number;
+    type: string;
+    emailAddress: string;
+    isConfirmed: boolean;
+    comment: string;
+}
+
+export class ContactPhoneDto implements IContactPhoneDto {
+    id: number;
+    type: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
+
+    constructor(data?: IContactPhoneDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.type = data["type"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): ContactPhoneDto {
+        let result = new ContactPhoneDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IContactPhoneDto {
+    id: number;
+    type: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
+}
+
+export class ContactAddressDto implements IContactAddressDto {
+    id: number;
+    type: string;
+    streetAddress: string;
+    city: string;
+    state: string;
+    country: string;
+    zip: string;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
+
+    constructor(data?: IContactAddressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.type = data["type"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.country = data["country"];
+            this.zip = data["zip"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): ContactAddressDto {
+        let result = new ContactAddressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["country"] = this.country;
+        data["zip"] = this.zip;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IContactAddressDto {
+    id: number;
+    type: string;
+    streetAddress: string;
+    city: string;
+    state: string;
+    country: string;
+    zip: string;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
+}
+
+export class ContactLinkDto implements IContactLinkDto {
+    id: number;
+    type: string;
+    url: string;
+    isConfirmed: boolean;
+    isActive: boolean;
+    comment: string;
+
+    constructor(data?: IContactLinkDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.type = data["type"];
+            this.url = data["url"];
+            this.isConfirmed = data["isConfirmed"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): ContactLinkDto {
+        let result = new ContactLinkDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["url"] = this.url;
+        data["isConfirmed"] = this.isConfirmed;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IContactLinkDto {
+    id: number;
+    type: string;
+    url: string;
+    isConfirmed: boolean;
+    isActive: boolean;
+    comment: string;
 }
 
 export class ListResultDtoOfSubscribableEditionComboboxItemDto implements IListResultDtoOfSubscribableEditionComboboxItemDto {
@@ -13465,6 +13963,163 @@ export interface IFlatPermissionWithLevelDto {
     displayName: string;
     description: string;
     isGrantedByDefault: boolean;
+}
+
+export class PipelineDto implements IPipelineDto {
+    id: number;
+    name: string;
+    purpose: string;
+    stages: StageDto[];
+
+    constructor(data?: IPipelineDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.purpose = data["purpose"];
+            if (data["stages"] && data["stages"].constructor === Array) {
+                this.stages = [];
+                for (let item of data["stages"])
+                    this.stages.push(StageDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PipelineDto {
+        let result = new PipelineDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["purpose"] = this.purpose;
+        if (this.stages && this.stages.constructor === Array) {
+            data["stages"] = [];
+            for (let item of this.stages)
+                data["stages"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPipelineDto {
+    id: number;
+    name: string;
+    purpose: string;
+    stages: StageDto[];
+}
+
+export class StageDto implements IStageDto {
+    id: number;
+    name: string;
+    color: string;
+    accessibleActions: ActionDto[];
+
+    constructor(data?: IStageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.color = data["color"];
+            if (data["accessibleActions"] && data["accessibleActions"].constructor === Array) {
+                this.accessibleActions = [];
+                for (let item of data["accessibleActions"])
+                    this.accessibleActions.push(ActionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): StageDto {
+        let result = new StageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["color"] = this.color;
+        if (this.accessibleActions && this.accessibleActions.constructor === Array) {
+            data["accessibleActions"] = [];
+            for (let item of this.accessibleActions)
+                data["accessibleActions"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IStageDto {
+    id: number;
+    name: string;
+    color: string;
+    accessibleActions: ActionDto[];
+}
+
+export class ActionDto implements IActionDto {
+    id: number;
+    name: string;
+    handlerName: string;
+    targetStageId: number;
+
+    constructor(data?: IActionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.handlerName = data["handlerName"];
+            this.targetStageId = data["targetStageId"];
+        }
+    }
+
+    static fromJS(data: any): ActionDto {
+        let result = new ActionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["handlerName"] = this.handlerName;
+        data["targetStageId"] = this.targetStageId;
+        return data; 
+    }
+}
+
+export interface IActionDto {
+    id: number;
+    name: string;
+    handlerName: string;
+    targetStageId: number;
 }
 
 export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {

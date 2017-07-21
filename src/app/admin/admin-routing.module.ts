@@ -21,7 +21,7 @@ import { SubscriptionManagementComponent } from './subscription-management/subsc
             {
                 path: '',
                 children: [
-                    { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.Customers' } },
+                    { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.CRM.Customers' } },
                     { path: 'users', component: UsersComponent, data: { permission: 'Pages.Administration.Users' } },
                     { path: 'roles', component: RolesComponent, data: { permission: 'Pages.Administration.Roles' } },
                     { path: 'auditLogs', component: AuditLogsComponent, data: { permission: 'Pages.Administration.AuditLogs' } },
