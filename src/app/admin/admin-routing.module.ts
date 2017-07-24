@@ -3,6 +3,7 @@ import { RouterModule, Router } from '@angular/router';
 import { UsersComponent } from './users/users.component';
 import { RolesComponent } from './roles/roles.component';
 import { ClientsComponent } from './clients/clients.component';
+import { LeadsComponent } from './leads/leads.component';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
 import { HostSettingsComponent } from './settings/host-settings.component';
 import { TenantSettingsComponent } from './settings/tenant-settings.component';
@@ -22,6 +23,7 @@ import { SubscriptionManagementComponent } from './subscription-management/subsc
                 path: '',
                 children: [
                     { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.CRM.Customers' } },
+                    { path: 'leads', component: LeadsComponent, data: { permission: 'Pages.CRM.Leads' } },
                     { path: 'users', component: UsersComponent, data: { permission: 'Pages.Administration.Users' } },
                     { path: 'roles', component: RolesComponent, data: { permission: 'Pages.Administration.Roles' } },
                     { path: 'auditLogs', component: AuditLogsComponent, data: { permission: 'Pages.Administration.AuditLogs' } },

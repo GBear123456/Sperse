@@ -23,6 +23,7 @@ export class TopBarComponent extends AppComponentBase {
         new PanelMenuItem("Dashboard", "Pages.Administration.Host.Dashboard", "icon-home", "/app/admin/hostDashboard"),
         new PanelMenuItem("Dashboard", "Pages.Tenant.Dashboard", "icon-home", "/app/main/dashboard"),
         new PanelMenuItem("Customers", "Pages.CRM.Customers", "icon-globe", "/app/admin/clients"),
+        new PanelMenuItem("Leads", "Pages.CRM.Leads", "icon-globe", "/app/admin/leads"),
         new PanelMenuItem("Tenants", "Pages.Tenants", "icon-globe", "/app/admin/tenants"),
         new PanelMenuItem("Editions", "Pages.Editions", "icon-grid", "/app/admin/editions"),
         new PanelMenuItem("Administration", "", "icon-wrench", "", [
