@@ -34,6 +34,7 @@ import { LanguageTextsComponent } from './languages/language-texts.component';
 import { CreateOrEditLanguageModalComponent } from './languages/create-or-edit-language-modal.component';
 import { ClientsComponent } from './clients/clients.component';
 import { LeadsComponent } from './leads/leads.component';
+import { OrdersComponent } from './orders/orders.component';
 import { TenantsComponent } from './tenants/tenants.component'
 import { CreateTenantModalComponent } from './tenants/create-tenant-modal.component'
 import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component'
@@ -89,6 +90,7 @@ import { DxDataGridModule, DxToolbarModule, DxTemplateModule } from 'devextreme-
         CreateOrEditLanguageModalComponent,
         ClientsComponent,
         LeadsComponent,
+        OrdersComponent,
         TenantsComponent,
         CreateTenantModalComponent,
         EditTenantModalComponent,
