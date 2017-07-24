@@ -49,17 +49,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             select: [
                 'Id',
+                'Stage.Id',
+                'Stage.PipelineId',
+                'Stage.Name',
+                'Stage.Pipeline.Name',
                 'FirstName',
                 'LastName',
+                'Contact.PrimaryPhoto.Thumbnail',
                 'EmailAddress',
                 'PhoneNumber',
                 'Customer.Status.Name',
                 'CreationTime',
-                'Stage.Name',
-                'Stage.Id',
-                'Stage.PipelineId',
-                'Stage.Pipeline.Name',
-                'Stage.Pipeline.Purpose.Name'
             ]
         }
     }

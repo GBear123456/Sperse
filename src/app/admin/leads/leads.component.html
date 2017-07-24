@@ -46,7 +46,8 @@
                         <dxi-column dataField="PhoneNumber" caption="{{l('Contact.Phone')}}"></dxi-column>
                         <dxi-column dataField="CreationTime" caption="{{l('Customer.CreationTime')}}" dataType="date" format="shortDateShortTime"></dxi-column>
                         <dxi-column dataField="Stage.Name" caption="Stage Name"></dxi-column>
-                        <dxi-column dataField="Stage.Pipeline.Purpose.Name" caption="Pipeline"></dxi-column>
+                        <dxi-column dataField="Stage.Pipeline.Name" caption="Pipeline"></dxi-column>
+                        <dxi-column dataField="Contact.PrimaryPhoto.Thumbnail" caption="Thumbnail"></dxi-column>
 
 						<dxo-sorting mode="multiple"></dxo-sorting>
 						<dxo-paging [pageSize]="5"></dxo-paging>
