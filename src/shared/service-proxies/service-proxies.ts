@@ -981,6 +981,56 @@ export class ClientsServiceProxy {
         }
         return Observable.of<GetContactPersonalInfoResponse>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getClientInfo(customerId: number): Observable<GetClientInfoResponse> {
+        let url_ = this.baseUrl + "/api/services/CRM/Clients/GetClientInfo?";
+        if (customerId !== undefined)
+            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetClientInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetClientInfo(response_);
+                } catch (e) {
+                    return <Observable<GetClientInfoResponse>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetClientInfoResponse>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetClientInfo(response: Response): Observable<GetClientInfoResponse> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: GetClientInfoResponse = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetClientInfoResponse.fromJS(resultData200) : new GetClientInfoResponse();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<GetClientInfoResponse>(<any>null);
+    }
 }
 
 @Injectable()
@@ -8831,6 +8881,7 @@ export class ContactLinkDto implements IContactLinkDto {
     id: number;
     type: string;
     url: string;
+    isSocialNetwork: boolean;
     isConfirmed: boolean;
     isActive: boolean;
     comment: string;
@@ -8849,6 +8900,7 @@ export class ContactLinkDto implements IContactLinkDto {
             this.id = data["id"];
             this.type = data["type"];
             this.url = data["url"];
+            this.isSocialNetwork = data["isSocialNetwork"];
             this.isConfirmed = data["isConfirmed"];
             this.isActive = data["isActive"];
             this.comment = data["comment"];
@@ -8866,6 +8918,7 @@ export class ContactLinkDto implements IContactLinkDto {
         data["id"] = this.id;
         data["type"] = this.type;
         data["url"] = this.url;
+        data["isSocialNetwork"] = this.isSocialNetwork;
         data["isConfirmed"] = this.isConfirmed;
         data["isActive"] = this.isActive;
         data["comment"] = this.comment;
@@ -8877,9 +8930,124 @@ export interface IContactLinkDto {
     id: number;
     type: string;
     url: string;
+    isSocialNetwork: boolean;
     isConfirmed: boolean;
     isActive: boolean;
     comment: string;
+}
+
+export class GetClientInfoResponse implements IGetClientInfoResponse {
+    name: string;
+    status: string;
+    score: number;
+    primaryContactPersonalInfo: GetContactPersonalInfoResponse;
+    contacts: ContactShortInfoDto[];
+    creationDate: moment.Moment;
+    userContextOrderId: number;
+    userContextOrderType: string;
+
+    constructor(data?: IGetClientInfoResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.status = data["status"];
+            this.score = data["score"];
+            this.primaryContactPersonalInfo = data["primaryContactPersonalInfo"] ? GetContactPersonalInfoResponse.fromJS(data["primaryContactPersonalInfo"]) : <any>undefined;
+            if (data["contacts"] && data["contacts"].constructor === Array) {
+                this.contacts = [];
+                for (let item of data["contacts"])
+                    this.contacts.push(ContactShortInfoDto.fromJS(item));
+            }
+            this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
+            this.userContextOrderId = data["userContextOrderId"];
+            this.userContextOrderType = data["userContextOrderType"];
+        }
+    }
+
+    static fromJS(data: any): GetClientInfoResponse {
+        let result = new GetClientInfoResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["status"] = this.status;
+        data["score"] = this.score;
+        data["primaryContactPersonalInfo"] = this.primaryContactPersonalInfo ? this.primaryContactPersonalInfo.toJSON() : <any>undefined;
+        if (this.contacts && this.contacts.constructor === Array) {
+            data["contacts"] = [];
+            for (let item of this.contacts)
+                data["contacts"].push(item.toJSON());
+        }
+        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
+        data["userContextOrderId"] = this.userContextOrderId;
+        data["userContextOrderType"] = this.userContextOrderType;
+        return data; 
+    }
+}
+
+export interface IGetClientInfoResponse {
+    name: string;
+    status: string;
+    score: number;
+    primaryContactPersonalInfo: GetContactPersonalInfoResponse;
+    contacts: ContactShortInfoDto[];
+    creationDate: moment.Moment;
+    userContextOrderId: number;
+    userContextOrderType: string;
+}
+
+export class ContactShortInfoDto implements IContactShortInfoDto {
+    id: number;
+    name: string;
+    type: string;
+
+    constructor(data?: IContactShortInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.type = data["type"];
+        }
+    }
+
+    static fromJS(data: any): ContactShortInfoDto {
+        let result = new ContactShortInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["type"] = this.type;
+        return data; 
+    }
+}
+
+export interface IContactShortInfoDto {
+    id: number;
+    name: string;
+    type: string;
 }
 
 export class ListResultDtoOfSubscribableEditionComboboxItemDto implements IListResultDtoOfSubscribableEditionComboboxItemDto {
