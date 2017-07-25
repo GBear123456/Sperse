@@ -1,0 +1,67 @@
+﻿<div [@routerTransition]>
+    <div class="row margin-bottom-5">
+        <div class="col-xs-6">
+            <div class="page-head">
+                <div class="page-title">
+                    <h1>
+						<i class="icon-globe"></i>
+                        <span>{{l("Clients")}}</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 text-right">
+			<ng-template ngFor let-tab [ngForOf]="filterTabs" let-i="index">
+				<div class="tab-filter {{'tab-' + tab}}" [ngClass]="{'tab-selected': tabIndex == i}" (click)="tabIndex = i;">{{l("TabFilter" + capitalize(tab))}}</div>
+			</ng-template>
+            <button ng-if="vm.permissions.create" class="btn btn-layout" (click)="createClient()"><i class="fa fa-plus"></i>{{l("CreateNewCustomer")}}</button>
+        </div>
+    </div>
+    <div class="portlet light margin-bottom-0">
+        <div class="portlet-body">
+            <div>
+                <div id="ClientsTable">
+					<dx-data-grid id="gridContainer" 
+						[dataSource]="dataSource" 
+						[allowColumnReordering]="true"  
+						[columnAutoWidth]="true" 
+						[allowColumnResizing]="true"
+						[hoverStateEnabled]="true"
+                        
+                        (onContentReady)="onContentReady($event)"
+						(onToolbarPreparing)="onToolbarPrepare($event)">
+                        <dxo-selection
+                            selectAllMode="page"
+                            showCheckBoxesMode="always"
+                            mode="multiple">
+                        </dxo-selection>
+                        <dxo-editing 
+                            mode="popup" 
+                            [allowUpdating]="true">
+                        </dxo-editing>
+                        <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"></dxi-column>
+					    <dxi-column dataField="FirstName" caption="{{l('Customer.Name')}}"></dxi-column>
+                        <dxi-column dataField="LastName" caption="{{l('Customer.Name')}}"></dxi-column>
+                        <dxi-column dataField="EmailAddress" caption="{{l('Contact.Email')}}"></dxi-column>
+                        <dxi-column dataField="PhoneNumber" caption="{{l('Contact.Phone')}}"></dxi-column>
+                        <dxi-column dataField="CreationTime" caption="{{l('Customer.CreationTime')}}" dataType="date" format="shortDateShortTime"></dxi-column>
+                        <dxi-column dataField="Stage.Name" caption="Stage Name"></dxi-column>
+                        <dxi-column dataField="Stage.Pipeline.Name" caption="Pipeline"></dxi-column>
+                        <dxi-column dataField="Contact.PrimaryPhoto.Thumbnail" caption="Thumbnail"></dxi-column>
+
+						<dxo-sorting mode="multiple"></dxo-sorting>
+						<dxo-paging [pageSize]="5"></dxo-paging>
+						<dxo-pager 
+					        [showPageSizeSelector]="true"
+					        [allowedPageSizes]="[5, 10, 20]"
+					        [showInfo]="true">
+					    </dxo-pager>
+						<dxo-group-panel [visible]="true"></dxo-group-panel>
+
+					</dx-data-grid>
+
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
