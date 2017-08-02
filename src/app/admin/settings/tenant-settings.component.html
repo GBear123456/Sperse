@@ -351,6 +351,28 @@
             </div>
           </div>
         </tab>
+        <tab heading="Upload ssl certificate">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>SSL certificate uploading form</h4>
+                    <form #certUploadForm>
+                        <div class="form-group">
+                            <input type="text" name="tenantHostType" class="form-control" [ngClass]="{'edited':tenantHostType}" [(ngModel)]="tenantHostType" maxlength="128">
+                            <span class="help-block m-b-none">Enter tenant host type</span>
+                        </div>
+                        <div class="form-group">
+                            <input type="file" ng2FileSelect [uploader]="certUploader" required />
+                            <span class="help-block m-b-none">Upload cert</span>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="certPassword" class="form-control" [ngClass]="{'edited':certPassword}" [(ngModel)]="certPassword" maxlength="128">
+                            <span class="help-block m-b-none">Enter cert password</span>
+                        </div>
+                        <button class="btn btn-primary" type="button" (click)="uploadCert()">Upload cert</button>
+                    </form>
+                </div>
+            </div>
+        </tab>
       </tabset>
     </div>
   </div>
