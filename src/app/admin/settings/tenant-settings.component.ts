@@ -30,11 +30,14 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
     loading: boolean = false;
     settings: TenantSettingsEditDto = undefined;
     idcsSettings: IdcsSettingsDto = undefined;
+    certPassword: string = undefined;
+    tenantHostType: number = undefined;
 
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('CreditReportFeature');
 
     logoUploader: FileUploader;
     customCssUploader: FileUploader;
+    certUploader: FileUploader;
 
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
 
@@ -97,6 +100,19 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
                 $('head').append('<link id="TenantCustomCss" href="' + AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + this.appSession.tenant.customCssId + '" rel="stylesheet"/>');
             }
         );
+
+        this.certUploader = this.createUploader(
+            "/TenantHosts/KeyVaultImportCertificate",
+            result => {
+                //this._appSessionService.tenant.logoFileType = result.fileType;
+                //this._appSessionService.tenant.logoId = result.id;
+            }
+        );
+
+        this.certUploader.onBuildItemForm = (fileItem, form) => {
+            form.append('password', this.certPassword);
+            form.append('TenantHostType', this.tenantHostType);
+        }
     }
 
     createUploader(url: string, success?: (result: any) => void): FileUploader {
@@ -129,6 +145,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
 
     uploadCustomCss(): void {
         this.customCssUploader.uploadAll();
+    }
+
+    uploadCert(): void {
+        this.certUploader.uploadAll();
     }
 
     clearLogo(): void {
