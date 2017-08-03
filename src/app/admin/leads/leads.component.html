@@ -40,14 +40,14 @@
                             [allowUpdating]="true">
                         </dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"></dxi-column>
-					    <dxi-column dataField="FirstName" caption="{{l('Customer.Name')}}"></dxi-column>
-                        <dxi-column dataField="LastName" caption="{{l('Customer.Name')}}"></dxi-column>
-                        <dxi-column dataField="EmailAddress" caption="{{l('Contact.Email')}}"></dxi-column>
-                        <dxi-column dataField="PhoneNumber" caption="{{l('Contact.Phone')}}"></dxi-column>
-                        <dxi-column dataField="CreationTime" caption="{{l('Customer.CreationTime')}}" dataType="date" format="shortDateShortTime"></dxi-column>
-                        <dxi-column dataField="Stage.Name" caption="Stage Name"></dxi-column>
-                        <dxi-column dataField="Stage.Pipeline.Name" caption="Pipeline"></dxi-column>
-                        <dxi-column dataField="Contact.PrimaryPhoto.Thumbnail" caption="Thumbnail"></dxi-column>
+					    <dxi-column dataField="Id" caption="ID"></dxi-column>
+                        <dxi-column dataField="Name" caption="Name"></dxi-column>
+                        <dxi-column dataField="Amount" caption="Amount"></dxi-column>
+                        <dxi-column dataField="CurrentNumber" caption="Current Number"></dxi-column>
+                        <dxi-column dataField="TotalNumber" caption="Total Number"></dxi-column>
+                        <dxi-column dataField="NoteCount" caption="Note Count"></dxi-column>
+                        <dxi-column dataField="DocumentCount" caption="Document Count"></dxi-column>
+                        <dxi-column dataField="Thumbnail" caption="Thumbnail"></dxi-column>
 
 						<dxo-sorting mode="multiple"></dxo-sorting>
 						<dxo-paging [pageSize]="5"></dxo-paging>
