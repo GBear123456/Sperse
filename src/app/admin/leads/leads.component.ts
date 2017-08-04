@@ -40,7 +40,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 		this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL('Lead'),
+                url: this.getODataURL('LeadDataItem'),
                 version: 4,
                 beforeSend: function (request) {
                     request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
@@ -48,18 +48,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 }
             },
             select: [
-                'Id',
-                'Stage.Id',
-                'Stage.PipelineId',
-                'Stage.Name',
-                'Stage.Pipeline.Name',
-                'FirstName',
-                'LastName',
-                'Contact.PrimaryPhoto.Thumbnail',
-                'EmailAddress',
-                'PhoneNumber',
-                'Customer.Status.Name',
-                'CreationTime',
+                //'Id',
+                //'StageId',
+                //'PipelineId',
+                //'Name',
+                //'Thumbnail',
+                //'Amount',
+                //'CurrentNumber',
+                //'TotalNumber',
+                //'NoteCount',
+                //'DocumentCount'
             ]
         }
     }
