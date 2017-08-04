@@ -40,7 +40,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 		this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL('Order'),
+                url: this.getODataURL('OrderDataItem'),
                 version: 4,
                 beforeSend: function (request) {
                     request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
@@ -48,17 +48,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 }
             },
             select: [
-                'Id',
-                'Stage.Id',
-                'Stage.PipelineId',
-                'Stage.Name',
-                'Stage.Pipeline.Name',
-                'Customer.Name',
-                'Customer.PrimaryContact.PrimaryPhoto.Thumbnail',
-                'Customer.PrimaryContact.PrimaryEmail.EmailAddress',
-                'Customer.PrimaryContact.PrimaryPhone.PhoneNumber',
-                'Customer.Status.Name',
-                'CreationTime',
+                //'Id',
+                //'StageId',
+                //'PipelineId',
+                //'Name',
+                //'Thumbnail',
+                //'Amount',
+                //'CurrentNumber',
+                //'TotalNumber',
+                //'NoteCount',
+                //'DocumentCount'
             ]
         }
     }
