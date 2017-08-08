@@ -58,7 +58,7 @@ export class AppPreBootstrap {
                 var platformHostUrl = result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "");
                 
                 abp.ajax({
-                    url: platformHostUrl + '/api/services/Platform/TenantHosts/GetTenantApiHost?ClientHostName=' + window.location.host,
+                    url: platformHostUrl + '/api/services/Platform/TenantHosts/GetTenantApiHost',
                     method: 'GET',
                     headers: {
                         'Accept-Language': abp.utils.getCookieValue("Abp.Localization.CultureName")

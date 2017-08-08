@@ -5482,10 +5482,8 @@ export class TenantHostsServiceProxy {
     /**
      * @return Success
      */
-    getTenantApiHost(clientHostName: string): Observable<TenantApiHostOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantHosts/GetTenantApiHost?";
-        if (clientHostName !== undefined)
-            url_ += "ClientHostName=" + encodeURIComponent("" + clientHostName) + "&"; 
+    getTenantApiHost(): Observable<TenantApiHostOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantHosts/GetTenantApiHost";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -9845,6 +9843,7 @@ export interface IAddressDto {
 export class EmployerDto implements IEmployerDto {
     name: string;
     date: moment.Moment;
+    type: string;
 
     constructor(data?: IEmployerDto) {
         if (data) {
@@ -9859,6 +9858,7 @@ export class EmployerDto implements IEmployerDto {
         if (data) {
             this.name = data["name"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.type = data["type"];
         }
     }
 
@@ -9872,6 +9872,7 @@ export class EmployerDto implements IEmployerDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["type"] = this.type;
         return data; 
     }
 }
@@ -9879,6 +9880,7 @@ export class EmployerDto implements IEmployerDto {
 export interface IEmployerDto {
     name: string;
     date: moment.Moment;
+    type: string;
 }
 
 export class AccountInfoDto implements IAccountInfoDto {
