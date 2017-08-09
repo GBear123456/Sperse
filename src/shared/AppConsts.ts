@@ -1,6 +1,7 @@
 ﻿export class AppConsts {
 
     static readonly tenancyNamePlaceHolderInUrl = "{TENANCY_NAME}";
+    static readonly tenantHostType = 1;
 
     static remoteServiceBaseUrl: string;
     static remoteServiceBaseUrlFormat: string;

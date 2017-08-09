@@ -45,6 +45,7 @@ export class AppPreBootstrap {
                 'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
             }
         }).done(result => {
+
             let subdomainTenancyNameFinder = new SubdomainTenancyNameFinder();
             var tenancyName = subdomainTenancyNameFinder.getCurrentTenancyNameOrNull(result.appBaseUrl);
 
@@ -53,34 +54,42 @@ export class AppPreBootstrap {
             AppConsts.recaptchaSiteKey = result.recaptchaSiteKey;
             AppConsts.subscriptionExpireNootifyDayCount = result.subscriptionExpireNootifyDayCount;
 
+            var platformHostUrl = tenancyName == null
+                ? result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "")
+                : result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl, tenancyName);
 
-            if (tenancyName == null) {
-                var platformHostUrl = result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "");
-                
-                abp.ajax({
-                    url: platformHostUrl + '/api/services/Platform/TenantHosts/GetTenantApiHost?ClientHostName=' + window.location.host,
-                    method: 'GET',
-                    headers: {
-                        'Accept-Language': abp.utils.getCookieValue("Abp.Localization.CultureName")
-                    }
-                }).done((tenantApiHostOutput: TenantApiHostOutput) => {
-                    if (tenantApiHostOutput.hostName !== null) {
-                        AppConsts.remoteServiceBaseUrl = window.location.protocol + "//" + tenantApiHostOutput.hostName;
-                        AppConsts.appBaseUrl = window.location.protocol + "//" + window.location.host;
-                    }
-                    else
-                    {
-                        AppConsts.appBaseUrl = result.appBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "");
-                        AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "");
-                    }
+            abp.ajax({
+                url: platformHostUrl + '/api/services/Platform/TenantHosts/GetTenantApiHost?TenantHostType=' + encodeURIComponent("" + AppConsts.tenantHostType),
+                method: 'GET',
+                headers: {
+                    'Accept-Language': abp.utils.getCookieValue("Abp.Localization.CultureName")
+                }
+            }).done((tenantApiHostOutput: TenantApiHostOutput) => {
+                var apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
+                var clientProtocolUrl = new URL(result.appBaseUrl);
 
-                    callback();
-                    });
-            } else {
-                AppConsts.appBaseUrl = result.appBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl, tenancyName);
-                AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl, tenancyName);
+                if (tenantApiHostOutput.apiHostName !== null) {
+                    AppConsts.remoteServiceBaseUrl = apiProtocolUrl.protocol + "//" + tenantApiHostOutput.apiHostName;
+                }
+                else if (tenancyName != null) {
+                    AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl, tenancyName);
+                }
+                else {
+                    AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "");
+                }
+
+                if (tenantApiHostOutput.clientHostName !== null) {
+                    AppConsts.appBaseUrl = clientProtocolUrl.protocol + "//" + tenantApiHostOutput.clientHostName;
+                }
+                else if (tenancyName != null) {
+                    AppConsts.appBaseUrl = result.appBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl, tenancyName);
+                }
+                else {
+                    AppConsts.appBaseUrl = result.appBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "");
+                }
+
                 callback();
-            }
+            });
         });
     }
 
