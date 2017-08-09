@@ -5482,8 +5482,10 @@ export class TenantHostsServiceProxy {
     /**
      * @return Success
      */
-    getTenantApiHost(): Observable<TenantApiHostOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantHosts/GetTenantApiHost";
+    getTenantApiHost(tenantHostType: TenantHostType): Observable<TenantApiHostOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantHosts/GetTenantApiHost?";
+        if (tenantHostType !== undefined)
+            url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -5578,7 +5580,7 @@ export class TenantHostsServiceProxy {
     /**
      * @return Success
      */
-    getHostname(tenantHostType: TenantHostType): Observable<GetHostnameOutput> {
+    getHostname(tenantHostType: TenantHostType2): Observable<GetHostnameOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantHosts/GetHostname?";
         if (tenantHostType !== undefined)
             url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
@@ -5724,7 +5726,7 @@ export class TenantHostsServiceProxy {
     /**
      * @return Success
      */
-    getSslBinding(tenantHostType: TenantHostType2): Observable<GetSslBindingOutput> {
+    getSslBinding(tenantHostType: TenantHostType3): Observable<GetSslBindingOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantHosts/GetSslBinding?";
         if (tenantHostType !== undefined)
             url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
@@ -5822,7 +5824,7 @@ export class TenantHostsServiceProxy {
     /**
      * @return Success
      */
-    deleteSslBinding(tenantHostType: TenantHostType3): Observable<DeleteSslBindingOutput> {
+    deleteSslBinding(tenantHostType: TenantHostType4): Observable<DeleteSslBindingOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantHosts/DeleteSslBinding?";
         if (tenantHostType !== undefined)
             url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
@@ -16374,7 +16376,8 @@ export interface IGetGeneralStatsOutput {
 }
 
 export class TenantApiHostOutput implements ITenantApiHostOutput {
-    hostName: string;
+    apiHostName: string;
+    clientHostName: string;
 
     constructor(data?: ITenantApiHostOutput) {
         if (data) {
@@ -16387,7 +16390,8 @@ export class TenantApiHostOutput implements ITenantApiHostOutput {
 
     init(data?: any) {
         if (data) {
-            this.hostName = data["hostName"];
+            this.apiHostName = data["apiHostName"];
+            this.clientHostName = data["clientHostName"];
         }
     }
 
@@ -16399,13 +16403,15 @@ export class TenantApiHostOutput implements ITenantApiHostOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["hostName"] = this.hostName;
+        data["apiHostName"] = this.apiHostName;
+        data["clientHostName"] = this.clientHostName;
         return data; 
     }
 }
 
 export interface ITenantApiHostOutput {
-    hostName: string;
+    apiHostName: string;
+    clientHostName: string;
 }
 
 export class CheckHostnameDnsMappingInput implements ICheckHostnameDnsMappingInput {
@@ -18793,6 +18799,12 @@ export enum TenantHostType2 {
 }
 
 export enum TenantHostType3 {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+}
+
+export enum TenantHostType4 {
     _0 = 0, 
     _1 = 1, 
     _2 = 2, 
