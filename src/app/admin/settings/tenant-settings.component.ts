@@ -102,7 +102,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         );
 
         this.certUploader = this.createUploader(
-            "/TenantHosts/KeyVaultImportCertificate",
+            "/TenantHost/KeyVaultImportCertificate",
             result => {
                 //this._appSessionService.tenant.logoFileType = result.fileType;
                 //this._appSessionService.tenant.logoId = result.id;
