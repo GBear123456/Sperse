@@ -40,22 +40,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 		this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL('Customers'),
+                url: this.getODataURL('Customer'),
                 version: 4,
                 beforeSend: function (request) {
                     request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
                     request.headers["Abp.TenantId"] = abp.multiTenancy.getTenantIdCookie();
                 }
-            },
-            select: [
-                'Name',
-                'PrimaryContact.FullName',
-                //'PrimaryContact.PrimaryAddress.State.Name',
-                'PrimaryContact.PrimaryEmail.EmailAddress',
-                'PrimaryContact.PrimaryPhone.PhoneNumber',
-                'Status.Name',
-                'CreationTime'
-            ]
+            }
         }
     }
 

@@ -40,14 +40,23 @@
                             [allowUpdating]="true">
                         </dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"></dxi-column>
-                        <dxi-column dataField="Id" caption="ID"></dxi-column>
-                        <dxi-column dataField="Name" caption="Name"></dxi-column>
-                        <dxi-column dataField="Amount" caption="Amount"></dxi-column>
-                        <dxi-column dataField="CurrentNumber" caption="Current Number"></dxi-column>
-                        <dxi-column dataField="TotalNumber" caption="Total Number"></dxi-column>
-                        <dxi-column dataField="NoteCount" caption="Note Count"></dxi-column>
-                        <dxi-column dataField="DocumentCount" caption="Document Count"></dxi-column>
-                        <dxi-column dataField="Thumbnail" caption="Thumbnail"></dxi-column>
+                        <dxi-column dataField="Id" caption="{{l('Id')}}"></dxi-column>
+                        
+                        <dxi-column dataField="FullName" caption="{{l('Contact.FullName')}}"></dxi-column>
+                        
+                        <dxi-column dataField="State" caption="{{l('Contact.State')}}"></dxi-column>
+                        <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
+                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}"></dxi-column>
+                        <dxi-column dataField="Photo" caption="{{l('Contact.Photo')}}"></dxi-column>
+                        
+                        <dxi-column dataField="Amount" caption="{{l('Amount')}}"></dxi-column>
+                        <dxi-column dataField="CurrentNumber" caption="{{l('CurrentNumber')}}"></dxi-column>
+                        <dxi-column dataField="TotalNumber" caption="{{l('TotalNumber')}}"></dxi-column>
+                        <dxi-column dataField="NoteCount" caption="{{l('NoteCount')}}"></dxi-column>
+                        <dxi-column dataField="DocumentCount" caption="{{l('DocumentCount')}}"></dxi-column>
+                        
+                        <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
+                        <dxi-column dataField="CreationTime" caption="{{l('CreationTime')}}" dataType="date" format="shortDateShortTime"></dxi-column>
 
 						<dxo-sorting mode="multiple"></dxo-sorting>
 						<dxo-paging [pageSize]="5"></dxo-paging>

@@ -40,13 +40,18 @@
                             [allowUpdating]="true">
                         </dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"></dxi-column>
-					    <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
-                        <dxi-column dataField="PrimaryContact.FullName" caption="{{l('Contact.FullName')}}"></dxi-column>
-                        <!--<dxi-column dataField="PrimaryContact.PrimaryAddress.State.Name" caption="{{l('Contact.State')}}"></dxi-column>-->
-                        <dxi-column dataField="PrimaryContact.PrimaryEmail.EmailAddress" caption="{{l('Contact.Email')}}"></dxi-column>
-                        <dxi-column dataField="PrimaryContact.PrimaryPhone.PhoneNumber" caption="{{l('Contact.Phone')}}"></dxi-column>
-                        <dxi-column dataField="CreationTime" caption="{{l('Customer.CreationTime')}}" dataType="date" format="shortDateShortTime"></dxi-column>
-                        <dxi-column dataField="Status.Name" caption="{{l('Customer.Status')}}"></dxi-column>
+                        <dxi-column dataField="Id" caption="{{l('Id')}}"></dxi-column>
+                        
+                        <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
+                        <dxi-column dataField="FullName" caption="{{l('Contact.FullName')}}"></dxi-column>
+                        
+                        <dxi-column dataField="State" caption="{{l('Contact.State')}}"></dxi-column>
+                        <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
+                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}"></dxi-column>
+                        <dxi-column dataField="Photo" caption="{{l('Contact.Photo')}}"></dxi-column>
+                        
+                        <dxi-column dataField="Status" caption="{{l('Status')}}"></dxi-column>
+                        <dxi-column dataField="CreationTime" caption="{{l('CreationTime')}}" dataType="date" format="shortDateShortTime"></dxi-column>
 
 						<dxo-sorting mode="multiple"></dxo-sorting>
 						<dxo-paging [pageSize]="5"></dxo-paging>
