@@ -42,7 +42,7 @@ export class AccountComponent extends AppComponentBase implements OnInit {
             return false;
         }
 
-        return abp.multiTenancy.isEnabled && !this.supportsTenancyNameInUrl();
+        return false;
     }
 
     ngOnInit(): void {
