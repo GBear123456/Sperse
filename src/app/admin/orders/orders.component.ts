@@ -40,25 +40,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 		this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL('OrderDataItem'),
+                url: this.getODataURL('Order'),
                 version: 4,
                 beforeSend: function (request) {
                     request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
                     request.headers["Abp.TenantId"] = abp.multiTenancy.getTenantIdCookie();
                 }
-            },
-            select: [
-                //'Id',
-                //'StageId',
-                //'PipelineId',
-                //'Name',
-                //'Thumbnail',
-                //'Amount',
-                //'CurrentNumber',
-                //'TotalNumber',
-                //'NoteCount',
-                //'DocumentCount'
-            ]
+            }
         }
     }
 

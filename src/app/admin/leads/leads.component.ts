@@ -40,25 +40,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 		this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL('LeadDataItem'),
+                url: this.getODataURL('Lead'),
                 version: 4,
                 beforeSend: function (request) {
                     request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
                     request.headers["Abp.TenantId"] = abp.multiTenancy.getTenantIdCookie();
                 }
-            },
-            select: [
-                //'Id',
-                //'StageId',
-                //'PipelineId',
-                //'Name',
-                //'Thumbnail',
-                //'Amount',
-                //'CurrentNumber',
-                //'TotalNumber',
-                //'NoteCount',
-                //'DocumentCount'
-            ]
+            }
         }
     }
 
