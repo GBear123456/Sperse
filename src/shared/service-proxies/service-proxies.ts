@@ -17416,6 +17416,7 @@ export class AuthenticateModel implements IAuthenticateModel {
     twoFactorRememberClientToken: string;
     singleSignIn: boolean;
     returnUrl: string;
+    autoDetectTenancy: boolean = false;
 
     constructor(data?: IAuthenticateModel) {
         if (data) {
@@ -17435,6 +17436,7 @@ export class AuthenticateModel implements IAuthenticateModel {
             this.twoFactorRememberClientToken = data["twoFactorRememberClientToken"];
             this.singleSignIn = data["singleSignIn"];
             this.returnUrl = data["returnUrl"];
+            this.autoDetectTenancy = data["autoDetectTenancy"] !== undefined ? data["autoDetectTenancy"] : false;
         }
     }
 
@@ -17453,6 +17455,7 @@ export class AuthenticateModel implements IAuthenticateModel {
         data["twoFactorRememberClientToken"] = this.twoFactorRememberClientToken;
         data["singleSignIn"] = this.singleSignIn;
         data["returnUrl"] = this.returnUrl;
+        data["autoDetectTenancy"] = this.autoDetectTenancy;
         return data; 
     }
 }
@@ -17465,6 +17468,7 @@ export interface IAuthenticateModel {
     twoFactorRememberClientToken: string;
     singleSignIn: boolean;
     returnUrl: string;
+    autoDetectTenancy: boolean;
 }
 
 export class AuthenticateResultModel implements IAuthenticateResultModel {
@@ -17478,6 +17482,7 @@ export class AuthenticateResultModel implements IAuthenticateResultModel {
     twoFactorAuthProviders: string[];
     twoFactorRememberClientToken: string;
     returnUrl: string;
+    detectedTenancies: TenantModel[];
 
     constructor(data?: IAuthenticateResultModel) {
         if (data) {
@@ -17504,6 +17509,11 @@ export class AuthenticateResultModel implements IAuthenticateResultModel {
             }
             this.twoFactorRememberClientToken = data["twoFactorRememberClientToken"];
             this.returnUrl = data["returnUrl"];
+            if (data["detectedTenancies"] && data["detectedTenancies"].constructor === Array) {
+                this.detectedTenancies = [];
+                for (let item of data["detectedTenancies"])
+                    this.detectedTenancies.push(TenantModel.fromJS(item));
+            }
         }
     }
 
@@ -17529,6 +17539,11 @@ export class AuthenticateResultModel implements IAuthenticateResultModel {
         }
         data["twoFactorRememberClientToken"] = this.twoFactorRememberClientToken;
         data["returnUrl"] = this.returnUrl;
+        if (this.detectedTenancies && this.detectedTenancies.constructor === Array) {
+            data["detectedTenancies"] = [];
+            for (let item of this.detectedTenancies)
+                data["detectedTenancies"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -17544,6 +17559,50 @@ export interface IAuthenticateResultModel {
     twoFactorAuthProviders: string[];
     twoFactorRememberClientToken: string;
     returnUrl: string;
+    detectedTenancies: TenantModel[];
+}
+
+export class TenantModel implements ITenantModel {
+    id: number;
+    tenancyName: string;
+    name: string;
+
+    constructor(data?: ITenantModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): TenantModel {
+        let result = new TenantModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ITenantModel {
+    id: number;
+    tenancyName: string;
+    name: string;
 }
 
 export class SendTwoFactorAuthCodeModel implements ISendTwoFactorAuthCodeModel {
