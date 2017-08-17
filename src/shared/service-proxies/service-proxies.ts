@@ -13070,6 +13070,7 @@ export interface ICountryStateDto {
 export class SelectPackageResponseDto implements ISelectPackageResponseDto {
     registrationId: string;
     memberInfo: MemberInfoDto;
+    paymentAuthorizationRequired: boolean;
 
     constructor(data?: ISelectPackageResponseDto) {
         if (data) {
@@ -13084,6 +13085,7 @@ export class SelectPackageResponseDto implements ISelectPackageResponseDto {
         if (data) {
             this.registrationId = data["registrationId"];
             this.memberInfo = data["memberInfo"] ? MemberInfoDto.fromJS(data["memberInfo"]) : <any>undefined;
+            this.paymentAuthorizationRequired = data["paymentAuthorizationRequired"];
         }
     }
 
@@ -13097,6 +13099,7 @@ export class SelectPackageResponseDto implements ISelectPackageResponseDto {
         data = typeof data === 'object' ? data : {};
         data["registrationId"] = this.registrationId;
         data["memberInfo"] = this.memberInfo ? this.memberInfo.toJSON() : <any>undefined;
+        data["paymentAuthorizationRequired"] = this.paymentAuthorizationRequired;
         return data; 
     }
 }
@@ -13104,6 +13107,7 @@ export class SelectPackageResponseDto implements ISelectPackageResponseDto {
 export interface ISelectPackageResponseDto {
     registrationId: string;
     memberInfo: MemberInfoDto;
+    paymentAuthorizationRequired: boolean;
 }
 
 export class GetNotificationsOutput implements IGetNotificationsOutput {
