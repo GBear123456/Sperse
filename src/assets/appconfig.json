@@ -1,6 +1,6 @@
 ﻿{
-  "remoteServiceBaseUrl": "https://{TENANCY_NAME}.testapi.sperse.com",
-  "appBaseUrl": "https://{TENANCY_NAME}.testtenants.sperse.com",
+  "remoteServiceBaseUrl": "https://testapi.sperse.com",
+  "appBaseUrl": "https://testtenants.sperse.com",
   "recaptchaSiteKey": "6LfD-wUTAAAAACULAVXvL61K0w02RIsjhI8EyiS-",
   "subscriptionExpireNootifyDayCount": 7
 }

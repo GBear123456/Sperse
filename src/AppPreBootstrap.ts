@@ -8,7 +8,7 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Type, CompilerOptions, NgModuleRef } from '@angular/core';
 import { UtilsService } from '@abp/utils/utils.service';
 import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
-import { TenantApiHostOutput } from '@shared/service-proxies/service-proxies'
+import { TenantApiHostOutput } from '@shared/service-proxies/service-proxies';
 
 export class AppPreBootstrap {
 
@@ -45,21 +45,13 @@ export class AppPreBootstrap {
                 'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
             }
         }).done(result => {
-
-            let subdomainTenancyNameFinder = new SubdomainTenancyNameFinder();
-            var tenancyName = subdomainTenancyNameFinder.getCurrentTenancyNameOrNull(result.appBaseUrl);
-
             AppConsts.appBaseUrlFormat = result.appBaseUrl;
             AppConsts.remoteServiceBaseUrlFormat = result.remoteServiceBaseUrl;
             AppConsts.recaptchaSiteKey = result.recaptchaSiteKey;
             AppConsts.subscriptionExpireNootifyDayCount = result.subscriptionExpireNootifyDayCount;
 
-            var platformHostUrl = tenancyName == null
-                ? result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "")
-                : result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl, tenancyName);
-
             abp.ajax({
-                url: platformHostUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=' + encodeURIComponent("" + AppConsts.tenantHostType),
+                url: result.remoteServiceBaseUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=' + encodeURIComponent("" + AppConsts.tenantHostType),
                 method: 'GET',
                 headers: {
                     'Accept-Language': abp.utils.getCookieValue("Abp.Localization.CultureName")
@@ -71,21 +63,15 @@ export class AppPreBootstrap {
                 if (tenantApiHostOutput.apiHostName !== null) {
                     AppConsts.remoteServiceBaseUrl = apiProtocolUrl.protocol + "//" + tenantApiHostOutput.apiHostName;
                 }
-                else if (tenancyName != null) {
-                    AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl, tenancyName);
-                }
                 else {
-                    AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "");
+                    AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
                 }
 
                 if (tenantApiHostOutput.clientHostName !== null) {
                     AppConsts.appBaseUrl = clientProtocolUrl.protocol + "//" + tenantApiHostOutput.clientHostName;
                 }
-                else if (tenancyName != null) {
-                    AppConsts.appBaseUrl = result.appBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl, tenancyName);
-                }
                 else {
-                    AppConsts.appBaseUrl = result.appBaseUrl.replace(AppConsts.tenancyNamePlaceHolderInUrl + ".", "");
+                    AppConsts.appBaseUrl = result.appBaseUrl;
                 }
 
                 callback();

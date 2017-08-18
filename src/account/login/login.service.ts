@@ -65,13 +65,14 @@ export class LoginService {
         this.clear();
     }
 
-    authenticate(finallyCallback?: () => void, redirectUrl?: string): void {
+    authenticate(finallyCallback?: () => void, redirectUrl?: string, autoDetectTenancy: boolean = true): void {
         finallyCallback = finallyCallback || (() => { });
 
         //We may switch to localStorage instead of cookies
         this.authenticateModel.twoFactorRememberClientToken = this._utilsService.getCookieValue(LoginService.twoFactorRememberClientTokenName);
         this.authenticateModel.singleSignIn = UrlHelper.getSingleSignIn();
         this.authenticateModel.returnUrl = UrlHelper.getReturnUrl();
+        this.authenticateModel.autoDetectTenancy = autoDetectTenancy;
 
         this._tokenAuthService
             .authenticate(this.authenticateModel)
@@ -128,6 +129,9 @@ export class LoginService {
 
             this.login(authenticateResult.accessToken, authenticateResult.encryptedAccessToken, authenticateResult.expireInSeconds, this.rememberMe, authenticateResult.twoFactorRememberClientToken, redirectUrl);
 
+        } else if (authenticateResult.detectedTenancies.length > 1) {
+            //Select tenant
+            this._router.navigate(['account/select-tenant']);
         } else {
             //Unexpected result!
 

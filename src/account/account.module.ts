@@ -30,6 +30,7 @@ import { ConfirmEmailComponent } from './email-activation/confirm-email.componen
 import { LoginService } from './login/login.service';
 import { SendTwoFactorCodeComponent } from './login/send-two-factor-code.component';
 import { ValidateTwoFactorCodeComponent } from './login/validate-two-factor-code.component';
+import { SelectTenantComponent } from './login/select-tenant.component';
 import { LanguageSwitchComponent } from './language-switch.component';
 import { BuyComponent } from './payment/buy.component';
 import { UpgradeOrExtendComponent } from './payment/upgrade-or-extend.component';
@@ -70,6 +71,7 @@ import { PayPalComponent } from './payment/paypal/paypal.component';
         ConfirmEmailComponent,
         SendTwoFactorCodeComponent,
         ValidateTwoFactorCodeComponent,
+        SelectTenantComponent,
         LanguageSwitchComponent,
         BuyComponent,
         UpgradeOrExtendComponent,
