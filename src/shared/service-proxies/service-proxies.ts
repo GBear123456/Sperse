@@ -1093,6 +1093,56 @@ export class CreditReportServiceProxy {
     /**
      * @return Success
      */
+    downloadCreditReport(reportId: number): Observable<string> {
+        let url_ = this.baseUrl + "/cr/CreditReport/DownloadCreditReport?";
+        if (reportId !== undefined)
+            url_ += "reportId=" + encodeURIComponent("" + reportId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDownloadCreditReport(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDownloadCreditReport(response_);
+                } catch (e) {
+                    return <Observable<string>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<string>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDownloadCreditReport(response: Response): Observable<string> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: string = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<string>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     getLastCreditReport(dateTime: moment.Moment): Observable<CreditReportOutput> {
         let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetLastCreditReport?";
         if (dateTime !== undefined)
@@ -9297,6 +9347,7 @@ export class AccountDto implements IAccountDto {
     availableCredit: number;
     outstandingBalance: number;
     ratio: number;
+    accountDetails: AccountInfoDto[];
 
     constructor(data?: IAccountDto) {
         if (data) {
@@ -9320,6 +9371,11 @@ export class AccountDto implements IAccountDto {
             this.availableCredit = data["availableCredit"];
             this.outstandingBalance = data["outstandingBalance"];
             this.ratio = data["ratio"];
+            if (data["accountDetails"] && data["accountDetails"].constructor === Array) {
+                this.accountDetails = [];
+                for (let item of data["accountDetails"])
+                    this.accountDetails.push(AccountInfoDto.fromJS(item));
+            }
         }
     }
 
@@ -9342,6 +9398,11 @@ export class AccountDto implements IAccountDto {
         data["availableCredit"] = this.availableCredit;
         data["outstandingBalance"] = this.outstandingBalance;
         data["ratio"] = this.ratio;
+        if (this.accountDetails && this.accountDetails.constructor === Array) {
+            data["accountDetails"] = [];
+            for (let item of this.accountDetails)
+                data["accountDetails"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -9354,6 +9415,7 @@ export interface IAccountDto {
     availableCredit: number;
     outstandingBalance: number;
     ratio: number;
+    accountDetails: AccountInfoDto[];
 }
 
 export class AlertDto implements IAlertDto {
@@ -9795,96 +9857,6 @@ export interface IScoreFactorDto {
     text: string;
 }
 
-export class AddressDto implements IAddressDto {
-    line1: string;
-    line2: string;
-    line3: string;
-    line4: string;
-
-    constructor(data?: IAddressDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.line1 = data["line1"];
-            this.line2 = data["line2"];
-            this.line3 = data["line3"];
-            this.line4 = data["line4"];
-        }
-    }
-
-    static fromJS(data: any): AddressDto {
-        let result = new AddressDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["line1"] = this.line1;
-        data["line2"] = this.line2;
-        data["line3"] = this.line3;
-        data["line4"] = this.line4;
-        return data; 
-    }
-}
-
-export interface IAddressDto {
-    line1: string;
-    line2: string;
-    line3: string;
-    line4: string;
-}
-
-export class EmployerDto implements IEmployerDto {
-    name: string;
-    date: moment.Moment;
-    type: string;
-
-    constructor(data?: IEmployerDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
-            this.type = data["type"];
-        }
-    }
-
-    static fromJS(data: any): EmployerDto {
-        let result = new EmployerDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["type"] = this.type;
-        return data; 
-    }
-}
-
-export interface IEmployerDto {
-    name: string;
-    date: moment.Moment;
-    type: string;
-}
-
 export class AccountInfoDto implements IAccountInfoDto {
     bureau: string;
     status: AccountInfoDtoStatus;
@@ -9986,6 +9958,96 @@ export interface IAccountInfoDto {
     comment: string;
     maxAccountHistoryDate: moment.Moment;
     twoYearHistory: AccountCreditHistoryDto[];
+}
+
+export class AddressDto implements IAddressDto {
+    line1: string;
+    line2: string;
+    line3: string;
+    line4: string;
+
+    constructor(data?: IAddressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.line1 = data["line1"];
+            this.line2 = data["line2"];
+            this.line3 = data["line3"];
+            this.line4 = data["line4"];
+        }
+    }
+
+    static fromJS(data: any): AddressDto {
+        let result = new AddressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["line1"] = this.line1;
+        data["line2"] = this.line2;
+        data["line3"] = this.line3;
+        data["line4"] = this.line4;
+        return data; 
+    }
+}
+
+export interface IAddressDto {
+    line1: string;
+    line2: string;
+    line3: string;
+    line4: string;
+}
+
+export class EmployerDto implements IEmployerDto {
+    name: string;
+    date: moment.Moment;
+    type: string;
+
+    constructor(data?: IEmployerDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.type = data["type"];
+        }
+    }
+
+    static fromJS(data: any): EmployerDto {
+        let result = new EmployerDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["type"] = this.type;
+        return data; 
+    }
+}
+
+export interface IEmployerDto {
+    name: string;
+    date: moment.Moment;
+    type: string;
 }
 
 export class AccountCreditHistoryDto implements IAccountCreditHistoryDto {
