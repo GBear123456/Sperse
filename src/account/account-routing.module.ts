@@ -13,6 +13,7 @@ import { EmailActivationComponent } from './email-activation/email-activation.co
 import { ConfirmEmailComponent } from './email-activation/confirm-email.component';
 import { SendTwoFactorCodeComponent } from './login/send-two-factor-code.component';
 import { ValidateTwoFactorCodeComponent } from './login/validate-two-factor-code.component';
+import { SelectTenantComponent } from './login/select-tenant.component';
 import { AccountComponent } from './account.component';
 
 @NgModule({
@@ -35,6 +36,7 @@ import { AccountComponent } from './account.component';
                     { path: 'confirm-email', component: ConfirmEmailComponent },
                     { path: 'send-code', component: SendTwoFactorCodeComponent },
                     { path: 'verify-code', component: ValidateTwoFactorCodeComponent },
+                    { path: 'select-tenant', component: SelectTenantComponent },
                     { path: 'select-edition', component: SelectEditionComponent }
                 ]
             }
