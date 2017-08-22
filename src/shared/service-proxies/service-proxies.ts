@@ -1094,7 +1094,7 @@ export class CreditReportServiceProxy {
      * @return Success
      */
     downloadCreditReport(reportId: number): Observable<string> {
-        let url_ = this.baseUrl + "/cr/CreditReport/DownloadCreditReport?";
+        let url_ = this.baseUrl + "/Reports/CreditReport/DownloadCreditReport?";
         if (reportId !== undefined)
             url_ += "reportId=" + encodeURIComponent("" + reportId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -2711,6 +2711,56 @@ export class MemberServiceProxy {
     /**
      * @return Success
      */
+    selectPackage(packageId: number): Observable<SelectPackageResponseDto> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/Member/SelectPackage?";
+        if (packageId !== undefined)
+            url_ += "packageId=" + encodeURIComponent("" + packageId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSelectPackage(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSelectPackage(response_);
+                } catch (e) {
+                    return <Observable<SelectPackageResponseDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<SelectPackageResponseDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSelectPackage(response: Response): Observable<SelectPackageResponseDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: SelectPackageResponseDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SelectPackageResponseDto.fromJS(resultData200) : new SelectPackageResponseDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<SelectPackageResponseDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     submitMemberInfo(memberInfo: MemberInfoDto): Observable<SubmitMemberInfoResultDto> {
         let url_ = this.baseUrl + "/api/services/CreditReport/Member/SubmitMemberInfo";
         url_ = url_.replace(/[?&]$/, "");
@@ -2754,6 +2804,60 @@ export class MemberServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<SubmitMemberInfoResultDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getCountryStates(countryCode: string): Observable<CountryStateDto[]> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/Member/GetCountryStates?";
+        if (countryCode !== undefined)
+            url_ += "countryCode=" + encodeURIComponent("" + countryCode) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCountryStates(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCountryStates(response_);
+                } catch (e) {
+                    return <Observable<CountryStateDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CountryStateDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCountryStates(response: Response): Observable<CountryStateDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CountryStateDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CountryStateDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CountryStateDto[]>(<any>null);
     }
 
     /**
@@ -2847,110 +2951,6 @@ export class MemberServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getCountryStates(countryCode: string): Observable<CountryStateDto[]> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/Member/GetCountryStates?";
-        if (countryCode !== undefined)
-            url_ += "countryCode=" + encodeURIComponent("" + countryCode) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetCountryStates(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetCountryStates(response_);
-                } catch (e) {
-                    return <Observable<CountryStateDto[]>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<CountryStateDto[]>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetCountryStates(response: Response): Observable<CountryStateDto[]> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: CountryStateDto[] = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(CountryStateDto.fromJS(item));
-            }
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<CountryStateDto[]>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    selectPackage(packageId: number): Observable<SelectPackageResponseDto> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/Member/SelectPackage?";
-        if (packageId !== undefined)
-            url_ += "packageId=" + encodeURIComponent("" + packageId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processSelectPackage(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processSelectPackage(response_);
-                } catch (e) {
-                    return <Observable<SelectPackageResponseDto>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<SelectPackageResponseDto>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processSelectPackage(response: Response): Observable<SelectPackageResponseDto> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: SelectPackageResponseDto = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SelectPackageResponseDto.fromJS(resultData200) : new SelectPackageResponseDto();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<SelectPackageResponseDto>(<any>null);
     }
 }
 
@@ -12740,12 +12740,56 @@ export interface IUpdateLanguageTextInput {
     value: string;
 }
 
+export class SelectPackageResponseDto implements ISelectPackageResponseDto {
+    registrationId: string;
+    memberInfo: MemberInfoDto;
+    paymentAuthorizationRequired: boolean;
+
+    constructor(data?: ISelectPackageResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.registrationId = data["registrationId"];
+            this.memberInfo = data["memberInfo"] ? MemberInfoDto.fromJS(data["memberInfo"]) : <any>undefined;
+            this.paymentAuthorizationRequired = data["paymentAuthorizationRequired"];
+        }
+    }
+
+    static fromJS(data: any): SelectPackageResponseDto {
+        let result = new SelectPackageResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["registrationId"] = this.registrationId;
+        data["memberInfo"] = this.memberInfo ? this.memberInfo.toJSON() : <any>undefined;
+        data["paymentAuthorizationRequired"] = this.paymentAuthorizationRequired;
+        return data; 
+    }
+}
+
+export interface ISelectPackageResponseDto {
+    registrationId: string;
+    memberInfo: MemberInfoDto;
+    paymentAuthorizationRequired: boolean;
+}
+
 export class MemberInfoDto implements IMemberInfoDto {
     registrationId: string;
     name: string;
     surname: string;
     email: string;
     phone: string;
+    address: MemberAddressDto;
     doB: moment.Moment;
     ssn: string;
     gender: MemberInfoDtoGender;
@@ -12768,6 +12812,7 @@ export class MemberInfoDto implements IMemberInfoDto {
             this.surname = data["surname"];
             this.email = data["email"];
             this.phone = data["phone"];
+            this.address = data["address"] ? MemberAddressDto.fromJS(data["address"]) : <any>undefined;
             this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
             this.ssn = data["ssn"];
             this.gender = data["gender"];
@@ -12789,6 +12834,7 @@ export class MemberInfoDto implements IMemberInfoDto {
         data["surname"] = this.surname;
         data["email"] = this.email;
         data["phone"] = this.phone;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
         data["ssn"] = this.ssn;
         data["gender"] = this.gender;
@@ -12804,11 +12850,71 @@ export interface IMemberInfoDto {
     surname: string;
     email: string;
     phone: string;
+    address: MemberAddressDto;
     doB: moment.Moment;
     ssn: string;
     gender: MemberInfoDtoGender;
     isUSCitizen: boolean;
     packageId: number;
+}
+
+export class MemberAddressDto implements IMemberAddressDto {
+    address: string;
+    zip: string;
+    city: string;
+    stateCode: string;
+    state: string;
+    countryCode: string;
+    country: string;
+
+    constructor(data?: IMemberAddressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.address = data["address"];
+            this.zip = data["zip"];
+            this.city = data["city"];
+            this.stateCode = data["stateCode"];
+            this.state = data["state"];
+            this.countryCode = data["countryCode"];
+            this.country = data["country"];
+        }
+    }
+
+    static fromJS(data: any): MemberAddressDto {
+        let result = new MemberAddressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["address"] = this.address;
+        data["zip"] = this.zip;
+        data["city"] = this.city;
+        data["stateCode"] = this.stateCode;
+        data["state"] = this.state;
+        data["countryCode"] = this.countryCode;
+        data["country"] = this.country;
+        return data; 
+    }
+}
+
+export interface IMemberAddressDto {
+    address: string;
+    zip: string;
+    city: string;
+    stateCode: string;
+    state: string;
+    countryCode: string;
+    country: string;
 }
 
 export class SubmitMemberInfoResultDto implements ISubmitMemberInfoResultDto {
@@ -12844,6 +12950,45 @@ export class SubmitMemberInfoResultDto implements ISubmitMemberInfoResultDto {
 
 export interface ISubmitMemberInfoResultDto {
     paymentAuthorizationRequired: boolean;
+}
+
+export class CountryStateDto implements ICountryStateDto {
+    code: string;
+    name: string;
+
+    constructor(data?: ICountryStateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.code = data["code"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CountryStateDto {
+        let result = new CountryStateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICountryStateDto {
+    code: string;
+    name: string;
 }
 
 export class PaymentAuthorizeRequestDto implements IPaymentAuthorizeRequestDto {
@@ -13022,6 +13167,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     surname: string;
     email: string;
     phone: string;
+    address: MemberAddressDto;
     doB: moment.Moment;
     ssn: string;
     gender: RegisterMemberRequestGender;
@@ -13045,6 +13191,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
             this.surname = data["surname"];
             this.email = data["email"];
             this.phone = data["phone"];
+            this.address = data["address"] ? MemberAddressDto.fromJS(data["address"]) : <any>undefined;
             this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
             this.ssn = data["ssn"];
             this.gender = data["gender"];
@@ -13067,6 +13214,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
         data["surname"] = this.surname;
         data["email"] = this.email;
         data["phone"] = this.phone;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
         data["ssn"] = this.ssn;
         data["gender"] = this.gender;
@@ -13083,93 +13231,12 @@ export interface IRegisterMemberRequest {
     surname: string;
     email: string;
     phone: string;
+    address: MemberAddressDto;
     doB: moment.Moment;
     ssn: string;
     gender: RegisterMemberRequestGender;
     isUSCitizen: boolean;
     packageId: number;
-}
-
-export class CountryStateDto implements ICountryStateDto {
-    code: string;
-    name: string;
-
-    constructor(data?: ICountryStateDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.code = data["code"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CountryStateDto {
-        let result = new CountryStateDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["code"] = this.code;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICountryStateDto {
-    code: string;
-    name: string;
-}
-
-export class SelectPackageResponseDto implements ISelectPackageResponseDto {
-    registrationId: string;
-    memberInfo: MemberInfoDto;
-    paymentAuthorizationRequired: boolean;
-
-    constructor(data?: ISelectPackageResponseDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.registrationId = data["registrationId"];
-            this.memberInfo = data["memberInfo"] ? MemberInfoDto.fromJS(data["memberInfo"]) : <any>undefined;
-            this.paymentAuthorizationRequired = data["paymentAuthorizationRequired"];
-        }
-    }
-
-    static fromJS(data: any): SelectPackageResponseDto {
-        let result = new SelectPackageResponseDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["registrationId"] = this.registrationId;
-        data["memberInfo"] = this.memberInfo ? this.memberInfo.toJSON() : <any>undefined;
-        data["paymentAuthorizationRequired"] = this.paymentAuthorizationRequired;
-        return data; 
-    }
-}
-
-export interface ISelectPackageResponseDto {
-    registrationId: string;
-    memberInfo: MemberInfoDto;
-    paymentAuthorizationRequired: boolean;
 }
 
 export class GetNotificationsOutput implements IGetNotificationsOutput {
