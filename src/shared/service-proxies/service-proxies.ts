@@ -1409,6 +1409,54 @@ export class CustomersServiceProxy {
         }
         return Observable.of<GetCustomerInfoResponse>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    createCustomer(input: CreateCustomerInput): Observable<CreateCustomerOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/CreateCustomer";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateCustomer(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateCustomer(response_);
+                } catch (e) {
+                    return <Observable<CreateCustomerOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateCustomerOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateCustomer(response: Response): Observable<CreateCustomerOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CreateCustomerOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateCustomerOutput.fromJS(resultData200) : new CreateCustomerOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CreateCustomerOutput>(<any>null);
+    }
 }
 
 @Injectable()
@@ -10593,6 +10641,100 @@ export interface IContactShortInfoDto {
     type: string;
 }
 
+export class CreateCustomerInput implements ICreateCustomerInput {
+    firstName: string;
+    lastName: string;
+    dob: moment.Moment;
+    emailAddress: string;
+    phoneNumber: string;
+    ssn: string;
+    suppressSimilarContactWarning: boolean = false;
+
+    constructor(data?: ICreateCustomerInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
+            this.emailAddress = data["emailAddress"];
+            this.phoneNumber = data["phoneNumber"];
+            this.ssn = data["ssn"];
+            this.suppressSimilarContactWarning = data["suppressSimilarContactWarning"] !== undefined ? data["suppressSimilarContactWarning"] : false;
+        }
+    }
+
+    static fromJS(data: any): CreateCustomerInput {
+        let result = new CreateCustomerInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["emailAddress"] = this.emailAddress;
+        data["phoneNumber"] = this.phoneNumber;
+        data["ssn"] = this.ssn;
+        data["suppressSimilarContactWarning"] = this.suppressSimilarContactWarning;
+        return data; 
+    }
+}
+
+export interface ICreateCustomerInput {
+    firstName: string;
+    lastName: string;
+    dob: moment.Moment;
+    emailAddress: string;
+    phoneNumber: string;
+    ssn: string;
+    suppressSimilarContactWarning: boolean;
+}
+
+export class CreateCustomerOutput implements ICreateCustomerOutput {
+    id: number;
+
+    constructor(data?: ICreateCustomerOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateCustomerOutput {
+        let result = new CreateCustomerOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateCustomerOutput {
+    id: number;
+}
+
 export class ListResultDtoOfEditionListDto implements IListResultDtoOfEditionListDto {
     items: EditionListDto[];
 
@@ -12859,12 +13001,12 @@ export interface IMemberInfoDto {
 }
 
 export class MemberAddressDto implements IMemberAddressDto {
-    address: string;
+    streetAddress: string;
     zip: string;
     city: string;
-    stateCode: string;
+    stateId: string;
     state: string;
-    countryCode: string;
+    countryId: string;
     country: string;
 
     constructor(data?: IMemberAddressDto) {
@@ -12878,12 +13020,12 @@ export class MemberAddressDto implements IMemberAddressDto {
 
     init(data?: any) {
         if (data) {
-            this.address = data["address"];
+            this.streetAddress = data["streetAddress"];
             this.zip = data["zip"];
             this.city = data["city"];
-            this.stateCode = data["stateCode"];
+            this.stateId = data["stateId"];
             this.state = data["state"];
-            this.countryCode = data["countryCode"];
+            this.countryId = data["countryId"];
             this.country = data["country"];
         }
     }
@@ -12896,24 +13038,24 @@ export class MemberAddressDto implements IMemberAddressDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["address"] = this.address;
+        data["streetAddress"] = this.streetAddress;
         data["zip"] = this.zip;
         data["city"] = this.city;
-        data["stateCode"] = this.stateCode;
+        data["stateId"] = this.stateId;
         data["state"] = this.state;
-        data["countryCode"] = this.countryCode;
+        data["countryId"] = this.countryId;
         data["country"] = this.country;
         return data; 
     }
 }
 
 export interface IMemberAddressDto {
-    address: string;
+    streetAddress: string;
     zip: string;
     city: string;
-    stateCode: string;
+    stateId: string;
     state: string;
-    countryCode: string;
+    countryId: string;
     country: string;
 }
 
