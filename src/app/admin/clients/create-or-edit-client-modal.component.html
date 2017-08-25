@@ -1,0 +1,127 @@
+<div bsModal #createOrEditModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal" aria-hidden="true" [config]="{backdrop: 'static'}">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+    <form *ngIf="active" #clientForm="ngForm" novalidate (ngSubmit)="save()">
+
+      <div class="modal-header">
+        <button type="button" class="close" (click)="close()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">
+            <span>{{l("CreateNewCustomer")}}</span>
+        </h4>
+      </div>
+
+      <div class="modal-body">
+        <tabset class="tab-container tabbable-line">
+            <tab heading="{{l('CustomerInformations')}}">
+
+                <div class="row">
+                    <div class="col-sm-4 text-center">
+                        <img src="{{profilePicture}}" width="128" height="128" class="img-thumbnail img-rounded user-edit-dialog-profile-image" />
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="dx-field">
+                            <div class="dx-field-value">
+                                <dx-text-box type="text" name="Surname" placeholder="{{l('FirstName')}}"
+                                             maxlength="32"
+                                             [(value)]="client.firstName">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required" message="{{l('FirstNameIsRequired')}}."></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
+                            </div>
+                        </div>
+
+                        <div class="dx-field">
+                            <div class="dx-field-value">
+                                <dx-text-box type="text" name="Surname" placeholder="{{l('LastName')}}"
+                                             maxlength="32"
+                                             [(value)]="client.lastName">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required" message="{{l('LastNameIsRequired')}}."></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dx-field">
+                    <div class="dx-field-value">
+                        <dx-text-box type="text" name="Surname" placeholder="{{l('EmailAddress')}}"
+                                     maxlength="256"
+                                     [(value)]="client.emailAddress">
+                            <dx-validator>
+                                <dxi-validation-rule type="required"
+                                                     message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="email"
+                                                     message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                    </div>
+                </div>
+
+                <div class="dx-field">
+                    <div class="dx-field-value">
+                        <dx-date-box class="form-control" [ngClass]="{'edited':client.dob}"
+                                        invalidDateMessage="{{l('InvalidDateOfBirth')}}"
+                                        name="dob"
+                                        type="date"
+                                        placeholder="{{l('DateOfBirth')}}"
+                                        [(value)]="client.dob"
+                                        (onFocusIn)="focusDateBirth($event)">
+                        </dx-date-box>
+                    </div>
+                </div>
+
+                <div class="dx-field">
+                    <div class="dx-field-value">
+                        <dx-text-box type="text" name="PhoneNumber" placeholder="{{l('PhoneNumber')}}"
+                                     maskInvalidMessage="{{l('PhoneFormatError')}}"
+                                     [(value)]="client.phoneNumber"
+                                     (onFocusIn)="focusInput($event)" (onFocusOut)="blurInput($event)">
+                            <dx-validator>
+                                <dxi-validation-rule type="pattern" [pattern]="INPUT_MASK[PhoneNumber]" message="l('PhoneFormatError')"></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                    </div>
+                </div>
+
+                <div class="dx-field">
+                    <div class="dx-field-value">
+                        <dx-text-box type="text"
+                                     name="Ssn"
+                                     maskInvalidMessage="{{l('SSNFormatError')}}"
+                                     placeholder="{{l('Ssn')}}"
+                                     [(value)]="client.ssn"
+                                     (onFocusIn)="focusInput($event)" (onFocusOut)="blurInput($event)">
+                            <dx-validator>
+                                <dxi-validation-rule type="pattern" [pattern]="INPUT_MASK[Ssn]" message="l('SSNFormatError')"></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                    </div>
+                </div>
+
+                <dx-validation-summary class="summary"></dx-validation-summary>
+            </tab>
+        </tabset>
+      </div>
+
+      <div class="modal-footer">
+        <button [disabled]="saving" type="button" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
+        <dx-button class="btn btn-layout"
+                    text="{{l('Save')}}"
+                    type="success"
+                    [useSubmitBehavior]="true" 
+                    [disabled]="!clientForm.form.valid">
+        </dx-button>        
+      </div>
+
+    </form>
+
+  </div>
+  </div>
+</div>
