@@ -54,7 +54,9 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
         this.profilePicture = "/assets/common/images/default-profile-picture.png";
     }
     
-    save(): void {
+    save(event): void {
+        if (!this.validate(event)) return;
+
         this.saving = true;
         this._customersService.createCustomer(this.client)
             .finally(() => { this.saving = false; })
@@ -63,6 +65,13 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
                 this.close();
                 this.modalSave.emit(null);
         });
+    }
+
+    validate(event): boolean {
+        if (event.validationGroup.validate().isValid) {
+            event.component.option('disabled', true);
+            return true;
+        }
     }
 
     close(): void {
@@ -104,6 +113,6 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
 
     blurInput(event) {
         if (!(event.component._value && event.component._value.trim()))
-            event.component.option({ mask: "", value: "" });
+            event.component.option({ mask: "", value: "", isValid: true });
     }
 }

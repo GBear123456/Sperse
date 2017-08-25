@@ -3,7 +3,7 @@
 
     <div class="modal-content">
 
-    <form *ngIf="active" #clientForm="ngForm" novalidate (ngSubmit)="save()">
+    <form *ngIf="active" #clientForm="ngForm" novalidate>
 
       <div class="modal-header">
         <button type="button" class="close" (click)="close()" aria-label="Close">
@@ -84,7 +84,7 @@
                                      [(value)]="client.phoneNumber"
                                      (onFocusIn)="focusInput($event)" (onFocusOut)="blurInput($event)">
                             <dx-validator>
-                                <dxi-validation-rule type="pattern" [pattern]="INPUT_MASK[PhoneNumber]" message="l('PhoneFormatError')"></dxi-validation-rule>
+                                <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
                             </dx-validator>
                         </dx-text-box>
                     </div>
@@ -99,7 +99,7 @@
                                      [(value)]="client.ssn"
                                      (onFocusIn)="focusInput($event)" (onFocusOut)="blurInput($event)">
                             <dx-validator>
-                                <dxi-validation-rule type="pattern" [pattern]="INPUT_MASK[Ssn]" message="l('SSNFormatError')"></dxi-validation-rule>
+                                <dxi-validation-rule type="required" message="{{l('SSNIsRequired')}}."></dxi-validation-rule>
                             </dx-validator>
                         </dx-text-box>
                     </div>
@@ -113,11 +113,11 @@
       <div class="modal-footer">
         <button [disabled]="saving" type="button" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
         <dx-button class="btn btn-layout"
-                    text="{{l('Save')}}"
-                    type="success"
-                    [useSubmitBehavior]="true" 
-                    [disabled]="!clientForm.form.valid">
-        </dx-button>        
+                   text="{{l('Save')}}"
+                   type="submit"
+                   (onClick)="save($event)"
+                   [disabled]="saving">
+        </dx-button>
       </div>
 
     </form>
