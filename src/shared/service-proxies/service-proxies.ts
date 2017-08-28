@@ -1080,6 +1080,160 @@ export class CommonLookupServiceProxy {
 }
 
 @Injectable()
+export class ContactEmailServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    createContactEmail(input: CreateContactEmailInput): Observable<CreateContactEmailOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactEmail/CreateContactEmail";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateContactEmail(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateContactEmail(response_);
+                } catch (e) {
+                    return <Observable<CreateContactEmailOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateContactEmailOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateContactEmail(response: Response): Observable<CreateContactEmailOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CreateContactEmailOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateContactEmailOutput.fromJS(resultData200) : new CreateContactEmailOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CreateContactEmailOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateContactEmail(input: UpdateContactEmailInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactEmail/UpdateContactEmail";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateContactEmail(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateContactEmail(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateContactEmail(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteContactEmail(contactId: number, id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactEmail/DeleteContactEmail?";
+        if (contactId !== undefined)
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteContactEmail(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteContactEmail(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteContactEmail(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class CreditReportServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -9154,6 +9308,139 @@ export interface IGetDefaultEditionNameOutput {
     name: string;
 }
 
+export class CreateContactEmailInput implements ICreateContactEmailInput {
+    contactId: number;
+    emailAddress: string;
+    comment: string;
+    usageTypeId: string;
+
+    constructor(data?: ICreateContactEmailInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.emailAddress = data["emailAddress"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactEmailInput {
+        let result = new CreateContactEmailInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["emailAddress"] = this.emailAddress;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactEmailInput {
+    contactId: number;
+    emailAddress: string;
+    comment: string;
+    usageTypeId: string;
+}
+
+export class CreateContactEmailOutput implements ICreateContactEmailOutput {
+    id: number;
+
+    constructor(data?: ICreateContactEmailOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactEmailOutput {
+        let result = new CreateContactEmailOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateContactEmailOutput {
+    id: number;
+}
+
+export class UpdateContactEmailInput implements IUpdateContactEmailInput {
+    id: number;
+    contactId: number;
+    emailAddress: string;
+    comment: string;
+    usageTypeId: string;
+
+    constructor(data?: IUpdateContactEmailInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.contactId = data["contactId"];
+            this.emailAddress = data["emailAddress"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateContactEmailInput {
+        let result = new UpdateContactEmailInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["contactId"] = this.contactId;
+        data["emailAddress"] = this.emailAddress;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface IUpdateContactEmailInput {
+    id: number;
+    contactId: number;
+    emailAddress: string;
+    comment: string;
+    usageTypeId: string;
+}
+
 export class CreditReportOutput implements ICreditReportOutput {
     memberExists: boolean;
     uncompletedPackageId: number;
@@ -10284,6 +10571,7 @@ export interface IContactPhotoDto {
 }
 
 export class ContactEmailDto implements IContactEmailDto {
+    contactId: number;
     id: number;
     type: string;
     emailAddress: string;
@@ -10302,6 +10590,7 @@ export class ContactEmailDto implements IContactEmailDto {
 
     init(data?: any) {
         if (data) {
+            this.contactId = data["contactId"];
             this.id = data["id"];
             this.type = data["type"];
             this.emailAddress = data["emailAddress"];
@@ -10319,6 +10608,7 @@ export class ContactEmailDto implements IContactEmailDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
         data["id"] = this.id;
         data["type"] = this.type;
         data["emailAddress"] = this.emailAddress;
@@ -10330,6 +10620,7 @@ export class ContactEmailDto implements IContactEmailDto {
 }
 
 export interface IContactEmailDto {
+    contactId: number;
     id: number;
     type: string;
     emailAddress: string;

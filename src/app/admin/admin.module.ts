@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -33,6 +33,7 @@ import { LanguagesComponent } from './languages/languages.component';
 import { LanguageTextsComponent } from './languages/language-texts.component';
 import { CreateOrEditLanguageModalComponent } from './languages/create-or-edit-language-modal.component';
 import { ClientsComponent } from './clients/clients.component';
+import { CreateOrEditClientModalComponent } from './clients/create-or-edit-client-modal.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { TenantsComponent } from './tenants/tenants.component'
@@ -49,7 +50,7 @@ import { HostDashboardComponent } from './dashboard/host-dashboard.component'
 import { EditionComboComponent} from './shared/edition-combo.component';
 import { SubscriptionManagementComponent} from './subscription-management/subscription-management.component';
 
-import { DxDataGridModule, DxToolbarModule, DxTemplateModule } from 'devextreme-angular';
+import { DxDataGridModule, DxToolbarModule, DxTemplateModule, DxDateBoxModule, DxTextBoxModule, DxValidatorModule, DxValidationSummaryModule, DxButtonModule } from 'devextreme-angular';
 
 @NgModule({
     imports: [
@@ -57,7 +58,12 @@ import { DxDataGridModule, DxToolbarModule, DxTemplateModule } from 'devextreme-
         CommonModule,
 		DxDataGridModule,
 		DxToolbarModule,
-		DxTemplateModule,
+        DxTemplateModule,
+        DxDateBoxModule,
+        DxTextBoxModule,
+        DxValidatorModule,
+        DxValidationSummaryModule,
+        DxButtonModule,
 
         FileUploadModule,
         ModalModule.forRoot(),
@@ -89,6 +95,7 @@ import { DxDataGridModule, DxToolbarModule, DxTemplateModule } from 'devextreme-
         LanguageTextsComponent,
         CreateOrEditLanguageModalComponent,
         ClientsComponent,
+        CreateOrEditClientModalComponent,
         LeadsComponent,
         OrdersComponent,
         TenantsComponent,
