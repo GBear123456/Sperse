@@ -178,9 +178,12 @@
 }
 
 /* Portlets */
-.portlet.light {	
-	&, .portlet-body {
-		padding: 0px!important;
+.portlet.light {
+	&.no-padding {
+		padding: 0;
+	}
+	.portlet-body {
+		padding: 0px !important;
 		.form {
 			display:none;
 		}
