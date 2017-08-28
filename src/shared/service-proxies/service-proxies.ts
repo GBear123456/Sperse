@@ -10993,6 +10993,7 @@ export interface ICreateCustomerInput {
 
 export class CreateCustomerOutput implements ICreateCustomerOutput {
     id: number;
+    similarCustomerExists: boolean;
 
     constructor(data?: ICreateCustomerOutput) {
         if (data) {
@@ -11006,6 +11007,7 @@ export class CreateCustomerOutput implements ICreateCustomerOutput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.similarCustomerExists = data["similarCustomerExists"];
         }
     }
 
@@ -11018,12 +11020,14 @@ export class CreateCustomerOutput implements ICreateCustomerOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["similarCustomerExists"] = this.similarCustomerExists;
         return data; 
     }
 }
 
 export interface ICreateCustomerOutput {
     id: number;
+    similarCustomerExists: boolean;
 }
 
 export class ListResultDtoOfEditionListDto implements IListResultDtoOfEditionListDto {

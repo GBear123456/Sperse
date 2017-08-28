@@ -20,7 +20,7 @@
 
                 <div class="row">
                     <div class="col-sm-4 text-center">
-                        <img src="{{profilePicture}}" width="128" height="128" class="img-thumbnail img-rounded user-edit-dialog-profile-image" />
+                        <img src="{{profilePicture}}" width="128" height="128" class="img-thumbnail img-rounded client-edit-dialog-profile-image" />
                     </div>
                     <div class="col-sm-8">
                         <div class="dx-field">
@@ -51,7 +51,7 @@
 
                 <div class="dx-field">
                     <div class="dx-field-value">
-                        <dx-text-box type="text" name="Surname" placeholder="{{l('EmailAddress')}}"
+                        <dx-text-box type="text" name="Email" placeholder="{{l('EmailAddress')}}"
                                      maxlength="256"
                                      [(value)]="client.emailAddress">
                             <dx-validator>
@@ -66,13 +66,16 @@
 
                 <div class="dx-field">
                     <div class="dx-field-value">
-                        <dx-date-box class="form-control" [ngClass]="{'edited':client.dob}"
+                        <dx-date-box class="form-control"
                                         invalidDateMessage="{{l('InvalidDateOfBirth')}}"
                                         name="dob"
                                         type="date"
                                         placeholder="{{l('DateOfBirth')}}"
                                         [(value)]="client.dob"
                                         (onFocusIn)="focusDateBirth($event)">
+                            <dx-validator>
+                                <dxi-validation-rule type="required" message="{{l('DateOfBirthIsRequired')}}."></dxi-validation-rule>
+                            </dx-validator>
                         </dx-date-box>
                     </div>
                 </div>
@@ -111,10 +114,15 @@
       </div>
 
       <div class="modal-footer">
-        <button [disabled]="saving" type="button" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
-        <dx-button class="btn btn-layout"
+        <dx-button class="btn"
+                   text="{{l('Cancel')}}"
+                    type="normal"
+                    (onClick)="close()">
+        </dx-button>
+        <dx-button class="btn"
                    text="{{l('Save')}}"
-                   type="submit"
+                   type="success"
+                   useSubmitBehavior="true"
                    (onClick)="save($event)"
                    [disabled]="saving">
         </dx-button>
