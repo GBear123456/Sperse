@@ -38,6 +38,7 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     }
 
     show(clientId?: number): void {
+        this.client = new CreateCustomerInput();
         if (clientId) {
             this._customersService.getCustomerInfo(clientId).subscribe(result => {
                 this.client.firstName = result.primaryContactPersonalInfo.firstName;
@@ -61,10 +62,39 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
         this._customersService.createCustomer(this.client)
             .finally(() => { this.saving = false; })
             .subscribe(result => {
-                this.notify.info(this.l('SavedSuccessfully'));
-                this.close();
-                this.modalSave.emit(null);
-        });
+                if (result.similarCustomerExists) {
+                    abp.message.confirm(
+                        'Similar customer already exists',
+                        'Are you sure?',
+                        (isConfirmed) => {
+                            if (isConfirmed) {
+                                this.client.suppressSimilarContactWarning = true;
+                                this._customersService.createCustomer(this.client)
+                                    .finally(() => {
+                                        this.client.suppressSimilarContactWarning = false;
+                                    })
+                                    .subscribe(result => {
+                                        this.closeSuccessfull();
+                                    });
+                            }
+                        }
+                    );
+                } else {
+                    this.closeSuccessfull();
+                }
+            }
+        );
+    }
+
+    closeSuccessfull() {
+        this.notify.info(this.l('SavedSuccessfully'));
+        this.close();
+        this.modalSave.emit(null);
+    }
+
+    close(): void {
+        this.active = false;
+        this.modal.hide();
     }
 
     validate(event): boolean {
@@ -72,11 +102,6 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
             event.component.option('disabled', true);
             return true;
         }
-    }
-
-    close(): void {
-        this.active = false;
-        this.modal.hide();
     }
 
     focusDateBirth(event) {

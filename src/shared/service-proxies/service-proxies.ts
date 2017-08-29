@@ -1234,6 +1234,160 @@ export class ContactEmailServiceProxy {
 }
 
 @Injectable()
+export class ContactPhoneServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    createContactPhone(input: CreateContactPhoneInput): Observable<CreateContactPhoneOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactPhone/CreateContactPhone";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateContactPhone(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateContactPhone(response_);
+                } catch (e) {
+                    return <Observable<CreateContactPhoneOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateContactPhoneOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateContactPhone(response: Response): Observable<CreateContactPhoneOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CreateContactPhoneOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateContactPhoneOutput.fromJS(resultData200) : new CreateContactPhoneOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CreateContactPhoneOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateContactPhone(input: UpdateContactPhoneInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactPhone/UpdateContactPhone";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateContactPhone(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateContactPhone(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateContactPhone(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteContactPhone(contactId: number, id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactPhone/DeleteContactPhone?";
+        if (contactId !== undefined)
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteContactPhone(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteContactPhone(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteContactPhone(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class CreditReportServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -6628,6 +6782,165 @@ export class TenantSettingsCreditReportServiceProxy {
 }
 
 @Injectable()
+export class TenantSslCertificateServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getTenantSslCertificates(): Observable<TenantSslCertificateInfo[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSslCertificate/GetTenantSslCertificates";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetTenantSslCertificates(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTenantSslCertificates(response_);
+                } catch (e) {
+                    return <Observable<TenantSslCertificateInfo[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<TenantSslCertificateInfo[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTenantSslCertificates(response: Response): Observable<TenantSslCertificateInfo[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: TenantSslCertificateInfo[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(TenantSslCertificateInfo.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<TenantSslCertificateInfo[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    addTenantSslCertificate(input: AddTenantSslCertificateInput): Observable<TenantSslCertificateInfo> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSslCertificate/AddTenantSslCertificate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processAddTenantSslCertificate(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAddTenantSslCertificate(response_);
+                } catch (e) {
+                    return <Observable<TenantSslCertificateInfo>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<TenantSslCertificateInfo>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAddTenantSslCertificate(response: Response): Observable<TenantSslCertificateInfo> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: TenantSslCertificateInfo = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? TenantSslCertificateInfo.fromJS(resultData200) : new TenantSslCertificateInfo();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<TenantSslCertificateInfo>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteTenantSslCertificate(sslCertificateId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSslCertificate/DeleteTenantSslCertificate?";
+        if (sslCertificateId !== undefined)
+            url_ += "SslCertificateId=" + encodeURIComponent("" + sslCertificateId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteTenantSslCertificate(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteTenantSslCertificate(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteTenantSslCertificate(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class TimingServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -9441,6 +9754,147 @@ export interface IUpdateContactEmailInput {
     usageTypeId: string;
 }
 
+export class CreateContactPhoneInput implements ICreateContactPhoneInput {
+    contactId: number;
+    phoneNumber: string;
+    phoneExtension: string;
+    comment: string;
+    usageTypeId: string;
+
+    constructor(data?: ICreateContactPhoneInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactPhoneInput {
+        let result = new CreateContactPhoneInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactPhoneInput {
+    contactId: number;
+    phoneNumber: string;
+    phoneExtension: string;
+    comment: string;
+    usageTypeId: string;
+}
+
+export class CreateContactPhoneOutput implements ICreateContactPhoneOutput {
+    id: number;
+
+    constructor(data?: ICreateContactPhoneOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactPhoneOutput {
+        let result = new CreateContactPhoneOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateContactPhoneOutput {
+    id: number;
+}
+
+export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
+    id: number;
+    contactId: number;
+    phoneNumber: string;
+    phoneExtension: string;
+    comment: string;
+    usageTypeId: string;
+
+    constructor(data?: IUpdateContactPhoneInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.contactId = data["contactId"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateContactPhoneInput {
+        let result = new UpdateContactPhoneInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["contactId"] = this.contactId;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface IUpdateContactPhoneInput {
+    id: number;
+    contactId: number;
+    phoneNumber: string;
+    phoneExtension: string;
+    comment: string;
+    usageTypeId: string;
+}
+
 export class CreditReportOutput implements ICreditReportOutput {
     memberExists: boolean;
     uncompletedPackageId: number;
@@ -10630,6 +11084,7 @@ export interface IContactEmailDto {
 }
 
 export class ContactPhoneDto implements IContactPhoneDto {
+    contactId: number;
     id: number;
     type: string;
     phoneNumber: string;
@@ -10649,6 +11104,7 @@ export class ContactPhoneDto implements IContactPhoneDto {
 
     init(data?: any) {
         if (data) {
+            this.contactId = data["contactId"];
             this.id = data["id"];
             this.type = data["type"];
             this.phoneNumber = data["phoneNumber"];
@@ -10667,6 +11123,7 @@ export class ContactPhoneDto implements IContactPhoneDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
         data["id"] = this.id;
         data["type"] = this.type;
         data["phoneNumber"] = this.phoneNumber;
@@ -10679,6 +11136,7 @@ export class ContactPhoneDto implements IContactPhoneDto {
 }
 
 export interface IContactPhoneDto {
+    contactId: number;
     id: number;
     type: string;
     phoneNumber: string;
@@ -10993,6 +11451,7 @@ export interface ICreateCustomerInput {
 
 export class CreateCustomerOutput implements ICreateCustomerOutput {
     id: number;
+    similarCustomerExists: boolean;
 
     constructor(data?: ICreateCustomerOutput) {
         if (data) {
@@ -11006,6 +11465,7 @@ export class CreateCustomerOutput implements ICreateCustomerOutput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.similarCustomerExists = data["similarCustomerExists"];
         }
     }
 
@@ -11018,12 +11478,14 @@ export class CreateCustomerOutput implements ICreateCustomerOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["similarCustomerExists"] = this.similarCustomerExists;
         return data; 
     }
 }
 
 export interface ICreateCustomerOutput {
     id: number;
+    similarCustomerExists: boolean;
 }
 
 export class ListResultDtoOfEditionListDto implements IListResultDtoOfEditionListDto {
@@ -17929,6 +18391,92 @@ export interface IIdcsSettingsDto {
     partnerAccount: string;
     password: string;
     branding: string;
+}
+
+export class TenantSslCertificateInfo implements ITenantSslCertificateInfo {
+    id: number;
+    hostName: string;
+    expiration: moment.Moment;
+    thumbprint: string;
+
+    constructor(data?: ITenantSslCertificateInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.hostName = data["hostName"];
+            this.expiration = data["expiration"] ? moment(data["expiration"].toString()) : <any>undefined;
+            this.thumbprint = data["thumbprint"];
+        }
+    }
+
+    static fromJS(data: any): TenantSslCertificateInfo {
+        let result = new TenantSslCertificateInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["hostName"] = this.hostName;
+        data["expiration"] = this.expiration ? this.expiration.toISOString() : <any>undefined;
+        data["thumbprint"] = this.thumbprint;
+        return data; 
+    }
+}
+
+export interface ITenantSslCertificateInfo {
+    id: number;
+    hostName: string;
+    expiration: moment.Moment;
+    thumbprint: string;
+}
+
+export class AddTenantSslCertificateInput implements IAddTenantSslCertificateInput {
+    base64EncodedCertificate: string;
+    password: string;
+
+    constructor(data?: IAddTenantSslCertificateInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.base64EncodedCertificate = data["base64EncodedCertificate"];
+            this.password = data["password"];
+        }
+    }
+
+    static fromJS(data: any): AddTenantSslCertificateInput {
+        let result = new AddTenantSslCertificateInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["base64EncodedCertificate"] = this.base64EncodedCertificate;
+        data["password"] = this.password;
+        return data; 
+    }
+}
+
+export interface IAddTenantSslCertificateInput {
+    base64EncodedCertificate: string;
+    password: string;
 }
 
 export class ListResultDtoOfNameValueDto implements IListResultDtoOfNameValueDto {
