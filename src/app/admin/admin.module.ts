@@ -46,11 +46,16 @@ import { OrganizationTreeComponent } from './organization-units/organization-tre
 import { OrganizationUnitMembersComponent } from './organization-units/organization-unit-members.component';
 import { CreateOrEditUnitModalComponent } from './organization-units/create-or-edit-unit-modal.component';
 import { TenantSettingsComponent } from './settings/tenant-settings.component';
+import { SystemSettingsComponent } from './settings/system-settings.component';
+import { UploadSSLCertificateModalComponent } from './settings/upload-ssl-cert-modal.component';
 import { HostDashboardComponent } from './dashboard/host-dashboard.component'
 import { EditionComboComponent} from './shared/edition-combo.component';
 import { SubscriptionManagementComponent} from './subscription-management/subscription-management.component';
 
-import { DxDataGridModule, DxToolbarModule, DxTemplateModule, DxDateBoxModule, DxTextBoxModule, DxValidatorModule, DxValidationSummaryModule, DxButtonModule } from 'devextreme-angular';
+import {
+    DxDataGridModule, DxToolbarModule, DxTemplateModule, DxDateBoxModule, DxTextBoxModule, DxValidatorModule, DxValidationSummaryModule, DxButtonModule,
+    DxFileUploaderModule
+} from 'devextreme-angular';
 
 @NgModule({
     imports: [
@@ -64,6 +69,7 @@ import { DxDataGridModule, DxToolbarModule, DxTemplateModule, DxDateBoxModule, D
         DxValidatorModule,
         DxValidationSummaryModule,
         DxButtonModule,
+        DxFileUploaderModule,
 
         FileUploadModule,
         ModalModule.forRoot(),
@@ -109,6 +115,8 @@ import { DxDataGridModule, DxToolbarModule, DxTemplateModule, DxDateBoxModule, D
         OrganizationUnitMembersComponent,
         CreateOrEditUnitModalComponent,
         TenantSettingsComponent,
+        SystemSettingsComponent,
+        UploadSSLCertificateModalComponent,
         HostDashboardComponent,
         EditionComboComponent,
         SubscriptionManagementComponent
