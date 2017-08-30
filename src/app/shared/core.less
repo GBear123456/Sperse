@@ -178,9 +178,12 @@
 }
 
 /* Portlets */
-.portlet.light {	
-	&, .portlet-body {
-		padding: 0px!important;
+.portlet.light {
+	&.no-padding {
+		padding: 0;
+	}
+	.portlet-body {
+		padding: 0px !important;
 		.form {
 			display:none;
 		}
@@ -293,7 +296,7 @@ br {
 /* devExpress common styles */
 
 #gridContainer {
-	height: calc(~'100vh - 162px');
+	height: calc(~'100vh - 163px');
 	width: 100%;
 
 	@font-size: 16px;

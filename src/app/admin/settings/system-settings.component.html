@@ -1,0 +1,41 @@
+<div [@routerTransition]>
+  <div class="row margin-bottom-5">
+    <div class="col-xs-6">
+      <div class="page-head">
+        <div class="page-title">
+          <h1>
+            <span>{{l("SystemSettings")}}</span>
+          </h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="portlet light margin-bottom-0">
+    <div class="portlet-body">
+        <tabset class="tab-container tabbable-line">
+            <tab heading="{{l('SSLConfiguration')}}">
+                <div class="text-right">
+                    <button class="btn btn-layout" (click)="showSSLDialog()"><i class="fa fa-plus"></i>{{l("UploadCertificate")}}</button>
+                </div>
+                <div id="SSLTable">
+                    <dx-data-grid id="gridContainer"
+                                  #sslGrid
+                                  [dataSource]="dataSource"
+                                  [allowColumnReordering]="true"
+                                  [columnAutoWidth]="true"
+                                  [allowColumnResizing]="true"
+                                  (onRowRemoving)="deleteCertificate($event)">
+                        <dxo-editing mode="row" [allowDeleting]="true"></dxo-editing>
+
+                        <dxi-column dataField="id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="hostNames" caption="{{l('HostName')}}"></dxi-column>
+                        <dxi-column dataField="expiration" caption="{{l('ExpirationDate')}}" dataType="date" format="shortDateShortTime"></dxi-column>
+                        <dxi-column dataField="thumbprint" caption="{{l('Thumbprint')}}"></dxi-column>
+                    </dx-data-grid>
+                </div>
+                <uploadSSLCertificateModal #uploadSSLCertificateModal (modalSave)="refreshSSLGrid()"></uploadSSLCertificateModal>
+            </tab>
+        </tabset>
+    </div>
+  </div>
+</div>
