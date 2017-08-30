@@ -35,7 +35,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     private _commonLookupService: CommonLookupServiceProxy,
     private _impersonationService: ImpersonationService,		
   ) {
-    super(injector, true);
+    super(injector);
 
     this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 

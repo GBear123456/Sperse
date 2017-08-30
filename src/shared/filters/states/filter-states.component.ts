@@ -5,8 +5,7 @@ import getCountriesInfo from 'get-countries-info';
 
 @Component({
   templateUrl: './filter-states.component.html',
-	styleUrls: ['./filter-states.component.less'],
-  selector: 'filter'
+	styleUrls: ['./filter-states.component.less']
 })
 export class FilterStatesComponent extends AppComponentBase implements OnInit {
   items: {
