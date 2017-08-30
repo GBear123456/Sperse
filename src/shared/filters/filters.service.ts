@@ -1,29 +1,30 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+import { FilterModel } from './filter.model';
 
 @Injectable()
 export class FiltersService {
-	private filters: Subject<Object[]>;
-	private filter: Subject<Object>;
+	private filters: Subject<FilterModel[]>;
+	private filter: Subject<FilterModel>;
 
 	constructor() {
-		this.filters = new Subject<Object[]>();
-		this.filter = new Subject<Object>();
+		this.filters = new Subject<FilterModel[]>();
+		this.filter = new Subject<FilterModel>();
 	}
 
-	setup(filters: Object[]) {
+	setup(filters: FilterModel[]) {
 		this.filters.next(filters);
 	}	
 
-	update(callback: (filters: Object[]) => any) {
+	update(callback: (filters: FilterModel[]) => any) {
 		this.filters.asObservable().subscribe(callback);
 	}
 
-	change(filter: Object) {
+	change(filter: FilterModel) {
 		this.filter.next(filter);
 	}
 
-	apply(callback: (filters: Object) => any) {
+	apply(callback: (filters: FilterModel) => any) {
 		this.filter.asObservable().subscribe(callback);
 	}
 }

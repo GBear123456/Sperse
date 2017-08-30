@@ -32,15 +32,30 @@
 		top: 0px;
 		left: 320px;
 		width: 20vw;
-		height: 100vh;
+		height: calc(~"100vh - 160px");
 		z-index: 3;
-		padding-left: 20px;
+		padding: 0px 20px;
 		border: 1px solid #dfdfdf;
 		background-color: #fff;
 	}
 
 	.sidebar-filter-head {
 		padding: 20px 0px 20px 0px;
+    line-height: 37px;
 		font-weight: bold;
+    button {
+      float: right;
+      border-radius: 17px;
+      background-color: #00aeef;
+      border: none;
+      font-size: 15px;
+      letter-spacing: 0.3px;
+      color: #ffffff;
+      width: 110px;
+      height: 36px;
+      i {
+        color: #ffffff;
+      }
+    }
 	}
 }

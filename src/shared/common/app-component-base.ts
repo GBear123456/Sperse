@@ -1,4 +1,4 @@
-﻿import { Injector } from '@angular/core';
+﻿import { Injector, Inject, Input } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -10,49 +10,48 @@ import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.ser
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
 export abstract class AppComponentBase {
-    localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+  localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
 
 	dataSource: any;
 	tabIndex: Number = 0;
 	filterTabs: String[] = [];
-    localization: LocalizationService;
-    permission: PermissionCheckerService;
-    feature: FeatureCheckerService;
-    notify: NotifyService;
-    setting: SettingService;
-    message: MessageService;
-    multiTenancy: AbpMultiTenancyService;
-    appSession: AppSessionService;
+  localization: LocalizationService;
+  permission: PermissionCheckerService;
+  feature: FeatureCheckerService;
+  notify: NotifyService;
+  setting: SettingService;
+  message: MessageService;
+  multiTenancy: AbpMultiTenancyService;
+  appSession: AppSessionService;
 
-    constructor(injector: Injector) {
-        this.localization = injector.get(LocalizationService);
-        this.permission = injector.get(PermissionCheckerService);
-        this.feature = injector.get(FeatureCheckerService);
-        this.notify = injector.get(NotifyService);
-        this.setting = injector.get(SettingService);
-        this.message = injector.get(MessageService);
-        this.multiTenancy = injector.get(AbpMultiTenancyService);
-        this.appSession = injector.get(AppSessionService);
-    }
+  constructor(injector: Injector) {
+    this.localization = injector.get(LocalizationService);
+    this.permission = injector.get(PermissionCheckerService);
+    this.feature = injector.get(FeatureCheckerService);
+    this.notify = injector.get(NotifyService);
+    this.setting = injector.get(SettingService);
+    this.message = injector.get(MessageService);
+    this.multiTenancy = injector.get(AbpMultiTenancyService);
+    this.appSession = injector.get(AppSessionService);
+  }
 
-    l(key: string, ...args: any[]): string {
-        return this.ls(this.localizationSourceName, key);
-    }
+  l(key: string, ...args: any[]): string {
+    return this.ls(this.localizationSourceName, key);
+  }
 
-    ls(sourcename: string, key: string, ...args: any[]): string {
-        let localizedText = this.localization.localize(key, sourcename);
+  ls(sourcename: string, key: string, ...args: any[]): string {
+    let localizedText = this.localization.localize(key, sourcename);
 
-        if (!localizedText) {
-            localizedText = key;
-        }
+    if (!localizedText)
+      localizedText = key;
 
-        if (!args || !args.length) {
-            return localizedText;
-        }
+    if (!args || !args.length)
+      return localizedText;
 
-        args.unshift(localizedText);
-        return abp.utils.formatString.apply(this, args);
-    }
+
+    args.unshift(localizedText);
+    return abp.utils.formatString.apply(this, args);
+  }
 
 	capitalize = require('underscore.string/capitalize');
 
@@ -60,7 +59,11 @@ export abstract class AppComponentBase {
 		return AppConsts.remoteServiceBaseUrl + '/odata/' + uri;
 	}
 
-    isGranted(permissionName: string): boolean {
-        return this.permission.isGranted(permissionName);
-    }
+  getODataVersion = function() {
+    return 4;
+  }
+
+  isGranted(permissionName: string): boolean {
+    return this.permission.isGranted(permissionName);
+  }
 }

@@ -5,31 +5,39 @@ import { FormsModule } from '@angular/forms';
 
 
 import { FiltersService } from './filters.service';
-import { FilterStatusComponent } from './status/filter-status.component';
 
-import { DxCheckBoxModule } from 'devextreme-angular';
+import { FilterComponentManager, AdDirective } from './filter.component';
+import { FilterStatesComponent } from './states/filter-states.component';
+
+import { DxCheckBoxModule, DxSelectBoxModule } from 'devextreme-angular';
 
 @NgModule({
-    imports: [
+  imports: [
 		ngCommon.CommonModule,
 		FormsModule,
 
-		DxCheckBoxModule
+		DxCheckBoxModule,
+    DxSelectBoxModule
 	],
-    declarations: [
-		FilterStatusComponent
-    ],
-    exports: [
-		FilterStatusComponent
-    ]
+  declarations: [
+    FilterComponentManager,
+		FilterStatesComponent,
+    AdDirective
+  ],
+  entryComponents: [
+    FilterStatesComponent
+  ],
+  exports: [
+		FilterComponentManager
+  ]
 })
 export class FiltersModule {
-    static forRoot(): ModuleWithProviders {
-        return {
-            ngModule: FiltersModule,
-            providers: [
-                FiltersService
-            ]
-        }
+  static forRoot(): ModuleWithProviders {
+    return {
+      ngModule: FiltersModule,
+      providers: [
+        FiltersService
+      ]
     }
+  }
 }

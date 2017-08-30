@@ -4,6 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { FiltersService } from '@shared/filters/filters.service';
+import { FilterModel } from '@shared/filters/filter.model';
+import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 
 import { /* ClientServiceProxy, */ CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
@@ -111,7 +113,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 		];
 
 		this._filtersService.setup([
-            { cnt: 'status' },
+      <FilterModel> {component: FilterStatesComponent, caption: 'states'}
 		]);
     }
 
