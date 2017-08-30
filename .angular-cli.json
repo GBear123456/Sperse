@@ -1,4 +1,4 @@
-﻿{
+{
   "project": {
     "name": "abp-zero-template"
   },
@@ -58,8 +58,10 @@
         "../src/assets/bootstrap-datepicker/css/bootstrap-datepicker.min.css",
         "../node_modules/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css",
 
-        "../node_modules/devextreme/dist/css/dx.common.css", 
-        "../node_modules/devextreme/dist/css/dx.light.css", 
+        "../node_modules/devextreme/dist/css/dx.common.css",
+        "../node_modules/devextreme/dist/css/dx.light.css",
+
+        "../src/app/shared/dx-customs.less",
 
         "styles.css"
       ],

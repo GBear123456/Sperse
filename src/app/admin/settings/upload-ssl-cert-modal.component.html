@@ -1,0 +1,54 @@
+<div bsModal #createOrEditModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal" aria-hidden="true" [config]="{backdrop: 'static'}">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+    <form *ngIf="active" #clientForm="ngForm" novalidate>
+
+      <div class="modal-header">
+        <button type="button" class="close" (click)="close()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">
+            <span>{{l("UploadCertificate")}}</span>
+        </h4>
+      </div>
+
+      <div class="modal-body">
+
+
+        <dx-file-uploader #uploader
+                        accept=".pfx"
+                        selectButtonText="{{l('SelectCertificate')}}"
+                        uploadMode="useForm">
+            <dx-validator>
+                <dxi-validation-rule type="required" message="{{l('CertificateIsRequired')}}."></dxi-validation-rule>
+            </dx-validator>
+        </dx-file-uploader>
+
+        <div class="dx-field">
+            <dx-text-box type="text" name="Password" placeholder="{{l('Password')}}"
+                            maxlength="256"
+                            [(value)]="model.password">
+            </dx-text-box>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <dx-button text="{{l('Cancel')}}"
+                   type="normal"
+                   (onClick)="close()">
+        </dx-button>
+        <dx-button text="{{l('Save')}}"
+                   type="success"
+                   useSubmitBehavior="true"
+                   (onClick)="save($event)"
+                   [disabled]="saving">
+        </dx-button>
+      </div>
+
+    </form>
+
+  </div>
+  </div>
+</div>

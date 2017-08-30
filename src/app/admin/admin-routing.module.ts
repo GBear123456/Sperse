@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { UsersComponent } from './users/users.component';
 import { RolesComponent } from './roles/roles.component';
@@ -8,6 +8,7 @@ import { OrdersComponent } from './orders/orders.component';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
 import { HostSettingsComponent } from './settings/host-settings.component';
 import { TenantSettingsComponent } from './settings/tenant-settings.component';
+import { SystemSettingsComponent } from './settings/system-settings.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { EditionsComponent } from './editions/editions.component';
 import { LanguagesComponent } from './languages/languages.component';
@@ -38,6 +39,7 @@ import { SubscriptionManagementComponent } from './subscription-management/subsc
                     { path: 'organization-units', component: OrganizationUnitsComponent, data: { permission: 'Pages.Administration.OrganizationUnits' } },
                     { path: 'subscription-management', component: SubscriptionManagementComponent, data: { permission: 'Pages.Administration.Tenant.SubscriptionManagement' } },
                     { path: 'tenantSettings', component: TenantSettingsComponent, data: { permission: 'Pages.Administration.Tenant.Settings' } },
+                    { path: 'systemSettings', component: SystemSettingsComponent, data: { permission: 'Pages.Administration.Tenant.Settings' } },
                     { path: 'hostDashboard', component: HostDashboardComponent, data: { permission: 'Pages.Administration.Host.Dashboard' } }
                 ]
             }

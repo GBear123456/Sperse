@@ -1,4 +1,4 @@
-﻿import { Component, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { PanelMenu } from './panel-menu';
 import { PanelMenuItem } from './panel-menu-item';
 
@@ -36,7 +36,8 @@ export class TopBarComponent extends AppComponentBase {
             new PanelMenuItem("Maintenance", "Pages.Administration.Host.Maintenance", "icon-wrench", "/app/admin/maintenance"),
             new PanelMenuItem("Subscription", "Pages.Administration.Tenant.SubscriptionManagement", "icon-refresh", "/app/admin/subscription-management"),
             new PanelMenuItem("Settings", "Pages.Administration.Host.Settings", "icon-settings", "/app/admin/hostSettings"),
-            new PanelMenuItem("Settings", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/tenantSettings")
+            new PanelMenuItem("Settings", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/tenantSettings"),
+            new PanelMenuItem("System", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/systemSettings")
         ])
     ]);
 

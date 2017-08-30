@@ -18395,7 +18395,7 @@ export interface IIdcsSettingsDto {
 
 export class TenantSslCertificateInfo implements ITenantSslCertificateInfo {
     id: number;
-    hostName: string;
+    hostNames: string;
     expiration: moment.Moment;
     thumbprint: string;
 
@@ -18411,7 +18411,7 @@ export class TenantSslCertificateInfo implements ITenantSslCertificateInfo {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.hostName = data["hostName"];
+            this.hostNames = data["hostNames"];
             this.expiration = data["expiration"] ? moment(data["expiration"].toString()) : <any>undefined;
             this.thumbprint = data["thumbprint"];
         }
@@ -18426,7 +18426,7 @@ export class TenantSslCertificateInfo implements ITenantSslCertificateInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["hostName"] = this.hostName;
+        data["hostNames"] = this.hostNames;
         data["expiration"] = this.expiration ? this.expiration.toISOString() : <any>undefined;
         data["thumbprint"] = this.thumbprint;
         return data; 
@@ -18435,7 +18435,7 @@ export class TenantSslCertificateInfo implements ITenantSslCertificateInfo {
 
 export interface ITenantSslCertificateInfo {
     id: number;
-    hostName: string;
+    hostNames: string;
     expiration: moment.Moment;
     thumbprint: string;
 }
