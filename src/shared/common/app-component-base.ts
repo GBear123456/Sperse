@@ -63,6 +63,25 @@ export abstract class AppComponentBase {
     return 4;
   }
 
+  processODataFilter(grid, filter, checkCustom) {
+    let filters = grid.filter() || [],
+        caption = this.capitalize(filter.caption);
+    
+    for(let item in filter.items) {
+      let field = this.capitalize(item);
+      filters = filters.filter((fld)=>{
+        return [field, caption].indexOf(fld[0]) < 0;
+      });
+
+      if (!checkCustom(filters) && filter.items[item])
+          filters.push([field, filter.operator, filter.items[item]]);
+    }
+
+    grid.clearFilter();
+    if (filters.length)
+      grid.filter(filters);
+  }
+
   isGranted(permissionName: string): boolean {
     return this.permission.isGranted(permissionName);
   }

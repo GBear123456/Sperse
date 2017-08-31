@@ -7,6 +7,8 @@ import { CreateOrEditClientModalComponent } from './create-or-edit-client-modal.
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
+import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
+import { FilterCBoxesComponent } from '@shared/filters/cboxes/filter-cboxes.component';
 
 import { CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
@@ -49,7 +51,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
           request.headers["Abp.TenantId"] = abp.multiTenancy.getTenantIdCookie();
         }
       }
-    }
+    };
   }
 
   onContentReady(event) {
@@ -119,15 +121,39 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 		this._filtersService.setup([
 			<FilterModel> {
         component: FilterStatesComponent, 
-        caption: 'states', 
+        operator: '=',
+        caption: 'states',   
         items: {
           country: '', 
           state: ''
         }
       },
-			<FilterModel> {component: FilterStatesComponent, caption: 'employee'}, 
-			<FilterModel> {component: FilterStatesComponent, caption: 'LeadDate'}
+			<FilterModel> {
+        component: FilterInputsComponent, 
+        operator: 'contains',
+        caption: 'name', 
+        items: {name: ''}
+      }, 
+			<FilterModel> {
+        component: FilterCBoxesComponent, 
+        operator: '=',
+        caption: 'status', 
+        items: {active: true, unactive: true}
+      }
 		]);
+
+    this._filtersService.apply((filter: FilterModel)=>{
+      this.processODataFilter(this.dataGrid.instance, filter, 
+        (filters)=>{ //!!VP need to consider after backend update
+          if (filter.caption == 'status') {
+            if (!filter.items['active'] || !filter.items['unactive'])
+              filters.push([this.capitalize(filter.caption), 
+                filter.operator, filter.items['active'] ? 'Active': '']);
+            return true;
+          }
+        }
+      );
+    });
   }
 
   ngAfterViewInit(): void {

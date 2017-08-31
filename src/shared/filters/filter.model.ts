@@ -2,11 +2,13 @@ import { Type } from '@angular/core';
 
 export interface FilterComponent {
   items?: object;
-  apply: () => void;
+  apply: (event) => void;
 }
 
 export class FilterModel {
   component: Type<any>;
-  caption: string;
+  operator: string;
+  caption: string;  
   items?: object;
+  query?: Array<string>[];
 }

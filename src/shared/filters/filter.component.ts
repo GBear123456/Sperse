@@ -39,6 +39,8 @@ export class FilterComponentManager extends AppComponentBase {
     ).instance;
 
     componentRef.items = filter.items || {};
-    componentRef.apply = this.onApply.emit.bind(this);
+    componentRef.apply = (event) => {
+      this.onApply.emit(event);
+    }
   }  
 }

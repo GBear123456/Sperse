@@ -8,8 +8,10 @@ import { FiltersService } from './filters.service';
 
 import { FilterComponentManager, AdDirective } from './filter.component';
 import { FilterStatesComponent } from './states/filter-states.component';
+import { FilterInputsComponent } from './inputs/filter-inputs.component';
+import { FilterCBoxesComponent } from './cboxes/filter-cboxes.component';
 
-import { DxCheckBoxModule, DxSelectBoxModule } from 'devextreme-angular';
+import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule } from 'devextreme-angular';
 
 @NgModule({
   imports: [
@@ -17,15 +19,20 @@ import { DxCheckBoxModule, DxSelectBoxModule } from 'devextreme-angular';
 		FormsModule,
 
 		DxCheckBoxModule,
-    DxSelectBoxModule
+    DxSelectBoxModule,
+    DxTextBoxModule
 	],
   declarations: [
     FilterComponentManager,
 		FilterStatesComponent,
+    FilterInputsComponent,
+    FilterCBoxesComponent,
     AdDirective
   ],
   entryComponents: [
-    FilterStatesComponent
+    FilterStatesComponent,
+    FilterCBoxesComponent,
+    FilterInputsComponent
   ],
   exports: [
 		FilterComponentManager

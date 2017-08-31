@@ -13,5 +13,5 @@
     <button class="btn" (click)="filterApply($event)"><i class="fa fa-check" aria-hidden="true"></i>{{l('Apply')}}</button>
 	</div>
 
-  <filter [config]="activeFilter" (onApply)="filterBy($event)"></filter>
+  <filter [config]="activeFilter" (onApply)="filterApply($event)"></filter>
 </div>

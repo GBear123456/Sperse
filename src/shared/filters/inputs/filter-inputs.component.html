@@ -1,0 +1,10 @@
+<div class="wrapper">
+  <ng-template ngFor let-item [ngForOf]="getItems()" let-i="index">
+    <dx-text-box
+      name="item"    
+      [(value)]="items[item]"
+      (onEnterKey)="apply($event)"
+      placeholder="{{l(capitalize(item))}}">
+    </dx-text-box>  
+  </ng-template>
+</div>
