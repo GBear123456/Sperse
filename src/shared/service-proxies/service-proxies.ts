@@ -11135,6 +11135,7 @@ export class AccountCreditHistoryDto implements IAccountCreditHistoryDto {
     year: number;
     month: number;
     status: string;
+    isPositiveStatus: boolean;
     statusType: AccountCreditHistoryDtoStatusType;
 
     constructor(data?: IAccountCreditHistoryDto) {
@@ -11151,6 +11152,7 @@ export class AccountCreditHistoryDto implements IAccountCreditHistoryDto {
             this.year = data["year"];
             this.month = data["month"];
             this.status = data["status"];
+            this.isPositiveStatus = data["isPositiveStatus"];
             this.statusType = data["statusType"];
         }
     }
@@ -11166,6 +11168,7 @@ export class AccountCreditHistoryDto implements IAccountCreditHistoryDto {
         data["year"] = this.year;
         data["month"] = this.month;
         data["status"] = this.status;
+        data["isPositiveStatus"] = this.isPositiveStatus;
         data["statusType"] = this.statusType;
         return data; 
     }
@@ -11175,6 +11178,7 @@ export interface IAccountCreditHistoryDto {
     year: number;
     month: number;
     status: string;
+    isPositiveStatus: boolean;
     statusType: AccountCreditHistoryDtoStatusType;
 }
 
