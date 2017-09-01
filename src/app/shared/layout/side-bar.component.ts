@@ -2,49 +2,49 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
+import { FilterModel } from '@shared/filters/filter.model';
 import { Router, NavigationStart  } from '@angular/router';
 
 @Component({
-    templateUrl: './side-bar.component.html',
+  templateUrl: './side-bar.component.html',
 	styleUrls: ['./side-bar.component.less'],
-    selector: 'side-bar',
-	host: {
-    	'(document:click)': "showFilterDialog($event)"
-  	},
+  selector: 'side-bar',
+  host: {
+    '(document:click)': "hideFilterDialog($event)"
+  }
 })
 export class SideBarComponent extends AppComponentBase {
-	filters: Object[] = [];
-	activeFilter: String = '';
+	filters: FilterModel[] = [];
+	activeFilter: FilterModel;
+  appElementRef: ElementRef;
 
-    constructor(
+  constructor(
 		private _eref: ElementRef, 
 		private _filtersService: FiltersService,
+		private _appSessionService: AppSessionService,
 		injector: Injector,
-		router: Router,
-		private _appSessionService: AppSessionService
+		router: Router
 	) {
-        super(injector);
+    super(injector);
 
-		_filtersService.update(filters => {
-			this.filters = filters;
-		});
+    _filtersService.update(filters => {
+      this.filters = filters;
+    });
 
-	    router.events.subscribe((event) => {
-			if (event instanceof NavigationStart)
-				this.filters = [];
-		});
-    }
+    router.events.subscribe((event) => {
+      if (event instanceof NavigationStart)
+        this.filters = [];
+    });
+  }
 
-	showFilterDialog(event, type) {
-		if (this._eref.nativeElement.contains(event.target)) {
-			type && (this.activeFilter = type);
-			event.stopPropagation();
-		} else 
-			this.activeFilter = type;	
+	filterApply(event) {    
+    this._filtersService.change(this.activeFilter);
+    this.activeFilter = undefined;
 	}
 
-/*
-	filterBy(event) {
-	}
-*/
+  hideFilterDialog(event) {
+    /* !!VP need to define correct check for close */
+    //if (!this._eref.nativeElement.contains(event.target)) 
+    //  this.activeFilter = undefined;
+  }
 }

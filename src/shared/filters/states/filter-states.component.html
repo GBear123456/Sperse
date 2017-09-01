@@ -1,0 +1,16 @@
+<div class="wrapper">
+  <dx-select-box
+    name="country"
+    [dataSource]="countries"
+    [(value)]="items.country"
+    (onValueChanged)="onChangeCountry($event)"
+    placeholder="{{l('Country')}}">
+  </dx-select-box>
+
+  <dx-select-box
+    name="state"    
+    [dataSource]="states"
+    [(value)]="items.state"
+    placeholder="{{l('State')}}">
+  </dx-select-box>
+</div>
