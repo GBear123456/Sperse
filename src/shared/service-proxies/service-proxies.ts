@@ -1080,6 +1080,160 @@ export class CommonLookupServiceProxy {
 }
 
 @Injectable()
+export class ContactAddressServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    createContactAddress(input: CreateContactAddressInput): Observable<CreateContactAddressOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactAddress/CreateContactAddress";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateContactAddress(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateContactAddress(response_);
+                } catch (e) {
+                    return <Observable<CreateContactAddressOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateContactAddressOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateContactAddress(response: Response): Observable<CreateContactAddressOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CreateContactAddressOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateContactAddressOutput.fromJS(resultData200) : new CreateContactAddressOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CreateContactAddressOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateContactAddress(input: UpdateContactAddressInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactAddress/UpdateContactAddress";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateContactAddress(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateContactAddress(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateContactAddress(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteContactAddress(contactId: number, id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactAddress/DeleteContactAddress?";
+        if (contactId !== undefined)
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteContactAddress(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteContactAddress(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteContactAddress(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class ContactEmailServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -5986,10 +6140,8 @@ export class TenantHostServiceProxy {
     /**
      * @return Success
      */
-    getHostName(tenantHostType: TenantHostType2): Observable<GetHostNameOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/GetHostName?";
-        if (tenantHostType !== undefined)
-            url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
+    getSslBindings(): Observable<TenantSslBindingInfo[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/GetSslBindings";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -6004,185 +6156,43 @@ export class TenantHostServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetHostName(response_);
+            return this.processGetSslBindings(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processGetHostName(response_);
+                    return this.processGetSslBindings(response_);
                 } catch (e) {
-                    return <Observable<GetHostNameOutput>><any>Observable.throw(e);
+                    return <Observable<TenantSslBindingInfo[]>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<GetHostNameOutput>><any>Observable.throw(response_);
+                return <Observable<TenantSslBindingInfo[]>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetHostName(response: Response): Observable<GetHostNameOutput> {
+    protected processGetSslBindings(response: Response): Observable<TenantSslBindingInfo[]> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: GetHostNameOutput = null;
+            let result200: TenantSslBindingInfo[] = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetHostNameOutput.fromJS(resultData200) : new GetHostNameOutput();
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(TenantSslBindingInfo.fromJS(item));
+            }
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<GetHostNameOutput>(<any>null);
+        return Observable.of<TenantSslBindingInfo[]>(<any>null);
     }
 
     /**
      * @return Success
      */
-    assignHostName(input: AssignHostNameInput): Observable<AssignHostNameOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/AssignHostName";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input ? input.toJSON() : null);
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processAssignHostName(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processAssignHostName(response_);
-                } catch (e) {
-                    return <Observable<AssignHostNameOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<AssignHostNameOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processAssignHostName(response: Response): Observable<AssignHostNameOutput> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: AssignHostNameOutput = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? AssignHostNameOutput.fromJS(resultData200) : new AssignHostNameOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<AssignHostNameOutput>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    unassignHostName(input: UnassignHostNameInput): Observable<UnassignHostNameOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/UnassignHostName";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input ? input.toJSON() : null);
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processUnassignHostName(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processUnassignHostName(response_);
-                } catch (e) {
-                    return <Observable<UnassignHostNameOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<UnassignHostNameOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processUnassignHostName(response: Response): Observable<UnassignHostNameOutput> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: UnassignHostNameOutput = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? UnassignHostNameOutput.fromJS(resultData200) : new UnassignHostNameOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<UnassignHostNameOutput>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getSslBinding(tenantHostType: TenantHostType3): Observable<GetSslBindingOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/GetSslBinding?";
-        if (tenantHostType !== undefined)
-            url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetSslBinding(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetSslBinding(response_);
-                } catch (e) {
-                    return <Observable<GetSslBindingOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<GetSslBindingOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetSslBinding(response: Response): Observable<GetSslBindingOutput> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: GetSslBindingOutput = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetSslBindingOutput.fromJS(resultData200) : new GetSslBindingOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<GetSslBindingOutput>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    addSslBinding(input: AddSslBindingInput): Observable<AddSslBindingOutput> {
+    addSslBinding(input: AddSslBindingInput): Observable<TenantSslBindingInfo> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantHost/AddSslBinding";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -6204,33 +6214,129 @@ export class TenantHostServiceProxy {
                 try {
                     return this.processAddSslBinding(response_);
                 } catch (e) {
-                    return <Observable<AddSslBindingOutput>><any>Observable.throw(e);
+                    return <Observable<TenantSslBindingInfo>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<AddSslBindingOutput>><any>Observable.throw(response_);
+                return <Observable<TenantSslBindingInfo>><any>Observable.throw(response_);
         });
     }
 
-    protected processAddSslBinding(response: Response): Observable<AddSslBindingOutput> {
+    protected processAddSslBinding(response: Response): Observable<TenantSslBindingInfo> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: AddSslBindingOutput = null;
+            let result200: TenantSslBindingInfo = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? AddSslBindingOutput.fromJS(resultData200) : new AddSslBindingOutput();
+            result200 = resultData200 ? TenantSslBindingInfo.fromJS(resultData200) : new TenantSslBindingInfo();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<AddSslBindingOutput>(<any>null);
+        return Observable.of<TenantSslBindingInfo>(<any>null);
     }
 
     /**
      * @return Success
      */
-    deleteSslBinding(tenantHostType: TenantHostType4): Observable<DeleteSslBindingOutput> {
+    updateSslBindingCertificate(input: UpdateSslBindingCertificateInput): Observable<TenantSslBindingInfo> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/UpdateSslBindingCertificate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateSslBindingCertificate(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateSslBindingCertificate(response_);
+                } catch (e) {
+                    return <Observable<TenantSslBindingInfo>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<TenantSslBindingInfo>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateSslBindingCertificate(response: Response): Observable<TenantSslBindingInfo> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: TenantSslBindingInfo = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? TenantSslBindingInfo.fromJS(resultData200) : new TenantSslBindingInfo();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<TenantSslBindingInfo>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateSslBindingIsActive(input: UpdateSslBindingIsActiveInput): Observable<TenantSslBindingInfo> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/UpdateSslBindingIsActive";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateSslBindingIsActive(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateSslBindingIsActive(response_);
+                } catch (e) {
+                    return <Observable<TenantSslBindingInfo>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<TenantSslBindingInfo>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateSslBindingIsActive(response: Response): Observable<TenantSslBindingInfo> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: TenantSslBindingInfo = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? TenantSslBindingInfo.fromJS(resultData200) : new TenantSslBindingInfo();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<TenantSslBindingInfo>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteSslBinding(tenantHostType: TenantHostType2): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantHost/DeleteSslBinding?";
         if (tenantHostType !== undefined)
             url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
@@ -6254,27 +6360,24 @@ export class TenantHostServiceProxy {
                 try {
                     return this.processDeleteSslBinding(response_);
                 } catch (e) {
-                    return <Observable<DeleteSslBindingOutput>><any>Observable.throw(e);
+                    return <Observable<void>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<DeleteSslBindingOutput>><any>Observable.throw(response_);
+                return <Observable<void>><any>Observable.throw(response_);
         });
     }
 
-    protected processDeleteSslBinding(response: Response): Observable<DeleteSslBindingOutput> {
+    protected processDeleteSslBinding(response: Response): Observable<void> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: DeleteSslBindingOutput = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? DeleteSslBindingOutput.fromJS(resultData200) : new DeleteSslBindingOutput();
-            return Observable.of(result200);
+            return Observable.of<void>(<any>null);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<DeleteSslBindingOutput>(<any>null);
+        return Observable.of<void>(<any>null);
     }
 }
 
@@ -9619,6 +9722,195 @@ export class GetDefaultEditionNameOutput implements IGetDefaultEditionNameOutput
 
 export interface IGetDefaultEditionNameOutput {
     name: string;
+}
+
+export class CreateContactAddressInput implements ICreateContactAddressInput {
+    contactId: number;
+    streetAddress: string;
+    city: string;
+    stateId: string;
+    zip: string;
+    countryId: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    comment: string;
+    usageTypeId: string;
+    ownershipTypeId: string;
+
+    constructor(data?: ICreateContactAddressInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.stateId = data["stateId"];
+            this.zip = data["zip"];
+            this.countryId = data["countryId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+            this.ownershipTypeId = data["ownershipTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactAddressInput {
+        let result = new CreateContactAddressInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["stateId"] = this.stateId;
+        data["zip"] = this.zip;
+        data["countryId"] = this.countryId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        data["ownershipTypeId"] = this.ownershipTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactAddressInput {
+    contactId: number;
+    streetAddress: string;
+    city: string;
+    stateId: string;
+    zip: string;
+    countryId: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    comment: string;
+    usageTypeId: string;
+    ownershipTypeId: string;
+}
+
+export class CreateContactAddressOutput implements ICreateContactAddressOutput {
+    id: number;
+
+    constructor(data?: ICreateContactAddressOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactAddressOutput {
+        let result = new CreateContactAddressOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateContactAddressOutput {
+    id: number;
+}
+
+export class UpdateContactAddressInput implements IUpdateContactAddressInput {
+    id: number;
+    contactId: number;
+    streetAddress: string;
+    city: string;
+    stateId: string;
+    zip: string;
+    countryId: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    comment: string;
+    usageTypeId: string;
+    ownershipTypeId: string;
+
+    constructor(data?: IUpdateContactAddressInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.contactId = data["contactId"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.stateId = data["stateId"];
+            this.zip = data["zip"];
+            this.countryId = data["countryId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+            this.ownershipTypeId = data["ownershipTypeId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateContactAddressInput {
+        let result = new UpdateContactAddressInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["contactId"] = this.contactId;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["stateId"] = this.stateId;
+        data["zip"] = this.zip;
+        data["countryId"] = this.countryId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        data["ownershipTypeId"] = this.ownershipTypeId;
+        return data; 
+    }
+}
+
+export interface IUpdateContactAddressInput {
+    id: number;
+    contactId: number;
+    streetAddress: string;
+    city: string;
+    stateId: string;
+    zip: string;
+    countryId: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    comment: string;
+    usageTypeId: string;
+    ownershipTypeId: string;
 }
 
 export class CreateContactEmailInput implements ICreateContactEmailInput {
@@ -16503,7 +16795,7 @@ export class TenantListDto implements ITenantListDto {
     tenancyName: string;
     name: string;
     editionDisplayName: string;
-    connectionString: string;
+    hasOwnDatabase: boolean;
     isActive: boolean;
     creationTime: moment.Moment;
     subscriptionEndDateUtc: moment.Moment;
@@ -16523,7 +16815,7 @@ export class TenantListDto implements ITenantListDto {
             this.tenancyName = data["tenancyName"];
             this.name = data["name"];
             this.editionDisplayName = data["editionDisplayName"];
-            this.connectionString = data["connectionString"];
+            this.hasOwnDatabase = data["hasOwnDatabase"];
             this.isActive = data["isActive"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
@@ -16542,7 +16834,7 @@ export class TenantListDto implements ITenantListDto {
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
         data["editionDisplayName"] = this.editionDisplayName;
-        data["connectionString"] = this.connectionString;
+        data["hasOwnDatabase"] = this.hasOwnDatabase;
         data["isActive"] = this.isActive;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
@@ -16555,7 +16847,7 @@ export interface ITenantListDto {
     tenancyName: string;
     name: string;
     editionDisplayName: string;
-    connectionString: string;
+    hasOwnDatabase: boolean;
     isActive: boolean;
     creationTime: moment.Moment;
     subscriptionEndDateUtc: moment.Moment;
@@ -16568,6 +16860,8 @@ export class CreateTenantInput implements ICreateTenantInput {
     adminEmailAddress: string;
     adminPassword: string;
     connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
     shouldChangePasswordOnNextLogin: boolean;
     sendActivationEmail: boolean;
     editionId: number;
@@ -16591,6 +16885,8 @@ export class CreateTenantInput implements ICreateTenantInput {
             this.adminEmailAddress = data["adminEmailAddress"];
             this.adminPassword = data["adminPassword"];
             this.connectionString = data["connectionString"];
+            this.crmConnectionString = data["crmConnectionString"];
+            this.memberDbConnectionString = data["memberDbConnectionString"];
             this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
             this.sendActivationEmail = data["sendActivationEmail"];
             this.editionId = data["editionId"];
@@ -16613,6 +16909,8 @@ export class CreateTenantInput implements ICreateTenantInput {
         data["adminEmailAddress"] = this.adminEmailAddress;
         data["adminPassword"] = this.adminPassword;
         data["connectionString"] = this.connectionString;
+        data["crmConnectionString"] = this.crmConnectionString;
+        data["memberDbConnectionString"] = this.memberDbConnectionString;
         data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
         data["sendActivationEmail"] = this.sendActivationEmail;
         data["editionId"] = this.editionId;
@@ -16629,6 +16927,8 @@ export interface ICreateTenantInput {
     adminEmailAddress: string;
     adminPassword: string;
     connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
     shouldChangePasswordOnNextLogin: boolean;
     sendActivationEmail: boolean;
     editionId: number;
@@ -16641,6 +16941,8 @@ export class TenantEditDto implements ITenantEditDto {
     tenancyName: string;
     name: string;
     connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
     editionId: number;
     isActive: boolean;
     subscriptionEndDateUtc: moment.Moment;
@@ -16661,6 +16963,8 @@ export class TenantEditDto implements ITenantEditDto {
             this.tenancyName = data["tenancyName"];
             this.name = data["name"];
             this.connectionString = data["connectionString"];
+            this.crmConnectionString = data["crmConnectionString"];
+            this.memberDbConnectionString = data["memberDbConnectionString"];
             this.editionId = data["editionId"];
             this.isActive = data["isActive"];
             this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
@@ -16680,6 +16984,8 @@ export class TenantEditDto implements ITenantEditDto {
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
         data["connectionString"] = this.connectionString;
+        data["crmConnectionString"] = this.crmConnectionString;
+        data["memberDbConnectionString"] = this.memberDbConnectionString;
         data["editionId"] = this.editionId;
         data["isActive"] = this.isActive;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
@@ -16693,6 +16999,8 @@ export interface ITenantEditDto {
     tenancyName: string;
     name: string;
     connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
     editionId: number;
     isActive: boolean;
     subscriptionEndDateUtc: moment.Moment;
@@ -17516,11 +17824,16 @@ export interface ICheckHostNameDnsMappingOutput {
     hostNameDnsMapped: boolean;
 }
 
-export class GetHostNameOutput implements IGetHostNameOutput {
+export class TenantSslBindingInfo implements ITenantSslBindingInfo {
+    id: number;
     hostName: string;
+    hostType: TenantSslBindingInfoHostType;
     isActive: boolean;
+    sslCertificateId: number;
+    sslCertificateExpiration: moment.Moment;
+    sslCertificateThumbprint: string;
 
-    constructor(data?: IGetHostNameOutput) {
+    constructor(data?: ITenantSslBindingInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17531,215 +17844,50 @@ export class GetHostNameOutput implements IGetHostNameOutput {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.hostName = data["hostName"];
+            this.hostType = data["hostType"];
             this.isActive = data["isActive"];
+            this.sslCertificateId = data["sslCertificateId"];
+            this.sslCertificateExpiration = data["sslCertificateExpiration"] ? moment(data["sslCertificateExpiration"].toString()) : <any>undefined;
+            this.sslCertificateThumbprint = data["sslCertificateThumbprint"];
         }
     }
 
-    static fromJS(data: any): GetHostNameOutput {
-        let result = new GetHostNameOutput();
+    static fromJS(data: any): TenantSslBindingInfo {
+        let result = new TenantSslBindingInfo();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["hostName"] = this.hostName;
+        data["hostType"] = this.hostType;
         data["isActive"] = this.isActive;
+        data["sslCertificateId"] = this.sslCertificateId;
+        data["sslCertificateExpiration"] = this.sslCertificateExpiration ? this.sslCertificateExpiration.toISOString() : <any>undefined;
+        data["sslCertificateThumbprint"] = this.sslCertificateThumbprint;
         return data; 
     }
 }
 
-export interface IGetHostNameOutput {
+export interface ITenantSslBindingInfo {
+    id: number;
     hostName: string;
+    hostType: TenantSslBindingInfoHostType;
     isActive: boolean;
-}
-
-export class AssignHostNameInput implements IAssignHostNameInput {
-    tenantHostType: AssignHostNameInputTenantHostType;
-    domain: string;
-    subDomain: string;
-
-    constructor(data?: IAssignHostNameInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantHostType = data["tenantHostType"];
-            this.domain = data["domain"];
-            this.subDomain = data["subDomain"];
-        }
-    }
-
-    static fromJS(data: any): AssignHostNameInput {
-        let result = new AssignHostNameInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantHostType"] = this.tenantHostType;
-        data["domain"] = this.domain;
-        data["subDomain"] = this.subDomain;
-        return data; 
-    }
-}
-
-export interface IAssignHostNameInput {
-    tenantHostType: AssignHostNameInputTenantHostType;
-    domain: string;
-    subDomain: string;
-}
-
-export class AssignHostNameOutput implements IAssignHostNameOutput {
-    success: boolean;
-
-    constructor(data?: IAssignHostNameOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.success = data["success"];
-        }
-    }
-
-    static fromJS(data: any): AssignHostNameOutput {
-        let result = new AssignHostNameOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["success"] = this.success;
-        return data; 
-    }
-}
-
-export interface IAssignHostNameOutput {
-    success: boolean;
-}
-
-export class UnassignHostNameInput implements IUnassignHostNameInput {
-    tenantHostType: UnassignHostNameInputTenantHostType;
-
-    constructor(data?: IUnassignHostNameInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantHostType = data["tenantHostType"];
-        }
-    }
-
-    static fromJS(data: any): UnassignHostNameInput {
-        let result = new UnassignHostNameInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantHostType"] = this.tenantHostType;
-        return data; 
-    }
-}
-
-export interface IUnassignHostNameInput {
-    tenantHostType: UnassignHostNameInputTenantHostType;
-}
-
-export class UnassignHostNameOutput implements IUnassignHostNameOutput {
-    success: boolean;
-
-    constructor(data?: IUnassignHostNameOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.success = data["success"];
-        }
-    }
-
-    static fromJS(data: any): UnassignHostNameOutput {
-        let result = new UnassignHostNameOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["success"] = this.success;
-        return data; 
-    }
-}
-
-export interface IUnassignHostNameOutput {
-    success: boolean;
-}
-
-export class GetSslBindingOutput implements IGetSslBindingOutput {
-    sslBindingAdded: boolean;
-
-    constructor(data?: IGetSslBindingOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.sslBindingAdded = data["sslBindingAdded"];
-        }
-    }
-
-    static fromJS(data: any): GetSslBindingOutput {
-        let result = new GetSslBindingOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["sslBindingAdded"] = this.sslBindingAdded;
-        return data; 
-    }
-}
-
-export interface IGetSslBindingOutput {
-    sslBindingAdded: boolean;
+    sslCertificateId: number;
+    sslCertificateExpiration: moment.Moment;
+    sslCertificateThumbprint: string;
 }
 
 export class AddSslBindingInput implements IAddSslBindingInput {
     tenantHostType: AddSslBindingInputTenantHostType;
+    domain: string;
+    subDomain: string;
+    sslCertificateId: number;
 
     constructor(data?: IAddSslBindingInput) {
         if (data) {
@@ -17753,6 +17901,9 @@ export class AddSslBindingInput implements IAddSslBindingInput {
     init(data?: any) {
         if (data) {
             this.tenantHostType = data["tenantHostType"];
+            this.domain = data["domain"];
+            this.subDomain = data["subDomain"];
+            this.sslCertificateId = data["sslCertificateId"];
         }
     }
 
@@ -17765,18 +17916,25 @@ export class AddSslBindingInput implements IAddSslBindingInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tenantHostType"] = this.tenantHostType;
+        data["domain"] = this.domain;
+        data["subDomain"] = this.subDomain;
+        data["sslCertificateId"] = this.sslCertificateId;
         return data; 
     }
 }
 
 export interface IAddSslBindingInput {
     tenantHostType: AddSslBindingInputTenantHostType;
+    domain: string;
+    subDomain: string;
+    sslCertificateId: number;
 }
 
-export class AddSslBindingOutput implements IAddSslBindingOutput {
-    success: boolean;
+export class UpdateSslBindingCertificateInput implements IUpdateSslBindingCertificateInput {
+    tenantHostType: UpdateSslBindingCertificateInputTenantHostType;
+    sslCertificateId: number;
 
-    constructor(data?: IAddSslBindingOutput) {
+    constructor(data?: IUpdateSslBindingCertificateInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17787,31 +17945,35 @@ export class AddSslBindingOutput implements IAddSslBindingOutput {
 
     init(data?: any) {
         if (data) {
-            this.success = data["success"];
+            this.tenantHostType = data["tenantHostType"];
+            this.sslCertificateId = data["sslCertificateId"];
         }
     }
 
-    static fromJS(data: any): AddSslBindingOutput {
-        let result = new AddSslBindingOutput();
+    static fromJS(data: any): UpdateSslBindingCertificateInput {
+        let result = new UpdateSslBindingCertificateInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["success"] = this.success;
+        data["tenantHostType"] = this.tenantHostType;
+        data["sslCertificateId"] = this.sslCertificateId;
         return data; 
     }
 }
 
-export interface IAddSslBindingOutput {
-    success: boolean;
+export interface IUpdateSslBindingCertificateInput {
+    tenantHostType: UpdateSslBindingCertificateInputTenantHostType;
+    sslCertificateId: number;
 }
 
-export class DeleteSslBindingOutput implements IDeleteSslBindingOutput {
-    success: boolean;
+export class UpdateSslBindingIsActiveInput implements IUpdateSslBindingIsActiveInput {
+    tenantHostType: UpdateSslBindingIsActiveInputTenantHostType;
+    isActive: boolean;
 
-    constructor(data?: IDeleteSslBindingOutput) {
+    constructor(data?: IUpdateSslBindingIsActiveInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -17822,25 +17984,28 @@ export class DeleteSslBindingOutput implements IDeleteSslBindingOutput {
 
     init(data?: any) {
         if (data) {
-            this.success = data["success"];
+            this.tenantHostType = data["tenantHostType"];
+            this.isActive = data["isActive"];
         }
     }
 
-    static fromJS(data: any): DeleteSslBindingOutput {
-        let result = new DeleteSslBindingOutput();
+    static fromJS(data: any): UpdateSslBindingIsActiveInput {
+        let result = new UpdateSslBindingIsActiveInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["success"] = this.success;
+        data["tenantHostType"] = this.tenantHostType;
+        data["isActive"] = this.isActive;
         return data; 
     }
 }
 
-export interface IDeleteSslBindingOutput {
-    success: boolean;
+export interface IUpdateSslBindingIsActiveInput {
+    tenantHostType: UpdateSslBindingIsActiveInputTenantHostType;
+    isActive: boolean;
 }
 
 export class RegisterTenantInput implements IRegisterTenantInput {
@@ -19971,18 +20136,6 @@ export enum TenantHostType2 {
     _2 = 2, 
 }
 
-export enum TenantHostType3 {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
-}
-
-export enum TenantHostType4 {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
-}
-
 export enum DefaultTimezoneScope {
     _1 = 1, 
     _2 = 2, 
@@ -20154,19 +20307,25 @@ export enum CheckHostNameDnsMappingInputTenantHostType {
     _2 = 2, 
 }
 
-export enum AssignHostNameInputTenantHostType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
-}
-
-export enum UnassignHostNameInputTenantHostType {
+export enum TenantSslBindingInfoHostType {
     _0 = 0, 
     _1 = 1, 
     _2 = 2, 
 }
 
 export enum AddSslBindingInputTenantHostType {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+}
+
+export enum UpdateSslBindingCertificateInputTenantHostType {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+}
+
+export enum UpdateSslBindingIsActiveInputTenantHostType {
     _0 = 0, 
     _1 = 1, 
     _2 = 2, 
