@@ -181,7 +181,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
                         title: self.l('TenancyCodeName'),
                         display(data) {
                             var $div = $('<div> ' + data.record.tenancyName + '</div>');
-                            if (data.record.connectionString) {
+                            if (data.record.hasOwnDatabase) {
                                 $div.prepend($("<i class='fa fa-database' title=\"" + self.l('HasOwnDatabase') + "\"></i>"));
                             }
 

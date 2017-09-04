@@ -24,7 +24,6 @@ export class EditTenantModalComponent extends AppComponentBase {
     subscriptionEndDateUtcIsValid: boolean = false;
 
     tenant: TenantEditDto = undefined;
-    currentConnectionString: string;
     editions: SubscribableEditionComboboxItemDto[] = [];
     isSubscriptionFieldsVisible: boolean = false;
 
@@ -48,7 +47,6 @@ export class EditTenantModalComponent extends AppComponentBase {
 
             this._tenantService.getTenantForEdit(tenantId).subscribe((result) => {
                 this.tenant = result;
-                this.currentConnectionString = result.connectionString;
                 this.tenant.editionId = this.tenant.editionId || 0;
                 this.isUnlimited = !this.tenant.subscriptionEndDateUtc;
                 this.subscriptionEndDateUtcIsValid = this.isUnlimited || this.tenant.subscriptionEndDateUtc !== undefined;
