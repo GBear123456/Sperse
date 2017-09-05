@@ -3,7 +3,7 @@
         <div class="page-logo">
             <a routerLink="/" target="_blank">
                 <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/common/images/app-logo-on-light.png" alt="logo" class="logo-layout" width="200" height="60" />
-                <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetLogo?id=' + appSession.tenant.logoId" alt="logo" class="logo-default" width="200" height="60" />			
+                <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetTenantLogo?tenantId=' + appSession.tenantId" alt="logo" class="logo-default" width="200" height="60" />			
             </a>
 			<i class="icon-menu filter-toggle sidebar-toggler"></i>
         </div>
