@@ -6536,6 +6536,111 @@ export class TenantHostServiceProxy {
 }
 
 @Injectable()
+export class TenantPaymentSettingsServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getBaseCommercePaymentSettings(): Observable<BaseCommercePaymentSettings> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantPaymentSettings/GetBaseCommercePaymentSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetBaseCommercePaymentSettings(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetBaseCommercePaymentSettings(response_);
+                } catch (e) {
+                    return <Observable<BaseCommercePaymentSettings>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<BaseCommercePaymentSettings>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetBaseCommercePaymentSettings(response: Response): Observable<BaseCommercePaymentSettings> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: BaseCommercePaymentSettings = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? BaseCommercePaymentSettings.fromJS(resultData200) : new BaseCommercePaymentSettings();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<BaseCommercePaymentSettings>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateBaseCommercePaymentSettings(input: BaseCommercePaymentSettings): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantPaymentSettings/UpdateBaseCommercePaymentSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateBaseCommercePaymentSettings(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateBaseCommercePaymentSettings(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateBaseCommercePaymentSettings(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class TenantRegistrationServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -10203,7 +10308,6 @@ export interface IUpdateContactEmailInput {
 export class CreateContactLinkInput implements ICreateContactLinkInput {
     contactId: number;
     url: string;
-    isSocialNetwork: boolean;
     comment: string;
     linkTypeId: string;
 
@@ -10220,7 +10324,6 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
         if (data) {
             this.contactId = data["contactId"];
             this.url = data["url"];
-            this.isSocialNetwork = data["isSocialNetwork"];
             this.comment = data["comment"];
             this.linkTypeId = data["linkTypeId"];
         }
@@ -10236,7 +10339,6 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["url"] = this.url;
-        data["isSocialNetwork"] = this.isSocialNetwork;
         data["comment"] = this.comment;
         data["linkTypeId"] = this.linkTypeId;
         return data; 
@@ -10246,7 +10348,6 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
 export interface ICreateContactLinkInput {
     contactId: number;
     url: string;
-    isSocialNetwork: boolean;
     comment: string;
     linkTypeId: string;
 }
@@ -10290,7 +10391,6 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
     id: number;
     contactId: number;
     url: string;
-    isSocialNetwork: boolean;
     comment: string;
     linkTypeId: string;
 
@@ -10308,7 +10408,6 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
             this.id = data["id"];
             this.contactId = data["contactId"];
             this.url = data["url"];
-            this.isSocialNetwork = data["isSocialNetwork"];
             this.comment = data["comment"];
             this.linkTypeId = data["linkTypeId"];
         }
@@ -10325,7 +10424,6 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
         data["id"] = this.id;
         data["contactId"] = this.contactId;
         data["url"] = this.url;
-        data["isSocialNetwork"] = this.isSocialNetwork;
         data["comment"] = this.comment;
         data["linkTypeId"] = this.linkTypeId;
         return data; 
@@ -10336,7 +10434,6 @@ export interface IUpdateContactLinkInput {
     id: number;
     contactId: number;
     url: string;
-    isSocialNetwork: boolean;
     comment: string;
     linkTypeId: string;
 }
@@ -18301,6 +18398,53 @@ export class UpdateSslBindingIsActiveInput implements IUpdateSslBindingIsActiveI
 export interface IUpdateSslBindingIsActiveInput {
     tenantHostType: UpdateSslBindingIsActiveInputTenantHostType;
     isActive: boolean;
+}
+
+export class BaseCommercePaymentSettings implements IBaseCommercePaymentSettings {
+    userName: string;
+    password: string;
+    key: string;
+    sandBox: boolean;
+
+    constructor(data?: IBaseCommercePaymentSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userName = data["userName"];
+            this.password = data["password"];
+            this.key = data["key"];
+            this.sandBox = data["sandBox"];
+        }
+    }
+
+    static fromJS(data: any): BaseCommercePaymentSettings {
+        let result = new BaseCommercePaymentSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userName"] = this.userName;
+        data["password"] = this.password;
+        data["key"] = this.key;
+        data["sandBox"] = this.sandBox;
+        return data; 
+    }
+}
+
+export interface IBaseCommercePaymentSettings {
+    userName: string;
+    password: string;
+    key: string;
+    sandBox: boolean;
 }
 
 export class RegisterTenantInput implements IRegisterTenantInput {
