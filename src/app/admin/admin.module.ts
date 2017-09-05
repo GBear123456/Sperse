@@ -47,7 +47,7 @@ import { OrganizationUnitMembersComponent } from './organization-units/organizat
 import { CreateOrEditUnitModalComponent } from './organization-units/create-or-edit-unit-modal.component';
 import { TenantSettingsComponent } from './settings/tenant-settings.component';
 import { SystemSettingsComponent } from './settings/system-settings.component';
-import { UploadSSLCertificateModalComponent } from './settings/upload-ssl-cert-modal.component';
+import { UploadSSLCertificateModalComponent } from './settings/modals/upload-ssl-cert-modal.component';
 import { HostDashboardComponent } from './dashboard/host-dashboard.component'
 import { EditionComboComponent} from './shared/edition-combo.component';
 import { SubscriptionManagementComponent} from './subscription-management/subscription-management.component';
