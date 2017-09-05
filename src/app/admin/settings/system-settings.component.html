@@ -35,15 +35,16 @@
                 </div>
                 <uploadSSLCertificateModal #uploadSSLCertificateModal (modalSave)="refreshSSLGrid()"></uploadSSLCertificateModal>
             </tab>
-
-            <tab heading="{{l('CustomDomains')}}">
+            <tab heading="{{l('CustomDomains')}}" (select)="refreshSSLBindingGrid()">
                 <div id="CustomDomainsTable">
                     <dx-data-grid id="gridContainer"
                                   #customDomainsGrid
                                   [dataSource]="sslBindingsDataSource"
                                   [allowColumnReordering]="true"
-                                  [columnAutoWidth]="true"
-                                  [allowColumnResizing]="true">
+                                  [allowColumnResizing]="true"
+                                  (onRowRemoving)="deleteSSLBinding($event)">
+                        <dxo-editing mode="row" [allowDeleting]="true"></dxo-editing>
+
                         <dxi-column dataField="id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="sslCertificateId" caption="{{l('SslCertificateId')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="hostName" caption="{{l('HostName')}}"></dxi-column>

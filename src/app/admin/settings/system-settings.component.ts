@@ -12,6 +12,7 @@ import { UploadSSLCertificateModalComponent } from './modals/upload-ssl-cert-mod
 })
 export class SystemSettingsComponent extends AppComponentBase implements OnInit {
 
+    @ViewChild('customDomainsGrid') customDomainsGrid: DxDataGridComponent;
     @ViewChild('sslGrid') sslGrid: DxDataGridComponent;
     @ViewChild('uploadSSLCertificateModal') uploadSSLCertificateModal: UploadSSLCertificateModalComponent;
 
@@ -51,10 +52,27 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
         this.sslGrid.instance.refresh();
     }
 
+    refreshSSLBindingGrid() {
+        this.customDomainsGrid.instance.refresh();
+    }
+
     deleteCertificate(event) {
         let d = $.Deferred();
         
         this._tenantSslCertificateService.deleteTenantSslCertificate(event.data.id)
+            .subscribe(result => {
+                d.resolve();
+                this.notify.info(this.l('SavedSuccessfully'));
+            }, (error) => {
+                d.reject(error);
+            });
+        event.cancel = d.promise();
+    }
+
+    deleteSSLBinding(event) {
+        let d = $.Deferred();
+
+        this._tenantHostService.deleteSslBinding(event.data.hostType)
             .subscribe(result => {
                 d.resolve();
                 this.notify.info(this.l('SavedSuccessfully'));
