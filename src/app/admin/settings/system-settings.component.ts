@@ -37,14 +37,8 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
     }
 
     ngOnInit(): void {
-        this._tenantSslCertificateService.getTenantSslCertificates()
-            .subscribe(result => {
-                this.sslGridDataSource = result;
-            });
-        this._tenantHostService.getSslBindings()
-            .subscribe(result => {
-                this.sslBindingsDataSource = result;
-            });
+        this.refreshSSLGrid();
+        this.refreshSSLBindingGrid();
     }
 
     showSSLDialog() {
@@ -56,36 +50,42 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
     }
 
     refreshSSLGrid() {
-        this.sslGrid.instance.refresh();
+        this._tenantSslCertificateService.getTenantSslCertificates()
+        .subscribe(result => {
+            this.sslGridDataSource = result;
+            this.sslGrid.instance.refresh();
+        });
     }
 
     refreshSSLBindingGrid() {
-        this.customDomainsGrid.instance.refresh();
+        this._tenantHostService.getSslBindings()
+            .subscribe(result => {
+                this.sslBindingsDataSource = result;
+                this.customDomainsGrid.instance.refresh();
+            });
     }
 
-    deleteCertificate(event) {
-        let d = $.Deferred();
-        
-        this._tenantSslCertificateService.deleteTenantSslCertificate(event.data.id)
-            .subscribe(result => {
-                d.resolve();
-                this.notify.info(this.l('SavedSuccessfully'));
-            }, (error) => {
-                d.reject(error);
-            });
-        event.cancel = d.promise();
+    deleteCertificate(row, event) {
+        abp.message.confirm("", this.l('DeleteConfiramtion'), result => {
+            if (result) {
+                this._tenantSslCertificateService.deleteTenantSslCertificate(row.data.id)
+                    .subscribe(result => {
+                        this.notify.info(this.l('SavedSuccessfully'));
+                        this.refreshSSLBindingGrid();
+                    });
+            }
+        });
     }
 
-    deleteSSLBinding(event) {
-        let d = $.Deferred();
-
-        this._tenantHostService.deleteSslBinding(event.data.hostType)
-            .subscribe(result => {
-                d.resolve();
-                this.notify.info(this.l('SavedSuccessfully'));
-            }, (error) => {
-                d.reject(error);
-            });
-        event.cancel = d.promise();
+    deleteSSLBinding(row, event) {
+        abp.message.confirm("", this.l('DeleteConfiramtion'), result => {
+            if (result) {
+                this._tenantHostService.deleteSslBinding(row.data.hostType)
+                    .subscribe(result => {
+                        this.notify.info(this.l('SavedSuccessfully'));
+                        this.refreshSSLBindingGrid();
+                    });
+            }
+        });
     }
 }
