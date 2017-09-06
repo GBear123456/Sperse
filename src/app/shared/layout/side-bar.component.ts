@@ -5,6 +5,9 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
 import { Router, NavigationStart  } from '@angular/router';
 
+import * as _ from 'underscore';
+import * as moment from 'moment';
+
 @Component({
   templateUrl: './side-bar.component.html',
 	styleUrls: ['./side-bar.component.less'],
@@ -37,14 +40,62 @@ export class SideBarComponent extends AppComponentBase {
     });
   }
 
+  excludeFilter(event, filter) {
+    filter.value = '';
+    _.each(filter.items, (val, key) => {
+      filter.items[key] = 
+        typeof(val) == 'string' ? '': true;            
+    });
+    this._filtersService.change(filter);
+    event.stopPropagation();    
+  }
+
+  showSelectedFilters() {
+    this.filters.forEach((filter) => {
+      let isBoolValues = false;
+      let values = _.values(_.mapObject(
+        filter.items, (val, key) => { 
+          let caption = this.capitalize(key);
+          isBoolValues = typeof(val) == 'boolean';        
+          return (typeof(val) == 'string') && val 
+            || isBoolValues && val && caption
+            || val.getDate && (caption + ': ' + 
+              moment(val).format('l'));
+        })
+      ).filter(Boolean);
+      if (!isBoolValues || (values.length 
+        != _.values(filter.items).length)
+      )
+        filter.value = values.join(', ');
+    });
+  }
+
 	filterApply(event) {    
-    this._filtersService.change(this.activeFilter);
+    this.showSelectedFilters();
+
+    this._filtersService
+      .change(this.activeFilter);
     this.activeFilter = undefined;
-	}
+
+    event.stopPropagation && 
+    event.stopPropagation();    
+	}  
+
+  showFilterDialog(event, filter){
+    this.activeFilter = filter;
+
+    event.stopPropagation();
+  }
 
   hideFilterDialog(event) {
-    /* !!VP need to define correct check for close */
-    //if (!this._eref.nativeElement.contains(event.target)) 
-    //  this.activeFilter = undefined;
+    let sideBar = this._eref.nativeElement
+      .querySelector('.sidebar-filters'); 
+    if (sideBar) {    
+      let rect =  sideBar.getBoundingClientRect();
+      if (rect.top > event.clientY || rect.bottom < event.clientY ||
+        rect.left > event.clientX || rect.right < event.clientX
+      )   
+        this.activeFilter = undefined;    
+    }
   }
 }

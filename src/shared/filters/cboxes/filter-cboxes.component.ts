@@ -1,12 +1,14 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { FilterComponent } from '../filter.model';
 
 @Component({
   templateUrl: './filter-cboxes.component.html',
 	styleUrls: ['./filter-cboxes.component.less']
 })
-export class FilterCBoxesComponent extends AppComponentBase implements OnInit {
+export class FilterCBoxesComponent extends AppComponentBase implements OnInit, FilterComponent {
   items: {};   
+	apply: (event) => void;
   selectAll: boolean;
 	
   constructor(injector: Injector) {

@@ -10,11 +10,11 @@ export class AdDirective {
 }
 
 @Component({
-  templateUrl: './filter.component.html',
-	styleUrls: ['./filter.component.less'],
+  templateUrl: './filter.manager.component.html',
+	styleUrls: ['./filter.manager.component.less'],
   selector: 'filter'
 })
-export class FilterComponentManager extends AppComponentBase {
+export class FilterManagerComponent extends AppComponentBase {
   @ViewChild(AdDirective) adHost: AdDirective;
 
   private _config: FilterModel;

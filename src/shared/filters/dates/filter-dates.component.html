@@ -1,0 +1,15 @@
+<div class="wrapper">
+  <ng-template ngFor let-item [ngForOf]="getItems()" let-i="index">
+    <dx-date-box
+      name="item"    
+      type="date"
+      [(value)]="items[item]"
+      placeholder="{{l(capitalize(item))}}"
+      [displayFormat]="dd/MM/yyyy"
+      [showClearButton]="true"
+      (onEnterKey)="apply($event)"
+      (onFocusIn)="onFocusIn($event)"
+      (onKeyDown)="validateDate($event)">
+    </dx-date-box>  
+  </ng-template>
+</div>

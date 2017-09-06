@@ -7,8 +7,9 @@ export interface FilterComponent {
 
 export class FilterModel {
   component: Type<any>;
-  operator: string;
+  operator: any;
   caption: string;  
-  items?: object;
-  query?: Array<string>[];
+  value?: string;
+  field?: any;
+  items?: any;
 }

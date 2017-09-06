@@ -3,15 +3,15 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-
 import { FiltersService } from './filters.service';
 
-import { FilterComponentManager, AdDirective } from './filter.component';
+import { FilterManagerComponent, AdDirective } from './filter.manager.component';
 import { FilterStatesComponent } from './states/filter-states.component';
 import { FilterInputsComponent } from './inputs/filter-inputs.component';
 import { FilterCBoxesComponent } from './cboxes/filter-cboxes.component';
+import { FilterDatesComponent } from './dates/filter-dates.component';
 
-import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule } from 'devextreme-angular';
+import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule } from 'devextreme-angular';
 
 @NgModule({
   imports: [
@@ -20,22 +20,25 @@ import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule } from 'devextreme
 
 		DxCheckBoxModule,
     DxSelectBoxModule,
-    DxTextBoxModule
+    DxTextBoxModule,
+    DxDateBoxModule
 	],
   declarations: [
-    FilterComponentManager,
+    FilterManagerComponent,
 		FilterStatesComponent,
     FilterInputsComponent,
     FilterCBoxesComponent,
+    FilterDatesComponent,
     AdDirective
   ],
   entryComponents: [
     FilterStatesComponent,
     FilterCBoxesComponent,
-    FilterInputsComponent
+    FilterInputsComponent,
+    FilterDatesComponent
   ],
   exports: [
-		FilterComponentManager
+		FilterManagerComponent
   ]
 })
 export class FiltersModule {

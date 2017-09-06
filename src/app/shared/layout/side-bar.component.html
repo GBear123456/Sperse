@@ -2,7 +2,8 @@
 	<b>{{l('SideBarFilterHeader')}}</b>
 	<div class="filter-link">
     <ng-template ngFor let-filter [ngForOf]="filters" let-i="index">
-			<a href="javascript:;" (click)="activeFilter = filter">{{l('FilterBy' + capitalize(filter.caption) + 'Header')}}</a>
+			<a href="javascript:;" (click)="showFilterDialog($event, filter)">{{l('FilterBy' + capitalize(filter.caption) + 'Header')}}</a>
+      <span *ngIf="filter.value">{{filter.value}}<i class="fa fa-minus-circle" aria-hidden="true" (click)="excludeFilter($event, filter)"></i></span>
 		</ng-template>
 	</div>
 </div>
