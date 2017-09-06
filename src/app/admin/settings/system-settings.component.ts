@@ -4,6 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { TenantSslCertificateServiceProxy, TenantHostServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DxFileUploaderComponent, DxTextBoxComponent, DxButtonComponent, DxDataGridComponent } from 'devextreme-angular';
 import { UploadSSLCertificateModalComponent } from './modals/upload-ssl-cert-modal.component';
+import { AddOrEditSSLBindingModal } from './modals/add-or-edit-ssl-binding-modal.component';
 
 @Component({
     templateUrl: "./system-settings.component.html",
@@ -13,13 +14,15 @@ import { UploadSSLCertificateModalComponent } from './modals/upload-ssl-cert-mod
 export class SystemSettingsComponent extends AppComponentBase implements OnInit {
 
     @ViewChild('customDomainsGrid') customDomainsGrid: DxDataGridComponent;
+    @ViewChild('addOrEditSSLBindingModal') addOrEditSSLBindingModal: AddOrEditSSLBindingModal;
+    
     @ViewChild('sslGrid') sslGrid: DxDataGridComponent;
     @ViewChild('uploadSSLCertificateModal') uploadSSLCertificateModal: UploadSSLCertificateModalComponent;
 
     public sslGridDataSource: any;
     public sslBindingsDataSource: any;
 
-    hostTypes = [
+    public hostTypes: any = [
         { "Id": 0, "Name": "Platform API" },
         { "Id": 1, "Name": "Platform UI" },
         { "Id": 2, "Name": "Funding UI" }
@@ -46,6 +49,10 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
 
     showSSLDialog() {
         this.uploadSSLCertificateModal.show();
+    }
+
+    showSSLBindingDialog() {
+        this.addOrEditSSLBindingModal.show();
     }
 
     refreshSSLGrid() {
