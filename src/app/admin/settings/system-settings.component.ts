@@ -1,7 +1,7 @@
 import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { TenantSslCertificateServiceProxy, TenantHostServiceProxy } from '@shared/service-proxies/service-proxies';
+import { TenantSslCertificateServiceProxy, TenantHostServiceProxy, TenantSslBindingInfo } from '@shared/service-proxies/service-proxies';
 import { DxFileUploaderComponent, DxTextBoxComponent, DxButtonComponent, DxDataGridComponent } from 'devextreme-angular';
 import { UploadSSLCertificateModalComponent } from './modals/upload-ssl-cert-modal.component';
 import { AddOrEditSSLBindingModal } from './modals/add-or-edit-ssl-binding-modal.component';
@@ -45,8 +45,10 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
         this.uploadSSLCertificateModal.show();
     }
 
-    showSSLBindingDialog() {
-        this.addOrEditSSLBindingModal.show();
+    showSSLBindingDialog(row) {
+        let data: TenantSslBindingInfo;
+        if (row) data = row.data;
+        this.addOrEditSSLBindingModal.show(data);
     }
 
     refreshSSLGrid() {

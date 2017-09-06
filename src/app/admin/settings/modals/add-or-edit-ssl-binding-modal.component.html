@@ -10,20 +10,20 @@
           <span aria-hidden="true">&times;</span>
         </button>
         <h4 class="modal-title">
-            <span>{{l("AddSSLBinding")}}</span>
+            <span>{{titleText}}</span>
         </h4>
       </div>
 
       <div class="modal-body">
         <div class="dx-field">
-            <dx-select-box [(value)]="model.tenantHostType" [dataSource]="hostTypes" [placeholder]="l('Type')"
+            <dx-select-box [(value)]="model.tenantHostType" [dataSource]="hostTypes" [placeholder]="l('Type')" [readOnly]="editing"
                             valueExpr="Id" displayExpr="Name">
             </dx-select-box>
         </div>
 
         <div class="dx-field">
             <dx-text-box type="text" name="DomainName" placeholder="{{l('HostName')}}"
-                            maxlength="256"
+                            maxlength="256" [readOnly]="editing"
                             [(value)]="model.domainName">
             </dx-text-box>
         </div>
