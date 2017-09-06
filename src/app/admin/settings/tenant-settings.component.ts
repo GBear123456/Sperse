@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { TenantSettingsServiceProxy, HostSettingsServiceProxy, DefaultTimezoneScope, TenantSettingsEditDto, SendTestEmailInput, TenantSettingsCreditReportServiceProxy, IdcsSettingsDto } from '@shared/service-proxies/service-proxies';
+import { TenantSettingsServiceProxy, HostSettingsServiceProxy, DefaultTimezoneScope, TenantSettingsEditDto, SendTestEmailInput, TenantSettingsCreditReportServiceProxy, IdcsSettingsDto, TenantPaymentSettingsServiceProxy, BaseCommercePaymentSettings } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -19,7 +19,6 @@ import * as moment from "moment";
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit {
 
-
     usingDefaultTimeZone: boolean = false;
     initialTimeZone: string = null;
     testEmailAddress: string = undefined;
@@ -29,7 +28,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
     activeTabIndex: number = (abp.clock.provider.supportsMultipleTimezone) ? 0 : 1;
     loading: boolean = false;
     settings: TenantSettingsEditDto = undefined;
-    idcsSettings: IdcsSettingsDto = undefined;
+    idcsSettings: IdcsSettingsDto = new IdcsSettingsDto();
+    baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
 
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('CreditReportFeature');
 
@@ -44,6 +44,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         injector: Injector,
         private _tenantSettingsService: TenantSettingsServiceProxy,
         private _tenantSettingsCreditReportService: TenantSettingsCreditReportServiceProxy,
+        private _tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private _appSessionService: AppSessionService,
         private _tokenService: TokenService
     ) {
@@ -60,16 +61,22 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         this.loading = true;
         this._tenantSettingsService.getAllSettings()
             .finally(() => {
-                if (this.isCreditReportFeatureEnabled) {
-                    this._tenantSettingsCreditReportService.getIdcsSettings()
-                        .finally(() => this.loading = false)
-                        .subscribe((result: IdcsSettingsDto) => {
-                            this.idcsSettings = result;
-                        });
-                }
-                else {
-                    this.loading = false;
-                }
+                this._tenantPaymentSettingsService.getBaseCommercePaymentSettings()
+                    .finally(() => {
+                        if (this.isCreditReportFeatureEnabled) {
+                            this._tenantSettingsCreditReportService.getIdcsSettings()
+                                .finally(() => this.loading = false)
+                                .subscribe((result: IdcsSettingsDto) => {
+                                    this.idcsSettings = result;
+                                });
+                        }
+                        else {
+                            this.loading = false;
+                        }
+                    })
+                    .subscribe((result: BaseCommercePaymentSettings) => {
+                        this.baseCommercePaymentSettings = result;
+                    });
             })
             .subscribe((result: TenantSettingsEditDto) => {
                 this.settings = result;
@@ -149,18 +156,21 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
 
     saveAll(): void {
         this._tenantSettingsService.updateAllSettings(this.settings).subscribe(() => {
-            if (this.isCreditReportFeatureEnabled) {
-                this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings).subscribe(() => {
-                    this.notify.info(this.l('SavedSuccessfully'));
-                });
-            }
-            else this.notify.info(this.l('SavedSuccessfully'));
+            this._tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings).subscribe(() => {
 
-            if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone && this.initialTimeZone !== this.settings.general.timezone) {
-                this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
-                    window.location.reload();
-                });
-            }
+                if (this.isCreditReportFeatureEnabled) {
+                    this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings).subscribe(() => {
+                        this.notify.info(this.l('SavedSuccessfully'));
+                    });
+                }
+                else this.notify.info(this.l('SavedSuccessfully'));
+
+                if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone && this.initialTimeZone !== this.settings.general.timezone) {
+                    this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
+                        window.location.reload();
+                    });
+                }
+            });
         });
     };
 

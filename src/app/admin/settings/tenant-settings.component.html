@@ -22,7 +22,7 @@
             <timezone-combo [(selectedTimeZone)]="settings.general.timezone" defaultTimezoneScope="{{defaultTimezoneScope}}"></timezone-combo>
           </div>
         </tab>
-            <tab heading="{{l('Appearance')}}" [active]="activeTabIndex == 1">
+        <tab heading="{{l('Appearance')}}" [active]="activeTabIndex == 1">
           <div class="row">
             <div class="col-md-6">
               <h4>{{l("ApplicationLogo")}}</h4>
@@ -49,7 +49,7 @@
             </div>
           </div>
         </tab>
-                <tab heading="{{l('UserManagement')}}">
+        <tab heading="{{l('UserManagement')}}">
           <div>
             <h4>{{l("FormBasedRegistration")}}</h4>
             <div class="md-checkbox-list">
@@ -327,7 +327,7 @@
             </div>
           </div>
         </tab>
-        <tab heading="{{l('IDCS Config')}}" *ngIf="isCreditReportFeatureEnabled">
+        <tab heading="{{l('IDCS Link')}}" *ngIf="isCreditReportFeatureEnabled">
           <div>
             <div class="form-group form-md-line-input form-md-floating-label no-hint">
               <input type="text" name="RequestSource" class="form-control" [ngClass]="{'edited':idcsSettings.requestSource}" [(ngModel)]="idcsSettings.requestSource" maxlength="128">
@@ -350,6 +350,32 @@
               <label>{{l("Branding")}}</label>
             </div>
           </div>
+        </tab>
+        <tab heading="{{l('Base Commerce Link')}}">
+            <div>
+                <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                    <input type="text" name="UserName" class="form-control" [ngClass]="{'edited':baseCommercePaymentSettings.userName}" [(ngModel)]="baseCommercePaymentSettings.userName" maxlength="128">
+                    <label>{{l("User Name")}}</label>
+                </div>
+                <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                    <input type="password" name="Password" class="form-control" [ngClass]="{'edited':baseCommercePaymentSettings.password}" [(ngModel)]="baseCommercePaymentSettings.password" maxlength="128">
+                    <label>{{l("Password")}}</label>
+                </div>
+                <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                    <input type="text" name="Key" class="form-control" [ngClass]="{'edited':baseCommercePaymentSettings.key}" [(ngModel)]="baseCommercePaymentSettings.key" maxlength="128">
+                    <label>{{l("Key")}}</label>
+                </div>
+                <div class="md-checkbox">
+                    <input id="IsSandBox" class="md-check" type="checkbox" name="IsSandBox" [(ngModel)]="baseCommercePaymentSettings.sandBox">
+                    <label for="IsSandBox">
+                        <span class="inc"></span>
+                        <span class="check"></span>
+                        <span class="box"></span>
+                        {{l("SandBox")}}
+                    </label>
+                    <span class="help-block">{{l("Environment")}}</span>
+                </div>
+            </div>
         </tab>
       </tabset>
     </div>

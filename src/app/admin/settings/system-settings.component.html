@@ -20,7 +20,7 @@
                 <div id="SSLTable">
                     <dx-data-grid id="gridContainer"
                                   #sslGrid
-                                  [dataSource]="dataSource"
+                                  [dataSource]="sslGridDataSource"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
@@ -34,6 +34,32 @@
                     </dx-data-grid>
                 </div>
                 <uploadSSLCertificateModal #uploadSSLCertificateModal (modalSave)="refreshSSLGrid()"></uploadSSLCertificateModal>
+            </tab>
+            <tab heading="{{l('CustomDomains')}}" (select)="refreshSSLBindingGrid()">
+                <div class="text-right">
+                    <button class="btn btn-layout" (click)="showSSLBindingDialog()"><i class="fa fa-plus"></i>{{l("AddSSLBinding")}}</button>
+                </div>
+                <div id="CustomDomainsTable">
+                    <dx-data-grid id="gridContainer"
+                                  #customDomainsGrid
+                                  [dataSource]="sslBindingsDataSource"
+                                  [allowColumnReordering]="true"
+                                  [allowColumnResizing]="true"
+                                  (onRowRemoving)="deleteSSLBinding($event)">
+                        <dxo-editing mode="row" [allowDeleting]="true"></dxo-editing>
+
+                        <dxi-column dataField="id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="sslCertificateId" caption="{{l('SslCertificateId')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="hostName" caption="{{l('HostName')}}"></dxi-column>
+                        <dxi-column dataField="hostType" caption="{{l('Type')}}">
+                            <dxo-lookup [dataSource]="hostTypes" valueExpr="Id" displayExpr="Name"></dxo-lookup>
+                        </dxi-column>
+                        <dxi-column dataField="isActive" caption="{{l('Active')}}"></dxi-column>
+                        <dxi-column dataField="sslCertificateExpiration" caption="{{l('ExpirationDate')}}" dataType="date" format="shortDateShortTime"></dxi-column>
+                        <dxi-column dataField="sslCertificateThumbprint" caption="{{l('Thumbprint')}}"></dxi-column>
+                    </dx-data-grid>
+                </div>
+                <addOrEditSSLBindingModal #addOrEditSSLBindingModal [hostTypes]="hostTypes" (modalSave)="refreshSSLBindingGrid()"></addOrEditSSLBindingModal>
             </tab>
         </tabset>
     </div>
