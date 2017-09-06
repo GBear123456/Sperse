@@ -1231,6 +1231,54 @@ export class ContactAddressServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getAddressUsageTypes(): Observable<ListResultDtoOfAddressUsageTypeDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactAddress/GetAddressUsageTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetAddressUsageTypes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetAddressUsageTypes(response_);
+                } catch (e) {
+                    return <Observable<ListResultDtoOfAddressUsageTypeDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ListResultDtoOfAddressUsageTypeDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetAddressUsageTypes(response: Response): Observable<ListResultDtoOfAddressUsageTypeDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ListResultDtoOfAddressUsageTypeDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ListResultDtoOfAddressUsageTypeDto.fromJS(resultData200) : new ListResultDtoOfAddressUsageTypeDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ListResultDtoOfAddressUsageTypeDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -1385,6 +1433,256 @@ export class ContactEmailServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getEmailUsageTypes(): Observable<ListResultDtoOfEmailUsageTypeDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactEmail/GetEmailUsageTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetEmailUsageTypes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetEmailUsageTypes(response_);
+                } catch (e) {
+                    return <Observable<ListResultDtoOfEmailUsageTypeDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ListResultDtoOfEmailUsageTypeDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetEmailUsageTypes(response: Response): Observable<ListResultDtoOfEmailUsageTypeDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ListResultDtoOfEmailUsageTypeDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ListResultDtoOfEmailUsageTypeDto.fromJS(resultData200) : new ListResultDtoOfEmailUsageTypeDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ListResultDtoOfEmailUsageTypeDto>(<any>null);
+    }
+}
+
+@Injectable()
+export class ContactLinkServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    createContactLink(input: CreateContactLinkInput): Observable<CreateContactLinkOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactLink/CreateContactLink";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateContactLink(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateContactLink(response_);
+                } catch (e) {
+                    return <Observable<CreateContactLinkOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateContactLinkOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateContactLink(response: Response): Observable<CreateContactLinkOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CreateContactLinkOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateContactLinkOutput.fromJS(resultData200) : new CreateContactLinkOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CreateContactLinkOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateContactLink(input: UpdateContactLinkInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactLink/UpdateContactLink";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateContactLink(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateContactLink(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateContactLink(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteContactLink(contactId: number, id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactLink/DeleteContactLink?";
+        if (contactId !== undefined)
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteContactLink(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteContactLink(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteContactLink(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getContactLinkTypes(): Observable<ListResultDtoOfContactLinkTypeDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactLink/GetContactLinkTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetContactLinkTypes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetContactLinkTypes(response_);
+                } catch (e) {
+                    return <Observable<ListResultDtoOfContactLinkTypeDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ListResultDtoOfContactLinkTypeDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetContactLinkTypes(response: Response): Observable<ListResultDtoOfContactLinkTypeDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ListResultDtoOfContactLinkTypeDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ListResultDtoOfContactLinkTypeDto.fromJS(resultData200) : new ListResultDtoOfContactLinkTypeDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ListResultDtoOfContactLinkTypeDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -1538,6 +1836,54 @@ export class ContactPhoneServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getPhoneUsageTypes(): Observable<ListResultDtoOfPhoneUsageTypeDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactPhone/GetPhoneUsageTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetPhoneUsageTypes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetPhoneUsageTypes(response_);
+                } catch (e) {
+                    return <Observable<ListResultDtoOfPhoneUsageTypeDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ListResultDtoOfPhoneUsageTypeDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetPhoneUsageTypes(response: Response): Observable<ListResultDtoOfPhoneUsageTypeDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ListResultDtoOfPhoneUsageTypeDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ListResultDtoOfPhoneUsageTypeDto.fromJS(resultData200) : new ListResultDtoOfPhoneUsageTypeDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ListResultDtoOfPhoneUsageTypeDto>(<any>null);
     }
 }
 
@@ -6382,6 +6728,111 @@ export class TenantHostServiceProxy {
 }
 
 @Injectable()
+export class TenantPaymentSettingsServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getBaseCommercePaymentSettings(): Observable<BaseCommercePaymentSettings> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantPaymentSettings/GetBaseCommercePaymentSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetBaseCommercePaymentSettings(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetBaseCommercePaymentSettings(response_);
+                } catch (e) {
+                    return <Observable<BaseCommercePaymentSettings>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<BaseCommercePaymentSettings>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetBaseCommercePaymentSettings(response: Response): Observable<BaseCommercePaymentSettings> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: BaseCommercePaymentSettings = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? BaseCommercePaymentSettings.fromJS(resultData200) : new BaseCommercePaymentSettings();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<BaseCommercePaymentSettings>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateBaseCommercePaymentSettings(input: BaseCommercePaymentSettings): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantPaymentSettings/UpdateBaseCommercePaymentSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateBaseCommercePaymentSettings(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateBaseCommercePaymentSettings(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateBaseCommercePaymentSettings(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class TenantRegistrationServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -9913,6 +10364,88 @@ export interface IUpdateContactAddressInput {
     ownershipTypeId: string;
 }
 
+export class ListResultDtoOfAddressUsageTypeDto implements IListResultDtoOfAddressUsageTypeDto {
+    items: AddressUsageTypeDto[];
+
+    constructor(data?: IListResultDtoOfAddressUsageTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(AddressUsageTypeDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ListResultDtoOfAddressUsageTypeDto {
+        let result = new ListResultDtoOfAddressUsageTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IListResultDtoOfAddressUsageTypeDto {
+    items: AddressUsageTypeDto[];
+}
+
+export class AddressUsageTypeDto implements IAddressUsageTypeDto {
+    id: string;
+    name: string;
+
+    constructor(data?: IAddressUsageTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): AddressUsageTypeDto {
+        let result = new AddressUsageTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IAddressUsageTypeDto {
+    id: string;
+    name: string;
+}
+
 export class CreateContactEmailInput implements ICreateContactEmailInput {
     contactId: number;
     emailAddress: string;
@@ -10044,6 +10577,307 @@ export interface IUpdateContactEmailInput {
     emailAddress: string;
     comment: string;
     usageTypeId: string;
+}
+
+export class ListResultDtoOfEmailUsageTypeDto implements IListResultDtoOfEmailUsageTypeDto {
+    items: EmailUsageTypeDto[];
+
+    constructor(data?: IListResultDtoOfEmailUsageTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(EmailUsageTypeDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ListResultDtoOfEmailUsageTypeDto {
+        let result = new ListResultDtoOfEmailUsageTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IListResultDtoOfEmailUsageTypeDto {
+    items: EmailUsageTypeDto[];
+}
+
+export class EmailUsageTypeDto implements IEmailUsageTypeDto {
+    id: string;
+    name: string;
+
+    constructor(data?: IEmailUsageTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): EmailUsageTypeDto {
+        let result = new EmailUsageTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IEmailUsageTypeDto {
+    id: string;
+    name: string;
+}
+
+export class CreateContactLinkInput implements ICreateContactLinkInput {
+    contactId: number;
+    url: string;
+    comment: string;
+    linkTypeId: string;
+
+    constructor(data?: ICreateContactLinkInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.url = data["url"];
+            this.comment = data["comment"];
+            this.linkTypeId = data["linkTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactLinkInput {
+        let result = new CreateContactLinkInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["url"] = this.url;
+        data["comment"] = this.comment;
+        data["linkTypeId"] = this.linkTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactLinkInput {
+    contactId: number;
+    url: string;
+    comment: string;
+    linkTypeId: string;
+}
+
+export class CreateContactLinkOutput implements ICreateContactLinkOutput {
+    id: number;
+
+    constructor(data?: ICreateContactLinkOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactLinkOutput {
+        let result = new CreateContactLinkOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateContactLinkOutput {
+    id: number;
+}
+
+export class UpdateContactLinkInput implements IUpdateContactLinkInput {
+    id: number;
+    contactId: number;
+    url: string;
+    comment: string;
+    linkTypeId: string;
+
+    constructor(data?: IUpdateContactLinkInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.contactId = data["contactId"];
+            this.url = data["url"];
+            this.comment = data["comment"];
+            this.linkTypeId = data["linkTypeId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateContactLinkInput {
+        let result = new UpdateContactLinkInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["contactId"] = this.contactId;
+        data["url"] = this.url;
+        data["comment"] = this.comment;
+        data["linkTypeId"] = this.linkTypeId;
+        return data; 
+    }
+}
+
+export interface IUpdateContactLinkInput {
+    id: number;
+    contactId: number;
+    url: string;
+    comment: string;
+    linkTypeId: string;
+}
+
+export class ListResultDtoOfContactLinkTypeDto implements IListResultDtoOfContactLinkTypeDto {
+    items: ContactLinkTypeDto[];
+
+    constructor(data?: IListResultDtoOfContactLinkTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(ContactLinkTypeDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ListResultDtoOfContactLinkTypeDto {
+        let result = new ListResultDtoOfContactLinkTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IListResultDtoOfContactLinkTypeDto {
+    items: ContactLinkTypeDto[];
+}
+
+export class ContactLinkTypeDto implements IContactLinkTypeDto {
+    id: string;
+    name: string;
+    isSocialNetwork: boolean;
+
+    constructor(data?: IContactLinkTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.isSocialNetwork = data["isSocialNetwork"];
+        }
+    }
+
+    static fromJS(data: any): ContactLinkTypeDto {
+        let result = new ContactLinkTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["isSocialNetwork"] = this.isSocialNetwork;
+        return data; 
+    }
+}
+
+export interface IContactLinkTypeDto {
+    id: string;
+    name: string;
+    isSocialNetwork: boolean;
 }
 
 export class CreateContactPhoneInput implements ICreateContactPhoneInput {
@@ -10185,6 +11019,88 @@ export interface IUpdateContactPhoneInput {
     phoneExtension: string;
     comment: string;
     usageTypeId: string;
+}
+
+export class ListResultDtoOfPhoneUsageTypeDto implements IListResultDtoOfPhoneUsageTypeDto {
+    items: PhoneUsageTypeDto[];
+
+    constructor(data?: IListResultDtoOfPhoneUsageTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(PhoneUsageTypeDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ListResultDtoOfPhoneUsageTypeDto {
+        let result = new ListResultDtoOfPhoneUsageTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IListResultDtoOfPhoneUsageTypeDto {
+    items: PhoneUsageTypeDto[];
+}
+
+export class PhoneUsageTypeDto implements IPhoneUsageTypeDto {
+    id: string;
+    name: string;
+
+    constructor(data?: IPhoneUsageTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): PhoneUsageTypeDto {
+        let result = new PhoneUsageTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IPhoneUsageTypeDto {
+    id: string;
+    name: string;
 }
 
 export class CreditReportOutput implements ICreditReportOutput {
@@ -17889,8 +18805,7 @@ export interface ITenantSslBindingInfo {
 
 export class AddSslBindingInput implements IAddSslBindingInput {
     tenantHostType: AddSslBindingInputTenantHostType;
-    domain: string;
-    subDomain: string;
+    domainName: string;
     sslCertificateId: number;
 
     constructor(data?: IAddSslBindingInput) {
@@ -17905,8 +18820,7 @@ export class AddSslBindingInput implements IAddSslBindingInput {
     init(data?: any) {
         if (data) {
             this.tenantHostType = data["tenantHostType"];
-            this.domain = data["domain"];
-            this.subDomain = data["subDomain"];
+            this.domainName = data["domainName"];
             this.sslCertificateId = data["sslCertificateId"];
         }
     }
@@ -17920,8 +18834,7 @@ export class AddSslBindingInput implements IAddSslBindingInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tenantHostType"] = this.tenantHostType;
-        data["domain"] = this.domain;
-        data["subDomain"] = this.subDomain;
+        data["domainName"] = this.domainName;
         data["sslCertificateId"] = this.sslCertificateId;
         return data; 
     }
@@ -17929,8 +18842,7 @@ export class AddSslBindingInput implements IAddSslBindingInput {
 
 export interface IAddSslBindingInput {
     tenantHostType: AddSslBindingInputTenantHostType;
-    domain: string;
-    subDomain: string;
+    domainName: string;
     sslCertificateId: number;
 }
 
@@ -18010,6 +18922,53 @@ export class UpdateSslBindingIsActiveInput implements IUpdateSslBindingIsActiveI
 export interface IUpdateSslBindingIsActiveInput {
     tenantHostType: UpdateSslBindingIsActiveInputTenantHostType;
     isActive: boolean;
+}
+
+export class BaseCommercePaymentSettings implements IBaseCommercePaymentSettings {
+    userName: string;
+    password: string;
+    key: string;
+    sandBox: boolean;
+
+    constructor(data?: IBaseCommercePaymentSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userName = data["userName"];
+            this.password = data["password"];
+            this.key = data["key"];
+            this.sandBox = data["sandBox"];
+        }
+    }
+
+    static fromJS(data: any): BaseCommercePaymentSettings {
+        let result = new BaseCommercePaymentSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userName"] = this.userName;
+        data["password"] = this.password;
+        data["key"] = this.key;
+        data["sandBox"] = this.sandBox;
+        return data; 
+    }
+}
+
+export interface IBaseCommercePaymentSettings {
+    userName: string;
+    password: string;
+    key: string;
+    sandBox: boolean;
 }
 
 export class RegisterTenantInput implements IRegisterTenantInput {
