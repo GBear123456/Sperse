@@ -59,7 +59,7 @@ export class SideBarComponent extends AppComponentBase {
           isBoolValues = typeof(val) == 'boolean';        
           return (typeof(val) == 'string') && val 
             || isBoolValues && val && caption
-            || val.getDate && (caption + ': ' + 
+            || val && val['getDate'] && (caption + ': ' + 
               moment(val).format('l'));
         })
       ).filter(Boolean);
