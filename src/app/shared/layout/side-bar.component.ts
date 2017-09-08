@@ -42,9 +42,11 @@ export class SideBarComponent extends AppComponentBase {
 
   excludeFilter(event, filter) {
     filter.value = '';
-    _.each(filter.items, (val, key) => {
-      filter.items[key] = 
-        typeof(val) == 'string' ? '': true;            
+    _.each(filter.items, (val, key) => {      
+      if ((typeof(val) == 'string') || (val instanceof Date))
+        filter.items[key] = '';
+      else if (typeof(val) == 'boolean')
+        filter.items[key] = true;        
     });
     this._filtersService.change(filter);
     event.stopPropagation();    
