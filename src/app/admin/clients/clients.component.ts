@@ -9,6 +9,7 @@ import { FilterModel } from '@shared/filters/filter.model';
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCBoxesComponent } from '@shared/filters/cboxes/filter-cboxes.component';
+import { FilterDatesComponent } from '@shared/filters/dates/filter-dates.component';
 
 import { CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
@@ -18,6 +19,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
 import query from 'devextreme/data/query';
 
 import 'devextreme/data/odata/store';
+import * as _ from 'underscore';
 
 import * as moment from "moment";
 
@@ -30,6 +32,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
   @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
   @ViewChild('createOrEditClientModal') createOrEditClientModal: CreateOrEditClientModalComponent;
 	
+  private readonly dataSourceURI = 'Customer';
+  private filters: FilterModel[];
+
   constructor(
     injector: Injector,
 		private _filtersService: FiltersService,
@@ -44,7 +49,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 		this.dataSource = {
       store: {
         type: 'odata',
-        url: this.getODataURL('Customer'),
+        url: this.getODataURL(this.dataSourceURI),
         version: this.getODataVersion(),
         beforeSend: function (request) {
           request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
@@ -118,42 +123,80 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 			'all', 'active', 'archived'
 		];
 
-		this._filtersService.setup([
-			<FilterModel> {
-        component: FilterStatesComponent, 
-        operator: '=',
-        caption: 'states',   
-        items: {
-          country: '', 
-          state: ''
-        }
-      },
-			<FilterModel> {
-        component: FilterInputsComponent, 
-        operator: 'contains',
-        caption: 'name', 
-        items: {name: ''}
-      }, 
-			<FilterModel> {
-        component: FilterCBoxesComponent, 
-        operator: '=',
-        caption: 'status', 
-        items: {active: true, unactive: true}
-      }
-		]);
-
-    this._filtersService.apply((filter: FilterModel)=>{
-      this.processODataFilter(this.dataGrid.instance, filter, 
-        (filters)=>{ //!!VP need to consider after backend update
-          if (filter.caption == 'status') {
-            if (!filter.items['active'] || !filter.items['unactive'])
-              filters.push([this.capitalize(filter.caption), 
-                filter.operator, filter.items['active'] ? 'Active': '']);
-            return true;
+		this._filtersService.setup(
+      this.filters = [
+  			<FilterModel> {
+          component: FilterStatesComponent, 
+          caption: 'states',
+          items: {
+            countryId: '', 
+            stateId: ''
           }
+        },
+  			<FilterModel> {
+          component: FilterInputsComponent, 
+          operator: 'contains',
+          caption: 'name', 
+          items: {name: ''}
+        }, 
+	  		<FilterModel> {
+          component: FilterCBoxesComponent, 
+          caption: 'status', 
+          field: 'StatusId',
+          items: {active: true, inactive: true}
+        },
+			  <FilterModel> {
+          component: FilterDatesComponent, 
+          operator: {from: "ge", to: "le"},
+          caption: 'creation', 
+          field: 'CreationTime',
+          items: {from: '', to: ''}
+        }
+		  ]
+    );
+
+    this._filtersService.apply(() => {
+      this.processODataFilter(this.dataGrid.instance, 
+        this.dataSourceURI, this.filters, (filter) => { 
+          let filterMethod = this['filterBy' + 
+            this.capitalize(filter.caption)];
+          if (filterMethod)
+            return filterMethod.call(this, filter);
         }
       );
     });
+  }
+
+  filterByStates(filter) {
+    let filterData = {};
+    _.mapObject(filter.items, (val, key) => {
+        return val && (typeof(val) == 'string') 
+          && (filterData[this.capitalize(key)] = val);
+    });
+
+    if (Object.keys(filterData).length)
+      return {
+        Addresses: {
+          any: filterData
+        }
+      };
+  }
+
+  filterByCreation(filter) {
+    let data = {};
+    data[filter.field] = {};
+    _.each(filter.items, (val, key) => {
+      val && (data[filter.field][filter.operator[key]] = val);
+    });
+    return data;
+  }
+
+  filterByStatus(filter) {
+    if (!filter.items.active || !filter.items.inactive) {
+      let obj = {};
+      obj[filter.field] = filter.items.active ? 'A': 'I';
+      return obj;
+    }
   }
 
   ngAfterViewInit(): void {

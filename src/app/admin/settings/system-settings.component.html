@@ -25,17 +25,19 @@
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   (onRowRemoving)="deleteCertificate($event)">
-                        <dxo-editing mode="row" [allowDeleting]="true"></dxo-editing>
-
                         <dxi-column dataField="id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="hostNames" caption="{{l('HostName')}}"></dxi-column>
                         <dxi-column dataField="expiration" caption="{{l('ExpirationDate')}}" dataType="date" format="shortDateShortTime"></dxi-column>
                         <dxi-column dataField="thumbprint" caption="{{l('Thumbprint')}}"></dxi-column>
+                        <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                        <div *dxTemplate="let data of 'editDeleteTemplate'">
+                            <a class="dx-link" (click)="deleteCertificate(data, $event)">{{l('Delete')}}</a>
+                        </div> 
                     </dx-data-grid>
                 </div>
                 <uploadSSLCertificateModal #uploadSSLCertificateModal (modalSave)="refreshSSLGrid()"></uploadSSLCertificateModal>
             </tab>
-            <tab heading="{{l('CustomDomains')}}" (select)="refreshSSLBindingGrid()">
+            <tab heading="{{l('CustomDomains')}}">
                 <div class="text-right">
                     <button class="btn btn-layout" (click)="showSSLBindingDialog()"><i class="fa fa-plus"></i>{{l("AddSSLBinding")}}</button>
                 </div>
@@ -44,9 +46,7 @@
                                   #customDomainsGrid
                                   [dataSource]="sslBindingsDataSource"
                                   [allowColumnReordering]="true"
-                                  [allowColumnResizing]="true"
-                                  (onRowRemoving)="deleteSSLBinding($event)">
-                        <dxo-editing mode="row" [allowDeleting]="true"></dxo-editing>
+                                  [allowColumnResizing]="true">
 
                         <dxi-column dataField="id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="sslCertificateId" caption="{{l('SslCertificateId')}}" [visible]="false"></dxi-column>
@@ -57,6 +57,11 @@
                         <dxi-column dataField="isActive" caption="{{l('Active')}}"></dxi-column>
                         <dxi-column dataField="sslCertificateExpiration" caption="{{l('ExpirationDate')}}" dataType="date" format="shortDateShortTime"></dxi-column>
                         <dxi-column dataField="sslCertificateThumbprint" caption="{{l('Thumbprint')}}"></dxi-column>
+                        <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                        <div *dxTemplate="let data of 'editDeleteTemplate'">
+                            <a class="dx-link" (click)="showSSLBindingDialog(data, $event)">{{l('Edit')}}</a>
+                            <a class="dx-link" (click)="deleteSSLBinding(data, $event)">{{l('Delete')}}</a>
+                        </div> 
                     </dx-data-grid>
                 </div>
                 <addOrEditSSLBindingModal #addOrEditSSLBindingModal [hostTypes]="hostTypes" (modalSave)="refreshSSLBindingGrid()"></addOrEditSSLBindingModal>

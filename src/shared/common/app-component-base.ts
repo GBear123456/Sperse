@@ -9,6 +9,9 @@ import { MessageService } from '@abp/message/message.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
+import buildQuery from 'odata-query';
+import * as _ from 'underscore';
+
 export abstract class AppComponentBase {
   localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
 
@@ -55,31 +58,37 @@ export abstract class AppComponentBase {
 
 	capitalize = require('underscore.string/capitalize');
 
-	getODataURL = function(uri: String) {
-		return AppConsts.remoteServiceBaseUrl + '/odata/' + uri;
+	getODataURL(uri: String, filter?: Object) {
+		return AppConsts.remoteServiceBaseUrl + '/odata/' + 
+      uri + (filter ? buildQuery({ filter }): '');
 	}
 
-  getODataVersion = function() {
+  getODataVersion() {
     return 4;
   }
 
-  processODataFilter(grid, filter, checkCustom) {
-    let filters = grid.filter() || [],
-        caption = this.capitalize(filter.caption);
-    
-    for(let item in filter.items) {
-      let field = this.capitalize(item);
-      filters = filters.filter((fld)=>{
-        return [field, caption].indexOf(fld[0]) < 0;
-      });
+  advancedODataFilter(grid: any, uri: string, query: any[]) {
+    grid.getDataSource()['_store']['_url'] = 
+      this.getODataURL(uri, query);
+        
+    grid.refresh();
+  }
 
-      if (!checkCustom(filters) && filter.items[item])
-          filters.push([field, filter.operator, filter.items[item]]);
-    }
-
-    grid.clearFilter();
-    if (filters.length)
-      grid.filter(filters);
+  processODataFilter(grid, uri, filters, getCheckCustom) {       
+    this.advancedODataFilter(grid, uri, 
+      filters.map((filter) => {        
+        return getCheckCustom(filter) || _.pairs(filter.items)
+          .reduce((obj, pair)=>{
+            let val = pair.pop(), key = pair.pop(), operator = {};
+            if (filter.operator)
+              operator[filter.operator] = val;                      
+            if (val && (typeof(val) == 'string')) {
+              obj[this.capitalize(key)] =  filter.operator ? operator: val;                      
+            }
+            return obj;
+          }, {});
+      })
+    );
   }
 
   isGranted(permissionName: string): boolean {
