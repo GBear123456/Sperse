@@ -7244,7 +7244,7 @@ export class TenantSettingsCreditReportServiceProxy {
     /**
      * @return Success
      */
-    getIdcsSettings(): Observable<IdcsSettingsDto> {
+    getIdcsSettings(): Observable<IdcsSettings> {
         let url_ = this.baseUrl + "/api/services/CreditReport/TenantSettingsCreditReport/GetIdcsSettings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -7266,33 +7266,33 @@ export class TenantSettingsCreditReportServiceProxy {
                 try {
                     return this.processGetIdcsSettings(response_);
                 } catch (e) {
-                    return <Observable<IdcsSettingsDto>><any>Observable.throw(e);
+                    return <Observable<IdcsSettings>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<IdcsSettingsDto>><any>Observable.throw(response_);
+                return <Observable<IdcsSettings>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetIdcsSettings(response: Response): Observable<IdcsSettingsDto> {
+    protected processGetIdcsSettings(response: Response): Observable<IdcsSettings> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: IdcsSettingsDto = null;
+            let result200: IdcsSettings = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? IdcsSettingsDto.fromJS(resultData200) : new IdcsSettingsDto();
+            result200 = resultData200 ? IdcsSettings.fromJS(resultData200) : new IdcsSettings();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<IdcsSettingsDto>(<any>null);
+        return Observable.of<IdcsSettings>(<any>null);
     }
 
     /**
      * @return Success
      */
-    updateIdcsSettings(input: IdcsSettingsDto): Observable<void> {
+    updateIdcsSettings(input: IdcsSettings): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CreditReport/TenantSettingsCreditReport/UpdateIdcsSettings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -11166,6 +11166,7 @@ export class CreditReportDto implements ICreditReportDto {
     recommendations: RecommendationDto[];
     creditorContacts: CreditorContactDto[];
     consumerStatements: ConsumerStatementDto[];
+    publicInformation: PublicRecordDto[];
 
     constructor(data?: ICreditReportDto) {
         if (data) {
@@ -11209,6 +11210,11 @@ export class CreditReportDto implements ICreditReportDto {
                 for (let item of data["consumerStatements"])
                     this.consumerStatements.push(ConsumerStatementDto.fromJS(item));
             }
+            if (data["publicInformation"] && data["publicInformation"].constructor === Array) {
+                this.publicInformation = [];
+                for (let item of data["publicInformation"])
+                    this.publicInformation.push(PublicRecordDto.fromJS(item));
+            }
         }
     }
 
@@ -11251,6 +11257,11 @@ export class CreditReportDto implements ICreditReportDto {
             for (let item of this.consumerStatements)
                 data["consumerStatements"].push(item.toJSON());
         }
+        if (this.publicInformation && this.publicInformation.constructor === Array) {
+            data["publicInformation"] = [];
+            for (let item of this.publicInformation)
+                data["publicInformation"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -11263,6 +11274,7 @@ export interface ICreditReportDto {
     recommendations: RecommendationDto[];
     creditorContacts: CreditorContactDto[];
     consumerStatements: ConsumerStatementDto[];
+    publicInformation: PublicRecordDto[];
 }
 
 export class CreditBureauReportDto implements ICreditBureauReportDto {
@@ -11585,6 +11597,65 @@ export interface IConsumerStatementDto {
     bureau: string;
     date: moment.Moment;
     statement: string;
+}
+
+export class PublicRecordDto implements IPublicRecordDto {
+    title: string;
+    status: string;
+    amount: number;
+    dateReleased: moment.Moment;
+    publicRecordDetails: PublicRecordInfoDto[];
+
+    constructor(data?: IPublicRecordDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.title = data["title"];
+            this.status = data["status"];
+            this.amount = data["amount"];
+            this.dateReleased = data["dateReleased"] ? moment(data["dateReleased"].toString()) : <any>undefined;
+            if (data["publicRecordDetails"] && data["publicRecordDetails"].constructor === Array) {
+                this.publicRecordDetails = [];
+                for (let item of data["publicRecordDetails"])
+                    this.publicRecordDetails.push(PublicRecordInfoDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PublicRecordDto {
+        let result = new PublicRecordDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        data["status"] = this.status;
+        data["amount"] = this.amount;
+        data["dateReleased"] = this.dateReleased ? this.dateReleased.toISOString() : <any>undefined;
+        if (this.publicRecordDetails && this.publicRecordDetails.constructor === Array) {
+            data["publicRecordDetails"] = [];
+            for (let item of this.publicRecordDetails)
+                data["publicRecordDetails"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPublicRecordDto {
+    title: string;
+    status: string;
+    amount: number;
+    dateReleased: moment.Moment;
+    publicRecordDetails: PublicRecordInfoDto[];
 }
 
 export class CreditScoreDto implements ICreditScoreDto {
@@ -12002,6 +12073,85 @@ export interface IAddressDto {
     line2: string;
     line3: string;
     line4: string;
+}
+
+export class PublicRecordInfoDto implements IPublicRecordInfoDto {
+    bureau: string;
+    title: string;
+    type: string;
+    status: string;
+    amount: number;
+    dateFiledOrReported: moment.Moment;
+    referenceNo: string;
+    court: string;
+    dateVerified: moment.Moment;
+    dateUpdated: moment.Moment;
+    dateReleased: moment.Moment;
+    remarks: string;
+
+    constructor(data?: IPublicRecordInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.bureau = data["bureau"];
+            this.title = data["title"];
+            this.type = data["type"];
+            this.status = data["status"];
+            this.amount = data["amount"];
+            this.dateFiledOrReported = data["dateFiledOrReported"] ? moment(data["dateFiledOrReported"].toString()) : <any>undefined;
+            this.referenceNo = data["referenceNo"];
+            this.court = data["court"];
+            this.dateVerified = data["dateVerified"] ? moment(data["dateVerified"].toString()) : <any>undefined;
+            this.dateUpdated = data["dateUpdated"] ? moment(data["dateUpdated"].toString()) : <any>undefined;
+            this.dateReleased = data["dateReleased"] ? moment(data["dateReleased"].toString()) : <any>undefined;
+            this.remarks = data["remarks"];
+        }
+    }
+
+    static fromJS(data: any): PublicRecordInfoDto {
+        let result = new PublicRecordInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["bureau"] = this.bureau;
+        data["title"] = this.title;
+        data["type"] = this.type;
+        data["status"] = this.status;
+        data["amount"] = this.amount;
+        data["dateFiledOrReported"] = this.dateFiledOrReported ? this.dateFiledOrReported.toISOString() : <any>undefined;
+        data["referenceNo"] = this.referenceNo;
+        data["court"] = this.court;
+        data["dateVerified"] = this.dateVerified ? this.dateVerified.toISOString() : <any>undefined;
+        data["dateUpdated"] = this.dateUpdated ? this.dateUpdated.toISOString() : <any>undefined;
+        data["dateReleased"] = this.dateReleased ? this.dateReleased.toISOString() : <any>undefined;
+        data["remarks"] = this.remarks;
+        return data; 
+    }
+}
+
+export interface IPublicRecordInfoDto {
+    bureau: string;
+    title: string;
+    type: string;
+    status: string;
+    amount: number;
+    dateFiledOrReported: moment.Moment;
+    referenceNo: string;
+    court: string;
+    dateVerified: moment.Moment;
+    dateUpdated: moment.Moment;
+    dateReleased: moment.Moment;
+    remarks: string;
 }
 
 export class EmployerDto implements IEmployerDto {
@@ -16734,7 +16884,7 @@ export interface IStageDto {
 export class ActionDto implements IActionDto {
     id: number;
     name: string;
-    handlerName: string;
+    sysId: string;
     targetStageId: number;
 
     constructor(data?: IActionDto) {
@@ -16750,7 +16900,7 @@ export class ActionDto implements IActionDto {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
-            this.handlerName = data["handlerName"];
+            this.sysId = data["sysId"];
             this.targetStageId = data["targetStageId"];
         }
     }
@@ -16765,7 +16915,7 @@ export class ActionDto implements IActionDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        data["handlerName"] = this.handlerName;
+        data["sysId"] = this.sysId;
         data["targetStageId"] = this.targetStageId;
         return data; 
     }
@@ -16774,7 +16924,7 @@ export class ActionDto implements IActionDto {
 export interface IActionDto {
     id: number;
     name: string;
-    handlerName: string;
+    sysId: string;
     targetStageId: number;
 }
 
@@ -19470,14 +19620,14 @@ export interface ILdapSettingsEditDto {
     password: string;
 }
 
-export class IdcsSettingsDto implements IIdcsSettingsDto {
+export class IdcsSettings implements IIdcsSettings {
     requestSource: string;
     partnerCode: string;
     partnerAccount: string;
     password: string;
     branding: string;
 
-    constructor(data?: IIdcsSettingsDto) {
+    constructor(data?: IIdcsSettings) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19496,8 +19646,8 @@ export class IdcsSettingsDto implements IIdcsSettingsDto {
         }
     }
 
-    static fromJS(data: any): IdcsSettingsDto {
-        let result = new IdcsSettingsDto();
+    static fromJS(data: any): IdcsSettings {
+        let result = new IdcsSettings();
         result.init(data);
         return result;
     }
@@ -19513,7 +19663,7 @@ export class IdcsSettingsDto implements IIdcsSettingsDto {
     }
 }
 
-export interface IIdcsSettingsDto {
+export interface IIdcsSettings {
     requestSource: string;
     partnerCode: string;
     partnerAccount: string;

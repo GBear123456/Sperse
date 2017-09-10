@@ -1285,6 +1285,10 @@ cosmiconfig@^2.1.0, cosmiconfig@^2.1.1:
     parse-json "^2.2.0"
     require-from-string "^1.1.0"
 
+countries-provinces@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/countries-provinces/-/countries-provinces-0.0.1.tgz#f383b087633f3f7930ed0a90262d6911c43d2036"
+
 create-ecdh@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/create-ecdh/-/create-ecdh-4.0.0.tgz#888c723596cdf7612f6498233eebd7a35301737d"
@@ -4201,6 +4205,10 @@ object.omit@^2.0.0:
 obuf@^1.0.0, obuf@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/obuf/-/obuf-1.1.1.tgz#104124b6c602c6796881a042541d36db43a5264e"
+
+odata-query@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/odata-query/-/odata-query-4.0.0.tgz#89d4de03645c6501a1b8a9f89e701b56a92856a2"
 
 on-finished@~2.3.0:
   version "2.3.0"
