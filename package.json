@@ -44,6 +44,7 @@
     "bootstrap-switch": "^3.3.4",
     "codelyzer": "^2.1.1",
     "core-js": "^2.4.1",
+    "countries-provinces": "0.0.1",
     "datamaps": "^0.5.8",
     "devextreme": "^16.2.6",
     "devextreme-angular": "^16.2.6",

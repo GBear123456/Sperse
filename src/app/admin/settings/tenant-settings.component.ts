@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { TenantSettingsServiceProxy, HostSettingsServiceProxy, DefaultTimezoneScope, TenantSettingsEditDto, SendTestEmailInput, TenantSettingsCreditReportServiceProxy, IdcsSettingsDto, TenantPaymentSettingsServiceProxy, BaseCommercePaymentSettings } from '@shared/service-proxies/service-proxies';
+import { TenantSettingsServiceProxy, HostSettingsServiceProxy, DefaultTimezoneScope, TenantSettingsEditDto, SendTestEmailInput, TenantSettingsCreditReportServiceProxy, IdcsSettings, TenantPaymentSettingsServiceProxy, BaseCommercePaymentSettings } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -28,7 +28,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
     activeTabIndex: number = (abp.clock.provider.supportsMultipleTimezone) ? 0 : 1;
     loading: boolean = false;
     settings: TenantSettingsEditDto = undefined;
-    idcsSettings: IdcsSettingsDto = new IdcsSettingsDto();
+    idcsSettings: IdcsSettings = new IdcsSettings();
     baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
 
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('CreditReportFeature');
@@ -66,7 +66,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
                         if (this.isCreditReportFeatureEnabled) {
                             this._tenantSettingsCreditReportService.getIdcsSettings()
                                 .finally(() => this.loading = false)
-                                .subscribe((result: IdcsSettingsDto) => {
+                                .subscribe((result: IdcsSettings) => {
                                     this.idcsSettings = result;
                                 });
                         }
