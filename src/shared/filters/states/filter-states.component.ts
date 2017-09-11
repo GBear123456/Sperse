@@ -3,7 +3,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterComponent } from '../filter.model';
 
 import getCountriesInfo from 'get-countries-info';
-import provincesInfo from 'countries-provinces';
 
 @Component({
   templateUrl: './filter-states.component.html',
@@ -19,12 +18,19 @@ export class FilterStatesComponent extends AppComponentBase implements OnInit, F
   countries: string[] = [];
   states: string[] = [];
   country: string;
-  state: string;
-	
+  state: string;  
+
   constructor(injector: Injector) {
     super(injector);
 
     this.countries = getCountriesInfo({}, 'name');
+  }
+
+  provinces = require('countries-provinces/data/provinces.json');
+  fromCountryCode(code) {
+    return this.provinces.filter((province) => {
+      return province.country == code
+    });
   }
 
   onChangeCountry(event) {
@@ -37,7 +43,7 @@ export class FilterStatesComponent extends AppComponentBase implements OnInit, F
   } 
 
   onChangeState(event) {
-    if (provincesInfo.fromCountryCode(this.items.countryId)
+    if (this.fromCountryCode(this.items.countryId)
       .every((row) => {        
         if (event.value == row.name)
           this.items.stateId = row.short;        
@@ -56,7 +62,7 @@ export class FilterStatesComponent extends AppComponentBase implements OnInit, F
         {name: this.country}, 'provinces').pop();
         
       if (this.items.stateId)
-        if (provincesInfo.fromCountryCode(this.items.countryId)
+        if (this.fromCountryCode(this.items.countryId)
           .every((row) => {
             if (row.short == this.items.stateId)
               this.state = row.name;
