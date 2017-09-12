@@ -1,7 +1,7 @@
 ﻿<div class="logo">
     <a routerLink="/">
       <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/common/images/app-logo-on-dark.png" alt="logo" width="200" height="60" />
-      <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetTenantLogo?tenantId=' + appSession.tenantId" alt="logo" width="200" height="60" />
+      <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" width="200" height="60" />
     </a>
 </div>
 
