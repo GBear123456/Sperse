@@ -1279,6 +1279,54 @@ export class ContactAddressServiceProxy {
         }
         return Observable.of<ListResultDtoOfAddressUsageTypeDto>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getAddressOwnershipTypes(): Observable<ListResultDtoOfAddressOwnershipTypeDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactAddress/GetAddressOwnershipTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetAddressOwnershipTypes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetAddressOwnershipTypes(response_);
+                } catch (e) {
+                    return <Observable<ListResultDtoOfAddressOwnershipTypeDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ListResultDtoOfAddressOwnershipTypeDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetAddressOwnershipTypes(response: Response): Observable<ListResultDtoOfAddressOwnershipTypeDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ListResultDtoOfAddressOwnershipTypeDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ListResultDtoOfAddressOwnershipTypeDto.fromJS(resultData200) : new ListResultDtoOfAddressOwnershipTypeDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ListResultDtoOfAddressOwnershipTypeDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -10442,6 +10490,88 @@ export class AddressUsageTypeDto implements IAddressUsageTypeDto {
 }
 
 export interface IAddressUsageTypeDto {
+    id: string;
+    name: string;
+}
+
+export class ListResultDtoOfAddressOwnershipTypeDto implements IListResultDtoOfAddressOwnershipTypeDto {
+    items: AddressOwnershipTypeDto[];
+
+    constructor(data?: IListResultDtoOfAddressOwnershipTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(AddressOwnershipTypeDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ListResultDtoOfAddressOwnershipTypeDto {
+        let result = new ListResultDtoOfAddressOwnershipTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IListResultDtoOfAddressOwnershipTypeDto {
+    items: AddressOwnershipTypeDto[];
+}
+
+export class AddressOwnershipTypeDto implements IAddressOwnershipTypeDto {
+    id: string;
+    name: string;
+
+    constructor(data?: IAddressOwnershipTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): AddressOwnershipTypeDto {
+        let result = new AddressOwnershipTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IAddressOwnershipTypeDto {
     id: string;
     name: string;
 }
