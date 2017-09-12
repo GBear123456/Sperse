@@ -61,6 +61,8 @@
         "../node_modules/devextreme/dist/css/dx.common.css",
         "../node_modules/devextreme/dist/css/dx.light.css",
 
+        "../node_modules/dragula/dist/dragula.css",
+
         "../src/app/shared/dx-customs.less",
 
         "styles.css"
