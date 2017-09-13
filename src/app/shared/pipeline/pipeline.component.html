@@ -1,0 +1,35 @@
+﻿<div class="pipeline-wrapper">
+    <div *ngFor="let item of pipeline?.stages; let i = index;" class="column column-{{i}} color-{{item.color}}">
+        <div class="column-title">
+            {{item.name}} <button class="edit-button"><img src="/assets/common/images/icons/edit-icon.svg" alt="Edit"></button>
+        </div>
+        <div class="column-items" [dragula]='"bag"'>
+            <div class="card" *ngFor="let card of cards">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-9">{{card.title}}</div>
+                        <div class="col-sm-3 text-right">
+                            <img src="{{card.imgUrl}}" alt="{{card.title}}" class="img-responsive img-circle" width="40">
+                        </div>
+                    </div>
+                    <div class="row item-data">
+                        <div class="col-sm-6">
+                        <span class="price">
+                            {{card.amount}}
+                        </span>
+                            <span class="count">
+                            {{card.currentNumber}}/{{card.totalNumber}}
+                        </span>
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <span class="notes-count"><img src="/assets/common/images/icons/note-file.svg" alt="note" width="11">{{card.noteCount}}</span>
+                            <span class="documents-count"><img src="/assets/common/images/icons/document-file.svg" alt="document" width="11">{{card.documentCount}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngFor="let item of "></div>
