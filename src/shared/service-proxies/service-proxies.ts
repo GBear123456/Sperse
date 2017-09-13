@@ -11240,6 +11240,7 @@ export class CreditReportOutput implements ICreditReportOutput {
     creditReport: CreditReportDto;
     updatable: boolean;
     isSubscriptionCancelled: boolean;
+    previousReportExists: boolean;
 
     constructor(data?: ICreditReportOutput) {
         if (data) {
@@ -11258,6 +11259,7 @@ export class CreditReportOutput implements ICreditReportOutput {
             this.creditReport = data["creditReport"] ? CreditReportDto.fromJS(data["creditReport"]) : <any>undefined;
             this.updatable = data["updatable"];
             this.isSubscriptionCancelled = data["isSubscriptionCancelled"];
+            this.previousReportExists = data["previousReportExists"];
         }
     }
 
@@ -11275,6 +11277,7 @@ export class CreditReportOutput implements ICreditReportOutput {
         data["creditReport"] = this.creditReport ? this.creditReport.toJSON() : <any>undefined;
         data["updatable"] = this.updatable;
         data["isSubscriptionCancelled"] = this.isSubscriptionCancelled;
+        data["previousReportExists"] = this.previousReportExists;
         return data; 
     }
 }
@@ -11286,6 +11289,7 @@ export interface ICreditReportOutput {
     creditReport: CreditReportDto;
     updatable: boolean;
     isSubscriptionCancelled: boolean;
+    previousReportExists: boolean;
 }
 
 export class CreditReportDto implements ICreditReportDto {
@@ -11486,6 +11490,7 @@ export class AccountDto implements IAccountDto {
     availableCredit: number;
     outstandingBalance: number;
     ratio: number;
+    dateOpened: moment.Moment;
     accountDetails: AccountInfoDto[];
 
     constructor(data?: IAccountDto) {
@@ -11510,6 +11515,7 @@ export class AccountDto implements IAccountDto {
             this.availableCredit = data["availableCredit"];
             this.outstandingBalance = data["outstandingBalance"];
             this.ratio = data["ratio"];
+            this.dateOpened = data["dateOpened"] ? moment(data["dateOpened"].toString()) : <any>undefined;
             if (data["accountDetails"] && data["accountDetails"].constructor === Array) {
                 this.accountDetails = [];
                 for (let item of data["accountDetails"])
@@ -11537,6 +11543,7 @@ export class AccountDto implements IAccountDto {
         data["availableCredit"] = this.availableCredit;
         data["outstandingBalance"] = this.outstandingBalance;
         data["ratio"] = this.ratio;
+        data["dateOpened"] = this.dateOpened ? this.dateOpened.toISOString() : <any>undefined;
         if (this.accountDetails && this.accountDetails.constructor === Array) {
             data["accountDetails"] = [];
             for (let item of this.accountDetails)
@@ -11554,6 +11561,7 @@ export interface IAccountDto {
     availableCredit: number;
     outstandingBalance: number;
     ratio: number;
+    dateOpened: moment.Moment;
     accountDetails: AccountInfoDto[];
 }
 
@@ -11734,7 +11742,7 @@ export class PublicRecordDto implements IPublicRecordDto {
     status: string;
     amount: number;
     dateReleased: moment.Moment;
-    publicRecordDetails: PublicRecordInfoDto[];
+    publicRecordDetails: PublicRecordBureauInfoDto[];
 
     constructor(data?: IPublicRecordDto) {
         if (data) {
@@ -11754,7 +11762,7 @@ export class PublicRecordDto implements IPublicRecordDto {
             if (data["publicRecordDetails"] && data["publicRecordDetails"].constructor === Array) {
                 this.publicRecordDetails = [];
                 for (let item of data["publicRecordDetails"])
-                    this.publicRecordDetails.push(PublicRecordInfoDto.fromJS(item));
+                    this.publicRecordDetails.push(PublicRecordBureauInfoDto.fromJS(item));
             }
         }
     }
@@ -11785,7 +11793,7 @@ export interface IPublicRecordDto {
     status: string;
     amount: number;
     dateReleased: moment.Moment;
-    publicRecordDetails: PublicRecordInfoDto[];
+    publicRecordDetails: PublicRecordBureauInfoDto[];
 }
 
 export class CreditScoreDto implements ICreditScoreDto {
@@ -12205,7 +12213,7 @@ export interface IAddressDto {
     line4: string;
 }
 
-export class PublicRecordInfoDto implements IPublicRecordInfoDto {
+export class PublicRecordBureauInfoDto implements IPublicRecordBureauInfoDto {
     bureau: string;
     title: string;
     type: string;
@@ -12219,7 +12227,7 @@ export class PublicRecordInfoDto implements IPublicRecordInfoDto {
     dateReleased: moment.Moment;
     remarks: string;
 
-    constructor(data?: IPublicRecordInfoDto) {
+    constructor(data?: IPublicRecordBureauInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12245,8 +12253,8 @@ export class PublicRecordInfoDto implements IPublicRecordInfoDto {
         }
     }
 
-    static fromJS(data: any): PublicRecordInfoDto {
-        let result = new PublicRecordInfoDto();
+    static fromJS(data: any): PublicRecordBureauInfoDto {
+        let result = new PublicRecordBureauInfoDto();
         result.init(data);
         return result;
     }
@@ -12269,7 +12277,7 @@ export class PublicRecordInfoDto implements IPublicRecordInfoDto {
     }
 }
 
-export interface IPublicRecordInfoDto {
+export interface IPublicRecordBureauInfoDto {
     bureau: string;
     title: string;
     type: string;
@@ -21415,6 +21423,7 @@ export enum AccountDtoState {
 export enum AlertDtoType {
     _0 = 0, 
     _1 = 1, 
+    _2 = 2, 
 }
 
 export enum AccountInfoDtoStatus {
