@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+﻿import { NgModule, ApplicationRef, Injector, AfterViewInit } from '@angular/core';
 import { Routes, RouterModule, Router, NavigationEnd } from '@angular/router';
 
 const routes: Routes = [
@@ -12,34 +12,22 @@ const routes: Routes = [
 
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule],
-    providers: []
+    exports: [RouterModule]
 })
-export class RootRoutingModule {
-    constructor(private router: Router) {
-        router.events.subscribe((event: NavigationEnd) => {
-            setTimeout(() => {
-                this.toggleBodyCssClass(event.url);
-            }, 0);
-        });
-    }
+export class RootRoutingModule implements AfterViewInit {
+  constructor(
+    private _router: Router,
+    private _injector: Injector,
+    private _applicationRef: ApplicationRef
+  ) {    }
 
-    toggleBodyCssClass(url: string): void {
-        if (url) {
-
-            if (url === '/') {
-                if (abp.session.userId > 0) {
-                    $('body').attr('class', 'page-md page-header-fixed page-sidebar-closed-hide-logo');
-                } else {
-                    $('body').attr('class', 'page-md login');
-                }
-            }
-
-            if (url.indexOf("/account/") >= 0) {
-                $('body').attr('class', 'page-md login');
-            } else {
-                $('body').attr('class', 'page-md page-header-fixed page-sidebar-closed-hide-logo');
-            }
-        }
-    }
+  ngAfterViewInit() {
+    this._router.events.subscribe((event: NavigationEnd) => {
+      setTimeout(() => {
+        this._injector.get(this._applicationRef.componentTypes[0])
+          .checkSetClasses(abp.session.userId || (event.url.indexOf("/account/") >= 0));
+        }, 0);
+      }
+    );
+  }
 }

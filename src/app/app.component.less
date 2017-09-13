@@ -12,7 +12,9 @@
     .subscription-bar-visible {
         margin-top: 15px !important;
     }
-}:host {
+}
+
+:host {
 	position: absolute;
 	width: 100%!important;
 
@@ -21,7 +23,10 @@
 	}
 
 	.page-content-wrapper .page-content {
-    	margin-left: 300px;
+    	margin-left: 0px;
+      &.enabled-filters {
+      	margin-left: 300px;
+      }
 	}
 }
 

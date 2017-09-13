@@ -1,6 +1,6 @@
-import { Component, OnInit, AfterViewInit, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateOrEditClientModalComponent } from './create-or-edit-client-modal.component';
 
@@ -28,19 +28,21 @@ import * as moment from "moment";
   styleUrls: ["./clients.component.less"],
   animations: [appModuleAnimation()]
 })
-export class ClientsComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class ClientsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
   @ViewChild('createOrEditClientModal') createOrEditClientModal: CreateOrEditClientModalComponent;
 	
   private readonly dataSourceURI = 'Customer';
   private filters: FilterModel[];
+  private rootComponent: any;
 
   constructor(
     injector: Injector,
+    private _router: Router,
 		private _filtersService: FiltersService,
     private _activatedRoute: ActivatedRoute,
     private _commonLookupService: CommonLookupServiceProxy,
-    private _impersonationService: ImpersonationService,		
+    private _impersonationService: ImpersonationService
   ) {
     super(injector);
 
@@ -116,6 +118,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
   createClient() {
     this.createOrEditClientModal.show();
+  }
+
+  showClientDetails(event){    
+    this._router.navigate(['app/admin/clients/' + event.data.Id]);
   }
 
   ngOnInit(): void {
@@ -200,5 +206,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
   }
 
   ngAfterViewInit(): void {
+    this.rootComponent = this.getRootComponent()
+    this.rootComponent.overflowHidden(true);
+  }
+
+  ngOnDestroy() {
+    this.rootComponent.overflowHidden();
   }
 }

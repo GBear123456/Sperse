@@ -1,0 +1,96 @@
+:host {
+  header {
+      background: #f3f7fa;
+      display: flex;
+      border-bottom: 1px solid #e5e9ec;
+      box-shadow: -2px 0px 6px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  .avatar {
+      position: absolute;
+      margin: 24px 24px;
+      z-index: 1;
+  }
+
+  .avatar img {
+      border-radius: 50%;
+      height: 115px;
+      width: 115px;
+  }
+
+  .avatar .active {
+      background: #37d749;
+      border-radius: 50%;
+      border: 1px solid #fff;
+      width: 10px;
+      height: 10px;
+      position: absolute;
+      top: 4px;
+      right: 14px;
+  }
+
+  md-progress-bar {
+      width: 100px;
+  }
+
+  /deep/ .mat-progress-bar-fill:after {
+    background-color: #00aeef;    
+  }
+
+  .personal_info {
+      margin: 0 200px 0 150px;
+  }
+
+  .personal_info .rating {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 10px;
+  }
+
+  .personal_info .rating > * {
+      max-width: 50%;
+  }
+
+  .personal_info .rating md-progress-bar {
+      margin-right: 10px;
+  }
+
+  .header_financial_info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+
+  .header_financial_info > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+
+  .header_financial_info > div > *{
+      max-width: 50%;
+      margin-top: 0;
+      margin-bottom: 0;
+  }
+
+  .header_financial_info h3.lab {
+      display: inline-block;
+  }
+
+  .header_financial_info .approved {
+      margin-right: 30px;
+  }
+
+  .header_financial_info .lab {
+      margin-right: 20px;
+  }
+
+  .header_financial_info span {
+      font-weight: 600;
+  }
+
+  .header_financial_info .approved span {
+      color: #00aeef;
+  }
+}

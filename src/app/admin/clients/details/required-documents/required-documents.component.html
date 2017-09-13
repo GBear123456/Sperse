@@ -1,0 +1,11 @@
+<div class="title" (click)="changeColupsStatus()">
+  <h4>Required Documents</h4>
+  <div class="credit_lines_amounts">
+    <ul>
+      <li class="green">{{statuses.success_amount}}</li>/
+      <li class="red">{{statuses.unsuccess_amount}}</li>/
+      <li class="grey">{{statuses.pending_amount}}</li>
+    </ul>
+  </div>
+  <i class="fa fa-chevron-{{documents_colupsed ? 'up' : 'down'}}"></i>
+</div>

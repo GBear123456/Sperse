@@ -1,0 +1,27 @@
+<div class="contacts">
+  <div class="emails">
+    <h3 class="lab">Contact</h3>
+    <i class="fa fa-envelope-o" aria-hidden="true"></i>
+    <ul *ngFor="let email of emails">
+      <li>{{email}}</li>
+    </ul>
+  </div>
+  <div class="home_phones">
+    <i class="material-icons">&#xE0CD;</i>
+    <ul>
+      <li>{{phones.home?.phone}}</li>
+    </ul>
+  </div>
+  <div class="personal_phones">
+    <i class="material-icons">&#xE325;</i>
+    <ul>
+      <li>{{phones.mobile?.phone}}</li>
+    </ul>
+  </div>
+  <div class="work_phones">
+    <i class="material-icons">&#xE7EE;</i>
+    <ul>
+      <li>{{phones.office?.phone}}</li>
+    </ul>
+  </div>
+</div>

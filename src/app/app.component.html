@@ -3,12 +3,12 @@
 <div class="clearfix">
 </div>
 <div class="page-container" [ngClass]="{'subscription-bar-visible': subscriptionStatusBarVisible()}">
-  <div class="page-sidebar-wrapper">
+  <div class="page-sidebar-wrapper" [ngStyle]="{display: filtersService.enabled ? 'block': 'none'}">
     <side-bar></side-bar>
   </div>
 
   <div class="page-content-wrapper">
-    <div class="page-content">
+    <div class="page-content" [ngClass]="{'enabled-filters': filtersService.enabled }">
       <router-outlet></router-outlet>
     </div>
   </div>
