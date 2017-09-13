@@ -1,0 +1,196 @@
+.pipeline-wrapper {
+    width: 100%;
+    display: flex;
+    height: 100%;
+    .column {
+        min-height: 50px;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        .column-title {
+            min-height: 40px;
+            padding: 15px 16px;
+            background-color: #fff;
+            border: 1px solid #dfdfdf;
+            border-right: 0;
+            margin-bottom: 12px;
+    
+            // font-family: Geometria; // no font
+            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: 600; // 500
+            letter-spacing: 0.5px;
+            color: #4b657e;
+            .edit-button {
+                padding: 0;
+                border: 0;
+                background: transparent;
+                float: right;
+                position: relative;
+                top: -2px;
+                outline: none;
+            }
+        }
+        &:first-child {
+            .column-title {
+                border-radius: 3px 0 0 3px;
+            }
+        }
+        &:last-child {
+            .column-title {
+                border-radius: 0 3px 3px 0;
+                border-right: 1px solid #dfdfdf;
+            }
+        }
+        .column-items {
+            min-height: 40px;
+            .card {
+                min-height: 105px;
+                padding: 16px 0;
+                margin-bottom: 8px;
+                font-size: 14px;
+                line-height: 1.4;
+                font-weight: 600; // TODO: need change on 500 when font will be added
+                text-align: left;
+                color: #202b35;
+                border: 1px solid #dfdfdf;
+                border-left: 3px solid #9a7fe7;
+                border-radius: 3px;
+                &.gu-transit {
+                    opacity: 1;
+                    background: #fafafa;
+                }
+                .row {
+                    margin-right: -15px;
+                }
+                .row + .row {
+                    margin-top: 10px;
+                }
+                .item-data {
+                    font-size: 13px;
+                    font-weight: 400;
+                }
+            }
+        }
+        .card {
+            min-height: 105px;
+            padding: 16px 0;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+            font-weight: 600; // TODO: need change on 500 when font will be added
+            text-align: left;
+            color: #202b35;
+            border: 1px solid #dfdfdf;
+            border-left: 3px solid #9a7fe7;
+            border-radius: 3px;
+            .notes-count,
+            .documents-count {
+                line-height: 14px;
+                img {
+                    margin-right: 5px;
+                }
+            }
+            &.gu-transit {
+                opacity: 1;
+                background: #fafafa;
+            }
+            .row {
+                margin-right: -15px;
+            }
+            .row + .row {
+                margin-top: 10px;
+            }
+            .item-data {
+                font-size: 13px;
+                font-weight: 400;
+            }
+        }
+        &.color-purple {
+            .column-title {
+                color: #7458c5;
+            }
+            .column-items {
+                .card {
+                    border-left-color: #7458c5;
+                }
+            }
+        }
+        &.color-green {
+            .column-title {
+                color: #6ce686;
+            }
+            .column-items {
+                .card {
+                    border-left-color: #6ce686;
+                }
+            }
+        }
+        &.color-orange {
+            .column-title {
+                color: orange;
+            }
+            .column-items {
+                .card {
+                    border-left-color: orange;
+                }
+            }
+        }
+        &.color-yellow {
+            .column-title {
+                color: gold;
+            }
+            .column-items {
+                .card {
+                    border-left-color: gold;
+                }
+            }
+        }
+        &.color-black {
+            .column-title {
+                color: #000;
+            }
+            .column-items {
+                .card {
+                    border-left-color: #000;
+                }
+            }
+        }
+        &.color-blue {
+            .column-title {
+                color: blue;
+            }
+            .column-items {
+                .card {
+                    border-left-color: blue;
+                }
+            }
+        }
+        &.color-gray {
+            .column-title {
+                color: gray;
+            }
+            .column-items {
+                .card {
+                    border-left-color: gray;
+                }
+            }
+        }
+    }
+}
+
+.gu-mirror {
+    opacity: 1;
+    background: #fafafa;
+    min-height: 105px;
+    padding: 16px 0;
+    border: 1px solid #dfdfdf;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 600; // TODO: need change on 500 when font will be added
+    text-align: left;
+    color: #202b35;
+    .row + .row {
+        margin-top: 10px;
+    }
+}

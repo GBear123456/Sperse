@@ -74,6 +74,7 @@
     "moment-timezone": "^0.5.13",
     "morris.js": "^0.5.0",
     "ng-recaptcha": "^2.0.2",
+    "ng2-dragula": "^1.5.0",
     "ng2-file-upload": "^1.2.1",
     "ng2modules-easypiechart": "^0.0.4",
     "ng2modules-flot": "^0.0.1",

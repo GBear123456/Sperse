@@ -1279,6 +1279,54 @@ export class ContactAddressServiceProxy {
         }
         return Observable.of<ListResultDtoOfAddressUsageTypeDto>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getAddressOwnershipTypes(): Observable<ListResultDtoOfAddressOwnershipTypeDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactAddress/GetAddressOwnershipTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetAddressOwnershipTypes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetAddressOwnershipTypes(response_);
+                } catch (e) {
+                    return <Observable<ListResultDtoOfAddressOwnershipTypeDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ListResultDtoOfAddressOwnershipTypeDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetAddressOwnershipTypes(response: Response): Observable<ListResultDtoOfAddressOwnershipTypeDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ListResultDtoOfAddressOwnershipTypeDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ListResultDtoOfAddressOwnershipTypeDto.fromJS(resultData200) : new ListResultDtoOfAddressOwnershipTypeDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ListResultDtoOfAddressOwnershipTypeDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -10446,6 +10494,88 @@ export interface IAddressUsageTypeDto {
     name: string;
 }
 
+export class ListResultDtoOfAddressOwnershipTypeDto implements IListResultDtoOfAddressOwnershipTypeDto {
+    items: AddressOwnershipTypeDto[];
+
+    constructor(data?: IListResultDtoOfAddressOwnershipTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(AddressOwnershipTypeDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ListResultDtoOfAddressOwnershipTypeDto {
+        let result = new ListResultDtoOfAddressOwnershipTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IListResultDtoOfAddressOwnershipTypeDto {
+    items: AddressOwnershipTypeDto[];
+}
+
+export class AddressOwnershipTypeDto implements IAddressOwnershipTypeDto {
+    id: string;
+    name: string;
+
+    constructor(data?: IAddressOwnershipTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): AddressOwnershipTypeDto {
+        let result = new AddressOwnershipTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IAddressOwnershipTypeDto {
+    id: string;
+    name: string;
+}
+
 export class CreateContactEmailInput implements ICreateContactEmailInput {
     contactId: number;
     emailAddress: string;
@@ -11110,6 +11240,7 @@ export class CreditReportOutput implements ICreditReportOutput {
     creditReport: CreditReportDto;
     updatable: boolean;
     isSubscriptionCancelled: boolean;
+    previousReportExists: boolean;
 
     constructor(data?: ICreditReportOutput) {
         if (data) {
@@ -11128,6 +11259,7 @@ export class CreditReportOutput implements ICreditReportOutput {
             this.creditReport = data["creditReport"] ? CreditReportDto.fromJS(data["creditReport"]) : <any>undefined;
             this.updatable = data["updatable"];
             this.isSubscriptionCancelled = data["isSubscriptionCancelled"];
+            this.previousReportExists = data["previousReportExists"];
         }
     }
 
@@ -11145,6 +11277,7 @@ export class CreditReportOutput implements ICreditReportOutput {
         data["creditReport"] = this.creditReport ? this.creditReport.toJSON() : <any>undefined;
         data["updatable"] = this.updatable;
         data["isSubscriptionCancelled"] = this.isSubscriptionCancelled;
+        data["previousReportExists"] = this.previousReportExists;
         return data; 
     }
 }
@@ -11156,6 +11289,7 @@ export interface ICreditReportOutput {
     creditReport: CreditReportDto;
     updatable: boolean;
     isSubscriptionCancelled: boolean;
+    previousReportExists: boolean;
 }
 
 export class CreditReportDto implements ICreditReportDto {
@@ -11356,6 +11490,7 @@ export class AccountDto implements IAccountDto {
     availableCredit: number;
     outstandingBalance: number;
     ratio: number;
+    dateOpened: moment.Moment;
     accountDetails: AccountInfoDto[];
 
     constructor(data?: IAccountDto) {
@@ -11380,6 +11515,7 @@ export class AccountDto implements IAccountDto {
             this.availableCredit = data["availableCredit"];
             this.outstandingBalance = data["outstandingBalance"];
             this.ratio = data["ratio"];
+            this.dateOpened = data["dateOpened"] ? moment(data["dateOpened"].toString()) : <any>undefined;
             if (data["accountDetails"] && data["accountDetails"].constructor === Array) {
                 this.accountDetails = [];
                 for (let item of data["accountDetails"])
@@ -11407,6 +11543,7 @@ export class AccountDto implements IAccountDto {
         data["availableCredit"] = this.availableCredit;
         data["outstandingBalance"] = this.outstandingBalance;
         data["ratio"] = this.ratio;
+        data["dateOpened"] = this.dateOpened ? this.dateOpened.toISOString() : <any>undefined;
         if (this.accountDetails && this.accountDetails.constructor === Array) {
             data["accountDetails"] = [];
             for (let item of this.accountDetails)
@@ -11424,6 +11561,7 @@ export interface IAccountDto {
     availableCredit: number;
     outstandingBalance: number;
     ratio: number;
+    dateOpened: moment.Moment;
     accountDetails: AccountInfoDto[];
 }
 
@@ -11604,7 +11742,7 @@ export class PublicRecordDto implements IPublicRecordDto {
     status: string;
     amount: number;
     dateReleased: moment.Moment;
-    publicRecordDetails: PublicRecordInfoDto[];
+    publicRecordDetails: PublicRecordBureauInfoDto[];
 
     constructor(data?: IPublicRecordDto) {
         if (data) {
@@ -11624,7 +11762,7 @@ export class PublicRecordDto implements IPublicRecordDto {
             if (data["publicRecordDetails"] && data["publicRecordDetails"].constructor === Array) {
                 this.publicRecordDetails = [];
                 for (let item of data["publicRecordDetails"])
-                    this.publicRecordDetails.push(PublicRecordInfoDto.fromJS(item));
+                    this.publicRecordDetails.push(PublicRecordBureauInfoDto.fromJS(item));
             }
         }
     }
@@ -11655,7 +11793,7 @@ export interface IPublicRecordDto {
     status: string;
     amount: number;
     dateReleased: moment.Moment;
-    publicRecordDetails: PublicRecordInfoDto[];
+    publicRecordDetails: PublicRecordBureauInfoDto[];
 }
 
 export class CreditScoreDto implements ICreditScoreDto {
@@ -12075,7 +12213,7 @@ export interface IAddressDto {
     line4: string;
 }
 
-export class PublicRecordInfoDto implements IPublicRecordInfoDto {
+export class PublicRecordBureauInfoDto implements IPublicRecordBureauInfoDto {
     bureau: string;
     title: string;
     type: string;
@@ -12089,7 +12227,7 @@ export class PublicRecordInfoDto implements IPublicRecordInfoDto {
     dateReleased: moment.Moment;
     remarks: string;
 
-    constructor(data?: IPublicRecordInfoDto) {
+    constructor(data?: IPublicRecordBureauInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12115,8 +12253,8 @@ export class PublicRecordInfoDto implements IPublicRecordInfoDto {
         }
     }
 
-    static fromJS(data: any): PublicRecordInfoDto {
-        let result = new PublicRecordInfoDto();
+    static fromJS(data: any): PublicRecordBureauInfoDto {
+        let result = new PublicRecordBureauInfoDto();
         result.init(data);
         return result;
     }
@@ -12139,7 +12277,7 @@ export class PublicRecordInfoDto implements IPublicRecordInfoDto {
     }
 }
 
-export interface IPublicRecordInfoDto {
+export interface IPublicRecordBureauInfoDto {
     bureau: string;
     title: string;
     type: string;
@@ -21285,6 +21423,7 @@ export enum AccountDtoState {
 export enum AlertDtoType {
     _0 = 0, 
     _1 = 1, 
+    _2 = 2, 
 }
 
 export enum AccountInfoDtoStatus {

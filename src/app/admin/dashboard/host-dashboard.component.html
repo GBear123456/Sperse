@@ -171,12 +171,12 @@
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div #IncomeStatisticsChart 
+                        <div #IncomeStatisticsChart
                              class="chart income-statistics-chart"
-                             [busyIf]="loadingIncomeStatistics" 
+                             [busyIf]="loadingIncomeStatistics"
                              [hidden]="!incomeStatisticsHasData">
                         </div>
-                        <div class="note note-info text-center chart" 
+                        <div class="note note-info text-center chart"
                              [hidden]="incomeStatisticsHasData">
                             <small class="text-muted">{{l("NoData")}}</small>
                         </div>
@@ -194,10 +194,10 @@
                     </div>
                     <div class="portlet-body">
                         <div #EditionStatisticsChart
-                             class="edition-statistics-chart chart" 
+                             class="edition-statistics-chart chart"
                              [hidden]="!editionStatisticsHasData">
                         </div>
-                        <div class="note note-info text-center text-muted " 
+                        <div class="note note-info text-center text-muted "
                              [hidden]="editionStatisticsHasData">
                             <small class="text-muted">{{l("NoData")}}</small>
                         </div>
