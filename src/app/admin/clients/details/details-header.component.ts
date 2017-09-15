@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, Input } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
@@ -7,6 +7,10 @@ import { AppComponentBase } from '@shared/common/app-component-base';
   styleUrls: ['./details-header.component.less']
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
+  @Input()
+  data: { 
+    name?: string;
+  };
 
   person = {
     id: 1,

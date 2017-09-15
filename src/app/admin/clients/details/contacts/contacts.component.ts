@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CustomersServiceProxy, CustomerInfoDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'contacts',
@@ -6,27 +7,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./contacts.component.less']
 })
 export class ContactsComponent implements OnInit {
-
-  emails = [
-    'super@mail.com', 'mr@sperse.com'
-  ];
-  phones = {
-    'mobile': {
-        'phone': '+123 456 789 012'
-    },
-    'home': {
-        'phone': '+123 456 789 012'
-    },
-    'office': {
-        'phone': '+123 456 789 012'
-    }
-  };
+  data: {
+    customerInfo: CustomerInfoDto
+  };  
   
-  constructor() { }
+  constructor(
+    private _customerService: CustomersServiceProxy
+  ) { }
 
   ngOnInit() {
-//    this.emails = this.PersonService.getEmails();
-//    this.phones = this.PersonService.getPhones();
+    this.data = this._customerService['data'];
   }
-
 }

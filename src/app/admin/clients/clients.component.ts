@@ -46,6 +46,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
   ) {
     super(injector);
 
+    this._filtersService.enabled = true;
     this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
 		this.dataSource = {
@@ -121,7 +122,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
   }
 
   showClientDetails(event){    
-    this._router.navigate(['app/admin/clients/' + event.data.Id]);
+    this._router.navigate(['app/admin/client', event.data.Id]);
   }
 
   ngOnInit(): void {
@@ -211,6 +212,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
   }
 
   ngOnDestroy() {
+    this._filtersService.unsubscribe();
+    this._filtersService.enabled = false;
     this.rootComponent.overflowHidden();
   }
 }

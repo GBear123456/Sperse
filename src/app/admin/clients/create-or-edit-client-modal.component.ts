@@ -41,8 +41,8 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
         this.client = new CreateCustomerInput();
         if (clientId) {
             this._customersService.getCustomerInfo(clientId).subscribe(result => {
-                this.client.firstName = result.primaryContactPersonalInfo.firstName;
-                this.client.lastName = result.primaryContactPersonalInfo.lastName;
+//                this.client.firstName = result.primaryContactPersonalInfo.firstName;
+//                this.client.lastName = result.primaryContactPersonalInfo.lastName;
             });
         }
 
