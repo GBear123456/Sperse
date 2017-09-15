@@ -7,6 +7,8 @@ export class FiltersService {
 	private filters: Subject<FilterModel[]>;
 	private filter: Subject<FilterModel>;
 
+  public enabled: boolean = true;
+
 	constructor() {
 		this.filters = new Subject<FilterModel[]>();
 		this.filter = new Subject<FilterModel>();

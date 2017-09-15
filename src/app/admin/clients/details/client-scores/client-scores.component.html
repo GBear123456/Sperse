@@ -1,0 +1,28 @@
+<h4>Scores</h4>
+<div class="scors">
+  <div class="experian_score">
+    <!-- #4edb5d -->
+    <md-progress-spinner
+            [value]="scores.experian_score?.amount/10">
+    </md-progress-spinner>
+    <span>{{scores.experian_score?.amount}}</span>
+    <h5>{{scores.experian_score?.label}}</h5>
+  </div>
+  <div class="equifax_score">
+    <!-- #ea5080 -->
+    <md-progress-spinner
+            [value]="scores.equifax_score?.amount/10" [color]="'accent'">
+    </md-progress-spinner>
+    <span>{{scores.equifax_score?.amount}}</span>
+    <h5>{{scores.equifax_score?.label}}</h5>
+  </div>
+  <div class="transunion_score">
+    <!-- #fac154 -->
+    <md-progress-spinner
+            [value]="scores.transunion_score?.amount/10" [color]="'warn'">
+    </md-progress-spinner>
+    <span>{{scores.transunion_score?.amount}}</span>
+    <h5>{{scores.transunion_score?.label}}</h5>
+  </div>
+
+</div>

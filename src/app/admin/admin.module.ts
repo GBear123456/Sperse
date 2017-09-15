@@ -9,14 +9,16 @@ import {AdminRoutingModule} from './admin-routing.module';
 import {UtilsModule} from '@shared/utils/utils.module';
 import {AppCommonModule} from '@app/shared/common/app-common.module';
 import {FiltersModule} from '@shared/filters/filters.module';
+import {PipelineModule} from '@app/shared/pipeline/pipeline.module';
+import { ClientDetailsModule } from './clients/details/client-details.module';	
 
-import {UsersComponent} from './users/users.component';
-import {PermissionComboComponent} from './shared/permission-combo.component';
-import {RoleComboComponent} from './shared/role-combo.component';
-import {CreateOrEditUserModalComponent} from './users/create-or-edit-user-modal.component';
-import {EditUserPermissionsModalComponent} from './users/edit-user-permissions-modal.component';
-import {PermissionTreeComponent} from './shared/permission-tree.component';
-import {FeatureTreeComponent} from './shared/feature-tree.component';
+import { UsersComponent } from './users/users.component'
+import { PermissionComboComponent } from './shared/permission-combo.component';
+import { RoleComboComponent } from './shared/role-combo.component';
+import { CreateOrEditUserModalComponent } from './users/create-or-edit-user-modal.component'
+import { EditUserPermissionsModalComponent } from './users/edit-user-permissions-modal.component';
+import { PermissionTreeComponent } from './shared/permission-tree.component';
+import { FeatureTreeComponent } from './shared/feature-tree.component';
 
 import {RolesComponent} from './roles/roles.component';
 import {CreateOrEditRoleModalComponent} from './roles/create-or-edit-role-modal.component';
@@ -65,76 +67,77 @@ import {
     DxFileUploaderModule,
     DxSelectBoxModule
 } from 'devextreme-angular';
-import {PipelineModule} from '@app/shared/pipeline/pipeline.module';
 
 @NgModule({
     imports: [
-        FormsModule,
-        CommonModule,
-        DxDataGridModule,
-        DxToolbarModule,
-        DxTemplateModule,
-        DxDateBoxModule,
-        DxTextBoxModule,
-        DxValidatorModule,
-        DxValidationSummaryModule,
-        DxButtonModule,
-        DxFileUploaderModule,
-        DxSelectBoxModule,
-        FileUploadModule,
-        ModalModule.forRoot(),
-        TabsModule.forRoot(),
-        TooltipModule.forRoot(),
-        PopoverModule.forRoot(),
-        AdminRoutingModule,
-        UtilsModule,
-        AppCommonModule,
-        FiltersModule,
-        PipelineModule
+      FormsModule,
+      CommonModule,
+      DxDataGridModule,
+      DxToolbarModule,
+      DxTemplateModule,
+      DxDateBoxModule,
+      DxTextBoxModule,
+      DxValidatorModule,
+      DxValidationSummaryModule,
+      DxButtonModule,
+      DxFileUploaderModule,
+      DxSelectBoxModule,
+
+      ClientDetailsModule,
+      FileUploadModule,
+      ModalModule.forRoot(),
+      TabsModule.forRoot(),
+      TooltipModule.forRoot(),
+      PopoverModule.forRoot(),
+      AdminRoutingModule,
+      UtilsModule,
+      AppCommonModule,
+      FiltersModule,
+      PipelineModule
     ],
     declarations: [
-        UsersComponent,
-        PermissionComboComponent,
-        RoleComboComponent,
-        CreateOrEditUserModalComponent,
-        EditUserPermissionsModalComponent,
-        PermissionTreeComponent,
-        FeatureTreeComponent,
-        RolesComponent,
-        CreateOrEditRoleModalComponent,
-        AuditLogsComponent,
-        AuditLogDetailModalComponent,
-        HostSettingsComponent,
-        MaintenanceComponent,
-        EditionsComponent,
-        CreateOrEditEditionModalComponent,
-        LanguagesComponent,
-        LanguageTextsComponent,
-        CreateOrEditLanguageModalComponent,
-        ClientsComponent,
-        CreateOrEditClientModalComponent,
-        LeadsComponent,
-        OrdersComponent,
-        TenantsComponent,
-        CreateTenantModalComponent,
-        EditTenantModalComponent,
-        TenantFeaturesModalComponent,
-        CreateOrEditLanguageModalComponent,
-        EditTextModalComponent,
-        OrganizationUnitsComponent,
-        OrganizationTreeComponent,
-        OrganizationUnitMembersComponent,
-        CreateOrEditUnitModalComponent,
-        TenantSettingsComponent,
-        SystemSettingsComponent,
-        UploadSSLCertificateModalComponent,
-        AddOrEditSSLBindingModal,
-        HostDashboardComponent,
-        EditionComboComponent,
-        SubscriptionManagementComponent
+      UsersComponent,
+      PermissionComboComponent,
+      RoleComboComponent,
+      CreateOrEditUserModalComponent,
+      EditUserPermissionsModalComponent,
+      PermissionTreeComponent,
+      FeatureTreeComponent,
+      RolesComponent,
+      CreateOrEditRoleModalComponent,
+      AuditLogsComponent,
+      AuditLogDetailModalComponent,
+      HostSettingsComponent,
+      MaintenanceComponent,
+      EditionsComponent,
+      CreateOrEditEditionModalComponent,
+      LanguagesComponent,
+      LanguageTextsComponent,
+      CreateOrEditLanguageModalComponent,
+      ClientsComponent,
+      CreateOrEditClientModalComponent,
+      LeadsComponent,
+      OrdersComponent,
+      TenantsComponent,
+      CreateTenantModalComponent,
+      EditTenantModalComponent,
+      TenantFeaturesModalComponent,
+      CreateOrEditLanguageModalComponent,
+      EditTextModalComponent,
+      OrganizationUnitsComponent,
+      OrganizationTreeComponent,
+      OrganizationUnitMembersComponent,
+      CreateOrEditUnitModalComponent,
+      TenantSettingsComponent,
+      SystemSettingsComponent,
+      UploadSSLCertificateModalComponent,
+      AddOrEditSSLBindingModal,
+      HostDashboardComponent,
+      EditionComboComponent,
+      SubscriptionManagementComponent
     ],
     providers: [
-        ImpersonationService
+      ImpersonationService
     ]
 })
 export class AdminModule {

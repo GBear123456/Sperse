@@ -6790,7 +6790,7 @@ export class TenantPaymentSettingsServiceProxy {
      * @return Success
      */
     getBaseCommercePaymentSettings(): Observable<BaseCommercePaymentSettings> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantPaymentSettings/GetBaseCommercePaymentSettings";
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetBaseCommercePaymentSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -6838,7 +6838,7 @@ export class TenantPaymentSettingsServiceProxy {
      * @return Success
      */
     updateBaseCommercePaymentSettings(input: BaseCommercePaymentSettings): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantPaymentSettings/UpdateBaseCommercePaymentSettings";
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdateBaseCommercePaymentSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);

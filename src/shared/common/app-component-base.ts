@@ -1,4 +1,4 @@
-﻿import { Injector, Inject, Input } from '@angular/core';
+﻿import { Injector, Inject, Input, ApplicationRef } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -27,15 +27,22 @@ export abstract class AppComponentBase {
   multiTenancy: AbpMultiTenancyService;
   appSession: AppSessionService;
 
-  constructor(injector: Injector) {
-    this.localization = injector.get(LocalizationService);
-    this.permission = injector.get(PermissionCheckerService);
-    this.feature = injector.get(FeatureCheckerService);
-    this.notify = injector.get(NotifyService);
-    this.setting = injector.get(SettingService);
-    this.message = injector.get(MessageService);
-    this.multiTenancy = injector.get(AbpMultiTenancyService);
-    this.appSession = injector.get(AppSessionService);
+  private _applicationRef: ApplicationRef;
+
+  constructor(private _injector: Injector) {
+    this.localization = _injector.get(LocalizationService);
+    this.permission = _injector.get(PermissionCheckerService);
+    this.feature = _injector.get(FeatureCheckerService);
+    this.notify = _injector.get(NotifyService);
+    this.setting = _injector.get(SettingService);
+    this.message = _injector.get(MessageService);
+    this.multiTenancy = _injector.get(AbpMultiTenancyService);
+    this.appSession = _injector.get(AppSessionService);
+    this._applicationRef = _injector.get(ApplicationRef);
+  }
+
+  getRootComponent() {
+    return this._injector.get(this._applicationRef.componentTypes[0]);
   }
 
   l(key: string, ...args: any[]): string {

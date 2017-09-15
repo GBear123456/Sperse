@@ -1,0 +1,35 @@
+<details-header></details-header>
+<div class="close-details" (click)="close($event)"></div>
+<md-sidenav-container>
+  <md-sidenav mode="side" opened="true" align="start">
+    <nav md-tab-nav-bar>
+        <a md-tab-link *ngFor="let link of navLinks" [routerLink]="link.route" routerLinkActive="active">{{link.label}}</a>
+    </nav>
+    <div class="created_owner">
+      <div class="created">
+          <h4>Created:</h4>
+          <p>{{person.profile_created}}</p>
+      </div>
+      <div class="lead_owner">
+          <h4>Lead owner:</h4>
+          <img src="{{person.lead_owner_photo_url}}" alt="">
+          <p>{{person.lead_owner_name}}</p>
+      </div>
+    </div>  
+  </md-sidenav>
+  <div class="main-content">
+    <operations-widget></operations-widget>
+    <router-outlet></router-outlet>
+  </div>
+  <md-sidenav class="right_sidenav" mode="side" align="end" opened="true">
+    <md-tab-group>
+      <md-tab label="Credit overview">
+        <client-scores></client-scores>
+        <total-approved></total-approved>
+        <credit-lines></credit-lines>
+        <required-documents></required-documents>
+      </md-tab>
+      <md-tab label="Activity">Activity</md-tab>
+    </md-tab-group>
+  </md-sidenav>
+</md-sidenav-container>
