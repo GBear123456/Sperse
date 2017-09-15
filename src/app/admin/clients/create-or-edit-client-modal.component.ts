@@ -40,10 +40,10 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     show(clientId?: number): void {
         this.client = new CreateCustomerInput();
         if (clientId) {
-            this._customersService.getCustomerInfo(clientId).subscribe(result => {
-                this.client.firstName = result.primaryContactPersonalInfo.firstName;
-                this.client.lastName = result.primaryContactPersonalInfo.lastName;
-            });
+            //this._customersService.getCustomerInfo(clientId).subscribe(result => {
+            //    this.client.firstName = result.primaryContactInfo.person.firstName;
+            //    this.client.lastName = result.primaryContactInfo.person.lastName;
+            //});
         }
 
         this.getProfilePicture();
