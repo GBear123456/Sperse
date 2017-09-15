@@ -12494,7 +12494,7 @@ export class PersonInfoDto implements IPersonInfoDto {
     ssn: string;
     timeZone: string;
     identityConfirmationDate: moment.Moment;
-    identityConfirmUserName: string;
+    identityConfirmedByUser: UserKeyInfoDto;
     maritalStatus: string;
     marriageDate: moment.Moment;
     divorceDate: moment.Moment;
@@ -12524,7 +12524,7 @@ export class PersonInfoDto implements IPersonInfoDto {
             this.ssn = data["ssn"];
             this.timeZone = data["timeZone"];
             this.identityConfirmationDate = data["identityConfirmationDate"] ? moment(data["identityConfirmationDate"].toString()) : <any>undefined;
-            this.identityConfirmUserName = data["identityConfirmUserName"];
+            this.identityConfirmedByUser = data["identityConfirmedByUser"] ? UserKeyInfoDto.fromJS(data["identityConfirmedByUser"]) : <any>undefined;
             this.maritalStatus = data["maritalStatus"];
             this.marriageDate = data["marriageDate"] ? moment(data["marriageDate"].toString()) : <any>undefined;
             this.divorceDate = data["divorceDate"] ? moment(data["divorceDate"].toString()) : <any>undefined;
@@ -12553,7 +12553,7 @@ export class PersonInfoDto implements IPersonInfoDto {
         data["ssn"] = this.ssn;
         data["timeZone"] = this.timeZone;
         data["identityConfirmationDate"] = this.identityConfirmationDate ? this.identityConfirmationDate.toISOString() : <any>undefined;
-        data["identityConfirmUserName"] = this.identityConfirmUserName;
+        data["identityConfirmedByUser"] = this.identityConfirmedByUser ? this.identityConfirmedByUser.toJSON() : <any>undefined;
         data["maritalStatus"] = this.maritalStatus;
         data["marriageDate"] = this.marriageDate ? this.marriageDate.toISOString() : <any>undefined;
         data["divorceDate"] = this.divorceDate ? this.divorceDate.toISOString() : <any>undefined;
@@ -12576,7 +12576,7 @@ export interface IPersonInfoDto {
     ssn: string;
     timeZone: string;
     identityConfirmationDate: moment.Moment;
-    identityConfirmUserName: string;
+    identityConfirmedByUser: UserKeyInfoDto;
     maritalStatus: string;
     marriageDate: moment.Moment;
     divorceDate: moment.Moment;
@@ -12591,7 +12591,7 @@ export interface IPersonInfoDto {
 export class OrganizationInfoDto implements IOrganizationInfoDto {
     industry: string;
     type: string;
-    personInfo: PersonInfoKeyInfoDto;
+    contactPerson: PersonKeyInfoDto;
 
     constructor(data?: IOrganizationInfoDto) {
         if (data) {
@@ -12606,7 +12606,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
         if (data) {
             this.industry = data["industry"];
             this.type = data["type"];
-            this.personInfo = data["personInfo"] ? PersonInfoKeyInfoDto.fromJS(data["personInfo"]) : <any>undefined;
+            this.contactPerson = data["contactPerson"] ? PersonKeyInfoDto.fromJS(data["contactPerson"]) : <any>undefined;
         }
     }
 
@@ -12620,7 +12620,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
         data = typeof data === 'object' ? data : {};
         data["industry"] = this.industry;
         data["type"] = this.type;
-        data["personInfo"] = this.personInfo ? this.personInfo.toJSON() : <any>undefined;
+        data["contactPerson"] = this.contactPerson ? this.contactPerson.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -12628,7 +12628,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 export interface IOrganizationInfoDto {
     industry: string;
     type: string;
-    personInfo: PersonInfoKeyInfoDto;
+    contactPerson: PersonKeyInfoDto;
 }
 
 export class ContactPhotoDto implements IContactPhotoDto {
@@ -12926,12 +12926,55 @@ export interface IContactLinkDto {
     comment: string;
 }
 
-export class PersonInfoKeyInfoDto implements IPersonInfoKeyInfoDto {
+export class UserKeyInfoDto implements IUserKeyInfoDto {
+    id: number;
+    userName: string;
+    fullName: string;
+
+    constructor(data?: IUserKeyInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.userName = data["userName"];
+            this.fullName = data["fullName"];
+        }
+    }
+
+    static fromJS(data: any): UserKeyInfoDto {
+        let result = new UserKeyInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["userName"] = this.userName;
+        data["fullName"] = this.fullName;
+        return data; 
+    }
+}
+
+export interface IUserKeyInfoDto {
+    id: number;
+    userName: string;
+    fullName: string;
+}
+
+export class PersonKeyInfoDto implements IPersonKeyInfoDto {
     contactId: number;
     firstName: string;
     lastName: string;
 
-    constructor(data?: IPersonInfoKeyInfoDto) {
+    constructor(data?: IPersonKeyInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12948,8 +12991,8 @@ export class PersonInfoKeyInfoDto implements IPersonInfoKeyInfoDto {
         }
     }
 
-    static fromJS(data: any): PersonInfoKeyInfoDto {
-        let result = new PersonInfoKeyInfoDto();
+    static fromJS(data: any): PersonKeyInfoDto {
+        let result = new PersonKeyInfoDto();
         result.init(data);
         return result;
     }
@@ -12963,7 +13006,7 @@ export class PersonInfoKeyInfoDto implements IPersonInfoKeyInfoDto {
     }
 }
 
-export interface IPersonInfoKeyInfoDto {
+export interface IPersonKeyInfoDto {
     contactId: number;
     firstName: string;
     lastName: string;
