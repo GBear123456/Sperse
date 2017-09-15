@@ -73,7 +73,7 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
                 this._tenantSslCertificateService.deleteTenantSslCertificate(row.data.id)
                     .subscribe(result => {
                         this.notify.info(this.l('SavedSuccessfully'));
-                        this.refreshSSLBindingGrid();
+                        this.refreshSSLGrid();
                     });
             }
         });
