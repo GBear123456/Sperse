@@ -1,7 +1,18 @@
 <div class="socials">
-  <h3 class="lab">Social</h3>
+  <h3 class="lab">{{l('Social')}}</h3>
   <ul>
-    <li *ngFor="let social of socials"><a href="{{social.url}}"><i class="fa fa-{{social.icon}}" aria-hidden="true"></i></a>
+    <li *ngFor="let social of data?.customerInfo?.primaryContactInfo.links">
+      <a href="{{social.url}}" target="_blank">
+        <i class="fa fa-{{social.type?.replace('+', '-plus').toLowerCase() || 'share-square-o'}}" aria-hidden="true"></i>
+      </a>
+    </li>
+  </ul>
+  <h3 class="lab">{{l('Others')}}</h3>
+  <ul class="others">
+    <li *ngFor="let social of data?.customerInfo?.primaryContactInfo.links">
+      <a href="{{social.url}}" target="_blank" *ngIf="!social.isSocialNetwork">
+        {{social.url}}
+      </a>
     </li>
   </ul>
 </div>

@@ -12,7 +12,6 @@ import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component'; 
 
 import { SocialsComponent } from './socials/socials.component';
-import { OthersComponent } from './others/others.component';
 import { ContactsComponent } from './contacts/contacts.component';
 import { AddressesComponent } from './addresses/addresses.component';
 import { ClientScoresComponent } from './client-scores/client-scores.component';
@@ -30,7 +29,6 @@ import { CustomersServiceProxy } from '@shared/service-proxies/service-proxies';
     ClientDetailsComponent,
     DetailsHeaderComponent,
     ClientScoresComponent,
-    OthersComponent,
     SocialsComponent,
     ContactsComponent,
     AddressesComponent,

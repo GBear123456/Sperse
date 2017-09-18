@@ -1,17 +1,36 @@
-.socials li {
+.socials {  
+  li {
     display: inline-block;
     margin: 10px;
     font-size: 34px;
-}
 
-.socials li .fa-facebook-official {
-    color: #455ea2;
-}
+    &.fa-facebook-official {
+      color: #455ea2;
+    }
+    &.fa-twitter {
+      color: #5ca7e2;
+    }
+    &.fa-pinterest {
+      color: #cd0f00;
+    }
+  }
 
-.socials li .fa-twitter {
-    color: #5ca7e2;
-}
+  ul.others {
+    padding-left: 0;
+   
+    li {
+      margin-bottom: 10px;
+      display: flex;
+      vertical-align: middle;
+      align-items: center;
 
-.socials li .fa-pinterest {
-    color: #cd0f00;
+      a {
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 1.67;
+        letter-spacing: 0.3px;
+        color: #424c56;
+      }
+    }
+  }
 }
