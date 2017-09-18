@@ -25,9 +25,10 @@ import * as moment from "moment";
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-
+    showPipeline = false;
+    gridDataSource: any = {};
     private rootComponent: any;
-	
+
     constructor(
         injector: Injector,
     		private _filtersService: FiltersService,
@@ -35,7 +36,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy,
         private _impersonationService: ImpersonationService,
-		
+
     ) {
         super(injector);
 
@@ -61,7 +62,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             width: 40
         });
     }
-    
+
 	onToolbarPrepare(event) {
 		event.toolbarOptions.items.unshift({
                 location: 'center',
@@ -121,8 +122,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     ngAfterViewInit(): void {
+        this.gridDataSource = this.dataGrid.instance.getDataSource();
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);    
+        this.rootComponent.overflowHidden(true);
     }
 
     ngOnDestroy() {

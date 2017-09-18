@@ -126,7 +126,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     ngAfterViewInit(): void {
         this.gridDataSource = this.dataGrid.instance.getDataSource();
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);    
+        this.rootComponent.overflowHidden(true);
     }
 
     ngOnDestroy() {
