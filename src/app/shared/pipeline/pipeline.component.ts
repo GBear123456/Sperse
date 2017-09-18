@@ -12,15 +12,12 @@ import DataSource from 'devextreme/data/data_source';
 })
 export class PipelineComponent extends AppComponentBase implements OnInit, AfterViewInit {
     @Input() dataSource: DataSource;
-    itemsList: DataSource;
     pipeline: PipelineDto;
     pipelineItems: any;
     pipelineId = 1; // TODO: send actual pipelineId
 
-    constructor(
-        injector: Injector,
-        private _pipelineService: PipelineServiceProxy
-    ) {
+    constructor(injector: Injector,
+                private _pipelineService: PipelineServiceProxy) {
         super(injector);
     }
 
@@ -35,10 +32,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
             this.dataSource.reload();
             setTimeout(() => {
                 this.pipelineItems = this.dataSource.items();
-                console.log(this.pipelineItems);
             }, 5000);
         }, 5000);
-
     }
 
     getPipelineDefinition(): void {
