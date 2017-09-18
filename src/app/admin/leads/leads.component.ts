@@ -1,4 +1,4 @@
-﻿import {Component, OnInit, AfterViewInit, Injector, Inject, ViewEncapsulation, ViewChild} from '@angular/core';
+﻿import {Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
 import {AppConsts} from '@shared/AppConsts';
 import {ActivatedRoute} from '@angular/router';
 import {AppComponentBase} from '@shared/common/app-component-base';
@@ -23,8 +23,10 @@ import * as moment from 'moment';
     styleUrls: ['./leads.component.less'],
     animations: [appModuleAnimation()]
 })
-export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+
+    private rootComponent: any;
 
     gridDataSource: any = {};
     collection: any;
@@ -38,6 +40,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 private _impersonationService: ImpersonationService, ) {
         super(injector);
 
+        this._filtersService.enabled = true;
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
         this.dataSource = {
@@ -122,5 +125,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     ngAfterViewInit(): void {
         this.gridDataSource = this.dataGrid.instance.getDataSource();
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+    }
+
+    ngOnDestroy() {
+        this._filtersService.enabled = false;
+        this.rootComponent.overflowHidden();
     }
 }

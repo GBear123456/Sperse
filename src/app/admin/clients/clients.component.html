@@ -27,6 +27,7 @@
 						[columnAutoWidth]="true"
 						[allowColumnResizing]="true"
 						[hoverStateEnabled]="true"
+            (onRowClick)="showClientDetails($event)"
 
                         (onContentReady)="onContentReady($event)"
 						(onToolbarPreparing)="onToolbarPrepare($event)">

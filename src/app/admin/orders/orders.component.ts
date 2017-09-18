@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, AfterViewInit, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -23,23 +23,27 @@ import * as moment from "moment";
     styleUrls: ["./orders.component.less"],
     animations: [appModuleAnimation()]
 })
-export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-	
+    showPipeline = false;
+    gridDataSource: any = {};
+    private rootComponent: any;
+
     constructor(
         injector: Injector,
-		private _filtersService: FiltersService,
+    		private _filtersService: FiltersService,
         //private _clientService: ClientServiceProxy,
         private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy,
         private _impersonationService: ImpersonationService,
-		
+
     ) {
         super(injector);
 
+        this._filtersService.enabled = true;
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
-		this.dataSource = {
+		    this.dataSource = {
             store: {
                 type: 'odata',
                 url: this.getODataURL('Order'),
@@ -58,7 +62,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             width: 40
         });
     }
-    
+
 	onToolbarPrepare(event) {
 		event.toolbarOptions.items.unshift({
                 location: 'center',
@@ -108,15 +112,23 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     ngOnInit(): void {
-		this.filterTabs = [
-			'all', 'active', 'archived'
-		];
+  		this.filterTabs = [
+	  		'all', 'active', 'archived'
+		  ];
 
-		this._filtersService.setup([
-      <FilterModel> {component: FilterStatesComponent, caption: 'states'}
-		]);
+  		this._filtersService.setup([
+        <FilterModel> {component: FilterStatesComponent, caption: 'states'}
+		  ]);
     }
 
     ngAfterViewInit(): void {
+        this.gridDataSource = this.dataGrid.instance.getDataSource();
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+    }
+
+    ngOnDestroy() {
+        this._filtersService.enabled = false;
+        this.rootComponent.overflowHidden();
     }
 }

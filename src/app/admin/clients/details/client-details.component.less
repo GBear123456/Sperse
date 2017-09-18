@@ -74,34 +74,70 @@
     border-right: none;
     background-color: #FFF;
     box-shadow: -2px 0px 6px 0 rgba(0, 0, 0, 0.1);
-  }
 
-  .close-details:hover {
-    opacity: 1;
-  }
-
-  .close-details:before, .close-details:after {
-    position: absolute;
-    top: 10px;
-    left: 20px;
-    content: ' ';
-    height: 20px;
-    width: 2px;
-    background-color: #1b1b1b;
-  }
-
-  .close-details:before {
-    transform: rotate(45deg);
-  }
-
-  .close-details:after {
-    transform: rotate(-45deg);
+    &:before, &:after {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      content: ' ';
+      height: 20px;
+      width: 2px;
+      background-color: #1b1b1b;
+    }
+    &:before {
+      transform: rotate(45deg);
+    }
+    &:after {
+      transform: rotate(-45deg);
+    }
+    &:hover {
+      opacity: 1;
+    }
   }
 
   md-sidenav {
-      width: 288px;
-      padding-top: 40px;
-      padding-bottom: 120px;
+    width: 288px;
+    padding-bottom: 120px;
+
+    .short-contact {
+      width: 85%;
+      margin: 0 auto;
+      min-height: 100px;
+      position: relative;
+      border-bottom: 1px solid #e5e9ec;
+
+      .small-phones {
+        position: absolute;
+        bottom: 10px;
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1.83;
+        letter-spacing: 0.2px;
+        color: #677380;
+        .material-icons {
+          position: relative;
+          font-size: 16px;
+          font-weight: bold;
+          padding-right: 10px;
+          top: 3px;
+        }
+      }
+      .general-links {  
+        float: right;    
+
+        i {
+          color: #686f76;
+          width: 16px;
+          height: 16px;
+          margin: 10px 0px 0px 20px;
+          cursor: pointer;
+        }
+      }
+    }
+    .mat-tab-nav-bar {
+      border: none;
+      padding-top: 12px;
+    }
   }
 
   md-sidenav.right_sidenav {

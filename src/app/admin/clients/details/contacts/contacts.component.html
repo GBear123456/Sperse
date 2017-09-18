@@ -1,27 +1,15 @@
 <div class="contacts">
-  <div class="emails">
+  <div class="emails" *ngIf="data?.customerInfo?.primaryContactInfo.emails.length">
     <h3 class="lab">Contact</h3>
-    <i class="fa fa-envelope-o" aria-hidden="true"></i>
-    <ul *ngFor="let email of emails">
-      <li>{{email}}</li>
+      <i class="material-icons">&#xE0E1;</i>
+    <ul *ngFor="let email of data?.customerInfo?.primaryContactInfo.emails">
+      <li>{{email.emailAddress}}</li>
     </ul>
   </div>
-  <div class="home_phones">
-    <i class="material-icons">&#xE0CD;</i>
+  <div class="phone" *ngFor="let phone of data?.customerInfo?.primaryContactInfo.phones">
+    <i class="material-icons">{{['&#xE0CD;', '&#xE325;', '&#xE7EE;'][phone?.type || 0]}}</i>
     <ul>
-      <li>{{phones.home?.phone}}</li>
-    </ul>
-  </div>
-  <div class="personal_phones">
-    <i class="material-icons">&#xE325;</i>
-    <ul>
-      <li>{{phones.mobile?.phone}}</li>
-    </ul>
-  </div>
-  <div class="work_phones">
-    <i class="material-icons">&#xE7EE;</i>
-    <ul>
-      <li>{{phones.office?.phone}}</li>
+      <li>{{phone?.phoneNumber}}</li>
     </ul>
   </div>
 </div>

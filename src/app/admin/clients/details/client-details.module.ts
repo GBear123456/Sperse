@@ -23,7 +23,7 @@ import { ContactInformationComponent } from './contact-information/contact-infor
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 
-/** Services */
+import { CustomersServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
   declarations: [
@@ -60,6 +60,6 @@ import { ClientDetailsRoutingModule } from './client-details-routing.module';
   bootstrap: [
     ClientDetailsComponent
   ],
-  providers: []
+  providers: [CustomersServiceProxy]
 })
 export class ClientDetailsModule { }

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 import { FilterModel } from './filter.model';
 
@@ -7,7 +8,9 @@ export class FiltersService {
 	private filters: Subject<FilterModel[]>;
 	private filter: Subject<FilterModel>;
 
-  public enabled: boolean = true;
+  private subscribers: Array<Subscription> = [];
+
+  public enabled: boolean = false;
 
 	constructor() {
 		this.filters = new Subject<FilterModel[]>();
@@ -19,14 +22,23 @@ export class FiltersService {
 	}	
 
 	update(callback: (filters: FilterModel[]) => any) {
-		this.filters.asObservable().subscribe(callback);
+    this.filters.asObservable().subscribe(callback);
 	}
 
 	change(filter: FilterModel) {
 		this.filter.next(filter);
 	}
 
-	apply(callback: (filters: FilterModel) => any) {
-		this.filter.asObservable().subscribe(callback);
+	apply(callback: (filter: FilterModel) => any) {
+    this.subscribers.push(
+  		this.filter.asObservable().subscribe(callback)
+    );
 	}
+
+  unsubscribe() {
+    this.subscribers.map((sub) => {
+      return void(sub.unsubscribe());
+    });
+    this.subscribers.length = 0;
+  }
 }

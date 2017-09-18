@@ -1,7 +1,7 @@
 import { Component, Input, Injector, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FiltersService } from '@shared/filters/filters.service';
-import { Router } from '@angular/router';
+import { CustomersServiceProxy, CustomerInfoDto, ContactInfoDto } from '@shared/service-proxies/service-proxies';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'client-details',
@@ -9,9 +9,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./client-details.component.less']
 })
 export class ClientDetailsComponent extends AppComponentBase implements OnInit, OnDestroy {
-  @Input()
-  clientId: number;
-
+  customerInfo: CustomerInfoDto;
+  primaryContact: ContactInfoDto;
+  
   person: any = {
     id: 1,
     first_name: 'Matthew',
@@ -27,51 +27,39 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
   };
 
   navLinks = [
-      {
-          'label': 'Contact Information',
-          'route': 'contact-information'
-      },
-      {
-          'label': 'Lead Information',
-          'route': 'lead-information',
-      },
-      {
-          'label': 'Questionnaire',
-          'route': 'questionnaire'
-      },
-      {
-          'label': 'Application Status',
-          'route': 'application-status'
-      },
-      {
-          'label': 'Referral History',
-          'route': 'referal-history'
-      },
-      {
-          'label': 'Payment Information',
-          'route': 'payment-information'
-      },
-      {
-          'label': 'Activity Logs',
-          'route': 'activity-logs'
-      },
-      {
-          'label': 'Notes',
-          'route': 'notes'
-      }
+    {'label': 'Contact Information','route': 'contact-information'},
+    {'label': 'Lead Information', 'route': 'lead-information',},
+    {'label': 'Questionnaire', 'route': 'questionnaire'},
+    {'label': 'Documents', 'route': 'required-documents'},
+    {'label': 'Application Status', 'route': 'application-status'},
+    {'label': 'Referral History', 'route': 'referal-history'},
+    {'label': 'Payment Information', 'route': 'payment-information'},
+    {'label': 'Activity Logs', 'route': 'activity-logs'},
+    {'label': 'Notes', 'route': 'notes'}
   ];
 
   private rootComponent: any;
+  private paramsSubscribe: any;
 
   constructor(
     injector: Injector,
     private _router: Router,
-    private _filtersService: FiltersService
+    private _route: ActivatedRoute,
+    private _customerService: CustomersServiceProxy
   ) {
     super(injector);
 
-    this._filtersService.enabled = false;
-    this.rootComponent = this.getRootComponent();
+    _customerService['data'] = {customerInfo: null};
+    this.rootComponent = this.getRootComponent();    
+    this.paramsSubscribe = this._route.params.subscribe(params => {
+      _customerService.getCustomerInfo(params['clientId'])
+        .subscribe(responce => {
+          _customerService['data'].customerInfo = responce;
+          this.primaryContact = responce.primaryContactInfo;
+          this.customerInfo = responce;
+        }
+      );
+    });
   }
 
   close(event) {
@@ -84,7 +72,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
   }
 
   ngOnDestroy() {
-    this._filtersService.enabled = true;
+    this.paramsSubscribe.unsubscribe();
+
     this.rootComponent.overflowHidden();
     this.rootComponent.pageHeaderFixed(true);
   }

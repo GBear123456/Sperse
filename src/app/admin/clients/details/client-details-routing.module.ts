@@ -9,7 +9,7 @@ import { ContactInformationComponent } from './contact-information/contact-infor
     imports: [
         RouterModule.forChild([
             {
-                path: 'clients/:id',
+                path: 'client/:clientId',
                 component: ClientDetailsComponent,
                 children: [
                   {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
