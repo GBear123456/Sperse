@@ -25,14 +25,15 @@ import * as moment from "moment";
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    items: any;
     showPipeline = false;
     gridDataSource: any = {};
     private rootComponent: any;
 
     constructor(
         injector: Injector,
-    		private _filtersService: FiltersService,
-        //private _clientService: ClientServiceProxy,
+    	private _filtersService: FiltersService,
+        // private _clientService: ClientServiceProxy,
         private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy,
         private _impersonationService: ImpersonationService,
@@ -54,6 +55,80 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 }
             }
         }
+
+        this.items = [{
+            location: 'before',
+            widget: 'dxButton',
+            options: {
+                hint: 'Back',
+                iconSrc: 'assets/common/images/icons/back-arrow.svg',
+                onClick: Function()
+            }
+        }, {
+            location: 'before',
+            widget: 'dxButton',
+            options: {
+                text: 'Assign',
+                iconSrc: 'assets/common/images/icons/assign-icon.svg',
+                onClick: Function()
+            }
+        }, {
+            location: 'before',
+            widget: 'dxButton',
+            options: {
+                text: 'Status',
+                iconSrc: 'assets/common/images/icons/status-icon.svg',
+                onClick: Function()
+            }
+        }, {
+            location: 'before',
+            widget: 'dxButton',
+            options: {
+                text: 'Delete',
+                iconSrc: 'assets/common/images/icons/delete-icon.svg',
+                onClick: Function()
+            }
+        }, {
+            location: 'after',
+            widget: 'dxButton',
+            options: {
+                hint: 'Refresh',
+                icon: 'icon icon-refresh',
+                onClick: this.refreshDataGrid.bind(this)
+            }
+        }, {
+            location: 'after',
+            widget: 'dxButton',
+            options: {
+                hint: 'Export to Excel',
+                iconSrc: 'assets/common/images/icons/download-icon.svg',
+                onClick: this.exportData.bind(this)
+            }
+        }, {
+            location: 'after',
+            widget: 'dxButton',
+            options: {
+                hint: 'Column chooser',
+                iconSrc: 'assets/common/images/icons/clmn-chooser-icon.svg',
+                onClick: this.showColumnChooser.bind(this)
+            }
+        }, {
+            location: 'after',
+            widget: 'dxButton',
+            options: {
+                hint: 'Pipeline',
+                iconSrc: 'assets/common/images/icons/pipeline-icon.svg',
+                onClick: this.togglePipeline.bind(this, true)
+            }
+        }, {
+            location: 'after',
+            widget: 'dxButton',
+            options: {
+                hint: 'Grid',
+                iconSrc: 'assets/common/images/icons/table-icon.svg',
+                onClick: this.togglePipeline.bind(this, false)
+            }
+        }];
     }
 
     onContentReady(event) {
@@ -63,52 +138,19 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-	onToolbarPrepare(event) {
-		event.toolbarOptions.items.unshift({
-                location: 'center',
-                widget: 'dxButton',
-                options: {
-                    hint: 'Back',
-                    icon: 'back',
-                    onClick: Function
-                }
-            }, {
-                location: 'center',
-                widget: 'dxButton',
-                options: {
-                    text: 'Assign',
-                    icon: 'fa fa-user-o',
-                    onClick: Function()
-                }
-            },{
-                location: 'center',
-                widget: 'dxButton',
-                options: {
-                    text: 'Status',
-                    icon: 'fa fa-flag-o',
-                    onClick: Function()
-                }
-            },{
-                location: 'center',
-                widget: 'dxButton',
-                options: {
-                    text: 'Delete',
-                    icon: 'fa fa-trash-o',
-                    onClick: Function()
-                }
-            },{
-                location: 'after',
-                widget: 'dxButton',
-                options: {
-					hint: 'Refresh',
-                    icon: 'refresh',
-                    onClick: this.refreshDataGrid.bind(this)
-                }
-            });
-	}
-
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
+    }
+    exportData() {
+        this.dataGrid.instance.exportToExcel(true);
+    }
+
+    showColumnChooser() {
+        this.dataGrid.instance.showColumnChooser();
+    }
+
+    togglePipeline(param) {
+        this.showPipeline = param;
     }
 
     ngOnInit(): void {
