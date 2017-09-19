@@ -46,7 +46,7 @@ export abstract class AppComponentBase {
   }
 
   l(key: string, ...args: any[]): string {
-    return this.ls(this.localizationSourceName, key);
+    return this.ls(this.localizationSourceName, key, ...args);
   }
 
   ls(sourcename: string, key: string, ...args: any[]): string {
@@ -66,7 +66,7 @@ export abstract class AppComponentBase {
 	capitalize = require('underscore.string/capitalize');
 
 	getODataURL(uri: String, filter?: Object) {
-		return AppConsts.remoteServiceBaseUrl + '/odata/' + 
+		return AppConsts.remoteServiceBaseUrl + '/odata/' +
       uri + (filter ? buildQuery({ filter }): '');
 	}
 
@@ -75,22 +75,22 @@ export abstract class AppComponentBase {
   }
 
   advancedODataFilter(grid: any, uri: string, query: any[]) {
-    grid.getDataSource()['_store']['_url'] = 
+    grid.getDataSource()['_store']['_url'] =
       this.getODataURL(uri, query);
-        
+
     grid.refresh();
   }
 
-  processODataFilter(grid, uri, filters, getCheckCustom) {       
-    this.advancedODataFilter(grid, uri, 
-      filters.map((filter) => {        
+  processODataFilter(grid, uri, filters, getCheckCustom) {
+    this.advancedODataFilter(grid, uri,
+      filters.map((filter) => {
         return getCheckCustom(filter) || _.pairs(filter.items)
           .reduce((obj, pair)=>{
             let val = pair.pop(), key = pair.pop(), operator = {};
             if (filter.operator)
-              operator[filter.operator] = val;                      
+              operator[filter.operator] = val;
             if (val && (typeof(val) == 'string')) {
-              obj[this.capitalize(key)] =  filter.operator ? operator: val;                      
+              obj[this.capitalize(key)] =  filter.operator ? operator: val;
             }
             return obj;
           }, {});

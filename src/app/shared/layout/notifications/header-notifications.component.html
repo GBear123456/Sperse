@@ -14,7 +14,7 @@
             <li>
                 <a (click)="gotoUrl(notification.url)" class="user-notification-item" [ngClass]="{'user-notification-item-unread': notification.state=='UNREAD', 'user-notification-item-clickable': notification.url}">
                     <span class="details">
-                        <i class="{{notification.icon}}"></i> {{notification.text}}
+                        <i class="{{notification.icon}}"></i> {{l(notification.text, appSession.tenant.name)}}
                     </span>
                     <div>
                         <span class="notification-time" title="{{notification.time}}" jq-plugin="timeago"></span>
