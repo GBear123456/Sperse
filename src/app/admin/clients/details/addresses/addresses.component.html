@@ -1,11 +1,10 @@
 <div class="addresses">
-  <h3 class="lab">Addresses</h3>
-  <div *ngFor="let address of person_addresses" class="address">
-    <i class="fa fa-{{address.icon ? address.icon : 'home'}}" aria-hidden="true"></i>
+  <h3 class="lab">{{l('Addresses')}}</h3>
+  <div *ngFor="let address of data?.customerInfo?.primaryContactInfo.addresses" class="address">
+    <i class="fa fa-{{address.type ? address.type : 'home'}}" aria-hidden="true"></i>
     <div class="address_text">
-      <h4>{{address.title}}</h4>
-      <p>{{address.description}}</p>
-      <p>{{address.location}}</p>
+      <h4>{{address.comment}}</h4>
+      <p>{{address.zip}}, {{address.streetAddress}}, {{address.city}}, {{address.state}}, {{address.country}}</p>
     </div>
   </div>
   <a class="other-info" (click)="addAddress()">+ Other Info</a>

@@ -1,31 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injector } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { CustomersServiceProxy, CustomerInfoDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'socials',
   templateUrl: './socials.component.html',
   styleUrls: ['./socials.component.less']
 })
-export class SocialsComponent implements OnInit {
-
-  socials = [
-    {
-        'icon': 'facebook-official',
-        'url': 'https://facebook.com'
-    },
-    {
-        'icon': 'twitter',
-        'url': 'https://twitter.com'
-    },
-    {
-        'icon': 'pinterest',
-        'url': 'https://pinterest.com'
-    }
-  ];
+export class SocialsComponent extends AppComponentBase implements OnInit {
+  data: {
+    customerInfo: CustomerInfoDto
+  };  
   
-  constructor() { }
+  constructor(
+    injector: Injector,
+    private _customerService: CustomersServiceProxy
+  ) { 
+    super(injector);
+  }
 
   ngOnInit() {
-//    this.socials = this.PersonService.getSocials();
+    this.data = this._customerService['data'];
   }
 
 }

@@ -1,42 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injector } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
 import { MdDialog, MdDialogRef } from '@angular/material';
+import { CustomersServiceProxy, CustomerInfoDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'addresses',
   templateUrl: './addresses.component.html',
   styleUrls: ['./addresses.component.less']
 })
-export class AddressesComponent implements OnInit {
-  person_addresses = [
-    {
-        'title': 'Primary Residential Address',
-        'description': 'Lorem ipsum dolor sit amet. conse ctetur adippiscing',
-        'location': 'Austin, Texas',
-        'icon': 'home'
-    },
-    {
-        'title': 'Previous Home',
-        'description': 'Lorem ipsum dolor sit amet. conse ctetur adippiscing',
-        'location': 'Austin, Texas',
-        'icon': 'arrow-left'
-    },
-    {
-        'title': 'Shipping Address',
-        'description': 'Lorem ipsum dolor sit amet. conse ctetur adippiscing',
-        'location': 'Austin, Texas',
-        'icon': 'truck'
-    }
-  ];
+export class AddressesComponent extends AppComponentBase implements OnInit {
+  data: any[] = [];
 
   constructor(
-    public dialog: MdDialog
-  ) { }
-
-  ngOnInit() {
-      //this.person_addresses = this.PersonService.getPersonAddresses();      
+    injector: Injector,
+    private _customerService: CustomersServiceProxy
+  ) { 
+    super(injector);
   }
 
-  addAddress() {
- }
-
+  ngOnInit() {
+    this.data = this._customerService['data'];
+  }
 }

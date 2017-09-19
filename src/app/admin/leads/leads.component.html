@@ -14,15 +14,17 @@
 			<ng-template ngFor let-tab [ngForOf]="filterTabs" let-i="index">
 				<div class="tab-filter {{'tab-' + tab}}" [ngClass]="{'tab-selected': tabIndex == i}" (click)="tabIndex = i;">{{l("TabFilter" + capitalize(tab))}}</div>
 			</ng-template>
-            <button class="btn btn-layout" (click)="showPipeline = !showPipeline">
-                <i class="fa fa-refresh" aria-hidden="true"></i>{{showPipeline ? 'Grid' : 'Pipeline'}}
-            </button>
             <button ng-if="vm.permissions.create" class="btn btn-layout" (click)="createClient()"><i class="fa fa-plus"></i>{{l("CreateNewCustomer")}}</button>
         </div>
     </div>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
+                <div class="dx-datagrid-header-panel">
+                    <div class="dx-toolbar">
+                        <dx-toolbar [items]="items"></dx-toolbar>
+                    </div>
+                </div>
                 <div [hidden]="showPipeline">
                     <div id="ClientsTable">
                         <dx-data-grid id="gridContainer"
@@ -31,9 +33,7 @@
                                       [columnAutoWidth]="true"
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
-                                      (onContentReady)="onContentReady($event)"
-                                      (onToolbarPreparing)="onToolbarPrepare($event)">
-                            <dxo-export [enabled]="true" fileName="Employees" [allowExportSelectedData]="true"></dxo-export>
+                                      (onContentReady)="onContentReady($event)">
                             <dxo-selection
                                 selectAllMode="page"
                                 showCheckBoxesMode="always"
@@ -69,7 +69,6 @@
                                 [allowedPageSizes]="[5, 10, 20]"
                                 [showInfo]="true">
                             </dxo-pager>
-                            <dxo-group-panel [visible]="true"></dxo-group-panel>
 
                         </dx-data-grid>
 
