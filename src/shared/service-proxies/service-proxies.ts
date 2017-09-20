@@ -8724,68 +8724,6 @@ export class UserLoginServiceProxy {
 }
 
 @Injectable()
-export class ValidationServiceProxy {
-    private http: Http;
-    private baseUrl: string;
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    isEmailValidToRegister(email: string): Observable<EmailValidationDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/Validation/IsEmailValidToRegister?";
-        if (email !== undefined)
-            url_ += "email=" + encodeURIComponent("" + email) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processIsEmailValidToRegister(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processIsEmailValidToRegister(response_);
-                } catch (e) {
-                    return <Observable<EmailValidationDto>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<EmailValidationDto>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processIsEmailValidToRegister(response: Response): Observable<EmailValidationDto> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: EmailValidationDto = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? EmailValidationDto.fromJS(resultData200) : new EmailValidationDto();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<EmailValidationDto>(<any>null);
-    }
-}
-
-@Injectable()
 export class WebLogServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -11615,6 +11553,7 @@ export interface IAlertDto {
 export class RecommendationDto implements IRecommendationDto {
     header: string;
     text: string;
+    isPositive: boolean;
 
     constructor(data?: IRecommendationDto) {
         if (data) {
@@ -11629,6 +11568,7 @@ export class RecommendationDto implements IRecommendationDto {
         if (data) {
             this.header = data["header"];
             this.text = data["text"];
+            this.isPositive = data["isPositive"];
         }
     }
 
@@ -11642,6 +11582,7 @@ export class RecommendationDto implements IRecommendationDto {
         data = typeof data === 'object' ? data : {};
         data["header"] = this.header;
         data["text"] = this.text;
+        data["isPositive"] = this.isPositive;
         return data; 
     }
 }
@@ -11649,6 +11590,7 @@ export class RecommendationDto implements IRecommendationDto {
 export interface IRecommendationDto {
     header: string;
     text: string;
+    isPositive: boolean;
 }
 
 export class CreditorContactDto implements ICreditorContactDto {
@@ -12387,6 +12329,7 @@ export interface IAccountCreditHistoryDto {
 }
 
 export class ContactInfoDto implements IContactInfoDto {
+    id: number;
     fullName: string;
     person: PersonInfoDto;
     organization: OrganizationInfoDto;
@@ -12408,6 +12351,7 @@ export class ContactInfoDto implements IContactInfoDto {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.fullName = data["fullName"];
             this.person = data["person"] ? PersonInfoDto.fromJS(data["person"]) : <any>undefined;
             this.organization = data["organization"] ? OrganizationInfoDto.fromJS(data["organization"]) : <any>undefined;
@@ -12444,6 +12388,7 @@ export class ContactInfoDto implements IContactInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["person"] = this.person ? this.person.toJSON() : <any>undefined;
         data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
@@ -12474,6 +12419,7 @@ export class ContactInfoDto implements IContactInfoDto {
 }
 
 export interface IContactInfoDto {
+    id: number;
     fullName: string;
     person: PersonInfoDto;
     organization: OrganizationInfoDto;
@@ -12677,7 +12623,7 @@ export interface IContactPhotoDto {
 export class ContactEmailDto implements IContactEmailDto {
     contactId: number;
     id: number;
-    type: string;
+    usageTypeId: string;
     emailAddress: string;
     isConfirmed: boolean;
     isActive: boolean;
@@ -12696,7 +12642,7 @@ export class ContactEmailDto implements IContactEmailDto {
         if (data) {
             this.contactId = data["contactId"];
             this.id = data["id"];
-            this.type = data["type"];
+            this.usageTypeId = data["usageTypeId"];
             this.emailAddress = data["emailAddress"];
             this.isConfirmed = data["isConfirmed"];
             this.isActive = data["isActive"];
@@ -12714,7 +12660,7 @@ export class ContactEmailDto implements IContactEmailDto {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["id"] = this.id;
-        data["type"] = this.type;
+        data["usageTypeId"] = this.usageTypeId;
         data["emailAddress"] = this.emailAddress;
         data["isConfirmed"] = this.isConfirmed;
         data["isActive"] = this.isActive;
@@ -12726,7 +12672,7 @@ export class ContactEmailDto implements IContactEmailDto {
 export interface IContactEmailDto {
     contactId: number;
     id: number;
-    type: string;
+    usageTypeId: string;
     emailAddress: string;
     isConfirmed: boolean;
     isActive: boolean;
@@ -12736,7 +12682,7 @@ export interface IContactEmailDto {
 export class ContactPhoneDto implements IContactPhoneDto {
     contactId: number;
     id: number;
-    type: string;
+    usageTypeId: string;
     phoneNumber: string;
     phoneExtension: string;
     isActive: boolean;
@@ -12756,7 +12702,7 @@ export class ContactPhoneDto implements IContactPhoneDto {
         if (data) {
             this.contactId = data["contactId"];
             this.id = data["id"];
-            this.type = data["type"];
+            this.usageTypeId = data["usageTypeId"];
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
             this.isActive = data["isActive"];
@@ -12775,7 +12721,7 @@ export class ContactPhoneDto implements IContactPhoneDto {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["id"] = this.id;
-        data["type"] = this.type;
+        data["usageTypeId"] = this.usageTypeId;
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
         data["isActive"] = this.isActive;
@@ -12788,7 +12734,7 @@ export class ContactPhoneDto implements IContactPhoneDto {
 export interface IContactPhoneDto {
     contactId: number;
     id: number;
-    type: string;
+    usageTypeId: string;
     phoneNumber: string;
     phoneExtension: string;
     isActive: boolean;
@@ -12798,7 +12744,7 @@ export interface IContactPhoneDto {
 
 export class ContactAddressDto implements IContactAddressDto {
     id: number;
-    type: string;
+    usageTypeId: string;
     streetAddress: string;
     city: string;
     state: string;
@@ -12820,7 +12766,7 @@ export class ContactAddressDto implements IContactAddressDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.type = data["type"];
+            this.usageTypeId = data["usageTypeId"];
             this.streetAddress = data["streetAddress"];
             this.city = data["city"];
             this.state = data["state"];
@@ -12841,7 +12787,7 @@ export class ContactAddressDto implements IContactAddressDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["type"] = this.type;
+        data["usageTypeId"] = this.usageTypeId;
         data["streetAddress"] = this.streetAddress;
         data["city"] = this.city;
         data["state"] = this.state;
@@ -12856,7 +12802,7 @@ export class ContactAddressDto implements IContactAddressDto {
 
 export interface IContactAddressDto {
     id: number;
-    type: string;
+    usageTypeId: string;
     streetAddress: string;
     city: string;
     state: string;
@@ -12869,7 +12815,7 @@ export interface IContactAddressDto {
 
 export class ContactLinkDto implements IContactLinkDto {
     id: number;
-    type: string;
+    linkTypeId: string;
     url: string;
     isSocialNetwork: boolean;
     isConfirmed: boolean;
@@ -12888,7 +12834,7 @@ export class ContactLinkDto implements IContactLinkDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.type = data["type"];
+            this.linkTypeId = data["linkTypeId"];
             this.url = data["url"];
             this.isSocialNetwork = data["isSocialNetwork"];
             this.isConfirmed = data["isConfirmed"];
@@ -12906,7 +12852,7 @@ export class ContactLinkDto implements IContactLinkDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["type"] = this.type;
+        data["linkTypeId"] = this.linkTypeId;
         data["url"] = this.url;
         data["isSocialNetwork"] = this.isSocialNetwork;
         data["isConfirmed"] = this.isConfirmed;
@@ -12918,7 +12864,7 @@ export class ContactLinkDto implements IContactLinkDto {
 
 export interface IContactLinkDto {
     id: number;
-    type: string;
+    linkTypeId: string;
     url: string;
     isSocialNetwork: boolean;
     isConfirmed: boolean;
@@ -21557,45 +21503,6 @@ export interface IUserLoginAttemptDto {
     browserInfo: string;
     result: string;
     creationTime: moment.Moment;
-}
-
-export class EmailValidationDto implements IEmailValidationDto {
-    result: boolean;
-    message: string;
-
-    constructor(data?: IEmailValidationDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.result = data["result"];
-            this.message = data["message"];
-        }
-    }
-
-    static fromJS(data: any): EmailValidationDto {
-        let result = new EmailValidationDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["result"] = this.result;
-        data["message"] = this.message;
-        return data; 
-    }
-}
-
-export interface IEmailValidationDto {
-    result: boolean;
-    message: string;
 }
 
 export class GetLatestWebLogsOutput implements IGetLatestWebLogsOutput {
