@@ -4,6 +4,7 @@ import { CustomersServiceProxy, CreateCustomerInput } from '@shared/service-prox
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { DxDateBoxComponent, DxTextBoxComponent, DxValidatorComponent, DxValidationSummaryComponent, DxButtonComponent } from 'devextreme-angular';
+import * as moment from 'moment';
 
 @Component({
     selector: 'createOrEditClientModal',
@@ -57,6 +58,19 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     
     save(event): void {
         if (!this.validate(event)) return;
+
+        var date = new Date(this.client.dob.toString()),
+            month = date.getMonth() + 1,
+            day = date.getDate();
+
+        this.client.dob = moment(
+            Date.parse(
+                date.getFullYear() + '-' +
+                this.twoDigitsFormat(month) + '-' +
+                this.twoDigitsFormat(day) +
+                "T00:00:00.000Z"
+            )
+        );
 
         this.saving = true;
         this._customersService.createCustomer(this.client)
@@ -113,6 +127,10 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
         }, 0);
 
         event.component.open();
+    }
+
+    twoDigitsFormat(value) {
+        return ("0" + value).slice(-2);
     }
 
     focusInput(event) {
