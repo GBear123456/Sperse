@@ -1,15 +1,17 @@
 <div class="contacts">
   <div class="emails" *ngIf="data?.customerInfo?.primaryContactInfo.emails.length">
-    <h3 class="lab">Contact</h3>
-      <i class="material-icons">&#xE0E1;</i>
+    <h3 class="lab">{{l('Contact')}}</h3>
+    <span (click)="showEditDialog('emailAddress')">+&nbsp;{{l('Add') + ' ' + l('Email')}}</span><br>
+    <i class="material-icons">&#xE0E1;</i>
     <ul *ngFor="let email of data?.customerInfo?.primaryContactInfo.emails">
-      <li>{{email.emailAddress}}</li>
+      <li (click)="showEditDialog('emailAddress', email)">{{email.emailAddress}}</li>
     </ul>
   </div>
+  <span (click)="showEditDialog('phoneNumber')">+&nbsp;{{l('Add') + ' ' + l('Phone')}}</span>
   <div class="phone" *ngFor="let phone of data?.customerInfo?.primaryContactInfo.phones">
-    <i class="material-icons">{{['&#xE0CD;', '&#xE325;', '&#xE7EE;'][phone?.type || 0]}}</i>
+    <i class="material-icons">{{['&#xE0CD;', '&#xE325;', '&#xE7EE;'][phone?.usageTypeId || 0]}}</i>
     <ul>
-      <li>{{phone?.phoneNumber}}</li>
+      <li (click)="showEditDialog('phoneNumber', phone)">{{phone.phoneNumber}}</li>
     </ul>
   </div>
 </div>

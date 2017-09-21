@@ -10,7 +10,7 @@
       </div>
       <div class="small-phones">
         <div class="phone" *ngFor="let phone of primaryContact?.phones">
-          <i class="material-icons"> {{['&#xE0CD;', '&#xE325;', '&#xE7EE;'][phone.type || 0]}} </i>{{ phone.phoneNumber }}
+          <i class="material-icons"> {{['&#xE0CD;', '&#xE325;', '&#xE7EE;'][phone.usageTypeId || 0]}} </i>{{ phone.phoneNumber }}
         </div>        
       </div>
     </div>
