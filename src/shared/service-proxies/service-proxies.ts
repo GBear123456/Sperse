@@ -613,6 +613,67 @@ export class AuditLogServiceProxy {
 }
 
 @Injectable()
+export class BaseCommercePushNotificationHandlerServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    handle(merchant_username: string, push_notification: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/BaseCommercePushNotificationHandler/Handle?";
+        if (merchant_username !== undefined)
+            url_ += "merchant_username=" + encodeURIComponent("" + merchant_username) + "&"; 
+        if (push_notification !== undefined)
+            url_ += "push_notification=" + encodeURIComponent("" + push_notification) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processHandle(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processHandle(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processHandle(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class CachingServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -10170,6 +10231,8 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     countryId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
     ownershipTypeId: string;
@@ -10193,6 +10256,8 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
             this.countryId = data["countryId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.usageTypeId = data["usageTypeId"];
             this.ownershipTypeId = data["ownershipTypeId"];
@@ -10215,6 +10280,8 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
         data["countryId"] = this.countryId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         data["ownershipTypeId"] = this.ownershipTypeId;
@@ -10231,6 +10298,8 @@ export interface ICreateContactAddressInput {
     countryId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
     ownershipTypeId: string;
@@ -10281,6 +10350,8 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
     countryId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
     ownershipTypeId: string;
@@ -10305,6 +10376,8 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
             this.countryId = data["countryId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.usageTypeId = data["usageTypeId"];
             this.ownershipTypeId = data["ownershipTypeId"];
@@ -10328,6 +10401,8 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
         data["countryId"] = this.countryId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         data["ownershipTypeId"] = this.ownershipTypeId;
@@ -10345,6 +10420,8 @@ export interface IUpdateContactAddressInput {
     countryId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
     ownershipTypeId: string;
@@ -10517,6 +10594,8 @@ export interface IAddressOwnershipTypeDto {
 export class CreateContactEmailInput implements ICreateContactEmailInput {
     contactId: number;
     emailAddress: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 
@@ -10533,6 +10612,8 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
         if (data) {
             this.contactId = data["contactId"];
             this.emailAddress = data["emailAddress"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.usageTypeId = data["usageTypeId"];
         }
@@ -10548,6 +10629,8 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["emailAddress"] = this.emailAddress;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         return data; 
@@ -10557,6 +10640,8 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
 export interface ICreateContactEmailInput {
     contactId: number;
     emailAddress: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 }
@@ -10600,6 +10685,8 @@ export class UpdateContactEmailInput implements IUpdateContactEmailInput {
     id: number;
     contactId: number;
     emailAddress: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 
@@ -10617,6 +10704,8 @@ export class UpdateContactEmailInput implements IUpdateContactEmailInput {
             this.id = data["id"];
             this.contactId = data["contactId"];
             this.emailAddress = data["emailAddress"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.usageTypeId = data["usageTypeId"];
         }
@@ -10633,6 +10722,8 @@ export class UpdateContactEmailInput implements IUpdateContactEmailInput {
         data["id"] = this.id;
         data["contactId"] = this.contactId;
         data["emailAddress"] = this.emailAddress;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         return data; 
@@ -10643,6 +10734,8 @@ export interface IUpdateContactEmailInput {
     id: number;
     contactId: number;
     emailAddress: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 }
@@ -10732,6 +10825,8 @@ export interface IEmailUsageTypeDto {
 export class CreateContactLinkInput implements ICreateContactLinkInput {
     contactId: number;
     url: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     linkTypeId: string;
 
@@ -10748,6 +10843,8 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
         if (data) {
             this.contactId = data["contactId"];
             this.url = data["url"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.linkTypeId = data["linkTypeId"];
         }
@@ -10763,6 +10860,8 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["url"] = this.url;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["linkTypeId"] = this.linkTypeId;
         return data; 
@@ -10772,6 +10871,8 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
 export interface ICreateContactLinkInput {
     contactId: number;
     url: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     linkTypeId: string;
 }
@@ -10815,6 +10916,8 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
     id: number;
     contactId: number;
     url: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     linkTypeId: string;
 
@@ -10832,6 +10935,8 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
             this.id = data["id"];
             this.contactId = data["contactId"];
             this.url = data["url"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.linkTypeId = data["linkTypeId"];
         }
@@ -10848,6 +10953,8 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
         data["id"] = this.id;
         data["contactId"] = this.contactId;
         data["url"] = this.url;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["linkTypeId"] = this.linkTypeId;
         return data; 
@@ -10858,6 +10965,8 @@ export interface IUpdateContactLinkInput {
     id: number;
     contactId: number;
     url: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     linkTypeId: string;
 }
@@ -10952,6 +11061,8 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
     contactId: number;
     phoneNumber: string;
     phoneExtension: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 
@@ -10969,6 +11080,8 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
             this.contactId = data["contactId"];
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.usageTypeId = data["usageTypeId"];
         }
@@ -10985,6 +11098,8 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
         data["contactId"] = this.contactId;
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         return data; 
@@ -10995,6 +11110,8 @@ export interface ICreateContactPhoneInput {
     contactId: number;
     phoneNumber: string;
     phoneExtension: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 }
@@ -11039,6 +11156,8 @@ export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
     contactId: number;
     phoneNumber: string;
     phoneExtension: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 
@@ -11057,6 +11176,8 @@ export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
             this.contactId = data["contactId"];
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.usageTypeId = data["usageTypeId"];
         }
@@ -11074,6 +11195,8 @@ export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
         data["contactId"] = this.contactId;
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         return data; 
@@ -11085,6 +11208,8 @@ export interface IUpdateContactPhoneInput {
     contactId: number;
     phoneNumber: string;
     phoneExtension: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 }
@@ -11232,6 +11357,8 @@ export interface ICreditReportOutput {
 
 export class CreditReportDto implements ICreditReportDto {
     creditReportId: number;
+    minScoreValue: number;
+    maxScoreValue: number;
     bureauReports: CreditBureauReportDto[];
     accounts: AccountDto[];
     alerts: AlertDto[];
@@ -11252,6 +11379,8 @@ export class CreditReportDto implements ICreditReportDto {
     init(data?: any) {
         if (data) {
             this.creditReportId = data["creditReportId"];
+            this.minScoreValue = data["minScoreValue"];
+            this.maxScoreValue = data["maxScoreValue"];
             if (data["bureauReports"] && data["bureauReports"].constructor === Array) {
                 this.bureauReports = [];
                 for (let item of data["bureauReports"])
@@ -11299,6 +11428,8 @@ export class CreditReportDto implements ICreditReportDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["creditReportId"] = this.creditReportId;
+        data["minScoreValue"] = this.minScoreValue;
+        data["maxScoreValue"] = this.maxScoreValue;
         if (this.bureauReports && this.bureauReports.constructor === Array) {
             data["bureauReports"] = [];
             for (let item of this.bureauReports)
@@ -11340,6 +11471,8 @@ export class CreditReportDto implements ICreditReportDto {
 
 export interface ICreditReportDto {
     creditReportId: number;
+    minScoreValue: number;
+    maxScoreValue: number;
     bureauReports: CreditBureauReportDto[];
     accounts: AccountDto[];
     alerts: AlertDto[];
@@ -11740,6 +11873,7 @@ export interface IPublicRecordDto {
 
 export class CreditScoreDto implements ICreditScoreDto {
     score: number;
+    scoreRank: CreditScoreDtoScoreRank;
     populationRank: number;
     qualitativeRank: number;
     scoreDate: moment.Moment;
@@ -11757,6 +11891,7 @@ export class CreditScoreDto implements ICreditScoreDto {
     init(data?: any) {
         if (data) {
             this.score = data["score"];
+            this.scoreRank = data["scoreRank"];
             this.populationRank = data["populationRank"];
             this.qualitativeRank = data["qualitativeRank"];
             this.scoreDate = data["scoreDate"] ? moment(data["scoreDate"].toString()) : <any>undefined;
@@ -11773,6 +11908,7 @@ export class CreditScoreDto implements ICreditScoreDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
+        data["scoreRank"] = this.scoreRank;
         data["populationRank"] = this.populationRank;
         data["qualitativeRank"] = this.qualitativeRank;
         data["scoreDate"] = this.scoreDate ? this.scoreDate.toISOString() : <any>undefined;
@@ -11783,6 +11919,7 @@ export class CreditScoreDto implements ICreditScoreDto {
 
 export interface ICreditScoreDto {
     score: number;
+    scoreRank: CreditScoreDtoScoreRank;
     populationRank: number;
     qualitativeRank: number;
     scoreDate: moment.Moment;
@@ -12625,8 +12762,11 @@ export class ContactEmailDto implements IContactEmailDto {
     id: number;
     usageTypeId: string;
     emailAddress: string;
-    isConfirmed: boolean;
     isActive: boolean;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 
     constructor(data?: IContactEmailDto) {
@@ -12644,8 +12784,11 @@ export class ContactEmailDto implements IContactEmailDto {
             this.id = data["id"];
             this.usageTypeId = data["usageTypeId"];
             this.emailAddress = data["emailAddress"];
-            this.isConfirmed = data["isConfirmed"];
             this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -12662,8 +12805,11 @@ export class ContactEmailDto implements IContactEmailDto {
         data["id"] = this.id;
         data["usageTypeId"] = this.usageTypeId;
         data["emailAddress"] = this.emailAddress;
-        data["isConfirmed"] = this.isConfirmed;
         data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
@@ -12674,8 +12820,11 @@ export interface IContactEmailDto {
     id: number;
     usageTypeId: string;
     emailAddress: string;
-    isConfirmed: boolean;
     isActive: boolean;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 }
 
@@ -12687,6 +12836,9 @@ export class ContactPhoneDto implements IContactPhoneDto {
     phoneExtension: string;
     isActive: boolean;
     isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 
     constructor(data?: IContactPhoneDto) {
@@ -12707,6 +12859,9 @@ export class ContactPhoneDto implements IContactPhoneDto {
             this.phoneExtension = data["phoneExtension"];
             this.isActive = data["isActive"];
             this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -12726,6 +12881,9 @@ export class ContactPhoneDto implements IContactPhoneDto {
         data["phoneExtension"] = this.phoneExtension;
         data["isActive"] = this.isActive;
         data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
@@ -12739,10 +12897,14 @@ export interface IContactPhoneDto {
     phoneExtension: string;
     isActive: boolean;
     isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 }
 
 export class ContactAddressDto implements IContactAddressDto {
+    contactId: number;
     id: number;
     usageTypeId: string;
     streetAddress: string;
@@ -12750,8 +12912,13 @@ export class ContactAddressDto implements IContactAddressDto {
     state: string;
     country: string;
     zip: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
     isActive: boolean;
     isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 
     constructor(data?: IContactAddressDto) {
@@ -12765,6 +12932,7 @@ export class ContactAddressDto implements IContactAddressDto {
 
     init(data?: any) {
         if (data) {
+            this.contactId = data["contactId"];
             this.id = data["id"];
             this.usageTypeId = data["usageTypeId"];
             this.streetAddress = data["streetAddress"];
@@ -12772,8 +12940,13 @@ export class ContactAddressDto implements IContactAddressDto {
             this.state = data["state"];
             this.country = data["country"];
             this.zip = data["zip"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
             this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -12786,6 +12959,7 @@ export class ContactAddressDto implements IContactAddressDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
         data["id"] = this.id;
         data["usageTypeId"] = this.usageTypeId;
         data["streetAddress"] = this.streetAddress;
@@ -12793,14 +12967,20 @@ export class ContactAddressDto implements IContactAddressDto {
         data["state"] = this.state;
         data["country"] = this.country;
         data["zip"] = this.zip;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["isActive"] = this.isActive;
         data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
 }
 
 export interface IContactAddressDto {
+    contactId: number;
     id: number;
     usageTypeId: string;
     streetAddress: string;
@@ -12808,18 +12988,27 @@ export interface IContactAddressDto {
     state: string;
     country: string;
     zip: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
     isActive: boolean;
     isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 }
 
 export class ContactLinkDto implements IContactLinkDto {
+    contactId: number;
     id: number;
     linkTypeId: string;
     url: string;
     isSocialNetwork: boolean;
-    isConfirmed: boolean;
     isActive: boolean;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 
     constructor(data?: IContactLinkDto) {
@@ -12833,12 +13022,16 @@ export class ContactLinkDto implements IContactLinkDto {
 
     init(data?: any) {
         if (data) {
+            this.contactId = data["contactId"];
             this.id = data["id"];
             this.linkTypeId = data["linkTypeId"];
             this.url = data["url"];
             this.isSocialNetwork = data["isSocialNetwork"];
-            this.isConfirmed = data["isConfirmed"];
             this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -12851,24 +13044,32 @@ export class ContactLinkDto implements IContactLinkDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
         data["id"] = this.id;
         data["linkTypeId"] = this.linkTypeId;
         data["url"] = this.url;
         data["isSocialNetwork"] = this.isSocialNetwork;
-        data["isConfirmed"] = this.isConfirmed;
         data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
 }
 
 export interface IContactLinkDto {
+    contactId: number;
     id: number;
     linkTypeId: string;
     url: string;
     isSocialNetwork: boolean;
-    isConfirmed: boolean;
     isActive: boolean;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 }
 
@@ -21626,6 +21827,13 @@ export enum AlertDtoType {
     _0 = 0, 
     _1 = 1, 
     _2 = 2, 
+}
+
+export enum CreditScoreDtoScoreRank {
+    Poor = <any>"Poor", 
+    Fair = <any>"Fair", 
+    Good = <any>"Good", 
+    Excellent = <any>"Excellent", 
 }
 
 export enum AccountInfoDtoStatus {
