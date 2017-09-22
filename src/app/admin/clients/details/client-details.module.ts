@@ -5,12 +5,16 @@ import { CommonModule } from '@angular/common';
 import { MdSidenavModule, MdProgressBarModule, MdTabsModule, MdDialogModule, 
   MdDialogRef, MdProgressSpinnerModule, MdSelectModule } from '@angular/material';
 
+import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule,
+  DxTextBoxModule, DxValidatorModule, DxValidationGroupComponent } from 'devextreme-angular';
+
 import { RouterModule, Routes } from '@angular/router';
 
 import { ClientDetailsComponent } from './client-details.component';
 import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component'; 
 
+import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
 import { SocialsComponent } from './socials/socials.component';
 import { ContactsComponent } from './contacts/contacts.component';
 import { AddressesComponent } from './addresses/addresses.component';
@@ -22,10 +26,12 @@ import { ContactInformationComponent } from './contact-information/contact-infor
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 
-import { CustomersServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CustomersServiceProxy, ContactEmailServiceProxy, 
+  ContactPhoneServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
   declarations: [
+    EditContactDialog,
     ClientDetailsComponent,
     DetailsHeaderComponent,
     ClientScoresComponent,
@@ -37,7 +43,8 @@ import { CustomersServiceProxy } from '@shared/service-proxies/service-proxies';
     CreditLinesComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent,
-    OperationsWidgetComponent
+    OperationsWidgetComponent, 
+    DxValidationGroupComponent
   ],
   imports: [
     FormsModule,
@@ -48,16 +55,29 @@ import { CustomersServiceProxy } from '@shared/service-proxies/service-proxies';
     MdDialogModule,
     MdProgressSpinnerModule,
     MdSelectModule,
-    ClientDetailsRoutingModule
+    ClientDetailsRoutingModule,
+
+    DxSelectBoxModule,
+    DxCheckBoxModule,
+    DxTextBoxModule,
+    DxValidatorModule,
+    DxNumberBoxModule
   ],
   exports: [
     ClientDetailsComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent
   ],
+  entryComponents: [
+    EditContactDialog
+  ],
   bootstrap: [
     ClientDetailsComponent
   ],
-  providers: [CustomersServiceProxy]
+  providers: [
+    ContactEmailServiceProxy,
+    ContactPhoneServiceProxy,
+    CustomersServiceProxy
+  ]
 })
 export class ClientDetailsModule { }

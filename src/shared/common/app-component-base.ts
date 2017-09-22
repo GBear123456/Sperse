@@ -12,9 +12,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import buildQuery from 'odata-query';
 import * as _ from 'underscore';
 
-export abstract class AppComponentBase {
-  localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-
+export abstract class AppComponentBase {  
 	dataSource: any;
 	tabIndex: Number = 0;
 	filterTabs: String[] = [];
@@ -29,7 +27,9 @@ export abstract class AppComponentBase {
 
   private _applicationRef: ApplicationRef;
 
-  constructor(private _injector: Injector) {
+  constructor(private _injector: Injector, 
+    public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName
+  ) {
     this.localization = _injector.get(LocalizationService);
     this.permission = _injector.get(PermissionCheckerService);
     this.feature = _injector.get(FeatureCheckerService);

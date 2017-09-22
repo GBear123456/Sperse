@@ -11,6 +11,14 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
   data: {
     customerInfo: CustomerInfoDto
   };  
+
+  LINK_TYPES = {
+    F: 'facebook',
+    G: 'google-plus',
+    L: 'linkedin',
+    P: 'pinterest',
+    T: 'twitter'
+  }
   
   constructor(
     injector: Injector,

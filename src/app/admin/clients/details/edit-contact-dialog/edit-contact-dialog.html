@@ -1,0 +1,80 @@
+<h2 md-dialog-title>{{l('ContactInfoDialogTitle', action, data.name)}}</h2>
+<md-dialog-content>
+  <dx-validation-group (onInitialized)="initValidationGroup($event)">
+    <dx-select-box
+      name="usageType"
+      placeholder="{{l('Type')}}"
+      [dataSource]="types"
+      displayExpr="name"
+      valueExpr="id"
+      [(value)]="data.usageTypeId"
+      fieldTemplate="fieldTemplate">
+      <div *dxTemplate="let item of 'fieldTemplate'">
+        <div class="type-item-wrapper ">
+          <dx-text-box class="{{data.field}} type-{{item?.id}}"
+            [value]="item?.name"
+            placeholder="{{l('Type')}}"
+            [readOnly]="true">
+          </dx-text-box>
+        </div>
+      </div>
+
+      <dx-validator>
+        <dxi-validation-rule type="required" message="{{l('TypeRequired')}}"></dxi-validation-rule>
+      </dx-validator>
+    </dx-select-box>
+
+    <dx-text-box 
+      *ngIf="data.field == 'emailAddress'"
+      name="email"
+      placeholder="{{l('Email')}}"
+      [(value)]="data.emailAddress">
+      <dx-validator>
+        <dxi-validation-rule type="required" message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
+        <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+      </dx-validator>
+    </dx-text-box>
+
+    <div *ngIf="data.field == 'phoneNumber'">
+      <dx-text-box      
+        name="phone"
+        placeholder="{{l('Phone')}}"
+        maskInvalidMessage="{{l('PhoneValidationError')}}"
+        [(value)]="data.phoneNumber"
+        (onFocusOut)="blurInput($event)"
+        (onFocusIn)="focusInput($event)">
+        <dx-validator>
+          <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
+        </dx-validator>
+      </dx-text-box>
+
+      <dx-number-box
+        name="phoneExtension"
+        placeholder="{{l('Extension')}}"
+        [(value)]="data.phoneExtension">
+      </dx-number-box>
+    </div>
+
+    <dx-text-box 
+      name="comment"
+      placeholder="{{l('Comment')}}"
+      [(value)]="data.comment">
+    </dx-text-box>
+
+    <p>
+      <dx-check-box
+        text="{{l('ConfirmedContact', [data.name])}}"
+        [(value)]="data.isConfirmed">
+      </dx-check-box>
+      &nbsp;&nbsp;&nbsp;
+      <dx-check-box
+        text="{{l('ActiveContact', [data.name])}}"
+        [(value)]="data.isActive">
+      </dx-check-box>
+    </p>
+  </dx-validation-group>
+</md-dialog-content>
+<md-dialog-actions>
+  <button md-button md-dialog-close class="btn btn-default">{{l('Cancel')}}</button>
+  <button md-button class="btn button-primary" (click)="onSave($event)">{{l('Save')}}</button>
+</md-dialog-actions>
