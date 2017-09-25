@@ -5722,6 +5722,262 @@ export class SessionServiceProxy {
 }
 
 @Injectable()
+export class TenancyServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getTenancies(customerId: number): Observable<PagedResultDtoOfTenancyListDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancies?";
+        if (customerId !== undefined)
+            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetTenancies(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTenancies(response_);
+                } catch (e) {
+                    return <Observable<PagedResultDtoOfTenancyListDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<PagedResultDtoOfTenancyListDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTenancies(response: Response): Observable<PagedResultDtoOfTenancyListDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: PagedResultDtoOfTenancyListDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PagedResultDtoOfTenancyListDto.fromJS(resultData200) : new PagedResultDtoOfTenancyListDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<PagedResultDtoOfTenancyListDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    createTenancy(input: CreateTenancyInput): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/CreateTenancy";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateTenancy(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateTenancy(response_);
+                } catch (e) {
+                    return <Observable<number>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateTenancy(response: Response): Observable<number> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: number = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<number>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getTenancyForEdit(id: number, customerId: number): Observable<GetTenancyForEditOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancyForEdit?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        if (customerId !== undefined)
+            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetTenancyForEdit(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTenancyForEdit(response_);
+                } catch (e) {
+                    return <Observable<GetTenancyForEditOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetTenancyForEditOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTenancyForEdit(response: Response): Observable<GetTenancyForEditOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: GetTenancyForEditOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetTenancyForEditOutput.fromJS(resultData200) : new GetTenancyForEditOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<GetTenancyForEditOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateTenancy(input: UpdateTenancyInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/UpdateTenancy";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateTenancy(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateTenancy(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateTenancy(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteTenancy(id: number, customerId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/DeleteTenancy?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        if (customerId !== undefined)
+            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteTenancy(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteTenancy(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteTenancy(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class TenantServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -17511,7 +17767,6 @@ export interface IActionDto {
 export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
     name: string;
     surname: string;
-    userName: string;
     emailAddress: string;
     phoneNumber: string;
     timezone: string;
@@ -17529,7 +17784,6 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
         if (data) {
             this.name = data["name"];
             this.surname = data["surname"];
-            this.userName = data["userName"];
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
             this.timezone = data["timezone"];
@@ -17546,7 +17800,6 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["surname"] = this.surname;
-        data["userName"] = this.userName;
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
         data["timezone"] = this.timezone;
@@ -17557,7 +17810,6 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
 export interface ICurrentUserProfileEditDto {
     name: string;
     surname: string;
-    userName: string;
     emailAddress: string;
     phoneNumber: string;
     timezone: string;
@@ -18392,6 +18644,321 @@ export interface IUpdateUserSignInTokenOutput {
     signInToken: string;
     encodedUserId: string;
     encodedTenantId: string;
+}
+
+export class PagedResultDtoOfTenancyListDto implements IPagedResultDtoOfTenancyListDto {
+    totalCount: number;
+    items: TenancyListDto[];
+
+    constructor(data?: IPagedResultDtoOfTenancyListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalCount = data["totalCount"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(TenancyListDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PagedResultDtoOfTenancyListDto {
+        let result = new PagedResultDtoOfTenancyListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPagedResultDtoOfTenancyListDto {
+    totalCount: number;
+    items: TenancyListDto[];
+}
+
+export class TenancyListDto implements ITenancyListDto {
+    name: string;
+    id: number;
+
+    constructor(data?: ITenancyListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): TenancyListDto {
+        let result = new TenancyListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ITenancyListDto {
+    name: string;
+    id: number;
+}
+
+export class CreateTenancyInput implements ICreateTenancyInput {
+    customerId: number;
+    adminEmailAddress: string;
+    adminPassword: string;
+    shouldChangePasswordOnNextLogin: boolean;
+    sendActivationEmail: boolean;
+    tenancyName: string;
+    name: string;
+    connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
+    editionId: number;
+    isActive: boolean;
+    subscriptionEndDateUtc: moment.Moment;
+    isInTrialPeriod: boolean;
+
+    constructor(data?: ICreateTenancyInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerId = data["customerId"];
+            this.adminEmailAddress = data["adminEmailAddress"];
+            this.adminPassword = data["adminPassword"];
+            this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
+            this.sendActivationEmail = data["sendActivationEmail"];
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
+            this.connectionString = data["connectionString"];
+            this.crmConnectionString = data["crmConnectionString"];
+            this.memberDbConnectionString = data["memberDbConnectionString"];
+            this.editionId = data["editionId"];
+            this.isActive = data["isActive"];
+            this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
+            this.isInTrialPeriod = data["isInTrialPeriod"];
+        }
+    }
+
+    static fromJS(data: any): CreateTenancyInput {
+        let result = new CreateTenancyInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        data["adminEmailAddress"] = this.adminEmailAddress;
+        data["adminPassword"] = this.adminPassword;
+        data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
+        data["sendActivationEmail"] = this.sendActivationEmail;
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
+        data["connectionString"] = this.connectionString;
+        data["crmConnectionString"] = this.crmConnectionString;
+        data["memberDbConnectionString"] = this.memberDbConnectionString;
+        data["editionId"] = this.editionId;
+        data["isActive"] = this.isActive;
+        data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
+        data["isInTrialPeriod"] = this.isInTrialPeriod;
+        return data; 
+    }
+}
+
+export interface ICreateTenancyInput {
+    customerId: number;
+    adminEmailAddress: string;
+    adminPassword: string;
+    shouldChangePasswordOnNextLogin: boolean;
+    sendActivationEmail: boolean;
+    tenancyName: string;
+    name: string;
+    connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
+    editionId: number;
+    isActive: boolean;
+    subscriptionEndDateUtc: moment.Moment;
+    isInTrialPeriod: boolean;
+}
+
+export class GetTenancyForEditOutput implements IGetTenancyForEditOutput {
+    tenancyName: string;
+    name: string;
+    connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
+    editionId: number;
+    isActive: boolean;
+    subscriptionEndDateUtc: moment.Moment;
+    isInTrialPeriod: boolean;
+
+    constructor(data?: IGetTenancyForEditOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
+            this.connectionString = data["connectionString"];
+            this.crmConnectionString = data["crmConnectionString"];
+            this.memberDbConnectionString = data["memberDbConnectionString"];
+            this.editionId = data["editionId"];
+            this.isActive = data["isActive"];
+            this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
+            this.isInTrialPeriod = data["isInTrialPeriod"];
+        }
+    }
+
+    static fromJS(data: any): GetTenancyForEditOutput {
+        let result = new GetTenancyForEditOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
+        data["connectionString"] = this.connectionString;
+        data["crmConnectionString"] = this.crmConnectionString;
+        data["memberDbConnectionString"] = this.memberDbConnectionString;
+        data["editionId"] = this.editionId;
+        data["isActive"] = this.isActive;
+        data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
+        data["isInTrialPeriod"] = this.isInTrialPeriod;
+        return data; 
+    }
+}
+
+export interface IGetTenancyForEditOutput {
+    tenancyName: string;
+    name: string;
+    connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
+    editionId: number;
+    isActive: boolean;
+    subscriptionEndDateUtc: moment.Moment;
+    isInTrialPeriod: boolean;
+}
+
+export class UpdateTenancyInput implements IUpdateTenancyInput {
+    id: number;
+    customerId: number;
+    tenancyName: string;
+    name: string;
+    connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
+    editionId: number;
+    isActive: boolean;
+    subscriptionEndDateUtc: moment.Moment;
+    isInTrialPeriod: boolean;
+
+    constructor(data?: IUpdateTenancyInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.customerId = data["customerId"];
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
+            this.connectionString = data["connectionString"];
+            this.crmConnectionString = data["crmConnectionString"];
+            this.memberDbConnectionString = data["memberDbConnectionString"];
+            this.editionId = data["editionId"];
+            this.isActive = data["isActive"];
+            this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
+            this.isInTrialPeriod = data["isInTrialPeriod"];
+        }
+    }
+
+    static fromJS(data: any): UpdateTenancyInput {
+        let result = new UpdateTenancyInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["customerId"] = this.customerId;
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
+        data["connectionString"] = this.connectionString;
+        data["crmConnectionString"] = this.crmConnectionString;
+        data["memberDbConnectionString"] = this.memberDbConnectionString;
+        data["editionId"] = this.editionId;
+        data["isActive"] = this.isActive;
+        data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
+        data["isInTrialPeriod"] = this.isInTrialPeriod;
+        return data; 
+    }
+}
+
+export interface IUpdateTenancyInput {
+    id: number;
+    customerId: number;
+    tenancyName: string;
+    name: string;
+    connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
+    editionId: number;
+    isActive: boolean;
+    subscriptionEndDateUtc: moment.Moment;
+    isInTrialPeriod: boolean;
 }
 
 export class PagedResultDtoOfTenantListDto implements IPagedResultDtoOfTenantListDto {
