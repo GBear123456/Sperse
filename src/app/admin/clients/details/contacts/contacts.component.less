@@ -3,12 +3,54 @@
 }
 
 .contacts {
-  i {
+  .add-contact {
+    color: #00aeef;
+    font-size: 32px;
+    font-weight: 400;
+    float: right;
+    position: relative;
+    bottom: 60px;
+    cursor: pointer;
+    margin: 0px;
+  }
+
+  i.material-icons {
     position: absolute;
   }
 
   ul {
     padding-left: 30px;
+
+    .actions  {
+      position: absolute;
+      display: none;
+      right: 50px;
+      margin-top: -4px;
+
+      i {
+        font-size: 18px;
+        padding: 7px;
+        cursor: pointer;
+      }
+
+      i.edit {
+        color: #00aeef;
+      }
+    
+      i.delete {
+        color: #f44336;
+      }
+    }
+
+    &:hover {
+      li {
+        background-color: #ecf1f3;
+      }
+
+      .actions {
+        display: block;
+      }      
+    }
   }
 
   & > div {
@@ -16,6 +58,7 @@
   }
 
   li {
+    margin-right: 35px;
     cursor: pointer;
   }
   span{
