@@ -5,7 +5,8 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
 import { 
   ContactEmailServiceProxy,
-  ContactPhoneServiceProxy
+  ContactPhoneServiceProxy,
+  ContactLinkServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -29,12 +30,19 @@ export class EditContactDialog extends AppComponentBase {
     @Inject(MD_DIALOG_DATA) public data: any,
     public dialogRef: MdDialogRef<EditContactDialog>,
     private _contactEmailService: ContactEmailServiceProxy,
-    private _contactPhoneService: ContactPhoneServiceProxy
+    private _contactPhoneService: ContactPhoneServiceProxy,
+    private _contactLinkService: ContactLinkServiceProxy
   ) { 
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
     this[data.field + 'TypesLoad']();
     this.action = this.l(data.value ? 'Edit': 'Create');
+  }
+
+  urlTypesLoad() {
+    this._contactLinkService.getContactLinkTypes().subscribe(result => {
+      this.types = result.items;
+    });
   }
 
   emailAddressTypesLoad() {

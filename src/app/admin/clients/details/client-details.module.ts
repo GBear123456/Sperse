@@ -29,7 +29,7 @@ import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
 
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy,
-  ContactPhoneServiceProxy, MemberServiceProxy } from '@shared/service-proxies/service-proxies';
+  ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
   declarations: [
@@ -82,6 +82,7 @@ import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceP
     ContactAddressServiceProxy,
     ContactEmailServiceProxy,
     ContactPhoneServiceProxy,
+    ContactLinkServiceProxy,
     CustomersServiceProxy,
     MemberServiceProxy
   ]
