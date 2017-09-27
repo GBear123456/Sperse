@@ -2166,6 +2166,62 @@ export class CreditReportServiceProxy {
     /**
      * @return Success
      */
+    getCreditReportHistory(periodYears: number, reportId: number): Observable<ScoreHistoryDto[]> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetCreditReportHistory?";
+        if (periodYears !== undefined)
+            url_ += "periodYears=" + encodeURIComponent("" + periodYears) + "&"; 
+        if (reportId !== undefined)
+            url_ += "reportId=" + encodeURIComponent("" + reportId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCreditReportHistory(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCreditReportHistory(response_);
+                } catch (e) {
+                    return <Observable<ScoreHistoryDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ScoreHistoryDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCreditReportHistory(response: Response): Observable<ScoreHistoryDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ScoreHistoryDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ScoreHistoryDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ScoreHistoryDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     loadAlerts(): Observable<AlertDto[]> {
         let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/LoadAlerts";
         url_ = url_.replace(/[?&]$/, "");
@@ -6430,6 +6486,115 @@ export class TenantServiceProxy {
 }
 
 @Injectable()
+export class TenantCustomizationServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getTenantCustomization(customizationGroupName: string, customizationName: string): Observable<TenantCustomizationDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/GetTenantCustomization?";
+        if (customizationGroupName !== undefined)
+            url_ += "CustomizationGroupName=" + encodeURIComponent("" + customizationGroupName) + "&"; 
+        if (customizationName !== undefined)
+            url_ += "CustomizationName=" + encodeURIComponent("" + customizationName) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetTenantCustomization(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTenantCustomization(response_);
+                } catch (e) {
+                    return <Observable<TenantCustomizationDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<TenantCustomizationDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTenantCustomization(response: Response): Observable<TenantCustomizationDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: TenantCustomizationDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? TenantCustomizationDto.fromJS(resultData200) : new TenantCustomizationDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<TenantCustomizationDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    addTenantCustomization(input: TenantCustomizationDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/AddTenantCustomization";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processAddTenantCustomization(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAddTenantCustomization(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAddTenantCustomization(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class TenantDashboardServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -7537,6 +7702,51 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processClearCustomCss(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    clearFavicons(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/ClearFavicons";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processClearFavicons(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processClearFavicons(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processClearFavicons(response: Response): Observable<void> {
         const status = response.status; 
 
         if (status === 200) {
@@ -12719,6 +12929,53 @@ export interface IAccountCreditHistoryDto {
     status: string;
     isPositiveStatus: boolean;
     statusType: AccountCreditHistoryDtoStatusType;
+}
+
+export class ScoreHistoryDto implements IScoreHistoryDto {
+    scoreDate: moment.Moment;
+    experianScore: number;
+    transUnionScore: number;
+    equifaxScore: number;
+
+    constructor(data?: IScoreHistoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.scoreDate = data["scoreDate"] ? moment(data["scoreDate"].toString()) : <any>undefined;
+            this.experianScore = data["experianScore"];
+            this.transUnionScore = data["transUnionScore"];
+            this.equifaxScore = data["equifaxScore"];
+        }
+    }
+
+    static fromJS(data: any): ScoreHistoryDto {
+        let result = new ScoreHistoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["scoreDate"] = this.scoreDate ? this.scoreDate.toISOString() : <any>undefined;
+        data["experianScore"] = this.experianScore;
+        data["transUnionScore"] = this.transUnionScore;
+        data["equifaxScore"] = this.equifaxScore;
+        return data; 
+    }
+}
+
+export interface IScoreHistoryDto {
+    scoreDate: moment.Moment;
+    experianScore: number;
+    transUnionScore: number;
+    equifaxScore: number;
 }
 
 export class ContactInfoDto implements IContactInfoDto {
@@ -18419,6 +18676,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     paymentPeriodType: TenantLoginInfoDtoPaymentPeriodType;
     subscriptionDateString: string;
     creationTimeString: string;
+    tenantCustomizations: TenantCustomizationInfoDto;
     id: number;
 
     constructor(data?: ITenantLoginInfoDto) {
@@ -18444,6 +18702,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
             this.paymentPeriodType = data["paymentPeriodType"];
             this.subscriptionDateString = data["subscriptionDateString"];
             this.creationTimeString = data["creationTimeString"];
+            this.tenantCustomizations = data["tenantCustomizations"] ? TenantCustomizationInfoDto.fromJS(data["tenantCustomizations"]) : <any>undefined;
             this.id = data["id"];
         }
     }
@@ -18468,6 +18727,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["subscriptionDateString"] = this.subscriptionDateString;
         data["creationTimeString"] = this.creationTimeString;
+        data["tenantCustomizations"] = this.tenantCustomizations ? this.tenantCustomizations.toJSON() : <any>undefined;
         data["id"] = this.id;
         return data; 
     }
@@ -18486,6 +18746,7 @@ export interface ITenantLoginInfoDto {
     paymentPeriodType: TenantLoginInfoDtoPaymentPeriodType;
     subscriptionDateString: string;
     creationTimeString: string;
+    tenantCustomizations: TenantCustomizationInfoDto;
     id: number;
 }
 
@@ -18601,6 +18862,92 @@ export interface IEditionInfoDto {
     isHighestEdition: boolean;
     isFree: boolean;
     id: number;
+}
+
+export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
+    favicons: FaviconDto[];
+    siteTitle: string;
+
+    constructor(data?: ITenantCustomizationInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["favicons"] && data["favicons"].constructor === Array) {
+                this.favicons = [];
+                for (let item of data["favicons"])
+                    this.favicons.push(FaviconDto.fromJS(item));
+            }
+            this.siteTitle = data["siteTitle"];
+        }
+    }
+
+    static fromJS(data: any): TenantCustomizationInfoDto {
+        let result = new TenantCustomizationInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.favicons && this.favicons.constructor === Array) {
+            data["favicons"] = [];
+            for (let item of this.favicons)
+                data["favicons"].push(item.toJSON());
+        }
+        data["siteTitle"] = this.siteTitle;
+        return data; 
+    }
+}
+
+export interface ITenantCustomizationInfoDto {
+    favicons: FaviconDto[];
+    siteTitle: string;
+}
+
+export class FaviconDto implements IFaviconDto {
+    faviconName: string;
+    faviconUri: string;
+
+    constructor(data?: IFaviconDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.faviconName = data["faviconName"];
+            this.faviconUri = data["faviconUri"];
+        }
+    }
+
+    static fromJS(data: any): FaviconDto {
+        let result = new FaviconDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["faviconName"] = this.faviconName;
+        data["faviconUri"] = this.faviconUri;
+        return data; 
+    }
+}
+
+export interface IFaviconDto {
+    faviconName: string;
+    faviconUri: string;
 }
 
 export class UpdateUserSignInTokenOutput implements IUpdateUserSignInTokenOutput {
@@ -19360,6 +19707,49 @@ export class EntityDto implements IEntityDto {
 
 export interface IEntityDto {
     id: number;
+}
+
+export class TenantCustomizationDto implements ITenantCustomizationDto {
+    customizationGroupName: string;
+    customizationName: string;
+    value: string;
+
+    constructor(data?: ITenantCustomizationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customizationGroupName = data["customizationGroupName"];
+            this.customizationName = data["customizationName"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): TenantCustomizationDto {
+        let result = new TenantCustomizationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customizationGroupName"] = this.customizationGroupName;
+        data["customizationName"] = this.customizationName;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface ITenantCustomizationDto {
+    customizationGroupName: string;
+    customizationName: string;
+    value: string;
 }
 
 export class GetMemberActivityOutput implements IGetMemberActivityOutput {
