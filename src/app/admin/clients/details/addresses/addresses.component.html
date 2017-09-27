@@ -4,10 +4,10 @@
     <div class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="editAddress(address)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteAddress(address, $event, i)"></i></div>
     <i class="fa fa-{{address.type ? address.type : 'home'}}" aria-hidden="true"></i>
     <div class="address">
-      <h4>{{address.comment}}</h4>
+      <h4>{{address.comment || "No Description"}}</h4>
       <p>{{address.zip}}, {{address.streetAddress}}, {{address.city}}, {{address.state}}, {{address.country}}</p>
     </div>
   </div>
   <div class="add-address" (click)="editAddress()">+</div>
-  <a class="other-info">+ Other Info</a>
+  <h3 class="other-info">+ Other Info</h3>
 </div>

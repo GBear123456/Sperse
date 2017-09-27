@@ -1,8 +1,37 @@
 .socials {  
+  max-width: 400px;
+
+  h3 {
+    font-size: 12px;
+    line-height: 1.67;
+    letter-spacing: 0.7px;
+    text-align: left;
+    color: #677380;
+  }
+
+  .add-contact {
+    color: #00aeef;
+    font-size: 32px;
+    font-weight: 400;
+    float: right;
+    position: relative;
+    bottom: 51px;
+    cursor: pointer;
+    margin: 0px;
+  }
+
   li {
     display: inline-block;
+    position: relative;
     margin: 10px;
-    font-size: 34px;
+    margin-right: 35px;
+    padding: 5px;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.67;
+    letter-spacing: 0.3px;
+    text-align: left;
+    color: #424c56;
 
     i.fa-facebook {
       color: #455ea2;
@@ -19,6 +48,35 @@
 
     i.fa-linkedin {
       color: #007bb6;
+    }
+
+    .actions  {
+      position: absolute;
+      display: none;
+      right: 18px;
+      top: 4px;
+
+      i {
+        font-size: 18px;
+        padding: 7px;
+        cursor: pointer;
+      }
+
+      i.edit {
+        color: #00aeef;
+      }
+    
+      i.delete {
+        color: #f44336;
+      }
+    }
+
+    &:hover {
+      background-color: #F7FAFA;
+
+      .actions {
+        display: block;
+      }      
     }
   }
 
