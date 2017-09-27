@@ -1,18 +1,60 @@
-.addresses i {
-    position: absolute;
-    color: grey
-}
-
-.addresses .address_text {
-    padding-left: 30px;
-}
-
-.addresses .other-info {
-    text-transform: uppercase;
-    color: #c1c5ca;
+.addresses { 
+  .add-address {
+    color: #00aeef;
+    font-size: 32px;
+    font-weight: 400;
+    float: right;
+    position: relative;
+    bottom: 55px;
     cursor: pointer;
-}
-
-.addresses .address {
+  }
+  .address-wrapper {
     margin-bottom: 20px;
+    cursor: pointer;
+
+
+    &>i {
+      position: absolute;
+      color: grey;
+    }
+
+    .actions  {
+      position: absolute;
+      display: none;
+      right: 20px;
+      margin-top: -4px;
+
+      i {
+        font-size: 18px;
+        padding: 7px;
+      }
+
+      i.edit {
+        color: #00aeef;
+      }
+    
+      i.delete {
+        color: #f44336;
+      }
+    }
+
+    &:hover {
+      .address h4 {
+        background-color: #ecf1f3;
+      }
+      .actions {
+        display: block;
+      }
+    }
+  }
+
+  .address {
+    padding-left: 30px;
+  }
+
+  .other-info {
+      text-transform: uppercase;
+      color: #c1c5ca;
+      cursor: pointer;
+  }
 }

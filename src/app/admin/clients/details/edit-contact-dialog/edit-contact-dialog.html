@@ -76,5 +76,5 @@
 </md-dialog-content>
 <md-dialog-actions>
   <button md-button md-dialog-close class="btn btn-default">{{l('Cancel')}}</button>
-  <button md-button class="btn button-primary" (click)="onSave($event)">{{l('Save')}}</button>
+  <button md-button class="btn button-primary" (click)="onSave($event)">{{action == 'Edit' ? l('Update'): action}}</button>
 </md-dialog-actions>

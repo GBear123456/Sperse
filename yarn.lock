@@ -3890,6 +3890,10 @@ ng2-file-upload@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/ng2-file-upload/-/ng2-file-upload-1.2.1.tgz#5563c5dfd6f43fbfbe815c206e343464a0a6a197"
 
+ng2-google-place-autocomplete@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/ng2-google-place-autocomplete/-/ng2-google-place-autocomplete-1.4.2.tgz#41c8dd34d167520a11f1b56781eba15d89f9b7ad"
+
 ng2modules-easypiechart@^0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/ng2modules-easypiechart/-/ng2modules-easypiechart-0.0.4.tgz#a308b511d9f840d28020146bb73aa6d9a1ef5dce"

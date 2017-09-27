@@ -15,6 +15,7 @@ import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component'; 
 
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
+import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.component';
 import { SocialsComponent } from './socials/socials.component';
 import { ContactsComponent } from './contacts/contacts.component';
 import { AddressesComponent } from './addresses/addresses.component';
@@ -25,13 +26,15 @@ import { RequiredDocumentsComponent } from './required-documents/required-docume
 import { ContactInformationComponent } from './contact-information/contact-information.component';
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
+import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
 
-import { CustomersServiceProxy, ContactEmailServiceProxy, 
-  ContactPhoneServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy,
+  ContactPhoneServiceProxy, MemberServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
   declarations: [
     EditContactDialog,
+    EditAddressDialog,
     ClientDetailsComponent,
     DetailsHeaderComponent,
     ClientScoresComponent,
@@ -56,7 +59,7 @@ import { CustomersServiceProxy, ContactEmailServiceProxy,
     MdProgressSpinnerModule,
     MdSelectModule,
     ClientDetailsRoutingModule,
-
+    GooglePlaceModule,
     DxSelectBoxModule,
     DxCheckBoxModule,
     DxTextBoxModule,
@@ -69,15 +72,18 @@ import { CustomersServiceProxy, ContactEmailServiceProxy,
     RequiredDocumentsComponent
   ],
   entryComponents: [
-    EditContactDialog
+    EditContactDialog,
+    EditAddressDialog
   ],
   bootstrap: [
     ClientDetailsComponent
   ],
   providers: [
+    ContactAddressServiceProxy,
     ContactEmailServiceProxy,
     ContactPhoneServiceProxy,
-    CustomersServiceProxy
+    CustomersServiceProxy,
+    MemberServiceProxy
   ]
 })
 export class ClientDetailsModule { }

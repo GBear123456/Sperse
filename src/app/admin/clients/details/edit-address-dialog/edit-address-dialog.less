@@ -1,0 +1,33 @@
+/deep/ md-dialog-container {
+  min-width: 400px;
+}
+
+:host {
+  md-dialog-actions {
+    justify-content: flex-end;
+  }
+
+  md-dialog-content {
+    min-height: 160px;
+  }
+
+  .type-item-wrapper {
+    /deep/ input {
+      padding-left: 40px;
+      background-repeat: no-repeat;
+      background-position: 10px 15px;
+    }
+    /deep/ input[value=""] {
+      background-image: none!important;
+    }
+  }
+
+  .addressType {
+    &.type-1, &.type-2 {
+      /deep/ input {
+        background-image: url("../../../../../assets/common/icons/address-primary.png");
+        background-position: 10px 12px;
+      }
+    }
+  }
+}

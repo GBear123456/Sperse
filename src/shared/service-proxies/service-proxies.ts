@@ -613,6 +613,67 @@ export class AuditLogServiceProxy {
 }
 
 @Injectable()
+export class BaseCommercePushNotificationHandlerServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    handle(merchant_username: string, push_notification: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/BaseCommercePushNotificationHandler/Handle?";
+        if (merchant_username !== undefined)
+            url_ += "merchant_username=" + encodeURIComponent("" + merchant_username) + "&"; 
+        if (push_notification !== undefined)
+            url_ += "push_notification=" + encodeURIComponent("" + push_notification) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processHandle(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processHandle(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processHandle(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class CachingServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -2100,6 +2161,62 @@ export class CreditReportServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<AccountInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getCreditReportHistory(periodYears: number, reportId: number): Observable<ScoreHistoryDto[]> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetCreditReportHistory?";
+        if (periodYears !== undefined)
+            url_ += "periodYears=" + encodeURIComponent("" + periodYears) + "&"; 
+        if (reportId !== undefined)
+            url_ += "reportId=" + encodeURIComponent("" + reportId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCreditReportHistory(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCreditReportHistory(response_);
+                } catch (e) {
+                    return <Observable<ScoreHistoryDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ScoreHistoryDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCreditReportHistory(response: Response): Observable<ScoreHistoryDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ScoreHistoryDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ScoreHistoryDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ScoreHistoryDto[]>(<any>null);
     }
 
     /**
@@ -5661,6 +5778,262 @@ export class SessionServiceProxy {
 }
 
 @Injectable()
+export class TenancyServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getTenancies(customerId: number): Observable<PagedResultDtoOfTenancyListDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancies?";
+        if (customerId !== undefined)
+            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetTenancies(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTenancies(response_);
+                } catch (e) {
+                    return <Observable<PagedResultDtoOfTenancyListDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<PagedResultDtoOfTenancyListDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTenancies(response: Response): Observable<PagedResultDtoOfTenancyListDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: PagedResultDtoOfTenancyListDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PagedResultDtoOfTenancyListDto.fromJS(resultData200) : new PagedResultDtoOfTenancyListDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<PagedResultDtoOfTenancyListDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    createTenancy(input: CreateTenancyInput): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/CreateTenancy";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateTenancy(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateTenancy(response_);
+                } catch (e) {
+                    return <Observable<number>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateTenancy(response: Response): Observable<number> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: number = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<number>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getTenancyForEdit(id: number, customerId: number): Observable<GetTenancyForEditOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancyForEdit?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        if (customerId !== undefined)
+            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetTenancyForEdit(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTenancyForEdit(response_);
+                } catch (e) {
+                    return <Observable<GetTenancyForEditOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetTenancyForEditOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTenancyForEdit(response: Response): Observable<GetTenancyForEditOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: GetTenancyForEditOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetTenancyForEditOutput.fromJS(resultData200) : new GetTenancyForEditOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<GetTenancyForEditOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateTenancy(input: UpdateTenancyInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/UpdateTenancy";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateTenancy(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateTenancy(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateTenancy(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteTenancy(id: number, customerId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/DeleteTenancy?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        if (customerId !== undefined)
+            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteTenancy(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteTenancy(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteTenancy(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class TenantServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -6099,6 +6472,115 @@ export class TenantServiceProxy {
     }
 
     protected processUnlockTenantAdmin(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class TenantCustomizationServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getTenantCustomization(customizationGroupName: string, customizationName: string): Observable<TenantCustomizationDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/GetTenantCustomization?";
+        if (customizationGroupName !== undefined)
+            url_ += "CustomizationGroupName=" + encodeURIComponent("" + customizationGroupName) + "&"; 
+        if (customizationName !== undefined)
+            url_ += "CustomizationName=" + encodeURIComponent("" + customizationName) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetTenantCustomization(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTenantCustomization(response_);
+                } catch (e) {
+                    return <Observable<TenantCustomizationDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<TenantCustomizationDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTenantCustomization(response: Response): Observable<TenantCustomizationDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: TenantCustomizationDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? TenantCustomizationDto.fromJS(resultData200) : new TenantCustomizationDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<TenantCustomizationDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    addTenantCustomization(input: TenantCustomizationDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/AddTenantCustomization";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processAddTenantCustomization(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAddTenantCustomization(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAddTenantCustomization(response: Response): Observable<void> {
         const status = response.status; 
 
         if (status === 200) {
@@ -7220,6 +7702,51 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processClearCustomCss(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    clearFavicons(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/ClearFavicons";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processClearFavicons(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processClearFavicons(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processClearFavicons(response: Response): Observable<void> {
         const status = response.status; 
 
         if (status === 200) {
@@ -10170,6 +10697,8 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     countryId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
     ownershipTypeId: string;
@@ -10193,6 +10722,8 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
             this.countryId = data["countryId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.usageTypeId = data["usageTypeId"];
             this.ownershipTypeId = data["ownershipTypeId"];
@@ -10215,6 +10746,8 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
         data["countryId"] = this.countryId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         data["ownershipTypeId"] = this.ownershipTypeId;
@@ -10231,6 +10764,8 @@ export interface ICreateContactAddressInput {
     countryId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
     ownershipTypeId: string;
@@ -10281,6 +10816,8 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
     countryId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
     ownershipTypeId: string;
@@ -10305,6 +10842,8 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
             this.countryId = data["countryId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.usageTypeId = data["usageTypeId"];
             this.ownershipTypeId = data["ownershipTypeId"];
@@ -10328,6 +10867,8 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
         data["countryId"] = this.countryId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         data["ownershipTypeId"] = this.ownershipTypeId;
@@ -10345,6 +10886,8 @@ export interface IUpdateContactAddressInput {
     countryId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
     ownershipTypeId: string;
@@ -10517,6 +11060,8 @@ export interface IAddressOwnershipTypeDto {
 export class CreateContactEmailInput implements ICreateContactEmailInput {
     contactId: number;
     emailAddress: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 
@@ -10533,6 +11078,8 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
         if (data) {
             this.contactId = data["contactId"];
             this.emailAddress = data["emailAddress"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.usageTypeId = data["usageTypeId"];
         }
@@ -10548,6 +11095,8 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["emailAddress"] = this.emailAddress;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         return data; 
@@ -10557,6 +11106,8 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
 export interface ICreateContactEmailInput {
     contactId: number;
     emailAddress: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 }
@@ -10600,6 +11151,8 @@ export class UpdateContactEmailInput implements IUpdateContactEmailInput {
     id: number;
     contactId: number;
     emailAddress: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 
@@ -10617,6 +11170,8 @@ export class UpdateContactEmailInput implements IUpdateContactEmailInput {
             this.id = data["id"];
             this.contactId = data["contactId"];
             this.emailAddress = data["emailAddress"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.usageTypeId = data["usageTypeId"];
         }
@@ -10633,6 +11188,8 @@ export class UpdateContactEmailInput implements IUpdateContactEmailInput {
         data["id"] = this.id;
         data["contactId"] = this.contactId;
         data["emailAddress"] = this.emailAddress;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         return data; 
@@ -10643,6 +11200,8 @@ export interface IUpdateContactEmailInput {
     id: number;
     contactId: number;
     emailAddress: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 }
@@ -10732,6 +11291,8 @@ export interface IEmailUsageTypeDto {
 export class CreateContactLinkInput implements ICreateContactLinkInput {
     contactId: number;
     url: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     linkTypeId: string;
 
@@ -10748,6 +11309,8 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
         if (data) {
             this.contactId = data["contactId"];
             this.url = data["url"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.linkTypeId = data["linkTypeId"];
         }
@@ -10763,6 +11326,8 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["url"] = this.url;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["linkTypeId"] = this.linkTypeId;
         return data; 
@@ -10772,6 +11337,8 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
 export interface ICreateContactLinkInput {
     contactId: number;
     url: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     linkTypeId: string;
 }
@@ -10815,6 +11382,8 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
     id: number;
     contactId: number;
     url: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     linkTypeId: string;
 
@@ -10832,6 +11401,8 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
             this.id = data["id"];
             this.contactId = data["contactId"];
             this.url = data["url"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.linkTypeId = data["linkTypeId"];
         }
@@ -10848,6 +11419,8 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
         data["id"] = this.id;
         data["contactId"] = this.contactId;
         data["url"] = this.url;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["linkTypeId"] = this.linkTypeId;
         return data; 
@@ -10858,6 +11431,8 @@ export interface IUpdateContactLinkInput {
     id: number;
     contactId: number;
     url: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     linkTypeId: string;
 }
@@ -10952,6 +11527,8 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
     contactId: number;
     phoneNumber: string;
     phoneExtension: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 
@@ -10969,6 +11546,8 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
             this.contactId = data["contactId"];
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.usageTypeId = data["usageTypeId"];
         }
@@ -10985,6 +11564,8 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
         data["contactId"] = this.contactId;
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         return data; 
@@ -10995,6 +11576,8 @@ export interface ICreateContactPhoneInput {
     contactId: number;
     phoneNumber: string;
     phoneExtension: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 }
@@ -11039,6 +11622,8 @@ export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
     contactId: number;
     phoneNumber: string;
     phoneExtension: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 
@@ -11057,6 +11642,8 @@ export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
             this.contactId = data["contactId"];
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.usageTypeId = data["usageTypeId"];
         }
@@ -11074,6 +11661,8 @@ export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
         data["contactId"] = this.contactId;
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         return data; 
@@ -11085,6 +11674,8 @@ export interface IUpdateContactPhoneInput {
     contactId: number;
     phoneNumber: string;
     phoneExtension: string;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string;
     usageTypeId: string;
 }
@@ -11232,6 +11823,8 @@ export interface ICreditReportOutput {
 
 export class CreditReportDto implements ICreditReportDto {
     creditReportId: number;
+    minScoreValue: number;
+    maxScoreValue: number;
     bureauReports: CreditBureauReportDto[];
     accounts: AccountDto[];
     alerts: AlertDto[];
@@ -11252,6 +11845,8 @@ export class CreditReportDto implements ICreditReportDto {
     init(data?: any) {
         if (data) {
             this.creditReportId = data["creditReportId"];
+            this.minScoreValue = data["minScoreValue"];
+            this.maxScoreValue = data["maxScoreValue"];
             if (data["bureauReports"] && data["bureauReports"].constructor === Array) {
                 this.bureauReports = [];
                 for (let item of data["bureauReports"])
@@ -11299,6 +11894,8 @@ export class CreditReportDto implements ICreditReportDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["creditReportId"] = this.creditReportId;
+        data["minScoreValue"] = this.minScoreValue;
+        data["maxScoreValue"] = this.maxScoreValue;
         if (this.bureauReports && this.bureauReports.constructor === Array) {
             data["bureauReports"] = [];
             for (let item of this.bureauReports)
@@ -11340,6 +11937,8 @@ export class CreditReportDto implements ICreditReportDto {
 
 export interface ICreditReportDto {
     creditReportId: number;
+    minScoreValue: number;
+    maxScoreValue: number;
     bureauReports: CreditBureauReportDto[];
     accounts: AccountDto[];
     alerts: AlertDto[];
@@ -11740,6 +12339,7 @@ export interface IPublicRecordDto {
 
 export class CreditScoreDto implements ICreditScoreDto {
     score: number;
+    scoreRank: CreditScoreDtoScoreRank;
     populationRank: number;
     qualitativeRank: number;
     scoreDate: moment.Moment;
@@ -11757,6 +12357,7 @@ export class CreditScoreDto implements ICreditScoreDto {
     init(data?: any) {
         if (data) {
             this.score = data["score"];
+            this.scoreRank = data["scoreRank"];
             this.populationRank = data["populationRank"];
             this.qualitativeRank = data["qualitativeRank"];
             this.scoreDate = data["scoreDate"] ? moment(data["scoreDate"].toString()) : <any>undefined;
@@ -11773,6 +12374,7 @@ export class CreditScoreDto implements ICreditScoreDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["score"] = this.score;
+        data["scoreRank"] = this.scoreRank;
         data["populationRank"] = this.populationRank;
         data["qualitativeRank"] = this.qualitativeRank;
         data["scoreDate"] = this.scoreDate ? this.scoreDate.toISOString() : <any>undefined;
@@ -11783,6 +12385,7 @@ export class CreditScoreDto implements ICreditScoreDto {
 
 export interface ICreditScoreDto {
     score: number;
+    scoreRank: CreditScoreDtoScoreRank;
     populationRank: number;
     qualitativeRank: number;
     scoreDate: moment.Moment;
@@ -12328,6 +12931,53 @@ export interface IAccountCreditHistoryDto {
     statusType: AccountCreditHistoryDtoStatusType;
 }
 
+export class ScoreHistoryDto implements IScoreHistoryDto {
+    scoreDate: moment.Moment;
+    experianScore: number;
+    transUnionScore: number;
+    equifaxScore: number;
+
+    constructor(data?: IScoreHistoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.scoreDate = data["scoreDate"] ? moment(data["scoreDate"].toString()) : <any>undefined;
+            this.experianScore = data["experianScore"];
+            this.transUnionScore = data["transUnionScore"];
+            this.equifaxScore = data["equifaxScore"];
+        }
+    }
+
+    static fromJS(data: any): ScoreHistoryDto {
+        let result = new ScoreHistoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["scoreDate"] = this.scoreDate ? this.scoreDate.toISOString() : <any>undefined;
+        data["experianScore"] = this.experianScore;
+        data["transUnionScore"] = this.transUnionScore;
+        data["equifaxScore"] = this.equifaxScore;
+        return data; 
+    }
+}
+
+export interface IScoreHistoryDto {
+    scoreDate: moment.Moment;
+    experianScore: number;
+    transUnionScore: number;
+    equifaxScore: number;
+}
+
 export class ContactInfoDto implements IContactInfoDto {
     id: number;
     fullName: string;
@@ -12625,8 +13275,11 @@ export class ContactEmailDto implements IContactEmailDto {
     id: number;
     usageTypeId: string;
     emailAddress: string;
-    isConfirmed: boolean;
     isActive: boolean;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 
     constructor(data?: IContactEmailDto) {
@@ -12644,8 +13297,11 @@ export class ContactEmailDto implements IContactEmailDto {
             this.id = data["id"];
             this.usageTypeId = data["usageTypeId"];
             this.emailAddress = data["emailAddress"];
-            this.isConfirmed = data["isConfirmed"];
             this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -12662,8 +13318,11 @@ export class ContactEmailDto implements IContactEmailDto {
         data["id"] = this.id;
         data["usageTypeId"] = this.usageTypeId;
         data["emailAddress"] = this.emailAddress;
-        data["isConfirmed"] = this.isConfirmed;
         data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
@@ -12674,8 +13333,11 @@ export interface IContactEmailDto {
     id: number;
     usageTypeId: string;
     emailAddress: string;
-    isConfirmed: boolean;
     isActive: boolean;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 }
 
@@ -12687,6 +13349,9 @@ export class ContactPhoneDto implements IContactPhoneDto {
     phoneExtension: string;
     isActive: boolean;
     isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 
     constructor(data?: IContactPhoneDto) {
@@ -12707,6 +13372,9 @@ export class ContactPhoneDto implements IContactPhoneDto {
             this.phoneExtension = data["phoneExtension"];
             this.isActive = data["isActive"];
             this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -12726,6 +13394,9 @@ export class ContactPhoneDto implements IContactPhoneDto {
         data["phoneExtension"] = this.phoneExtension;
         data["isActive"] = this.isActive;
         data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
@@ -12739,10 +13410,14 @@ export interface IContactPhoneDto {
     phoneExtension: string;
     isActive: boolean;
     isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 }
 
 export class ContactAddressDto implements IContactAddressDto {
+    contactId: number;
     id: number;
     usageTypeId: string;
     streetAddress: string;
@@ -12750,8 +13425,13 @@ export class ContactAddressDto implements IContactAddressDto {
     state: string;
     country: string;
     zip: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
     isActive: boolean;
     isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 
     constructor(data?: IContactAddressDto) {
@@ -12765,6 +13445,7 @@ export class ContactAddressDto implements IContactAddressDto {
 
     init(data?: any) {
         if (data) {
+            this.contactId = data["contactId"];
             this.id = data["id"];
             this.usageTypeId = data["usageTypeId"];
             this.streetAddress = data["streetAddress"];
@@ -12772,8 +13453,13 @@ export class ContactAddressDto implements IContactAddressDto {
             this.state = data["state"];
             this.country = data["country"];
             this.zip = data["zip"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
             this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -12786,6 +13472,7 @@ export class ContactAddressDto implements IContactAddressDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
         data["id"] = this.id;
         data["usageTypeId"] = this.usageTypeId;
         data["streetAddress"] = this.streetAddress;
@@ -12793,14 +13480,20 @@ export class ContactAddressDto implements IContactAddressDto {
         data["state"] = this.state;
         data["country"] = this.country;
         data["zip"] = this.zip;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["isActive"] = this.isActive;
         data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
 }
 
 export interface IContactAddressDto {
+    contactId: number;
     id: number;
     usageTypeId: string;
     streetAddress: string;
@@ -12808,18 +13501,27 @@ export interface IContactAddressDto {
     state: string;
     country: string;
     zip: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
     isActive: boolean;
     isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 }
 
 export class ContactLinkDto implements IContactLinkDto {
+    contactId: number;
     id: number;
     linkTypeId: string;
     url: string;
     isSocialNetwork: boolean;
-    isConfirmed: boolean;
     isActive: boolean;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 
     constructor(data?: IContactLinkDto) {
@@ -12833,12 +13535,16 @@ export class ContactLinkDto implements IContactLinkDto {
 
     init(data?: any) {
         if (data) {
+            this.contactId = data["contactId"];
             this.id = data["id"];
             this.linkTypeId = data["linkTypeId"];
             this.url = data["url"];
             this.isSocialNetwork = data["isSocialNetwork"];
-            this.isConfirmed = data["isConfirmed"];
             this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -12851,24 +13557,32 @@ export class ContactLinkDto implements IContactLinkDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
         data["id"] = this.id;
         data["linkTypeId"] = this.linkTypeId;
         data["url"] = this.url;
         data["isSocialNetwork"] = this.isSocialNetwork;
-        data["isConfirmed"] = this.isConfirmed;
         data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
 }
 
 export interface IContactLinkDto {
+    contactId: number;
     id: number;
     linkTypeId: string;
     url: string;
     isSocialNetwork: boolean;
-    isConfirmed: boolean;
     isActive: boolean;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
     comment: string;
 }
 
@@ -17310,7 +18024,6 @@ export interface IActionDto {
 export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
     name: string;
     surname: string;
-    userName: string;
     emailAddress: string;
     phoneNumber: string;
     timezone: string;
@@ -17328,7 +18041,6 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
         if (data) {
             this.name = data["name"];
             this.surname = data["surname"];
-            this.userName = data["userName"];
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
             this.timezone = data["timezone"];
@@ -17345,7 +18057,6 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["surname"] = this.surname;
-        data["userName"] = this.userName;
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
         data["timezone"] = this.timezone;
@@ -17356,7 +18067,6 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
 export interface ICurrentUserProfileEditDto {
     name: string;
     surname: string;
-    userName: string;
     emailAddress: string;
     phoneNumber: string;
     timezone: string;
@@ -17966,6 +18676,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     paymentPeriodType: TenantLoginInfoDtoPaymentPeriodType;
     subscriptionDateString: string;
     creationTimeString: string;
+    tenantCustomizations: TenantCustomizationInfoDto;
     id: number;
 
     constructor(data?: ITenantLoginInfoDto) {
@@ -17991,6 +18702,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
             this.paymentPeriodType = data["paymentPeriodType"];
             this.subscriptionDateString = data["subscriptionDateString"];
             this.creationTimeString = data["creationTimeString"];
+            this.tenantCustomizations = data["tenantCustomizations"] ? TenantCustomizationInfoDto.fromJS(data["tenantCustomizations"]) : <any>undefined;
             this.id = data["id"];
         }
     }
@@ -18015,6 +18727,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["subscriptionDateString"] = this.subscriptionDateString;
         data["creationTimeString"] = this.creationTimeString;
+        data["tenantCustomizations"] = this.tenantCustomizations ? this.tenantCustomizations.toJSON() : <any>undefined;
         data["id"] = this.id;
         return data; 
     }
@@ -18033,6 +18746,7 @@ export interface ITenantLoginInfoDto {
     paymentPeriodType: TenantLoginInfoDtoPaymentPeriodType;
     subscriptionDateString: string;
     creationTimeString: string;
+    tenantCustomizations: TenantCustomizationInfoDto;
     id: number;
 }
 
@@ -18150,6 +18864,92 @@ export interface IEditionInfoDto {
     id: number;
 }
 
+export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
+    favicons: FaviconDto[];
+    siteTitle: string;
+
+    constructor(data?: ITenantCustomizationInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["favicons"] && data["favicons"].constructor === Array) {
+                this.favicons = [];
+                for (let item of data["favicons"])
+                    this.favicons.push(FaviconDto.fromJS(item));
+            }
+            this.siteTitle = data["siteTitle"];
+        }
+    }
+
+    static fromJS(data: any): TenantCustomizationInfoDto {
+        let result = new TenantCustomizationInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.favicons && this.favicons.constructor === Array) {
+            data["favicons"] = [];
+            for (let item of this.favicons)
+                data["favicons"].push(item.toJSON());
+        }
+        data["siteTitle"] = this.siteTitle;
+        return data; 
+    }
+}
+
+export interface ITenantCustomizationInfoDto {
+    favicons: FaviconDto[];
+    siteTitle: string;
+}
+
+export class FaviconDto implements IFaviconDto {
+    faviconName: string;
+    faviconUri: string;
+
+    constructor(data?: IFaviconDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.faviconName = data["faviconName"];
+            this.faviconUri = data["faviconUri"];
+        }
+    }
+
+    static fromJS(data: any): FaviconDto {
+        let result = new FaviconDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["faviconName"] = this.faviconName;
+        data["faviconUri"] = this.faviconUri;
+        return data; 
+    }
+}
+
+export interface IFaviconDto {
+    faviconName: string;
+    faviconUri: string;
+}
+
 export class UpdateUserSignInTokenOutput implements IUpdateUserSignInTokenOutput {
     signInToken: string;
     encodedUserId: string;
@@ -18191,6 +18991,321 @@ export interface IUpdateUserSignInTokenOutput {
     signInToken: string;
     encodedUserId: string;
     encodedTenantId: string;
+}
+
+export class PagedResultDtoOfTenancyListDto implements IPagedResultDtoOfTenancyListDto {
+    totalCount: number;
+    items: TenancyListDto[];
+
+    constructor(data?: IPagedResultDtoOfTenancyListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalCount = data["totalCount"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(TenancyListDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PagedResultDtoOfTenancyListDto {
+        let result = new PagedResultDtoOfTenancyListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPagedResultDtoOfTenancyListDto {
+    totalCount: number;
+    items: TenancyListDto[];
+}
+
+export class TenancyListDto implements ITenancyListDto {
+    name: string;
+    id: number;
+
+    constructor(data?: ITenancyListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): TenancyListDto {
+        let result = new TenancyListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ITenancyListDto {
+    name: string;
+    id: number;
+}
+
+export class CreateTenancyInput implements ICreateTenancyInput {
+    customerId: number;
+    adminEmailAddress: string;
+    adminPassword: string;
+    shouldChangePasswordOnNextLogin: boolean;
+    sendActivationEmail: boolean;
+    tenancyName: string;
+    name: string;
+    connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
+    editionId: number;
+    isActive: boolean;
+    subscriptionEndDateUtc: moment.Moment;
+    isInTrialPeriod: boolean;
+
+    constructor(data?: ICreateTenancyInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerId = data["customerId"];
+            this.adminEmailAddress = data["adminEmailAddress"];
+            this.adminPassword = data["adminPassword"];
+            this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
+            this.sendActivationEmail = data["sendActivationEmail"];
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
+            this.connectionString = data["connectionString"];
+            this.crmConnectionString = data["crmConnectionString"];
+            this.memberDbConnectionString = data["memberDbConnectionString"];
+            this.editionId = data["editionId"];
+            this.isActive = data["isActive"];
+            this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
+            this.isInTrialPeriod = data["isInTrialPeriod"];
+        }
+    }
+
+    static fromJS(data: any): CreateTenancyInput {
+        let result = new CreateTenancyInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        data["adminEmailAddress"] = this.adminEmailAddress;
+        data["adminPassword"] = this.adminPassword;
+        data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
+        data["sendActivationEmail"] = this.sendActivationEmail;
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
+        data["connectionString"] = this.connectionString;
+        data["crmConnectionString"] = this.crmConnectionString;
+        data["memberDbConnectionString"] = this.memberDbConnectionString;
+        data["editionId"] = this.editionId;
+        data["isActive"] = this.isActive;
+        data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
+        data["isInTrialPeriod"] = this.isInTrialPeriod;
+        return data; 
+    }
+}
+
+export interface ICreateTenancyInput {
+    customerId: number;
+    adminEmailAddress: string;
+    adminPassword: string;
+    shouldChangePasswordOnNextLogin: boolean;
+    sendActivationEmail: boolean;
+    tenancyName: string;
+    name: string;
+    connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
+    editionId: number;
+    isActive: boolean;
+    subscriptionEndDateUtc: moment.Moment;
+    isInTrialPeriod: boolean;
+}
+
+export class GetTenancyForEditOutput implements IGetTenancyForEditOutput {
+    tenancyName: string;
+    name: string;
+    connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
+    editionId: number;
+    isActive: boolean;
+    subscriptionEndDateUtc: moment.Moment;
+    isInTrialPeriod: boolean;
+
+    constructor(data?: IGetTenancyForEditOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
+            this.connectionString = data["connectionString"];
+            this.crmConnectionString = data["crmConnectionString"];
+            this.memberDbConnectionString = data["memberDbConnectionString"];
+            this.editionId = data["editionId"];
+            this.isActive = data["isActive"];
+            this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
+            this.isInTrialPeriod = data["isInTrialPeriod"];
+        }
+    }
+
+    static fromJS(data: any): GetTenancyForEditOutput {
+        let result = new GetTenancyForEditOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
+        data["connectionString"] = this.connectionString;
+        data["crmConnectionString"] = this.crmConnectionString;
+        data["memberDbConnectionString"] = this.memberDbConnectionString;
+        data["editionId"] = this.editionId;
+        data["isActive"] = this.isActive;
+        data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
+        data["isInTrialPeriod"] = this.isInTrialPeriod;
+        return data; 
+    }
+}
+
+export interface IGetTenancyForEditOutput {
+    tenancyName: string;
+    name: string;
+    connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
+    editionId: number;
+    isActive: boolean;
+    subscriptionEndDateUtc: moment.Moment;
+    isInTrialPeriod: boolean;
+}
+
+export class UpdateTenancyInput implements IUpdateTenancyInput {
+    id: number;
+    customerId: number;
+    tenancyName: string;
+    name: string;
+    connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
+    editionId: number;
+    isActive: boolean;
+    subscriptionEndDateUtc: moment.Moment;
+    isInTrialPeriod: boolean;
+
+    constructor(data?: IUpdateTenancyInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.customerId = data["customerId"];
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
+            this.connectionString = data["connectionString"];
+            this.crmConnectionString = data["crmConnectionString"];
+            this.memberDbConnectionString = data["memberDbConnectionString"];
+            this.editionId = data["editionId"];
+            this.isActive = data["isActive"];
+            this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
+            this.isInTrialPeriod = data["isInTrialPeriod"];
+        }
+    }
+
+    static fromJS(data: any): UpdateTenancyInput {
+        let result = new UpdateTenancyInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["customerId"] = this.customerId;
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
+        data["connectionString"] = this.connectionString;
+        data["crmConnectionString"] = this.crmConnectionString;
+        data["memberDbConnectionString"] = this.memberDbConnectionString;
+        data["editionId"] = this.editionId;
+        data["isActive"] = this.isActive;
+        data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
+        data["isInTrialPeriod"] = this.isInTrialPeriod;
+        return data; 
+    }
+}
+
+export interface IUpdateTenancyInput {
+    id: number;
+    customerId: number;
+    tenancyName: string;
+    name: string;
+    connectionString: string;
+    crmConnectionString: string;
+    memberDbConnectionString: string;
+    editionId: number;
+    isActive: boolean;
+    subscriptionEndDateUtc: moment.Moment;
+    isInTrialPeriod: boolean;
 }
 
 export class PagedResultDtoOfTenantListDto implements IPagedResultDtoOfTenantListDto {
@@ -18592,6 +19707,49 @@ export class EntityDto implements IEntityDto {
 
 export interface IEntityDto {
     id: number;
+}
+
+export class TenantCustomizationDto implements ITenantCustomizationDto {
+    customizationGroupName: string;
+    customizationName: string;
+    value: string;
+
+    constructor(data?: ITenantCustomizationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customizationGroupName = data["customizationGroupName"];
+            this.customizationName = data["customizationName"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): TenantCustomizationDto {
+        let result = new TenantCustomizationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customizationGroupName"] = this.customizationGroupName;
+        data["customizationName"] = this.customizationName;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface ITenantCustomizationDto {
+    customizationGroupName: string;
+    customizationName: string;
+    value: string;
 }
 
 export class GetMemberActivityOutput implements IGetMemberActivityOutput {
@@ -21626,6 +22784,13 @@ export enum AlertDtoType {
     _0 = 0, 
     _1 = 1, 
     _2 = 2, 
+}
+
+export enum CreditScoreDtoScoreRank {
+    Poor = <any>"Poor", 
+    Fair = <any>"Fair", 
+    Good = <any>"Good", 
+    Excellent = <any>"Excellent", 
 }
 
 export enum AccountInfoDtoStatus {

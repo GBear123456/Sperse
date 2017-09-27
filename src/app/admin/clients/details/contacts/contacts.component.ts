@@ -7,6 +7,7 @@ import { CustomersServiceProxy, ContactEmailServiceProxy, ContactEmailDto, Conta
   ContactPhoneServiceProxy, CustomerInfoDto, CreateContactEmailInput, 
   UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput } from '@shared/service-proxies/service-proxies';
 
+
 @Component({
   selector: 'contacts',
   templateUrl: './contacts.component.html',
@@ -75,6 +76,20 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
             });           
         }
     });
+  }
+
+  deleteEmailAddress(email, event, index) {
+    this._contactEmailService.deleteContactEmail(
+      this.data.customerInfo.primaryContactInfo.id, email.id).subscribe(result => {
+        console.log(result);
+      });
+  }
+
+  deletePhoneNumber(phone, event, index) {
+    this._contactPhoneService.deleteContactPhone(
+      this.data.customerInfo.primaryContactInfo.id, phone.id).subscribe(result => {
+        console.log(result);
+      });
   }
 
   ngOnInit() {

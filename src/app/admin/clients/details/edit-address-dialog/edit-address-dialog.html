@@ -1,0 +1,110 @@
+<h2 md-dialog-title>{{l('ContactInfoDialogTitle', action, l('Address'))}}</h2>
+<md-dialog-content>
+  <dx-validation-group (onInitialized)="initValidationGroup($event)">
+    <dx-select-box
+      name="usageType"
+      placeholder="{{l('Type')}}"
+      [dataSource]="types"
+      displayExpr="name"
+      valueExpr="id"
+      [(value)]="data.usageTypeId"
+      fieldTemplate="fieldTemplate">
+      <div *dxTemplate="let item of 'fieldTemplate'">
+        <div class="type-item-wrapper ">
+          <dx-text-box class="addressType type-{{item?.id}}"
+            [value]="item?.name"
+            placeholder="{{l('Type')}}"
+            [readOnly]="true">
+          </dx-text-box>
+        </div>
+      </div>
+
+      <dx-validator>
+        <dxi-validation-rule type="required" message="{{l('TypeRequired')}}"></dxi-validation-rule>
+      </dx-validator>
+    </dx-select-box>
+
+    <input type="text"
+      [(ngModel)]="address"
+      name="Address"
+      [disabled]="false"
+      class="dx-texteditor-input"
+      [options]='options'
+      (country)="data.country"
+      (street_number)='data.streetNumber=$event'
+      (street)='data.streetAddress=$event'
+      (city)='data.city=$event'
+      (state)='data.state=$event'
+      (postal_code)='data.zip=$event'
+      placeholder="{{l('AddressPlaceholder')}}"
+      ng2-google-place-autocomplete/>
+
+    <dx-text-box
+        name="city"
+        [disabled]="false"
+        maxLength="50"
+        placeholder="{{l('City')}}"
+        [(value)]="data.city">
+        <dx-validator>
+            <dxi-validation-rule type="required" message="{{l('CityRequired')}}"></dxi-validation-rule>
+        </dx-validator>
+    </dx-text-box>
+
+    <dx-select-box
+        [dataSource]="states"
+        displayExpr="name"
+        valueExpr="name"
+        name="state"
+        placeholder="{{l('State')}}"
+        [disabled]="false"
+        [searchEnabled]="true"
+        [(value)]="data.state"
+        fieldTemplate="field">
+        <div *dxTemplate="let data of 'field'">
+            <div class="custom-item">
+                <dx-text-box class="state"
+                             [value]="data?.name"
+                             placeholder="State"
+                             [readOnly]="true">
+                </dx-text-box>
+            </div>
+        </div>
+        <dx-validator>
+            <dxi-validation-rule type="required" message="{{l('StateRequired')}}"></dxi-validation-rule>
+        </dx-validator>
+    </dx-select-box>
+
+    <dx-text-box
+        name="zip"
+        [disabled]="false"
+        maxLength="5"
+        placeholder="{{l('ZipCode')}}"
+        [(value)]="data.zip">
+        <dx-validator>
+            <dxi-validation-rule type="required" message="{{l('ZipIsRequired')}}"></dxi-validation-rule>
+        </dx-validator>
+    </dx-text-box>
+
+    <dx-text-box 
+      name="comment"
+      placeholder="{{l('Comment')}}"
+      [(value)]="data.comment">
+    </dx-text-box>
+
+    <p>
+      <dx-check-box
+        text="{{l('ConfirmedContact', [data.name])}}"
+        [(value)]="data.isConfirmed">
+      </dx-check-box>
+      &nbsp;&nbsp;&nbsp;
+      <dx-check-box
+        text="{{l('ActiveContact', [data.name])}}"
+        [(value)]="data.isActive">
+      </dx-check-box>
+    </p>
+  </dx-validation-group>
+</md-dialog-content>
+<md-dialog-actions>
+  <button md-button md-dialog-close class="btn btn-default">{{l('Cancel')}}</button>
+  <button md-button class="btn button-primary" (click)="onSave($event)">{{action == 'Edit' ? l('Update'): action}}</button>
+</md-dialog-actions>

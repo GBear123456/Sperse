@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, ViewChild, AfterViewInit, Injector, Inject, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Injector, Inject, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
@@ -23,7 +23,6 @@ export class MySettingsModalComponent extends AppComponentBase {
 
     public user: CurrentUserProfileEditDto;
     public showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
-    public canChangeUserName: boolean;
     public defaultTimezoneScope: DefaultTimezoneScope = AppTimezoneScope.User;
     private _initialTimezone: string = undefined;
 
@@ -40,7 +39,6 @@ export class MySettingsModalComponent extends AppComponentBase {
         this._profileService.getCurrentUserProfileForEdit().subscribe((result) => {
             this.user = result;
             this._initialTimezone = result.timezone;
-            this.canChangeUserName = this.user.userName != AppConsts.userManagement.defaultAdminUserName;
             this.modal.show();
         });
     }
@@ -61,7 +59,6 @@ export class MySettingsModalComponent extends AppComponentBase {
             .subscribe(() => {
                 this._appSessionService.user.name = this.user.name;
                 this._appSessionService.user.surname = this.user.surname;
-                this._appSessionService.user.userName = this.user.userName;
                 this._appSessionService.user.emailAddress = this.user.emailAddress;
 
                 this.notify.info(this.l('SavedSuccessfully'));

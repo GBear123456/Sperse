@@ -1,4 +1,4 @@
-﻿<div bsModal #mySettingsModal="bs-modal" (onShown)="onShown()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" [config]="{backdrop: 'static'}">
+<div bsModal #mySettingsModal="bs-modal" (onShown)="onShown()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" [config]="{backdrop: 'static'}">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<form *ngIf="active" #mySettingsModalForm="ngForm" (ngSubmit)="save()">
@@ -23,19 +23,13 @@
 					</div>
 
 					<div class="form-group form-md-line-input form-md-floating-label no-hint">
-						<input type="email" name="EmailAddress" class="form-control edited" [(ngModel)]="user.emailAddress" required maxlength="256">
+						<input type="email" name="EmailAddress" class="form-control edited" disabled [(ngModel)]="user.emailAddress" required maxlength="256">
 						<label>{{l("EmailAddress")}}</label>
 					</div>
 
 					<div class="form-group form-md-line-input form-md-floating-label no-hint">
 						<input type="text" name="PhoneNumber" class="form-control edited" [(ngModel)]="user.phoneNumber" maxlength="24">
 						<label>{{l("PhoneNumber")}}</label>
-					</div>
-
-					<div class="form-group form-md-line-input form-md-floating-label">
-						<input type="text" [disabled]="!canChangeUserName" class="form-control edited" [(ngModel)]="user.userName" name="UserName" required maxlength="32">
-						<label>{{l("UserName")}}</label>
-						<span class="help-block" *ngIf="!canChangeUserName">{{l("CanNotChangeAdminUserName")}}</span>
 					</div>
 
 					<div class="form-group form-md-line-input form-md-floating-label no-hint" *ngIf="showTimezoneSelection">
