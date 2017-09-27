@@ -47,6 +47,22 @@
                 <button class="btn btn-default" type="button" (click)="clearCustomCss()">{{l("Clear")}}</button>
               </form>
             </div>
+              <div class="col-md-6">
+                  <h4>{{l("CustomFavicons")}}</h4>
+                  <form #faviconUploadForm>
+                      <div class="form-group">
+                          <input type="file" ng2FileSelect [uploader]="faviconUploader" required />
+                          <span class="help-block m-b-none">{{l("UploadFavicon_Info")}}</span>
+                      </div>
+                      <button class="btn btn-primary" type="button" (click)="uploadFavicon()">{{l("Upload")}}</button>
+                      <button class="btn btn-default" type="button" (click)="clearFavicon()">{{l("Clear")}}</button>
+                  </form>
+              </div>
+              <div class="col-md-6">
+                  <h4>{{l("CustomSiteTitle")}}</h4>
+                  <input type="text" name="SiteTitle" class="form-control" [ngClass]="{'edited':siteTitle.value}" [(ngModel)]="siteTitle.value" maxlength="128">
+                  <label>{{l("CustomSiteTitle")}}</label>
+              </div>
           </div>
         </tab>
         <tab heading="{{l('UserManagement')}}">

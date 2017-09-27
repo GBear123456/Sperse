@@ -26,4 +26,9 @@
     static readonly grid = {
         defaultPageSize: 10
     }
+
+    static readonly tenantCustomizations = {
+        uiCustomizationsGroupName: 'UiCustomizations',
+        UiCustomizationsSiteTitleName: 'SiteTitle'
+    }
 }
