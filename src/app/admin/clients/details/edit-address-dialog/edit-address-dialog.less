@@ -1,8 +1,52 @@
 /deep/ md-dialog-container {
+  overflow: visible!important;
   min-width: 400px;
 }
 
 :host {
+  position: relative;
+  &:before {
+    content: "";
+    position: absolute;
+    top: 220px;
+    left: -34px;    
+    width: 0; 
+    height: 0; 
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;   
+    border-right:10px solid #FFF;
+  }
+
+  input {
+    width: 240px;
+  }
+
+  label {
+    right: -4px;
+    width: 130px;
+    position: relative;
+    color: #BDC6C7;
+    line-height: 48px;
+    vertical-align: top;
+    border-bottom: 1px solid #dfdfdf;
+  }
+
+  h2 {
+    font-weight: 500;
+    line-height: 1.71;
+    letter-spacing: 0.6px;
+  }
+
+  /deep/ .dx-texteditor-container {
+    width: 240px;
+  }
+
+  dx-select-box, 
+  dx-text-box, 
+  dx-number-box {
+    display: inline-block;
+  }
+
   md-dialog-actions {
     justify-content: flex-end;
   }

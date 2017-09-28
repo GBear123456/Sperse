@@ -36,7 +36,7 @@ export class EditContactDialog extends AppComponentBase {
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
     this[data.field + 'TypesLoad']();
-    this.action = this.l(data.value ? 'Edit': 'Create');
+    this.action = data.value ? 'Edit': 'Create';
   }
 
   urlTypesLoad() {

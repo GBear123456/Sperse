@@ -1,6 +1,8 @@
+import { AppConsts } from '@shared/AppConsts';
 import { Component, OnInit, Injector } from '@angular/core';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { ConfirmDialog } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { MdDialog, MdDialogRef } from '@angular/material';
 import { CustomersServiceProxy, ContactAddressServiceProxy, CustomerInfoDto, 
   ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput } from '@shared/service-proxies/service-proxies';
@@ -23,17 +25,40 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     private _customerService: CustomersServiceProxy,
     private _addressService: ContactAddressServiceProxy
   ) { 
-    super(injector);
+    super(injector, AppConsts.localization.CRMLocalizationSourceName);
   }
 
-  editAddress(address) {
+  getDialogPossition(event) {
+    let shift = 245, parent = event.target
+      .closest(".address-wrapper");        
+
+    if (parent) {
+      let rect = parent.getBoundingClientRect();
+      return {
+        top: (rect.top + rect.height / 2 - shift) + 'px', 
+        left: (rect.left + rect.width / 2) + 'px'
+      };
+    } else
+      return {
+        top: event.clientY - shift + 'px',
+        left: event.clientX + 'px'
+      };
+  }
+
+  editAddress(address, event, index) {
     let dialogData = _.pick(address || {}, 'id', 'city', 
       'comment', 'country', 'isActive', 'isConfirmed', 
       'state', 'streetAddress', 'usageTypeId', 'zip');
     dialogData.contactId = this.data
       .customerInfo.primaryContactInfo.id;
+    dialogData.deleteItem = (event) => {
+      this.deleteAddress(address, event, index);
+    };
+    this.dialog.closeAll();
     this.dialog.open(EditAddressDialog, {
-      data: dialogData
+      data: dialogData,
+      hasBackdrop: false,
+      position: this.getDialogPossition(event)
     }).afterClosed().subscribe(result => {
       if (result) {
         this._addressService
@@ -58,16 +83,24 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
           });
       }                                                                                                                                                            
     });
+    event.stopPropagation();
   }
 
   deleteAddress(address, event, index){
-    console.log(this.data.customerInfo.primaryContactInfo.id, address.id);
-    this._addressService.deleteContactAddress(
-      this.data.customerInfo.primaryContactInfo.id, address.id).subscribe(result => {
-        console.log(result);
-        this.data.customerInfo.primaryContactInfo.addresses.splice(1, 1);
-      });
-
+    this.dialog.open(ConfirmDialog, {
+      data: {
+        title: this.l('DeleteContactHeader', this.l('Address')),
+        message: this.l('DeleteContactMessage', this.l('Address').toLowerCase())
+      }
+    }).afterClosed().subscribe(result => {
+      if (result) {
+        this.dialog.closeAll();
+        this._addressService.deleteContactAddress(
+          this.data.customerInfo.primaryContactInfo.id, address.id).subscribe(result => {
+            this.data.customerInfo.primaryContactInfo.addresses.splice(index, 1);
+          });
+      }
+    });
     event.stopPropagation();
   }
 

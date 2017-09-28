@@ -2,11 +2,15 @@ import { Component, Input, Injector, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomersServiceProxy, CustomerInfoDto, ContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { Router, ActivatedRoute } from '@angular/router';
+import { MdDialog } from '@angular/material';
 
 @Component({
   selector: 'client-details',
   templateUrl: './client-details.component.html',
-  styleUrls: ['./client-details.component.less']
+  styleUrls: ['./client-details.component.less'],
+  host: {
+    '(document:click)': "closeEditDialogs($event)"
+  }  
 })
 export class ClientDetailsComponent extends AppComponentBase implements OnInit, OnDestroy {
   customerInfo: CustomerInfoDto;
@@ -44,6 +48,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
   constructor(
     injector: Injector,
     private _router: Router,
+    private _dialog: MdDialog,
     private _route: ActivatedRoute,
     private _customerService: CustomersServiceProxy
   ) {
@@ -63,7 +68,13 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
   }
 
   close(event) {
+    this._dialog.closeAll();
     this._router.navigate(['app/admin/clients']);
+  }
+
+  closeEditDialogs(event) {
+    if (!event.target.closest('md-dialog-container, .dx-popup-wrapper'))
+      this._dialog.closeAll();
   }
 
   ngOnInit() {

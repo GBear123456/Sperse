@@ -40,7 +40,7 @@ export class EditAddressDialog extends AppComponentBase {
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
         
     if (data.city) {
-      this.action = this.l('Edit');
+      this.action = 'Edit';
       this.address = [
         data.streetAddress,
         data.city,
@@ -48,7 +48,7 @@ export class EditAddressDialog extends AppComponentBase {
         data.country
       ].join(',');
     } else
-      this.action = this.l('Create');
+      this.action = 'Create';
 
     this.addressTypesLoad();
     this.addressStatesLoad();

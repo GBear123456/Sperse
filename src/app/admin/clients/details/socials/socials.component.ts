@@ -1,3 +1,5 @@
+import { AppConsts } from '@shared/AppConsts';
+import { ConfirmDialog } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { Component, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomersServiceProxy, CustomerInfoDto, ContactLinkServiceProxy, 
@@ -30,10 +32,27 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
     private _customerService: CustomersServiceProxy,
     private _contactLinkService: ContactLinkServiceProxy
   ) { 
-    super(injector);
+    super(injector, AppConsts.localization.CRMLocalizationSourceName);
   }
 
-  showEditDialog(data) {
+  getDialogPossition(event) {
+    let shift = 160, parent = 
+      event.target.closest("li");
+
+    if (parent) {
+      let rect = parent.getBoundingClientRect();
+      return {
+        top: (rect.top + rect.height / 2 - shift) + 'px', 
+        left: (rect.left + rect.width / 2) + 'px'
+      };
+    } else
+      return {
+        top: event.clientY - shift + 'px',
+        left: event.clientX + 'px'
+      };
+  }
+
+  showEditDialog(data, event, index) {    
     let dialogData = {
       field: 'url', 
       id: data && data.id,
@@ -46,10 +65,16 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
       usageTypeId: data && data.usageTypeId,
       isConfirmed: data && data.isConfirmed,
       isActive: data && data.isActive,
-      comment: data && data.comment
+      comment: data && data.comment,
+      deleteItem: (event) => {
+        this.deleteLink(data, event, index);
+      } 
     };
+    this.dialog.closeAll();
     this.dialog.open(EditContactDialog, {
-      data: dialogData
+      data: dialogData,
+      hasBackdrop: false,
+      position: this.getDialogPossition(event)
     }).afterClosed().subscribe(result => {
         if (result) {
           this._contactLinkService
@@ -68,18 +93,29 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
             });           
         }
     });
+    event.stopPropagation();
   }
 
   deleteLink(link, event, index) {
-    this._contactLinkService.deleteContactLink(
-      this.data.customerInfo.primaryContactInfo.id, link.id).subscribe(result => {
-        console.log(result);
-      });
+   this.dialog.open(ConfirmDialog, {
+      data: {
+        title: this.l('DeleteContactHeader', this.l('Link')),
+        message: this.l('DeleteContactMessage', this.l('Link').toLowerCase())
+      }
+    }).afterClosed().subscribe(result => {
+      if (result) {
+        this.dialog.closeAll();
+        this._contactLinkService.deleteContactLink(
+          this.data.customerInfo.primaryContactInfo.id, link.id).subscribe(result => {
+            if (!result)
+              this.data.customerInfo.primaryContactInfo.links.splice(index, 1);
+          });
+      }
+    });
+    event.stopPropagation();
   }
-
 
   ngOnInit() {
     this.data = this._customerService['data'];
   }
-
 }
