@@ -44,6 +44,7 @@ export class EditContactDialog extends AppComponentBase {
   urlTypesLoad() {
     this._contactLinkService.getContactLinkTypes().subscribe(result => {
       this.types = result.items;
+      this.types.unshift({id: 'O', name: this.l('Other Link')});
     });
   }
 

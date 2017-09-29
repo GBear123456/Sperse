@@ -77,7 +77,8 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
       position: this.getDialogPossition(event)
     }).afterClosed().subscribe(result => {
         if (result) {
-          dialogData['linkTypeId'] = dialogData.usageTypeId;            
+          if (dialogData.usageTypeId != 'O')
+            dialogData['linkTypeId'] = dialogData.usageTypeId;            
           this._contactLinkService
             [(data ? 'update': 'create') + 'ContactLink'](
               (data ? UpdateContactLinkInput: CreateContactLinkInput).fromJS(dialogData)
@@ -86,6 +87,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
                 data.url = dialogData.url;
                 data.comment = dialogData.comment;
                 data.usageTypeId = dialogData.usageTypeId;
+                data.isSocialNetwork = dialogData['isSocialNetwork'];
               } else if (result.id) {
                 dialogData.id = result.id;    
                 this.data.customerInfo.primaryContactInfo.links
