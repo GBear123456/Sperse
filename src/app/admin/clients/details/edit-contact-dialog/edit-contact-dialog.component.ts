@@ -3,6 +3,8 @@ import { Component, Inject, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
+import * as _ from 'underscore';
+
 import { 
   ContactEmailServiceProxy,
   ContactPhoneServiceProxy,
@@ -42,6 +44,7 @@ export class EditContactDialog extends AppComponentBase {
   urlTypesLoad() {
     this._contactLinkService.getContactLinkTypes().subscribe(result => {
       this.types = result.items;
+      this.types.unshift({id: 'O', name: this.l('Other Link')});
     });
   }
 
@@ -80,6 +83,12 @@ export class EditContactDialog extends AppComponentBase {
   blurInput(event) {
     if (!(event.component._value && event.component._value.trim()))
       event.component.option({mask: "", value: ""});
+  }
+
+  onTypeChanged(event) { 
+    let type = _.findWhere(this.types, {id: event.value});
+    if (type.isSocialNetwork)
+      this.data.isSocialNetwork = true;
   }
 
   onSave(event) {
