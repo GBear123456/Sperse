@@ -63,8 +63,8 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
         .primaryContactInfo.id,
       url: data && data.url,
       usageTypeId: data && data.linkTypeId,
-      isConfirmed: data && data.isConfirmed,
-      isActive: data && data.isActive,
+      isConfirmed: Boolean(data && data.isConfirmed),
+      isActive: Boolean(data && data.isActive),
       comment: data && data.comment,
       deleteItem: (event) => {
         this.deleteLink(data, event, index);
