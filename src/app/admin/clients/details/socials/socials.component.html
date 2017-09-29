@@ -12,9 +12,9 @@
   <div class="other-links">
     <h3 class="lab">{{l('Others')}}</h3>
     <ul class="others">
-      <li *ngFor="let social of data?.customerInfo?.primaryContactInfo.links; let i = index">
+      <li *ngFor="let social of data?.customerInfo?.primaryContactInfo.links; let i = index" [ngStyle]="{display: social.isSocialNetwork ? 'none': 'block'}">
         <div class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog(social, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteLink(social, $event, i)"></i></div>
-        <a href="{{social.url}}" target="_blank" *ngIf="!social.isSocialNetwork">
+        <a href="{{social.url}}" target="_blank">
           {{social.url}}
         </a>
       </li>

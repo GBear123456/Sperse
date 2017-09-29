@@ -8,6 +8,7 @@
       displayExpr="name"
       valueExpr="id"
       [(value)]="data.usageTypeId"
+      (onValueChanged)="onTypeChanged($event)"
       fieldTemplate="fieldTemplate">
       <div *dxTemplate="let item of 'fieldTemplate'">
         <div class="type-item-wrapper ">
