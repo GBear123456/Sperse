@@ -1,12 +1,12 @@
+import { AppConsts } from '@shared/AppConsts';
 import { Component, OnInit, Injector } from '@angular/core';
 import { MdDialog } from '@angular/material';
-
+import { ConfirmDialog } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
   ContactPhoneServiceProxy, CustomerInfoDto, CreateContactEmailInput, 
   UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput } from '@shared/service-proxies/service-proxies';
-
 
 @Component({
   selector: 'contacts',
@@ -25,10 +25,27 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
     private _contactEmailService: ContactEmailServiceProxy, 
     private _contactPhoneService: ContactPhoneServiceProxy
   ) { 
-    super(injector);
+    super(injector, AppConsts.localization.CRMLocalizationSourceName);
   }
 
-  showEditDialog(field, data) {
+  getDialogPossition(event) {
+    let shift = 160, parent = 
+      event.target.closest("ul");        
+
+    if (parent) {
+      let rect = parent.getBoundingClientRect();
+      return {
+        top: (rect.top + rect.height / 2 - shift) + 'px', 
+        left: (rect.left + rect.width / 2) + 'px'
+      };
+    } else
+      return {
+        top: event.clientY - shift + 'px',
+        left: event.clientX + 'px'
+      };
+  }
+
+  showEditDialog(field, data, event, index) {
     let dialogData = {
       field: field, 
       id: data && data.id,
@@ -43,10 +60,19 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
       usageTypeId: data && data.usageTypeId,
       isConfirmed: data && data.isConfirmed,
       isActive: data && data.isActive,
-      comment: data && data.comment
+      comment: data && data.comment,
+      deleteItem: (event) => {
+        if (data.emailAddress)
+          this.deleteEmailAddress(data, event, index);
+        else
+          this.deletePhoneNumber(data, event, index);
+      } 
     };
+    this.dialog.closeAll();
     this.dialog.open(EditContactDialog, {
-      data: dialogData
+      data: dialogData,
+      hasBackdrop: false,
+      position: this.getDialogPossition(event)
     }).afterClosed().subscribe(result => {
         if (result) {
           let isPhoneDialog = dialogData.name == 'Phone';
@@ -76,20 +102,45 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
             });           
         }
     });
+    event.stopPropagation();
   }
 
   deleteEmailAddress(email, event, index) {
-    this._contactEmailService.deleteContactEmail(
-      this.data.customerInfo.primaryContactInfo.id, email.id).subscribe(result => {
-        console.log(result);
-      });
+   this.dialog.open(ConfirmDialog, {
+      data: {
+        title: this.l('DeleteContactHeader', this.l('Email')),
+        message: this.l('DeleteContactMessage', this.l('Email').toLowerCase())
+      }
+    }).afterClosed().subscribe(result => {
+      if (result) {
+        this.dialog.closeAll();
+        this._contactEmailService.deleteContactEmail(
+          this.data.customerInfo.primaryContactInfo.id, email.id).subscribe(result => {
+            if (!result)
+              this.data.customerInfo.primaryContactInfo.emails.splice(index, 1);
+          });
+      }
+    });
+    event.stopPropagation();
   }
 
   deletePhoneNumber(phone, event, index) {
-    this._contactPhoneService.deleteContactPhone(
-      this.data.customerInfo.primaryContactInfo.id, phone.id).subscribe(result => {
-        console.log(result);
-      });
+   this.dialog.open(ConfirmDialog, {
+      data: {
+        title: this.l('DeleteContactHeader', this.l('Phone')),
+        message: this.l('DeleteContactMessage', this.l('Phone').toLowerCase())
+      }
+    }).afterClosed().subscribe(result => {
+      if (result) {
+        this.dialog.closeAll();
+        this._contactPhoneService.deleteContactPhone(
+          this.data.customerInfo.primaryContactInfo.id, phone.id).subscribe(result => {
+            if (!result)
+              this.data.customerInfo.primaryContactInfo.phones.splice(index, 1);
+          });
+      }
+    });
+    event.stopPropagation();
   }
 
   ngOnInit() {

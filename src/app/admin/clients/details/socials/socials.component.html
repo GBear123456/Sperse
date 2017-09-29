@@ -13,12 +13,12 @@
     <h3 class="lab">{{l('Others')}}</h3>
     <ul class="others">
       <li *ngFor="let social of data?.customerInfo?.primaryContactInfo.links; let i = index">
-        <div class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog(social)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteLink(social, $event, i)"></i></div>
+        <div class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog(social, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteLink(social, $event, i)"></i></div>
         <a href="{{social.url}}" target="_blank" *ngIf="!social.isSocialNetwork">
           {{social.url}}
         </a>
       </li>
     </ul>
   </div>
-  <div class="add-contact" (click)="showEditDialog()">+</div>
+  <div class="add-contact" (click)="showEditDialog(null, $event)">+</div>
 </div>
