@@ -49,33 +49,34 @@ export class AppPreBootstrap {
             AppConsts.remoteServiceBaseUrlFormat = result.remoteServiceBaseUrl;
             AppConsts.recaptchaSiteKey = result.recaptchaSiteKey;
             AppConsts.subscriptionExpireNootifyDayCount = result.subscriptionExpireNootifyDayCount;
+            AppConsts.appBaseUrl = window.location.protocol + "//" + window.location.host;
 
-            abp.ajax({
-                url: result.remoteServiceBaseUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=' + encodeURIComponent("" + AppConsts.tenantHostType),
-                method: 'GET',
-                headers: {
-                    'Accept-Language': abp.utils.getCookieValue("Abp.Localization.CultureName")
-                }
-            }).done((tenantApiHostOutput: TenantApiHostOutput) => {
-                var apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
-                var clientProtocolUrl = new URL(result.appBaseUrl);
+            if (result.appBaseUrl !== AppConsts.appBaseUrl)
+            {
+                abp.ajax({
+                    url: result.remoteServiceBaseUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=' + encodeURIComponent("" + AppConsts.tenantHostType),
+                    method: 'GET',
+                    headers: {
+                        'Accept-Language': abp.utils.getCookieValue("Abp.Localization.CultureName")
+                    }
+                }).done((tenantApiHostOutput: TenantApiHostOutput) => {
+                    var apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
+    
+                    if (tenantApiHostOutput.apiHostName !== null) {
+                        AppConsts.remoteServiceBaseUrl = apiProtocolUrl.protocol + "//" + tenantApiHostOutput.apiHostName;
+                    }
+                    else {
+                        AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
+                    }
 
-                if (tenantApiHostOutput.apiHostName !== null) {
-                    AppConsts.remoteServiceBaseUrl = apiProtocolUrl.protocol + "//" + tenantApiHostOutput.apiHostName;
-                }
-                else {
-                    AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
-                }
-
-                if (tenantApiHostOutput.clientHostName !== null) {
-                    AppConsts.appBaseUrl = clientProtocolUrl.protocol + "//" + tenantApiHostOutput.clientHostName;
-                }
-                else {
-                    AppConsts.appBaseUrl = result.appBaseUrl;
-                }
-
+                    callback();
+                });
+            }
+            else
+            {
+                AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
                 callback();
-            });
+            }
         });
     }
 
