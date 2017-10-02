@@ -1,11 +1,11 @@
-import { AppConsts } from '@shared/AppConsts';
+﻿import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
 import { 
   ContactAddressServiceProxy,
-  MemberServiceProxy,
+  CountryServiceProxy,
   CountryStateDto
 } from '@shared/service-proxies/service-proxies';
 
@@ -35,7 +35,7 @@ export class EditAddressDialog extends AppComponentBase {
     @Inject(MD_DIALOG_DATA) public data: any,
     public dialogRef: MdDialogRef<EditAddressDialog>,
     private _contactAddressService: ContactAddressServiceProxy,
-    private _memberService: MemberServiceProxy
+    private _countryService: CountryServiceProxy
   ) { 
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
         
@@ -55,7 +55,7 @@ export class EditAddressDialog extends AppComponentBase {
   }
 
   addressStatesLoad(): void {
-    this._memberService
+      this._countryService
       .getCountryStates(this.options.componentRestrictions.country)
       .subscribe(result => {
         this.states = result;

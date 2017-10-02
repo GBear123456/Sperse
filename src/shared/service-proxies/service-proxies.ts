@@ -2000,6 +2000,124 @@ export class ContactPhoneServiceProxy {
 }
 
 @Injectable()
+export class CountryServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getCountries(): Observable<CountryDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Country/GetCountries";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCountries(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCountries(response_);
+                } catch (e) {
+                    return <Observable<CountryDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CountryDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCountries(response: Response): Observable<CountryDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CountryDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CountryDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CountryDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getCountryStates(code: string): Observable<CountryStateDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Country/GetCountryStates?";
+        if (code !== undefined)
+            url_ += "code=" + encodeURIComponent("" + code) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCountryStates(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCountryStates(response_);
+                } catch (e) {
+                    return <Observable<CountryStateDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CountryStateDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCountryStates(response: Response): Observable<CountryStateDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CountryStateDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CountryStateDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CountryStateDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class CreditReportServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -3878,60 +3996,6 @@ export class MemberServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<SubmitMemberInfoResultDto>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getCountryStates(countryCode: string): Observable<CountryStateDto[]> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/Member/GetCountryStates?";
-        if (countryCode !== undefined)
-            url_ += "countryCode=" + encodeURIComponent("" + countryCode) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetCountryStates(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetCountryStates(response_);
-                } catch (e) {
-                    return <Observable<CountryStateDto[]>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<CountryStateDto[]>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetCountryStates(response: Response): Observable<CountryStateDto[]> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: CountryStateDto[] = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(CountryStateDto.fromJS(item));
-            }
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<CountryStateDto[]>(<any>null);
     }
 
     /**
@@ -12022,6 +12086,84 @@ export interface IPhoneUsageTypeDto {
     name: string;
 }
 
+export class CountryDto implements ICountryDto {
+    code: string;
+    name: string;
+
+    constructor(data?: ICountryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.code = data["code"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CountryDto {
+        let result = new CountryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICountryDto {
+    code: string;
+    name: string;
+}
+
+export class CountryStateDto implements ICountryStateDto {
+    code: string;
+    name: string;
+
+    constructor(data?: ICountryStateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.code = data["code"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CountryStateDto {
+        let result = new CountryStateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICountryStateDto {
+    code: string;
+    name: string;
+}
+
 export class CreditReportOutput implements ICreditReportOutput {
     memberExists: boolean;
     uncompletedPackageId: number;
@@ -16667,45 +16809,6 @@ export class SubmitMemberInfoResultDto implements ISubmitMemberInfoResultDto {
 
 export interface ISubmitMemberInfoResultDto {
     paymentAuthorizationRequired: boolean;
-}
-
-export class CountryStateDto implements ICountryStateDto {
-    code: string;
-    name: string;
-
-    constructor(data?: ICountryStateDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.code = data["code"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CountryStateDto {
-        let result = new CountryStateDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["code"] = this.code;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICountryStateDto {
-    code: string;
-    name: string;
 }
 
 export class PaymentAuthorizeRequestDto implements IPaymentAuthorizeRequestDto {
