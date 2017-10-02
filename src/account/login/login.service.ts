@@ -1,6 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { TokenAuthServiceProxy, AuthenticateModel, AuthenticateResultModel, ExternalLoginProviderInfoModel, ExternalAuthenticateModel, ExternalAuthenticateResultModel } from '@shared/service-proxies/service-proxies';
+import { TokenAuthServiceProxy, AuthenticateModel, AuthenticateResultModel, ExternalLoginProviderInfoModel, ExternalAuthenticateModel, ExternalAuthenticateResultModel, SendPasswordResetCodeInput, AccountServiceProxy, SendPasswordResetCodeOutput  } from '@shared/service-proxies/service-proxies';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -50,6 +50,9 @@ export class LoginService {
     authenticateModel: AuthenticateModel;
     authenticateResult: AuthenticateResultModel;
 
+    resetPasswordModel: SendPasswordResetCodeInput;
+    resetPasswordResult: SendPasswordResetCodeOutput;
+
     externalLoginProviders: ExternalLoginProvider[] = [];
 
     rememberMe: boolean;
@@ -60,7 +63,8 @@ export class LoginService {
         private _utilsService: UtilsService,
         private _messageService: MessageService,
         private _tokenService: TokenService,
-        private _logService: LogService
+        private _logService: LogService,
+        private _accountService: AccountServiceProxy
     ) {
         this.clear();
     }
@@ -79,6 +83,32 @@ export class LoginService {
             .finally(finallyCallback)
             .subscribe((result: AuthenticateResultModel) => {
                 this.processAuthenticateResult(result, redirectUrl);
+            });
+    }
+
+    sendPasswordResetCode(finallyCallback?: () => void, autoDetectTenancy: boolean = true): void {
+        finallyCallback = finallyCallback || (() => { });
+
+        this.resetPasswordModel.autoDetectTenancy = autoDetectTenancy;
+
+        this._accountService
+            .sendPasswordResetCode(this.resetPasswordModel)
+            .finally(finallyCallback)
+            .subscribe((result: SendPasswordResetCodeOutput) => {
+                if (this.resetPasswordModel.autoDetectTenancy) {
+                    this.resetPasswordResult = result;
+                } else {
+                    this.resetPasswordResult = null;
+                }
+
+                if (result.detectedTenancies.length > 1) {
+                    this._router.navigate(['account/select-tenant']);
+                } else {
+                    this._messageService.success(
+                        abp.localization.localize('PasswordResetMailSentMessage', 'Platform'),
+                        abp.localization.localize('MailSent', 'Platform')
+                    ).done(() => { this._router.navigate(['account/login']); });
+                }
             });
     }
 
@@ -184,6 +214,9 @@ export class LoginService {
         this.authenticateModel.rememberClient = false;
         this.authenticateResult = null;
         this.rememberMe = false;
+
+        this.resetPasswordModel = null;
+        this.resetPasswordResult = null;
     }
 
     private initExternalLoginProviders() {

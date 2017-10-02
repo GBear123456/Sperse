@@ -53,9 +53,8 @@ export class LoginComponent extends AppComponentBase implements OnInit {
 
     login(): void {
         this.submitting = true;
-        this.loginService.authenticate(
-            () => this.submitting = false
-        );
+
+        this.loginService.authenticate(() => this.submitting = false);
     }
 
     externalLogin(provider: ExternalLoginProvider) {

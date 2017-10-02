@@ -13,7 +13,10 @@ import { TenantModel } from "shared/service-proxies/service-proxies";
     animations: [accountModuleAnimation()]
 })
 export class SelectTenantComponent extends AppComponentBase implements CanActivate, OnInit, OnDestroy {
-    tenants?: TenantModel[];
+
+    tenants?: TenantModel[] = [];
+
+    saving: boolean = false;
 
     constructor(
         injector: Injector,
@@ -24,20 +27,16 @@ export class SelectTenantComponent extends AppComponentBase implements CanActiva
     }
 
     canActivate(): boolean {
-        if (this.loginService.authenticateModel
-            && this.loginService.authenticateModel.autoDetectTenancy
-            && this.loginService.authenticateResult
-            && this.loginService.authenticateResult.detectedTenancies.length > 1
-        ) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     ngOnInit(): void {
-        if (this.loginService.authenticateResult){
-            this.tenants = this.loginService.authenticateResult.detectedTenancies;
+        if (this.loginService.resetPasswordResult) {
+            this.tenants = this.loginService.resetPasswordResult.detectedTenancies;
+        } else {
+            if (this.loginService.authenticateResult) {
+                this.tenants = this.loginService.authenticateResult.detectedTenancies;
+            }
         }
     }
 
@@ -46,8 +45,16 @@ export class SelectTenantComponent extends AppComponentBase implements CanActiva
     }
 
     submit(tenantId?: number): void {
+        this.saving = true;
+
         abp.multiTenancy.setTenantIdCookie(tenantId);
 
-        this.loginService.authenticate(() => { }, undefined, false);
+        if (this.loginService.resetPasswordResult) {
+            this.loginService.sendPasswordResetCode(() => { this.saving = false; }, false);
+        } else {
+            if (this.loginService.authenticateResult) {
+                this.loginService.authenticate(() => { this.saving = false; }, undefined, false);
+            }
+        }
     }
 }
