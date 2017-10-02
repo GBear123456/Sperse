@@ -105,6 +105,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
     event.stopPropagation();
   }
 
+  inPlaceEdit(field, data, event, index) {  
+//    event.target.setAttribute('contenteditable', true);
+  }
+
   deleteEmailAddress(email, event, index) {
    this.dialog.open(ConfirmDialog, {
       data: {
