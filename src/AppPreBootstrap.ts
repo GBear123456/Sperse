@@ -27,7 +27,10 @@ export class AppPreBootstrap {
                 AppPreBootstrap.impersonatedAuthenticate(queryStringObj.impersonationToken, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
             } else if (queryStringObj.switchAccountToken) {
                 AppPreBootstrap.linkedAccountAuthenticate(queryStringObj.switchAccountToken, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
-            } else {
+            } else {                            
+                if (queryStringObj.hasOwnProperty('tenantId'))
+                  abp.multiTenancy.setTenantIdCookie(queryStringObj.tenantId);
+                
                 AppPreBootstrap.getUserConfiguration(callback);
             }
         });
