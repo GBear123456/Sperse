@@ -131,7 +131,7 @@ export class AccountServiceProxy {
     /**
      * @return Success
      */
-    sendPasswordResetCode(input: SendPasswordResetCodeInput): Observable<void> {
+    sendPasswordResetCode(input: SendPasswordResetCodeInput): Observable<SendPasswordResetCodeOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Account/SendPasswordResetCode";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -153,24 +153,27 @@ export class AccountServiceProxy {
                 try {
                     return this.processSendPasswordResetCode(response_);
                 } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
+                    return <Observable<SendPasswordResetCodeOutput>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<void>><any>Observable.throw(response_);
+                return <Observable<SendPasswordResetCodeOutput>><any>Observable.throw(response_);
         });
     }
 
-    protected processSendPasswordResetCode(response: Response): Observable<void> {
+    protected processSendPasswordResetCode(response: Response): Observable<SendPasswordResetCodeOutput> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            return Observable.of<void>(<any>null);
+            let result200: SendPasswordResetCodeOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SendPasswordResetCodeOutput.fromJS(resultData200) : new SendPasswordResetCodeOutput();
+            return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<void>(<any>null);
+        return Observable.of<SendPasswordResetCodeOutput>(<any>null);
     }
 
     /**
@@ -1997,6 +2000,124 @@ export class ContactPhoneServiceProxy {
 }
 
 @Injectable()
+export class CountryServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getCountries(): Observable<CountryDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Country/GetCountries";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCountries(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCountries(response_);
+                } catch (e) {
+                    return <Observable<CountryDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CountryDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCountries(response: Response): Observable<CountryDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CountryDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CountryDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CountryDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getCountryStates(code: string): Observable<CountryStateDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Country/GetCountryStates?";
+        if (code !== undefined)
+            url_ += "code=" + encodeURIComponent("" + code) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCountryStates(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCountryStates(response_);
+                } catch (e) {
+                    return <Observable<CountryStateDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CountryStateDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCountryStates(response: Response): Observable<CountryStateDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CountryStateDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CountryStateDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CountryStateDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class CreditReportServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -2269,6 +2390,56 @@ export class CreditReportServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<AlertDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    simulateScore(simulatorData: ScoreSimulatorDto, getCurrentScore: boolean): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/SimulateScore?";
+        if (getCurrentScore !== undefined)
+            url_ += "getCurrentScore=" + encodeURIComponent("" + getCurrentScore) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(simulatorData ? simulatorData.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSimulateScore(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSimulateScore(response_);
+                } catch (e) {
+                    return <Observable<number>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSimulateScore(response: Response): Observable<number> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: number = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<number>(<any>null);
     }
 }
 
@@ -3825,60 +3996,6 @@ export class MemberServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<SubmitMemberInfoResultDto>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getCountryStates(countryCode: string): Observable<CountryStateDto[]> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/Member/GetCountryStates?";
-        if (countryCode !== undefined)
-            url_ += "countryCode=" + encodeURIComponent("" + countryCode) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetCountryStates(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetCountryStates(response_);
-                } catch (e) {
-                    return <Observable<CountryStateDto[]>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<CountryStateDto[]>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetCountryStates(response: Response): Observable<CountryStateDto[]> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: CountryStateDto[] = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(CountryStateDto.fromJS(item));
-            }
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<CountryStateDto[]>(<any>null);
     }
 
     /**
@@ -7258,6 +7375,111 @@ export class TenantHostServiceProxy {
 }
 
 @Injectable()
+export class TenantIntegrationsSettingsServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getIntegrationsSettings(): Observable<IntegrationsSettings> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantIntegrationsSettings/GetIntegrationsSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetIntegrationsSettings(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetIntegrationsSettings(response_);
+                } catch (e) {
+                    return <Observable<IntegrationsSettings>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<IntegrationsSettings>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetIntegrationsSettings(response: Response): Observable<IntegrationsSettings> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: IntegrationsSettings = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? IntegrationsSettings.fromJS(resultData200) : new IntegrationsSettings();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<IntegrationsSettings>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateIntegrationsSettings(input: IntegrationsSettings): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantIntegrationsSettings/UpdateIntegrationsSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateIntegrationsSettings(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateIntegrationsSettings(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateIntegrationsSettings(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class TenantPaymentSettingsServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -9524,6 +9746,8 @@ export interface IRegisterOutput {
 
 export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
     emailAddress: string;
+    autoDetectTenancy: boolean = false;
+    features: string[];
 
     constructor(data?: ISendPasswordResetCodeInput) {
         if (data) {
@@ -9537,6 +9761,12 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
     init(data?: any) {
         if (data) {
             this.emailAddress = data["emailAddress"];
+            this.autoDetectTenancy = data["autoDetectTenancy"] !== undefined ? data["autoDetectTenancy"] : false;
+            if (data["features"] && data["features"].constructor === Array) {
+                this.features = [];
+                for (let item of data["features"])
+                    this.features.push(item);
+            }
         }
     }
 
@@ -9549,12 +9779,106 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["emailAddress"] = this.emailAddress;
+        data["autoDetectTenancy"] = this.autoDetectTenancy;
+        if (this.features && this.features.constructor === Array) {
+            data["features"] = [];
+            for (let item of this.features)
+                data["features"].push(item);
+        }
         return data; 
     }
 }
 
 export interface ISendPasswordResetCodeInput {
     emailAddress: string;
+    autoDetectTenancy: boolean;
+    features: string[];
+}
+
+export class SendPasswordResetCodeOutput implements ISendPasswordResetCodeOutput {
+    detectedTenancies: TenantModel[];
+
+    constructor(data?: ISendPasswordResetCodeOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["detectedTenancies"] && data["detectedTenancies"].constructor === Array) {
+                this.detectedTenancies = [];
+                for (let item of data["detectedTenancies"])
+                    this.detectedTenancies.push(TenantModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SendPasswordResetCodeOutput {
+        let result = new SendPasswordResetCodeOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.detectedTenancies && this.detectedTenancies.constructor === Array) {
+            data["detectedTenancies"] = [];
+            for (let item of this.detectedTenancies)
+                data["detectedTenancies"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ISendPasswordResetCodeOutput {
+    detectedTenancies: TenantModel[];
+}
+
+export class TenantModel implements ITenantModel {
+    id: number;
+    tenancyName: string;
+    name: string;
+
+    constructor(data?: ITenantModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): TenantModel {
+        let result = new TenantModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ITenantModel {
+    id: number;
+    tenancyName: string;
+    name: string;
 }
 
 export class ResetPasswordInput implements IResetPasswordInput {
@@ -11762,6 +12086,84 @@ export interface IPhoneUsageTypeDto {
     name: string;
 }
 
+export class CountryDto implements ICountryDto {
+    code: string;
+    name: string;
+
+    constructor(data?: ICountryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.code = data["code"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CountryDto {
+        let result = new CountryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICountryDto {
+    code: string;
+    name: string;
+}
+
+export class CountryStateDto implements ICountryStateDto {
+    code: string;
+    name: string;
+
+    constructor(data?: ICountryStateDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.code = data["code"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CountryStateDto {
+        let result = new CountryStateDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICountryStateDto {
+    code: string;
+    name: string;
+}
+
 export class CreditReportOutput implements ICreditReportOutput {
     memberExists: boolean;
     uncompletedPackageId: number;
@@ -12976,6 +13378,117 @@ export interface IScoreHistoryDto {
     experianScore: number;
     transUnionScore: number;
     equifaxScore: number;
+}
+
+export class ScoreSimulatorDto implements IScoreSimulatorDto {
+    onTimePayment: number;
+    closeOldestCreditCard: boolean;
+    oneAccountPastDue: number;
+    allAccountsPastDue: number;
+    increaseCreditBalance: number;
+    decreaseCreditBalance: number;
+    increaseCreditCardLimit: number;
+    moveOneAccountToCollection: boolean;
+    addTaxLienPublicRecord: boolean;
+    addForeClosurePublicRecord: boolean;
+    addChildSupportPublicRecord: boolean;
+    addWageGarnishmentPublicRecord: boolean;
+    declareBankruptcy: boolean;
+    payOffAllCreditCards: boolean;
+    applyForCreditCard: number;
+    obtainCreditCard: number;
+    obtainMortgage: number;
+    obtainAutoLoan: number;
+    obtainPersonalLoan: number;
+    transferCreditBalances: number;
+
+    constructor(data?: IScoreSimulatorDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.onTimePayment = data["onTimePayment"];
+            this.closeOldestCreditCard = data["closeOldestCreditCard"];
+            this.oneAccountPastDue = data["oneAccountPastDue"];
+            this.allAccountsPastDue = data["allAccountsPastDue"];
+            this.increaseCreditBalance = data["increaseCreditBalance"];
+            this.decreaseCreditBalance = data["decreaseCreditBalance"];
+            this.increaseCreditCardLimit = data["increaseCreditCardLimit"];
+            this.moveOneAccountToCollection = data["moveOneAccountToCollection"];
+            this.addTaxLienPublicRecord = data["addTaxLienPublicRecord"];
+            this.addForeClosurePublicRecord = data["addForeClosurePublicRecord"];
+            this.addChildSupportPublicRecord = data["addChildSupportPublicRecord"];
+            this.addWageGarnishmentPublicRecord = data["addWageGarnishmentPublicRecord"];
+            this.declareBankruptcy = data["declareBankruptcy"];
+            this.payOffAllCreditCards = data["payOffAllCreditCards"];
+            this.applyForCreditCard = data["applyForCreditCard"];
+            this.obtainCreditCard = data["obtainCreditCard"];
+            this.obtainMortgage = data["obtainMortgage"];
+            this.obtainAutoLoan = data["obtainAutoLoan"];
+            this.obtainPersonalLoan = data["obtainPersonalLoan"];
+            this.transferCreditBalances = data["transferCreditBalances"];
+        }
+    }
+
+    static fromJS(data: any): ScoreSimulatorDto {
+        let result = new ScoreSimulatorDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["onTimePayment"] = this.onTimePayment;
+        data["closeOldestCreditCard"] = this.closeOldestCreditCard;
+        data["oneAccountPastDue"] = this.oneAccountPastDue;
+        data["allAccountsPastDue"] = this.allAccountsPastDue;
+        data["increaseCreditBalance"] = this.increaseCreditBalance;
+        data["decreaseCreditBalance"] = this.decreaseCreditBalance;
+        data["increaseCreditCardLimit"] = this.increaseCreditCardLimit;
+        data["moveOneAccountToCollection"] = this.moveOneAccountToCollection;
+        data["addTaxLienPublicRecord"] = this.addTaxLienPublicRecord;
+        data["addForeClosurePublicRecord"] = this.addForeClosurePublicRecord;
+        data["addChildSupportPublicRecord"] = this.addChildSupportPublicRecord;
+        data["addWageGarnishmentPublicRecord"] = this.addWageGarnishmentPublicRecord;
+        data["declareBankruptcy"] = this.declareBankruptcy;
+        data["payOffAllCreditCards"] = this.payOffAllCreditCards;
+        data["applyForCreditCard"] = this.applyForCreditCard;
+        data["obtainCreditCard"] = this.obtainCreditCard;
+        data["obtainMortgage"] = this.obtainMortgage;
+        data["obtainAutoLoan"] = this.obtainAutoLoan;
+        data["obtainPersonalLoan"] = this.obtainPersonalLoan;
+        data["transferCreditBalances"] = this.transferCreditBalances;
+        return data; 
+    }
+}
+
+export interface IScoreSimulatorDto {
+    onTimePayment: number;
+    closeOldestCreditCard: boolean;
+    oneAccountPastDue: number;
+    allAccountsPastDue: number;
+    increaseCreditBalance: number;
+    decreaseCreditBalance: number;
+    increaseCreditCardLimit: number;
+    moveOneAccountToCollection: boolean;
+    addTaxLienPublicRecord: boolean;
+    addForeClosurePublicRecord: boolean;
+    addChildSupportPublicRecord: boolean;
+    addWageGarnishmentPublicRecord: boolean;
+    declareBankruptcy: boolean;
+    payOffAllCreditCards: boolean;
+    applyForCreditCard: number;
+    obtainCreditCard: number;
+    obtainMortgage: number;
+    obtainAutoLoan: number;
+    obtainPersonalLoan: number;
+    transferCreditBalances: number;
 }
 
 export class ContactInfoDto implements IContactInfoDto {
@@ -16296,45 +16809,6 @@ export class SubmitMemberInfoResultDto implements ISubmitMemberInfoResultDto {
 
 export interface ISubmitMemberInfoResultDto {
     paymentAuthorizationRequired: boolean;
-}
-
-export class CountryStateDto implements ICountryStateDto {
-    code: string;
-    name: string;
-
-    constructor(data?: ICountryStateDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.code = data["code"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CountryStateDto {
-        let result = new CountryStateDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["code"] = this.code;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICountryStateDto {
-    code: string;
-    name: string;
 }
 
 export class PaymentAuthorizeRequestDto implements IPaymentAuthorizeRequestDto {
@@ -20320,7 +20794,6 @@ export interface IGetGeneralStatsOutput {
 
 export class TenantApiHostOutput implements ITenantApiHostOutput {
     apiHostName: string;
-    clientHostName: string;
 
     constructor(data?: ITenantApiHostOutput) {
         if (data) {
@@ -20334,7 +20807,6 @@ export class TenantApiHostOutput implements ITenantApiHostOutput {
     init(data?: any) {
         if (data) {
             this.apiHostName = data["apiHostName"];
-            this.clientHostName = data["clientHostName"];
         }
     }
 
@@ -20347,14 +20819,12 @@ export class TenantApiHostOutput implements ITenantApiHostOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["apiHostName"] = this.apiHostName;
-        data["clientHostName"] = this.clientHostName;
         return data; 
     }
 }
 
 export interface ITenantApiHostOutput {
     apiHostName: string;
-    clientHostName: string;
 }
 
 export class CheckHostNameDnsMappingInput implements ICheckHostNameDnsMappingInput {
@@ -20609,6 +21079,41 @@ export class UpdateSslBindingIsActiveInput implements IUpdateSslBindingIsActiveI
 export interface IUpdateSslBindingIsActiveInput {
     tenantHostType: UpdateSslBindingIsActiveInputTenantHostType;
     isActive: boolean;
+}
+
+export class IntegrationsSettings implements IIntegrationsSettings {
+    googleMapsJavascriptApiKey: string;
+
+    constructor(data?: IIntegrationsSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.googleMapsJavascriptApiKey = data["googleMapsJavascriptApiKey"];
+        }
+    }
+
+    static fromJS(data: any): IntegrationsSettings {
+        let result = new IntegrationsSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["googleMapsJavascriptApiKey"] = this.googleMapsJavascriptApiKey;
+        return data; 
+    }
+}
+
+export interface IIntegrationsSettings {
+    googleMapsJavascriptApiKey: string;
 }
 
 export class BaseCommercePaymentSettings implements IBaseCommercePaymentSettings {
@@ -21346,6 +21851,7 @@ export class AuthenticateModel implements IAuthenticateModel {
     singleSignIn: boolean;
     returnUrl: string;
     autoDetectTenancy: boolean = false;
+    features: string[];
 
     constructor(data?: IAuthenticateModel) {
         if (data) {
@@ -21366,6 +21872,11 @@ export class AuthenticateModel implements IAuthenticateModel {
             this.singleSignIn = data["singleSignIn"];
             this.returnUrl = data["returnUrl"];
             this.autoDetectTenancy = data["autoDetectTenancy"] !== undefined ? data["autoDetectTenancy"] : false;
+            if (data["features"] && data["features"].constructor === Array) {
+                this.features = [];
+                for (let item of data["features"])
+                    this.features.push(item);
+            }
         }
     }
 
@@ -21385,6 +21896,11 @@ export class AuthenticateModel implements IAuthenticateModel {
         data["singleSignIn"] = this.singleSignIn;
         data["returnUrl"] = this.returnUrl;
         data["autoDetectTenancy"] = this.autoDetectTenancy;
+        if (this.features && this.features.constructor === Array) {
+            data["features"] = [];
+            for (let item of this.features)
+                data["features"].push(item);
+        }
         return data; 
     }
 }
@@ -21398,6 +21914,7 @@ export interface IAuthenticateModel {
     singleSignIn: boolean;
     returnUrl: string;
     autoDetectTenancy: boolean;
+    features: string[];
 }
 
 export class AuthenticateResultModel implements IAuthenticateResultModel {
@@ -21489,49 +22006,6 @@ export interface IAuthenticateResultModel {
     twoFactorRememberClientToken: string;
     returnUrl: string;
     detectedTenancies: TenantModel[];
-}
-
-export class TenantModel implements ITenantModel {
-    id: number;
-    tenancyName: string;
-    name: string;
-
-    constructor(data?: ITenantModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.tenancyName = data["tenancyName"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): TenantModel {
-        let result = new TenantModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["tenancyName"] = this.tenancyName;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ITenantModel {
-    id: number;
-    tenancyName: string;
-    name: string;
 }
 
 export class SendTwoFactorAuthCodeModel implements ISendTwoFactorAuthCodeModel {

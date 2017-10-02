@@ -36,6 +36,10 @@ export class LoginComponent extends AppComponentBase implements OnInit {
         return this.setting.getBoolean('App.UserManagement.AllowSelfRegistration');
     }
 
+    get isTenantRegistrationAllowed(): boolean {
+        return this.setting.getBoolean('App.TenantManagement.AllowSelfRegistration');
+    }
+
     ngOnInit(): void {
         if (this._sessionService.userId > 0 && UrlHelper.getReturnUrl() && UrlHelper.getSingleSignIn()) {
             this._sessionAppService.updateUserSignInToken()
@@ -53,9 +57,8 @@ export class LoginComponent extends AppComponentBase implements OnInit {
 
     login(): void {
         this.submitting = true;
-        this.loginService.authenticate(
-            () => this.submitting = false
-        );
+
+        this.loginService.authenticate(() => this.submitting = false);
     }
 
     externalLogin(provider: ExternalLoginProvider) {
