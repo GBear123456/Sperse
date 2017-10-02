@@ -41,7 +41,7 @@
 
     <div class="create-account">
         <p>
-            <span *ngIf="!multiTenancySideIsTeanant">
+            <span *ngIf="!multiTenancySideIsTeanant && isTenantRegistrationAllowed">
                 <a routerLink="/account/select-edition" id="register-btn" class="uppercase">{{l("NewTenant")}}</a>
                 <span class="pipe-divider"> | </span>
             </span>
@@ -49,7 +49,9 @@
                 <a routerLink="/account/register" id="register-btn" class="uppercase">{{l("CreateAnAccount")}}</a>
                 <span class="pipe-divider"> | </span>
             </span>
-            <a routerLink="/account/email-activation" id="email-activation-btn" class="uppercase">{{l("EmailActivation")}}</a>
+            <span *ngIf="multiTenancySideIsTeanant">
+                <a routerLink="/account/email-activation" id="email-activation-btn" class="uppercase">{{l("EmailActivation")}}</a>
+            </span>
         </p>
     </div>
 </div>
