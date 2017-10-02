@@ -131,7 +131,7 @@ export class AccountServiceProxy {
     /**
      * @return Success
      */
-    sendPasswordResetCode(input: SendPasswordResetCodeInput): Observable<void> {
+    sendPasswordResetCode(input: SendPasswordResetCodeInput): Observable<SendPasswordResetCodeOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Account/SendPasswordResetCode";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -153,24 +153,27 @@ export class AccountServiceProxy {
                 try {
                     return this.processSendPasswordResetCode(response_);
                 } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
+                    return <Observable<SendPasswordResetCodeOutput>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<void>><any>Observable.throw(response_);
+                return <Observable<SendPasswordResetCodeOutput>><any>Observable.throw(response_);
         });
     }
 
-    protected processSendPasswordResetCode(response: Response): Observable<void> {
+    protected processSendPasswordResetCode(response: Response): Observable<SendPasswordResetCodeOutput> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            return Observable.of<void>(<any>null);
+            let result200: SendPasswordResetCodeOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SendPasswordResetCodeOutput.fromJS(resultData200) : new SendPasswordResetCodeOutput();
+            return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<void>(<any>null);
+        return Observable.of<SendPasswordResetCodeOutput>(<any>null);
     }
 
     /**
@@ -9679,6 +9682,8 @@ export interface IRegisterOutput {
 
 export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
     emailAddress: string;
+    autoDetectTenancy: boolean = false;
+    features: string[];
 
     constructor(data?: ISendPasswordResetCodeInput) {
         if (data) {
@@ -9692,6 +9697,12 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
     init(data?: any) {
         if (data) {
             this.emailAddress = data["emailAddress"];
+            this.autoDetectTenancy = data["autoDetectTenancy"] !== undefined ? data["autoDetectTenancy"] : false;
+            if (data["features"] && data["features"].constructor === Array) {
+                this.features = [];
+                for (let item of data["features"])
+                    this.features.push(item);
+            }
         }
     }
 
@@ -9704,12 +9715,106 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["emailAddress"] = this.emailAddress;
+        data["autoDetectTenancy"] = this.autoDetectTenancy;
+        if (this.features && this.features.constructor === Array) {
+            data["features"] = [];
+            for (let item of this.features)
+                data["features"].push(item);
+        }
         return data; 
     }
 }
 
 export interface ISendPasswordResetCodeInput {
     emailAddress: string;
+    autoDetectTenancy: boolean;
+    features: string[];
+}
+
+export class SendPasswordResetCodeOutput implements ISendPasswordResetCodeOutput {
+    detectedTenancies: TenantModel[];
+
+    constructor(data?: ISendPasswordResetCodeOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["detectedTenancies"] && data["detectedTenancies"].constructor === Array) {
+                this.detectedTenancies = [];
+                for (let item of data["detectedTenancies"])
+                    this.detectedTenancies.push(TenantModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SendPasswordResetCodeOutput {
+        let result = new SendPasswordResetCodeOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.detectedTenancies && this.detectedTenancies.constructor === Array) {
+            data["detectedTenancies"] = [];
+            for (let item of this.detectedTenancies)
+                data["detectedTenancies"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ISendPasswordResetCodeOutput {
+    detectedTenancies: TenantModel[];
+}
+
+export class TenantModel implements ITenantModel {
+    id: number;
+    tenancyName: string;
+    name: string;
+
+    constructor(data?: ITenantModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): TenantModel {
+        let result = new TenantModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ITenantModel {
+    id: number;
+    tenancyName: string;
+    name: string;
 }
 
 export class ResetPasswordInput implements IResetPasswordInput {
@@ -21798,49 +21903,6 @@ export interface IAuthenticateResultModel {
     twoFactorRememberClientToken: string;
     returnUrl: string;
     detectedTenancies: TenantModel[];
-}
-
-export class TenantModel implements ITenantModel {
-    id: number;
-    tenancyName: string;
-    name: string;
-
-    constructor(data?: ITenantModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.tenancyName = data["tenancyName"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): TenantModel {
-        let result = new TenantModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["tenancyName"] = this.tenancyName;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ITenantModel {
-    id: number;
-    tenancyName: string;
-    name: string;
 }
 
 export class SendTwoFactorAuthCodeModel implements ISendTwoFactorAuthCodeModel {
