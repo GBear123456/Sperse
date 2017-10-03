@@ -2287,7 +2287,7 @@ export class CreditReportServiceProxy {
     /**
      * @return Success
      */
-    getCreditReportHistory(periodYears: number, reportId: number): Observable<ScoreHistoryDto[]> {
+    getCreditReportHistory(periodYears: number, reportId: number): Observable<KeyValuePairOfStringAndListOfScoreHistoryDto[]> {
         let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetCreditReportHistory?";
         if (periodYears !== undefined)
             url_ += "periodYears=" + encodeURIComponent("" + periodYears) + "&"; 
@@ -2313,31 +2313,31 @@ export class CreditReportServiceProxy {
                 try {
                     return this.processGetCreditReportHistory(response_);
                 } catch (e) {
-                    return <Observable<ScoreHistoryDto[]>><any>Observable.throw(e);
+                    return <Observable<KeyValuePairOfStringAndListOfScoreHistoryDto[]>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<ScoreHistoryDto[]>><any>Observable.throw(response_);
+                return <Observable<KeyValuePairOfStringAndListOfScoreHistoryDto[]>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetCreditReportHistory(response: Response): Observable<ScoreHistoryDto[]> {
+    protected processGetCreditReportHistory(response: Response): Observable<KeyValuePairOfStringAndListOfScoreHistoryDto[]> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: ScoreHistoryDto[] = null;
+            let result200: KeyValuePairOfStringAndListOfScoreHistoryDto[] = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(ScoreHistoryDto.fromJS(item));
+                    result200.push(KeyValuePairOfStringAndListOfScoreHistoryDto.fromJS(item));
             }
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<ScoreHistoryDto[]>(<any>null);
+        return Observable.of<KeyValuePairOfStringAndListOfScoreHistoryDto[]>(<any>null);
     }
 
     /**
@@ -13397,11 +13397,56 @@ export interface IAccountCreditHistoryDto {
     statusType: AccountCreditHistoryDtoStatusType;
 }
 
+export class KeyValuePairOfStringAndListOfScoreHistoryDto implements IKeyValuePairOfStringAndListOfScoreHistoryDto {
+    key: string;
+    value: ScoreHistoryDto[];
+
+    constructor(data?: IKeyValuePairOfStringAndListOfScoreHistoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.key = data["key"];
+            if (data["value"] && data["value"].constructor === Array) {
+                this.value = [];
+                for (let item of data["value"])
+                    this.value.push(ScoreHistoryDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): KeyValuePairOfStringAndListOfScoreHistoryDto {
+        let result = new KeyValuePairOfStringAndListOfScoreHistoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["key"] = this.key;
+        if (this.value && this.value.constructor === Array) {
+            data["value"] = [];
+            for (let item of this.value)
+                data["value"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IKeyValuePairOfStringAndListOfScoreHistoryDto {
+    key: string;
+    value: ScoreHistoryDto[];
+}
+
 export class ScoreHistoryDto implements IScoreHistoryDto {
     scoreDate: moment.Moment;
-    experianScore: number;
-    transUnionScore: number;
-    equifaxScore: number;
+    score: number;
 
     constructor(data?: IScoreHistoryDto) {
         if (data) {
@@ -13415,9 +13460,7 @@ export class ScoreHistoryDto implements IScoreHistoryDto {
     init(data?: any) {
         if (data) {
             this.scoreDate = data["scoreDate"] ? moment(data["scoreDate"].toString()) : <any>undefined;
-            this.experianScore = data["experianScore"];
-            this.transUnionScore = data["transUnionScore"];
-            this.equifaxScore = data["equifaxScore"];
+            this.score = data["score"];
         }
     }
 
@@ -13430,18 +13473,14 @@ export class ScoreHistoryDto implements IScoreHistoryDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["scoreDate"] = this.scoreDate ? this.scoreDate.toISOString() : <any>undefined;
-        data["experianScore"] = this.experianScore;
-        data["transUnionScore"] = this.transUnionScore;
-        data["equifaxScore"] = this.equifaxScore;
+        data["score"] = this.score;
         return data; 
     }
 }
 
 export interface IScoreHistoryDto {
     scoreDate: moment.Moment;
-    experianScore: number;
-    transUnionScore: number;
-    equifaxScore: number;
+    score: number;
 }
 
 export class ScoreSimulatorDto implements IScoreSimulatorDto {
