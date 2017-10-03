@@ -103,10 +103,10 @@
 
   md-sidenav-container {
     width: calc(~"100% - 30px");
-    height: calc(~"100vh - 160px");
-    height: -o-calc(~"100vh - 160px"); /* opera */
-    height: -webkit-calc(~"100vh - 160px"); /* google, safari */
-    height: -moz-calc(~"100vh - 160px"); /* firefox */
+    height: calc(~"100vh - 215px");
+    height: -o-calc(~"100vh - 215px"); /* opera */
+    height: -webkit-calc(~"100vh - 215px"); /* google, safari */
+    height: -moz-calc(~"100vh - 215px"); /* firefox */
   }
 
   .right-side-content {
@@ -210,6 +210,10 @@
 /deep/ .mat-tab-body {
   position: absolute!important;
   margin-top: 60px;
+}
+
+/deep/ .mat-tab-body-content {
+  overflow: hidden;
 }
 
 /deep/ .main-content {

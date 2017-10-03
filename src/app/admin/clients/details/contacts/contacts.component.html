@@ -3,17 +3,42 @@
   <div class="emails" *ngIf="data?.customerInfo?.primaryContactInfo.emails.length; let i = index">
     <i class="material-icons">&#xE0E1;</i>
     <ul *ngFor="let email of data?.customerInfo?.primaryContactInfo.emails; let i = index;">
-      <div class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog('emailAddress', email, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteEmailAddress(email, $event, i)"></i></div>
-      <li (click)="inPlaceEdit('emailAddress', email, $event, i)">{{email.emailAddress}}</li>      
+      <div *ngIf="!email.inplaceEdit">
+        <div class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog('emailAddress', email, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteEmailAddress(email, $event, i)"></i></div>
+        <li (click)="inPlaceEdit('emailAddress', email)">{{email.emailAddress}}</li>      
+      </div>
+      <div *ngIf="email.inplaceEdit" class="inplace-edit-wrapper">
+        <dx-validation-group>
+          <dx-text-box placeholder="" [(value)]="email.emailAddress">
+            <dx-validator>
+              <dxi-validation-rule type="required" message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
+              <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+            </dx-validator>
+          </dx-text-box>
+          <dx-button class="update" icon="todo" (onClick)="updateItem('emailAddress', email, $event)"></dx-button>
+          <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('emailAddress', email)"></dx-button>
+        </dx-validation-group>
+      </div>
     </ul>
   </div>
   <div class="add-contact" (click)="showEditDialog('emailAddress', null, $event)">+</div>
   <div class="phone" *ngFor="let phone of data?.customerInfo?.primaryContactInfo.phones; let i = index;">
     <i class="material-icons">{{['&#xE0CD;', '&#xE325;', '&#xE7EE;'][phone?.usageTypeId || 0]}}</i>
-    <ul>
+    <ul *ngIf="!phone.inplaceEdit">
       <div class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog('phoneNumber', phone, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deletePhoneNumber(phone, $event, i)"></i></div>
-      <li (click)="inPlaceEdit('phoneNumber', phone, $event, i)">{{phone.phoneNumber}}</li>
+      <li (click)="inPlaceEdit('phoneNumber', phone)">{{phone.phoneNumber}}</li>
     </ul>
+    <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
+      <dx-validation-group>
+        <dx-text-box placeholder="" mask="(000) 000-0000" [(value)]="phone.phoneNumber">
+          <dx-validator>
+            <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
+          </dx-validator>
+        </dx-text-box>
+        <dx-button class="update" icon="todo" (onClick)="updateItem('phoneNumber', phone, $event)"></dx-button>
+        <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('phoneNumber', phone)"></dx-button>
+      </dx-validation-group>
+    </div>
   </div>
   <div class="add-contact" (click)="showEditDialog('phoneNumber', null, $event)">+</div>
 </div>

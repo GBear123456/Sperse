@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { MdSidenavModule, MdProgressBarModule, MdTabsModule, MdDialogModule, 
   MdDialogRef, MdProgressSpinnerModule, MdSelectModule } from '@angular/material';
 
-import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule,
+import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxButtonModule,
   DxTextBoxModule, DxValidatorModule, DxValidationGroupComponent } from 'devextreme-angular';
 
 import { RouterModule, Routes } from '@angular/router';
@@ -62,6 +62,7 @@ import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceP
     GooglePlaceModule,
     DxSelectBoxModule,
     DxCheckBoxModule,
+    DxButtonModule,
     DxTextBoxModule,
     DxValidatorModule,
     DxNumberBoxModule,

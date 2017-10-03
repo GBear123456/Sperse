@@ -45,12 +45,16 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
       };
   }
 
+  getFieldName(field) {
+    return this.capitalize(field.slice(0, 5));
+  }
+
   showEditDialog(field, data, event, index) {
     let dialogData = {
       field: field, 
       id: data && data.id,
       value: data && data[field],
-      name: this.capitalize(field.slice(0, 5)),
+      name: this.getFieldName(field),
       contactId: data && data.contactId 
         || this.data.customerInfo
         .primaryContactInfo.id,
@@ -74,43 +78,61 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
       hasBackdrop: false,
       position: this.getDialogPossition(event)
     }).afterClosed().subscribe(result => {
-        if (result) {
-          let isPhoneDialog = dialogData.name == 'Phone';
-          this['_contact' + dialogData.name + 'Service']
-            [(data ? 'update': 'create') + 'Contact' + dialogData.name](
-              (isPhoneDialog ? 
-                (data ? UpdateContactPhoneInput: CreateContactPhoneInput) :
-                (data ? UpdateContactEmailInput: CreateContactEmailInput)
-              ).fromJS(dialogData)
-            ).subscribe(result => {
-              if (!result && data) {
-                data[field] = dialogData[field];
-                data.comment = dialogData.comment;
-                data.usageTypeId = dialogData.usageTypeId;
-                if (isPhoneDialog)
-                  data.phoneExtension = 
-                    dialogData['phoneExtension'];
-              } else if (result.id) {
-                dialogData.id = result.id;    
-                if (isPhoneDialog)
-                  this.data.customerInfo.primaryContactInfo.phones
-                    .push(ContactPhoneDto.fromJS(dialogData));
-                else
-                  this.data.customerInfo.primaryContactInfo.emails
-                    .push(ContactEmailDto.fromJS(dialogData));
-              }
-            });           
-        }
+      if (result) 
+        this.updateDataField(field, data, dialogData);
     });
     event.stopPropagation();
   }
 
-  inPlaceEdit(field, data, event, index) {  
-//    event.target.setAttribute('contenteditable', true);
+  updateDataField(field, dataItem, updatedData) {
+    let name = this.getFieldName(field), 
+      isPhoneDialog = (name == 'Phone');
+    this['_contact' + name + 'Service']
+      [(dataItem ? 'update': 'create') + 'Contact' + name](
+        (isPhoneDialog ? 
+          (dataItem ? UpdateContactPhoneInput: CreateContactPhoneInput) :
+          (dataItem ? UpdateContactEmailInput: CreateContactEmailInput)
+        ).fromJS(updatedData)
+      ).subscribe(result => {
+        if (!result && dataItem) {
+          dataItem[field] = updatedData[field];
+          dataItem.comment = updatedData.comment;
+          dataItem.usageTypeId = updatedData.usageTypeId;
+          if (isPhoneDialog)
+            dataItem.phoneExtension = 
+              updatedData['phoneExtension'];
+        } else if (result.id) {
+          updatedData.id = result.id;    
+          if (isPhoneDialog)
+            this.data.customerInfo.primaryContactInfo.phones
+              .push(ContactPhoneDto.fromJS(updatedData));
+          else
+            this.data.customerInfo.primaryContactInfo.emails
+              .push(ContactEmailDto.fromJS(updatedData));
+        }
+      });           
   }
 
+  inPlaceEdit(field, item) {  
+    item.inplaceEdit = true;
+    item.original = item[field]; 
+  }
+
+  closeInPlaceEdit(field, item) {
+    item.inplaceEdit = false;
+    item[field] = item.original;
+  }
+
+  updateItem(field, item, event) {
+    if(event.validationGroup.validate().isValid) {    
+      if (item[field] != item.original)
+        this.updateDataField(field, item, item);
+      item.inplaceEdit = false;
+    }
+  }
+    
   deleteEmailAddress(email, event, index) {
-   this.dialog.open(ConfirmDialog, {
+    this.dialog.open(ConfirmDialog, {
       data: {
         title: this.l('DeleteContactHeader', this.l('Email')),
         message: this.l('DeleteContactMessage', this.l('Email').toLowerCase())
