@@ -4,7 +4,7 @@
     <i class="material-icons">&#xE0E1;</i>
     <ul *ngFor="let email of data?.customerInfo?.primaryContactInfo.emails; let i = index;">
       <div class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog('emailAddress', email, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteEmailAddress(email, $event, i)"></i></div>
-      <li (click)="showEditDialog('emailAddress', email, $event, i)">{{email.emailAddress}}</li>
+      <li (click)="inPlaceEdit('emailAddress', email, $event, i)">{{email.emailAddress}}</li>      
     </ul>
   </div>
   <div class="add-contact" (click)="showEditDialog('emailAddress', null, $event)">+</div>
@@ -12,7 +12,7 @@
     <i class="material-icons">{{['&#xE0CD;', '&#xE325;', '&#xE7EE;'][phone?.usageTypeId || 0]}}</i>
     <ul>
       <div class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog('phoneNumber', phone, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deletePhoneNumber(phone, $event, i)"></i></div>
-      <li (click)="showEditDialog('phoneNumber', phone, $event, i)">{{phone.phoneNumber}}</li>
+      <li (click)="inPlaceEdit('phoneNumber', phone, $event, i)">{{phone.phoneNumber}}</li>
     </ul>
   </div>
   <div class="add-contact" (click)="showEditDialog('phoneNumber', null, $event)">+</div>
