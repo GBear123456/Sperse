@@ -1,4 +1,4 @@
-<h2 md-dialog-title>{{l('ContactInfoDialogTitle', l(action), data.name)}}</h2>
+<h2 md-dialog-title (mousedown)="mouseDown($event)">{{l('ContactInfoDialogTitle', l(action), data.name)}}</h2>
 <md-dialog-content>
   <dx-validation-group (onInitialized)="initValidationGroup($event)">
     <label>{{l('Type')}}</label>
