@@ -5094,6 +5094,60 @@ export class PipelineServiceProxy {
     /**
      * @return Success
      */
+    getPipelines(purposeId: string): Observable<number[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelines?";
+        if (purposeId !== undefined)
+            url_ += "purposeId=" + encodeURIComponent("" + purposeId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetPipelines(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetPipelines(response_);
+                } catch (e) {
+                    return <Observable<number[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetPipelines(response: Response): Observable<number[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: number[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<number[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     getPipelineDefinition(pipelineId: number): Observable<PipelineDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinition?";
         if (pipelineId !== undefined)
@@ -12234,6 +12288,7 @@ export class CreditReportOutput implements ICreditReportOutput {
     kbaPassed: boolean;
     creditReport: CreditReportDto;
     updatable: boolean;
+    isPaymentDelayed: boolean;
     isSubscriptionCancelled: boolean;
     previousReportExists: boolean;
 
@@ -12253,6 +12308,7 @@ export class CreditReportOutput implements ICreditReportOutput {
             this.kbaPassed = data["kbaPassed"];
             this.creditReport = data["creditReport"] ? CreditReportDto.fromJS(data["creditReport"]) : <any>undefined;
             this.updatable = data["updatable"];
+            this.isPaymentDelayed = data["isPaymentDelayed"];
             this.isSubscriptionCancelled = data["isSubscriptionCancelled"];
             this.previousReportExists = data["previousReportExists"];
         }
@@ -12271,6 +12327,7 @@ export class CreditReportOutput implements ICreditReportOutput {
         data["kbaPassed"] = this.kbaPassed;
         data["creditReport"] = this.creditReport ? this.creditReport.toJSON() : <any>undefined;
         data["updatable"] = this.updatable;
+        data["isPaymentDelayed"] = this.isPaymentDelayed;
         data["isSubscriptionCancelled"] = this.isSubscriptionCancelled;
         data["previousReportExists"] = this.previousReportExists;
         return data; 
@@ -12283,6 +12340,7 @@ export interface ICreditReportOutput {
     kbaPassed: boolean;
     creditReport: CreditReportDto;
     updatable: boolean;
+    isPaymentDelayed: boolean;
     isSubscriptionCancelled: boolean;
     previousReportExists: boolean;
 }
