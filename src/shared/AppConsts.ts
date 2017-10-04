@@ -31,4 +31,9 @@
         uiCustomizationsGroupName: 'UiCustomizations',
         UiCustomizationsSiteTitleName: 'SiteTitle'
     }
+
+    static readonly PipelinePurposeIds = {
+        lead: "L",
+        order: "O"
+    }
 }

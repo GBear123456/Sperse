@@ -29,6 +29,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     showPipeline = false;
     gridDataSource: any = {};
     private rootComponent: any;
+    pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
 
     constructor(
         injector: Injector,

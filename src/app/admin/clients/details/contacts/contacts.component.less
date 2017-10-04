@@ -1,9 +1,43 @@
-.material-icons {
-    color: grey;
-}
-
 .contacts {
-  max-width: 400px;
+  .phone {
+    .inplace-edit-wrapper {
+      margin-left: 30px;
+    }
+  }
+  .inplace-edit-wrapper {
+    height: 35px;
+
+    /deep/ input {
+      margin: 0px;
+      padding: 0 0 0 5px;
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.67;
+      letter-spacing: 0.3px;
+      text-align: left;
+      font-family: Montserrat;
+    }
+
+    dx-text-box, dx-button {
+      display: inline-block;
+    }
+    dx-text-box {
+      min-width: 230px;
+      width: 70%;
+    }
+    dx-button {
+      /deep/ &.update i {
+        color: #00aeef;
+      }
+      /deep/ &.exit i {
+        color: #f44336;
+      }
+
+      border: none;
+      position: relative;
+      top: -14px;
+    }
+  }
 
   h3 {
     font-size: 12px;
@@ -27,6 +61,7 @@
 
   i.material-icons {
     position: absolute;
+    color: grey;
   }
 
   ul {

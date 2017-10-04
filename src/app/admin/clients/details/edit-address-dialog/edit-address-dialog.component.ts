@@ -1,5 +1,5 @@
-﻿import { AppConsts } from '@shared/AppConsts';
-import { Component, Inject, Injector } from '@angular/core';
+import { AppConsts } from '@shared/AppConsts';
+import { Component, Inject, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
@@ -14,13 +14,19 @@ import * as _ from 'underscore';
 @Component({
   selector: 'edit-address-dialog',
   templateUrl: 'edit-address-dialog.html',
-  styleUrls: ['edit-address-dialog.less']
+  styleUrls: ['edit-address-dialog.less'],
+  providers: [CountryServiceProxy],
+  host: {
+    '(document:mouseup)': "mouseUp($event)",
+    '(document:mousemove)': "mouseMove($event)"
+  }
 })
 export class EditAddressDialog extends AppComponentBase {
   types: any[] = [];
   validator: any;
   action: string;
   address: any;
+  movePos: any;
 
   states: CountryStateDto[];
   options = {
@@ -32,6 +38,7 @@ export class EditAddressDialog extends AppComponentBase {
 
   constructor(
     injector: Injector,
+    private elementRef: ElementRef,
     @Inject(MD_DIALOG_DATA) public data: any,
     public dialogRef: MdDialogRef<EditAddressDialog>,
     private _contactAddressService: ContactAddressServiceProxy,
@@ -80,5 +87,32 @@ export class EditAddressDialog extends AppComponentBase {
 
   initValidationGroup(event){
     this.validator = event.component;
+  }
+
+  mouseDown(event) {
+    this.movePos =  {
+      x: event.clientX,
+      y: event.clientY
+    }
+  }
+
+  mouseUp(event) {
+    this.movePos = null;
+  }
+
+  mouseMove(event) {
+    if (this.movePos) {
+      let x = event.clientX - this.movePos.x,
+        y = event.clientY - this.movePos.y,
+        elm = this.elementRef.nativeElement
+          .parentElement.parentElement;
+
+      this.dialogRef.updatePosition({
+        top: parseInt(elm.style.marginTop) + y + 'px',
+        left: parseInt(elm.style.marginLeft) + x + 'px'
+      });
+
+      this.mouseDown(event);
+    }
   }
 }

@@ -73,7 +73,7 @@
 				    </div>
                 </div>
                 <div [hidden]="!showPipeline" class="pipepline-wrapper">
-                    <app-pipeline [dataSource]="gridDataSource">
+                    <app-pipeline [dataSource]="gridDataSource" [pipelinePurposeId]="pipelinePurposeId">
                         Loading...
                     </app-pipeline>
                 </div>

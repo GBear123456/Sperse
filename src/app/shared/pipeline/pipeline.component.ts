@@ -12,9 +12,9 @@ import DataSource from 'devextreme/data/data_source';
 })
 export class PipelineComponent extends AppComponentBase implements OnInit, AfterViewInit {
     @Input() dataSource: DataSource;
+    @Input() pipelinePurposeId: string;
     pipeline: PipelineDto;
     pipelineItems: any;
-    pipelineId = 1; // TODO: send actual pipelineId
 
     constructor(injector: Injector,
                 private _pipelineService: PipelineServiceProxy) {
@@ -22,7 +22,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
     }
 
     ngOnInit(): void {
-        this.getPipelineDefinition();
+        this._pipelineService
+        .getPipelines(this.pipelinePurposeId)
+        .subscribe((result: number[]) => {
+            if (result.length > 0)
+            {
+                this.getPipelineDefinition(result[0]);
+            }
+        });
     }
 
     ngAfterViewInit(): void {
@@ -36,9 +43,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
         }, 5000);
     }
 
-    getPipelineDefinition(): void {
+    getPipelineDefinition(pipelineId: number): void {
         this._pipelineService
-            .getPipelineDefinition(this.pipelineId)
+            .getPipelineDefinition(pipelineId)
             .subscribe(result => {
                 this.pipeline = result;
             });

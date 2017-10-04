@@ -1,5 +1,5 @@
 import { AppConsts } from '@shared/AppConsts';
-import { Component, Inject, Injector } from '@angular/core';
+import { Component, Inject, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
@@ -14,13 +14,18 @@ import {
 @Component({
   selector: 'edit-contact-dialog',
   templateUrl: 'edit-contact-dialog.html',
-  styleUrls: ['edit-contact-dialog.less']
+  styleUrls: ['edit-contact-dialog.less'],
+  host: {
+    '(document:mouseup)': "mouseUp($event)",
+    '(document:mousemove)': "mouseMove($event)"
+  }
 })
 export class EditContactDialog extends AppComponentBase {
   isValid: boolean = false;
   action: string;
   types: any[] = [];
   validator: any;
+  movePos: any;
 
   private readonly INPUT_MASK = {
     phone: "(000) 000-0000",
@@ -30,6 +35,7 @@ export class EditContactDialog extends AppComponentBase {
   constructor(
     injector: Injector,
     @Inject(MD_DIALOG_DATA) public data: any,
+    private elementRef: ElementRef,
     public dialogRef: MdDialogRef<EditContactDialog>,
     private _contactEmailService: ContactEmailServiceProxy,
     private _contactPhoneService: ContactPhoneServiceProxy,
@@ -98,5 +104,32 @@ export class EditContactDialog extends AppComponentBase {
 
   initValidationGroup(event){
     this.validator = event.component;
+  }
+
+  mouseDown(event) {
+    this.movePos =  {
+      x: event.clientX,
+      y: event.clientY
+    }
+  }
+
+  mouseUp(event) {
+    this.movePos = null;
+  }
+
+  mouseMove(event) {
+    if (this.movePos) {
+      let x = event.clientX - this.movePos.x,
+        y = event.clientY - this.movePos.y,
+        elm = this.elementRef.nativeElement
+          .parentElement.parentElement;
+
+      this.dialogRef.updatePosition({
+        top: parseInt(elm.style.marginTop) + y + 'px',
+        left: parseInt(elm.style.marginLeft) + x + 'px'
+      });
+
+      this.mouseDown(event);
+    }
   }
 }
