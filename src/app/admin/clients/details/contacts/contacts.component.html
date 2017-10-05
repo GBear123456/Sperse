@@ -4,8 +4,8 @@
     <i class="icons email"></i>
     <ul *ngFor="let email of data?.customerInfo?.primaryContactInfo.emails; let i = index;">
       <div *ngIf="!email.inplaceEdit">
-        <div class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog('emailAddress', email, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteEmailAddress(email, $event, i)"></i></div>
-        <li (click)="inPlaceEdit('emailAddress', email)">{{email.emailAddress}}</li>      
+        <div class="actions" *ngIf="isEditAllowed"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog('emailAddress', email, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteEmailAddress(email, $event, i)"></i></div>
+        <li (click)="inPlaceEdit('emailAddress', email, $event, i)">{{email.emailAddress}}</li>      
       </div>
       <div *ngIf="email.inplaceEdit" class="inplace-edit-wrapper">
         <dx-validation-group>
@@ -21,12 +21,12 @@
       </div>
     </ul>
   </div>
-  <div class="add-contact" (click)="showEditDialog('emailAddress', null, $event)">+</div>
+  <div *ngIf="isEditAllowed" class="add-contact" (click)="showDialog('emailAddress', null, $event)">+</div>
   <div class="phone" *ngFor="let phone of data?.customerInfo?.primaryContactInfo.phones; let i = index;">
     <i class="icons phone type-{{phone?.usageTypeId}}"></i>
     <ul *ngIf="!phone.inplaceEdit">
-      <div class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog('phoneNumber', phone, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deletePhoneNumber(phone, $event, i)"></i></div>
-      <li (click)="inPlaceEdit('phoneNumber', phone)">{{phone.phoneNumber}}</li>
+      <div class="actions" *ngIf="isEditAllowed"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog('phoneNumber', phone, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deletePhoneNumber(phone, $event, i)"></i></div>
+      <li (click)="inPlaceEdit('phoneNumber', phone, $event, i)">{{phone.phoneNumber}}</li>
     </ul>
     <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
       <dx-validation-group>
@@ -40,5 +40,5 @@
       </dx-validation-group>
     </div>
   </div>
-  <div class="add-contact" (click)="showEditDialog('phoneNumber', null, $event)">+</div>
+  <div *ngIf="isEditAllowed" class="add-contact" (click)="showDialog('phoneNumber', null, $event)">+</div>
 </div>

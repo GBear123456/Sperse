@@ -18,6 +18,8 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
     customerInfo: CustomerInfoDto
   };  
 
+  isEditAllowed: boolean = false;
+
   LINK_TYPES = {
     F: 'facebook',
     G: 'google-plus',
@@ -33,6 +35,8 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
     private _contactLinkService: ContactLinkServiceProxy
   ) { 
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
+
+    this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
   }
 
   getDialogPossition(event) {

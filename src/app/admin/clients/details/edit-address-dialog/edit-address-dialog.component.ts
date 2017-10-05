@@ -26,7 +26,7 @@ export class EditAddressDialog extends AppComponentBase {
   action: string;
   address: any;
   movePos: any;
-
+  isEditAllowed: boolean = false;
   states: CountryStateDto[];
   countries: CountryDto[];
 
@@ -39,7 +39,7 @@ export class EditAddressDialog extends AppComponentBase {
     private _countryService: CountryServiceProxy
   ) { 
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        
+    this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');        
     if (data.city) {
       this.action = 'Edit';
       this.address = [

@@ -8,6 +8,7 @@
         [dataSource]="types"
         displayExpr="name"
         valueExpr="id"
+        [disabled]="!isEditAllowed"
         [(value)]="data.usageTypeId"
         fieldTemplate="fieldTemplate">
         <div *dxTemplate="let item of 'fieldTemplate'">
@@ -30,8 +31,8 @@
         name="Address"
         placeholder=""
         [(ngModel)]="address"
-        [disabled]="false"
         class="dx-texteditor-input"
+        [disabled]="!isEditAllowed"
         (country)="data.country=$event"
         (street_number)='data.streetNumber=$event'
         (street)='data.streetAddress=$event'
@@ -47,8 +48,8 @@
           [dataSource]="countries"
           displayExpr="name"
           valueExpr="name"
+          [disabled]="!isEditAllowed"
           name="country"
-          [disabled]="false"
           [searchEnabled]="true"
           [(value)]="data.country"
           fieldTemplate="field"
@@ -74,7 +75,7 @@
           displayExpr="name"
           valueExpr="name"
           name="state"
-          [disabled]="false"
+          [disabled]="!isEditAllowed"
           [searchEnabled]="true"
           [(value)]="data.state"
           fieldTemplate="field">
@@ -96,7 +97,7 @@
       <label>{{l('City')}}</label>
       <dx-text-box
           name="city"
-          [disabled]="false"
+          [disabled]="!isEditAllowed"
           maxLength="50"
           [(value)]="data.city">
           <dx-validator>
@@ -109,7 +110,7 @@
       <label>{{l('ZipCode')}}</label>
       <dx-text-box
           name="zip"
-          [disabled]="false"
+          [disabled]="!isEditAllowed"
           maxLength="5"
           [(value)]="data.zip">
           <dx-validator>
@@ -122,6 +123,7 @@
       <label>{{l('Comment')}}</label>
       <dx-text-box 
         name="comment"
+        [disabled]="!isEditAllowed"
         [(value)]="data.comment">
       </dx-text-box>
     </div>
@@ -129,20 +131,22 @@
     <p>
       <dx-check-box
         text="{{l('ConfirmedContact', [data.name])}}"
+        [disabled]="!isEditAllowed"
         [(value)]="data.isConfirmed">
       </dx-check-box>
       &nbsp;&nbsp;&nbsp;
       <dx-check-box
         text="{{l('ActiveContact', [data.name])}}"
+        [disabled]="!isEditAllowed"
         [(value)]="data.isActive">
       </dx-check-box>
     </p>
   </dx-validation-group>
 </md-dialog-content>
 <md-dialog-actions>
-  <button md-button class="button-layout button-clean-red" (click)="data.deleteItem($event)" *ngIf="action=='Edit'">
+  <button *ngIf="isEditAllowed && (action=='Edit')" md-button class="button-layout button-clean-red" (click)="data.deleteItem($event)">
     <i class="delete fa fa-times" aria-hidden="true"></i>{{l('Delete')}}
   </button>
   <button md-button md-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
-  <button md-button class="button-layout button-primary" (click)="onSave($event)">{{action == 'Edit' ? l('Update'): action}}</button>
+  <button *ngIf="isEditAllowed" md-button class="button-layout button-primary" (click)="onSave($event)">{{action == 'Edit' ? l('Update'): action}}</button>
 </md-dialog-actions>

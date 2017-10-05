@@ -17,6 +17,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
   data: {
     customerInfo: CustomerInfoDto
   };  
+  isEditAllowed: boolean = false;
   
   constructor(
     injector: Injector,
@@ -26,6 +27,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
     private _contactPhoneService: ContactPhoneServiceProxy
   ) { 
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
+
+    this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
   }
 
   getDialogPossition(event) {
@@ -49,7 +52,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
     return this.capitalize(field.slice(0, 5));
   }
 
-  showEditDialog(field, data, event, index) {
+  showDialog(field, data, event, index) {
     let dialogData = {
       field: field, 
       id: data && data.id,
@@ -113,9 +116,12 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
       });           
   }
 
-  inPlaceEdit(field, item) {  
-    item.inplaceEdit = true;
-    item.original = item[field]; 
+  inPlaceEdit(field, item, event, index) {  
+    if (this.isEditAllowed) {
+      item.inplaceEdit = true;
+      item.original = item[field]; 
+    } else
+      this.showDialog(field, item, event, index);
   }
 
   closeInPlaceEdit(field, item) {
@@ -151,7 +157,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
   }
 
   deletePhoneNumber(phone, event, index) {
-   this.dialog.open(ConfirmDialog, {
+    this.dialog.open(ConfirmDialog, {
       data: {
         title: this.l('DeleteContactHeader', this.l('Phone')),
         message: this.l('DeleteContactMessage', this.l('Phone').toLowerCase())

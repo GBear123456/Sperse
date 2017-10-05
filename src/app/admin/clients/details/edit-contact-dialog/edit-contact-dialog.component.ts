@@ -27,6 +27,7 @@ export class EditContactDialog extends AppComponentBase {
   validator: any;
   movePos: any;
 
+  isEditAllowed: boolean = false;
   private readonly INPUT_MASK = {
     phone: "(000) 000-0000",
     phoneExtension: "0000000000"
@@ -42,6 +43,8 @@ export class EditContactDialog extends AppComponentBase {
     private _contactLinkService: ContactLinkServiceProxy
   ) { 
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
+
+    this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
 
     this[data.field + 'TypesLoad']();
     this.action = data.value ? 'Edit': 'Create';

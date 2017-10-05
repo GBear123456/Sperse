@@ -7,6 +7,7 @@
       [dataSource]="types"
       displayExpr="name"
       valueExpr="id"
+      [disabled]="!isEditAllowed"
       [(value)]="data.usageTypeId"
       (onValueChanged)="onTypeChanged($event)"
       fieldTemplate="fieldTemplate">
@@ -28,6 +29,7 @@
       <label>{{l('Link')}}</label>
       <dx-text-box 
         name="email"
+        [disabled]="!isEditAllowed"
         [(value)]="data.url">
         <dx-validator>
           <dxi-validation-rule type="required" message="{{l('LinkIsRequired')}}."></dxi-validation-rule>
@@ -40,6 +42,7 @@
       <label>{{l('Email')}}</label>
       <dx-text-box 
         name="email"
+        [disabled]="!isEditAllowed"
         [(value)]="data.emailAddress">
         <dx-validator>
           <dxi-validation-rule type="required" message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
@@ -52,6 +55,7 @@
       <label>{{l('Phone')}}</label>
       <dx-text-box      
         name="phone"
+        [disabled]="!isEditAllowed"
         maskInvalidMessage="{{l('PhoneValidationError')}}"
         [(value)]="data.phoneNumber"
         (onFocusOut)="blurInput($event)"
@@ -64,6 +68,7 @@
       <label>{{l('Extension')}}</label>
       <dx-number-box
         name="phoneExtension"
+        [disabled]="!isEditAllowed"
         [(value)]="data.phoneExtension">
       </dx-number-box><br>
     </div>
@@ -71,26 +76,29 @@
     <label>{{l('Comment')}}</label>
     <dx-text-box 
       name="comment"
+      [disabled]="!isEditAllowed"
       [(value)]="data.comment">
     </dx-text-box><br>
 
     <p>
       <dx-check-box
         text="{{l('ConfirmedContact', [data.name])}}"
+        [disabled]="!isEditAllowed"
         [(value)]="data.isConfirmed">
       </dx-check-box>
       &nbsp;&nbsp;&nbsp;
       <dx-check-box
         text="{{l('ActiveContact', [data.name])}}"
+        [disabled]="!isEditAllowed"
         [(value)]="data.isActive">
       </dx-check-box>
     </p>
   </dx-validation-group>
 </md-dialog-content>
 <md-dialog-actions>
-  <button md-button class="button-layout button-clean-red" (click)="data.deleteItem($event)" *ngIf="action=='Edit'">
+  <button *ngIf="isEditAllowed && (action=='Edit')" md-button class="button-layout button-clean-red" (click)="data.deleteItem($event)">
     <i class="delete fa fa-times" aria-hidden="true"></i>{{l('Delete')}}
   </button>
   <button md-button md-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
-  <button md-button class="button-layout button-primary" (click)="onSave($event)">{{action == 'Edit' ? l('Update'): action}}</button>
+  <button *ngIf="isEditAllowed" md-button class="button-layout button-primary" (click)="onSave($event)">{{action == 'Edit' ? l('Update'): action}}</button>
 </md-dialog-actions>

@@ -26,6 +26,8 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
   state: string;
   zip: string;
 
+  isEditAllowed: boolean = false;
+
   countries: CountryDto[];
 
   constructor(
@@ -48,9 +50,9 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
       .subscribe(result => {
         this.countries = result;
       });
+
+    this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
   }
-
-
 
   getDialogPossition(event) {
     let shift = 245, parent = event.target
@@ -69,7 +71,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
       };
   }
 
-  editAddress(address, event, index) {
+  showDialog(address, event, index) {
     let dialogData = _.pick(address || {}, 'id', 'city', 
       'comment', 'country', 'isActive', 'isConfirmed', 
       'state', 'streetAddress', 'usageTypeId', 'zip');
@@ -131,7 +133,10 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     event.stopPropagation();
   }
 
-  inPlaceEdit(address, event) {  
+  inPlaceEdit(address, event, index) {  
+    if(!this.isEditAllowed)
+      return this.showDialog(address, event, index);
+
     address.inplaceEdit = true;
     address.autoComplete = [
       address.streetAddress, 
