@@ -1,7 +1,7 @@
 <div class="contacts">
   <h3 class="lab">{{l('Contact')}}</h3>
   <div class="emails" *ngIf="data?.customerInfo?.primaryContactInfo.emails.length; let i = index">
-    <i class="material-icons">&#xE0E1;</i>
+    <i class="icons email"></i>
     <ul *ngFor="let email of data?.customerInfo?.primaryContactInfo.emails; let i = index;">
       <div *ngIf="!email.inplaceEdit">
         <div class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog('emailAddress', email, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteEmailAddress(email, $event, i)"></i></div>
@@ -23,7 +23,7 @@
   </div>
   <div class="add-contact" (click)="showEditDialog('emailAddress', null, $event)">+</div>
   <div class="phone" *ngFor="let phone of data?.customerInfo?.primaryContactInfo.phones; let i = index;">
-    <i class="material-icons">{{['&#xE0CD;', '&#xE325;', '&#xE7EE;'][phone?.usageTypeId || 0]}}</i>
+    <i class="icons phone type-{{phone?.usageTypeId}}"></i>
     <ul *ngIf="!phone.inplaceEdit">
       <div class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog('phoneNumber', phone, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deletePhoneNumber(phone, $event, i)"></i></div>
       <li (click)="inPlaceEdit('phoneNumber', phone)">{{phone.phoneNumber}}</li>

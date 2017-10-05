@@ -6,7 +6,7 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 import { 
   ContactAddressServiceProxy,
   CountryServiceProxy,
-  CountryStateDto
+  CountryStateDto, CountryDto
 } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
@@ -15,7 +15,6 @@ import * as _ from 'underscore';
   selector: 'edit-address-dialog',
   templateUrl: 'edit-address-dialog.html',
   styleUrls: ['edit-address-dialog.less'],
-  providers: [CountryServiceProxy],
   host: {
     '(document:mouseup)': "mouseUp($event)",
     '(document:mousemove)': "mouseMove($event)"
@@ -29,12 +28,7 @@ export class EditAddressDialog extends AppComponentBase {
   movePos: any;
 
   states: CountryStateDto[];
-  options = {
-    types: ['address'],
-    componentRestrictions: {
-      country: 'US'
-    }
-  };
+  countries: CountryDto[];
 
   constructor(
     injector: Injector,
@@ -58,12 +52,19 @@ export class EditAddressDialog extends AppComponentBase {
       this.action = 'Create';
 
     this.addressTypesLoad();
-    this.addressStatesLoad();
+    this.countriesLoad();
   }
 
-  addressStatesLoad(): void {
-      this._countryService
-      .getCountryStates(this.options.componentRestrictions.country)
+  countriesLoad(): void {
+    this._countryService.getCountries()
+      .subscribe(result => {
+        this.countries = result;
+      });
+  }
+
+  onCountryChange(event) {
+    this._countryService
+      .getCountryStates(_.findWhere(this.countries, {name: event.value})['code'])
       .subscribe(result => {
         this.states = result;
       });
@@ -79,7 +80,7 @@ export class EditAddressDialog extends AppComponentBase {
     if (!this.data.streetAddress)
       this.data.streetAddress = this.address;
     if (this.validator.validate().isValid && this.data.streetAddress) {
-      this.data.countryId = this.options.componentRestrictions.country;
+      this.data.countryId = _.findWhere(this.countries, {name: this.data.country})['code'];
       this.data.stateId = _.findWhere(this.states, {name: this.data.state})['code'];
       this.dialogRef.close(true);
     }
