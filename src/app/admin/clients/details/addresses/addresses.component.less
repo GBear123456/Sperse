@@ -21,10 +21,22 @@
     margin-bottom: 20px;
     cursor: pointer;
 
-    &>i {
+    &>i.icons {
+      width: 20px;
+      height: 30px;
       position: absolute;
-      margin-top: 8px;
-      color: grey;
+      background-repeat: no-repeat;
+      background-position: 0px 3px;
+    
+      &.type-H {
+        background-image: url("../../../../../assets/common/icons/address-home.png");        
+      }
+      &.type-W, &.type-1 {
+        background-image: url("../../../../../assets/common/icons/address-primary.png");        
+      }
+      &.type-S {
+        background-image: url("../../../../../assets/common/icons/address-shipping.png");        
+      }
     }
 
     .actions  {
@@ -69,6 +81,25 @@
 
   .address {
     padding-left: 30px;
+
+    input {
+      max-width: 80%;
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.67;
+      letter-spacing: 0.3px;
+      font-family: Montserrat;
+    }
+    dx-button {
+      border: none;
+      position: relative;
+      /deep/ &.update i {
+        color: #00aeef;
+      }
+      /deep/ &.exit i {
+        color: #f44336;
+      }
+    }
     p {
       margin: 15px 0;
       font-size: 15px;

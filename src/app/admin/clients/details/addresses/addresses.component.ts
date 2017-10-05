@@ -4,7 +4,7 @@ import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.co
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmDialog } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { MdDialog, MdDialogRef } from '@angular/material';
-import { CustomersServiceProxy, ContactAddressServiceProxy, CustomerInfoDto, 
+import { CustomersServiceProxy, ContactAddressServiceProxy, CustomerInfoDto, CountryDto, CountryServiceProxy,
   ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
@@ -18,15 +18,39 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
   data: {
     customerInfo: CustomerInfoDto
   };  
+  types: Object = {};
+  country: string;
+  streetNumber: string;
+  streetAddress: string;
+  city: string;
+  state: string;
+  zip: string;
+
+  countries: CountryDto[];
 
   constructor(
     injector: Injector,
     public dialog: MdDialog,
     private _customerService: CustomersServiceProxy,
-    private _addressService: ContactAddressServiceProxy
+    private _addressService: ContactAddressServiceProxy,
+    private _countryService: CountryServiceProxy
   ) { 
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
+
+    _addressService.getAddressUsageTypes().subscribe(result => {      
+      result.items.reduce(function(obj, type){
+        obj[type.id] = type.name;
+        return obj;
+      }, this.types);
+    });
+
+    this._countryService.getCountries()
+      .subscribe(result => {
+        this.countries = result;
+      });
   }
+
+
 
   getDialogPossition(event) {
     let shift = 245, parent = event.target
@@ -60,30 +84,33 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
       hasBackdrop: false,
       position: this.getDialogPossition(event)
     }).afterClosed().subscribe(result => {
-      if (result) {
-        this._addressService
-          [(address ? 'update': 'create') + 'ContactAddress'](              
-            (address ? UpdateContactAddressInput: CreateContactAddressInput).fromJS(dialogData)
-          ).subscribe(result => { 
-            if (!result && address) {
-              address.city = dialogData.city;
-              address.country = dialogData.country;
-              address.isActive = dialogData.isActive;
-              address.isConfirmed = dialogData.isConfirmed;
-              address.state = dialogData.state;
-              address.streetAddress = dialogData.streetAddress;
-              address.comment = dialogData.comment;
-              address.usageTypeId = dialogData.usageTypeId;
-            } else if (result.id) {
-              dialogData.id = result.id;                  
-              this.data.customerInfo.primaryContactInfo.addresses
-                .push(ContactAddressDto.fromJS(dialogData));
-            }
-            
-          });
-      }                                                                                                                                                            
+      if (result) 
+        this.updateDataField(address, dialogData);
     });
     event.stopPropagation();
+  }
+
+  updateDataField(address, data) {
+    this._addressService
+      [(address ? 'update': 'create') + 'ContactAddress'](              
+        (address ? UpdateContactAddressInput: CreateContactAddressInput).fromJS(data)
+      ).subscribe(result => { 
+        if (!result && address) {
+          address.city = data.city;
+          address.country = data.country;
+          address.isActive = data.isActive;
+          address.isConfirmed = data.isConfirmed;
+          address.state = data.state;
+          address.streetAddress = data.streetAddress;
+          address.comment = data.comment;
+          address.usageTypeId = data.usageTypeId;
+        } else if (result.id) {
+          data.id = result.id;                  
+          this.data.customerInfo.primaryContactInfo.addresses
+            .push(ContactAddressDto.fromJS(data));
+        }        
+      }
+    );
   }
 
   deleteAddress(address, event, index){
@@ -102,6 +129,67 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
       }
     });
     event.stopPropagation();
+  }
+
+  inPlaceEdit(address, event) {  
+    address.inplaceEdit = true;
+    address.autoComplete = [
+      address.streetAddress, 
+      address.city, 
+      address.state, 
+      address.zip,
+      address.country
+    ].join(',');
+    event.stopPropagation();
+  }
+
+  closeInPlaceEdit(address, event) {
+    this.clearInplaceData();
+    address.inplaceEdit = false;
+    event.jQueryEvent.stopPropagation();
+  }
+
+  clearInplaceData() {
+    this.country = '';
+    this.streetNumber = '';
+    this.streetAddress = '';
+    this.city = '';
+    this.state = '';
+    this.zip = '';
+  }
+
+  updateItem(address, event) {
+    let countryId = _.findWhere(this.countries, {name: this.country})['code'];
+    countryId && this._countryService
+      .getCountryStates(countryId)
+      .subscribe(states => {
+        if(this.country && this.streetNumber && this.state &&
+          this.streetAddress && this.city && 
+          ((this.country != address.country) ||
+            (address.streetAddress != (this.streetAddress + ' ' + this.streetNumber)) ||
+            (this.city != address.city) ||
+            (this.state != address.state))
+        ) {    
+          this.updateDataField(address, {
+            id: address.id,
+            contactId: this.data.customerInfo
+              .primaryContactInfo.id,
+            city: this.city,
+            country: this.country,
+            isActive: address.isActive,
+            isConfirmed: address.isConfirmed,
+            state: this.state,
+            streetAddress: this.streetAddress + ' ' + this.streetNumber,
+            comment: address.comment,
+            usageTypeId: address.usageTypeId,
+            countryId: countryId,
+            stateId: _.findWhere(states, {name: this.state})['code']
+          });
+          this.clearInplaceData();
+        }
+      });    
+    address.inplaceEdit = false;
+    event.jQueryEvent.stopPropagation();
   }
 
   ngOnInit() {

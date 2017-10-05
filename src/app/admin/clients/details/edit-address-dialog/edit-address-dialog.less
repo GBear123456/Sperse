@@ -68,9 +68,21 @@
   }
 
   .addressType {
-    &.type-1, &.type-2 {
+    &.type-1, &.type-2, &.type-W {
       /deep/ input {
         background-image: url("../../../../../assets/common/icons/address-primary.png");
+        background-position: 10px 12px;
+      }
+    }
+    &.type-H {
+      /deep/ input {
+        background-image: url("../../../../../assets/common/icons/address-home.png");        
+        background-position: 10px 12px;
+      }
+    }
+    &.type-S {
+      /deep/ input {
+        background-image: url("../../../../../assets/common/icons/address-shipping.png");        
         background-position: 10px 12px;
       }
     }
