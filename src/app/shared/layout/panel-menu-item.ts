@@ -1,12 +1,12 @@
 ﻿export class PanelMenuItem {
-    name: string = '';
+    text: string = '';
     permissionName: string = '';
     icon: string = '';
     route: string = '';
     items: PanelMenuItem[];
 
-    constructor(name: string, permissionName: string, icon: string, route: string, items?: PanelMenuItem[]) {
-        this.name = name;
+    constructor(text: string, permissionName: string, icon: string, route: string, items?: PanelMenuItem[]) {
+        this.text = text;
         this.permissionName = permissionName;
         this.icon = icon;
         this.route = route;

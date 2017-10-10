@@ -1,0 +1,221 @@
+@left-column-width: 300px;
+
+/deep/ .dx-pivotgrid {
+
+    .dx-grandtotal {
+        background: #edf7fb
+    }
+
+    .dx-area-description-cell{
+        background-color: #fff;
+        min-width: @left-column-width;
+        //min-height: 61px;
+        //display: block;
+    }
+
+    .dx-pivotgrid-horizontal-headers {
+        td {
+            font-size: 10px;
+            &.cashflow {
+                color: #00aeef;
+            }
+            .totals {
+                font-size: 10px;
+            }
+            &.dx-pivotgrid-expanded,
+            &.dx-pivotgrid-collapsed {
+                text-align: center;
+            }
+            .dx-expand-icon-container {
+                display: none;
+            }
+            &.year {
+                color: #00aeef;
+                font-weight: 600;
+                font-size: 20px;
+            }
+            &.month,
+            &.quarter,
+            &.dx-row-total {
+                color: #212c36;
+                font-weight: 600;
+                font-size: 18px;
+                &.current {
+                    color: #fff;
+                    background: #f9b532
+                }
+            }
+            &.historicalField {
+                cursor: default;
+                &.historical {
+
+                }
+                &.current {
+                    background: #fab800;
+                    color: #fff;
+                }
+                &.forecast {
+                    color: #00aeef
+                }
+            }
+        }
+    }
+
+    .dx-pivotgrid-vertical-headers {
+        tr {
+            td {
+                text-align: left;
+                &.dx-total {
+                    font-weight:700;
+                    &.startedBalance {
+                        background: #def4fd
+                    }
+                    &.income {
+                        background: #def9f4
+                    }
+                    &.expenses {
+                        background: #fee4dc;
+                    }
+                    &.income,
+                    &.expenses,
+                    &.startedBalance {
+                        cursor: default;
+                        text-align: left;
+                        padding-left: 20px;
+                        .dx-expand-icon-container {
+                            display: none;
+                        }
+                    }
+                }
+                .dx-expand-icon-container {
+                    font: inherit;
+                    margin-left: 10px;
+                    margin-right: 10px;
+                    .dx-expand:before {
+                        border: 1px solid #91969b;
+                        color: #000;
+                        font-size: 18px;
+                        position: absolute;
+                        top: 7px;
+                        left: 0;
+                        border-radius: 5px;
+                    }
+                }
+                &.dx-pivotgrid-collapsed .dx-expand:before {
+                    content: '+';
+                }
+
+                &.dx-pivotgrid-expanded .dx-expand:before {
+                    content: '-';
+                }
+                .dx-grandtotal {
+                    background: #00aff4;
+                    color: #fff;
+                    font-weight: 700;
+                }
+                &.dx-white-space-column {
+                    min-width: 0;
+                    width: 0;
+                }
+            }
+        }
+    }
+
+    .dx-bottom-border tr:last-child td {
+        background: #00aff4;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .dx-pivotgrid-area {
+        td {
+            color: #000;
+            &.dx-total {
+                &.startedBalance {
+                    background: #d8f0fa;
+                    & + td:not(.startedBalance) {
+                        display: none;
+                    }
+                }
+                &.income {
+                    background: #d9f5f0;
+                }
+                &.expenses {
+                    background: #f9e1da;
+                }
+            }
+        }
+    }
+
+    .dx-total,
+    .dx-data-header,
+    .dx-column-header {
+        background: #f0f9fd;
+    }
+
+    .dx-texteditor {
+        border: none;
+        max-width: 80px
+    }
+
+    .dx-dropdowneditor-button {
+        width: 10px
+    }
+
+    .dx-dropdowneditor-button-visible .dx-texteditor-input {
+        padding-right: 10px;
+    }
+
+    .dx-dropdowneditor {
+        &.dx-state-hover .dx-dropdowneditor-icon,
+        &.dx-state-active .dx-dropdowneditor-icon,
+        &.dx-dropdowneditor-active .dx-dropdowneditor-icon {
+            background: none!important;
+        }
+    }
+
+    .dx-dropdowneditor-icon {
+        background: none!important;
+    }
+
+}
+
+/deep/ .dx-dropdowneditor {
+
+    &.dx-dropdowneditor-field-clickable {
+        width: 160px;
+        input {
+            border-bottom: none;
+        }
+        .dx-placeholder {
+            display: none !important;
+        }
+    }
+    &.dx-state-hover .dx-dropdowneditor-icon,
+    &.dx-dropdowneditor.dx-state-active .dx-dropdowneditor-icon,
+    &.dx-dropdowneditor-active .dx-dropdowneditor-icon {
+        background: none!important;
+    }
+
+}
+
+.cashflow {
+    position: relative;
+}
+
+.group_by {
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 13px;
+    left: 0;
+    z-index: 1;
+    span {
+        margin-right: 10px;
+    }
+}
+
+
+
+

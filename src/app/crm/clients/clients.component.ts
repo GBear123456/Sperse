@@ -1,0 +1,219 @@
+import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
+import { AppConsts } from '@shared/AppConsts';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { CreateOrEditClientModalComponent } from './create-or-edit-client-modal.component';
+
+import { FiltersService } from '@shared/filters/filters.service';
+import { FilterModel } from '@shared/filters/filter.model';
+import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
+import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
+import { FilterCBoxesComponent } from '@shared/filters/cboxes/filter-cboxes.component';
+import { FilterDatesComponent } from '@shared/filters/dates/filter-dates.component';
+
+import { CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ImpersonationService } from '@app/crm/users/impersonation.service';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+
+import { DxDataGridComponent } from 'devextreme-angular';
+import query from 'devextreme/data/query';
+
+import 'devextreme/data/odata/store';
+import * as _ from 'underscore';
+
+import * as moment from "moment";
+
+@Component({
+  templateUrl: "./clients.component.html",
+  styleUrls: ["./clients.component.less"],
+  animations: [appModuleAnimation()]
+})
+export class ClientsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+  @ViewChild('createOrEditClientModal') createOrEditClientModal: CreateOrEditClientModalComponent;
+	
+  private readonly dataSourceURI = 'Customer';
+  private filters: FilterModel[];
+  private rootComponent: any;
+
+  constructor(
+    injector: Injector,
+    private _router: Router,
+		private _filtersService: FiltersService,
+    private _activatedRoute: ActivatedRoute,
+    private _commonLookupService: CommonLookupServiceProxy,
+    private _impersonationService: ImpersonationService
+  ) {
+    super(injector);
+
+    this._filtersService.enabled = true;
+    this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+
+		this.dataSource = {
+      store: {
+        type: 'odata',
+        url: this.getODataURL(this.dataSourceURI),
+        version: this.getODataVersion(),
+        beforeSend: function (request) {
+          request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
+          request.headers["Abp.TenantId"] = abp.multiTenancy.getTenantIdCookie();
+        }
+      }
+    };
+  }
+
+  onContentReady(event) {
+    event.component.columnOption('command:edit', {
+      visibleIndex: -1,
+      width: 40
+    });
+  }
+    
+	onToolbarPrepare(event) {
+		event.toolbarOptions.items.unshift({
+      location: 'center',
+      widget: 'dxButton',
+      options: {
+        hint: 'Back',
+        icon: 'back',
+        onClick: Function
+      }
+    }, {
+      location: 'center',
+      widget: 'dxButton',
+      options: {
+        text: 'Assign',
+        icon: 'fa fa-user-o',
+        onClick: Function()
+      }
+    }, {
+      location: 'center',
+      widget: 'dxButton',
+      options: {
+        text: 'Status',
+        icon: 'fa fa-flag-o',
+        onClick: Function()
+      }
+    }, {
+      location: 'center',
+      widget: 'dxButton',
+      options: {
+        text: 'Delete',
+        icon: 'fa fa-trash-o',
+        onClick: Function()
+      }
+    }, {
+      location: 'after',
+      widget: 'dxButton',
+      options: {
+        hint: 'Refresh',
+        icon: 'refresh',
+        onClick: this.refreshDataGrid.bind(this)
+      }
+    });
+	}
+
+  refreshDataGrid() {
+    this.dataGrid.instance.refresh();
+  }
+
+  createClient() {
+    this.createOrEditClientModal.show();
+  }
+
+  showClientDetails(event){    
+    this._router.navigate(['app/crm/client', event.data.Id]);
+  }
+
+  ngOnInit(): void {
+    this.filterTabs = [
+			'all', 'active', 'archived'
+		];
+
+		this._filtersService.setup(
+      this.filters = [
+  			<FilterModel> {
+          component: FilterStatesComponent, 
+          caption: 'states',
+          items: {
+            countryId: '', 
+            stateId: ''
+          }
+        },
+  			<FilterModel> {
+          component: FilterInputsComponent, 
+          operator: 'contains',
+          caption: 'name', 
+          items: {name: ''}
+        }, 
+	  		<FilterModel> {
+          component: FilterCBoxesComponent, 
+          caption: 'status', 
+          field: 'StatusId',
+          items: {active: true, inactive: true}
+        },
+			  <FilterModel> {
+          component: FilterDatesComponent, 
+          operator: {from: "ge", to: "le"},
+          caption: 'creation', 
+          field: 'CreationTime',
+          items: {from: '', to: ''}
+        }
+		  ]
+    );
+
+    this._filtersService.apply(() => {
+      this.processODataFilter(this.dataGrid.instance, 
+        this.dataSourceURI, this.filters, (filter) => { 
+          let filterMethod = this['filterBy' + 
+            this.capitalize(filter.caption)];
+          if (filterMethod)
+            return filterMethod.call(this, filter);
+        }
+      );
+    });
+  }
+
+  filterByStates(filter) {
+    let filterData = {};
+    _.mapObject(filter.items, (val, key) => {
+        return val && (typeof(val) == 'string') 
+          && (filterData[this.capitalize(key)] = val);
+    });
+
+    if (Object.keys(filterData).length)
+      return {
+        Addresses: {
+          any: filterData
+        }
+      };
+  }
+
+  filterByCreation(filter) {
+    let data = {};
+    data[filter.field] = {};
+    _.each(filter.items, (val, key) => {
+      val && (data[filter.field][filter.operator[key]] = val);
+    });
+    return data;
+  }
+
+  filterByStatus(filter) {
+    if (!filter.items.active || !filter.items.inactive) {
+      let obj = {};
+      obj[filter.field] = filter.items.active ? 'A': 'I';
+      return obj;
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.rootComponent = this.getRootComponent()
+    this.rootComponent.overflowHidden(true);
+  }
+
+  ngOnDestroy() {
+    this._filtersService.unsubscribe();
+    this._filtersService.enabled = false;
+    this.rootComponent.overflowHidden();
+  }
+}

@@ -53,6 +53,6 @@ export class AppCommonModule {
                 AppAuthService,
                 AppRouteGuard
             ]
-        }
+        };
     }
 }

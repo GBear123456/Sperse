@@ -30,8 +30,8 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
 
     ngOnInit(): void {
         if (this.appSession.application.features['SignalR']) {
-        SignalRHelper.initSignalR(() => { this._chatSignalrService.init(); });
-    }
+            SignalRHelper.initSignalR(() => { this._chatSignalrService.init(); });
+        }
     }
 
     subscriptionStatusBarVisible(): boolean {
@@ -42,7 +42,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
 
     subscriptionIsExpiringSoon(): boolean {
         if (this._appSessionService.tenant.subscriptionEndDateUtc) {
-            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days') 
+            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days')
               >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
         }
 

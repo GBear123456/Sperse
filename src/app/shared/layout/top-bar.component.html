@@ -1,28 +1,56 @@
-﻿<div class="top-bar-search">
+﻿<!-- dx-menu [items]="menu.items"></dx-menu -->
+<div class="top-bar-search">
 	<i class="icon-magnifier"></i>
 	<input [(ngModel)]="search" name="search" autoFocus class="form-control" placeholder="{{l('SearchAllData')}}" type="text">
 </div>
-<div class="hor-menu hor-menu-light hidden-sm hidden-xs">
-    <ul class="nav navbar-nav" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">        
-        <ng-template ngFor let-menuItem [ngForOf]="menu.items" let-mainMenuItemIndex="index">
-            <li *ngIf="showMenuItem(menuItem)" class="classic-menu-dropdown" aria-haspopup="true">
-                <a [routerLink]="[menuItem.route]" class="auto" [ngClass]="{disabled: menuItem.items.length}" [routerLinkActive]="[menuItem.items.length ? '': 'active']">
-                    <!-- i class="{{menuItem.icon}}"></i -->
-                    {{l(menuItem.name)}}
-					<i class="fa fa-angle-down" *ngIf="menuItem.items.length"></i>
-                </a>
-                <ul class="dropdown-menu pull-left" *ngIf="menuItem.items.length">
-                    <!-- Menu Level 2 -->
-                    <ng-template ngFor let-childMenuItem [ngForOf]="menuItem.items" let-mainMenuItemIndex="index">
-                        <li *ngIf="showMenuItem(childMenuItem)">
-                            <a [routerLink]="[childMenuItem.route]" *ngIf="!childMenuItem.items.length">
-                                <i class="{{childMenuItem.icon}}"></i>
-                                <span class="title">{{l(childMenuItem.name)}}</span>
-                            </a>
-                        </li>
-                    </ng-template>
-                </ul>
-            </li>
-        </ng-template>
-    </ul>
+
+<!-- div class="top-bar-nav">
+  <nav mat-tab-nav-bar>
+    <a mat-tab-link
+       *ngFor="let link of menu.items"
+       [routerLink]="link.route"
+       routerLinkActive #rla="routerLinkActive"
+       [ngClass]="{disabled: link.items.length}"
+       [active]="!link.items.length && rla.isActive">
+      {{link.text}}
+    </a>
+  </nav>
+</div -->
+
+<!-- div class="top-bar-nav">
+  <md-tab-group [selectedIndex]="seletedTabIndex">
+    <ng-template ngFor let-menuItem [ngForOf]="menu.items" let-mainMenuItemIndex="index">
+      <md-tab *ngIf="showMenuItem(menuItem)" (click)="navigate(menuItem.route)" label="{{l(menuItem.text)}}"></md-tab>
+    </ng-template>
+  </md-tab-group>
+</div -->
+
+<div class="top-bar-nav">
+  <div class="hor-menu hor-menu-light hidden-sm hidden-xs">
+      <ul class="nav navbar-nav" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">        
+          <ng-template ngFor let-menuItem [ngForOf]="menu.items" let-mainMenuItemIndex="index">
+              <li *ngIf="showMenuItem(menuItem)" class="classic-menu-dropdown" aria-haspopup="true">
+                  <a [routerLink]="[menuItem.route]" class="auto" [ngClass]="{disabled: menuItem.items.length}" [routerLinkActive]="[menuItem.items.length ? '': 'active']">
+
+                      {{l(menuItem.text)}}
+  					<i class="fa fa-angle-down" *ngIf="menuItem.items.length"></i>
+                  </a>
+                  <ul class="dropdown-menu pull-left" *ngIf="menuItem.items.length">
+
+                      <ng-template ngFor let-childMenuItem [ngForOf]="menuItem.items" let-mainMenuItemIndex="index">
+                          <li *ngIf="showMenuItem(childMenuItem)">
+                              <a [routerLink]="[childMenuItem.route]" *ngIf="!childMenuItem.items.length">
+                                  <i class="{{childMenuItem.icon}}"></i>
+                                  <span class="title">{{l(childMenuItem.text)}}</span>
+                              </a>
+                          </li>
+                      </ng-template>
+                  </ul>
+              </li>
+          </ng-template>
+      </ul>
+  </div>
+
+  <platform-select></platform-select>
+
 </div>
