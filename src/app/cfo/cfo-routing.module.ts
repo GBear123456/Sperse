@@ -1,7 +1,7 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Route } from '@angular/router';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { CashflowComponent } from './cashflow/components/main/cashflow.component';
 
 @NgModule({
     imports: [
@@ -9,7 +9,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
             {
                 path: '',
                 children: [
-                    { path: 'dashboard', component: DashboardComponent, data: { permission: 'Pages.Tenant.Dashboard' } }
+                    { path: 'cashflow', component: CashflowComponent , data: { permission: 'Pages.Tenant.Dashboard' } }
                 ]
             }
         ])
@@ -18,4 +18,4 @@ import { DashboardComponent } from './dashboard/dashboard.component';
         RouterModule
     ]
 })
-export class MainRoutingModule { }
+export class CfoRoutingModule { }

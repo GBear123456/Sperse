@@ -14,7 +14,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
   selector: 'top-bar'
 })
 export class TopBarComponent extends AppComponentBase {
-    
+
   constructor(injector: Injector,
       private _appSessionService: AppSessionService,
       public router: Router
@@ -23,8 +23,8 @@ export class TopBarComponent extends AppComponentBase {
 
 /*
     this.initMenu(
-      require('@app/' + 
-        (sessionStorage.getItem('module') || 'crm') + 
+      require('@app/' +
+        (sessionStorage.getItem('module') || 'crm') +
         '/module.config.json'
       )
     );
@@ -34,6 +34,7 @@ export class TopBarComponent extends AppComponentBase {
   menu: PanelMenu = new PanelMenu("MainMenu", "MainMenu", [
     new PanelMenuItem("Dashboard", "Pages.Administration.Host.Dashboard", "icon-home", "/app/crm/hostDashboard"),
     new PanelMenuItem("Dashboard", "Pages.Tenant.Dashboard", "icon-home", "/app/main/dashboard"),
+    new PanelMenuItem("Cashflow", "Pages.Tenant.Dashboard", "icon-home", "/app/cfo/cashflow"),
     new PanelMenuItem("Customers", "Pages.CRM.Customers", "icon-globe", "/app/crm/clients"),
     new PanelMenuItem("Leads", "Pages.CRM.Leads", "icon-globe", "/app/crm/leads"),
     new PanelMenuItem("Orders", "Pages.CRM.Orders", "icon-globe", "/app/crm/orders"),
@@ -63,6 +64,7 @@ export class TopBarComponent extends AppComponentBase {
 	  	return this.checkMenuItemPermission(item);
   	});
   }
+
 
   showMenuItem(item, index): boolean {
     if (item.permissionName === 'Pages.Administration.Tenant.SubscriptionManagement' && this._appSessionService.tenant && !this._appSessionService.tenant.edition) {

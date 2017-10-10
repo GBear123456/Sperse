@@ -26,4 +26,5 @@ import { EasyPieChartModule } from 'ng2modules-easypiechart';
         DashboardComponent
     ]
 })
-export class MainModule { }
+export class MainModule {
+}
