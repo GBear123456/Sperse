@@ -47,29 +47,29 @@ export class CashflowTableComponent implements OnInit {
     //   'historicalCustomizerFunction': this.getWeekHistoricalCustomizer
     // },
     /** @todo implement the day interval in short long future */
-    /*{
-      'groupInterval': 'day',
-      'optionText': 'DAYS',
-      'customizeTextFunction': this.getDayHeaderCustomizer,
-      'historicalSelectionFunction': this.getDayHistoricalSelector,
-      'historicalCustomizerFunction': this.getDayHistoricalCustomizer
-    }*/
+    // {
+    //   'groupInterval': 'day',
+    //   'optionText': 'DAYS',
+    //   'customizeTextFunction': this.getDayHeaderCustomizer,
+    //   'historicalSelectionFunction': this.getDayHistoricalSelector,
+    //   'historicalCustomizerFunction': this.getDayHistoricalCustomizer
+    // }
   ];
   tableFields: any = [
-    {
-      caption: 'Cash Starting Balances',
-      area: 'row',
-      width: 120,
-      showTotals: true,
-      expanded: true,
-      isMeasure: false,
-      allowExpand: false,
-      dataField: null,
-      dataType: 'string',
-      customizeText: function() {
-        return 'CASH STARTING BALANCES';
-      }
-    },
+    // {
+    //   caption: 'Cash Starting Balances',
+    //   //area: 'row',
+    //   width: 120,
+    //   showTotals: false,
+    //   expanded: true,
+    //   // isMeasure: false,
+    //   // allowExpand: false,
+    //   // dataField: null,
+    //   // dataType: 'string',
+    //   customizeText: function() {
+    //     return 'CASH STARTING BALANCES';
+    //   }
+    // },
     {
       caption: 'Type',
       width: 120,
@@ -181,7 +181,7 @@ export class CashflowTableComponent implements OnInit {
       },
       expanded: true,
       allowExpand: false
-    }
+    },
     /** @todo implement the week interval in the long future */
     // {
     //   caption: 'Date',
@@ -193,15 +193,15 @@ export class CashflowTableComponent implements OnInit {
     //   visible: true
     // },
     /** @todo implement the day interval in short long future */
-    /*{
-      caption: 'Date',
-      dataField: 'date',
-      dataType: 'date',
-      area: 'column',
-      groupInterval: 'day',
-      customizeText: this.getDayHeaderCustomizer(),
-      visible: true
-    }*/
+    // {
+    //   caption: 'Date',
+    //   dataField: 'date',
+    //   dataType: 'date',
+    //   area: 'column',
+    //   groupInterval: 'day',
+    //   customizeText: this.getDayHeaderCustomizer(),
+    //   visible: true
+    // }
   ];
   cssClasses: any = {
       'historical': {
@@ -501,7 +501,7 @@ export class CashflowTableComponent implements OnInit {
    * return bool
    */
   isStartingBalanceHeaderColumn(cellObj) {
-      return cellObj.area === 'row' && cellObj.cell.type === 'T' && cellObj.cell.path.length === 1;
+      return cellObj.area === 'row' && cellObj.cell.type === 'T' && cellObj.cell.path.length === 0;
   }
   /**
    * whether or not the cell is balance sheet data cell
@@ -509,7 +509,7 @@ export class CashflowTableComponent implements OnInit {
    * return bool
   */
   isStartingBalanceDataColumn(cellObj) {
-      return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined && cellObj.cell.rowPath.length === 1;
+      return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined && cellObj.cell.rowPath.length === 0;
   }
   /**
    * whether or not the cell is income or expenses header cell
@@ -517,7 +517,7 @@ export class CashflowTableComponent implements OnInit {
    * return bool
    */
   isIncomeOrExpensesHeaderCell(cellObj) {
-      return cellObj.area === 'row' && cellObj.cell.type === 'T' && cellObj.cell.path.length === 2;
+      return cellObj.area === 'row' && cellObj.cell.type === 'T' && cellObj.cell.path.length === 1;
   }
 
   /**
@@ -526,7 +526,7 @@ export class CashflowTableComponent implements OnInit {
    * return bool
    */
   isIncomeOrExpensesDataCell(cellObj) {
-      return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined && cellObj.cell.rowPath.length === 2;
+      return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined && cellObj.cell.rowPath.length === 1;
   }
   onCellPrepared(e) {
         /** added css class to start balance row */
@@ -539,20 +539,20 @@ export class CashflowTableComponent implements OnInit {
                 event.stopImmediatePropagation();
             });
             /** move the row for started balance to the right to get proper view of started balances */
-            if (this.isStartingBalanceDataColumn(e)) {
-                /** clone the first cell with zero value */
-                if (e.columnIndex === 0) {
-                    /** clone the cell */
-                    const clonedCellElement = e.cellElement.clone();
-                    clonedCellElement.find('span').text('$0.00');
-                    e.cellElement.before(clonedCellElement);
-                }
-            }
+            // if (this.isStartingBalanceDataColumn(e)) {
+            //     /** clone the first cell with zero value */
+            //     if (e.columnIndex === 0) {
+            //         /** clone the cell */
+            //         const clonedCellElement = e.cellElement.clone();
+            //         clonedCellElement.find('span').text('$0.00');
+            //         e.cellElement.before(clonedCellElement);
+            //     }
+            // }
         }
         /** added css class to the income and outcomes columns */
         if ( (this.isIncomeOrExpensesHeaderCell(e)) ||
             ( this.isIncomeOrExpensesDataCell(e)) ) {
-            const cssClass = e.rowIndex === 1 ? 'income' : 'expenses';
+            const cssClass = e.rowIndex === 0 ? 'income' : 'expenses';
             e.cellElement.addClass(cssClass);
             /** disable collapsing for income and expenses columns */
             if (this.isIncomeOrExpensesHeaderCell(e)) {
@@ -596,6 +596,51 @@ export class CashflowTableComponent implements OnInit {
             }
             e.cellElement.addClass(cssClass);
         }
+
+        /** @todo change logic for reconciliation */
+        /** added reconciliation and starting balances rows to the table */
+        if (e.cell.type === 'GT') {
+            /** clone current row */
+            const clonedRow = e.cellElement.parent().clone();
+            /** added the css class to the current row */
+            clonedRow.find('td').removeClass('dx-grandtotal');
+            clonedRow.addClass('reconciliation');
+            /** find the span inside and change the text to the reconciliation */
+            clonedRow.find('span').text('Reconciliation Differences');
+            /** append the grand total row with the new created reconciliation row to match the mock up */
+            e.cellElement.parent().after(clonedRow);
+            const clonForStartingBalance = e.cellElement.parent().clone();
+            /** change the text */
+            clonForStartingBalance.find('span').text('Cash Starting Balances');
+            /** added the css class to the cloned row row */
+            clonForStartingBalance.find('td').removeClass('dx-grandtotal');
+            clonForStartingBalance.addClass('startedBalance uppercase');
+            /** prepend the table with the starting cashflow balance row*/
+            e.cellElement.closest('tbody').prepend(clonForStartingBalance);
+        }
+
+        /** added reconciliation and starting balances rows to the table data cells */
+        if (e.area === 'data' && e.cell.rowType === 'GT') {
+            if (e.cellElement.parent().is(':last-child')) {
+                /** clone current row for reconciliation */
+                let clonedRow = e.cellElement.parent().clone();
+                /** for each child change the text, remove grand total class and add reconciliation class */
+                clonedRow.addClass('reconciliation');
+                clonedRow.children('td').each(function(){
+                    $(this).text('$0.00');
+                    $(this).removeClass('dx-grandtotal');
+                });
+                e.cellElement.parent().after(clonedRow);
+
+                /** clone current row for starting balances*/
+                clonedRow = e.cellElement.parent().clone();
+                clonedRow.find('td').removeClass('dx-grandtotal');
+                /** for each child change the text, remove grand total class and add reconciliation class */
+                clonedRow.addClass('startedBalance');
+                e.cellElement.closest('tbody').prepend(clonedRow);
+            }
+        }
+
         /** remove minus sign from negative values */
         if (e.area === 'data') {
             if (e.cell.value < 0) {
@@ -605,33 +650,5 @@ export class CashflowTableComponent implements OnInit {
             }
         }
 
-        /** @todo change logic for reconciliation */
-        /** added reconciliation row to the table */
-        if (e.cell.type === 'GT') {
-            /** clone current row */
-            const clonedRow = e.cellElement.parent().clone();
-            /** added the css class to the current row */
-            clonedRow.find('td').removeClass('dx-grandtotal');
-            clonedRow.addClass('reconciliation');
-            /** find the span inside and change the text to the reconciliation */
-            clonedRow.find('span').text('Reconciliation Differences');
-            /** append the grand total row with the new created row to match the mock up */
-            e.cellElement.parent().after(clonedRow);
-        }
-
-        /** added reconciliation row to the table data cells */
-        if (e.area === 'data' && e.cell.rowType === 'GT') {
-            if (e.cellElement.parent().is(':last-child')) {
-                /** clone current row */
-                const clonedRow = e.cellElement.parent().clone();
-                /** for each child change the text, remove grand total class and add reconciliation class */
-                clonedRow.addClass('reconciliation');
-                clonedRow.children('td').each(function(){
-                    $(this).text('$0.00');
-                    $(this).removeClass('dx-grandtotal');
-                });
-                e.cellElement.parent().after(clonedRow);
-            }
-        }
-    }
+  }
 }
