@@ -11,9 +11,6 @@ import { DxPivotGridComponent } from 'devextreme-angular';
   providers: [ CashflowService ]
 })
 export class CashflowTableComponent implements OnInit {
-
-  /** @todo find out why self is window */
-  self = this;
   cashflowService: CashflowService;
   operations: Operation[];
   operationsSource: any;
@@ -62,10 +59,12 @@ export class CashflowTableComponent implements OnInit {
     {
       caption: 'Cash Starting Balances',
       area: 'row',
+      width: 120,
       showTotals: true,
       expanded: true,
       isMeasure: false,
       allowExpand: false,
+      dataField: null,
       dataType: 'string',
       customizeText: function() {
         return 'CASH STARTING BALANCES';
@@ -75,10 +74,10 @@ export class CashflowTableComponent implements OnInit {
       caption: 'Type',
       width: 120,
       area: 'row',
-      dataField: 'type',
       expanded: true,
       allowExpandAll: false,
       allowExpand: false,
+      dataField: 'type',
       rowHeaderLayout: 'tree',
       showTotals: true,
       /** @todo find out how to remove total from the total field */
@@ -166,13 +165,13 @@ export class CashflowTableComponent implements OnInit {
       selector: function(data) {const date = new Date(data.date);
           const current = new Date();
           let result;
-          if (date.getMonth() + date.getFullYear() === current.getMonth() + current.getFullYear()) {
+          // if (date.getMonth() + date.getFullYear() === current.getMonth() + current.getFullYear()) {
               if (current.getDay() > date.getDay()) {
                   result = 0;
               } else {
                   result = 1;
               }
-          }
+          // }
           return result;
       },
       customizeText: function(cellInfo) {
@@ -495,14 +494,44 @@ export class CashflowTableComponent implements OnInit {
   cutCssFromValue(text) {
       return text.slice(text.indexOf(this.cssMarker) + this.cssMarker.length + 2, text.length - 1);
   }
-  onContentReady(event) {
-      //console.log(event);
+  onContentReady(event) {}
+  /**
+   * whether or not the cell is balance sheet header
+   * @param cellObj - the object that pivot grid passes to the onCellPrepared event
+   * return bool
+   */
+  isStartingBalanceHeaderColumn(cellObj) {
+      return cellObj.area === 'row' && cellObj.cell.type === 'T' && cellObj.cell.path.length === 1;
+  }
+  /**
+   * whether or not the cell is balance sheet data cell
+   * @param cellObj - the object that pivot grid passes to the onCellPrepared event
+   * return bool
+  */
+  isStartingBalanceDataColumn(cellObj) {
+      return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined && cellObj.cell.rowPath.length === 1;
+  }
+  /**
+   * whether or not the cell is income or expenses header cell
+   * @param cellObj - the object that pivot grid passes to the onCellPrepared event
+   * return bool
+   */
+  isIncomeOrExpensesHeaderCell(cellObj) {
+      return cellObj.area === 'row' && cellObj.cell.type === 'T' && cellObj.cell.path.length === 2;
   }
 
+  /**
+   * whether or not the cell is income or expenses data cell
+   * @param cellObj - the object that pivot grid passes to the onCellPrepared event
+   * return bool
+   */
+  isIncomeOrExpensesDataCell(cellObj) {
+      return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined && cellObj.cell.rowPath.length === 2;
+  }
   onCellPrepared(e) {
         /** added css class to start balance row */
-        if ( (e.area === 'row' && e.cell.type === 'T' && e.cell.path.length === 1) ||
-            ( e.area === 'data' && e.cell.rowPath !== undefined && e.cell.rowPath.length === 1) ) {
+        if ( this.isStartingBalanceHeaderColumn(e) ||
+             this.isStartingBalanceDataColumn(e) ) {
             const cssClass = 'startedBalance';
             e.cellElement.addClass(cssClass);
             /** disable collapsing for start balance column */
@@ -510,34 +539,28 @@ export class CashflowTableComponent implements OnInit {
                 event.stopImmediatePropagation();
             });
             /** move the row for started balance to the right to get proper view of started balances */
-            if (e.area === 'data') {
+            if (this.isStartingBalanceDataColumn(e)) {
                 /** clone the first cell with zero value */
                 if (e.columnIndex === 0) {
                     /** clone the cell */
                     const clonedCellElement = e.cellElement.clone();
-                    clonedCellElement.find('span').text('$0');
+                    clonedCellElement.find('span').text('$0.00');
                     e.cellElement.before(clonedCellElement);
                 }
             }
         }
         /** added css class to the income and outcomes columns */
-        if ( (e.area === 'row' && e.cell.type === 'T' && e.cell.path.length === 2) ||
-            ( e.area === 'data' && e.cell.rowPath !== undefined && e.cell.rowPath.length === 2) ) {
+        if ( (this.isIncomeOrExpensesHeaderCell(e)) ||
+            ( this.isIncomeOrExpensesDataCell(e)) ) {
             const cssClass = e.rowIndex === 1 ? 'income' : 'expenses';
-
-            // console.log(e.cell.text, e);
             e.cellElement.addClass(cssClass);
-            /** @todo find out how to change the text "totals" */
             /** disable collapsing for income and expenses columns */
-            if ((e.area === 'row' && e.cell.type === 'T')) {
+            if (this.isIncomeOrExpensesHeaderCell(e)) {
+                e.cellElement.addClass('uppercase');
                 e.cellElement.click(function(event) {
                     event.stopImmediatePropagation();
                 });
             }
-        }
-        /** added css class to the income and outcomes columns to uppercase the columns names */
-        if ( (e.area === 'row' && e.cell.path !== undefined && e.cell.path.length === 2)) {
-            e.cellElement.addClass('uppercase');
         }
 
         /** headers manipulation (adding css classes and appending "Totals text") */
@@ -579,6 +602,35 @@ export class CashflowTableComponent implements OnInit {
                 e.cell.value = Math.abs(e.cell.value);
                 e.cell.text = e.cell.text.replace('-', '');
                 e.cellElement.text(e.cell.text);
+            }
+        }
+
+        /** @todo change logic for reconciliation */
+        /** added reconciliation row to the table */
+        if (e.cell.type === 'GT') {
+            /** clone current row */
+            const clonedRow = e.cellElement.parent().clone();
+            /** added the css class to the current row */
+            clonedRow.find('td').removeClass('dx-grandtotal');
+            clonedRow.addClass('reconciliation');
+            /** find the span inside and change the text to the reconciliation */
+            clonedRow.find('span').text('Reconciliation Differences');
+            /** append the grand total row with the new created row to match the mock up */
+            e.cellElement.parent().after(clonedRow);
+        }
+
+        /** added reconciliation row to the table data cells */
+        if (e.area === 'data' && e.cell.rowType === 'GT') {
+            if (e.cellElement.parent().is(':last-child')) {
+                /** clone current row */
+                const clonedRow = e.cellElement.parent().clone();
+                /** for each child change the text, remove grand total class and add reconciliation class */
+                clonedRow.addClass('reconciliation');
+                clonedRow.children('td').each(function(){
+                    $(this).text('$0.00');
+                    $(this).removeClass('dx-grandtotal');
+                });
+                e.cellElement.parent().after(clonedRow);
             }
         }
     }

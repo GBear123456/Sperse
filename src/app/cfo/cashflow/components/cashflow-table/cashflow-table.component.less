@@ -117,14 +117,22 @@
                     min-width: 0;
                     width: 0;
                 }
+
+            }
+            &.reconciliation {
+                td {
+                    font-weight: 700;
+                    background: #eff9fe
+                }
             }
         }
     }
 
-    .dx-bottom-border tr:last-child td {
-        background: #00aff4;
-        color: #fff;
-        font-weight: 700;
+    .dx-pivotgrid-area-data {
+        tr.reconciliation td {
+            background: #ecf7fc;
+            color: #a9b2ba;
+        }
     }
 
     .dx-pivotgrid-area {
@@ -143,6 +151,14 @@
                 &.expenses {
                     background: #f9e1da;
                 }
+            }
+            &.dx-grandtotal {
+                background: #00aff4;
+                color: #fff;
+                font-weight: 700;
+            }
+            &.reconciliation {
+                font-weight: 700;
             }
         }
     }
