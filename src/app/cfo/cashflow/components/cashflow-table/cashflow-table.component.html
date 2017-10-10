@@ -1,0 +1,32 @@
+<div class="cashflow">
+    <div class="group_by">
+        <span>Group by</span>
+        <dx-select-box
+                [items]="groupbyItems"
+                [value]="groupbyItems[0]"
+                displayExpr="optionText"
+                #selectBox
+                (onValueChanged)="changeGroupBy($event)"
+        >
+        </dx-select-box>
+    </div>
+
+    <dx-pivot-grid id="operations"
+                   [allowSortingBySummary]="true"
+                   [allowSorting]="false"
+                   [allowFiltering]="true"
+                   [allowExpandAll]="false"
+                   [showBorders]="false"
+                   [(dataSource)]="operationsSource"
+                   [rowHeaderLayout]="'tree'"
+                   [showTotalsPrior]="'none'"
+                   [showColumnGrandTotals]="false"
+                   [texts] = "{'grandTotal': 'ENDING CASH POSITION', 'total': '{0}'}"
+                   [fieldChooser]="false"
+                   [export]="{'enabled': false}"
+                   (onCellPrepared)="onCellPrepared($event)"
+                   (onContentReady)="onContentReady($event)"
+    >
+    </dx-pivot-grid>
+
+</div>
