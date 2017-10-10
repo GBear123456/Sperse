@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 
 import { ModalModule, TooltipModule } from 'ngx-bootstrap';
 
+import { PlatformSelect } from './platform-select.component';
 import { HeaderComponent } from './header.component';
 import { HeaderNotificationsComponent } from './notifications/header-notifications.component';
 import { SideBarComponent } from './side-bar.component';
@@ -32,23 +33,29 @@ import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
 
+import { DxMenuModule, DxScrollViewModule, DxButtonModule, 
+  DxDropDownBoxModule, DxListModule } from 'devextreme-angular';
+
+import { MdTabsModule } from '@angular/material';
+
 let COMPONENTS = [
-        HeaderComponent,
-        HeaderNotificationsComponent,
-        TopBarComponent,
-        SideBarComponent,		
-        FooterComponent,
-        LoginAttemptsModalComponent,
-        LinkedAccountsModalComponent,
-        LinkAccountModalComponent,
-        ChangePasswordModalComponent,
-        ChangeProfilePictureModalComponent,
-        MySettingsModalComponent,
-        NotificationsComponent,
-        ChatBarComponent,
-        ChatFriendListItem,
-        NotificationSettingsModalComponent
-    ];
+    PlatformSelect,
+    HeaderComponent,
+    HeaderNotificationsComponent,
+    TopBarComponent,
+    SideBarComponent,		
+    FooterComponent,
+    LoginAttemptsModalComponent,
+    LinkedAccountsModalComponent,
+    LinkAccountModalComponent,
+    ChangePasswordModalComponent,
+    ChangeProfilePictureModalComponent,
+    MySettingsModalComponent,
+    NotificationsComponent,
+    ChatBarComponent,
+    ChatFriendListItem,
+    NotificationSettingsModalComponent
+];
 
 @NgModule({
     imports: [
@@ -58,16 +65,24 @@ let COMPONENTS = [
 
 		AppCommonModule,
 
-        ModalModule.forRoot(),
-        TooltipModule.forRoot(),
+    ModalModule.forRoot(),
+    TooltipModule.forRoot(),
 
 		UtilsModule,
 		FiltersModule,
 
-		FileUploadModule
+		FileUploadModule,
+
+    DxListModule,
+    DxMenuModule, 
+    DxScrollViewModule, 
+    DxButtonModule,
+    DxDropDownBoxModule,
+
+    MdTabsModule
 	],
-    declarations: COMPONENTS,
-    exports: COMPONENTS,
+  declarations: COMPONENTS,
+  exports: COMPONENTS,
 	providers: [
 		LinkedAccountService,
 		UserNotificationHelper,

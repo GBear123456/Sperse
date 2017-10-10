@@ -1,0 +1,44 @@
+<div class="contacts">
+  <h3 class="lab">{{l('Contact')}}</h3>
+  <div class="emails" *ngIf="data?.customerInfo?.primaryContactInfo.emails.length; let i = index">
+    <i class="icons email"></i>
+    <ul *ngFor="let email of data?.customerInfo?.primaryContactInfo.emails; let i = index;">
+      <div *ngIf="!email.inplaceEdit">
+        <div class="actions" *ngIf="isEditAllowed"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog('emailAddress', email, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteEmailAddress(email, $event, i)"></i></div>
+        <li (click)="inPlaceEdit('emailAddress', email, $event, i)">{{email.emailAddress}}</li>      
+      </div>
+      <div *ngIf="email.inplaceEdit" class="inplace-edit-wrapper">
+        <dx-validation-group>
+          <dx-text-box placeholder="" [(value)]="email.emailAddress">
+            <dx-validator>
+              <dxi-validation-rule type="required" message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
+              <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+            </dx-validator>
+          </dx-text-box>
+          <dx-button class="update" icon="todo" (onClick)="updateItem('emailAddress', email, $event)"></dx-button>
+          <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('emailAddress', email)"></dx-button>
+        </dx-validation-group>
+      </div>
+    </ul>
+  </div>
+  <div *ngIf="isEditAllowed" class="add-contact" (click)="showDialog('emailAddress', null, $event)">+</div>
+  <div class="phone" *ngFor="let phone of data?.customerInfo?.primaryContactInfo.phones; let i = index;">
+    <i class="icons phone type-{{phone?.usageTypeId}}"></i>
+    <ul *ngIf="!phone.inplaceEdit">
+      <div class="actions" *ngIf="isEditAllowed"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog('phoneNumber', phone, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deletePhoneNumber(phone, $event, i)"></i></div>
+      <li (click)="inPlaceEdit('phoneNumber', phone, $event, i)">{{phone.phoneNumber}}</li>
+    </ul>
+    <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
+      <dx-validation-group>
+        <dx-text-box placeholder="" mask="(000) 000-0000" [(value)]="phone.phoneNumber">
+          <dx-validator>
+            <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
+          </dx-validator>
+        </dx-text-box>
+        <dx-button class="update" icon="todo" (onClick)="updateItem('phoneNumber', phone, $event)"></dx-button>
+        <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('phoneNumber', phone)"></dx-button>
+      </dx-validation-group>
+    </div>
+  </div>
+  <div *ngIf="isEditAllowed" class="add-contact" (click)="showDialog('phoneNumber', null, $event)">+</div>
+</div>

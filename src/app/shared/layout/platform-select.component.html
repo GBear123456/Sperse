@@ -1,0 +1,23 @@
+<dx-drop-down-box
+  [(value)]="module"
+  [dataSource]="modules"
+  width="570px">
+    <div *dxTemplate="let data of 'content'" style="display:flex;">
+        <dx-list 
+          selectionMode="single"
+          (onSelectionChanged)="changeModule($event)"
+          width="220px">
+
+          <dxi-item *ngFor="let item of modules">
+              <div class="module-select-item {{item | lowercase }}">
+                  <input value="{{item}}" readonly>
+                  <div>{{item}}</div>
+              </div>
+          </dxi-item>
+
+        </dx-list>
+        <div class="module-description">
+          <h3>CRM: Connect All Your Bussines Applications</h3>
+        </div>
+    </div>
+</dx-drop-down-box>

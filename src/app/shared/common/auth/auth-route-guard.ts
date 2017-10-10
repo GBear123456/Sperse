@@ -47,7 +47,7 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
         }
        
         if (this._permissionChecker.isGranted('Pages.Administration.Host.Dashboard')) {
-            return '/app/admin/hostDashboard';
+            return '/app/crm/hostDashboard';
         }
 
         if (this._permissionChecker.isGranted('Pages.Tenant.Dashboard')) {
@@ -55,11 +55,11 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
         }
 
         if (this._permissionChecker.isGranted('Pages.Tenants')) {
-            return '/app/admin/tenants';
+            return '/app/crm/tenants';
         }
 
         if (this._permissionChecker.isGranted('Pages.Administration.Users')) {
-            return '/app/admin/users';
+            return '/app/crm/users';
         }
       
         return '/app/notifications';

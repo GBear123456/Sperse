@@ -1,0 +1,106 @@
+/deep/ * {
+  &.api input {
+    background-image: linear-gradient(221deg, #91f7c8, #0cab2a);
+  }
+  &.cfo input {
+    background-image: linear-gradient(41deg, #f76b1c, #fad961);
+  }
+  &.crm input {
+    background-image: linear-gradient(41deg, #3023ae, #c86dd7);
+  }
+  &.cloud input {
+    background-image: linear-gradient(41deg, #2854e4, #70a0e2);
+  }
+  &.feeds input {
+    background-image: linear-gradient(221deg, #f791c4, #f83696);
+  }
+  &.forms input {
+    background-image: linear-gradient(41deg, #00a9ff, #7ddfff 83%);
+  }
+  &.hr input {
+    background-image: linear-gradient(41deg, #34aee0, #2beccf);
+  }
+  &.hub input {
+    background-image: linear-gradient(41deg, #f6221d, #f6b3b2);
+  }
+  &.slice input {
+    background-image: linear-gradient(41deg, #0d72e4, #2bd3ec);
+  }
+  &.store input {
+    background-image: linear-gradient(221deg, #e8e629, #deaf31);
+  }
+}
+
+/deep/ .module-select-item {
+  div, input {
+    display: inline-block;
+  }
+  div {
+    padding-left: 10px;
+  }
+  input {
+    width: 38px;
+    height: 38px;
+    border-radius: 19px;
+    border: none;
+    font-size: 10px;
+    line-height: 2.4;
+    color: #ffffff;
+    text-align: center;
+  }
+}
+
+/deep/ .module-description {
+  padding: 0px 10px 0px 10px;
+}
+
+/deep/ .dx-list-item {
+  border: none!important;
+
+  .dx-state-focused {
+    background: none!important;
+  }
+}
+
+/deep/ .dx-overlay-content {
+  left: -100px!important;
+}
+
+:host {
+  width: 51px;
+  float: right;
+  overflow: hidden;
+  padding-top: 19px; 
+
+  /deep/ .dx-texteditor-container {
+    .dx-dropdowneditor-icon {
+      dispaly: none; 
+    }
+    .dx-texteditor-input {
+      margin-bottom: 20px!important;
+      border-radius: 14px;
+      padding-bottom: 4px;
+      width: 51px;
+      height: 28px;
+      text-align: center;
+      padding: 0px;
+      margin: 0px;
+      font-size: 10px;
+      line-height: 2.4;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      color: #ffffff;
+      padding-top: 0px;
+      padding-bottom: 2px;
+    }    
+    &:after {
+      content: '';
+      left: -14px;
+      top: 12px;
+      position: relative; 
+      border-left: 3px solid transparent;
+      border-right: 3px solid transparent;  
+      border-top: 3px solid #FFF;        
+    }
+  }
+}

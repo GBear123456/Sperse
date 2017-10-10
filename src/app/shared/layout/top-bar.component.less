@@ -1,5 +1,38 @@
 :host {
 	position: relative; 	
+  display: block;
+  width: calc(~"100% - 700px");
+  margin-left: 300px;
+  white-space: nowrap;
+  height: 75px;
+
+  /deep/ md-tab-group {
+    .mat-tab-header {
+      border-bottom: none;
+    }
+    .mat-tab-labels {
+      justify-content: flex-end;
+
+      .mat-tab-label {
+        height: 74px;
+
+        font-family: Montserrat;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1.5;
+        letter-spacing: 0.2px;
+        text-align: left;
+        color: #677380;
+
+        &.mat-tab-label-active {
+          color: #202b35;      
+        }
+      }
+    }
+    .mat-tab-body-wrapper {
+      padding: 0px;
+    }
+  }
 
 	.top-bar-search:before, .hor-menu:after {
     	content: '';
@@ -10,8 +43,14 @@
 	    top: 20px;
 	}
 
+  .top-bar-nav {
+    float: right;
+    width: calc(~"100% - 330px");
+  }
+
 	.top-bar-search {
 		float: left;
+    display: inline-block;
 		height: 74px;
 		position: relative;
 		padding-left: 26px;
@@ -47,7 +86,7 @@
 
 	.hor-menu {
 		float: right;
-    max-width: calc(~"100% - 1000px");
+    margin-left: 20px;
 	
 		.navbar-nav {
 			> li.classic-menu-dropdown {				
