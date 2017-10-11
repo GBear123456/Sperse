@@ -21,6 +21,7 @@ import { SubscriptionManagementComponent } from './subscription-management/subsc
 @NgModule({
     imports: [
         RouterModule.forChild([
+            { path: '', redirectTo: '/app/crm/clients', pathMatch: 'full' },
             {
                 path: '',
                 children: [

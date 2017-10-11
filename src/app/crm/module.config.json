@@ -1,32 +1,25 @@
 {
-  "navigation": {
-    "Dashboard": [
-      ["Pages.Administration.Host.Dashboard", "icon-home", "/app/crm/hostDashboard"],
-      [ "Pages.Tenant.Dashboard", "icon-home", "/app/main/dashboard"]
-    ],
-    "Customers": ["Pages.CRM.Customers", "icon-globe", "/app/crm/clients"],
-    "Leads": ["Pages.CRM.Leads", "icon-globe", "/app/crm/leads"],
-    "Orders": ["Pages.CRM.Orders", "icon-globe", "/app/crm/orders"],
-    "Tenants": ["Pages.Tenants", "icon-globe", "/app/crm/tenants"],
-    "Editions": ["Pages.Editions", "icon-grid", "/app/crm/editions"],
-    "Administration": {
-      "permissions":  "", 
-      "icon": "icon-wrench", 
-      "path": "", 
-      "navigation": {
-        "OrganizationUnits": ["Pages.Administration.OrganizationUnits", "icon-layers", "/app/crm/organization-units"],
-        "Roles": ["Pages.Administration.Roles", "icon-briefcase", "/app/crm/roles"],
-        "Users": ["Pages.Administration.Users", "icon-people", "/app/crm/users"],
-        "Languages": ["Pages.Administration.Languages", "icon-flag", "/app/crm/languages"],
-        "AuditLogs": ["Pages.Administration.AuditLogs", "icon-lock", "/app/crm/auditLogs"],
-        "Maintenance": ["Pages.Administration.Host.Maintenance", "icon-wrench", "/app/crm/maintenance"],
-        "Subscription": ["Pages.Administration.Tenant.SubscriptionManagement", "icon-refresh", "/app/crm/subscription-management"],
-        "Settings": [ 
-          ["Pages.Administration.Host.Settings", "icon-settings", "/app/crm/hostSettings"],
-          ["Settings", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/crm/tenantSettings"]
-        ],
-        "System": ["Pages.Administration.Tenant.Settings", "icon-settings", "/app/crm/systemSettings"]
-      }
-    }
-  }
+  "name": "CRM",
+  "search": true,
+  "navigation": [
+    ["Dashboard", "Pages.Administration.Host.Dashboard", "icon-home", "/app/crm/hostDashboard"],
+    ["Dashboard", "Pages.Tenant.Dashboard", "icon-home", "/app/main/dashboard"],    
+    ["Customers", "Pages.CRM.Customers", "icon-globe", "/app/crm/clients"],
+    ["Leads", "Pages.CRM.Leads", "icon-globe", "/app/crm/leads"],
+    ["Orders", "Pages.CRM.Orders", "icon-globe", "/app/crm/orders"],
+    ["Tenants", "Pages.Tenants", "icon-globe", "/app/crm/tenants"],
+    ["Editions", "Pages.Editions", "icon-grid", "/app/crm/editions"],
+    ["Administration", "", "icon-wrench", "", [
+      ["OrganizationUnits", "Pages.Administration.OrganizationUnits", "icon-layers", "/app/crm/organization-units"],
+      ["Roles", "Pages.Administration.Roles", "icon-briefcase", "/app/crm/roles"],
+      ["Users", "Pages.Administration.Users", "icon-people", "/app/crm/users"],
+      ["Languages", "Pages.Administration.Languages", "icon-flag", "/app/crm/languages"],
+      ["AuditLogs", "Pages.Administration.AuditLogs", "icon-lock", "/app/crm/auditLogs"],
+      ["Maintenance", "Pages.Administration.Host.Maintenance", "icon-wrench", "/app/crm/maintenance"],
+      ["Subscription", "Pages.Administration.Tenant.SubscriptionManagement", "icon-refresh", "/app/crm/subscription-management"],
+      ["Settings", "Pages.Administration.Host.Settings", "icon-settings", "/app/crm/hostSettings"],
+      ["Settings", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/crm/tenantSettings"],
+      ["System", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/crm/systemSettings"]
+    ]]
+  ]
 }

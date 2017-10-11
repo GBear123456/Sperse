@@ -1,5 +1,5 @@
 ﻿<!-- dx-menu [items]="menu.items"></dx-menu -->
-<div class="top-bar-search">
+<div class="top-bar-search" *ngIf="config['search']">
 	<i class="icon-magnifier"></i>
 	<input [(ngModel)]="search" name="search" autoFocus class="form-control" placeholder="{{l('SearchAllData')}}" type="text">
 </div>
