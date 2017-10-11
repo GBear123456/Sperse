@@ -1,0 +1,7 @@
+{
+  "name": "CFO",
+  "search": false,
+  "navigation": [    
+    ["Cashflow", "Pages.Tenant.Dashboard", "icon-home", "/app/cfo/cashflow"]
+  ]
+}

@@ -51,14 +51,23 @@
 }
 
 /deep/ .module-description {
-  padding: 0px 10px 0px 10px;
+  width: 370px;
+  padding: 0px 10px 0px 10px;  
 }
 
 /deep/ .dx-list-item {
   border: none!important;
 
-  .dx-state-focused {
+  &.dx-state-focused {
     background: none!important;
+    color: #333!important;
+  }
+
+  .dx-icon-check {
+    float: right;
+    top: 10px;
+    position: relative;
+    color: #00aeef;
   }
 }
 
@@ -67,7 +76,7 @@
 }
 
 :host {
-  width: 51px;
+  width: 60px;
   float: right;
   overflow: hidden;
   padding-top: 19px; 
@@ -80,7 +89,7 @@
       margin-bottom: 20px!important;
       border-radius: 14px;
       padding-bottom: 4px;
-      width: 51px;
+      width: 60px;
       height: 28px;
       text-align: center;
       padding: 0px;

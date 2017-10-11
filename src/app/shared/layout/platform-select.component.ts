@@ -1,5 +1,7 @@
 import { Component, Injector, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppService } from '@app/app.service';
+import { Router } from '@angular/router';
 
 @Component({
   templateUrl: './platform-select.component.html',
@@ -9,15 +11,41 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 export class PlatformSelect extends AppComponentBase {
 	@HostBinding('class') private cssClass = '';
 
-  constructor(injector: Injector) {
+  hoverModule: string = '';
+  module: string = '';  
+  modules = [];
+
+  private _dropDown: any;
+
+  constructor(injector: Injector,
+    private _appService: AppService,
+    private _router: Router
+  ) {
     super(injector);
     
-    this.cssClass = this.module.toLowerCase();
+    this.module = _appService.getModule();
+    this.hoverModule = this.module;
+    this.modules = _appService.getModules();
+    _appService.subscribeModuleChange((config) => {
+      this.cssClass = (this.module = config['name']).toLowerCase();    
+    });
   }
-  
-  module: string = 'CRM';
-  modules = ['API', 'CFO', 'CRM', 'Cloud', 'Feeds', 'Forms', 'HR', 'HUB', 'Slice', 'Store'];
-
+ 
   changeModule(event){
+    if (this.module != this.modules[event.itemIndex]) {
+      this.module = this.modules[event.itemIndex];
+      this._appService.switchModule(this.module);
+      this._router.navigate(['app/' + 
+        this.module.toLowerCase() + '/']);   
+    }
+    this._dropDown.close();
+  }
+
+  onHover(module) {
+    this.hoverModule = module;
+  }
+
+  onDropDownInit(event) {
+    this._dropDown = event.component;
   }
 }

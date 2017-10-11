@@ -5,6 +5,7 @@ import { AppComponentBase } from 'shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { SubscriptionStartType } from "@shared/AppEnums";
+import { AppService } from './app.service';
 import { AppConsts } from '@shared/AppConsts';
 import * as moment from 'moment';
 
@@ -22,6 +23,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
         viewContainerRef: ViewContainerRef,
         private _chatSignalrService: ChatSignalrService,
         private _appSessionService: AppSessionService,
+        private _appService: AppService,
         public filtersService: FiltersService
     ) {
         super(injector);
@@ -29,6 +31,8 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     }
 
     ngOnInit(): void {
+        this._appService.initModule();
+
         if (this.appSession.application.features['SignalR']) {
             SignalRHelper.initSignalR(() => { this._chatSignalrService.init(); });
         }

@@ -6,11 +6,12 @@ import { CashflowComponent } from './cashflow/components/main/cashflow.component
 @NgModule({
     imports: [
         RouterModule.forChild([
+            { path: '', redirectTo: '/app/cfo/cashflow', pathMatch: 'full' },
             {
-                path: '',
-                children: [
-                    { path: 'cashflow', component: CashflowComponent , data: { permission: 'Pages.Tenant.Dashboard' } }
-                ]
+              path: '',
+              children: [
+                { path: 'cashflow', component: CashflowComponent , data: { permission: 'Pages.Tenant.Dashboard' } }
+              ]
             }
         ])
     ],

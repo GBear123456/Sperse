@@ -6,6 +6,7 @@ import { AppCommonModule } from './shared/common/app-common.module';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
+import { AppService } from './app.service';
 
 import { ImpersonationService } from './crm/users/impersonation.service';
 
@@ -20,6 +21,7 @@ import { ImpersonationService } from './crm/users/impersonation.service';
       BrowserModule
     ],
     providers: [
+      AppService,
       ImpersonationService
     ]
 })
