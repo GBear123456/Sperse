@@ -67,9 +67,6 @@
                 text-align: left;
                 &.dx-total {
                     font-weight:700;
-                    &.startedBalance {
-                        background: #def4fd
-                    }
                     &.income {
                         background: #def9f4
                     }
@@ -77,8 +74,7 @@
                         background: #fee4dc;
                     }
                     &.income,
-                    &.expenses,
-                    &.startedBalance {
+                    &.expenses {
                         cursor: default;
                         text-align: left;
                         padding-left: 20px;
@@ -86,6 +82,14 @@
                             display: none;
                         }
                     }
+                }
+                &:not(.dx-last-cell) {
+                    //display: none;
+                    //min-width: 0 !important;
+                    //width: 0!important;
+                }
+                &.dx-last-cell {
+                    width: 100%
                 }
                 .dx-expand-icon-container {
                     font: inherit;
@@ -117,34 +121,81 @@
                     min-width: 0;
                     width: 0;
                 }
+                &.startedBalance {
+                    font-weight:700;
+                    background: #dff4fe;
+                    padding-left: 20px;
+                    .dx-expand-icon-container {
+                        display: none;
+                    }
+                }
+            }
+            &.startedBalance {
+                td {
+                    font-weight:700;
+                    background: #def4fd;
+                    padding-left: 20px;
+                    .dx-expand-icon-container {
+                        display: none;
+                    }
+                }
+            }
+            &.reconciliation {
+                td {
+                    font-weight: 700;
+                    background: #eff9fe
+                }
             }
         }
     }
 
-    .dx-bottom-border tr:last-child td {
-        background: #00aff4;
-        color: #fff;
-        font-weight: 700;
+    .dx-pivotgrid-area-data {
+        tr.reconciliation td {
+            background: #ecf7fc;
+            color: #a9b2ba;
+        }
     }
 
     .dx-pivotgrid-area {
-        td {
-            color: #000;
-            &.dx-total {
+        tr {
+            &.startedBalance {
+                td {
+                    &.startedBalanceItem {
+                        background: #d9f0fa
+                    }
+                    background: #d9f0fa;
+                    & + td:not(.startedBalanceItem) {
+                        display: none;
+                    }
+                }
+            }
+            td {
+                color: #000;
+                &.dx-total {
+                    &.income {
+                        background: #d9f5f0;
+                    }
+                    &.expenses {
+                        background: #f9e1da;
+                    }
+                }
+                &.dx-grandtotal {
+                    background: #00aff4;
+                    color: #fff;
+                    font-weight: 700;
+                }
+                &.reconciliation {
+                    font-weight: 700;
+                }
                 &.startedBalance {
-                    background: #d8f0fa;
+                    background: #d9f0fa;
                     & + td:not(.startedBalance) {
                         display: none;
                     }
                 }
-                &.income {
-                    background: #d9f5f0;
-                }
-                &.expenses {
-                    background: #f9e1da;
-                }
             }
         }
+
     }
 
     .dx-total,
