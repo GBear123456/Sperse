@@ -6,15 +6,27 @@ import { Subject } from 'rxjs/Subject';
 export class AppService {
 	private _config: Subject<Object>;
   private _subscribers: Array<Subscription> = [];
+  private _modules = ['API', 'CFO', 'CRM', 'Cloud', 'Feeds', 'Forms', 'HR', 'HUB', 'Slice', 'Store'];
+  private _configs = {};
 
   private readonly MODULE_DEFAULT = 'CRM';
 
 	constructor() {
-		this._config = new Subject<Object>();    
+		this._config = new Subject<Object>();   
+
+    //!!VP should be considered to use lazy loading 
+    this._configs['CRM'] = require('./crm/module.config.json');
+    this._configs['CFO'] = require('./cfo/module.config.json');
+/*
+    ['CRM', 'CFO'].forEach((name) => {
+      this._configs[name] = require('./' + 
+        name.toLowerCase() + '/module.config.json');
+    });
+*/
 	}
 
   getModules() {
-    return ['API', 'CFO', 'CRM', 'Cloud', 'Feeds', 'Forms', 'HR', 'HUB', 'Slice', 'Store'];
+    return this._modules;
   }
 
   getModule() {
@@ -27,9 +39,7 @@ export class AppService {
   }
 
 	switchModule(name: string) {
-		this._config.next(require('./' +
-      name.toLowerCase() + '/module.config.json'
-    ));
+    this._config.next(this._configs[name]);
 	}	
 
 	subscribeModuleChange(callback: (config: Object) => any) {

@@ -5,6 +5,7 @@
   "angular-cli": {},
   "scripts": {
     "ng": "ng",
+    "prod": "ng build -prod --aot=false",
     "start": "ng serve --host 0.0.0.0 --port 7200 7201 --disable-host-check",
     "hmr": "ng serve --host 0.0.0.0 --port 7200 7201 --hmr -e=hmr",
     "test": "ng test",
