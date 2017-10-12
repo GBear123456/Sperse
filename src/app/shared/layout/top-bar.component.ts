@@ -15,7 +15,7 @@ import { AppService } from '@app/app.service';
   selector: 'top-bar'
 })
 export class TopBarComponent extends AppComponentBase {
-  config: any;
+  config: any = {};
   menu: PanelMenu = <PanelMenu>{
     items: []
   };
@@ -59,7 +59,9 @@ export class TopBarComponent extends AppComponentBase {
   }
 
   showMenuItem(item, index): boolean {
-    if (item.permissionName === 'Pages.Administration.Tenant.SubscriptionManagement' && this._appSessionService.tenant && !this._appSessionService.tenant.edition) {
+    if (item.permissionName === 'Pages.Administration.Tenant.SubscriptionManagement' 
+      && this._appSessionService.tenant && !this._appSessionService.tenant.edition
+    ) {
         return false;
     }
     return this.checkMenuItemPermission(item);
