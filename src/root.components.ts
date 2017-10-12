@@ -79,13 +79,15 @@ export class AppRootComponent {
 	) {}
 
   ngOnInit() {
-    this._tenantSettings.getIntegrationsSettings().subscribe((settings) => {
-      if (settings && settings.googleMapsJavascriptApiKey)
-        this.parent.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', settings.googleMapsJavascriptApiKey));
-    });
+    if (this.SS.tenant) {
+      this._tenantSettings.getIntegrationsSettings().subscribe((settings) => {
+        if (settings && settings.googleMapsJavascriptApiKey)
+          this.parent.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', settings.googleMapsJavascriptApiKey));
+      });
 
-  	//tenant specific custom css
-		this.SS.tenant && this.SS.tenant.customCssId && this.parent.addStyleSheet('TenantCustomCss',
-			AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + this.SS.tenant.customCssId);
+    	//tenant specific custom css
+		  this.SS.tenant.customCssId && this.parent.addStyleSheet('TenantCustomCss',
+			  AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + this.SS.tenant.customCssId);
+    }
   }    
 }
