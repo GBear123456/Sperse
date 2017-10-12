@@ -5,338 +5,331 @@ import { GroupbyItem } from '../../models/groupbyItem';
 import { DxPivotGridComponent } from 'devextreme-angular';
 
 @Component({
-  selector: 'app-cashflow-table',
-  templateUrl: './cashflow-table.component.html',
-  styleUrls: ['./cashflow-table.component.less'],
-  providers: [ CashflowService ]
+    selector: 'app-cashflow-table',
+    templateUrl: './cashflow-table.component.html',
+    styleUrls: ['./cashflow-table.component.less'],
+    providers: [CashflowService]
 })
 
 export class CashflowTableComponent implements OnInit {
-  cashflowService: CashflowService;
-  operations: Operation[];
-  operationsSource: any;
-  groupInterval: string;
-  /** posible groupIntervals year, quarter, month, dayofweek, day */
-  groupbyItems: GroupbyItem[] = [
-    {
-      'groupInterval': 'year',
-      'optionText': 'YEARS',
-      'customizeTextFunction': this.getYearHeaderCustomizer,
-      'historicalSelectionFunction': this.getYearHistoricalSelector,
-      'historicalCustomizerFunction': this.getYearHistoricalCustomizer
-    },
-    {
-      'groupInterval': 'quarter',
-      'optionText': 'QUARTERS',
-      'customizeTextFunction': this.getQuarterHeaderCustomizer,
-      'historicalSelectionFunction': this.getQuarterHistoricalSelector,
-      'historicalCustomizerFunction': this.getQuarterHistoricalCustomizer
-    },
-    {
-      'groupInterval': 'month',
-      'optionText': 'MONTHS',
-      'customizeTextFunction': this.getMonthHeaderCustomizer,
-      'historicalSelectionFunction': this.getMonthHistoricalSelector,
-      'historicalCustomizerFunction': this.getMonthHistoricalCustomizer
-    },
-    /** @todo implement week functionality that is not posible in pivot grid by default */
-    // {
-    //   'groupInterval': 'dayOfWeek',
-    //   'optionText': 'WEEKS',
-    //   'customizeTextFunction': this.getWeekHeaderCustomizer,
-    //   'historicalSelectionFunction': this.getWeekHistoricalSelector,
-    //   'historicalCustomizerFunction': this.getWeekHistoricalCustomizer
-    // },
-    /** @todo implement the day interval in short long future */
-    // {
-    //   'groupInterval': 'day',
-    //   'optionText': 'DAYS',
-    //   'customizeTextFunction': this.getDayHeaderCustomizer,
-    //   'historicalSelectionFunction': this.getDayHistoricalSelector,
-    //   'historicalCustomizerFunction': this.getDayHistoricalCustomizer
-    // }
-  ];
-  tableFields: any = [
-    {
-      caption: 'Cash Starting Balances',
-      area: 'row',
-      areaIndex: 0,
-      width: 120,
-      showTotals: false,
-      expanded: true,
-      // isMeasure: false,
-      // allowExpand: false,
-      dataField: 'a',
-      // dataType: 'string',
-      customizeText: function() {
-        return 'CASH STARTING BALANCES';
-      }
-    },
-    {
-      caption: 'Type',
-      width: 120,
-      area: 'row',
-      areaIndex: 0,
-      expanded: true,
-      allowExpandAll: false,
-      allowExpand: false,
-      dataField: 'type',
-      rowHeaderLayout: 'tree',
-      showTotals: true,
-      /** @todo find out how to remove total from the total field */
-      customizeText: function(cellInfo) {
-         return cellInfo.valueText === '0' ? 'TOTAL CASH INFLOWS' : 'TOTAL CASH OURFLOWS';
-      },
-      selector: function(data) {
-          return data.type === 'income' ? 0 : 1;
-      }
-    },
-    {
-      caption: 'Group',
-      width: 120,
-      area: 'row',
-      areaIndex: 1,
-      dataField: 'group',
-      expanded: false,
-      showTotals: true,
-      rowHeaderLayout: 'tree'
-    },
-    {
-      caption: 'Subgroup',
-      width: 120,
-      showTotals: false,
-      area: 'row',
-      areaIndex: 2,
-      dataField: 'subgroup',
-      rowHeaderLayout: 'tree'
-    },
-    {
-      // caption: 'Name',
-      width: 120,
-      area: 'row',
-      areaIndex: 3,
-      showTotals: false,
-      dataField: 'name',
-      rowHeaderLayout: 'tree'
-    },
-    {
-      caption: 'Historical',
-      area: 'column',
-      showTotals: false,
-      selector: this.groupbyItems[0].historicalSelectionFunction(),
-      customizeText: this.groupbyItems[0].historicalCustomizerFunction(),
-      expanded: true,
-      allowExpand: false
-    },
-    {
-      caption: 'Amount',
-      dataField: 'amount',
-      dataType: 'number',
-      summaryType: 'sum',
-      format: 'currency',
-      area: 'data',
-      showColumnTotals: false
-    },
-    {
-      caption: 'Date',
-      dataField: 'date',
-      dataType: 'date',
-      area: 'column',
-      groupInterval: 'year',
-      customizeText: this.getYearHeaderCustomizer(),
-      visible: true
-    },
-    {
-      caption: 'Date',
-      dataField: 'date',
-      dataType: 'date',
-      area: 'column',
-      groupInterval: 'quarter',
-      customizeText: this.getQuarterHeaderCustomizer(),
-      visible: true
-    },
-    {
-      caption: 'Date',
-      dataField: 'date',
-      dataType: 'date',
-      area: 'column',
-      groupInterval: 'month',
-      customizeText: this.getMonthHeaderCustomizer(),
-      visible: true
-    },
-    {
-      caption: 'Projected',
-      area: 'column',
-      showTotals: false,
-      selector: function(data) {const date = new Date(data.date);
-          const current = new Date();
-          let result;
-          // if (date.getMonth() + date.getFullYear() === current.getMonth() + current.getFullYear()) {
-              if (current.getDay() > date.getDay()) {
-                  result = 0;
-              } else {
-                  result = 1;
-              }
-          // }
-          return result;
-      },
-      customizeText: function(cellInfo) {
-          const cellValue = (cellInfo.value === 1 ? 'PROJECTED' : 'MTD');
-          const cssMarker = ' @css:{projectedField ' + (cellInfo.value === 1 ? 'projected' : 'mtd') + '}';
-          return cellValue + cssMarker;
-      },
-      expanded: true,
-      allowExpand: false
-    },
-    /** @todo implement the week interval in the long future */
-    // {
-    //   caption: 'Date',
-    //   dataField: 'date',
-    //   dataType: 'date',
-    //   area: 'column',
-    //   groupInterval: 'dayOfWeek',
-    //   customizeText: this.getWeekHeaderCustomizer(),
-    //   visible: true
-    // },
-    /** @todo implement the day interval in short long future */
-    // {
-    //   caption: 'Date',
-    //   dataField: 'date',
-    //   dataType: 'date',
-    //   area: 'column',
-    //   groupInterval: 'day',
-    //   customizeText: this.getDayHeaderCustomizer(),
-    //   visible: true
-    // }
-  ];
-  cssClasses: any = {
-      'historical': {
-          'groupClass': 'historicalField',
-          'specificClasses': [
-              'historical',
-              'current',
-              'forecast'
-          ]
-      },
-      'date': {
-          'groupClass': 'dateField',
-          'specificClasses': [
-              'year',
-              'quarter',
-              'month'
-          ]
-      },
-      'projected': {
-          'groupClass': 'dateField',
-          'specificClasses': [
-              'mtd',
-              'projected'
-          ]
-      }
-  };
-  cssMarker = ' @css';
-  constructor(CashflowService: CashflowService) {
-      this.updateDateFields('year');
-      this.cashflowService = CashflowService;
-      this.operations = this.cashflowService.getOperations();
-      this.operationsSource = this.getOperationsSource();
-  }
+    cashflowService: CashflowService;
+    operations: Operation[];
+    operationsSource: any;
+    groupInterval: string;
+    /** posible groupIntervals year, quarter, month, dayofweek, day */
+    groupbyItems: GroupbyItem[] = [
+        {
+            'groupInterval': 'year',
+            'optionText': 'YEARS',
+            'customizeTextFunction': this.getYearHeaderCustomizer,
+            'historicalSelectionFunction': this.getYearHistoricalSelector,
+            'historicalCustomizerFunction': this.getYearHistoricalCustomizer
+        },
+        {
+            'groupInterval': 'quarter',
+            'optionText': 'QUARTERS',
+            'customizeTextFunction': this.getQuarterHeaderCustomizer,
+            'historicalSelectionFunction': this.getQuarterHistoricalSelector,
+            'historicalCustomizerFunction': this.getQuarterHistoricalCustomizer
+        },
+        {
+            'groupInterval': 'month',
+            'optionText': 'MONTHS',
+            'customizeTextFunction': this.getMonthHeaderCustomizer,
+            'historicalSelectionFunction': this.getMonthHistoricalSelector,
+            'historicalCustomizerFunction': this.getMonthHistoricalCustomizer
+        },
+        /** @todo implement week functionality that is not posible in pivot grid by default */
+        // {
+        //   'groupInterval': 'dayOfWeek',
+        //   'optionText': 'WEEKS',
+        //   'customizeTextFunction': this.getWeekHeaderCustomizer,
+        //   'historicalSelectionFunction': this.getWeekHistoricalSelector,
+        //   'historicalCustomizerFunction': this.getWeekHistoricalCustomizer
+        // },
+        /** @todo implement the day interval in short long future */
+        // {
+        //   'groupInterval': 'day',
+        //   'optionText': 'DAYS',
+        //   'customizeTextFunction': this.getDayHeaderCustomizer,
+        //   'historicalSelectionFunction': this.getDayHistoricalSelector,
+        //   'historicalCustomizerFunction': this.getDayHistoricalCustomizer
+        // }
+    ];
+    tableFields: any = [
+        {
+            caption: 'Cash Starting Balances',
+            area: 'row',
+            areaIndex: 0,
+            width: 120,
+            showTotals: false,
+            expanded: true,
+            // isMeasure: false,
+            // allowExpand: false,
+            dataField: 'a',
+            // dataType: 'string',
+            customizeText: function () {
+                return 'CASH STARTING BALANCES';
+            }
+        },
+        {
+            caption: 'Type',
+            width: 120,
+            area: 'row',
+            areaIndex: 0,
+            expanded: true,
+            allowExpandAll: false,
+            allowExpand: false,
+            dataField: 'type',
+            rowHeaderLayout: 'tree',
+            showTotals: true,
+            /** @todo find out how to remove total from the total field */
+            customizeText: function (cellInfo) {
+                return cellInfo.valueText === '0' ? 'TOTAL CASH INFLOWS' : 'TOTAL CASH OURFLOWS';
+            },
+            selector: function (data) {
+                return data.type === 'income' ? 0 : 1;
+            }
+        },
+        {
+            caption: 'Group',
+            width: 120,
+            area: 'row',
+            areaIndex: 1,
+            dataField: 'group',
+            expanded: false,
+            showTotals: true,
+            rowHeaderLayout: 'tree'
+        },
+        {
+            caption: 'Subgroup',
+            width: 120,
+            showTotals: false,
+            area: 'row',
+            areaIndex: 2,
+            dataField: 'subgroup',
+            rowHeaderLayout: 'tree'
+        },
+        {
+            // caption: 'Name',
+            width: 120,
+            area: 'row',
+            areaIndex: 3,
+            showTotals: false,
+            dataField: 'name',
+            rowHeaderLayout: 'tree'
+        },
+        {
+            caption: 'Historical',
+            area: 'column',
+            showTotals: false,
+            selector: this.groupbyItems[0].historicalSelectionFunction(),
+            customizeText: this.groupbyItems[0].historicalCustomizerFunction(),
+            expanded: true,
+            allowExpand: false
+        },
+        {
+            caption: 'Amount',
+            dataField: 'amount',
+            dataType: 'number',
+            summaryType: 'sum',
+            format: 'currency',
+            area: 'data',
+            showColumnTotals: true,
+            calculateSummaryValue: function (summaryCell) {
+                /** changed the ending cash position result using internal devexpress methods to calculate the
+                 *  ending balances with the accounting of the starting balances
+                 */
+                /** check if current cell is the grand total cell */
+                if (summaryCell.prev() !== null &&
+                    summaryCell.grandTotal('row').value() === summaryCell.value()) {
+                    let sum = summaryCell.value();
+                    let prevSummaryCell = summaryCell.prev();
+                    sum += prevSummaryCell.value();
+                    /** add all previous grand totals cells values and redefine the previous cell */
+                    while (prevSummaryCell.prev() !== null) {
+                        sum += prevSummaryCell.prev().value();
+                        prevSummaryCell = prevSummaryCell.prev();
+                    }
+                    return sum;
+                }
+                return summaryCell.value();
+            }
+        },
+        {
+            caption: 'Date',
+            dataField: 'date',
+            dataType: 'date',
+            area: 'column',
+            groupInterval: 'year',
+            customizeText: this.getYearHeaderCustomizer(),
+            visible: true,
+            summaryDisplayMode: 'percentVariation',
+            // calculateSummaryValue: function(summaryCell) {
+            //     console.log(summaryCell);
+            // }
+        },
+        {
+            caption: 'Date',
+            dataField: 'date',
+            dataType: 'date',
+            area: 'column',
+            groupInterval: 'quarter',
+            customizeText: this.getQuarterHeaderCustomizer(),
+            visible: true
+        },
+        {
+            caption: 'Date',
+            dataField: 'date',
+            dataType: 'date',
+            area: 'column',
+            groupInterval: 'month',
+            customizeText: this.getMonthHeaderCustomizer(),
+            visible: true
+        },
+        {
+            caption: 'Projected',
+            area: 'column',
+            showTotals: false,
+            selector: function (data) {
+                const date = new Date(data.date);
+                const current = new Date();
+                let result;
+                // if (date.getMonth() + date.getFullYear() === current.getMonth() + current.getFullYear()) {
+                if (current.getDay() > date.getDay()) {
+                    result = 0;
+                } else {
+                    result = 1;
+                }
+                // }
+                return result;
+            },
+            customizeText: function (cellInfo) {
+                const cellValue = (cellInfo.value === 1 ? 'PROJECTED' : 'MTD');
+                const cssMarker = ' @css:{projectedField ' + (cellInfo.value === 1 ? 'projected' : 'mtd') + '}';
+                return cellValue + cssMarker;
+            },
+            expanded: true,
+            allowExpand: false
+        },
+        /** @todo implement the week interval in the long future */
+        // {
+        //   caption: 'Date',
+        //   dataField: 'date',
+        //   dataType: 'date',
+        //   area: 'column',
+        //   groupInterval: 'dayOfWeek',
+        //   customizeText: this.getWeekHeaderCustomizer(),
+        //   visible: true
+        // },
+        /** @todo implement the day interval in short long future */
+        // {
+        //   caption: 'Date',
+        //   dataField: 'date',
+        //   dataType: 'date',
+        //   area: 'column',
+        //   groupInterval: 'day',
+        //   customizeText: this.getDayHeaderCustomizer(),
+        //   visible: true
+        // }
+    ];
+    cssClasses: any = {
+        'historical': {
+            'groupClass': 'historicalField',
+            'specificClasses': [
+                'historical',
+                'current',
+                'forecast'
+            ]
+        },
+        'date': {
+            'groupClass': 'dateField',
+            'specificClasses': [
+                'year',
+                'quarter',
+                'month'
+            ]
+        },
+        'projected': {
+            'groupClass': 'dateField',
+            'specificClasses': [
+                'mtd',
+                'projected'
+            ]
+        }
+    };
+    cssMarker = ' @css';
 
-  ngOnInit() {}
-
-  /**
-   * Update the fields array with the date fields with different date intervals like year, quarter and month
-   * @param startedGroupInterval the groupInterval from wich we should start show headers
-   */
-  updateDateFields(startedGroupInterval) {
-
-    /** remove date fields from table fields to update with the proper */
-    this.hideDateFields();
-
-    /** update date fields for table */
-    let startedIntervalAdded = false;
-    for (const group_by_item of this.groupbyItems) {
-      if (group_by_item['groupInterval'] === startedGroupInterval || startedIntervalAdded) {
-        const dateField = this.getDateFieldByInterval(group_by_item['groupInterval']);
-        dateField.visible = true;
-        startedIntervalAdded = true;
-      }
+    constructor(CashflowService: CashflowService) {
+        this.updateDateFields('year');
+        this.cashflowService = CashflowService;
+        this.operations = this.cashflowService.getOperations();
+        this.operationsSource = this.getOperationsSource();
     }
-  };
 
-  hideDateFields() {
-    for (const group_by_item of this.groupbyItems) {
-        const dateField = this.getDateFieldByInterval(group_by_item['groupInterval']);
-        dateField.visible = false;
+    ngOnInit() {
     }
-  };
 
-  getOperationsSource() {
-      return {
-          fields: this.tableFields,
-          store: this.operations
-      };
-  }
+    /**
+     * Update the fields array with the date fields with different date intervals like year, quarter and month
+     * @param startedGroupInterval the groupInterval from wich we should start show headers
+     */
+    updateDateFields(startedGroupInterval) {
 
-  /**
-   * @returns {function(any): string}
-   */
-  getYearHeaderCustomizer() {
-      return function(cellInfo) {
-          /** @todo find out how to inject the this.cssMarker instead of hardcoded ' @css' */
-          return cellInfo.value + ' @css:{dateField year}';
-      };
-  }
+        /** remove date fields from table fields to update with the proper */
+        this.hideDateFields();
 
-  getYearHistoricalCustomizer() {
-      return function(cellInfo) {
-          const yearPeriods = [
-              'Historical Cashflows - Prior Years',
-              'Cashflow - Forecast'
-          ];
-          const cssClasses = [
-              'historical',
-              'forecast'
-          ];
-          return yearPeriods[cellInfo.value].toUpperCase() + ' @css:{historicalField ' + cssClasses[cellInfo.value] + '}';
-      };
-  }
+        /** update date fields for table */
+        let startedIntervalAdded = false;
+        for (const group_by_item of this.groupbyItems) {
+            if (group_by_item['groupInterval'] === startedGroupInterval || startedIntervalAdded) {
+                const dateField = this.getDateFieldByInterval(group_by_item['groupInterval']);
+                dateField.visible = true;
+                startedIntervalAdded = true;
+            }
+        }
+    }
 
-  getMonthHistoricalCustomizer() {
-      return function(cellInfo) {
-          const month_periods = [
-              'Historical Cashflows - Current Year',
-              'Current Period',
-              'Cashflow - Forecast'
-          ];
-          const cssClasses = [
-              'historical',
-              'current',
-              'forecast'
-          ];
-          /** @todo find out how to inject the this.cssMarker instead of hardcoded ' @css' */
-          return month_periods[cellInfo.value].toUpperCase() + ' @css:{historicalField ' + cssClasses[cellInfo.value] + '}';
-      };
-  }
+    hideDateFields() {
+        for (const group_by_item of this.groupbyItems) {
+            const dateField = this.getDateFieldByInterval(group_by_item['groupInterval']);
+            dateField.visible = false;
+        }
+    };
 
-  getWeekHistoricalCustomizer() {
-      return function(cellInfo) {
-          const weekPeriods = [
-              'Historical Cashflows - Current Year',
-              'Current Period',
-              'Cashflow - Forecast'
-          ];
-          const cssClasses = [
-              'historical',
-              'current',
-              'forecast'
-          ];
-          return weekPeriods[cellInfo.value].toUpperCase() + ' @css:{historicalField ' + cssClasses[cellInfo.value] + '}';
-      };
-  };
+    getOperationsSource() {
+        return {
+            fields: this.tableFields,
+            store: this.operations
+        };
+    }
 
-  getDayHistoricalCustomizer() {
-        return function(cellInfo) {
+    /**
+     * @returns {function(any): string}
+     */
+    getYearHeaderCustomizer() {
+        return function (cellInfo) {
+            /** @todo find out how to inject the this.cssMarker instead of hardcoded ' @css' */
+            return cellInfo.value + ' @css:{dateField year}';
+        };
+    }
+
+    getYearHistoricalCustomizer() {
+        return function (cellInfo) {
+            const yearPeriods = [
+                'Historical Cashflows - Prior Years',
+                'Cashflow - Forecast'
+            ];
+            const cssClasses = [
+                'historical',
+                'forecast'
+            ];
+            return yearPeriods[cellInfo.value].toUpperCase() + ' @css:{historicalField ' + cssClasses[cellInfo.value] + '}';
+        };
+    }
+
+    getMonthHistoricalCustomizer() {
+        return function (cellInfo) {
             const month_periods = [
                 'Historical Cashflows - Current Year',
                 'Current Period',
@@ -352,196 +345,277 @@ export class CashflowTableComponent implements OnInit {
         };
     }
 
-  getYearHistoricalSelector(): any {
-      return function(data) {
-          const current_year = new Date().getFullYear();
-          const itemYear = new Date(data.date).getFullYear();
-          return current_year < itemYear ? 1 : 0;
-      };
-  }
-
-  getMonthHistoricalSelector(): any {
-      return function(data) {
-        const currentMonth = new Date().getMonth();
-        const itemMonth = new Date(data.date).getMonth();
-        let result;
-        if (currentMonth < itemMonth) {
-            result = 2;
-        } else if (currentMonth === itemMonth) {
-            result = 1;
-        } else {
-            result = 0;
-        }
-        return result;
-      };
-  }
-
-  getWeekHistoricalSelector(): any {
-      return function(data) {
-          const currentWeek = new Date().getDay();
-          const itemWeek = new Date(data.date).getDay();
-          let result;
-          if (currentWeek < itemWeek) {
-              result = 2;
-          } else if (currentWeek === itemWeek) {
-              result = 1;
-          } else {
-              result = 0;
-          }
-          return result;
-      };
-  }
-
-  getDayHistoricalSelector(): any {
-      return function(data) {
-          const currentDay = new Date().getDate();
-          const itemDay = new Date(data.date).getDate();
-          let result;
-          if (currentDay < itemDay) {
-              result = 2;
-          } else if (currentDay === itemDay) {
-              result = 1;
-          } else {
-              result = 0;
-          }
-          return result;
-      };
-  }
-
-  /**
-  * @returns string - the text of the header and the mark for the cellPrepared function with css classes that should be defined to fields
-  */
-  getQuarterHistoricalCustomizer() {
-    return function(cellInfo) {
-        const quarters_periods = [
-            'Historical Cashflows - Current Year',
-            'Current Period',
-            'Cashflow - Forecast'
-        ];
-        const cssClasses = [
-            'historical',
-            'current',
-            'forecast'
-        ];
-        return quarters_periods[cellInfo.value].toUpperCase() + ' @css:{historicalField ' + cssClasses[cellInfo.value] + '}';
+    getWeekHistoricalCustomizer() {
+        return function (cellInfo) {
+            const weekPeriods = [
+                'Historical Cashflows - Current Year',
+                'Current Period',
+                'Cashflow - Forecast'
+            ];
+            const cssClasses = [
+                'historical',
+                'current',
+                'forecast'
+            ];
+            return weekPeriods[cellInfo.value].toUpperCase() + ' @css:{historicalField ' + cssClasses[cellInfo.value] + '}';
+        };
     };
-  }
 
-  getQuarterHistoricalSelector(): any {
-    return function(data) {
-        function getQuarter(date) {
-            date = date || new Date(); // If no date supplied, use today
-            const quartersArr = [1, 2, 3, 4];
-            return quartersArr[Math.floor(date.getMonth() / 3)];
-        }
-        const current_quarter = getQuarter(new Date());
-        const item_quarter = getQuarter(new Date(data.date));
-        let result;
-        if (current_quarter < item_quarter) {
-            result = 2;
-        } else if (current_quarter === item_quarter) {
-            result = 1;
-        } else {
-            result = 0;
-        }
-        return result;
-    };
-  }
+    getDayHistoricalCustomizer() {
+        return function (cellInfo) {
+            const month_periods = [
+                'Historical Cashflows - Current Year',
+                'Current Period',
+                'Cashflow - Forecast'
+            ];
+            const cssClasses = [
+                'historical',
+                'current',
+                'forecast'
+            ];
+            /** @todo find out how to inject the this.cssMarker instead of hardcoded ' @css' */
+            return month_periods[cellInfo.value].toUpperCase() + ' @css:{historicalField ' + cssClasses[cellInfo.value] + '}';
+        };
+    }
 
-  getQuarterHeaderCustomizer(): any {
-    return function(cellInfo) {
-        return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField quarter}';
-    };
-  }
+    getYearHistoricalSelector(): any {
+        return function (data) {
+            const current_year = new Date().getFullYear();
+            const itemYear = new Date(data.date).getFullYear();
+            return current_year < itemYear ? 1 : 0;
+        };
+    }
 
-  getMonthHeaderCustomizer(): any {
-      return function(cellInfo) {
-          return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField month}';
-      };
-  }
+    getMonthHistoricalSelector(): any {
+        return function (data) {
+            const currentMonth = new Date().getMonth();
+            const itemMonth = new Date(data.date).getMonth();
+            let result;
+            if (currentMonth < itemMonth) {
+                result = 2;
+            } else if (currentMonth === itemMonth) {
+                result = 1;
+            } else {
+                result = 0;
+            }
+            return result;
+        };
+    }
 
-  getWeekHeaderCustomizer(): any {
-      return function(cellInfo) {
-          return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField week}';
-      };
-  }
+    getWeekHistoricalSelector(): any {
+        return function (data) {
+            const currentWeek = new Date().getDay();
+            const itemWeek = new Date(data.date).getDay();
+            let result;
+            if (currentWeek < itemWeek) {
+                result = 2;
+            } else if (currentWeek === itemWeek) {
+                result = 1;
+            } else {
+                result = 0;
+            }
+            return result;
+        };
+    }
 
-  getDayHeaderCustomizer(): any {
-      return function(cellInfo) {
-          return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField day}';
-      };
-  }
-
-  getDateFieldByInterval(dateInterval): any {
-     return this.tableFields.find(
-         field => field['groupInterval'] === dateInterval
-     );
-  }
-  getHistoricField(): Object {
-      return this.tableFields.find(
-          field => field['caption'] === 'Historical'
-      );
-  }
-
-  changeGroupBy(event) {
-    const startedGroupInterval = event.value.groupInterval;
-    this.updateDateFields(startedGroupInterval);
+    getDayHistoricalSelector(): any {
+        return function (data) {
+            const currentDay = new Date().getDate();
+            const itemDay = new Date(data.date).getDate();
+            let result;
+            if (currentDay < itemDay) {
+                result = 2;
+            } else if (currentDay === itemDay) {
+                result = 1;
+            } else {
+                result = 0;
+            }
+            return result;
+        };
+    }
 
     /**
-     * Change historical field for different date intervals
+     * @returns string - the text of the header and the mark for the cellPrepared function with css classes that should be defined to fields
      */
-    const historical_field = this.getHistoricField();
-    historical_field['selector'] = event.value.historicalSelectionFunction();
-    historical_field['customizeText'] = event.value.historicalCustomizerFunction();
+    getQuarterHistoricalCustomizer() {
+        return function (cellInfo) {
+            const quarters_periods = [
+                'Historical Cashflows - Current Year',
+                'Current Period',
+                'Cashflow - Forecast'
+            ];
+            const cssClasses = [
+                'historical',
+                'current',
+                'forecast'
+            ];
+            return quarters_periods[cellInfo.value].toUpperCase() + ' @css:{historicalField ' + cssClasses[cellInfo.value] + '}';
+        };
+    }
 
-    this.operationsSource = this.getOperationsSource();
-  }
+    getQuarterHistoricalSelector(): any {
+        return function (data) {
+            function getQuarter(date) {
+                date = date || new Date(); // If no date supplied, use today
+                const quartersArr = [1, 2, 3, 4];
+                return quartersArr[Math.floor(date.getMonth() / 3)];
+            }
 
-  cutCssFromValue(text) {
-      return text.slice(text.indexOf(this.cssMarker) + this.cssMarker.length + 2, text.length - 1);
-  }
-  onContentReady(event) {}
-  /**
-   * whether or not the cell is balance sheet header
-   * @param cellObj - the object that pivot grid passes to the onCellPrepared event
-   * return bool
-   */
-  isStartingBalanceHeaderColumn(cellObj) {
-      return cellObj.area === 'row' && cellObj.cell.type === 'T' && cellObj.cell.path.length === 1;
-  }
-  /**
-   * whether or not the cell is balance sheet data cell
-   * @param cellObj - the object that pivot grid passes to the onCellPrepared event
-   * return bool
-  */
-  isStartingBalanceDataColumn(cellObj) {
-      return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined && cellObj.cell.rowPath.length === 1;
-  }
-  /**
-   * whether or not the cell is income or expenses header cell
-   * @param cellObj - the object that pivot grid passes to the onCellPrepared event
-   * return bool
-   */
-  isIncomeOrExpensesHeaderCell(cellObj) {
-      return cellObj.area === 'row' && cellObj.cell.type === 'T' && cellObj.cell.path.length === 2;
-  }
+            const current_quarter = getQuarter(new Date());
+            const item_quarter = getQuarter(new Date(data.date));
+            let result;
+            if (current_quarter < item_quarter) {
+                result = 2;
+            } else if (current_quarter === item_quarter) {
+                result = 1;
+            } else {
+                result = 0;
+            }
+            return result;
+        };
+    }
 
-  /**
-   * whether or not the cell is income or expenses data cell
-   * @param cellObj - the object that pivot grid passes to the onCellPrepared event
-   * return bool
-   */
-  isIncomeOrExpensesDataCell(cellObj) {
-      return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined && cellObj.cell.rowPath.length === 2;
-  }
-  onCellPrepared(e) {
+    getQuarterHeaderCustomizer(): any {
+        return function (cellInfo) {
+            return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField quarter}';
+        };
+    }
+
+    getMonthHeaderCustomizer(): any {
+        return function (cellInfo) {
+            return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField month}';
+        };
+    }
+
+    getWeekHeaderCustomizer(): any {
+        return function (cellInfo) {
+            return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField week}';
+        };
+    }
+
+    getDayHeaderCustomizer(): any {
+        return function (cellInfo) {
+            return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField day}';
+        };
+    }
+
+    getDateFieldByInterval(dateInterval): any {
+        return this.tableFields.find(
+            field => field['groupInterval'] === dateInterval
+        );
+    }
+
+    getHistoricField(): Object {
+        return this.tableFields.find(
+            field => field['caption'] === 'Historical'
+        );
+    }
+
+    changeGroupBy(event) {
+        const startedGroupInterval = event.value.groupInterval;
+        this.updateDateFields(startedGroupInterval);
+
+        /**
+         * Change historical field for different date intervals
+         */
+        const historical_field = this.getHistoricField();
+        historical_field['selector'] = event.value.historicalSelectionFunction();
+        historical_field['customizeText'] = event.value.historicalCustomizerFunction();
+
+        this.operationsSource = this.getOperationsSource();
+    }
+
+    cutCssFromValue(text) {
+        return text.slice(text.indexOf(this.cssMarker) + this.cssMarker.length + 2, text.length - 1);
+    }
+
+    onContentReady(event) {
+    }
+
+    /**
+     * whether or not the cell is balance sheet header
+     * @param cellObj - the object that pivot grid passes to the onCellPrepared event
+     * return bool
+     */
+    isStartingBalanceHeaderColumn(cellObj) {
+        return cellObj.area === 'row' && cellObj.cell.type === 'T' && cellObj.cell.path.length === 1;
+    }
+
+    /**
+     * whether or not the cell is balance sheet data cell
+     * @param cellObj - the object that pivot grid passes to the onCellPrepared event
+     * return {boolean}
+     */
+    isStartingBalanceDataColumn(cellObj) {
+        return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined && cellObj.cell.rowPath.length === 1;
+    }
+
+    /**
+     * whether or not the cell is income or expenses header cell
+     * @param cellObj - the object that pivot grid passes to the onCellPrepared event
+     * return {boolean}
+     */
+    isIncomeOrExpensesHeaderCell(cellObj) {
+        return cellObj.area === 'row' && cellObj.cell.type === 'T' && cellObj.cell.path.length === 2;
+    }
+
+    /**
+     * whether or not the cell is income or expenses data cell
+     * @param cellObj - the object that pivot grid passes to the onCellPrepared event
+     * return {boolean}
+     */
+    isIncomeOrExpensesDataCell(cellObj) {
+        return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined && cellObj.cell.rowPath.length === 2;
+    }
+
+    /**
+     * whether or not the cell is grand total label cell
+     * @param cellObj
+     * @returns {boolean}
+     */
+    isGrandTotalLabelCell(cellObj) {
+        return cellObj.cell.type === 'GT';
+    }
+    /**
+     * whether or not the cell is grand total data cell
+     * @param cellObj
+     * @returns {boolean}
+     */
+    isGrandTotalDataCell(cellObj) {
+        return cellObj.cell.rowType === 'GT';
+    }
+
+    /**
+     * whether or not the cell is data cell
+     * @param cellObj
+     * @returns {boolean}
+     */
+    isDataCell(cellObj) {
+        return cellObj.area === 'data';
+    }
+
+    /**
+     * whether the cell is the historical cell
+     * @param cellObj
+     * @returns {boolean}
+     */
+    isHistoricalCell(cellObj) {
+        return cellObj.rowIndex === 0;
+    }
+
+    /**
+     * Event that runs before rendering of every cell of the pivot grid
+     * @param e - the object with the cell info
+     * https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxPivotGrid/Events/#cellPrepared
+     */
+    onCellPrepared(e) {
         /** added css class to start balance row */
-        if ( this.isStartingBalanceHeaderColumn(e) ||
-             this.isStartingBalanceDataColumn(e) ) {
+        if (this.isStartingBalanceHeaderColumn(e) ||
+            this.isStartingBalanceDataColumn(e)) {
             const cssClass = 'startedBalance';
             e.cellElement.addClass(cssClass);
             /** disable collapsing for start balance column */
-            e.cellElement.click(function(event) {
+            e.cellElement.click(function (event) {
                 event.stopImmediatePropagation();
             });
             /** move the row for started balance to the right to get proper view of started balances */
@@ -556,15 +630,14 @@ export class CashflowTableComponent implements OnInit {
             }
         }
         /** added css class to the income and outcomes columns */
-        if ( (this.isIncomeOrExpensesHeaderCell(e)) ||
-            ( this.isIncomeOrExpensesDataCell(e)) ) {
-            console.log(e.cell.text, e);
+        if ((this.isIncomeOrExpensesHeaderCell(e)) ||
+            ( this.isIncomeOrExpensesDataCell(e))) {
             const cssClass = e.rowIndex === 1 ? 'income' : 'expenses';
             e.cellElement.addClass(cssClass);
             /** disable collapsing for income and expenses columns */
             if (this.isIncomeOrExpensesHeaderCell(e)) {
                 e.cellElement.addClass('uppercase');
-                e.cellElement.click(function(event) {
+                e.cellElement.click(function (event) {
                     event.stopImmediatePropagation();
                 });
             }
@@ -589,15 +662,15 @@ export class CashflowTableComponent implements OnInit {
                 // if (fieldName === 'month') {
                 //     console.log(e);
                 //     e.cellElement.click(function(event) {
-                //         event.stopImmediatePropagation();
+                //         event.stopImmediatePropagation();X
                 //     });
                 // }
             }
             /** Historical horizontal header columns */
             /** @todo exclude disabling for current month */
-            if (e.rowIndex === 0) {
+            if (this.isHistoricalCell(e)) {
                 /** disable collapsing for historical columns */
-                e.cellElement.click(function(event) {
+                e.cellElement.click(function (event) {
                     event.stopImmediatePropagation();
                 });
             }
@@ -605,29 +678,21 @@ export class CashflowTableComponent implements OnInit {
         }
 
         /** @todo change logic for reconciliation */
-        /** added reconciliation and starting balances rows to the table */
-        if (e.cell.type === 'GT') {
-            /** clone current row */
-            const clonedRow = e.cellElement.parent().clone();
-            /** added the css class to the current row */
-            clonedRow.find('td').removeClass('dx-grandtotal');
-            clonedRow.addClass('reconciliation');
-            /** find the span inside and change the text to the reconciliation */
-            clonedRow.find('span').text('Reconciliation Differences');
-            /** append the grand total row with the new created reconciliation row to match the mock up */
-            e.cellElement.parent().after(clonedRow);
-            /** adding the starting balance row */
+        /** added reconciliation rows to the table */
+        if (this.isGrandTotalLabelCell(e)) {
+            this.createReconsiliationVerticalRow(e);
         }
 
         /** added reconciliation and starting balances rows to the table data cells */
-        if (e.area === 'data' && e.cell.rowType === 'GT') {
+        if (this.isDataCell(e) && this.isGrandTotalDataCell(e)) {
+            console.log(e);
             /** if the reconciliations and starting balances rows haven't already added */
             if (e.cellElement.parent().is(':last-child')) {
                 /** clone current row for reconciliation */
-                let clonedRow = e.cellElement.parent().clone();
+                const clonedRow = e.cellElement.parent().clone();
                 /** for each child change the text, remove grand total class and add reconciliation class */
                 clonedRow.addClass('reconciliation');
-                clonedRow.children('td').each(function(){
+                clonedRow.children('td').each(function () {
                     $(this).text('$0.00');
                     $(this).removeClass('dx-grandtotal');
                 });
@@ -636,12 +701,24 @@ export class CashflowTableComponent implements OnInit {
         }
 
         /** remove minus sign from negative values */
-        if (e.area === 'data') {
+        if (this.isDataCell(e) && !this.isGrandTotalDataCell(e)) {
             if (e.cell.value < 0) {
                 e.cell.value = Math.abs(e.cell.value);
                 e.cell.text = e.cell.text.replace('-', '');
                 e.cellElement.text(e.cell.text);
             }
         }
-  }
+    }
+
+    createReconsiliationVerticalRow(e) {
+        /** clone current row */
+        let clonedRow = e.cellElement.parent().clone();
+        /** added the css class to the current row */
+        clonedRow.find('td').removeClass('dx-grandtotal');
+        clonedRow.addClass('reconciliation');
+        /** find the span inside and change the text to the reconciliation */
+        clonedRow.find('span').text('Reconciliation Differences');
+        /** append the grand total row with the new created reconciliation row to match the mock up */
+        e.cellElement.parent().after(clonedRow);
+    }
 }
