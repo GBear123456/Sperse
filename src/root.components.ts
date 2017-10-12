@@ -5,6 +5,7 @@ import { DOCUMENT } from '@angular/platform-browser';
 
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { TenantIntegrationsSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 
 /*
 	Root Document Component (Body Selector)
@@ -40,8 +41,15 @@ export class RootComponent implements AfterViewInit {
       value ? 'add': 'remove']('overflow-hidden');
   }
 
+  public addScriptLink(src: String, type: String = "text/javascript"): void {
+		let script = this.document.createElement('script');
+    script.type = type;
+    script.src = src;
+ 		this.document.head.append(script);
+  }
+
 	public addStyleSheet(id: String, href: String, rel: String = 'stylesheet'): void {
-		var link = this.document.createElement('link');
+		let link = this.document.createElement('link');
 		_.mapObject({id: id, href: href, rel: rel}, 
 			(val, key) => {
 				link.setAttribute(key, val);			
@@ -60,17 +68,26 @@ export class RootComponent implements AfterViewInit {
 */
 @Component({
     selector: 'app-root',
-    template:  `<router-outlet></router-outlet>`
+    template:  `<router-outlet></router-outlet>`,
+    providers: [TenantIntegrationsSettingsServiceProxy]
 })
 export class AppRootComponent {
 	constructor (
 		@Inject(AppSessionService) private SS, 
-		@Inject(RootComponent) private parent
+		@Inject(RootComponent) private parent,
+    private _tenantSettings: TenantIntegrationsSettingsServiceProxy
 	) {}
 
-    ngOnInit() {
+  ngOnInit() {
+    if (this.SS.tenant) {
+      this._tenantSettings.getIntegrationsSettings().subscribe((settings) => {
+        if (settings && settings.googleMapsJavascriptApiKey)
+          this.parent.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', settings.googleMapsJavascriptApiKey));
+      });
+
     	//tenant specific custom css
-		this.SS.tenant && this.SS.tenant.customCssId && this.parent.addStyleSheet('TenantCustomCss',
-			AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + this.SS.tenant.customCssId);
-    }    
+		  this.SS.tenant.customCssId && this.parent.addStyleSheet('TenantCustomCss',
+			  AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + this.SS.tenant.customCssId);
+    }
+  }    
 }
