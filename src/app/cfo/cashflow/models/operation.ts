@@ -3,7 +3,6 @@ export class Operation {
     group: string;
     type: 'income' | 'expense';
     subgroup: string;
-    name: string;
     amount: number;
     date: string;
 }

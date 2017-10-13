@@ -1,4 +1,5 @@
 @left-column-width: 300px;
+@expendedLineColor: #b3b7ba;
 
 /deep/ .dx-pivotgrid {
 
@@ -89,7 +90,8 @@
                     //width: 0!important;
                 }
                 &.dx-last-cell {
-                    width: 100%
+                    width: 100%;
+                    padding-left: 11px;
                 }
                 .dx-expand-icon-container {
                     font: inherit;
@@ -105,12 +107,30 @@
                         border-radius: 5px;
                     }
                 }
-                &.dx-pivotgrid-collapsed .dx-expand:before {
-                    content: '+';
+                &.dx-pivotgrid-collapsed {
+                    .dx-expand:before {
+                        content: '+';
+                    }
                 }
 
-                &.dx-pivotgrid-expanded .dx-expand:before {
-                    content: '-';
+                &.dx-pivotgrid-expanded {
+                    position: relative;
+                    .dx-expand:before {
+                        content: '-';
+                    }
+                    .dx-expand-icon-container {
+                        position: relative;
+                        &:after {
+                            content: '';
+                            border-left: 4px solid @expendedLineColor;
+                            display: block;
+                            position: absolute;
+                            height: 10px;
+                            bottom: -8px;
+                            left: -2px;
+                            right: 0;
+                        }
+                    }
                 }
                 .dx-grandtotal {
                     background: #00aff4;
@@ -118,8 +138,8 @@
                     font-weight: 700;
                 }
                 &.dx-white-space-column {
-                    min-width: 0;
-                    width: 0;
+                    background: #fff;
+                    border-right: 4px solid @expendedLineColor;
                 }
                 &.startedBalance {
                     font-weight: 700;
@@ -129,6 +149,21 @@
                     .dx-expand-icon-container {
                         display: none;
                     }
+                }
+            }
+            &.dx-expand-border:not(.incomeRow):not(.expensesRow) {
+                //& ~ tr td:not(.dx-white-space-column):not([colspan]) {
+                //    padding-left: 30px;
+                //}
+            }
+            &.incomeRow,
+            &.expensesRow {
+                .dx-white-space-column,
+                & + tr td.dx-white-space-column {
+                    width: 0;
+                    min-width: 0;
+                    margin-right: 0;
+                    border-right: none
                 }
             }
             &.reconciliation {
