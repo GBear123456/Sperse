@@ -31,8 +31,11 @@ import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
   ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy } from '@shared/service-proxies/service-proxies';
 
+import { PhoneFormatPipe } from './phone-format.pipe';
+
 @NgModule({
   declarations: [
+    PhoneFormatPipe,
     EditContactDialog,
     EditAddressDialog,
     ClientDetailsComponent,
