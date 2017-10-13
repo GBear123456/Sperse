@@ -4,4 +4,8 @@ export class GroupbyItem {
     customizeTextFunction: any;
     historicalSelectionFunction: any;
     historicalCustomizerFunction: any;
+    compareYears?: any;
+    compareQuarters?: any;
+    compareMonths?: any;
+    getQuarter?: any;
 }

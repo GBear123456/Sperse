@@ -15,7 +15,7 @@ export class CashflowTableComponent implements OnInit {
     cashflowService: CashflowService;
     operations: Operation[];
     operationsSource: any;
-    groupInterval: string;
+    groupInterval: any = 'year';
     /** posible groupIntervals year, quarter, month, dayofweek, day */
     groupbyItems: GroupbyItem[] = [
         {
@@ -30,14 +30,22 @@ export class CashflowTableComponent implements OnInit {
             'optionText': 'QUARTERS',
             'customizeTextFunction': this.getQuarterHeaderCustomizer,
             'historicalSelectionFunction': this.getQuarterHistoricalSelector,
-            'historicalCustomizerFunction': this.getQuarterHistoricalCustomizer
+            'historicalCustomizerFunction': this.getQuarterHistoricalCustomizer,
+            'compareYears': this.compareYears,
+            'compareQuarters': this.compareQuarters,
+            'compareMonths': this.compareMonths,
+            'getQuarter': this.getQuarter
         },
         {
             'groupInterval': 'month',
             'optionText': 'MONTHS',
             'customizeTextFunction': this.getMonthHeaderCustomizer,
             'historicalSelectionFunction': this.getMonthHistoricalSelector,
-            'historicalCustomizerFunction': this.getMonthHistoricalCustomizer
+            'historicalCustomizerFunction': this.getMonthHistoricalCustomizer,
+            'compareYears': this.compareYears,
+            'compareQuarters': this.compareQuarters,
+            'compareMonths': this.compareMonths,
+            'getQuarter': this.getQuarter
         },
         /** @todo implement week functionality that is not posible in pivot grid by default */
         // {
@@ -110,15 +118,15 @@ export class CashflowTableComponent implements OnInit {
             dataField: 'subgroup',
             rowHeaderLayout: 'tree'
         },
-        {
-            // caption: 'Name',
-            width: 120,
-            area: 'row',
-            areaIndex: 3,
-            showTotals: false,
-            dataField: 'name',
-            rowHeaderLayout: 'tree'
-        },
+        // {
+        //     // caption: 'Name',
+        //     width: 120,
+        //     area: 'row',
+        //     areaIndex: 3,
+        //     showTotals: false,
+        //     dataField: 'name',
+        //     rowHeaderLayout: 'tree'
+        // },
         {
             caption: 'Historical',
             area: 'column',
@@ -141,17 +149,17 @@ export class CashflowTableComponent implements OnInit {
                  *  ending balances with the accounting of the starting balances
                  */
                 /** check if current cell is the grand total cell */
-                if (summaryCell.prev() !== null &&
+                if (summaryCell.prev('column', true) !== null &&
                     summaryCell.grandTotal('row').value() === summaryCell.value()) {
                     let sum = summaryCell.value();
-                    let prevSummaryCell = summaryCell.prev();
+                    let prevSummaryCell = summaryCell.prev('column', true);
                     sum += prevSummaryCell.value();
                     /** add all previous grand totals cells values and redefine the previous cell */
-                    while (prevSummaryCell.prev() !== null) {
-                        sum += prevSummaryCell.prev().value();
-                        prevSummaryCell = prevSummaryCell.prev();
-                    }
-                    return sum;
+                     while (prevSummaryCell.prev('column', true) !== null) {
+                         sum += prevSummaryCell.prev('column', true).value();
+                         prevSummaryCell = prevSummaryCell.prev('column', true);
+                     }
+                     return sum;
                 }
                 return summaryCell.value();
             }
@@ -162,12 +170,10 @@ export class CashflowTableComponent implements OnInit {
             dataType: 'date',
             area: 'column',
             groupInterval: 'year',
+            showTotals: false,
             customizeText: this.getYearHeaderCustomizer(),
             visible: true,
-            summaryDisplayMode: 'percentVariation',
-            // calculateSummaryValue: function(summaryCell) {
-            //     console.log(summaryCell);
-            // }
+            summaryDisplayMode: 'percentVariation'
         },
         {
             caption: 'Date',
@@ -175,6 +181,7 @@ export class CashflowTableComponent implements OnInit {
             dataType: 'date',
             area: 'column',
             groupInterval: 'quarter',
+            showTotals: false,
             customizeText: this.getQuarterHeaderCustomizer(),
             visible: true
         },
@@ -183,6 +190,7 @@ export class CashflowTableComponent implements OnInit {
             dataField: 'date',
             dataType: 'date',
             area: 'column',
+            showTotals: false,
             groupInterval: 'month',
             customizeText: this.getMonthHeaderCustomizer(),
             visible: true
@@ -261,7 +269,7 @@ export class CashflowTableComponent implements OnInit {
     cssMarker = ' @css';
 
     constructor(CashflowService: CashflowService) {
-        this.updateDateFields('year');
+        //this.updateDateFields('year');
         this.cashflowService = CashflowService;
         this.operations = this.cashflowService.getOperations();
         this.operationsSource = this.getOperationsSource();
@@ -271,31 +279,57 @@ export class CashflowTableComponent implements OnInit {
     }
 
     /**
+     * return the array of dates intervals that should be hidden
+     * @param startedGroupInterval
+     */
+    getFieldsToBeHide(startedGroupInterval) {
+        const datesIntervalsToBeHide = this.groupbyItems.map(group => group.groupInterval);
+        /** update date fields for table */
+        let startedIntervalAdded = false;
+        for (const group_by_item of this.groupbyItems) {
+            const intervalField = this.getDateFieldByInterval(group_by_item['groupInterval']);
+            if (group_by_item['groupInterval'] === startedGroupInterval || startedIntervalAdded) {
+                datesIntervalsToBeHide.splice(datesIntervalsToBeHide.indexOf(group_by_item['groupInterval']), 1);
+                startedIntervalAdded = true;
+                console.log('all fields expand');
+                intervalField.expanded = true;
+            }
+        }
+        return datesIntervalsToBeHide;
+    }
+    /**
      * Update the fields array with the date fields with different date intervals like year, quarter and month
      * @param startedGroupInterval the groupInterval from wich we should start show headers
      */
     updateDateFields(startedGroupInterval) {
-
-        /** remove date fields from table fields to update with the proper */
-        this.hideDateFields();
-
-        /** update date fields for table */
-        let startedIntervalAdded = false;
-        for (const group_by_item of this.groupbyItems) {
-            if (group_by_item['groupInterval'] === startedGroupInterval || startedIntervalAdded) {
-                const dateField = this.getDateFieldByInterval(group_by_item['groupInterval']);
-                dateField.visible = true;
-                startedIntervalAdded = true;
-            }
+        const allDateIntervals = this.groupbyItems.map(group => group.groupInterval);
+        const datesIntervalsToBeHide = allDateIntervals.slice(0, allDateIntervals.indexOf(startedGroupInterval));
+        for (const dateInterval of allDateIntervals) {
+            const intervalField = this.getDateFieldByInterval(dateInterval);
+            intervalField.expanded = false;
+        }
+        for (const dateInterval of datesIntervalsToBeHide) {
+            const intervalField = this.getDateFieldByInterval(dateInterval);
+            intervalField.expanded = true;
         }
     }
 
-    hideDateFields() {
-        for (const group_by_item of this.groupbyItems) {
-            const dateField = this.getDateFieldByInterval(group_by_item['groupInterval']);
-            dateField.visible = false;
+    /**
+     * Event that happens when the content renders
+     * @param event
+     */
+    onContentReady(event) {
+        const allDateIntervals = this.groupbyItems.map(group => group.groupInterval);
+        const datesIntervalsToBeHide = allDateIntervals.slice(0, allDateIntervals.indexOf(this.groupInterval));
+        for (const dateInterval of datesIntervalsToBeHide) {
+            /** Hide the fields that are not chosen */
+            const intervalFieldsSelector = '.dateField:not(.dx-total).' + dateInterval;
+            $(intervalFieldsSelector).each(function(){
+                $(this).text('');
+                $(this).addClass('dataFieldHidden');
+            });
         }
-    };
+    }
 
     getOperationsSource() {
         return {
@@ -318,10 +352,12 @@ export class CashflowTableComponent implements OnInit {
         return function (cellInfo) {
             const yearPeriods = [
                 'Historical Cashflows - Prior Years',
-                'Cashflow - Forecast'
+                'Current',
+                'Cashflow - Forecast',
             ];
             const cssClasses = [
                 'historical',
+                'current',
                 'forecast'
             ];
             return yearPeriods[cellInfo.value].toUpperCase() + ' @css:{historicalField ' + cssClasses[cellInfo.value] + '}';
@@ -380,23 +416,43 @@ export class CashflowTableComponent implements OnInit {
 
     getYearHistoricalSelector(): any {
         return function (data) {
-            const current_year = new Date().getFullYear();
+            const currentYear = new Date().getFullYear();
             const itemYear = new Date(data.date).getFullYear();
-            return current_year < itemYear ? 1 : 0;
+            // let result = 0;
+            // if (currentYear < itemYear) {
+            //     result = 2;
+            // } else if (currentYear === itemYear) {
+            //     result = 1;
+            // }
+            // return result;
+            return currentYear < itemYear ? 1 : 0;
         };
     }
 
     getMonthHistoricalSelector(): any {
-        return function (data) {
-            const currentMonth = new Date().getMonth();
-            const itemMonth = new Date(data.date).getMonth();
+        // return function(data) {
+        //     const currentMonth = new Date().getMonth();
+        //     const itemMonth = new Date(data.date).getMonth();
+        //     let result;
+        //     if (currentMonth < itemMonth) {
+        //         result = 2;
+        //     } else if (currentMonth === itemMonth) {
+        //         result = 1;
+        //     } else {
+        //         result = 0;
+        //     }
+        //     return result;
+        // };
+        return (data) => {
             let result;
-            if (currentMonth < itemMonth) {
-                result = 2;
-            } else if (currentMonth === itemMonth) {
-                result = 1;
+            const currentDate = new Date();
+            const itemDate = new Date(data.date);
+            const yearCompare = this.compareYears(currentDate, itemDate);
+            /** if years not the same */
+            if (yearCompare !== 1) {
+                result = yearCompare;
             } else {
-                result = 0;
+                result = this.compareMonths(currentDate, itemDate);
             }
             return result;
         };
@@ -454,27 +510,104 @@ export class CashflowTableComponent implements OnInit {
     }
 
     getQuarterHistoricalSelector(): any {
-        return function (data) {
-            function getQuarter(date) {
-                date = date || new Date(); // If no date supplied, use today
-                const quartersArr = [1, 2, 3, 4];
-                return quartersArr[Math.floor(date.getMonth() / 3)];
-            }
-
-            const current_quarter = getQuarter(new Date());
-            const item_quarter = getQuarter(new Date(data.date));
-            let result;
-            if (current_quarter < item_quarter) {
+        // return function(data) {
+        //     function getQuarter(date) {
+        //         date = date || new Date(); // If no date supplied, use today
+        //         const quartersArr = [1, 2, 3, 4];
+        //         return quartersArr[Math.floor(date.getMonth() / 3)];
+        //     }
+        //     const current_quarter = getQuarter(new Date());
+        //     const item_quarter = getQuarter(new Date(data.date));
+        //     let result;
+        //     if (current_quarter < item_quarter) {
+        //         result = 2;
+        //     } else if (current_quarter === item_quarter) {
+        //         result = 1;
+        //     } else {
+        //         result = 0;
+        //     }
+        //     return result;
+        // };
+        return (data) => {
+            let result = 0;
+            const currentDate = new Date();
+            const itemDate = new Date(data.date);
+            const currentYear = currentDate.getFullYear();
+            const itemYear = itemDate.getFullYear();
+            const currentQuarter = this.getQuarter(currentDate);
+            const itemQuarter = this.getQuarter(itemDate);
+            const currentFullDate = currentYear.toString() + currentQuarter.toString();
+            const itemFullDate = itemYear.toString() + itemQuarter.toString();
+            if ( currentFullDate < itemFullDate ) {
                 result = 2;
-            } else if (current_quarter === item_quarter) {
+            } else if (currentFullDate === itemFullDate ) {
                 result = 1;
-            } else {
-                result = 0;
             }
             return result;
         };
     }
 
+    /**
+     * Gets quarter from the year
+     * @param date
+     * @returns {number}
+     */
+    getQuarter(date) {
+        date = date || new Date(); // If no date supplied, use today
+        const quartersArr = [1, 2, 3, 4];
+        return quartersArr[Math.floor(date.getMonth() / 3)];
+    }
+    /**
+     * Compares two years of two dates
+     * @param date1
+     * @param date2
+     * @return int
+     */
+    compareYears(date1, date2) {
+        let result = 0;
+        const currentYear = date1.getFullYear();
+        const itemYear = date2.getFullYear();
+        if (currentYear < itemYear) {
+            result = 2;
+        } else if (currentYear === itemYear) {
+            result = 1;
+        }
+        return result;
+    }
+
+    /**
+     * Compares the quarters of the dates
+     * @param date1
+     * @param date2
+     */
+    compareQuarters(date1, date2) {
+        let result = 0;
+        const currentQuarter = this.getQuarter(date1);
+        const itemQuarter = this.getQuarter(date2);
+        if (currentQuarter > itemQuarter) {
+            result = 2;
+        } else if (currentQuarter === itemQuarter) {
+            result = 1;
+        }
+        return result;
+    }
+
+    /**
+     * Compares the months of the dates
+     * @param date1
+     * @param date2
+     */
+    compareMonths(date1, date2) {
+        let result = 0;
+        const currentMonth = date1.getMonth();
+        const itemMonth = date2.getMonth();
+        if (currentMonth < itemMonth) {
+            result = 2;
+        } else if (currentMonth === itemMonth) {
+            result = 1;
+        }
+        return result;
+    }
     getQuarterHeaderCustomizer(): any {
         return function (cellInfo) {
             return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField quarter}';
@@ -513,23 +646,17 @@ export class CashflowTableComponent implements OnInit {
 
     changeGroupBy(event) {
         const startedGroupInterval = event.value.groupInterval;
+        this.groupInterval = startedGroupInterval;
         this.updateDateFields(startedGroupInterval);
-
-        /**
-         * Change historical field for different date intervals
-         */
+        /** Change historical field for different date intervals */
         const historical_field = this.getHistoricField();
         historical_field['selector'] = event.value.historicalSelectionFunction();
         historical_field['customizeText'] = event.value.historicalCustomizerFunction();
-
         this.operationsSource = this.getOperationsSource();
     }
 
     cutCssFromValue(text) {
         return text.slice(text.indexOf(this.cssMarker) + this.cssMarker.length + 2, text.length - 1);
-    }
-
-    onContentReady(event) {
     }
 
     /**
@@ -604,6 +731,14 @@ export class CashflowTableComponent implements OnInit {
     }
 
     /**
+     * whether the cell contains the css marker for adding css to it
+     * @param cellObj
+     * @returns {boolean}
+     */
+    isCellContainsCssMarker(cellObj) {
+        return cellObj.cell.text.indexOf(this.cssMarker) !== -1;
+    }
+    /**
      * Event that runs before rendering of every cell of the pivot grid
      * @param e - the object with the cell info
      * https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxPivotGrid/Events/#cellPrepared
@@ -631,9 +766,10 @@ export class CashflowTableComponent implements OnInit {
         }
         /** added css class to the income and outcomes columns */
         if ((this.isIncomeOrExpensesHeaderCell(e)) ||
-            ( this.isIncomeOrExpensesDataCell(e))) {
+            (this.isIncomeOrExpensesDataCell(e))) {
             const cssClass = e.rowIndex === 1 ? 'income' : 'expenses';
             e.cellElement.addClass(cssClass);
+            e.cellElement.parent().addClass(cssClass + 'Row');
             /** disable collapsing for income and expenses columns */
             if (this.isIncomeOrExpensesHeaderCell(e)) {
                 e.cellElement.addClass('uppercase');
@@ -645,27 +781,10 @@ export class CashflowTableComponent implements OnInit {
 
         /** headers manipulation (adding css classes and appending "Totals text") */
         if (e.area === 'column') {
-            let cssClass = '';
-            if (e.cell.text.indexOf(this.cssMarker) !== -1) {
-                /** get the css class from name */
-                const valueWithoutCss = e.cell.text.slice(0, (e.cell.text.indexOf(this.cssMarker)));
-                /** cut off the css from the cell text */
-                cssClass = this.cutCssFromValue(e.cell.text);
-                /** update the columns with the text without the marker */
-                e.cellElement.text(valueWithoutCss);
-                /** Added "Total" text to the year and quarter headers */
-                const fieldName = cssClass.slice(cssClass.indexOf(' ') + 1, cssClass.length).trim();
-                if (fieldName === 'year' || fieldName === 'quarter') {
-                    e.cellElement.append('<div class="totals">TOTALS</div>');
-                }
-                // /** Disable collapsing not current months for mdk and projected */
-                // if (fieldName === 'month') {
-                //     console.log(e);
-                //     e.cellElement.click(function(event) {
-                //         event.stopImmediatePropagation();X
-                //     });
-                // }
+            if (this.isCellContainsCssMarker(e)) {
+                this.prepareCell(e);
             }
+
             /** Historical horizontal header columns */
             /** @todo exclude disabling for current month */
             if (this.isHistoricalCell(e)) {
@@ -674,29 +793,19 @@ export class CashflowTableComponent implements OnInit {
                     event.stopImmediatePropagation();
                 });
             }
-            e.cellElement.addClass(cssClass);
         }
 
         /** @todo change logic for reconciliation */
         /** added reconciliation rows to the table */
         if (this.isGrandTotalLabelCell(e)) {
-            this.createReconsiliationVerticalRow(e);
+            this.createReconsiliationLabelCell(e);
         }
 
         /** added reconciliation and starting balances rows to the table data cells */
         if (this.isDataCell(e) && this.isGrandTotalDataCell(e)) {
-            console.log(e);
             /** if the reconciliations and starting balances rows haven't already added */
             if (e.cellElement.parent().is(':last-child')) {
-                /** clone current row for reconciliation */
-                const clonedRow = e.cellElement.parent().clone();
-                /** for each child change the text, remove grand total class and add reconciliation class */
-                clonedRow.addClass('reconciliation');
-                clonedRow.children('td').each(function () {
-                    $(this).text('$0.00');
-                    $(this).removeClass('dx-grandtotal');
-                });
-                e.cellElement.parent().after(clonedRow);
+                this.createReconciliationDataRow(e);
             }
         }
 
@@ -710,15 +819,76 @@ export class CashflowTableComponent implements OnInit {
         }
     }
 
-    createReconsiliationVerticalRow(e) {
+    /**
+     * whether it belong to current period
+     * @param cellObj
+     */
+    // isMonthBelongToCurrentPeriod(cellObj) {
+    //     return this.getMonthHistoricalSelector();
+    // }
+    //
+    /**
+     * remove css from the cell text, add css as a class, and add the totals text for the fields
+     * if it is year or quarter cells
+     * @param cellObj
+     */
+    prepareCell(cellObj) {
+        /** get the css class from name */
+        const valueWithoutCss = cellObj.cell.text.slice(0, (cellObj.cell.text.indexOf(this.cssMarker)));
+        /** cut off the css from the cell text */
+        const cssClass = this.cutCssFromValue(cellObj.cell.text);
+        /** update the columns with the text without the marker */
+        cellObj.cellElement.text(valueWithoutCss);
+        /** Added "Total" text to the year and quarter headers */
+        const fieldName = cssClass.slice(cssClass.indexOf(' ') + 1, cssClass.length).trim();
+        if (fieldName === 'year' || fieldName === 'quarter') {
+            cellObj.cellElement.append('<div class="totals">TOTALS</div>');
+        }
+        cellObj.cellElement.addClass(cssClass);
+        /** Disable collapsing not current months for mdk and projected */
+        if (fieldName === 'month') {
+            this.disableExtendingOfNotCurrentMonths(cellObj);
+        }
+    }
+
+    disableExtendingOfNotCurrentMonths(cellObj) {
+        const historicalCurrentCell = cellObj.cellElement.closest('thead').first().find('.current');
+        console.log(historicalCurrentCell);
+        const historicalCurrentCellIndex = !historicalCurrentCell.prev() ? 0 : +historicalCurrentCell.prev().attr('colspan');
+        if (cellObj.cellElement.index() !== historicalCurrentCellIndex) {
+            cellObj.cellElement.click(function(event) {
+                event.stopImmediatePropagation();
+            });
+            cellObj.cellElement.css({'cursor': 'default'});
+        }
+    }
+
+    /**
+     * Creates the reconciliation label it the left side
+     * @param cellObj
+     */
+    createReconsiliationLabelCell(cellObj) {
         /** clone current row */
-        let clonedRow = e.cellElement.parent().clone();
+        const clonedRow = cellObj.cellElement.parent().clone();
         /** added the css class to the current row */
         clonedRow.find('td').removeClass('dx-grandtotal');
         clonedRow.addClass('reconciliation');
         /** find the span inside and change the text to the reconciliation */
         clonedRow.find('span').text('Reconciliation Differences');
         /** append the grand total row with the new created reconciliation row to match the mock up */
-        e.cellElement.parent().after(clonedRow);
+        cellObj.cellElement.parent().after(clonedRow);
     }
+
+    createReconciliationDataRow(cellObj) {
+        /** clone current row for reconciliation */
+        const clonedRow = cellObj.cellElement.parent().clone();
+        /** for each child change the text, remove grand total class and add reconciliation class */
+        clonedRow.addClass('reconciliation');
+        clonedRow.children('td').each(function(){
+            $(this).text('$0.00');
+            $(this).removeClass('dx-grandtotal');
+        });
+        cellObj.cellElement.parent().after(clonedRow);
+    }
+
 }

@@ -1,11 +1,10 @@
-import * as _ from 'underscore';
-
 import { Component, HostBinding, Inject, ElementRef, AfterViewInit } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser';
 
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { TenantIntegrationsSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
+
+import * as _ from 'underscore';
 
 /*
 	Root Document Component (Body Selector)
@@ -68,22 +67,18 @@ export class RootComponent implements AfterViewInit {
 */
 @Component({
     selector: 'app-root',
-    template:  `<router-outlet></router-outlet>`,
-    providers: [TenantIntegrationsSettingsServiceProxy]
+    template:  `<router-outlet></router-outlet>`
 })
 export class AppRootComponent {
 	constructor (
 		@Inject(AppSessionService) private SS, 
-		@Inject(RootComponent) private parent,
-    private _tenantSettings: TenantIntegrationsSettingsServiceProxy
+		@Inject(RootComponent) private parent
 	) {}
 
   ngOnInit() {
     if (this.SS.tenant) {
-      this._tenantSettings.getIntegrationsSettings().subscribe((settings) => {
-        if (settings && settings.googleMapsJavascriptApiKey)
-          this.parent.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', settings.googleMapsJavascriptApiKey));
-      });
+      if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'])
+        this.parent.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
 
     	//tenant specific custom css
 		  this.SS.tenant.customCssId && this.parent.addStyleSheet('TenantCustomCss',

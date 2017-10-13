@@ -106,6 +106,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
           address.streetAddress = data.streetAddress;
           address.comment = data.comment;
           address.usageTypeId = data.usageTypeId;
+          address.zip = data.zip;
         } else if (result.id) {
           data.id = result.id;                  
           this.data.customerInfo.primaryContactInfo.addresses
@@ -134,7 +135,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
   }
 
   inPlaceEdit(address, event, index) {  
-    if(!this.isEditAllowed)
+    if(!this.isEditAllowed || !window['google'])
       return this.showDialog(address, event, index);
 
     address.inplaceEdit = true;

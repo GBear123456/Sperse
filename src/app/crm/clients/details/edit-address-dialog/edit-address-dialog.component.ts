@@ -30,6 +30,8 @@ export class EditAddressDialog extends AppComponentBase {
   states: CountryStateDto[];
   countries: CountryDto[];
 
+  googleAutoComplete: Boolean;
+
   constructor(
     injector: Injector,
     private elementRef: ElementRef,
@@ -42,23 +44,31 @@ export class EditAddressDialog extends AppComponentBase {
     this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');        
     if (data.city) {
       this.action = 'Edit';
-      this.address = [
-        data.streetAddress,
-        data.city,
-        data.state,
-        data.country
-      ].join(',');
+      this.address = 
+        this.googleAutoComplete ? [
+          data.streetAddress,
+          data.city,
+          data.state,
+          data.country
+        ].join(','): data.streetAddress;
     } else
       this.action = 'Create';
 
+    this.googleAutoComplete = Boolean(window['google']);
+    console.log(this.googleAutoComplete);
+
     this.addressTypesLoad();
-    this.countriesLoad();
+    this.countriesStateLoad();
   }
 
-  countriesLoad(): void {
+  countriesStateLoad(): void {
     this._countryService.getCountries()
       .subscribe(result => {
         this.countries = result;
+        if (this.data.country)
+          this.onCountryChange({
+            value: this.data.country
+          });
       });
   }
 
@@ -77,7 +87,7 @@ export class EditAddressDialog extends AppComponentBase {
   }
 
   onSave(event) {
-    if (!this.data.streetAddress)
+    if (!this.googleAutoComplete || !this.data.streetAddress)
       this.data.streetAddress = this.address;
     if (this.validator.validate().isValid && this.data.streetAddress) {
       this.data.countryId = _.findWhere(this.countries, {name: this.data.country})['code'];
