@@ -10,7 +10,7 @@ import { CashflowComponent } from './cashflow/components/main/cashflow.component
             {
               path: '',
               children: [
-                { path: 'cashflow', component: CashflowComponent , data: { permission: 'Pages.Tenant.Dashboard' } }
+                { path: 'cashflow', component: CashflowComponent , data: { permission: '' } }
               ]
             }
         ])

@@ -73,7 +73,9 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
   }
 
   closeEditDialogs(event) {
-    if (!event.target.closest('md-dialog-container, .dx-popup-wrapper'))
+    if (document.body.contains(event.target) && 
+      !event.target.closest('.mat-dialog-container, .dx-popup-wrapper')
+    )
       this._dialog.closeAll();
   }
 
