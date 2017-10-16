@@ -15,7 +15,7 @@ export class CashflowTableComponent implements OnInit {
     cashflowService: CashflowService;
     operations: Operation[];
     operationsSource: any;
-    groupInterval: string;
+    groupInterval: any = 'year';
     /** posible groupIntervals year, quarter, month, dayofweek, day */
     groupbyItems: GroupbyItem[] = [
         {
@@ -31,9 +31,10 @@ export class CashflowTableComponent implements OnInit {
             'customizeTextFunction': this.getQuarterHeaderCustomizer,
             'historicalSelectionFunction': this.getQuarterHistoricalSelector,
             'historicalCustomizerFunction': this.getQuarterHistoricalCustomizer,
-            // 'compareYears': this.compareYears,
-            // 'compareQuarters': this.compareQuarters,
-            // 'getQuarter': this.getQuarter
+            'compareYears': this.compareYears,
+            'compareQuarters': this.compareQuarters,
+            'compareMonths': this.compareMonths,
+            'getQuarter': this.getQuarter
         },
         {
             'groupInterval': 'month',
@@ -41,10 +42,10 @@ export class CashflowTableComponent implements OnInit {
             'customizeTextFunction': this.getMonthHeaderCustomizer,
             'historicalSelectionFunction': this.getMonthHistoricalSelector,
             'historicalCustomizerFunction': this.getMonthHistoricalCustomizer,
-            // 'compareYears': this.compareYears,
-            // 'compareQuarters': this.compareQuarters,
-            // 'compareMonths': this.compareMonths,
-            // 'getQuarter': this.getQuarter
+            'compareYears': this.compareYears,
+            'compareQuarters': this.compareQuarters,
+            'compareMonths': this.compareMonths,
+            'getQuarter': this.getQuarter
         },
         /** @todo implement week functionality that is not posible in pivot grid by default */
         // {
@@ -148,17 +149,17 @@ export class CashflowTableComponent implements OnInit {
                  *  ending balances with the accounting of the starting balances
                  */
                 /** check if current cell is the grand total cell */
-                if (summaryCell.prev() !== null &&
+                if (summaryCell.prev('column', true) !== null &&
                     summaryCell.grandTotal('row').value() === summaryCell.value()) {
                     let sum = summaryCell.value();
-                    let prevSummaryCell = summaryCell.prev();
+                    let prevSummaryCell = summaryCell.prev('column', true);
                     sum += prevSummaryCell.value();
                     /** add all previous grand totals cells values and redefine the previous cell */
-                    while (prevSummaryCell.prev() !== null) {
-                        sum += prevSummaryCell.prev().value();
-                        prevSummaryCell = prevSummaryCell.prev();
-                    }
-                    return sum;
+                     while (prevSummaryCell.prev('column', true) !== null) {
+                         sum += prevSummaryCell.prev('column', true).value();
+                         prevSummaryCell = prevSummaryCell.prev('column', true);
+                     }
+                     return sum;
                 }
                 return summaryCell.value();
             }
@@ -169,6 +170,7 @@ export class CashflowTableComponent implements OnInit {
             dataType: 'date',
             area: 'column',
             groupInterval: 'year',
+            showTotals: false,
             customizeText: this.getYearHeaderCustomizer(),
             visible: true,
             summaryDisplayMode: 'percentVariation'
@@ -179,6 +181,7 @@ export class CashflowTableComponent implements OnInit {
             dataType: 'date',
             area: 'column',
             groupInterval: 'quarter',
+            showTotals: false,
             customizeText: this.getQuarterHeaderCustomizer(),
             visible: true
         },
@@ -187,6 +190,7 @@ export class CashflowTableComponent implements OnInit {
             dataField: 'date',
             dataType: 'date',
             area: 'column',
+            showTotals: false,
             groupInterval: 'month',
             customizeText: this.getMonthHeaderCustomizer(),
             visible: true
@@ -265,7 +269,7 @@ export class CashflowTableComponent implements OnInit {
     cssMarker = ' @css';
 
     constructor(CashflowService: CashflowService) {
-        this.updateDateFields('year');
+        //this.updateDateFields('year');
         this.cashflowService = CashflowService;
         this.operations = this.cashflowService.getOperations();
         this.operationsSource = this.getOperationsSource();
@@ -275,29 +279,57 @@ export class CashflowTableComponent implements OnInit {
     }
 
     /**
+     * return the array of dates intervals that should be hidden
+     * @param startedGroupInterval
+     */
+    getFieldsToBeHide(startedGroupInterval) {
+        const datesIntervalsToBeHide = this.groupbyItems.map(group => group.groupInterval);
+        /** update date fields for table */
+        let startedIntervalAdded = false;
+        for (const group_by_item of this.groupbyItems) {
+            const intervalField = this.getDateFieldByInterval(group_by_item['groupInterval']);
+            if (group_by_item['groupInterval'] === startedGroupInterval || startedIntervalAdded) {
+                datesIntervalsToBeHide.splice(datesIntervalsToBeHide.indexOf(group_by_item['groupInterval']), 1);
+                startedIntervalAdded = true;
+                console.log('all fields expand');
+                intervalField.expanded = true;
+            }
+        }
+        return datesIntervalsToBeHide;
+    }
+    /**
      * Update the fields array with the date fields with different date intervals like year, quarter and month
      * @param startedGroupInterval the groupInterval from wich we should start show headers
      */
     updateDateFields(startedGroupInterval) {
-        /** remove date fields from table fields to update with the proper */
-        this.hideDateFields();
-        /** update date fields for table */
-        let startedIntervalAdded = false;
-        for (const group_by_item of this.groupbyItems) {
-            if (group_by_item['groupInterval'] === startedGroupInterval || startedIntervalAdded) {
-                const dateField = this.getDateFieldByInterval(group_by_item['groupInterval']);
-                dateField.visible = true;
-                startedIntervalAdded = true;
-            }
+        const allDateIntervals = this.groupbyItems.map(group => group.groupInterval);
+        const datesIntervalsToBeHide = allDateIntervals.slice(0, allDateIntervals.indexOf(startedGroupInterval));
+        for (const dateInterval of allDateIntervals) {
+            const intervalField = this.getDateFieldByInterval(dateInterval);
+            intervalField.expanded = false;
+        }
+        for (const dateInterval of datesIntervalsToBeHide) {
+            const intervalField = this.getDateFieldByInterval(dateInterval);
+            intervalField.expanded = true;
         }
     }
 
-    hideDateFields() {
-        for (const group_by_item of this.groupbyItems) {
-            const dateField = this.getDateFieldByInterval(group_by_item['groupInterval']);
-            dateField.visible = false;
+    /**
+     * Event that happens when the content renders
+     * @param event
+     */
+    onContentReady(event) {
+        const allDateIntervals = this.groupbyItems.map(group => group.groupInterval);
+        const datesIntervalsToBeHide = allDateIntervals.slice(0, allDateIntervals.indexOf(this.groupInterval));
+        for (const dateInterval of datesIntervalsToBeHide) {
+            /** Hide the fields that are not chosen */
+            const intervalFieldsSelector = '.dateField:not(.dx-total).' + dateInterval;
+            $(intervalFieldsSelector).each(function(){
+                $(this).text('');
+                $(this).addClass('dataFieldHidden');
+            });
         }
-    };
+    }
 
     getOperationsSource() {
         return {
@@ -320,10 +352,12 @@ export class CashflowTableComponent implements OnInit {
         return function (cellInfo) {
             const yearPeriods = [
                 'Historical Cashflows - Prior Years',
-                'Cashflow - Forecast'
+                'Current',
+                'Cashflow - Forecast',
             ];
             const cssClasses = [
                 'historical',
+                'current',
                 'forecast'
             ];
             return yearPeriods[cellInfo.value].toUpperCase() + ' @css:{historicalField ' + cssClasses[cellInfo.value] + '}';
@@ -382,39 +416,46 @@ export class CashflowTableComponent implements OnInit {
 
     getYearHistoricalSelector(): any {
         return function (data) {
-            const current_year = new Date().getFullYear();
+            const currentYear = new Date().getFullYear();
             const itemYear = new Date(data.date).getFullYear();
-            return current_year < itemYear ? 1 : 0;
+            // let result = 0;
+            // if (currentYear < itemYear) {
+            //     result = 2;
+            // } else if (currentYear === itemYear) {
+            //     result = 1;
+            // }
+            // return result;
+            return currentYear < itemYear ? 1 : 0;
         };
     }
 
     getMonthHistoricalSelector(): any {
-        return function(data) {
-            const currentMonth = new Date().getMonth();
-            const itemMonth = new Date(data.date).getMonth();
-            let result;
-            if (currentMonth < itemMonth) {
-                result = 2;
-            } else if (currentMonth === itemMonth) {
-                result = 1;
-            } else {
-                result = 0;
-            }
-            return result;
-        };
-        // return (data) => {
+        // return function(data) {
+        //     const currentMonth = new Date().getMonth();
+        //     const itemMonth = new Date(data.date).getMonth();
         //     let result;
-        //     const currentDate = new Date();
-        //     const itemDate = new Date(data.date);
-        //     const yearCompare = this.compareYears(currentDate, itemDate);
-        //     /** if years not the same */
-        //     if (yearCompare !== 1) {
-        //         result = yearCompare;
+        //     if (currentMonth < itemMonth) {
+        //         result = 2;
+        //     } else if (currentMonth === itemMonth) {
+        //         result = 1;
         //     } else {
-        //         result = this.compareMonths(currentDate, itemDate);
+        //         result = 0;
         //     }
         //     return result;
         // };
+        return (data) => {
+            let result;
+            const currentDate = new Date();
+            const itemDate = new Date(data.date);
+            const yearCompare = this.compareYears(currentDate, itemDate);
+            /** if years not the same */
+            if (yearCompare !== 1) {
+                result = yearCompare;
+            } else {
+                result = this.compareMonths(currentDate, itemDate);
+            }
+            return result;
+        };
     }
 
     getWeekHistoricalSelector(): any {
@@ -469,44 +510,41 @@ export class CashflowTableComponent implements OnInit {
     }
 
     getQuarterHistoricalSelector(): any {
-        return function(data) {
-            function getQuarter(date) {
-                date = date || new Date(); // If no date supplied, use today
-                const quartersArr = [1, 2, 3, 4];
-                return quartersArr[Math.floor(date.getMonth() / 3)];
-            }
-            const current_quarter = getQuarter(new Date());
-            const item_quarter = getQuarter(new Date(data.date));
-            let result;
-            if (current_quarter < item_quarter) {
-                result = 2;
-            } else if (current_quarter === item_quarter) {
-                result = 1;
-            } else {
-                result = 0;
-            }
-            return result;
-        };
-        // return (data) => {
-        //     let result = 0;
-        //     const currentDate = new Date();
-        //     const itemDate = new Date(data.date);
-        //     const currentYear = currentDate.getFullYear();
-        //     const itemYear = itemDate.getFullYear();
-        //     const currentQuarter = this.getQuarter(currentDate);
-        //     const itemQuarter = this.getQuarter(itemDate);
-        //     const currentMonth = currentDate.getMonth();
-        //     const itemMonth = itemDate.getMonth();
-        //
-        //     const currentFullDate = currentYear.toString() + currentQuarter.toString() + currentMonth.toString();
-        //     const itemFullDate = itemYear.toString() + itemQuarter.toString() + itemMonth.toString();
-        //     if ( currentFullDate < itemFullDate ) {
+        // return function(data) {
+        //     function getQuarter(date) {
+        //         date = date || new Date(); // If no date supplied, use today
+        //         const quartersArr = [1, 2, 3, 4];
+        //         return quartersArr[Math.floor(date.getMonth() / 3)];
+        //     }
+        //     const current_quarter = getQuarter(new Date());
+        //     const item_quarter = getQuarter(new Date(data.date));
+        //     let result;
+        //     if (current_quarter < item_quarter) {
         //         result = 2;
-        //     } else if (currentFullDate === itemFullDate ) {
+        //     } else if (current_quarter === item_quarter) {
         //         result = 1;
+        //     } else {
+        //         result = 0;
         //     }
         //     return result;
         // };
+        return (data) => {
+            let result = 0;
+            const currentDate = new Date();
+            const itemDate = new Date(data.date);
+            const currentYear = currentDate.getFullYear();
+            const itemYear = itemDate.getFullYear();
+            const currentQuarter = this.getQuarter(currentDate);
+            const itemQuarter = this.getQuarter(itemDate);
+            const currentFullDate = currentYear.toString() + currentQuarter.toString();
+            const itemFullDate = itemYear.toString() + itemQuarter.toString();
+            if ( currentFullDate < itemFullDate ) {
+                result = 2;
+            } else if (currentFullDate === itemFullDate ) {
+                result = 1;
+            }
+            return result;
+        };
     }
 
     /**
@@ -546,16 +584,6 @@ export class CashflowTableComponent implements OnInit {
         let result = 0;
         const currentQuarter = this.getQuarter(date1);
         const itemQuarter = this.getQuarter(date2);
-        console.log('current date', date1.toLocaleString());
-        console.log('current Quarter', currentQuarter);
-        console.log('item date', date2.toLocaleString());
-        console.log('item Quarter', itemQuarter);
-        console.log('result', result);
-
-        // console.log(date1);
-        // console.log(date2);
-        // console.log('currentQuarter', currentQuarter);
-        // console.log('itemQuarter', itemQuarter);
         if (currentQuarter > itemQuarter) {
             result = 2;
         } else if (currentQuarter === itemQuarter) {
@@ -618,6 +646,7 @@ export class CashflowTableComponent implements OnInit {
 
     changeGroupBy(event) {
         const startedGroupInterval = event.value.groupInterval;
+        this.groupInterval = startedGroupInterval;
         this.updateDateFields(startedGroupInterval);
         /** Change historical field for different date intervals */
         const historical_field = this.getHistoricField();
@@ -628,9 +657,6 @@ export class CashflowTableComponent implements OnInit {
 
     cutCssFromValue(text) {
         return text.slice(text.indexOf(this.cssMarker) + this.cssMarker.length + 2, text.length - 1);
-    }
-
-    onContentReady(event) {
     }
 
     /**
@@ -758,6 +784,7 @@ export class CashflowTableComponent implements OnInit {
             if (this.isCellContainsCssMarker(e)) {
                 this.prepareCell(e);
             }
+
             /** Historical horizontal header columns */
             /** @todo exclude disabling for current month */
             if (this.isHistoricalCell(e)) {
@@ -818,20 +845,21 @@ export class CashflowTableComponent implements OnInit {
             cellObj.cellElement.append('<div class="totals">TOTALS</div>');
         }
         cellObj.cellElement.addClass(cssClass);
-
         /** Disable collapsing not current months for mdk and projected */
         if (fieldName === 'month') {
-            const historicalCurrentCell = cellObj.cellElement.parent().prev().find('.current');
-            const historicalCurrentCellIndex = !historicalCurrentCell.prev() ? 0 : +historicalCurrentCell.prev().attr('colspan');
-            console.log('this cell', cellObj.cellElement);
-            console.log('historicalCurrentCellIndex', historicalCurrentCellIndex);
-            console.log('current index', cellObj.cellElement.index());
-            if (cellObj.cellElement.index() !== historicalCurrentCellIndex) {
-                cellObj.cellElement.click(function(event) {
-                    event.stopImmediatePropagation();
-                });
-                cellObj.cellElement.css({'cursor': 'default'});
-            }
+            this.disableExtendingOfNotCurrentMonths(cellObj);
+        }
+    }
+
+    disableExtendingOfNotCurrentMonths(cellObj) {
+        const historicalCurrentCell = cellObj.cellElement.closest('thead').first().find('.current');
+        console.log(historicalCurrentCell);
+        const historicalCurrentCellIndex = !historicalCurrentCell.prev() ? 0 : +historicalCurrentCell.prev().attr('colspan');
+        if (cellObj.cellElement.index() !== historicalCurrentCellIndex) {
+            cellObj.cellElement.click(function(event) {
+                event.stopImmediatePropagation();
+            });
+            cellObj.cellElement.css({'cursor': 'default'});
         }
     }
 
@@ -862,4 +890,5 @@ export class CashflowTableComponent implements OnInit {
         });
         cellObj.cellElement.parent().after(clonedRow);
     }
+
 }
