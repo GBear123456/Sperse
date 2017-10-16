@@ -1746,13 +1746,6 @@ let operations: Operation[] = [
   "amount": 2520,
   "date": "2017/12/20"
 }, {
-  "id": 250,
-  "group": "Total Cash Paid for Expenses",
-  "type": "expense",
-  "subgroup": "Reserve and/or escrow",
-  "amount": 4080,
-  "date": "2017/12/21"
-}, {
   "id": 251,
   "group": "Total Cash Paid for Expenses",
   "type": "expense",
@@ -2982,9 +2975,18 @@ let operations: Operation[] = [
   "group": "Total Cash Paid for Expenses",
   "type": "expense",
   "subgroup": "Reserve and/or escrow",
-  "amount": 3000,
+  "amount": 3005,
   "date": "2014/08/21"
-}, {
+},
+{
+  "id": 250,
+  "group": "Total Cash Paid for Expenses",
+  "type": "expense",
+  "subgroup": "Reserve and/or escrow",
+  "amount": 4080,
+  "date": "2017/12/21"
+},
+{
   "id": 427,
   "group": "Total Cash Paid for Expenses",
   "type": "expense",
