@@ -91,7 +91,8 @@ export class EditAddressDialog extends AppComponentBase {
       this.data.streetAddress = this.address;
     if (this.validator.validate().isValid && this.data.streetAddress) {
       this.data.countryId = _.findWhere(this.countries, {name: this.data.country})['code'];
-      this.data.stateId = _.findWhere(this.states, {name: this.data.state})['code'];
+      if (this.data.state)
+        this.data.stateId = _.findWhere(this.states, {name: this.data.state})['code'];
       this.dialogRef.close(true);
     }
   }
