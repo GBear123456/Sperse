@@ -38,13 +38,22 @@ export class TopBarComponent extends AppComponentBase {
   initMenu(config): PanelMenuItem[] {
     let navList: PanelMenuItem[] = [];
     config.forEach((val) => {
+      let value = val.slice(0);
       if (val.length == 5)
-        val.push(this.initMenu(val.pop()));          
-      navList.push(new PanelMenuItem(val[0], 
-        val[1], val[2], val[3], val[4])
+        value.push(this.initMenu(value.pop()));          
+      navList.push(new PanelMenuItem(value[0], 
+        value[1], value[2], value[3], value[4])
       );
     });
     return navList;
+  }
+
+  menuItemRendered(event){
+    event.itemData.visible = this.showMenuItem(event.itemData);
+    if (event.itemData.items)
+      event.itemData.items.forEach((item) => {
+        item.visible = this.showMenuItem(item);
+      });
   }
 
 	private checkMenuItemPermission(item): boolean {
@@ -58,7 +67,7 @@ export class TopBarComponent extends AppComponentBase {
   	});
   }
 
-  showMenuItem(item, index): boolean {
+  showMenuItem(item): boolean {
     if (item.permissionName === 'Pages.Administration.Tenant.SubscriptionManagement' 
       && this._appSessionService.tenant && !this._appSessionService.tenant.edition
     ) {

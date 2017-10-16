@@ -3,6 +3,7 @@
     permissionName: string = '';
     icon: string = '';
     route: string = '';
+    visible: boolean = true;
     items: PanelMenuItem[];
 
     constructor(text: string, permissionName: string, icon: string, route: string, items?: PanelMenuItem[]) {
