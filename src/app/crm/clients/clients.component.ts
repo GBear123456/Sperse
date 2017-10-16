@@ -121,8 +121,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     this.createOrEditClientModal.show();
   }
 
-  showClientDetails(event){    
-    this._router.navigate(['app/crm/client', event.data.Id]);
+  private mousePos: any;
+  onMouseDown(event) {
+    this.mousePos = {x: event.clientX, y: event.clientY};
+  }
+
+  showClientDetails(event){
+    if (this.mousePos.x == event.jQueryEvent.clientX 
+      && this.mousePos.y == event.jQueryEvent.clientY
+    )
+      this._router.navigate(['app/crm/client', event.data.Id]);
   }
 
   ngOnInit(): void {

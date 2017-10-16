@@ -3,6 +3,7 @@
 export class PanelMenu {
     name: string = '';
     text: string = '';
+    visible: boolean = true;
     items: PanelMenuItem[];
 
     constructor(name: string, text: string, items: PanelMenuItem[]) {

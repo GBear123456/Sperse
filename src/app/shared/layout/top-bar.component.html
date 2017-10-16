@@ -4,28 +4,40 @@
 	<input [(ngModel)]="search" name="search" autoFocus class="form-control" placeholder="{{l('SearchAllData')}}" type="text">
 </div>
 
-<!-- div class="top-bar-nav">
+<div class="top-bar-nav">
   <nav mat-tab-nav-bar>
-    <a mat-tab-link
-       *ngFor="let link of menu.items"
-       [routerLink]="link.route"
-       routerLinkActive #rla="routerLinkActive"
-       [ngClass]="{disabled: link.items.length}"
-       [active]="!link.items.length && rla.isActive">
-      {{link.text}}
-    </a>
+    <div *ngFor="let link of menu.items" style="display:inline-block;">
+      <a mat-tab-link
+         *ngIf="!link.items.length && showMenuItem(link)"
+         [routerLink]="link.route"
+         routerLinkActive #rla="routerLinkActive"
+         [disabled]="link.items.length > 0"
+         [active]="!link.items.length && rla.isActive">
+        {{link.text}}
+      </a>
+      <dx-menu *ngIf="link.items.length" [dataSource]="[link]" 
+        (onItemClick)="$event.itemData.route && router.navigate([$event.itemData.route])"
+        (onItemRendered)="menuItemRendered($event)">
+      </dx-menu>
+    </div>
   </nav>
-</div -->
+
+  <platform-select></platform-select>
+</div>
 
 <!-- div class="top-bar-nav">
   <md-tab-group [selectedIndex]="seletedTabIndex">
     <ng-template ngFor let-menuItem [ngForOf]="menu.items" let-mainMenuItemIndex="index">
-      <md-tab *ngIf="showMenuItem(menuItem)" (click)="navigate(menuItem.route)" label="{{l(menuItem.text)}}"></md-tab>
+      <div (click)="router.navigate(menuItem.route)">
+        <md-tab *ngIf="showMenuItem(menuItem)" label="{{l(menuItem.text)}}"></md-tab>
+      </div>
     </ng-template>
   </md-tab-group>
+
+  <platform-select></platform-select>
 </div -->
 
-<div class="top-bar-nav">
+<!-- div class="top-bar-nav">
   <div class="hor-menu hor-menu-light hidden-sm hidden-xs">
       <ul class="nav navbar-nav" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">        
           <ng-template ngFor let-menuItem [ngForOf]="menu.items" let-mainMenuItemIndex="index">
@@ -36,7 +48,6 @@
   					<i class="fa fa-angle-down" *ngIf="menuItem.items.length"></i>
                   </a>
                   <ul class="dropdown-menu pull-left" *ngIf="menuItem.items.length">
-
                       <ng-template ngFor let-childMenuItem [ngForOf]="menuItem.items" let-mainMenuItemIndex="index">
                           <li *ngIf="showMenuItem(childMenuItem)">
                               <a [routerLink]="[childMenuItem.route]" *ngIf="!childMenuItem.items.length">
@@ -52,5 +63,4 @@
   </div>
 
   <platform-select></platform-select>
-
-</div>
+</div -->

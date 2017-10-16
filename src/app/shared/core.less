@@ -12,6 +12,30 @@
     font-weight: bold;
 }
 
+/* Error Modal Design */
+.sweet-alert  {
+    .sa-icon.sa-error {
+        border: 5px solid #E7F9F9;
+        box-shadow: 0 0 20px 20px #F4FCFC;
+        .sa-x-mark {
+            &:before {
+                content: '!';
+                font-family: serif;
+                font-size: 60px;
+                color: #8CD4F5;
+            }
+            .sa-line {
+                display: none!important;
+            }
+        }
+    }
+    h2 {
+        color: #8CD4F5;
+        font-size: 18px;
+        font-weight: normal;
+    }
+}
+
 /* Portlet */
 .portlet {
     box-shadow: none!important;
