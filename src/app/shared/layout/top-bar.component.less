@@ -6,34 +6,6 @@
   white-space: nowrap;
   height: 75px;
 
-  /deep/ md-tab-group {
-    .mat-tab-header {
-      border-bottom: none;
-    }
-    .mat-tab-labels {
-      justify-content: flex-end;
-
-      .mat-tab-label {
-        height: 74px;
-
-        font-family: Montserrat;
-        font-size: 16px;
-        font-weight: 500;
-        line-height: 1.5;
-        letter-spacing: 0.2px;
-        text-align: left;
-        color: #677380;
-
-        &.mat-tab-label-active {
-          color: #202b35;      
-        }
-      }
-    }
-    .mat-tab-body-wrapper {
-      padding: 0px;
-    }
-  }
-
 	.top-bar-search:before, .hor-menu:after {
     	content: '';
 	    position: absolute;
@@ -45,7 +17,84 @@
 
   .top-bar-nav {
     float: right;
-    width: calc(~"100% - 330px");
+    width: calc(~"100% - 310px");
+
+    /deep/ .dx-menu-item-wrapper {
+      .dx-context-menu-container-border {
+        border: none!important;
+        box-shadow: none!important;
+      }
+
+      .dx-menu-item-content {
+        height: 74px;
+        padding: 0px;
+
+        .dx-menu-item-text {
+          font-family: Montserrat;
+          font-size: 16px;
+          font-weight: 500;
+          letter-spacing: 0.2px;
+          text-align: left;
+          color: #677380;
+          position: relative;
+          top: 27px;
+        }
+      }
+    }
+
+    /deep/ .mat-tab-nav-bar {
+      border-bottom: none;
+      width: calc(~"100% - 80px");
+      float: left;
+
+      .mat-tab-links {
+        text-align: right;
+        overflow-y: hidden;
+        overflow-x: hidden;
+
+        &:hover {
+          overflow-x: auto;
+        }
+
+        &::-webkit-scrollbar-track{
+        	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        	background-color: #F5F5F5;
+        }
+
+        &::-webkit-scrollbar{
+        	height: 6px;
+        	background-color: #CECECE;
+        }
+
+        &::-webkit-scrollbar-thumb{
+        	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        	background-color: #CECECE;
+        }        
+
+        .mat-ink-bar {
+          background-color: #00aeef; 
+        }
+        .mat-tab-link {
+          height: 74px;
+          opacity: 1;
+          font-family: Montserrat;
+          font-size: 16px;
+          font-weight: 500;
+          line-height: 1.5;
+          letter-spacing: 0.2px;
+          text-align: left;
+          color: #677380;
+
+          &, &:hover, &:active, &:visited {
+            text-decoration: unset;
+          }
+
+          &[ng-reflect-active="true"] {
+            color: #202b35;      
+          }
+        }  
+      }
+    }    
   }
 
 	.top-bar-search {
@@ -71,12 +120,13 @@
 		}
 		
 		input {
-		    margin-left: 30px;
-			margin-top: 20px;
-		    padding: 0px;
-    		border: none;
-	    	font-size: 22px;
-	    	height: 35px;			
+	    margin-left: 30px;
+	  	margin-top: 20px;
+	    padding: 0px;
+  		border: none;
+    	font-size: 22px;
+    	height: 35px;			
+      width: 240px;
 
 			&::placeholder {
 			  color: #9999A6;
