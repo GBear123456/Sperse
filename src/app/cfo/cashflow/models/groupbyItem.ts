@@ -7,5 +7,6 @@ export class GroupbyItem {
     compareYears?: any;
     compareQuarters?: any;
     compareMonths?: any;
+    compareDays?: any;
     getQuarter?: any;
 }

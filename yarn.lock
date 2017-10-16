@@ -1648,16 +1648,16 @@ detect-node@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.0.3.tgz#a2033c09cc8e158d37748fbde7507832bd6ce127"
 
-devextreme-angular@^16.2.6:
-  version "16.2.6"
-  resolved "https://registry.yarnpkg.com/devextreme-angular/-/devextreme-angular-16.2.6.tgz#8f2b13004ded595ef78e30b31a67d1497b35d015"
+devextreme-angular@^17.1.7:
+  version "17.1.7"
+  resolved "https://registry.yarnpkg.com/devextreme-angular/-/devextreme-angular-17.1.7.tgz#a12ddfe7bf4dc7f953b47c2d61ec622745614f91"
   dependencies:
     "@types/jquery" "^2.0.0 || ^3.0.0"
     jquery "^2.0.0 || ^3.0.0"
 
-devextreme@^16.2.6:
-  version "16.2.6"
-  resolved "https://registry.yarnpkg.com/devextreme/-/devextreme-16.2.6.tgz#f3e8b2c2ffc77ee12c74b85b6c24447421902141"
+devextreme@^17.1.7:
+  version "17.1.7"
+  resolved "https://registry.yarnpkg.com/devextreme/-/devextreme-17.1.7.tgz#385b16d801951c53451aa87ba8d510ddf018787e"
   dependencies:
     jszip "^2.0.0 || ^3.0.0"
 
@@ -3879,6 +3879,10 @@ ng-recaptcha@^2.0.2:
   resolved "https://registry.yarnpkg.com/ng-recaptcha/-/ng-recaptcha-2.1.1.tgz#cc1590095d2f7fd467602d33a280d38698043d74"
   optionalDependencies:
     "@types/grecaptcha" "^2.0.33"
+
+ng2-brpipes@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/ng2-brpipes/-/ng2-brpipes-1.1.2.tgz#79789d4fdbe4b6861e9e2166d6ecf717de83988e"
 
 ng2-dragula@^1.5.0:
   version "1.5.0"
