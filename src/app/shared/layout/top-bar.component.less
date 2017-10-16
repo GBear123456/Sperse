@@ -6,6 +6,10 @@
   white-space: nowrap;
   height: 75px;
 
+  @media (max-width: 770px){
+    display: none;
+  }
+
 	.top-bar-search:before, .hor-menu:after {
     	content: '';
 	    position: absolute;
@@ -46,6 +50,10 @@
       border-bottom: none;
       width: calc(~"100% - 80px");
       float: left;
+
+      @media (max-width: 1000px){
+        display: none;
+      }
 
       .mat-tab-links {
         text-align: right;
@@ -103,6 +111,10 @@
 		height: 74px;
 		position: relative;
 		padding-left: 26px;
+
+    @media (max-width: 1000px){
+      display: none;
+    }
 
 		&:before {
 			left: 0px;

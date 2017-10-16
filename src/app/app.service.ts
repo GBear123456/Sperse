@@ -31,7 +31,7 @@ export class AppService {
 
   getModule() {
     let module = (/\/app\/(\w+)\//.exec(location.pathname) || [this.MODULE_DEFAULT]).pop();
-    return this.getModules().indexOf(module) >= 0 ? module: this.MODULE_DEFAULT;
+    return this.getModules().indexOf(module.toUpperCase()) >= 0 ? module.toUpperCase(): this.MODULE_DEFAULT;
   }
 
   initModule() {
