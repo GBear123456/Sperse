@@ -1,0 +1,12 @@
+﻿<dx-pivot-grid id="sales"
+               [allowSortingBySummary]="true"
+               [allowSorting]="true"
+               [allowFiltering]="true"
+               [allowExpandAll]="true"
+               [height]="240"
+               [showBorders]="true"
+               [dataSource]="dataSource"
+               (onCellClick)="onPivotCellClick($event)">
+    <dxo-export [enabled]="false" fileName="Sales"></dxo-export>
+    <dxo-field-chooser [enabled]="false"></dxo-field-chooser>
+</dx-pivot-grid>

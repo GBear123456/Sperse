@@ -457,6 +457,51 @@ export class AccountServiceProxy {
         }
         return Observable.of<SwitchToLinkedAccountOutput>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    cancelUserAccount(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Account/CancelUserAccount";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCancelUserAccount(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCancelUserAccount(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCancelUserAccount(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -2864,6 +2909,440 @@ export class EditionServiceProxy {
 }
 
 @Injectable()
+export class FinancialInformationServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    createUser(email: string, name: string, username: string): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/Platform/FinancialInformation/CreateUser?";
+        if (email !== undefined)
+            url_ += "email=" + encodeURIComponent("" + email) + "&"; 
+        if (name !== undefined)
+            url_ += "name=" + encodeURIComponent("" + name) + "&"; 
+        if (username !== undefined)
+            url_ += "username=" + encodeURIComponent("" + username) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateUser(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateUser(response_);
+                } catch (e) {
+                    return <Observable<number>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateUser(response: Response): Observable<number> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: number = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<number>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    createIframeToken(userId: number): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/Platform/FinancialInformation/CreateIframeToken?";
+        if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateIframeToken(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateIframeToken(response_);
+                } catch (e) {
+                    return <Observable<string>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<string>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateIframeToken(response: Response): Observable<string> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: string = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<string>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    createAccount(userId: number, brokerage: number, password: string, username: string): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/Platform/FinancialInformation/CreateAccount?";
+        if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        if (brokerage !== undefined)
+            url_ += "brokerage=" + encodeURIComponent("" + brokerage) + "&"; 
+        if (password !== undefined)
+            url_ += "password=" + encodeURIComponent("" + password) + "&"; 
+        if (username !== undefined)
+            url_ += "username=" + encodeURIComponent("" + username) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateAccount(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateAccount(response_);
+                } catch (e) {
+                    return <Observable<number>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateAccount(response: Response): Observable<number> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: number = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<number>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    syncAccount(accountId: number): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/Platform/FinancialInformation/SyncAccount?";
+        if (accountId !== undefined)
+            url_ += "accountId=" + encodeURIComponent("" + accountId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSyncAccount(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSyncAccount(response_);
+                } catch (e) {
+                    return <Observable<string>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<string>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSyncAccount(response: Response): Observable<string> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: string = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<string>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    checkSyncAccount(accountId: number): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/Platform/FinancialInformation/CheckSyncAccount?";
+        if (accountId !== undefined)
+            url_ += "accountId=" + encodeURIComponent("" + accountId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCheckSyncAccount(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCheckSyncAccount(response_);
+                } catch (e) {
+                    return <Observable<string>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<string>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCheckSyncAccount(response: Response): Observable<string> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: string = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<string>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getAccountPortfolios(accountId: number): Observable<number[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/FinancialInformation/GetAccountPortfolios?";
+        if (accountId !== undefined)
+            url_ += "accountId=" + encodeURIComponent("" + accountId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetAccountPortfolios(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetAccountPortfolios(response_);
+                } catch (e) {
+                    return <Observable<number[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetAccountPortfolios(response: Response): Observable<number[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: number[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<number[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getPortfolioPositions(portfolioId: number): Observable<number[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/FinancialInformation/GetPortfolioPositions?";
+        if (portfolioId !== undefined)
+            url_ += "portfolioId=" + encodeURIComponent("" + portfolioId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetPortfolioPositions(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetPortfolioPositions(response_);
+                } catch (e) {
+                    return <Observable<number[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetPortfolioPositions(response: Response): Observable<number[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: number[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<number[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getPortfolioTransactions(portfolioId: number): Observable<number[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/FinancialInformation/GetPortfolioTransactions?";
+        if (portfolioId !== undefined)
+            url_ += "portfolioId=" + encodeURIComponent("" + portfolioId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetPortfolioTransactions(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetPortfolioTransactions(response_);
+                } catch (e) {
+                    return <Observable<number[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetPortfolioTransactions(response: Response): Observable<number[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: number[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<number[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class FriendshipServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -3890,6 +4369,163 @@ export class LanguageServiceProxy {
 }
 
 @Injectable()
+export class LeadServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    cancelLead(cancelLeadInfo: CancelLeadInfo): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/CancelLead";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(cancelLeadInfo ? cancelLeadInfo.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCancelLead(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCancelLead(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCancelLead(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getCancellationReasons(): Observable<ListResultDtoOfLeadCancellationReasonDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetCancellationReasons";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCancellationReasons(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCancellationReasons(response_);
+                } catch (e) {
+                    return <Observable<ListResultDtoOfLeadCancellationReasonDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ListResultDtoOfLeadCancellationReasonDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCancellationReasons(response: Response): Observable<ListResultDtoOfLeadCancellationReasonDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ListResultDtoOfLeadCancellationReasonDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ListResultDtoOfLeadCancellationReasonDto.fromJS(resultData200) : new ListResultDtoOfLeadCancellationReasonDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ListResultDtoOfLeadCancellationReasonDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getLeadStats(): Observable<LeadStatsDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetLeadStats";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetLeadStats(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetLeadStats(response_);
+                } catch (e) {
+                    return <Observable<LeadStatsDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<LeadStatsDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetLeadStats(response: Response): Observable<LeadStatsDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: LeadStatsDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(LeadStatsDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<LeadStatsDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class MemberServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -4079,6 +4715,51 @@ export class MemberServiceProxy {
     }
 
     protected processRegisterMember(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    cancelMembership(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/Member/CancelMembership";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCancelMembership(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCancelMembership(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCancelMembership(response: Response): Observable<void> {
         const status = response.status; 
 
         if (status === 200) {
@@ -5143,6 +5824,60 @@ export class PipelineServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<number[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getPipelinesFullData(purposeId: string): Observable<PipelineDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelinesFullData?";
+        if (purposeId !== undefined)
+            url_ += "purposeId=" + encodeURIComponent("" + purposeId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetPipelinesFullData(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetPipelinesFullData(response_);
+                } catch (e) {
+                    return <Observable<PipelineDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<PipelineDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetPipelinesFullData(response: Response): Observable<PipelineDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: PipelineDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(PipelineDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<PipelineDto[]>(<any>null);
     }
 
     /**
@@ -8876,6 +9611,72 @@ export class TransactionServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<TransactionDto[]>(<any>null);
+    }
+}
+
+@Injectable()
+export class TransactionStatsServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getStats(startDate: moment.Moment, endDate: moment.Moment, currencyId: string): Observable<CashFlowStatsDto> {
+        let url_ = this.baseUrl + "/api/services/app/TransactionStats/GetStats?";
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
+        if (currencyId !== undefined)
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetStats(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetStats(response_);
+                } catch (e) {
+                    return <Observable<CashFlowStatsDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CashFlowStatsDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetStats(response: Response): Observable<CashFlowStatsDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CashFlowStatsDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CashFlowStatsDto.fromJS(resultData200) : new CashFlowStatsDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CashFlowStatsDto>(<any>null);
     }
 }
 
@@ -16705,6 +17506,198 @@ export interface IUpdateLanguageTextInput {
     value: string;
 }
 
+export class CancelLeadInfo implements ICancelLeadInfo {
+    leadId: number;
+    cancellationReasonId: string;
+    comment: string;
+
+    constructor(data?: ICancelLeadInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadId = data["leadId"];
+            this.cancellationReasonId = data["cancellationReasonId"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): CancelLeadInfo {
+        let result = new CancelLeadInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadId"] = this.leadId;
+        data["cancellationReasonId"] = this.cancellationReasonId;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface ICancelLeadInfo {
+    leadId: number;
+    cancellationReasonId: string;
+    comment: string;
+}
+
+export class ListResultDtoOfLeadCancellationReasonDto implements IListResultDtoOfLeadCancellationReasonDto {
+    items: LeadCancellationReasonDto[];
+
+    constructor(data?: IListResultDtoOfLeadCancellationReasonDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(LeadCancellationReasonDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ListResultDtoOfLeadCancellationReasonDto {
+        let result = new ListResultDtoOfLeadCancellationReasonDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IListResultDtoOfLeadCancellationReasonDto {
+    items: LeadCancellationReasonDto[];
+}
+
+export class LeadCancellationReasonDto implements ILeadCancellationReasonDto {
+    id: string;
+    name: string;
+    isCommentRequired: boolean;
+    sortOrder: number;
+
+    constructor(data?: ILeadCancellationReasonDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.isCommentRequired = data["isCommentRequired"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): LeadCancellationReasonDto {
+        let result = new LeadCancellationReasonDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["isCommentRequired"] = this.isCommentRequired;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface ILeadCancellationReasonDto {
+    id: string;
+    name: string;
+    isCommentRequired: boolean;
+    sortOrder: number;
+}
+
+export class LeadStatsDto implements ILeadStatsDto {
+    typeId: number;
+    typeName: string;
+    stageId: number;
+    stageName: string;
+    pipelineId: number;
+    pipelineName: string;
+    count: number;
+
+    constructor(data?: ILeadStatsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.typeId = data["typeId"];
+            this.typeName = data["typeName"];
+            this.stageId = data["stageId"];
+            this.stageName = data["stageName"];
+            this.pipelineId = data["pipelineId"];
+            this.pipelineName = data["pipelineName"];
+            this.count = data["count"];
+        }
+    }
+
+    static fromJS(data: any): LeadStatsDto {
+        let result = new LeadStatsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["typeId"] = this.typeId;
+        data["typeName"] = this.typeName;
+        data["stageId"] = this.stageId;
+        data["stageName"] = this.stageName;
+        data["pipelineId"] = this.pipelineId;
+        data["pipelineName"] = this.pipelineName;
+        data["count"] = this.count;
+        return data; 
+    }
+}
+
+export interface ILeadStatsDto {
+    typeId: number;
+    typeName: string;
+    stageId: number;
+    stageName: string;
+    pipelineId: number;
+    pipelineName: string;
+    count: number;
+}
+
 export class SelectPackageResponseDto implements ISelectPackageResponseDto {
     registrationId: string;
     memberInfo: MemberInfoDto;
@@ -22476,6 +23469,383 @@ export class TransactionDto implements ITransactionDto {
 
 export interface ITransactionDto {
     id: number;
+}
+
+export class CashFlowStatsDto implements ICashFlowStatsDto {
+    transactionStats: TransactionStatsDto[];
+    categorization: CashFlowCategorizationDto;
+
+    constructor(data?: ICashFlowStatsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["transactionStats"] && data["transactionStats"].constructor === Array) {
+                this.transactionStats = [];
+                for (let item of data["transactionStats"])
+                    this.transactionStats.push(TransactionStatsDto.fromJS(item));
+            }
+            this.categorization = data["categorization"] ? CashFlowCategorizationDto.fromJS(data["categorization"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): CashFlowStatsDto {
+        let result = new CashFlowStatsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.transactionStats && this.transactionStats.constructor === Array) {
+            data["transactionStats"] = [];
+            for (let item of this.transactionStats)
+                data["transactionStats"].push(item.toJSON());
+        }
+        data["categorization"] = this.categorization ? this.categorization.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ICashFlowStatsDto {
+    transactionStats: TransactionStatsDto[];
+    categorization: CashFlowCategorizationDto;
+}
+
+export class TransactionStatsDto implements ITransactionStatsDto {
+    categoryId: number;
+    currencyId: string;
+    date: moment.Moment;
+    amount: number;
+
+    constructor(data?: ITransactionStatsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.categoryId = data["categoryId"];
+            this.currencyId = data["currencyId"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.amount = data["amount"];
+        }
+    }
+
+    static fromJS(data: any): TransactionStatsDto {
+        let result = new TransactionStatsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["categoryId"] = this.categoryId;
+        data["currencyId"] = this.currencyId;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["amount"] = this.amount;
+        return data; 
+    }
+}
+
+export interface ITransactionStatsDto {
+    categoryId: number;
+    currencyId: string;
+    date: moment.Moment;
+    amount: number;
+}
+
+export class CashFlowCategorizationDto implements ICashFlowCategorizationDto {
+    types: CashFlowTypeDto[];
+
+    constructor(data?: ICashFlowCategorizationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["types"] && data["types"].constructor === Array) {
+                this.types = [];
+                for (let item of data["types"])
+                    this.types.push(CashFlowTypeDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CashFlowCategorizationDto {
+        let result = new CashFlowCategorizationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.types && this.types.constructor === Array) {
+            data["types"] = [];
+            for (let item of this.types)
+                data["types"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICashFlowCategorizationDto {
+    types: CashFlowTypeDto[];
+}
+
+export class CashFlowTypeDto implements ICashFlowTypeDto {
+    id: string;
+    name: string;
+    isActive: boolean;
+    sortOrder: number;
+    groups: CashFlowGroupDto[];
+
+    constructor(data?: ICashFlowTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.isActive = data["isActive"];
+            this.sortOrder = data["sortOrder"];
+            if (data["groups"] && data["groups"].constructor === Array) {
+                this.groups = [];
+                for (let item of data["groups"])
+                    this.groups.push(CashFlowGroupDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CashFlowTypeDto {
+        let result = new CashFlowTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["isActive"] = this.isActive;
+        data["sortOrder"] = this.sortOrder;
+        if (this.groups && this.groups.constructor === Array) {
+            data["groups"] = [];
+            for (let item of this.groups)
+                data["groups"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICashFlowTypeDto {
+    id: string;
+    name: string;
+    isActive: boolean;
+    sortOrder: number;
+    groups: CashFlowGroupDto[];
+}
+
+export class CashFlowGroupDto implements ICashFlowGroupDto {
+    id: number;
+    name: string;
+    type: string;
+    isActive: boolean;
+    sortOrder: number;
+    subgroups: CashFlowSubgroupDto[];
+    categories: CashFlowCategoryDto[];
+
+    constructor(data?: ICashFlowGroupDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.type = data["type"];
+            this.isActive = data["isActive"];
+            this.sortOrder = data["sortOrder"];
+            if (data["subgroups"] && data["subgroups"].constructor === Array) {
+                this.subgroups = [];
+                for (let item of data["subgroups"])
+                    this.subgroups.push(CashFlowSubgroupDto.fromJS(item));
+            }
+            if (data["categories"] && data["categories"].constructor === Array) {
+                this.categories = [];
+                for (let item of data["categories"])
+                    this.categories.push(CashFlowCategoryDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CashFlowGroupDto {
+        let result = new CashFlowGroupDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["type"] = this.type;
+        data["isActive"] = this.isActive;
+        data["sortOrder"] = this.sortOrder;
+        if (this.subgroups && this.subgroups.constructor === Array) {
+            data["subgroups"] = [];
+            for (let item of this.subgroups)
+                data["subgroups"].push(item.toJSON());
+        }
+        if (this.categories && this.categories.constructor === Array) {
+            data["categories"] = [];
+            for (let item of this.categories)
+                data["categories"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICashFlowGroupDto {
+    id: number;
+    name: string;
+    type: string;
+    isActive: boolean;
+    sortOrder: number;
+    subgroups: CashFlowSubgroupDto[];
+    categories: CashFlowCategoryDto[];
+}
+
+export class CashFlowSubgroupDto implements ICashFlowSubgroupDto {
+    id: number;
+    name: string;
+    isActive: boolean;
+    sortOrder: number;
+    categories: CashFlowCategoryDto[];
+
+    constructor(data?: ICashFlowSubgroupDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.isActive = data["isActive"];
+            this.sortOrder = data["sortOrder"];
+            if (data["categories"] && data["categories"].constructor === Array) {
+                this.categories = [];
+                for (let item of data["categories"])
+                    this.categories.push(CashFlowCategoryDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CashFlowSubgroupDto {
+        let result = new CashFlowSubgroupDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["isActive"] = this.isActive;
+        data["sortOrder"] = this.sortOrder;
+        if (this.categories && this.categories.constructor === Array) {
+            data["categories"] = [];
+            for (let item of this.categories)
+                data["categories"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICashFlowSubgroupDto {
+    id: number;
+    name: string;
+    isActive: boolean;
+    sortOrder: number;
+    categories: CashFlowCategoryDto[];
+}
+
+export class CashFlowCategoryDto implements ICashFlowCategoryDto {
+    id: number;
+    name: string;
+    isActive: boolean;
+    sortOrder: number;
+
+    constructor(data?: ICashFlowCategoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.isActive = data["isActive"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): CashFlowCategoryDto {
+        let result = new CashFlowCategoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["isActive"] = this.isActive;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface ICashFlowCategoryDto {
+    id: number;
+    name: string;
+    isActive: boolean;
+    sortOrder: number;
 }
 
 export class PagedResultDtoOfUserListDto implements IPagedResultDtoOfUserListDto {
