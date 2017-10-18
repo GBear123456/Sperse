@@ -8,6 +8,8 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { MainRoutingModule } from './main-routing.module';
 import { CountoModule } from '@node_modules/angular2-counto';
 import { EasyPieChartModule } from 'ng2modules-easypiechart';
+import { LeadsStatsComponent } from './dashboard/leads-stats/leads-stats.component'
+import { DxPivotGridModule } from 'devextreme-angular';
 
 @NgModule({
     imports: [
@@ -20,10 +22,12 @@ import { EasyPieChartModule } from 'ng2modules-easypiechart';
         UtilsModule,
         MainRoutingModule,
         CountoModule,
-        EasyPieChartModule
+        EasyPieChartModule,
+        DxPivotGridModule
     ],
     declarations: [
-        DashboardComponent
+        DashboardComponent,
+        LeadsStatsComponent
     ]
 })
 export class MainModule {

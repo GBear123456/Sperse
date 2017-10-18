@@ -14,9 +14,10 @@ import {AppComponentBase} from '@shared/common/app-component-base';
 
 import {FiltersService} from '@shared/filters/filters.service';
 import {FilterModel} from '@shared/filters/filter.model';
-import {FilterStatesComponent} from '@shared/filters/states/filter-states.component';
+import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
+import { DropDownElement } from '@shared/filters/dropdown/dropdown_element';
 
-import {/* ClientServiceProxy, */ CommonLookupServiceProxy} from '@shared/service-proxies/service-proxies';
+import {/* ClientServiceProxy, */ CommonLookupServiceProxy, PipelineServiceProxy} from '@shared/service-proxies/service-proxies';
 import {ImpersonationService} from '@app/crm/users/impersonation.service';
 import {appModuleAnimation} from '@shared/animations/routerTransition';
 
@@ -25,6 +26,7 @@ import query from 'devextreme/data/query';
 
 import 'devextreme/data/odata/store';
 
+import * as _ from 'underscore';
 import * as moment from 'moment';
 
 @Component({
@@ -40,13 +42,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     collection: any;
     showPipeline = false;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
+    private readonly dataSourceURI = 'Lead';
+    private filters: FilterModel[];
 
     constructor(injector: Injector,
                 private _filtersService: FiltersService,
                 // private _clientService: ClientServiceProxy,
                 private _activatedRoute: ActivatedRoute,
                 private _commonLookupService: CommonLookupServiceProxy,
-                private _impersonationService: ImpersonationService) {
+                private _impersonationService: ImpersonationService,
+                private _pipelineService: PipelineServiceProxy) {
         super(injector);
 
         this._filtersService.enabled = true;
@@ -168,9 +173,54 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             'all', 'active', 'archived'
         ];
 
-        this._filtersService.setup([
-            <FilterModel> {component: FilterStatesComponent, caption: 'states'}
-        ]);
+        this._pipelineService.getPipelinesFullData("L").subscribe(result => {
+            this._filtersService.setup(this.filters = [
+                <FilterModel>{
+                    component: FilterDropDownComponent,
+                    caption: 'stages',
+                    items: {
+                        pipeline: <DropDownElement>{
+                            displayName: "Pipeline",
+                            elements: result,
+                            filterField: "pipelineId",
+                            onElementSelect: (event, filter: FilterDropDownComponent) => {
+                                filter.items["pipeline"].selectedElement = event.value;
+                                filter.items["stage"].elements = event.value.stages;
+                                filter.items["stage"].selectedElement = null;
+                            }
+                        },
+                        stage: <DropDownElement>{
+                            displayName: "Stages",
+                            filterField: "stageId",
+                            onElementSelect: (event, filter: FilterDropDownComponent) => {
+                                filter.items["stage"].selectedElement = event.value;
+                            }
+                        }
+                    }
+                }
+            ]);
+        });
+
+        this._filtersService.apply(() => {
+            this.processODataFilter(this.dataGrid.instance,
+                this.dataSourceURI, this.filters, (filter) => {
+                    let filterMethod = this['filterBy' +
+                        this.capitalize(filter.caption)];
+                    if (filterMethod)
+                        return filterMethod.call(this, filter);
+                }
+            );
+        });
+    }
+
+
+    filterByStages(filter) {
+        let data = {};
+        data[filter.field] = {};
+        _.each(filter.items, (val: DropDownElement, key) => {
+            val && val.filterField && val.selectedElement && (data[this.capitalize(val.filterField)] = val.selectedElement.id);
+        });
+        return data;
     }
 
     ngAfterViewInit(): void {
