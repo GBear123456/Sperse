@@ -872,6 +872,117 @@ export class CachingServiceProxy {
 }
 
 @Injectable()
+export class CashflowServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getStats(startDate: moment.Moment, endDate: moment.Moment, currencyId: string): Observable<CashFlowStatsDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStats?";
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
+        if (currencyId !== undefined)
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetStats(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetStats(response_);
+                } catch (e) {
+                    return <Observable<CashFlowStatsDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CashFlowStatsDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetStats(response: Response): Observable<CashFlowStatsDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CashFlowStatsDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CashFlowStatsDto.fromJS(resultData200) : new CashFlowStatsDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CashFlowStatsDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    recalculateCategories(input: RecalculateCategoriesInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/RecalculateCategories";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processRecalculateCategories(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRecalculateCategories(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRecalculateCategories(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class ChatServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -2436,14 +2547,72 @@ export class CreditReportServiceProxy {
         }
         return Observable.of<AlertDto[]>(<any>null);
     }
+}
+
+@Injectable()
+export class CreditSimulatorServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
 
     /**
      * @return Success
      */
-    simulateScore(simulatorData: ScoreSimulatorDto, getCurrentScore: boolean): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/SimulateScore?";
-        if (getCurrentScore !== undefined)
-            url_ += "getCurrentScore=" + encodeURIComponent("" + getCurrentScore) + "&"; 
+    getScoreSimulatorInfo(): Observable<ScoreSimulatorInfoDto> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/CreditSimulator/GetScoreSimulatorInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetScoreSimulatorInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetScoreSimulatorInfo(response_);
+                } catch (e) {
+                    return <Observable<ScoreSimulatorInfoDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ScoreSimulatorInfoDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetScoreSimulatorInfo(response: Response): Observable<ScoreSimulatorInfoDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ScoreSimulatorInfoDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ScoreSimulatorInfoDto.fromJS(resultData200) : new ScoreSimulatorInfoDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ScoreSimulatorInfoDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    simulateScore(simulatorData: ScoreSimulatorDto): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CreditReport/CreditSimulator/SimulateScore";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(simulatorData ? simulatorData.toJSON() : null);
@@ -9551,136 +9720,6 @@ export class TokenAuthServiceProxy {
 }
 
 @Injectable()
-export class TransactionServiceProxy {
-    private http: Http;
-    private baseUrl: string;
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getAll(): Observable<TransactionDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/Transaction/GetAll";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetAll(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetAll(response_);
-                } catch (e) {
-                    return <Observable<TransactionDto[]>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<TransactionDto[]>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetAll(response: Response): Observable<TransactionDto[]> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: TransactionDto[] = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(TransactionDto.fromJS(item));
-            }
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<TransactionDto[]>(<any>null);
-    }
-}
-
-@Injectable()
-export class TransactionStatsServiceProxy {
-    private http: Http;
-    private baseUrl: string;
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getStats(startDate: moment.Moment, endDate: moment.Moment, currencyId: string): Observable<CashFlowStatsDto> {
-        let url_ = this.baseUrl + "/api/services/app/TransactionStats/GetStats?";
-        if (startDate !== undefined)
-            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
-        if (endDate !== undefined)
-            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
-        if (currencyId !== undefined)
-            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetStats(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetStats(response_);
-                } catch (e) {
-                    return <Observable<CashFlowStatsDto>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<CashFlowStatsDto>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetStats(response: Response): Observable<CashFlowStatsDto> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: CashFlowStatsDto = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CashFlowStatsDto.fromJS(resultData200) : new CashFlowStatsDto();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<CashFlowStatsDto>(<any>null);
-    }
-}
-
-@Injectable()
 export class UserServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -11414,6 +11453,344 @@ export interface IEntityDtoOfString {
     id: string;
 }
 
+export class CashFlowStatsDto implements ICashFlowStatsDto {
+    transactionStats: TransactionStatsDto[];
+    categories: CashFlowCategoryDto[];
+    adjustments: AdjustmentDto[];
+    startingBalances: StartingBalanceDto[];
+
+    constructor(data?: ICashFlowStatsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["transactionStats"] && data["transactionStats"].constructor === Array) {
+                this.transactionStats = [];
+                for (let item of data["transactionStats"])
+                    this.transactionStats.push(TransactionStatsDto.fromJS(item));
+            }
+            if (data["categories"] && data["categories"].constructor === Array) {
+                this.categories = [];
+                for (let item of data["categories"])
+                    this.categories.push(CashFlowCategoryDto.fromJS(item));
+            }
+            if (data["adjustments"] && data["adjustments"].constructor === Array) {
+                this.adjustments = [];
+                for (let item of data["adjustments"])
+                    this.adjustments.push(AdjustmentDto.fromJS(item));
+            }
+            if (data["startingBalances"] && data["startingBalances"].constructor === Array) {
+                this.startingBalances = [];
+                for (let item of data["startingBalances"])
+                    this.startingBalances.push(StartingBalanceDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CashFlowStatsDto {
+        let result = new CashFlowStatsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.transactionStats && this.transactionStats.constructor === Array) {
+            data["transactionStats"] = [];
+            for (let item of this.transactionStats)
+                data["transactionStats"].push(item.toJSON());
+        }
+        if (this.categories && this.categories.constructor === Array) {
+            data["categories"] = [];
+            for (let item of this.categories)
+                data["categories"].push(item.toJSON());
+        }
+        if (this.adjustments && this.adjustments.constructor === Array) {
+            data["adjustments"] = [];
+            for (let item of this.adjustments)
+                data["adjustments"].push(item.toJSON());
+        }
+        if (this.startingBalances && this.startingBalances.constructor === Array) {
+            data["startingBalances"] = [];
+            for (let item of this.startingBalances)
+                data["startingBalances"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICashFlowStatsDto {
+    transactionStats: TransactionStatsDto[];
+    categories: CashFlowCategoryDto[];
+    adjustments: AdjustmentDto[];
+    startingBalances: StartingBalanceDto[];
+}
+
+export class TransactionStatsDto implements ITransactionStatsDto {
+    categoryId: number;
+    currencyId: string;
+    date: moment.Moment;
+    amount: number;
+
+    constructor(data?: ITransactionStatsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.categoryId = data["categoryId"];
+            this.currencyId = data["currencyId"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.amount = data["amount"];
+        }
+    }
+
+    static fromJS(data: any): TransactionStatsDto {
+        let result = new TransactionStatsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["categoryId"] = this.categoryId;
+        data["currencyId"] = this.currencyId;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["amount"] = this.amount;
+        return data; 
+    }
+}
+
+export interface ITransactionStatsDto {
+    categoryId: number;
+    currencyId: string;
+    date: moment.Moment;
+    amount: number;
+}
+
+export class CashFlowCategoryDto implements ICashFlowCategoryDto {
+    id: number;
+    type: string;
+    typeOrder: number;
+    group: string;
+    groupOrder: number;
+    subgroup: string;
+    subgroupOrder: number;
+    name: string;
+    nameOrder: number;
+
+    constructor(data?: ICashFlowCategoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.type = data["type"];
+            this.typeOrder = data["typeOrder"];
+            this.group = data["group"];
+            this.groupOrder = data["groupOrder"];
+            this.subgroup = data["subgroup"];
+            this.subgroupOrder = data["subgroupOrder"];
+            this.name = data["name"];
+            this.nameOrder = data["nameOrder"];
+        }
+    }
+
+    static fromJS(data: any): CashFlowCategoryDto {
+        let result = new CashFlowCategoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["typeOrder"] = this.typeOrder;
+        data["group"] = this.group;
+        data["groupOrder"] = this.groupOrder;
+        data["subgroup"] = this.subgroup;
+        data["subgroupOrder"] = this.subgroupOrder;
+        data["name"] = this.name;
+        data["nameOrder"] = this.nameOrder;
+        return data; 
+    }
+}
+
+export interface ICashFlowCategoryDto {
+    id: number;
+    type: string;
+    typeOrder: number;
+    group: string;
+    groupOrder: number;
+    subgroup: string;
+    subgroupOrder: number;
+    name: string;
+    nameOrder: number;
+}
+
+export class AdjustmentDto implements IAdjustmentDto {
+    id: number;
+    bankAccountId: number;
+    type: number;
+    date: moment.Moment;
+    currencyId: string;
+    amount: number;
+    cashflowCategoryId: number;
+    comments: string;
+
+    constructor(data?: IAdjustmentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.bankAccountId = data["bankAccountId"];
+            this.type = data["type"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.currencyId = data["currencyId"];
+            this.amount = data["amount"];
+            this.cashflowCategoryId = data["cashflowCategoryId"];
+            this.comments = data["comments"];
+        }
+    }
+
+    static fromJS(data: any): AdjustmentDto {
+        let result = new AdjustmentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["bankAccountId"] = this.bankAccountId;
+        data["type"] = this.type;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["currencyId"] = this.currencyId;
+        data["amount"] = this.amount;
+        data["cashflowCategoryId"] = this.cashflowCategoryId;
+        data["comments"] = this.comments;
+        return data; 
+    }
+}
+
+export interface IAdjustmentDto {
+    id: number;
+    bankAccountId: number;
+    type: number;
+    date: moment.Moment;
+    currencyId: string;
+    amount: number;
+    cashflowCategoryId: number;
+    comments: string;
+}
+
+export class StartingBalanceDto implements IStartingBalanceDto {
+    currencyId: string;
+    amount: number;
+
+    constructor(data?: IStartingBalanceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.currencyId = data["currencyId"];
+            this.amount = data["amount"];
+        }
+    }
+
+    static fromJS(data: any): StartingBalanceDto {
+        let result = new StartingBalanceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["currencyId"] = this.currencyId;
+        data["amount"] = this.amount;
+        return data; 
+    }
+}
+
+export interface IStartingBalanceDto {
+    currencyId: string;
+    amount: number;
+}
+
+export class RecalculateCategoriesInput implements IRecalculateCategoriesInput {
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    cashflowCategoryId: number;
+
+    constructor(data?: IRecalculateCategoriesInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.cashflowCategoryId = data["cashflowCategoryId"];
+        }
+    }
+
+    static fromJS(data: any): RecalculateCategoriesInput {
+        let result = new RecalculateCategoriesInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["cashflowCategoryId"] = this.cashflowCategoryId;
+        return data; 
+    }
+}
+
+export interface IRecalculateCategoriesInput {
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    cashflowCategoryId: number;
+}
+
 export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
     serverTime: moment.Moment;
     friends: FriendDto[];
@@ -13092,6 +13469,8 @@ export class CreditReportOutput implements ICreditReportOutput {
     isPaymentDelayed: boolean;
     isSubscriptionCancelled: boolean;
     previousReportExists: boolean;
+    memberName: string;
+    memberLastName: string;
 
     constructor(data?: ICreditReportOutput) {
         if (data) {
@@ -13112,6 +13491,8 @@ export class CreditReportOutput implements ICreditReportOutput {
             this.isPaymentDelayed = data["isPaymentDelayed"];
             this.isSubscriptionCancelled = data["isSubscriptionCancelled"];
             this.previousReportExists = data["previousReportExists"];
+            this.memberName = data["memberName"];
+            this.memberLastName = data["memberLastName"];
         }
     }
 
@@ -13131,6 +13512,8 @@ export class CreditReportOutput implements ICreditReportOutput {
         data["isPaymentDelayed"] = this.isPaymentDelayed;
         data["isSubscriptionCancelled"] = this.isSubscriptionCancelled;
         data["previousReportExists"] = this.previousReportExists;
+        data["memberName"] = this.memberName;
+        data["memberLastName"] = this.memberLastName;
         return data; 
     }
 }
@@ -13144,6 +13527,8 @@ export interface ICreditReportOutput {
     isPaymentDelayed: boolean;
     isSubscriptionCancelled: boolean;
     previousReportExists: boolean;
+    memberName: string;
+    memberLastName: string;
 }
 
 export class CreditReportDto implements ICreditReportDto {
@@ -14340,6 +14725,53 @@ export class ScoreHistoryDto implements IScoreHistoryDto {
 export interface IScoreHistoryDto {
     scoreDate: moment.Moment;
     score: number;
+}
+
+export class ScoreSimulatorInfoDto implements IScoreSimulatorInfoDto {
+    initialScore: number;
+    totalCreditLimit: number;
+    outstandingBalance: number;
+    accessStatus: ScoreSimulatorInfoDtoAccessStatus;
+
+    constructor(data?: IScoreSimulatorInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.initialScore = data["initialScore"];
+            this.totalCreditLimit = data["totalCreditLimit"];
+            this.outstandingBalance = data["outstandingBalance"];
+            this.accessStatus = data["accessStatus"];
+        }
+    }
+
+    static fromJS(data: any): ScoreSimulatorInfoDto {
+        let result = new ScoreSimulatorInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["initialScore"] = this.initialScore;
+        data["totalCreditLimit"] = this.totalCreditLimit;
+        data["outstandingBalance"] = this.outstandingBalance;
+        data["accessStatus"] = this.accessStatus;
+        return data; 
+    }
+}
+
+export interface IScoreSimulatorInfoDto {
+    initialScore: number;
+    totalCreditLimit: number;
+    outstandingBalance: number;
+    accessStatus: ScoreSimulatorInfoDtoAccessStatus;
 }
 
 export class ScoreSimulatorDto implements IScoreSimulatorDto {
@@ -19088,6 +19520,7 @@ export class PackageDto implements IPackageDto {
     trialPeriodDays: number;
     monthlyPaymentAmount: number;
     isActive: boolean;
+    isSimulatorEnabled: boolean;
     isDeleted: boolean;
     deleterUserId: number;
     deletionTime: moment.Moment;
@@ -19116,6 +19549,7 @@ export class PackageDto implements IPackageDto {
             this.trialPeriodDays = data["trialPeriodDays"];
             this.monthlyPaymentAmount = data["monthlyPaymentAmount"];
             this.isActive = data["isActive"];
+            this.isSimulatorEnabled = data["isSimulatorEnabled"];
             this.isDeleted = data["isDeleted"];
             this.deleterUserId = data["deleterUserId"];
             this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
@@ -19143,6 +19577,7 @@ export class PackageDto implements IPackageDto {
         data["trialPeriodDays"] = this.trialPeriodDays;
         data["monthlyPaymentAmount"] = this.monthlyPaymentAmount;
         data["isActive"] = this.isActive;
+        data["isSimulatorEnabled"] = this.isSimulatorEnabled;
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -19164,6 +19599,7 @@ export interface IPackageDto {
     trialPeriodDays: number;
     monthlyPaymentAmount: number;
     isActive: boolean;
+    isSimulatorEnabled: boolean;
     isDeleted: boolean;
     deleterUserId: number;
     deletionTime: moment.Moment;
@@ -23436,418 +23872,6 @@ export interface IExternalAuthenticateResultModel {
     returnUrl: string;
 }
 
-export class TransactionDto implements ITransactionDto {
-    id: number;
-
-    constructor(data?: ITransactionDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): TransactionDto {
-        let result = new TransactionDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ITransactionDto {
-    id: number;
-}
-
-export class CashFlowStatsDto implements ICashFlowStatsDto {
-    transactionStats: TransactionStatsDto[];
-    categorization: CashFlowCategorizationDto;
-
-    constructor(data?: ICashFlowStatsDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["transactionStats"] && data["transactionStats"].constructor === Array) {
-                this.transactionStats = [];
-                for (let item of data["transactionStats"])
-                    this.transactionStats.push(TransactionStatsDto.fromJS(item));
-            }
-            this.categorization = data["categorization"] ? CashFlowCategorizationDto.fromJS(data["categorization"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): CashFlowStatsDto {
-        let result = new CashFlowStatsDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.transactionStats && this.transactionStats.constructor === Array) {
-            data["transactionStats"] = [];
-            for (let item of this.transactionStats)
-                data["transactionStats"].push(item.toJSON());
-        }
-        data["categorization"] = this.categorization ? this.categorization.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ICashFlowStatsDto {
-    transactionStats: TransactionStatsDto[];
-    categorization: CashFlowCategorizationDto;
-}
-
-export class TransactionStatsDto implements ITransactionStatsDto {
-    categoryId: number;
-    currencyId: string;
-    date: moment.Moment;
-    amount: number;
-
-    constructor(data?: ITransactionStatsDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.categoryId = data["categoryId"];
-            this.currencyId = data["currencyId"];
-            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
-            this.amount = data["amount"];
-        }
-    }
-
-    static fromJS(data: any): TransactionStatsDto {
-        let result = new TransactionStatsDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["categoryId"] = this.categoryId;
-        data["currencyId"] = this.currencyId;
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["amount"] = this.amount;
-        return data; 
-    }
-}
-
-export interface ITransactionStatsDto {
-    categoryId: number;
-    currencyId: string;
-    date: moment.Moment;
-    amount: number;
-}
-
-export class CashFlowCategorizationDto implements ICashFlowCategorizationDto {
-    types: CashFlowTypeDto[];
-
-    constructor(data?: ICashFlowCategorizationDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["types"] && data["types"].constructor === Array) {
-                this.types = [];
-                for (let item of data["types"])
-                    this.types.push(CashFlowTypeDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): CashFlowCategorizationDto {
-        let result = new CashFlowCategorizationDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.types && this.types.constructor === Array) {
-            data["types"] = [];
-            for (let item of this.types)
-                data["types"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ICashFlowCategorizationDto {
-    types: CashFlowTypeDto[];
-}
-
-export class CashFlowTypeDto implements ICashFlowTypeDto {
-    id: string;
-    name: string;
-    isActive: boolean;
-    sortOrder: number;
-    groups: CashFlowGroupDto[];
-
-    constructor(data?: ICashFlowTypeDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.isActive = data["isActive"];
-            this.sortOrder = data["sortOrder"];
-            if (data["groups"] && data["groups"].constructor === Array) {
-                this.groups = [];
-                for (let item of data["groups"])
-                    this.groups.push(CashFlowGroupDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): CashFlowTypeDto {
-        let result = new CashFlowTypeDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["isActive"] = this.isActive;
-        data["sortOrder"] = this.sortOrder;
-        if (this.groups && this.groups.constructor === Array) {
-            data["groups"] = [];
-            for (let item of this.groups)
-                data["groups"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ICashFlowTypeDto {
-    id: string;
-    name: string;
-    isActive: boolean;
-    sortOrder: number;
-    groups: CashFlowGroupDto[];
-}
-
-export class CashFlowGroupDto implements ICashFlowGroupDto {
-    id: number;
-    name: string;
-    type: string;
-    isActive: boolean;
-    sortOrder: number;
-    subgroups: CashFlowSubgroupDto[];
-    categories: CashFlowCategoryDto[];
-
-    constructor(data?: ICashFlowGroupDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.type = data["type"];
-            this.isActive = data["isActive"];
-            this.sortOrder = data["sortOrder"];
-            if (data["subgroups"] && data["subgroups"].constructor === Array) {
-                this.subgroups = [];
-                for (let item of data["subgroups"])
-                    this.subgroups.push(CashFlowSubgroupDto.fromJS(item));
-            }
-            if (data["categories"] && data["categories"].constructor === Array) {
-                this.categories = [];
-                for (let item of data["categories"])
-                    this.categories.push(CashFlowCategoryDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): CashFlowGroupDto {
-        let result = new CashFlowGroupDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["type"] = this.type;
-        data["isActive"] = this.isActive;
-        data["sortOrder"] = this.sortOrder;
-        if (this.subgroups && this.subgroups.constructor === Array) {
-            data["subgroups"] = [];
-            for (let item of this.subgroups)
-                data["subgroups"].push(item.toJSON());
-        }
-        if (this.categories && this.categories.constructor === Array) {
-            data["categories"] = [];
-            for (let item of this.categories)
-                data["categories"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ICashFlowGroupDto {
-    id: number;
-    name: string;
-    type: string;
-    isActive: boolean;
-    sortOrder: number;
-    subgroups: CashFlowSubgroupDto[];
-    categories: CashFlowCategoryDto[];
-}
-
-export class CashFlowSubgroupDto implements ICashFlowSubgroupDto {
-    id: number;
-    name: string;
-    isActive: boolean;
-    sortOrder: number;
-    categories: CashFlowCategoryDto[];
-
-    constructor(data?: ICashFlowSubgroupDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.isActive = data["isActive"];
-            this.sortOrder = data["sortOrder"];
-            if (data["categories"] && data["categories"].constructor === Array) {
-                this.categories = [];
-                for (let item of data["categories"])
-                    this.categories.push(CashFlowCategoryDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): CashFlowSubgroupDto {
-        let result = new CashFlowSubgroupDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["isActive"] = this.isActive;
-        data["sortOrder"] = this.sortOrder;
-        if (this.categories && this.categories.constructor === Array) {
-            data["categories"] = [];
-            for (let item of this.categories)
-                data["categories"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ICashFlowSubgroupDto {
-    id: number;
-    name: string;
-    isActive: boolean;
-    sortOrder: number;
-    categories: CashFlowCategoryDto[];
-}
-
-export class CashFlowCategoryDto implements ICashFlowCategoryDto {
-    id: number;
-    name: string;
-    isActive: boolean;
-    sortOrder: number;
-
-    constructor(data?: ICashFlowCategoryDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.isActive = data["isActive"];
-            this.sortOrder = data["sortOrder"];
-        }
-    }
-
-    static fromJS(data: any): CashFlowCategoryDto {
-        let result = new CashFlowCategoryDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["isActive"] = this.isActive;
-        data["sortOrder"] = this.sortOrder;
-        return data; 
-    }
-}
-
-export interface ICashFlowCategoryDto {
-    id: number;
-    name: string;
-    isActive: boolean;
-    sortOrder: number;
-}
-
 export class PagedResultDtoOfUserListDto implements IPagedResultDtoOfUserListDto {
     totalCount: number;
     items: UserListDto[];
@@ -24859,6 +24883,15 @@ export enum AccountCreditHistoryDtoStatusType {
     _9 = 9, 
     _10 = 10, 
     _11 = 11, 
+}
+
+export enum ScoreSimulatorInfoDtoAccessStatus {
+    Ok = <any>"Ok", 
+    NoMember = <any>"NoMember", 
+    MemberIsCancelled = <any>"MemberIsCancelled", 
+    KbaIsNotPassed = <any>"KbaIsNotPassed", 
+    UnsupportedPackage = <any>"UnsupportedPackage", 
+    NoPayment = <any>"NoPayment", 
 }
 
 export enum MemberInfoDtoGender {
