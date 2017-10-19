@@ -12,7 +12,6 @@ import { FilterCBoxesComponent } from '@shared/filters/cboxes/filter-cboxes.comp
 import { FilterDatesComponent } from '@shared/filters/dates/filter-dates.component';
 
 import { CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
-import { ImpersonationService } from '@app/crm/users/impersonation.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -41,8 +40,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     private _router: Router,
 		private _filtersService: FiltersService,
     private _activatedRoute: ActivatedRoute,
-    private _commonLookupService: CommonLookupServiceProxy,
-    private _impersonationService: ImpersonationService
+    private _commonLookupService: CommonLookupServiceProxy
   ) {
     super(injector);
 

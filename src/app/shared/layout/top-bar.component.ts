@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PanelMenu } from './panel-menu';
 import { PanelMenuItem } from './panel-menu-item';
@@ -12,10 +12,16 @@ import { AppService } from '@app/app.service';
 @Component({
   templateUrl: './top-bar.component.html',
 	styleUrls: ['./top-bar.component.less'],
-  selector: 'top-bar'
+  selector: 'top-bar',
+  host: {
+    '(window:resize)': "toogleNavMenu()"
+  }
 })
-export class TopBarComponent extends AppComponentBase {
+export class TopBarComponent extends AppComponentBase  implements AfterViewInit {
   config: any = {};
+  selectedIndex: number;
+  visibleMenuItems: number = 0;
+  showAdaptiveMenu: boolean = true;
   menu: PanelMenu = <PanelMenu>{
     items: []
   };
@@ -26,12 +32,14 @@ export class TopBarComponent extends AppComponentBase {
       public router: Router
   ) {
     super(injector);
-
+    
     _appService.subscribeModuleChange((config) => {
       this.config = config;
       this.menu = new PanelMenu("MainMenu", "MainMenu", 
         this.initMenu(config['navigation'])
       );
+      this.selectedIndex = 0;
+      this.ngAfterViewInit();
     });
   }
 
@@ -48,12 +56,33 @@ export class TopBarComponent extends AppComponentBase {
     return navList;
   }
 
-  menuItemRendered(event){
-    event.itemData.visible = this.showMenuItem(event.itemData);
+  menuItemRendered(event, index){
+    if (this.router.url == event.itemData.route)
+      setTimeout(() => {
+        this.selectedIndex = isNaN(index) ? event.itemIndex: index;
+      }, 0);      
+
+    if(event.itemData.visible = this.showMenuItem(event.itemData))
+      this.visibleMenuItems++;
     if (event.itemData.items)
       event.itemData.items.forEach((item) => {
         item.visible = this.showMenuItem(item);
       });
+  }
+
+  navigate(event, index){   
+    if (event.itemData.route) {
+      this.router.navigate([event.itemData.route]);
+      this.selectedIndex = isNaN(index) ? event.itemIndex: index;
+    } 
+  }
+
+  toogleNavMenu() {   
+    let prevValue = this.showAdaptiveMenu;
+    this.showAdaptiveMenu = 
+      window.innerWidth - 1000 < this.visibleMenuItems * 70;
+    if (prevValue != this.showAdaptiveMenu)
+      this.visibleMenuItems = 0;
   }
 
 	private checkMenuItemPermission(item): boolean {
@@ -74,5 +103,11 @@ export class TopBarComponent extends AppComponentBase {
         return false;
     }
     return this.checkMenuItemPermission(item);
+  }
+
+  ngAfterViewInit() {  
+    setTimeout(() => {
+      this.toogleNavMenu();
+    }, 0);
   }
 }

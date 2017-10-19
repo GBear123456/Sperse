@@ -42,7 +42,8 @@
 		}
 	}
 	.page-logo {
-		max-width: 285px;
+    width: 316px!important;
+		max-width: 316px;
 	}
 }
 
@@ -117,6 +118,18 @@
 
 .md-shadow-zero-light {
     box-shadow: 0 0 0 rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.18) !important;
+}
+
+.dropdown-language {
+  @media (max-width: 845px) {
+    display: none!important;
+  }
+}
+
+.navbar-nav.pull-right {
+  @media (max-width: 565px) {
+    display: none!important;
+  }
 }
 
 .page-header.navbar .top-menu .navbar-nav > li.dropdown-dark .dropdown-submenu {

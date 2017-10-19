@@ -1,4 +1,4 @@
-﻿import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -33,8 +33,8 @@ import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
 
-import { DxMenuModule, DxScrollViewModule, DxButtonModule,
-  DxDropDownBoxModule, DxListModule } from 'devextreme-angular';
+import { DxMenuModule, DxScrollViewModule, DxButtonModule, 
+  DxDropDownBoxModule, DxListModule, DxNavBarModule } from 'devextreme-angular';
 
 import { MdTabsModule } from '@angular/material';
 
@@ -77,6 +77,7 @@ let COMPONENTS = [
     DxMenuModule, 
     DxScrollViewModule, 
     DxButtonModule,
+    DxNavBarModule,
     DxDropDownBoxModule,
 
     MdTabsModule

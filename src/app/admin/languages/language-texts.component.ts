@@ -147,7 +147,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     }
 
     applyFilters(): void {
-        this._router.navigate(['app/crm/languages', this.targetLanguageName, 'texts', {
+        this._router.navigate(['app/admin/languages', this.targetLanguageName, 'texts', {
             sourceName: this.sourceName,
             baseLanguageName: this.baseLanguageName,
             targetValueFilter: this.targetValueFilter,

@@ -1,66 +1,43 @@
-﻿<!-- dx-menu [items]="menu.items"></dx-menu -->
+﻿<div class="adaptive-menu" *ngIf="showAdaptiveMenu">
+  <dx-menu 
+    [accessKey]="nav-menu"
+    [dataSource]="menu.items" 
+    [selectionMode]="single"
+    [hoverStateEnabled]="true"
+    [submenuDirection]="rightOrBottom"
+    [hideSubmenuOnMouseLeave]="true"
+    [adaptivityEnabled]="true"
+    [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
+    [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
+    (onItemClick)="navigate($event)"
+    (onItemRendered)="menuItemRendered($event)">
+  </dx-menu>
+</div>
+
 <div class="top-bar-search" *ngIf="config['search']">
 	<i class="icon-magnifier"></i>
 	<input [(ngModel)]="search" name="search" autoFocus class="form-control" placeholder="{{l('SearchAllData')}}" type="text">
 </div>
 
-<div class="top-bar-nav">
-  <nav mat-tab-nav-bar>
-    <div *ngFor="let link of menu.items" style="display:inline-block;">
-      <a mat-tab-link
-         *ngIf="!link.items.length && showMenuItem(link)"
-         [routerLink]="link.route"
-         routerLinkActive #rla="routerLinkActive"
-         [disabled]="link.items.length > 0"
-         [active]="!link.items.length && rla.isActive">
-        {{link.text}}
-      </a>
-      <dx-menu *ngIf="link.items.length" [dataSource]="[link]" 
-        (onItemClick)="$event.itemData.route && router.navigate([$event.itemData.route])"
-        (onItemRendered)="menuItemRendered($event)">
-      </dx-menu>
-    </div>
-  </nav>
-
-  <platform-select></platform-select>
+<div class="top-bar-nav" *ngIf="!showAdaptiveMenu">
+  <dx-nav-bar
+    height="74px"
+    [hoverStateEnabled]="true"
+    [selectedIndex]="selectedIndex"
+    selectionMode="single">
+      <dxi-item                     
+        *ngFor="let link of menu.items; let i = index;" 
+        [visible]="showMenuItem(link)">
+        <dx-menu 
+          [dataSource]="[link]" 
+          [selectionMode]="none"
+          [hoverStateEnabled]="true"
+          [hideSubmenuOnMouseLeave]="true"
+          [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
+          [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
+          (onItemClick)="navigate($event, i)"
+          (onItemRendered)="menuItemRendered($event, i)">
+        </dx-menu>
+      </dxi-item>
+  </dx-nav-bar>
 </div>
-
-<!-- div class="top-bar-nav">
-  <md-tab-group [selectedIndex]="seletedTabIndex">
-    <ng-template ngFor let-menuItem [ngForOf]="menu.items" let-mainMenuItemIndex="index">
-      <div (click)="router.navigate(menuItem.route)">
-        <md-tab *ngIf="showMenuItem(menuItem)" label="{{l(menuItem.text)}}"></md-tab>
-      </div>
-    </ng-template>
-  </md-tab-group>
-
-  <platform-select></platform-select>
-</div -->
-
-<!-- div class="top-bar-nav">
-  <div class="hor-menu hor-menu-light hidden-sm hidden-xs">
-      <ul class="nav navbar-nav" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">        
-          <ng-template ngFor let-menuItem [ngForOf]="menu.items" let-mainMenuItemIndex="index">
-              <li *ngIf="showMenuItem(menuItem)" class="classic-menu-dropdown" aria-haspopup="true">
-                  <a [routerLink]="[menuItem.route]" class="auto" [ngClass]="{disabled: menuItem.items.length}" [routerLinkActive]="[menuItem.items.length ? '': 'active']">
-
-                      {{l(menuItem.text)}}
-  					<i class="fa fa-angle-down" *ngIf="menuItem.items.length"></i>
-                  </a>
-                  <ul class="dropdown-menu pull-left" *ngIf="menuItem.items.length">
-                      <ng-template ngFor let-childMenuItem [ngForOf]="menuItem.items" let-mainMenuItemIndex="index">
-                          <li *ngIf="showMenuItem(childMenuItem)">
-                              <a [routerLink]="[childMenuItem.route]" *ngIf="!childMenuItem.items.length">
-                                  <i class="{{childMenuItem.icon}}"></i>
-                                  <span class="title">{{l(childMenuItem.text)}}</span>
-                              </a>
-                          </li>
-                      </ng-template>
-                  </ul>
-              </li>
-          </ng-template>
-      </ul>
-  </div>
-
-  <platform-select></platform-select>
-</div -->

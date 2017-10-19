@@ -1,16 +1,15 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AppCommonModule } from '@app/shared/common/app-common.module';
+import { AdminRoutingModule } from './admin-routing.module';
 
-import {ModalModule, TabsModule, TooltipModule, PopoverModule} from 'ngx-bootstrap';
-import {FileUploadModule} from '@node_modules/ng2-file-upload';
-
-import {AdminRoutingModule} from './admin-routing.module';
-import {UtilsModule} from '@shared/utils/utils.module';
-import {AppCommonModule} from '@app/shared/common/app-common.module';
-import {FiltersModule} from '@shared/filters/filters.module';
-import {PipelineModule} from '@app/shared/pipeline/pipeline.module';
-import { ClientDetailsModule } from './clients/details/client-details.module';	
+import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
+import { FileUploadModule } from '@node_modules/ng2-file-upload';
+import { UtilsModule } from '@shared/utils/utils.module';
+import { DxFileUploaderModule, DxDataGridModule, DxValidatorModule,
+  DxValidationSummaryModule, DxTextBoxModule, DxButtonModule, DxSelectBoxModule
+} from 'devextreme-angular';
 
 import { UsersComponent } from './users/users.component'
 import { PermissionComboComponent } from './shared/permission-combo.component';
@@ -18,30 +17,16 @@ import { RoleComboComponent } from './shared/role-combo.component';
 import { CreateOrEditUserModalComponent } from './users/create-or-edit-user-modal.component'
 import { EditUserPermissionsModalComponent } from './users/edit-user-permissions-modal.component';
 import { PermissionTreeComponent } from './shared/permission-tree.component';
-import { FeatureTreeComponent } from './shared/feature-tree.component';
 
 import {RolesComponent} from './roles/roles.component';
 import {CreateOrEditRoleModalComponent} from './roles/create-or-edit-role-modal.component';
-
 import {AuditLogsComponent} from './audit-logs/audit-logs.component';
 import {AuditLogDetailModalComponent} from './audit-logs/audit-log-detail-modal.component';
-
 import {HostSettingsComponent} from './settings/host-settings.component';
 import {MaintenanceComponent} from './maintenance/maintenance.component';
-import {EditionsComponent} from './editions/editions.component';
-import {CreateOrEditEditionModalComponent} from './editions/create-or-edit-edition-modal.component';
-import {ImpersonationService} from './users/impersonation.service';
 import {LanguagesComponent} from './languages/languages.component';
 import {LanguageTextsComponent} from './languages/language-texts.component';
 import {CreateOrEditLanguageModalComponent} from './languages/create-or-edit-language-modal.component';
-import {ClientsComponent} from './clients/clients.component';
-import {CreateOrEditClientModalComponent} from './clients/create-or-edit-client-modal.component';
-import {LeadsComponent} from './leads/leads.component';
-import {OrdersComponent} from './orders/orders.component';
-import {TenantsComponent} from './tenants/tenants.component';
-import {CreateTenantModalComponent} from './tenants/create-tenant-modal.component';
-import {EditTenantModalComponent} from './tenants/edit-tenant-modal.component';
-import {TenantFeaturesModalComponent} from './tenants/tenant-features-modal.component';
 import {EditTextModalComponent} from './languages/edit-text-modal.component';
 import {OrganizationUnitsComponent} from './organization-units/organization-units.component';
 import {OrganizationTreeComponent} from './organization-units/organization-tree.component';
@@ -52,48 +37,27 @@ import {SystemSettingsComponent} from './settings/system-settings.component';
 import {UploadSSLCertificateModalComponent} from './settings/modals/upload-ssl-cert-modal.component';
 import {AddOrEditSSLBindingModal} from './settings/modals/add-or-edit-ssl-binding-modal.component';
 import {HostDashboardComponent} from './dashboard/host-dashboard.component';
-import {EditionComboComponent} from './shared/edition-combo.component';
 import {SubscriptionManagementComponent} from './subscription-management/subscription-management.component';
-
-import {
-    DxDataGridModule,
-    DxToolbarModule,
-    DxTemplateModule,
-    DxDateBoxModule,
-    DxTextBoxModule,
-    DxValidatorModule,
-    DxValidationSummaryModule,
-    DxButtonModule,
-    DxFileUploaderModule,
-    DxSelectBoxModule
-} from 'devextreme-angular';
 
 @NgModule({
     imports: [
       FormsModule,
       CommonModule,
-      DxDataGridModule,
-      DxToolbarModule,
-      DxTemplateModule,
-      DxDateBoxModule,
-      DxTextBoxModule,
-      DxValidatorModule,
-      DxValidationSummaryModule,
-      DxButtonModule,
-      DxFileUploaderModule,
-      DxSelectBoxModule,
-
-      ClientDetailsModule,
+      AppCommonModule,
+      AdminRoutingModule,
       FileUploadModule,
       ModalModule.forRoot(),
       TabsModule.forRoot(),
       TooltipModule.forRoot(),
       PopoverModule.forRoot(),
-      AdminRoutingModule,
-      UtilsModule,
-      AppCommonModule,
-      FiltersModule,
-      PipelineModule
+      DxValidationSummaryModule,
+      DxFileUploaderModule,
+      DxDataGridModule,
+      DxValidatorModule,
+      DxSelectBoxModule,
+      DxTextBoxModule,
+      DxButtonModule,
+      UtilsModule
     ],
     declarations: [
       UsersComponent,
@@ -102,26 +66,15 @@ import {
       CreateOrEditUserModalComponent,
       EditUserPermissionsModalComponent,
       PermissionTreeComponent,
-      FeatureTreeComponent,
       RolesComponent,
       CreateOrEditRoleModalComponent,
       AuditLogsComponent,
       AuditLogDetailModalComponent,
       HostSettingsComponent,
       MaintenanceComponent,
-      EditionsComponent,
-      CreateOrEditEditionModalComponent,
       LanguagesComponent,
       LanguageTextsComponent,
       CreateOrEditLanguageModalComponent,
-      ClientsComponent,
-      CreateOrEditClientModalComponent,
-      LeadsComponent,
-      OrdersComponent,
-      TenantsComponent,
-      CreateTenantModalComponent,
-      EditTenantModalComponent,
-      TenantFeaturesModalComponent,
       CreateOrEditLanguageModalComponent,
       EditTextModalComponent,
       OrganizationUnitsComponent,
@@ -133,12 +86,8 @@ import {
       UploadSSLCertificateModalComponent,
       AddOrEditSSLBindingModal,
       HostDashboardComponent,
-      EditionComboComponent,
       SubscriptionManagementComponent
-    ],
-    providers: [
-      ImpersonationService
     ]
 })
-export class AdminModule {
-}
+
+export class AdminModule { }

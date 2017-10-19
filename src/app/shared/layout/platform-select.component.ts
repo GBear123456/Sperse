@@ -32,10 +32,11 @@ export class PlatformSelect extends AppComponentBase {
   }
  
   changeModule(event){
-    if (this.module != this.modules[event.itemIndex] && 
-      (['CRM', 'CFO'].indexOf(this.modules[event.itemIndex]) >= 0)
+    let switchModule = this.modules[event.itemIndex];
+    if (this.module != switchModule &&  
+      this._appService.isModuleActive(switchModule)
     ) {
-      this.module = this.modules[event.itemIndex];
+      this.module = switchModule;
       this._appService.switchModule(this.module);
       this._router.navigate(['app/' + 
         this.module.toLowerCase() + '/']);   

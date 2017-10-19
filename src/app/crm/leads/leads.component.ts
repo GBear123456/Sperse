@@ -17,8 +17,7 @@ import {FilterModel} from '@shared/filters/filter.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { DropDownElement } from '@shared/filters/dropdown/dropdown_element';
 
-import {/* ClientServiceProxy, */ CommonLookupServiceProxy, PipelineServiceProxy} from '@shared/service-proxies/service-proxies';
-import {ImpersonationService} from '@app/crm/users/impersonation.service';
+import { CommonLookupServiceProxy, PipelineServiceProxy} from '@shared/service-proxies/service-proxies';
 import {appModuleAnimation} from '@shared/animations/routerTransition';
 
 import {DxDataGridComponent} from 'devextreme-angular';
@@ -50,7 +49,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 // private _clientService: ClientServiceProxy,
                 private _activatedRoute: ActivatedRoute,
                 private _commonLookupService: CommonLookupServiceProxy,
-                private _impersonationService: ImpersonationService,
                 private _pipelineService: PipelineServiceProxy) {
         super(injector);
 
