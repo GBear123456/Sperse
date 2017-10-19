@@ -53,10 +53,8 @@ export class UsersComponent extends AppComponentBase implements AfterViewInit {
 
         let self = this;
         this.filterText = this._activatedRoute.snapshot.queryParams['filterText'] || '';
-        
         var initUsersTable = () => {
             this._$usersTable = $('#UsersTable');
-            
             this._$usersTable.jtable({
 
                 title: this.l('Users'),

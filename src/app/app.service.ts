@@ -12,14 +12,14 @@ export class AppService {
   private readonly MODULE_DEFAULT = 'CRM';
 
 	constructor() {
-		this._config = new Subject<Object>();   
+		this._config = new Subject<Object>();
 
-    //!!VP should be considered to use lazy loading 
+    //!!VP should be considered to use lazy loading
     this._configs['CRM'] = require('./crm/module.config.json');
     this._configs['CFO'] = require('./cfo/module.config.json');
 /*
     ['CRM', 'CFO'].forEach((name) => {
-      this._configs[name] = require('./' + 
+      this._configs[name] = require('./' +
         name.toLowerCase() + '/module.config.json');
     });
 */
@@ -40,7 +40,7 @@ export class AppService {
 
 	switchModule(name: string) {
     this._config.next(this._configs[name]);
-	}	
+	}
 
 	subscribeModuleChange(callback: (config: Object) => any) {
     this._subscribers.push(

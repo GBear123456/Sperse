@@ -18,7 +18,7 @@
                    [allowFiltering]="true"
                    [allowExpandAll]="false"
                    [showBorders]="false"
-                   [(dataSource)]="operationsSource"
+                   [(dataSource)]="dataSource"
                    [rowHeaderLayout]="'tree'"
                    [showColumnGrandTotals]="false"
                    [texts] = "{'grandTotal': 'ENDING CASH POSITION', 'total': '{0}'}"
@@ -26,6 +26,7 @@
                    [export]="{'enabled': false}"
                    (onCellPrepared)="onCellPrepared($event)"
                    (onContentReady)="onContentReady($event)"
+                   (onCellClick)="onCellClick($event)"
     >
     </dx-pivot-grid>
 
