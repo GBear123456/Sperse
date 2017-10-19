@@ -5,6 +5,8 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
 import { Router, NavigationStart  } from '@angular/router';
 
+import { DropDownElement } from '@shared/filters/dropdown/dropdown_element'
+
 import * as _ from 'underscore';
 import * as moment from 'moment';
 
@@ -43,32 +45,37 @@ export class SideBarComponent extends AppComponentBase {
   excludeFilter(event, filter) {
     filter.value = '';
     _.each(filter.items, (val, key) => {      
-      if ((typeof(val) == 'string') || (val instanceof Date))
-        filter.items[key] = '';
-      else if (typeof(val) == 'boolean')
-        filter.items[key] = true;        
+        if ((typeof (val) == 'string') || (val instanceof Date))
+            filter.items[key] = '';
+        else if (typeof (val) == 'boolean')
+            filter.items[key] = true;
+        else if (val)
+            filter.items[key].selectedElement = null;
     });
     this._filtersService.change(filter);
     event.stopPropagation();    
   }
 
   showSelectedFilters() {
-    this.filters.forEach((filter) => {
+      console.log(this.filters);
+      let f = new FilterModel();
+      this.filters.forEach((filter: FilterModel) => {
       let isBoolValues = false;
       let values = _.values(_.mapObject(
         filter.items, (val, key) => { 
           let caption = this.capitalize(key);
-          isBoolValues = typeof(val) == 'boolean';        
-          return (typeof(val) == 'string') && val 
+          isBoolValues = typeof (val) == 'boolean';   
+          return (typeof (val) == 'string') && val 
             || isBoolValues && val && caption
             || val && val['getDate'] && (caption + ': ' + 
-              moment(val).format('l'));
+                  moment(val).format('l'))
+            || val && val.selectedElement && val.selectedElement.name;
         })
       ).filter(Boolean);
       if (!isBoolValues || (values.length 
         != _.values(filter.items).length)
       )
-        filter.value = values.join(', ');
+          filter.value = values.join(', ');
     });
   }
 
