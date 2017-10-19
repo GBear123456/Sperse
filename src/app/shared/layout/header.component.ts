@@ -32,6 +32,7 @@ import * as moment from 'moment';
 
 @Component({
     templateUrl: './header.component.html',
+    styleUrls: ['./header.component.less'],
     selector: 'header',
     encapsulation: ViewEncapsulation.None
 })

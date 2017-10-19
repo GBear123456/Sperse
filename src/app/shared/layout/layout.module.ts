@@ -34,7 +34,7 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
 
 import { DxMenuModule, DxScrollViewModule, DxButtonModule, 
-  DxDropDownBoxModule, DxListModule } from 'devextreme-angular';
+  DxDropDownBoxModule, DxListModule, DxNavBarModule } from 'devextreme-angular';
 
 import { MdTabsModule } from '@angular/material';
 
@@ -77,6 +77,7 @@ let COMPONENTS = [
     DxMenuModule, 
     DxScrollViewModule, 
     DxButtonModule,
+    DxNavBarModule,
     DxDropDownBoxModule,
 
     MdTabsModule

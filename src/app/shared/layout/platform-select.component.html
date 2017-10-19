@@ -1,16 +1,16 @@
 <dx-drop-down-box
+  width="570px"
   [value]="module"
   [dataSource]="modules"
-  (onInitialized)="onDropDownInit($event)"
-  width="570px">
+  (onInitialized)="onDropDownInit($event)">
     <div *dxTemplate="let data of 'content'" style="display:flex;">
-        <dx-list (onItemClick)="changeModule($event)" width="200px">
+        <dx-list (onItemClick)="changeModule($event)" accessKey="module-select" width="200px">
 
           <dxi-item *ngFor="let item of modules" (mouseenter)="onHover(item)">
               <div class="module-select-item {{item | lowercase }}">
                   <input value="{{item}}" readonly>
                   <div>{{item}}</div>
-                  <span *ngIf="item==module" class="dx-icon-check"></span>
+                  <i *ngIf="item==module" class="dx-icon-check"></i>
               </div>
           </dxi-item>
 
