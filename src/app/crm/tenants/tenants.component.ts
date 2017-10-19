@@ -7,7 +7,7 @@ import { EditTenantModalComponent } from './edit-tenant-modal.component';
 import { TenantFeaturesModalComponent } from './tenant-features-modal.component'
 import { JTableHelper } from '@shared/helpers/JTableHelper';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
-import { ImpersonationService } from '@app/crm/users/impersonation.service';
+import { ImpersonationService } from '@admin/users/impersonation.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import * as moment from "moment";
 

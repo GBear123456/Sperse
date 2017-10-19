@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, AfterViewChecked, ElementRef, ViewChild, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { GetUserPermissionsForEditOutput } from '@shared/service-proxies/service-proxies';
-import { PermissionTreeEditModel } from '@app/crm/shared/permission-tree-edit.model';
+import { PermissionTreeEditModel } from './permission-tree-edit.model';
 import * as _ from "lodash";
 
 @Component({

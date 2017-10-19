@@ -8,11 +8,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AppService } from './app.service';
 
-import { ImpersonationService } from './crm/users/impersonation.service';
+import { ImpersonationService } from '@admin/users/impersonation.service';
 
 @NgModule({
     declarations: [
-        AppComponent
+      AppComponent
     ],
     imports: [
   		LayoutModule,

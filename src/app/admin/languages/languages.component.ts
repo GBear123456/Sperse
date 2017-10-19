@@ -163,7 +163,7 @@ export class LanguagesComponent extends AppComponentBase implements AfterViewIni
     }
 
     changeTexts(language: ApplicationLanguageListDto): void {
-        this._router.navigate(['app/crm/languages', language.name, 'texts']);
+        this._router.navigate(['app/admin/languages', language.name, 'texts']);
     }
 
     setAsDefaultLanguage(language: ApplicationLanguageListDto): void {
