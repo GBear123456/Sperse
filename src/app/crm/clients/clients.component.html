@@ -41,11 +41,10 @@
                             [allowUpdating]="true">
                         </dxo-editing>
                         <dxo-export [enabled]="true" fileName="Clients" [allowExportSelectedData]="true"></dxo-export>
-                        <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"></dxi-column>
-                        <dxi-column dataField="Id" caption="{{l('Id')}}"></dxi-column>
-
+                        <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false"></dxi-column>
+                        <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate"
-                                    ></dxi-column>
+                                    [width]="50" [showInColumnChooser]="false"></dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <img [src]="data.data.Photo ? 'data:image/jpeg;base64,' + data.data.Photo : 'assets/common/images/no-photo.png'"
                                  alt="Person Photo"
@@ -53,14 +52,12 @@
                                  class="img-circle"/>
                         </div>
                         <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
-                        <dxi-column dataField="FullName" caption="{{l('Contact.FullName')}}"></dxi-column>
-
+                        <dxi-column dataField="Status" caption="{{l('Status')}}"></dxi-column>
+                        <dxi-column dataField="FullName" caption="{{l('Contact.FullName')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="State" caption="{{l('Contact.State')}}"></dxi-column>
                         <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
                         <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}"></dxi-column>
-
-                        <dxi-column dataField="Status" caption="{{l('Status')}}"></dxi-column>
-                        <dxi-column dataField="CreationTime" caption="{{l('CreationTime')}}" dataType="date"
+                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" dataType="date"
                                     format="shortDateShortTime"></dxi-column>
 
 
