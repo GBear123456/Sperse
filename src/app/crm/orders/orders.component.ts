@@ -25,7 +25,7 @@ import * as moment from "moment";
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     items: any;
-    showPipeline = false;
+    showPipeline = true;
     gridDataSource: any = {};
     private rootComponent: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
