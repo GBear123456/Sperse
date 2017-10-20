@@ -25,7 +25,7 @@ import * as moment from "moment";
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     items: any;
-    showPipeline = false;
+    showPipeline = true;
     gridDataSource: any = {};
     private rootComponent: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
@@ -50,7 +50,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 beforeSend: function (request) {
                     request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
                     request.headers["Abp.TenantId"] = abp.multiTenancy.getTenantIdCookie();
-                }
+                },
+                paginate: true
             }
         }
 

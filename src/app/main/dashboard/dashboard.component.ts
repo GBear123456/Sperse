@@ -7,9 +7,10 @@ declare let d3, Datamap: any;
 import * as _ from "lodash";
 
 @Component({
-    templateUrl: './dashboard.component.html',
-    encapsulation: ViewEncapsulation.None,
-    animations: [appModuleAnimation()]
+  templateUrl: './dashboard.component.html',
+  encapsulation: ViewEncapsulation.None,
+  animations: [appModuleAnimation()],
+  styleUrls: ['dashboard.component.less']
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
 
