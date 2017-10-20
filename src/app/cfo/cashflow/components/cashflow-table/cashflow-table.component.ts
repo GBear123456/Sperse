@@ -2,8 +2,8 @@ import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { CashflowService } from '../../services/cashflow.service';
 import { Operation } from '../../models/operation';
 import { GroupbyItem } from '../../models/groupbyItem';
-import { DxPivotGridComponent } from '@extended_modules/devextreme-angular/ui/pivot-grid';
-import { TransactionStatsServiceProxy } from '@shared/service-proxies/service-proxies';
+//import { DxPivotGridComponent } from '@extended_modules/devextreme-angular/ui/pivot-grid';
+import { CashflowServiceProxy } from '@shared/service-proxies/service-proxies';
 import * as moment from 'moment';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -12,7 +12,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     selector: 'app-cashflow-table',
     templateUrl: './cashflow-table.component.html',
     styleUrls: ['./cashflow-table.component.less'],
-    providers: [ CashflowService, TransactionStatsServiceProxy ]
+    providers: [ CashflowService, CashflowServiceProxy ]
 })
 
 export class CashflowTableComponent extends AppComponentBase implements OnInit {
@@ -296,7 +296,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
     };
     cssMarker = ' @css';
 
-    constructor(injector: Injector, CashflowService: CashflowService, private _transactionsService: TransactionStatsServiceProxy) {
+    constructor(injector: Injector, CashflowService: CashflowService, private _CashflowServiceProxy: CashflowServiceProxy) {
         super(injector);
         // this.updateDateFields('year');
         this.cashflowService = CashflowService;
@@ -337,6 +337,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
     getDataSource() {
         return {
             fields: this.tableFields,
+            //store: this._CashflowServiceProxy.getStats()
             store: this.cashflowService.getOperations()
         };
     }
