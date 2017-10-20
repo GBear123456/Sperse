@@ -10,7 +10,8 @@
     [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
     [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
     (onItemClick)="navigate($event)"
-    (onItemRendered)="menuItemRendered($event)">
+    (onItemRendered)="menuItemRendered($event)"
+    (onInitialized)="toogleNavMenu()">
   </dx-menu>
 </div>
 
@@ -24,7 +25,8 @@
     height="74px"
     [hoverStateEnabled]="true"
     [selectedIndex]="selectedIndex"
-    selectionMode="single">
+    selectionMode="single"
+    (onInitialized)="toogleNavMenu()">
       <dxi-item                     
         *ngFor="let link of menu.items; let i = index;" 
         [visible]="showMenuItem(link)">
