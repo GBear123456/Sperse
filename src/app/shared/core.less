@@ -239,9 +239,11 @@ button {
 
 .btn-layout,
 .btn-default {
-  border-radius: 18px!important;
+  border-radius: 21px!important;
   font-size: 15px!important;
   line-height: 1.6!important;
+  font-weight: 400!important;
+  padding-right: 50px!important;
   letter-spacing: 0.3px;
   margin: 5px;
   outline: none;
@@ -257,6 +259,19 @@ button {
 		color: #ffffff;		
     background-color: #00aeef;
 	}
+
+  &:after {
+    content: '';
+    width: 42px;
+    height: 100%;
+    background-color: #00a0dc;
+    border-top-right-radius: 21px;
+    border-bottom-right-radius: 21px;
+    display: block;
+    right: 0;
+    position: absolute;
+    top: 0;
+  }
 }
 
 .btn-default {
@@ -366,15 +381,16 @@ button {
 /* devExpress common styles */
 
 #gridContainer {
-	height: calc(~'100vh - 163px');
 	width: 100%;
 
 	@font-size: 16px;
 
 	.dx-datagrid-pager {
 		height: 60px;
-		border-top: 1px solid #ddd;
+    padding-left: 10px;
+		//border-top: 1px solid #ddd;
 
+/*
 		/deep/ * {
 			font-size: @font-size;
 			color: #202b35;
@@ -402,6 +418,7 @@ button {
 			float: right;
 			padding-right: 10px;
 		}
+*/
 	}
 
 	.dx-datagrid-headers {

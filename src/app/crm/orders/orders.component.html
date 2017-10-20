@@ -14,7 +14,7 @@
             <button ng-if="vm.permissions.create" class="btn btn-layout" (click)="createClient()"><i class="fa fa-plus"></i>{{l("CreateNewCustomer")}}</button>
         </div>
     </div>
-    <div class="portlet light margin-bottom-0">
+    <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
                 <div class="dx-datagrid-header-panel">
@@ -60,10 +60,11 @@
                             <dxi-column dataField="BillingSubscriptionStatus" caption="{{l('BillingSubscriptionStatus')}}"></dxi-column>
                             <dxi-column dataField="CreationTime" caption="{{l('CreationTime')}}" dataType="date" format="shortDateShortTime"></dxi-column>
 
-                            <dxo-paging [pageSize]="5"></dxo-paging>
+                            <dxo-sorting mode="multiple"></dxo-sorting>
+                            <dxo-paging [pageSize]="20"></dxo-paging>
                             <dxo-pager
                                 [showPageSizeSelector]="true"
-                                [allowedPageSizes]="[5, 10, 20]"
+                                [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
                                 [showInfo]="true">
                             </dxo-pager>
                         </dx-data-grid>

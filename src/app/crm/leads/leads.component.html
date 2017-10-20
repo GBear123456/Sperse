@@ -60,10 +60,10 @@
                             <dxi-column dataField="CreationTime" caption="{{l('CreationTime')}}" dataType="date" format="shortDateShortTime"></dxi-column>
 
                             <dxo-sorting mode="multiple"></dxo-sorting>
-                            <dxo-paging [pageSize]="5"></dxo-paging>
+                            <dxo-paging [pageSize]="20"></dxo-paging>
                             <dxo-pager
                                 [showPageSizeSelector]="true"
-                                [allowedPageSizes]="[5, 10, 20]"
+                                [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
                                 [showInfo]="true">
                             </dxo-pager>
                         </dx-data-grid>
