@@ -44,7 +44,7 @@
                             <dxi-column dataField="Id" caption="{{l('Id')}}"></dxi-column>
                             <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate" [width]="50"></dxi-column>
                             <div *dxTemplate="let data of 'photoTemplate'">
-                                <img [src]="data.value ? 'data:image/jpeg;base64,'+data.value : 'assets/common/images/no-photo.png'"
+                                <img [src]="data.data.Photo ? 'data:image/jpeg;base64,' + data.data.Photo : 'assets/common/images/no-photo.png'"
                                      alt="Person Photo"
                                      width="38"
                                      class="img-circle"/>
