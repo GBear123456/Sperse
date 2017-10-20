@@ -1,4 +1,4 @@
-import { Component, Injector, AfterViewInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { PanelMenu } from './panel-menu';
 import { PanelMenuItem } from './panel-menu-item';
@@ -17,7 +17,7 @@ import { AppService } from '@app/app.service';
     '(window:resize)': "toogleNavMenu()"
   }
 })
-export class TopBarComponent extends AppComponentBase  implements AfterViewInit {
+export class TopBarComponent extends AppComponentBase {
   config: any = {};
   selectedIndex: number;
   visibleMenuItems: number = 0;
@@ -35,11 +35,10 @@ export class TopBarComponent extends AppComponentBase  implements AfterViewInit 
     
     _appService.subscribeModuleChange((config) => {
       this.config = config;
+      this.showAdaptiveMenu = !this.showAdaptiveMenu;
       this.menu = new PanelMenu("MainMenu", "MainMenu", 
         this.initMenu(config['navigation'])
       );
-      this.selectedIndex = 0;
-      this.ngAfterViewInit();
     });
   }
 
@@ -78,11 +77,13 @@ export class TopBarComponent extends AppComponentBase  implements AfterViewInit 
   }
 
   toogleNavMenu() {   
-    let prevValue = this.showAdaptiveMenu;
-    this.showAdaptiveMenu = 
-      window.innerWidth - 1000 < this.visibleMenuItems * 70;
-    if (prevValue != this.showAdaptiveMenu)
-      this.visibleMenuItems = 0;
+    setTimeout(() => {
+      let prevValue = this.showAdaptiveMenu;
+      this.showAdaptiveMenu = 
+        window.innerWidth - 600 < this.visibleMenuItems * 70;
+      if (prevValue != this.showAdaptiveMenu)
+        this.visibleMenuItems = 0;
+    }, 0);
   }
 
 	private checkMenuItemPermission(item): boolean {
@@ -103,11 +104,5 @@ export class TopBarComponent extends AppComponentBase  implements AfterViewInit 
         return false;
     }
     return this.checkMenuItemPermission(item);
-  }
-
-  ngAfterViewInit() {  
-    setTimeout(() => {
-      this.toogleNavMenu();
-    }, 0);
   }
 }
