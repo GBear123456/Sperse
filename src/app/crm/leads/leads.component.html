@@ -45,13 +45,18 @@
                             </dxo-editing>
                             <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"></dxi-column>
                             <dxi-column dataField="Id" caption="{{l('Id')}}"></dxi-column>
+                            <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate" [width]="50"></dxi-column>
+                            <div *dxTemplate="let data of 'photoTemplate'">
+                                <img [src]="data.value ? 'data:image/jpeg;base64,'+data.value : 'assets/common/images/no-photo.png'"
+                                     alt="Person Photo"
+                                     width="38"
+                                     class="img-circle"/>
+                            </div>
 
                             <dxi-column dataField="FullName" caption="{{l('Contact.FullName')}}"></dxi-column>
-
                             <dxi-column dataField="State" caption="{{l('Contact.State')}}"></dxi-column>
                             <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
                             <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}"></dxi-column>
-                            <dxi-column dataField="Photo" caption="{{l('Contact.Photo')}}"></dxi-column>
 
                             <dxi-column dataField="Amount" caption="{{l('Amount')}}"></dxi-column>
                             <dxi-column dataField="CurrentNumber" caption="{{l('CurrentNumber')}}"></dxi-column>

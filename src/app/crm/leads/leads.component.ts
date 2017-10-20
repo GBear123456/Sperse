@@ -39,7 +39,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private rootComponent: any;
     gridDataSource: any = {};
     collection: any;
-    showPipeline = false;
+    showPipeline = true;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];

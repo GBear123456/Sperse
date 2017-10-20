@@ -10,8 +10,8 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-sm-9">{{card.FullName}}</div>
-                                <div class="col-sm-3 text-right">
-                                    <img src="{{card.Photo}}" alt="{{card.FullName}}" class="img-responsive img-circle" width="40">
+                                <div class="col-sm-3 text-right pipeline-photo-wrap">
+                                    <img [src]="card.Photo ? 'data:image/jpeg;base64,'+ card.Photo : 'assets/common/images/no-photo.png'" alt="{{card.FullName}}" class="img-responsive img-circle" width="40">
                                 </div>
                             </div>
                             <div class="row item-data">
