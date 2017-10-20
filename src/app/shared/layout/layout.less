@@ -17,41 +17,13 @@
 	}	
 }
 
-.page-header.navbar {
-	border-bottom: 1px solid #dfdfdf !important;
-
-  .page-top {
-    width: auto!important;
-    clear: none!important;
-  }
-
-	&.navbar-fixed-top {
- 	   z-index: 1000;
-	}
-	&.navbar-static-top {
-    	z-index: 1000;
-	}
-	.filter-toggle {
-		color: #202b35;
-		font-size: 23px;
-		cursor: pointer;
-		padding: 0 0 0 10px;
-
-		&:hover {
-			opacity: 0.5
-		}
-	}
-	.page-logo {
-    width: 316px!important;
-		max-width: 316px;
-	}
-}
-
 .page-content {
 	.row {
 		margin-right: 0px;
 	}
 	.col-xs-6:first-child {
+    height: 75px;
+    padding-top: 15px;
 		position: fixed;
 		left: 0px;
 
@@ -70,8 +42,10 @@
 		}
 	}
 	.col-xs-6.text-right {
+    padding-top: 10px;
 		float: right;
 		width: 100%;
+    height: 75px;
 		z-index: 3;
 
 		.tab-filter {			
@@ -118,12 +92,6 @@
 
 .md-shadow-zero-light {
     box-shadow: 0 0 0 rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.18) !important;
-}
-
-.dropdown-language {
-  @media (max-width: 845px) {
-    display: none!important;
-  }
 }
 
 .navbar-nav.pull-right {

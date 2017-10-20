@@ -1,22 +1,18 @@
 :host {
-	position: relative; 	
-  display: block;
-  width: calc(~"100% - 700px");
+	position: absolute; 	
+  display: flex;
+  padding-left: 20px;
+  justify-content: flex-start;
+  width: calc(~"100% - 480px");
   margin-left: 300px;
   white-space: nowrap;
   height: 75px;
-
-  @media (max-width: 769px) {
-    width: calc(~"100% - 500px")!important;
-  }
 
   @media (max-width: 565px) {
     width: calc(~"100% - 200px")!important;
   }
 
   .top-bar-nav {
-    float: right;
-    width: calc(~"100% - 400px");
     padding: 0px 10px 0px 10px;
     &:after {
       right: 40px;
@@ -100,16 +96,15 @@
 
     @media (max-width: 360px) {
       display: none;
-    }
+    }    
   }
 
 	.top-bar-search {
-		float: left;
     display: flex;
 		height: 74px;
     width: 250px;
 
-    @media (max-width: 1040px){
+    @media (max-width: 868px){
       display: none;
     }
 
@@ -143,5 +138,8 @@
   width: 300px!important;
   .dx-treeview-toggle-item-visibility {
     display: none!important;
+  }
+  .dx-treeview-node {
+    border-bottom: none!important;
   }
 }

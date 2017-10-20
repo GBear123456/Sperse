@@ -6,7 +6,7 @@ import { Subject } from 'rxjs/Subject';
 export class AppService {
 	private _config: Subject<Object>;
   private _subscribers: Array<Subscription> = [];
-  private _modules = ['Admin', 'API', 'CFO', 'CRM', 'Cloud', 'Feeds', 'Forms', 'HR', 'HUB', 'Slice', 'Store'];
+  private _modules = ['Admin', 'API', 'CFO', 'CRM' /*, 'Cloud', 'Feeds', 'Forms', 'HR', 'HUB', 'Slice', 'Store' */];
   private _configs = {};
 
   private readonly MODULE_DEFAULT = 'CRM';
@@ -15,8 +15,9 @@ export class AppService {
 		this._config = new Subject<Object>();   
 
     //!!VP should be considered to use lazy loading 
-    this._configs = {
+    this._configs = {      
       admin: require('./admin/module.config.json'),
+      api: require('./api/module.config.json'),
       crm: require('./crm/module.config.json'),
       cfo: require('./cfo/module.config.json')
     }
@@ -32,8 +33,13 @@ export class AppService {
     return this.isModuleActive(module) ? module: this.MODULE_DEFAULT;
   }
 
+  getModuleConfig(name: string) {
+    return this._configs[name.toLowerCase()];
+  }
+
   isModuleActive(name: string) {
-    return Boolean(this._configs[name.toLowerCase()]);
+    let config = this._configs[name.toLowerCase()];
+    return (config && typeof(config.navigation) == 'object');
   }
 
   initModule() {
