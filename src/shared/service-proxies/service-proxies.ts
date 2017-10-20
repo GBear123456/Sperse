@@ -2334,8 +2334,10 @@ export class CreditReportServiceProxy {
     /**
      * @return Success
      */
-    downloadCreditReport(reportId: number): Observable<string> {
-        let url_ = this.baseUrl + "/Reports/CreditReport/DownloadCreditReport?";
+    downloadCreditReportView(userId: number, reportId: number): Observable<void> {
+        let url_ = this.baseUrl + "/Reports/CreditReport/DownloadCreditReportView?";
+        if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
         if (reportId !== undefined)
             url_ += "reportId=" + encodeURIComponent("" + reportId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -2352,33 +2354,30 @@ export class CreditReportServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processDownloadCreditReport(response_);
+            return this.processDownloadCreditReportView(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processDownloadCreditReport(response_);
+                    return this.processDownloadCreditReportView(response_);
                 } catch (e) {
-                    return <Observable<string>><any>Observable.throw(e);
+                    return <Observable<void>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<string>><any>Observable.throw(response_);
+                return <Observable<void>><any>Observable.throw(response_);
         });
     }
 
-    protected processDownloadCreditReport(response: Response): Observable<string> {
+    protected processDownloadCreditReportView(response: Response): Observable<void> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: string = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return Observable.of(result200);
+            return Observable.of<void>(<any>null);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<string>(<any>null);
+        return Observable.of<void>(<any>null);
     }
 
     /**
@@ -3190,7 +3189,7 @@ export class FinancialInformationServiceProxy {
     /**
      * @return Success
      */
-    getSetupAccountsLink(css: string, errorPage: string): Observable<string> {
+    getSetupAccountsLink(css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSetupAccountsLink?";
         if (css !== undefined)
             url_ += "css=" + encodeURIComponent("" + css) + "&"; 
@@ -3216,27 +3215,27 @@ export class FinancialInformationServiceProxy {
                 try {
                     return this.processGetSetupAccountsLink(response_);
                 } catch (e) {
-                    return <Observable<string>><any>Observable.throw(e);
+                    return <Observable<GetSetupAccountsLinkOutput>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<string>><any>Observable.throw(response_);
+                return <Observable<GetSetupAccountsLinkOutput>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetSetupAccountsLink(response: Response): Observable<string> {
+    protected processGetSetupAccountsLink(response: Response): Observable<GetSetupAccountsLinkOutput> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: string = null;
+            let result200: GetSetupAccountsLinkOutput = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? GetSetupAccountsLinkOutput.fromJS(resultData200) : new GetSetupAccountsLinkOutput();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<string>(<any>null);
+        return Observable.of<GetSetupAccountsLinkOutput>(<any>null);
     }
 
     /**
@@ -3285,6 +3284,53 @@ export class FinancialInformationServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<number>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    syncAllAccounts(syncHistory: boolean): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
+        if (syncHistory !== undefined)
+            url_ += "SyncHistory=" + encodeURIComponent("" + syncHistory) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSyncAllAccounts(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSyncAllAccounts(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSyncAllAccounts(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
     }
 }
 
@@ -15990,6 +16036,41 @@ export interface IBankDto {
     userName: string;
     website: string;
     status: string;
+}
+
+export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
+    setupAccountsLink: string;
+
+    constructor(data?: IGetSetupAccountsLinkOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.setupAccountsLink = data["setupAccountsLink"];
+        }
+    }
+
+    static fromJS(data: any): GetSetupAccountsLinkOutput {
+        let result = new GetSetupAccountsLinkOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["setupAccountsLink"] = this.setupAccountsLink;
+        return data; 
+    }
+}
+
+export interface IGetSetupAccountsLinkOutput {
+    setupAccountsLink: string;
 }
 
 export class CreateFriendshipRequestInput implements ICreateFriendshipRequestInput {
