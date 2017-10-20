@@ -64,7 +64,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
                 },
-                paginate: false
+                paginate: true
             }
         };
 

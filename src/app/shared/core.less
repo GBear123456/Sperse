@@ -206,6 +206,8 @@
 
 /* Portlets */
 .portlet.light {
+  margin-top: 0px;
+
 	&.no-padding {
 		padding: 0;
 	}
@@ -235,17 +237,35 @@ button {
     margin-left: 5px;
 }
 
-.btn-layout {
-	height: 36px;
-	border-radius: 6px;
-	background-color: #33e504;
+.btn-layout,
+.btn-default {
+  border-radius: 18px!important;
+  font-size: 15px!important;
+  line-height: 1.6!important;
+  letter-spacing: 0.3px;
+  margin: 5px;
+  outline: none;
+  border: none;
+	height: 42px;
+}
 
-	font-size: 15px;
-	line-height: 1.6;
-	color: #ffffff;
+.btn-layout {
+  background-color: #00aeef;
+  color: #ffffff;
 
 	&:hover {
 		color: #ffffff;		
+    background-color: #00aeef;
+	}
+}
+
+.btn-default {
+  background-color: #FFF;
+  color: #000;
+
+	&:hover {
+		color: #000;		
+    background-color: #FFF;
 	}
 }
 

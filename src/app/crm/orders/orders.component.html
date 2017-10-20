@@ -1,19 +1,16 @@
 ﻿<div [@routerTransition]>
-    <div class="row margin-bottom-5">
+    <div class="row">
         <div class="col-xs-6">
             <div class="page-head">
                 <div class="page-title">
                     <h1>
 						<i class="icon-globe"></i>
-                        <span>{{l("Clients")}}</span>
+                        <span>{{l("Orders")}}</span>
                     </h1>
                 </div>
             </div>
         </div>
         <div class="col-xs-6 text-right">
-			<ng-template ngFor let-tab [ngForOf]="filterTabs" let-i="index">
-				<div class="tab-filter {{'tab-' + tab}}" [ngClass]="{'tab-selected': tabIndex == i}" (click)="tabIndex = i;">{{l("TabFilter" + capitalize(tab))}}</div>
-			</ng-template>
             <button ng-if="vm.permissions.create" class="btn btn-layout" (click)="createClient()"><i class="fa fa-plus"></i>{{l("CreateNewCustomer")}}</button>
         </div>
     </div>

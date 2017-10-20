@@ -2,6 +2,7 @@ import { Component, Injector, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppService } from '@app/app.service';
 import { Router } from '@angular/router';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
   templateUrl: './platform-select.component.html',
@@ -35,12 +36,16 @@ export class PlatformSelect extends AppComponentBase {
     let switchModule = this.modules[event.itemIndex];
     if (this.module != switchModule &&  
       this._appService.isModuleActive(switchModule)
-    ) {
+    ) {      
       this.module = switchModule;
       this._appService.switchModule(this.module);
       this._router.navigate(['app/' + 
         this.module.toLowerCase() + '/']);   
-    }
+    } else
+      window.open(AppConsts[
+        this._appService.getModuleConfig(switchModule).navigation
+      ], '_blank');
+
     this._dropDown.close();
   }
 

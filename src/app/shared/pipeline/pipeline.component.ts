@@ -33,6 +33,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
     }
 
     ngAfterViewInit(): void {
+/*
         setTimeout(() => {
             this.dataSource.paginate(false);
             this.dataSource.pageSize(100);
@@ -41,6 +42,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                 this.pipelineItems = this.dataSource.items();
             }, 5000);
         }, 5000);
+*/
     }
 
     getPipelineDefinition(pipelineId: number): void {
