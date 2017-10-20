@@ -20,7 +20,7 @@ import { ChangePasswordModalComponent } from './profile/change-password-modal.co
 import { ChangeProfilePictureModalComponent } from './profile/change-profile-picture-modal.component';
 import { MySettingsModalComponent } from './profile/my-settings-modal.component'
 import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
-import { ImpersonationService } from '@app/crm/users/impersonation.service';
+import { ImpersonationService } from '@admin/users/impersonation.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
 import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';

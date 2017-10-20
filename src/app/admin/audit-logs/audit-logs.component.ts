@@ -6,7 +6,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileDownloadService } from '@shared/utils/file-download.service';
-import { AuditLogDetailModalComponent } from '@app/crm/audit-logs/audit-log-detail-modal.component';
+import { AuditLogDetailModalComponent } from './audit-log-detail-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import * as moment from "moment";

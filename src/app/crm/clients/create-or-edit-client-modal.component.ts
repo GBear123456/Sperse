@@ -34,8 +34,7 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
         injector: Injector,
         private _customersService: CustomersServiceProxy
     ) {
-        super(injector);
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
     show(clientId?: number): void {

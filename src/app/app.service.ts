@@ -6,7 +6,7 @@ import { Subject } from 'rxjs/Subject';
 export class AppService {
 	private _config: Subject<Object>;
   private _subscribers: Array<Subscription> = [];
-  private _modules = ['API', 'CFO', 'CRM', 'Cloud', 'Feeds', 'Forms', 'HR', 'HUB', 'Slice', 'Store'];
+  private _modules = ['Admin', 'API', 'CFO', 'CRM', 'Cloud', 'Feeds', 'Forms', 'HR', 'HUB', 'Slice', 'Store'];
   private _configs = {};
 
   private readonly MODULE_DEFAULT = 'CRM';
@@ -15,14 +15,11 @@ export class AppService {
 		this._config = new Subject<Object>();
 
     //!!VP should be considered to use lazy loading
-    this._configs['CRM'] = require('./crm/module.config.json');
-    this._configs['CFO'] = require('./cfo/module.config.json');
-/*
-    ['CRM', 'CFO'].forEach((name) => {
-      this._configs[name] = require('./' +
-        name.toLowerCase() + '/module.config.json');
-    });
-*/
+    this._configs = {
+      admin: require('./admin/module.config.json'),
+      crm: require('./crm/module.config.json'),
+      cfo: require('./cfo/module.config.json')
+    }
 	}
 
   getModules() {
@@ -30,8 +27,13 @@ export class AppService {
   }
 
   getModule() {
-    let module = (/\/app\/(\w+)\//.exec(location.pathname) || [this.MODULE_DEFAULT]).pop();
-    return this.getModules().indexOf(module.toUpperCase()) >= 0 ? module.toUpperCase(): this.MODULE_DEFAULT;
+    let module = (/\/app\/(\w+)\//.exec(location.pathname)
+      || [this.MODULE_DEFAULT]).pop().toLowerCase();
+    return this.isModuleActive(module) ? module: this.MODULE_DEFAULT;
+  }
+
+  isModuleActive(name: string) {
+    return Boolean(this._configs[name.toLowerCase()]);
   }
 
   initModule() {
@@ -39,7 +41,7 @@ export class AppService {
   }
 
 	switchModule(name: string) {
-    this._config.next(this._configs[name]);
+    this._config.next(this._configs[name.toLowerCase()]);
 	}
 
 	subscribeModuleChange(callback: (config: Object) => any) {

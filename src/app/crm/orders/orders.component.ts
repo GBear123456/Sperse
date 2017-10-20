@@ -7,8 +7,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 
-import { /* ClientServiceProxy, */ CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
-import { ImpersonationService } from '@app/crm/users/impersonation.service';
+import { CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -36,9 +35,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     	private _filtersService: FiltersService,
         // private _clientService: ClientServiceProxy,
         private _activatedRoute: ActivatedRoute,
-        private _commonLookupService: CommonLookupServiceProxy,
-        private _impersonationService: ImpersonationService,
-
+        private _commonLookupService: CommonLookupServiceProxy
     ) {
         super(injector);
 

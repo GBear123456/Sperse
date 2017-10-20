@@ -3,7 +3,7 @@ import { ModalDirective } from 'ngx-bootstrap';
 import { UserServiceProxy, GetUserPermissionsForEditOutput, UpdateUserPermissionsInput, EntityDtoOfInt64 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { PermissionTreeComponent } from '../shared/permission-tree.component';
-import { PermissionTreeEditModel } from '@app/crm/shared/permission-tree-edit.model';
+import { PermissionTreeEditModel } from '../shared/permission-tree-edit.model';
 
 import * as _ from "lodash";
 

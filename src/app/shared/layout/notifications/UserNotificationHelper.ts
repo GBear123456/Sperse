@@ -32,7 +32,7 @@ export class UserNotificationHelper extends AppComponentBase {
     getUrl(userNotification: abp.notifications.IUserNotification): string {
         switch (userNotification.notification.notificationName) {
             case 'App.NewUserRegistered':
-                return '/app/crm/users?filterText=' + userNotification.notification.data.properties.emailAddress;
+                return '/app/admin/users?filterText=' + userNotification.notification.data.properties.emailAddress;
             case 'App.NewTenantRegistered':
                 return '/app/crm/tenants?filterText=' + userNotification.notification.data.properties.tenancyName;
             //Add your custom notification names to navigate to a URL when user clicks to a notification.
