@@ -1,20 +1,26 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { CashflowService } from '../../services/cashflow.service';
 import { Operation } from '../../models/operation';
 import { GroupbyItem } from '../../models/groupbyItem';
-import { DxPivotGridComponent } from 'devextreme-angular';
+//import { DxPivotGridComponent } from '@extended_modules/devextreme-angular/ui/pivot-grid';
+import { CashflowServiceProxy } from '@shared/service-proxies/service-proxies';
+import * as moment from 'moment';
+
+import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
     selector: 'app-cashflow-table',
     templateUrl: './cashflow-table.component.html',
     styleUrls: ['./cashflow-table.component.less'],
-    providers: [CashflowService]
+    providers: [ CashflowService, CashflowServiceProxy ]
 })
 
-export class CashflowTableComponent implements OnInit {
+export class CashflowTableComponent extends AppComponentBase implements OnInit {
     cashflowService: CashflowService;
-    operations: Operation[];
-    operationsSource: any;
+    /** @todo change for Operation model */
+    cashflowData: any/*Operation[]*/;
+    adjustments: any/*Operation[]*/;
+    dataSource: any;
     groupInterval: any = 'year';
     /** posible groupIntervals year, quarter, month, dayofweek, day */
     groupbyItems: GroupbyItem[] = [
@@ -121,15 +127,15 @@ export class CashflowTableComponent implements OnInit {
             dataField: 'subgroup',
             rowHeaderLayout: 'tree'
         },
-        // {
-        //     // caption: 'Name',
-        //     width: 120,
-        //     area: 'row',
-        //     areaIndex: 3,
-        //     showTotals: false,
-        //     dataField: 'name',
-        //     rowHeaderLayout: 'tree'
-        // },
+        {
+            // caption: 'Name',
+            width: 120,
+            area: 'row',
+            areaIndex: 3,
+            showTotals: false,
+            dataField: 'name',
+            rowHeaderLayout: 'tree'
+        },
         {
             caption: 'Historical',
             area: 'column',
@@ -290,14 +296,50 @@ export class CashflowTableComponent implements OnInit {
     };
     cssMarker = ' @css';
 
-    constructor(CashflowService: CashflowService) {
+    constructor(injector: Injector, CashflowService: CashflowService, private _CashflowServiceProxy: CashflowServiceProxy) {
+        super(injector);
         // this.updateDateFields('year');
         this.cashflowService = CashflowService;
-        this.operations = this.cashflowService.getOperations();
-        this.operationsSource = this.getOperationsSource();
+        /** @todo change default currency for dynamic value (and start and end dates) */
+        let now = new Date();
+        let lastTwoYearsDate = new Date(now.setFullYear(now.getFullYear() - 2));
+        console.log('lastTwoYearsDate: ', lastTwoYearsDate);
+        //debugger;
+        // this._transactionsService.getStats(moment(lastTwoYearsDate.toString()), moment(now.toString()), 'USD').subscribe(result => {
+        //     let transactions = result.transactionStats;
+        //     let categories = result.categories;
+        //     let adjustments = result.adjustments;
+        //     console.time('geting categories');
+        //     /** categoris - object with categories */
+        //     // this.cashflowData = transactions.map(function(transactionObj){
+        //     //     return Object.assign(transactionObj, categories[transactionObj.categoryId]);
+        //     // });
+        //     /** categories - array of objects */
+        //     this.cashflowData = transactions.map(function(transactionObj){
+        //         let category = categories.filter(function(category){
+        //             return category.id == transactionObj.categoryId;
+        //         });
+        //         console.log(category);
+        //         return Object.assign(transactionObj, category[0]);
+        //     });
+        //     console.timeEnd('geting categories');
+        //     // this.dataSource = {
+        //     //     fields: this.tableFields,
+        //     //     store: this.cashflowData
+        //     // };
+        // });
+        this.dataSource = this.getDataSource();
     }
 
     ngOnInit() {
+    }
+
+    getDataSource() {
+        return {
+            fields: this.tableFields,
+            //store: this._CashflowServiceProxy.getStats()
+            store: this.cashflowService.getOperations()
+        };
     }
 
     /**
@@ -346,18 +388,51 @@ export class CashflowTableComponent implements OnInit {
         for (const dateInterval of datesIntervalsToBeHide) {
             /** Hide the fields that are not chosen */
             const intervalFieldsSelector = '.dateField:not(.dx-total).' + dateInterval;
-            $(intervalFieldsSelector).each(function(){
-                $(this).text('');
-                $(this).addClass('dataFieldHidden');
-            });
+            // $(intervalFieldsSelector).each(function(){
+            //     $(this).text('');
+            //     $(this).addClass('dataFieldHidden');
+            // });
         }
+
+        /** crutch for moving the income and expenses rows to bottom instead of top */
+        /** calculate the amount of the subgroups for incomes and expenses */
+        // let amountOfIncomeSubgroups = this.calculateElementsBetween(
+        //     '.dx-pivotgrid-vertical-headers .incomeRow',
+        //     '.dx-pivotgrid-vertical-headers .expensesRow'
+        // );
+        // let amountOfExpenseSubgroups = this.calculateElementsBetween(
+        //     '.dx-pivotgrid-vertical-headers .expensesRow',
+        //     '.dx-pivotgrid-vertical-headers .reconciliation') - 1;
+
+        // let incomeLabel = $('.dx-pivotgrid-vertical-headers .incomeRow');
+        // let expensesLabel = $('.dx-pivotgrid-vertical-headers .expensesRow');
+        // let incomeRowspan = incomeLabel.find('tr').first().attr('rowspan');
+        // incomeLabel.find('tr').first().attr('rowspan', incomeRowspan + 1);
+        // let newIncomeRow = expensesLabel.prev().clone().text(incomeLabel.find('span').text());
+        // expensesLabel.before(newIncomeRow);
+
+        // this.changeColspanUntil(
+        //     '.dx-pivotgrid-vertical-headers .incomeRow',
+        //     '.dx-pivotgrid-vertical-headers .expensesRow'
+        // );
+        //
+        // $('.dx-pivotgrid-vertical-headers .expensesRow').before($('.dx-pivotgrid-vertical-headers .incomeRow').clone());
+        //
+        //
+        // $('.expensesRow').each(function(){
+        //
+        // });
     }
 
-    getOperationsSource() {
-        return {
-            fields: this.tableFields,
-            store: this.operations
-        };
+    changeColspanUntil(selector1, selector2) {
+        let elementsBetween = $(selector1).nextUntil(selector2);
+        elementsBetween.each(function(){
+            $(this).find('.dx-last-cell').attr('colspan', 2);
+        });
+    }
+
+    calculateElementsBetween(selector1, selector2) {
+        return $(selector1).nextUntil(selector2).length;
     }
 
     /**
@@ -518,7 +593,8 @@ export class CashflowTableComponent implements OnInit {
     }
 
     /**
-     * @returns string - the text of the header and the mark for the cellPrepared function with css classes that should be defined to fields
+     * @returns string - the text of the header and the mark for the cellPrepared
+     * function with css classes that should be defined to fields
      */
     getQuarterHistoricalCustomizer() {
         return function (cellInfo) {
@@ -724,7 +800,7 @@ export class CashflowTableComponent implements OnInit {
         const historical_field = this.getHistoricField();
         historical_field['selector'] = event.value.historicalSelectionFunction();
         historical_field['customizeText'] = event.value.historicalCustomizerFunction();
-        this.operationsSource = this.getOperationsSource();
+        this.dataSource = this.getDataSource();
     }
 
     cutCssFromValue(text) {
@@ -838,9 +914,12 @@ export class CashflowTableComponent implements OnInit {
             }
         }
         /** added css class to the income and outcomes columns */
+
         if ((this.isIncomeOrExpensesHeaderCell(e)) ||
             (this.isIncomeOrExpensesDataCell(e))) {
-            const cssClass = e.rowIndex === 1 ? 'income' : 'expenses';
+            let isDataCell = this.isIncomeOrExpensesDataCell(e);
+            let pathProp = isDataCell ? 'rowPath' : 'path';
+            const cssClass = (e.cell[pathProp] !== undefined && e.cell[pathProp][1] === 0)  ? 'income' : 'expenses';
             e.cellElement.addClass(cssClass);
             e.cellElement.parent().addClass(cssClass + 'Row');
             /** disable collapsing for income and expenses columns */
@@ -977,4 +1056,7 @@ export class CashflowTableComponent implements OnInit {
         cellObj.cellElement.parent().after(clonedRow);
     }
 
+    onCellClick(event) {
+        //debugger;
+    }
 }

@@ -1,38 +1,51 @@
 <div class="operations">
-  <div class="search_transaction">
-    <form action="">
-      <input type="text" placeholder="Search transaction" value="">
-    </form>
-  </div>
-  <div>
-    <button class="back btn btn-default"> <img src="/assets/icons/arrow.svg" alt=""></button>
-  </div>
-  <div>
-    <button class="btn btn-default edit">
-      <i class="fa fa-pencil" aria-hidden="true"></i>
-      <span>Edit</span>
-    </button><button class="rules btn btn-default">
 
-      <span>Rules</span>
-    </button><button class="expandAll btn btn-default">
-      <img src="" alt="">
-      <span>Expand all</span>
-    </button>
-  </div>
-  <div>
-    <button class="btn btn-default flag expand-button">
-      <img src="/assets/icons/flag.svg" alt="flag">
-    </button><button class="btn btn-default expand-button">
-      <img src="/assets/icons/add-label.svg" alt="add label">
-    </button>
-  </div>
-  <div>
-    <button class="btn btn-default more expand-button">More</button>
-  </div>
-  <div>
-    <button class="btn btn-default"><img src="/assets/icons/download.svg" alt="download"></button><button class="btn btn-default"><img src="/assets/icons/print.svg" alt="print"></button>
-  </div>
-  <div class="sorting">
-    <button class="btn btn-default"><img src="/assets/icons/tile-view.svg" alt="tile ivew"></button><button class="btn btn-default"><img src="/assets/icons/descending-view.svg" alt="descending view"></button><button class="btn btn-default"><img src="/assets/icons/table-view.svg" alt="table view"></button>
-  </div>
+    <div class="search_transaction">
+        <form action="">
+            <input type="text" placeholder="Search transaction" value="">
+        </form>
+    </div>
+
+    <div class="dx-datagrid-header-panel">
+        <div class="dx-toolbar">
+            <dx-toolbar [items]="toolbarItems"></dx-toolbar>
+        </div>
+    </div>
+
+   <!--
+
+    <div>
+        <button class="btn btn-default edit">
+            <i class="fa fa-pencil" aria-hidden="true"></i>
+            <span>Edit</span>
+        </button>
+        <button class="rules btn btn-default">
+
+            <span>Rules</span>
+        </button>
+        <button class="expandAll btn btn-default">
+            <img src="" alt="">
+            <span>Expand all</span>
+        </button>
+    </div>
+    <div>
+        <button class="btn btn-default flag expand-button">
+            <img src="/assets/icons/flag.svg" alt="flag">
+        </button>
+        <button class="btn btn-default expand-button">
+            <img src="/assets/icons/add-label.svg" alt="add label">
+        </button>
+    </div>
+    <div>
+        <button class="btn btn-default more expand-button">More</button>
+    </div>
+    <div>
+        <button class="btn btn-default"><img src="/assets/icons/download.svg" alt="download"></button>
+        <button class="btn btn-default"><img src="/assets/icons/print.svg" alt="print"></button>
+    </div>
+    <div class="sorting">
+        <button class="btn btn-default"><img src="/assets/icons/tile-view.svg" alt="tile ivew"></button>
+        <button class="btn btn-default"><img src="/assets/icons/descending-view.svg" alt="descending view"></button>
+        <button class="btn btn-default"><img src="/assets/icons/table-view.svg" alt="table view"></button>
+    </div>-->
 </div>

@@ -20,7 +20,8 @@
       "@app/*": [ "./app/*" ],
       "@admin/*": [ "./app/admin/*" ],
       "@shared/*": [ "./shared/*" ],
-      "@node_modules/*": [ "../node_modules/*" ]
+      "@node_modules/*": [ "../node_modules/*" ],
+      "@extended_modules/*": [ "../extended/node_modules/*" ]
     }
   },
   "exclude": [ "node_modules" ]

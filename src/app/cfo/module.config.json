@@ -1,7 +1,8 @@
 {
   "name": "CFO",
   "search": false,
-  "navigation": [    
-    ["Cashflow", "", "icon-home", "/app/cfo/cashflow"]
+  "navigation": [
+    ["Cashflow", "", "icon-home", "/app/cfo/cashflow"],
+    ["Bank accounts", "", "icon-home", "/app/cfo/bank-accounts"]
   ]
 }
