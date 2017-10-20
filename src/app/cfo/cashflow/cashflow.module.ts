@@ -9,14 +9,13 @@ import { CashflowTableComponent } from './components/cashflow-table/cashflow-tab
 
 /** devextreme modules */
 import {
-DxPivotGridModule,
 DxToolbarModule,
 DxButtonModule,
 DxSelectBoxModule
 } from 'devextreme-angular';
 
-/** custom overrided pivot grid module */
-//import { DxPivotGridModule } from '@extended_modules/devextreme-angular';
+/** custom overridden pivot grid module */
+import { DxPivotGridModule } from '@extended_modules/devextreme-angular';
 
 /** services */
 import { CashflowService } from './services/cashflow.service';
@@ -25,7 +24,6 @@ import { CashflowService } from './services/cashflow.service';
   imports: [
     CommonModule,
     DxPivotGridModule,
-    DxSelectBoxModule,
     DxToolbarModule,
     DxButtonModule,
     DxSelectBoxModule
