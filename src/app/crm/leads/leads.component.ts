@@ -14,10 +14,10 @@ import {AppComponentBase} from '@shared/common/app-component-base';
 
 import {FiltersService} from '@shared/filters/filters.service';
 import {FilterModel} from '@shared/filters/filter.model';
-import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
-import { DropDownElement } from '@shared/filters/dropdown/dropdown_element';
+import {FilterDropDownComponent} from '@shared/filters/dropdown/filter-dropdown.component';
+import {DropDownElement} from '@shared/filters/dropdown/dropdown_element';
 
-import { CommonLookupServiceProxy, PipelineServiceProxy} from '@shared/service-proxies/service-proxies';
+import {CommonLookupServiceProxy, PipelineServiceProxy} from '@shared/service-proxies/service-proxies';
 import {appModuleAnimation} from '@shared/animations/routerTransition';
 
 import {DxDataGridComponent} from 'devextreme-angular';
@@ -43,7 +43,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
-
+    
     constructor(injector: Injector,
                 private _filtersService: FiltersService,
                 // private _clientService: ClientServiceProxy,
@@ -51,10 +51,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 private _commonLookupService: CommonLookupServiceProxy,
                 private _pipelineService: PipelineServiceProxy) {
         super(injector);
-
+        
         this._filtersService.enabled = true;
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-
+        
         this.dataSource = {
             store: {
                 type: 'odata',
@@ -67,7 +67,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 paginate: true
             }
         };
-
+        
         this.items = [{
             location: 'before',
             widget: 'dxButton',
@@ -142,35 +142,31 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         }];
     }
-
+    
     onContentReady(event) {
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
         });
     }
-
+    
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
     }
-
+    
     exportData() {
         this.dataGrid.instance.exportToExcel(true);
     }
-
+    
     showColumnChooser() {
         this.dataGrid.instance.showColumnChooser();
     }
-
+    
     togglePipeline(param) {
         this.showPipeline = param;
     }
-
+    
     ngOnInit(): void {
-        this.filterTabs = [
-            'all', 'active', 'archived'
-        ];
-
         this._pipelineService.getPipelinesFullData("L").subscribe(result => {
             this._filtersService.setup(this.filters = [
                 <FilterModel>{
@@ -198,20 +194,20 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 }
             ]);
         });
-
+        
         this._filtersService.apply(() => {
             this.processODataFilter(this.dataGrid.instance,
                 this.dataSourceURI, this.filters, (filter) => {
                     let filterMethod = this['filterBy' +
-                        this.capitalize(filter.caption)];
+                    this.capitalize(filter.caption)];
                     if (filterMethod)
                         return filterMethod.call(this, filter);
                 }
             );
         });
     }
-
-
+    
+    
     filterByStages(filter) {
         let data = {};
         data[filter.field] = {};
@@ -220,13 +216,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
         return data;
     }
-
+    
     ngAfterViewInit(): void {
         this.gridDataSource = this.dataGrid.instance.getDataSource();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }
-
+    
     ngOnDestroy() {
         this._filtersService.enabled = false;
         this.rootComponent.overflowHidden();

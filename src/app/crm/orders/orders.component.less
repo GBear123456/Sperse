@@ -1,18 +1,27 @@
 ﻿:host {
     #gridContainer {
-      height: calc(~'100vh - 228px');
+        height: calc(~'100vh - 228px');
     }
+    
     .pipepline-wrapper {
         padding: 15px;
     }
+    
     /deep/ .dx-datagrid-header-panel {
+        &.custom .dx-toolbar {
+            margin-bottom: 0;
+        }
         .dx-toolbar {
-            height: 65px;
-            
+            height: 65px !important;
+           
             .dx-toolbar-before,
             .dx-toolbar-center,
             .dx-toolbar-after {
                 margin: 15px;
+            }
+            
+            .dx-toolbar-before {
+                top: 0 !important;
             }
             
             .dx-toolbar-button {
