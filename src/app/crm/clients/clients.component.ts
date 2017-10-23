@@ -40,7 +40,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild('createOrEditClientModal') createOrEditClientModal: CreateOrEditClientModalComponent;
     items: any;
-    showPipeline = true;
     private readonly dataSourceURI = 'Customer';
     private filters: FilterModel[];
     private rootComponent: any;
@@ -120,8 +119,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             widget: 'dxButton',
             options: {
                 hint: 'Column chooser',
-                iconSrc: 'assets/common/images/icons/clmn-chooser-icon.svg',
+                icon: 'column-chooser',
                 onClick: this.showColumnChooser.bind(this)
+            }
+        }, {
+            location: 'after',
+            widget: 'dxButton',
+            options: {
+                hint: 'Box',
+                iconSrc: 'assets/common/images/icons/box-icon.svg',
+                onClick: Function()
             }
         }, {
             location: 'after',
@@ -129,7 +136,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             options: {
                 hint: 'Pipeline',
                 iconSrc: 'assets/common/images/icons/pipeline-icon.svg',
-                onClick: this.togglePipeline.bind(this, true)
+                onClick: Function()
             }
         }, {
             location: 'after',
@@ -137,7 +144,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             options: {
                 hint: 'Grid',
                 iconSrc: 'assets/common/images/icons/table-icon.svg',
-                onClick: this.togglePipeline.bind(this, false)
+                onClick: Function()
             }
         }];
     }
@@ -149,11 +156,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     showColumnChooser() {
         this.dataGrid.instance.showColumnChooser();
     }
-
-    togglePipeline(param) {
-        this.showPipeline = param;
-    }
-
+    
     onContentReady(event) {
         event.component.columnOption('command:edit', {
             visibleIndex: -1,

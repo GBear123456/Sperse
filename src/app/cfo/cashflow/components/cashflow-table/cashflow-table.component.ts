@@ -2,7 +2,7 @@ import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { CashflowService } from '../../services/cashflow.service';
 import { Operation } from '../../models/operation';
 import { GroupbyItem } from '../../models/groupbyItem';
-//import { DxPivotGridComponent } from '@extended_modules/devextreme-angular/ui/pivot-grid';
+
 import { CashflowServiceProxy } from '@shared/service-proxies/service-proxies';
 import * as moment from 'moment';
 
@@ -19,7 +19,6 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
     cashflowService: CashflowService;
     /** @todo change for Operation model */
     cashflowData: any/*Operation[]*/;
-    adjustments: any/*Operation[]*/;
     dataSource: any;
     groupInterval: any = 'year';
     /** posible groupIntervals year, quarter, month, dayofweek, day */
@@ -81,7 +80,9 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             width: 120,
             showTotals: false,
             expanded: true,
-            // isMeasure: false,
+            isMeasure: false,
+            runningTotal: 'row',
+            allowCrossGroupCalculation: true,
             // allowExpand: false,
             dataField: 'startingBalance',
             // dataType: 'string',
@@ -269,6 +270,197 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
           visible: true
         }
     ];
+    apiTableFields: any = [
+        {
+            caption: 'Cash Starting Balances',
+            area: 'row',
+            areaIndex: 0,
+            width: 120,
+            showTotals: false,
+            expanded: true,
+            // isMeasure: false,
+            // allowExpand: false,
+            dataField: 'startingBalance',
+            // dataType: 'string',
+            customizeText: function () {
+                return this.l('Cash Starting Balances').toUpperCase();
+            },
+            calculateSummaryValue: function(summaryCell) {
+                console.log('summaryCell', summaryCell);
+                return 0;
+            }
+        },
+        {
+            caption: 'Type',
+            width: 120,
+            area: 'row',
+            areaIndex: 0,
+            expanded: true,
+            allowExpandAll: false,
+            allowExpand: false,
+            sortOrder: 'asc',
+            dataField: 'cashflowTypeId',
+            rowHeaderLayout: 'tree',
+            showTotals: true,
+            /** @todo find out how to remove total from the total field */
+            customizeText: function (cellInfo) {
+                return cellInfo.valueText === '0' ? 'TOTAL CASH INFLOWS' : 'TOTAL CASH OURFLOWS';
+            },
+            selector: function (data) {
+                return data.cashflowTypeId === 'Income' ? 0 : 1;
+            }
+        },
+        {
+            caption: 'Group',
+            width: 120,
+            area: 'row',
+            areaIndex: 1,
+            dataField: 'transactionCategoryId',
+            expanded: false,
+            showTotals: true,
+            rowHeaderLayout: 'tree'
+        },
+        {
+            caption: 'Subgroup',
+            width: 120,
+            showTotals: false,
+            area: 'row',
+            areaIndex: 2,
+            dataField: 'expenseCategoryId',
+            rowHeaderLayout: 'tree'
+        },
+        {
+            caption: 'Historical',
+            area: 'column',
+            showTotals: false,
+            selector: this.groupbyItems[0].historicalSelectionFunction(),
+            customizeText: this.groupbyItems[0].historicalCustomizerFunction(),
+            expanded: true,
+            allowExpand: false
+        },
+        {
+            caption: 'Amount',
+            dataField: 'amount',
+            dataType: 'number',
+            summaryType: 'sum',
+            format: 'currency',
+            area: 'data',
+            showColumnTotals: true,
+            calculateSummaryValue: function (summaryCell) {
+                /** changed the ending cash position result using internal devexpress methods to calculate the
+                 *  ending balances with the accounting of the starting balances
+                 */
+                /** check if current cell is the grand total cell */
+                let field = summaryCell.field('row', true);
+                /** if field === null - then it is the grand total row and if dataField is a - it starting balance row
+                 *  that we alse need to calculate */
+
+                let prevSummaryCell = summaryCell.prev('column', true);
+
+                /** @todo find out why allowCrossGroup is not working */
+                if ((field === null || field.dataField === 'startingBalance') && prevSummaryCell === null) {
+                    // let parent = summaryCell.parent('column');
+                    // /** check the previous value of the parent */
+                    // while (parent !== null) {
+                    //     prevSummaryCell = parent.prev('column', true);
+                    //     if (prevSummaryCell !== null) {
+                    //         break;
+                    //     } else {
+                    //         parent = summaryCell.parent('column');
+                    //     }
+                    // }
+                }
+
+                if ((field === null || field.dataField === 'startingBalance') && prevSummaryCell !== null) {
+
+                    let sum = summaryCell.value();
+                    sum += prevSummaryCell.value();
+                    /** add all previous grand totals cells values and redefine the previous cell */
+                    while (prevSummaryCell.prev('column', true) !== null) {
+                        sum += prevSummaryCell.prev('column', true).value();
+                        prevSummaryCell = prevSummaryCell.prev('column', true);
+                    }
+                    return sum;
+                }
+                return summaryCell.value();
+            }
+        },
+        {
+            caption: 'Date',
+            dataField: 'date',
+            dataType: 'date',
+            area: 'column',
+            groupInterval: 'year',
+            showTotals: false,
+            customizeText: this.getYearHeaderCustomizer(),
+            visible: true,
+            summaryDisplayMode: 'percentVariation'
+        },
+        {
+            caption: 'Date',
+            dataField: 'date',
+            dataType: 'date',
+            area: 'column',
+            groupInterval: 'quarter',
+            showTotals: false,
+            customizeText: this.getQuarterHeaderCustomizer(),
+            visible: true
+        },
+        {
+            caption: 'Date',
+            dataField: 'date',
+            dataType: 'date',
+            area: 'column',
+            showTotals: false,
+            groupInterval: 'month',
+            customizeText: this.getMonthHeaderCustomizer(),
+            visible: true
+        },
+        {
+            caption: 'Projected',
+            area: 'column',
+            showTotals: false,
+            selector: function (data) {
+                const date = new Date(data.date);
+                const current = new Date();
+                let result;
+                // if (date.getMonth() + date.getFullYear() === current.getMonth() + current.getFullYear()) {
+                if (current.getDate() > date.getDate()) {
+                    result = 0;
+                } else {
+                    result = 1;
+                }
+                // }
+                return result;
+            },
+            customizeText: function (cellInfo) {
+                const cellValue = (cellInfo.value === 1 ? 'PROJECTED' : 'MTD');
+                const cssMarker = ' @css:{projectedField ' + (cellInfo.value === 1 ? 'projected' : 'mtd') + '}';
+                return cellValue + cssMarker;
+            },
+            expanded: true,
+            allowExpand: false
+        },
+        /** @todo implement the week interval in the long future */
+        // {
+        //   caption: 'Date',
+        //   dataField: 'date',
+        //   dataType: 'date',
+        //   area: 'column',
+        //   groupInterval: 'dayOfWeek',
+        //   customizeText: this.getWeekHeaderCustomizer(),
+        //   visible: true
+        // },
+        {
+            caption: 'Date',
+            dataField: 'date',
+            dataType: 'date',
+            area: 'column',
+            groupInterval: 'day',
+            customizeText: this.getDayHeaderCustomizer(),
+            visible: true
+        }
+    ];
     cssClasses: any = {
         'historical': {
             'groupClass': 'historicalField',
@@ -298,46 +490,42 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
 
     constructor(injector: Injector, CashflowService: CashflowService, private _CashflowServiceProxy: CashflowServiceProxy) {
         super(injector);
-        // this.updateDateFields('year');
         this.cashflowService = CashflowService;
-        /** @todo change default currency for dynamic value (and start and end dates) */
-        let now = new Date();
-        let lastTwoYearsDate = new Date(now.setFullYear(now.getFullYear() - 2));
-        console.log('lastTwoYearsDate: ', lastTwoYearsDate);
-        //debugger;
-        // this._transactionsService.getStats(moment(lastTwoYearsDate.toString()), moment(now.toString()), 'USD').subscribe(result => {
-        //     let transactions = result.transactionStats;
-        //     let categories = result.categories;
-        //     let adjustments = result.adjustments;
-        //     console.time('geting categories');
-        //     /** categoris - object with categories */
-        //     // this.cashflowData = transactions.map(function(transactionObj){
-        //     //     return Object.assign(transactionObj, categories[transactionObj.categoryId]);
-        //     // });
-        //     /** categories - array of objects */
-        //     this.cashflowData = transactions.map(function(transactionObj){
-        //         let category = categories.filter(function(category){
-        //             return category.id == transactionObj.categoryId;
-        //         });
-        //         console.log(category);
-        //         return Object.assign(transactionObj, category[0]);
-        //     });
-        //     console.timeEnd('geting categories');
-        //     // this.dataSource = {
-        //     //     fields: this.tableFields,
-        //     //     store: this.cashflowData
-        //     // };
-        // });
-        this.dataSource = this.getDataSource();
     }
 
     ngOnInit() {
+        /** @todo change default currency for dynamic value (and start and end dates) */
+        let now = new Date();
+        let lastThreeYearsDate = new Date(now.setFullYear(now.getFullYear() - 3));
+        /** moment(lastTwoYearsDate.toString()), moment(new Date().toString()), 'USD' */
+        this._CashflowServiceProxy.getStats(moment(lastThreeYearsDate .toString()),
+                                            moment(new Date().toString()), 'USD')
+              .subscribe(result => {
+                  let transactions = result.transactionStats;
+                  let cashflowTypes = result.cashflowTypes;
+                  let expenseCategories = result.expenseCategories;
+                  let transactionCategories = result.transactionCategories;
+                  /** categoris - object with categories */
+                  this.cashflowData = transactions.map(function(transactionObj){
+                      transactionObj.cashflowTypeId = cashflowTypes[transactionObj.cashflowTypeId];
+                      transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
+                      transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
+                      return transactionObj;
+                  });
+            this.dataSource = this.getApiDataSource();
+        });
+    }
+
+    getApiDataSource() {
+        return {
+            fields: this.apiTableFields,
+            store: this.cashflowData
+        };
     }
 
     getDataSource() {
         return {
             fields: this.tableFields,
-            //store: this._CashflowServiceProxy.getStats()
             store: this.cashflowService.getOperations()
         };
     }
@@ -773,11 +961,11 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
     }
 
     /**
-     * Gets the field in tableFields by dateInterval (year, quarter, month or day)
+     * Gets the field in apiTableFields by dateInterval (year, quarter, month or day)
      * @returns {Object}
      */
     getDateFieldByInterval(dateInterval): any {
-        return this.tableFields.find(
+        return this.apiTableFields.find(
             field => field['groupInterval'] === dateInterval
         );
     }
@@ -787,7 +975,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
      * @returns {Object}
      */
     getHistoricField(): Object {
-        return this.tableFields.find(
+        return this.apiTableFields.find(
             field => field['caption'] === 'Historical'
         );
     }
@@ -800,7 +988,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
         const historical_field = this.getHistoricField();
         historical_field['selector'] = event.value.historicalSelectionFunction();
         historical_field['customizeText'] = event.value.historicalCustomizerFunction();
-        this.dataSource = this.getDataSource();
+        this.dataSource = this.getApiDataSource();
     }
 
     cutCssFromValue(text) {
@@ -961,7 +1149,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
         }
 
         /** remove minus sign from negative values */
-        if (this.isDataCell(e) && !this.isGrandTotalDataCell(e)) {
+        if (this.isDataCell(e) && !this.isGrandTotalDataCell(e) && !this.isStartingBalanceDataColumn(e)) {
             if (e.cell.value < 0) {
                 e.cell.value = Math.abs(e.cell.value);
                 e.cell.text = e.cell.text.replace('-', '');
@@ -977,7 +1165,6 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
     // isMonthBelongToCurrentPeriod(cellObj) {
     //     return this.getMonthHistoricalSelector();
     // }
-    //
     /**
      * remove css from the cell text, add css as a class, and add the totals text for the fields
      * if it is year or quarter cells

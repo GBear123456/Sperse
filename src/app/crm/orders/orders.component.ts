@@ -35,6 +35,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     items: any;
     showPipeline = true;
+    firstRefresh: boolean = false;
     gridDataSource: any = {};
     private rootComponent: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
@@ -115,8 +116,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             widget: 'dxButton',
             options: {
                 hint: 'Column chooser',
-                iconSrc: 'assets/common/images/icons/clmn-chooser-icon.svg',
+                icon: 'column-chooser',
                 onClick: this.showColumnChooser.bind(this)
+            }
+        }, {
+            location: 'after',
+            widget: 'dxButton',
+            options: {
+                hint: 'Box',
+                iconSrc: 'assets/common/images/icons/box-icon.svg',
+                onClick: Function()
             }
         }, {
             location: 'after',
@@ -158,6 +167,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     
     togglePipeline(param) {
         this.showPipeline = param;
+        if (!this.firstRefresh) {
+            this.firstRefresh = true;
+            abp.ui.setBusy(
+                '',
+                this.dataGrid.instance.refresh()
+            );
+        }
     }
     
     ngOnInit(): void {

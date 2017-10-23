@@ -1,6 +1,6 @@
 ﻿:host {
     #gridContainer {
-        height: calc(~'100vh - 152px');
+        height: calc(~'100vh - 216px');
     }
     
     /deep/ .dx-datagrid-content .dx-data-row {
@@ -65,22 +65,26 @@
             .dx-button[aria-label="download-icon"] {
                 border-radius: 0;
             }
-            
-            .dx-button[aria-label="clmn-chooser-icon"] {
+    
+            .dx-button[aria-label="column-chooser"] {
                 border-left: 0;
                 border-top-left-radius: 0;
                 border-bottom-left-radius: 0;
             }
-            
+    
+            .dx-button[aria-label="table-icon"] {
+                margin-left: -2px;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
             .dx-button[aria-label="pipeline-icon"] {
+                margin-left: -1px;
+                border-radius: 0;
+            }
+            .dx-button[aria-label="box-icon"] {
                 margin-left: 24px;
                 border-top-right-radius: 0;
                 border-bottom-right-radius: 0;
-            }
-            .dx-button[aria-label="table-icon"] {
-                margin-left: -1px;
-                border-top-left-radius: 0;
-                border-bottom-left-radius: 0;
             }
             
             .dx-button {
