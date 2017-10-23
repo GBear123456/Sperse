@@ -1,4 +1,7 @@
 {
   "name": "API",
-  "navigation": "remoteServiceBaseUrl"
+  "search": true,
+  "navigation": [
+    ["API Documentation", "", "icon-home", "/app/api/swagger"]
+  ]
 }

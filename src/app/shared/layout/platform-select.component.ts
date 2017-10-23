@@ -41,10 +41,7 @@ export class PlatformSelect extends AppComponentBase {
       this._appService.switchModule(this.module);
       this._router.navigate(['app/' + 
         this.module.toLowerCase() + '/']);   
-    } else
-      window.open(AppConsts[
-        this._appService.getModuleConfig(switchModule).navigation
-      ], '_blank');
+    } 
 
     this._dropDown.close();
   }

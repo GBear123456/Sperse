@@ -7,20 +7,18 @@ export class AppService {
 	private _config: Subject<Object>;
   private _subscribers: Array<Subscription> = [];
   private _modules = ['Admin', 'API', 'CFO', 'CRM' /*, 'Cloud', 'Feeds', 'Forms', 'HR', 'HUB', 'Slice', 'Store' */];
-  private _configs = {};
+  //!!VP should be considered to use lazy loading
+  private _configs = {
+    admin: require('./admin/module.config.json'),
+    api: require('./api/module.config.json'),
+    crm: require('./crm/module.config.json'),
+    cfo: require('./cfo/module.config.json')
+  };
 
   private readonly MODULE_DEFAULT = 'CRM';
 
 	constructor() {
 		this._config = new Subject<Object>();
-
-    //!!VP should be considered to use lazy loading
-    this._configs = {
-      admin: require('./admin/module.config.json'),
-      api: require('./api/module.config.json'),
-      crm: require('./crm/module.config.json'),
-      cfo: require('./cfo/module.config.json')
-    }
 	}
 
   getModules() {
