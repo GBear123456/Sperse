@@ -61,7 +61,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
       field: 'url', 
       id: data && data.id,
       value: data && data.url,
-      name: 'link',
+      name: this.l('Link'),
       contactId: data && data.contactId 
         || this.data.customerInfo
         .primaryContactInfo.id,
