@@ -1,14 +1,18 @@
 ﻿:host {
-  #gridContainer {
-	  height: calc(~'100vh - 228px');
-  }
-
-  .pipepline-wrapper {
-      padding: 15px;
-  }
-	/deep/ .dx-datagrid-header-panel {
-		.dx-toolbar {
-            height: 65px;
+    #gridContainer {
+        height: calc(~'100vh - 228px');
+    }
+    
+    .pipepline-wrapper {
+        padding: 15px;
+    }
+    
+    /deep/ .dx-datagrid-header-panel {
+        &.custom .dx-toolbar {
+            margin-bottom: 0;
+        }
+        .dx-toolbar {
+            height: 65px !important;
             
             .dx-toolbar-before,
             .dx-toolbar-center,
@@ -16,9 +20,13 @@
                 margin: 15px;
             }
             
-			.dx-toolbar-button {
-				padding: 0;
-			}
+            .dx-toolbar-before {
+                top: 0 !important;
+            }
+            
+            .dx-toolbar-button {
+                padding: 0;
+            }
             
             .dx-button[aria-label="back-arrow"] {
                 .dx-button-content {
@@ -30,39 +38,39 @@
                 }
             }
             
-			.dx-button[aria-label="Assign"] {
-				margin-left: 40px;
-				border-right: 0;
-				border-top-right-radius: 0;
-				border-bottom-right-radius: 0;
-			}
-
-			.dx-button[aria-label="Status"] {
-				border-right: 0;
-				border-radius: 0;
-			}
-
-			.dx-button[aria-label="Delete"] {
-				margin-right: 40px;
-				border-top-left-radius: 0;
-				border-bottom-left-radius: 0;
-			}
-
-			.dx-button[aria-label="icon icon-refresh"] {
-				border-top-right-radius: 0;
-				border-bottom-right-radius: 0;
+            .dx-button[aria-label="Assign"] {
+                margin-left: 40px;
                 border-right: 0;
-			}
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+            
+            .dx-button[aria-label="Status"] {
+                border-right: 0;
+                border-radius: 0;
+            }
+            
+            .dx-button[aria-label="Delete"] {
+                margin-right: 40px;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+            
+            .dx-button[aria-label="icon icon-refresh"] {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+                border-right: 0;
+            }
             
             .dx-button[aria-label="download-icon"] {
                 border-radius: 0;
             }
-
-			.dx-button[aria-label="clmn-chooser-icon"] {
-				border-left: 0;
-				border-top-left-radius: 0;
-				border-bottom-left-radius: 0;
-			}
+            
+            .dx-button[aria-label="clmn-chooser-icon"] {
+                border-left: 0;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
             
             .dx-button[aria-label="pipeline-icon"] {
                 margin-left: 24px;
@@ -84,6 +92,6 @@
                 }
             }
             
-		}
-	}
+        }
+    }
 }

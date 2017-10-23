@@ -17,7 +17,7 @@
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
-                <div class="dx-datagrid-header-panel">
+                <div class="dx-datagrid-header-panel custom">
                     <div class="dx-toolbar">
                         <dx-toolbar [items]="items"></dx-toolbar>
                     </div>
@@ -49,7 +49,6 @@
                                      width="38"
                                      class="img-circle"/>
                             </div>
-
                             <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
                             <dxi-column dataField="State" caption="{{l('Contact.State')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="Email" caption="{{l('Contact.Email')}}" [visible]="false"></dxi-column>
@@ -62,12 +61,12 @@
                             <dxi-column dataField="NoteCount" caption="{{l('NoteCount')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="DocumentCount" caption="{{l('DocumentCount')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="CreationTime" caption="{{l('Created')}}" dataType="date " format="shortDateShortTime"></dxi-column>
-
+                            <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-sorting mode="multiple"></dxo-sorting>
-                            <dxo-paging [pageSize]="5"></dxo-paging>
+                            <dxo-paging [pageSize]="20"></dxo-paging>
                             <dxo-pager
                                 [showPageSizeSelector]="true"
-                                [allowedPageSizes]="[5, 10, 20]"
+                                [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
                                 [showInfo]="true">
                             </dxo-pager>
                         </dx-data-grid>

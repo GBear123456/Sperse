@@ -17,7 +17,7 @@
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
-                <div class="dx-datagrid-header-panel">
+                <div class="dx-datagrid-header-panel custom">
                     <div class="dx-toolbar">
                         <dx-toolbar [items]="items"></dx-toolbar>
                     </div>
@@ -63,6 +63,7 @@
                             <dxi-column dataField="BillingSubscriptionStatus" caption="{{l('BillingStatus')}}"></dxi-column>
                             <dxi-column dataField="CreationTime" caption="{{l('Created')}}" dataType="date" format="shortDateShortTime"></dxi-column>
                             <dxo-sorting mode="multiple"></dxo-sorting>
+                            <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-paging [pageSize]="20"></dxo-paging>
                             <dxo-pager
                                 [showPageSizeSelector]="true"
