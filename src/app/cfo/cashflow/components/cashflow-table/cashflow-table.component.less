@@ -155,16 +155,16 @@
                 &.dx-white-space-column {
                     background: #fff;
                     border-top: 1px solid #ddd;
-                    border-right: 4px solid @expendedLineColor;
+                    border-right: none;
                     position: relative;
                     &:after {
                         content: '';
                         position: absolute;
-                        top: 0;
-                        right: -4px;
+                        top: 15px;
+                        left: 21px;
                         display: block;
-                        border-right: 4px solid #fff;
-                        height: 14px;
+                        border-right: 4px solid @expendedLineColor;
+                        height: 100%;
                     }
                 }
                 &.dx-total {
@@ -188,7 +188,7 @@
                 }
                 &.dx-last-cell {
                     width: 100%;
-                    padding-left: 11px;
+                    padding-left: 13px;
                 }
                 .dx-expand-icon-container {
                     font: inherit;
