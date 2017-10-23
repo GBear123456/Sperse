@@ -116,8 +116,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             areaIndex: 1,
             dataField: 'group',
             expanded: false,
-            showTotals: true,
-            rowHeaderLayout: 'tree'
+            showTotals: true
         },
         {
             caption: 'Subgroup',
@@ -278,16 +277,9 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             width: 120,
             showTotals: false,
             expanded: true,
-            // isMeasure: false,
-            // allowExpand: false,
             dataField: 'startingBalance',
-            // dataType: 'string',
-            customizeText: function () {
+            customizeText: () => {
                 return this.l('Cash Starting Balances').toUpperCase();
-            },
-            calculateSummaryValue: function(summaryCell) {
-                console.log('summaryCell', summaryCell);
-                return 0;
             }
         },
         {
@@ -302,11 +294,11 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             dataField: 'cashflowTypeId',
             rowHeaderLayout: 'tree',
             showTotals: true,
-            /** @todo find out how to remove total from the total field */
-            customizeText: function (cellInfo) {
-                return cellInfo.valueText === '0' ? 'TOTAL CASH INFLOWS' : 'TOTAL CASH OURFLOWS';
+            customizeText: cellInfo => {
+                let key = cellInfo.valueText === '0' ? 'Total Cash Inflows' : 'Total Cash Ourflows';
+                return  this.l(key).toUpperCase();
             },
-            selector: function (data) {
+            selector: data => {
                 return data.cashflowTypeId === 'Income' ? 0 : 1;
             }
         },
@@ -318,16 +310,17 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             dataField: 'transactionCategoryId',
             expanded: false,
             showTotals: true,
+            customizeText: function(cellInfo) {
+                return cellInfo.valueText.toUpperCase();
+            },
             rowHeaderLayout: 'tree'
         },
         {
             caption: 'Subgroup',
-            width: 120,
             showTotals: false,
             area: 'row',
             areaIndex: 2,
-            dataField: 'expenseCategoryId',
-            rowHeaderLayout: 'tree'
+            dataField: 'expenseCategoryId'
         },
         {
             caption: 'Historical',
@@ -500,20 +493,26 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
         /** moment(lastTwoYearsDate.toString()), moment(new Date().toString()), 'USD' */
         this._CashflowServiceProxy.getStats(moment(lastThreeYearsDate .toString()),
                                             moment(new Date().toString()), 'USD')
-              .subscribe(result => {
-                  let transactions = result.transactionStats;
-                  let cashflowTypes = result.cashflowTypes;
-                  let expenseCategories = result.expenseCategories;
-                  let transactionCategories = result.transactionCategories;
-                  /** categoris - object with categories */
-                  this.cashflowData = transactions.map(function(transactionObj){
-                      transactionObj.cashflowTypeId = cashflowTypes[transactionObj.cashflowTypeId];
-                      transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
-                      transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
-                      return transactionObj;
-                  });
-            this.dataSource = this.getApiDataSource();
-        });
+            .subscribe(result => {
+                let transactions = result.transactionStats;
+                let cashflowTypes = result.cashflowTypes;
+                let expenseCategories = result.expenseCategories;
+                let transactionCategories = result.transactionCategories;
+                /** categoris - object with categories */
+                this.cashflowData = transactions.map(function(transactionObj){
+                    transactionObj.cashflowTypeId = cashflowTypes[transactionObj.cashflowTypeId];
+                    transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
+                    if (!transactionObj.expenseCategoryId) {
+                        delete transactionObj.expenseCategoryId;
+                    }
+                    transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
+                    if (transactionObj.transactionCategoryId === 'Dividends/Interest/Fees') {
+                        console.log(transactionObj);
+                    }
+                    return transactionObj;
+                });
+                 this.dataSource = this.getApiDataSource();
+            });
     }
 
     getApiDataSource() {
@@ -581,35 +580,6 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             //     $(this).addClass('dataFieldHidden');
             // });
         }
-
-        /** crutch for moving the income and expenses rows to bottom instead of top */
-        /** calculate the amount of the subgroups for incomes and expenses */
-        // let amountOfIncomeSubgroups = this.calculateElementsBetween(
-        //     '.dx-pivotgrid-vertical-headers .incomeRow',
-        //     '.dx-pivotgrid-vertical-headers .expensesRow'
-        // );
-        // let amountOfExpenseSubgroups = this.calculateElementsBetween(
-        //     '.dx-pivotgrid-vertical-headers .expensesRow',
-        //     '.dx-pivotgrid-vertical-headers .reconciliation') - 1;
-
-        // let incomeLabel = $('.dx-pivotgrid-vertical-headers .incomeRow');
-        // let expensesLabel = $('.dx-pivotgrid-vertical-headers .expensesRow');
-        // let incomeRowspan = incomeLabel.find('tr').first().attr('rowspan');
-        // incomeLabel.find('tr').first().attr('rowspan', incomeRowspan + 1);
-        // let newIncomeRow = expensesLabel.prev().clone().text(incomeLabel.find('span').text());
-        // expensesLabel.before(newIncomeRow);
-
-        // this.changeColspanUntil(
-        //     '.dx-pivotgrid-vertical-headers .incomeRow',
-        //     '.dx-pivotgrid-vertical-headers .expensesRow'
-        // );
-        //
-        // $('.dx-pivotgrid-vertical-headers .expensesRow').before($('.dx-pivotgrid-vertical-headers .incomeRow').clone());
-        //
-        //
-        // $('.expensesRow').each(function(){
-        //
-        // });
     }
 
     changeColspanUntil(selector1, selector2) {
@@ -1244,6 +1214,6 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
     }
 
     onCellClick(event) {
-        //debugger;
+
     }
 }
