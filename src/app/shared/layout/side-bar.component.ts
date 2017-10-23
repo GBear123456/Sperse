@@ -1,9 +1,10 @@
-﻿import { Component, Injector, ElementRef } from '@angular/core';
+import { Component, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
-import { Router, NavigationStart  } from '@angular/router';
+import { Router, NavigationStart } from '@angular/router';
+import { AppConsts } from '@shared/AppConsts';
 
 import { DropDownElement } from '@shared/filters/dropdown/dropdown_element'
 
@@ -12,7 +13,7 @@ import * as moment from 'moment';
 
 @Component({
   templateUrl: './side-bar.component.html',
-	styleUrls: ['./side-bar.component.less'],
+  styleUrls: ['./side-bar.component.less'],
   selector: 'side-bar',
   host: {
     '(document:click)': "hideFilterDialog($event)"
@@ -31,8 +32,11 @@ export class SideBarComponent extends AppComponentBase {
 		router: Router
 	) {
     super(injector);
-
+      
     _filtersService.update(filters => {
+        this.localizationSourceName = _filtersService.localizationSourceName
+            ? _filtersService.localizationSourceName
+            : AppConsts.localization.defaultLocalizationSourceName;
       this.filters = filters;
     });
 

@@ -1,4 +1,4 @@
-﻿export class AppConsts {
+export class AppConsts {
 
     static readonly tenancyNamePlaceHolderInUrl = "{TENANCY_NAME}";
     static readonly tenantHostType = 1;
@@ -18,7 +18,8 @@
 
     static readonly localization = {
         defaultLocalizationSourceName: 'Platform',
-        CRMLocalizationSourceName: 'CRM'
+        CRMLocalizationSourceName: 'CRM',
+        CFOLocalizationSourceName: 'CFO'
     };
 
     static readonly authorization = {
