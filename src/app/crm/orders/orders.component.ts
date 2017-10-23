@@ -116,8 +116,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             widget: 'dxButton',
             options: {
                 hint: 'Column chooser',
-                iconSrc: 'assets/common/images/icons/clmn-chooser-icon.svg',
+                icon: 'column-chooser',
                 onClick: this.showColumnChooser.bind(this)
+            }
+        }, {
+            location: 'after',
+            widget: 'dxButton',
+            options: {
+                hint: 'Box',
+                iconSrc: 'assets/common/images/icons/box-icon.svg',
+                onClick: Function()
             }
         }, {
             location: 'after',
