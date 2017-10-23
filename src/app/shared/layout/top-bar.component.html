@@ -29,7 +29,8 @@
     (onInitialized)="toogleNavMenu()">
       <dxi-item                     
         *ngFor="let link of menu.items; let i = index;" 
-        [visible]="showMenuItem(link)">
+        [visible]="showMenuItem(link)"
+        [disabled]="link.disabled">
         <dx-menu 
           [dataSource]="[link]" 
           [selectionMode]="none"

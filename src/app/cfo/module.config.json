@@ -2,7 +2,12 @@
   "name": "CFO",
   "search": false,
   "navigation": [
+    ["Setup", "", "", ""],
     ["Cashflow", "", "icon-home", "/app/cfo/cashflow"],
-    ["Bank accounts", "", "icon-home", "/app/cfo/bank-accounts"]
+    ["Accounts", "", "icon-home", "/app/cfo/bank-accounts"],
+    ["Transactions", "", "", ""],
+    ["Rules", "", "", ""],
+    ["Stats", "", "", ""],
+    ["Logs", "", "", ""]
   ]
 }
