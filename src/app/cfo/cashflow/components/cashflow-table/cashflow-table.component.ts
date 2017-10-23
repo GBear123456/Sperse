@@ -102,8 +102,9 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             rowHeaderLayout: 'tree',
             showTotals: true,
             /** @todo find out how to remove total from the total field */
-            customizeText: function (cellInfo) {
-                return cellInfo.valueText === '0' ? 'TOTAL CASH INFLOWS' : 'TOTAL CASH OURFLOWS';
+            customizeText: cellInfo => {
+                let key = cellInfo.valueText === '0' ? 'Total Cash Inflows' : 'Total Cash Outflows';
+                return this.l(key).toUpperCase();
             },
             selector: function (data) {
                 return data.type === 'income' ? 0 : 1;
@@ -502,13 +503,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
                 this.cashflowData = transactions.map(function(transactionObj){
                     transactionObj.cashflowTypeId = cashflowTypes[transactionObj.cashflowTypeId];
                     transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
-                    if (!transactionObj.expenseCategoryId) {
-                        delete transactionObj.expenseCategoryId;
-                    }
                     transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
-                    if (transactionObj.transactionCategoryId === 'Dividends/Interest/Fees') {
-                        console.log(transactionObj);
-                    }
                     return transactionObj;
                 });
                  this.dataSource = this.getApiDataSource();

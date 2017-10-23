@@ -50,6 +50,7 @@
 
     .dx-pivotgrid-container {
         border-top: 1px solid @tableBorderColor;
+        vertical-align: inherit;
     }
 
     /** upper left column */
@@ -274,7 +275,7 @@
             td {
                 background: @dataCellColor;
                 color: #000;
-                &.startedBalance {
+                &.startedBalance.dx-total {
                     background: @startedBalanceDataCellColor;
                     & + td:not(.startedBalance) {
                         display: none;
@@ -307,7 +308,6 @@
             }
         }
     }
-
 
 }
 

@@ -1153,8 +1153,7 @@ Page content
     .page-content-wrapper .page-content {
       margin-left: 235px;
       margin-top: 0px;
-      min-height: 600px;
-      padding: 10px 0 0 20px; }
+      min-height: 600px; }
       .page-content-wrapper .page-content.no-min-height {
         min-height: auto; }
       .page-sidebar-fixed.page-sidebar-hover-on .page-content-wrapper .page-content {
@@ -2025,8 +2024,8 @@ Theme Panel
     top: 120px;
     margin-top: 0; } }
 
-/***          
-Page Loading         
+/***
+Page Loading
 ***/
 .page-on-load {
   background: #fefefe; }
