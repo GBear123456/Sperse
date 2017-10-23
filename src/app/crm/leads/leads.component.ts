@@ -44,7 +44,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
-    
+
     constructor(injector: Injector,
                 private _filtersService: FiltersService,
                 // private _clientService: ClientServiceProxy,
@@ -52,10 +52,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 private _commonLookupService: CommonLookupServiceProxy,
                 private _pipelineService: PipelineServiceProxy) {
         super(injector);
-        
+
         this._filtersService.enabled = true;
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-        
+
         this.dataSource = {
             store: {
                 type: 'odata',
@@ -68,13 +68,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 paginate: true
             }
         };
-        
+
         this.items = [{
             location: 'before',
             widget: 'dxButton',
             options: {
                 hint: 'Back',
-                iconSrc: 'assets/common/images/icons/back-arrow.svg',
+                iconSrc: 'assets/common/icons/back-arrow.svg',
                 onClick: Function()
             }
         }, {
@@ -82,7 +82,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             widget: 'dxButton',
             options: {
                 text: 'Assign',
-                iconSrc: 'assets/common/images/icons/assign-icon.svg',
+                iconSrc: 'assets/common/icons/assign-icon.svg',
                 onClick: Function()
             }
         }, {
@@ -90,7 +90,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             widget: 'dxButton',
             options: {
                 text: 'Status',
-                iconSrc: 'assets/common/images/icons/status-icon.svg',
+                iconSrc: 'assets/common/icons/status-icon.svg',
                 onClick: Function()
             }
         }, {
@@ -98,7 +98,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             widget: 'dxButton',
             options: {
                 text: 'Delete',
-                iconSrc: 'assets/common/images/icons/delete-icon.svg',
+                iconSrc: 'assets/common/icons/delete-icon.svg',
                 onClick: Function()
             }
         }, {
@@ -114,7 +114,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             widget: 'dxButton',
             options: {
                 hint: 'Export to Excel',
-                iconSrc: 'assets/common/images/icons/download-icon.svg',
+                iconSrc: 'assets/common/icons/download-icon.svg',
                 onClick: this.exportData.bind(this)
             }
         }, {
@@ -130,7 +130,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             widget: 'dxButton',
             options: {
                 hint: 'Box',
-                iconSrc: 'assets/common/images/icons/box-icon.svg',
+                iconSrc: 'assets/common/icons/box-icon.svg',
                 onClick: Function()
             }
         }, {
@@ -138,7 +138,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             widget: 'dxButton',
             options: {
                 hint: 'Pipeline',
-                iconSrc: 'assets/common/images/icons/pipeline-icon.svg',
+                iconSrc: 'assets/common/icons/pipeline-icon.svg',
                 onClick: this.togglePipeline.bind(this, true)
             }
         }, {
@@ -146,31 +146,31 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             widget: 'dxButton',
             options: {
                 hint: 'Grid',
-                iconSrc: 'assets/common/images/icons/table-icon.svg',
+                iconSrc: 'assets/common/icons/table-icon.svg',
                 onClick: this.togglePipeline.bind(this, false)
             }
         }];
     }
-    
+
     onContentReady(event) {
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
         });
     }
-    
+
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
     }
-    
+
     exportData() {
         this.dataGrid.instance.exportToExcel(true);
     }
-    
+
     showColumnChooser() {
         this.dataGrid.instance.showColumnChooser();
     }
-    
+
     togglePipeline(param) {
         this.showPipeline = param;
         if (!this.firstRefresh) {
@@ -181,7 +181,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             );
         }
     }
-    
+
     ngOnInit(): void {
         this._pipelineService.getPipelinesFullData("L").subscribe(result => {
             this._filtersService.setup(this.filters = [
@@ -210,7 +210,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 }
             ]);
         });
-        
+
         this._filtersService.apply(() => {
             this.processODataFilter(this.dataGrid.instance,
                 this.dataSourceURI, this.filters, (filter) => {
@@ -222,8 +222,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             );
         });
     }
-    
-    
+
+
     filterByStages(filter) {
         let data = {};
         data[filter.field] = {};
@@ -232,13 +232,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
         return data;
     }
-    
+
     ngAfterViewInit(): void {
         this.gridDataSource = this.dataGrid.instance.getDataSource();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }
-    
+
     ngOnDestroy() {
         this._filtersService.enabled = false;
         this.rootComponent.overflowHidden();

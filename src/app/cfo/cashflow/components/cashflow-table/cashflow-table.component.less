@@ -7,6 +7,7 @@
 @tableBorderColor: #ddd;
 
 /** historical row colors */
+@historicalTextColor: #686f76;
 @currentBackgroundColor: #f9b532;
 @currentTextColor: #fab800;
 @forecastTextColor: #00aeef;
@@ -103,8 +104,10 @@
             }
             &.historicalField {
                 cursor: default;
+                font-size: 10px;
+                letter-spacing: 0.6px;
                 &.historical {
-
+                    color: @historicalTextColor;
                 }
                 &.current {
                     background: @currentTextColor;
@@ -162,7 +165,7 @@
                         content: '';
                         position: absolute;
                         top: 15px;
-                        left: 21px;
+                        left: 16px;
                         display: block;
                         border-right: 4px solid @expendedLineColor;
                         height: 100%;
@@ -189,7 +192,7 @@
                 }
                 &.dx-last-cell {
                     width: 100%;
-                    padding-left: 13px;
+                    padding-left: 9px;
                 }
                 .dx-expand-icon-container {
                     font: inherit;
@@ -347,7 +350,7 @@
     display: flex;
     align-items: center;
     position: absolute;
-    top: 13px;
+    top: 21px;
     left: 0;
     z-index: 1;
     span {

@@ -1,4 +1,4 @@
-import { Component, OnInit, HostBinding, Injector } from '@angular/core';
+import { Component, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
@@ -16,7 +16,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit {
             widget: 'dxButton',
             options: {
                 hint: this.l('Back'),
-                iconSrc: 'assets/common/images/icons/back-arrow.svg',
+                iconSrc: 'assets/common/icons/back-arrow.svg',
                 onClick: Function()
             }
         }, {
@@ -24,7 +24,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit {
             widget: 'dxButton',
             options: {
                 text: this.l('Edit'),
-                iconSrc: 'assets/common/icons/edit-pencil.svg',
+                iconSrc: 'assets/common/icons/edit-pencil-icon.svg',
                 onClick: Function()
             }
         }, {
@@ -32,7 +32,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit {
             widget: 'dxButton',
             options: {
                 text: this.l('Rules'),
-                iconSrc: 'assets/common/icons/rules.svg',
+                iconSrc: 'assets/common/icons/rules-icon.svg',
                 onClick: Function()
             }
         }, {
@@ -40,47 +40,71 @@ export class OperationsComponent extends AppComponentBase implements OnInit {
             widget: 'dxButton',
             options: {
                 text: this.l('Expand all'),
-                iconSrc: 'assets/common/icons/expand-all.svg',
+                iconSrc: 'assets/common/icons/expand-all-icon.svg',
                 onClick: Function()
             }
         }, {
             location: 'center',
             widget: 'dxButton',
             options: {
-                hint: 'Refresh',
-                icon: 'icon icon-refresh',
+                hint: this.l('Flag'),
+                iconSrc: 'assets/common/icons/flag-icon.svg',
+                onClick: Function()
+            }
+        }, {
+            location: 'center',
+            widget: 'dxButton',
+            options: {
+                hint: this.l('Label'),
+                iconSrc: 'assets/common/icons/label-icon.svg',
+                onClick: Function()
+            }
+        }, {
+            location: 'center',
+            widget: 'dxButton',
+            options: {
+                hint: this.l('More'),
+                text: 'More',
                 onClick: Function()
             }
         }, {
             location: 'after',
             widget: 'dxButton',
             options: {
-                hint: 'Export to Excel',
-                iconSrc: 'assets/common/images/icons/download-icon.svg',
+                hint: this.l('Download'),
+                iconSrc: 'assets/common/icons/download-icon.svg',
                 onClick: Function()
             }
         }, {
             location: 'after',
             widget: 'dxButton',
             options: {
-                hint: 'Column chooser',
-                iconSrc: 'assets/common/images/icons/clmn-chooser-icon.svg',
+                hint: this.l('Print'),
+                iconSrc: 'assets/common/icons/print-icon.svg',
                 onClick: Function()
             }
         }, {
             location: 'after',
             widget: 'dxButton',
             options: {
-                hint: 'Pipeline',
-                iconSrc: 'assets/common/images/icons/pipeline-icon.svg',
+                hint: this.l('Box'),
+                iconSrc: 'assets/common/icons/box-icon.svg',
                 onClick: Function()
             }
         }, {
             location: 'after',
             widget: 'dxButton',
             options: {
-                hint: 'Grid',
-                iconSrc: 'assets/common/images/icons/table-icon.svg',
+                hint: this.l('Pipeline'),
+                iconSrc: 'assets/common/icons/pipeline-icon.svg',
+                onClick: Function()
+            }
+        }, {
+            location: 'after',
+            widget: 'dxButton',
+            options: {
+                hint: this.l('Grid'),
+                iconSrc: 'assets/common/icons/table-icon.svg',
                 onClick: Function()
             }
         }];
