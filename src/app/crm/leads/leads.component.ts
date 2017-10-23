@@ -36,6 +36,7 @@ import * as moment from 'moment';
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     items: any;
+    firstRefresh: boolean = false;
     private rootComponent: any;
     gridDataSource: any = {};
     collection: any;
@@ -164,6 +165,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     
     togglePipeline(param) {
         this.showPipeline = param;
+        if (!this.firstRefresh) {
+            this.firstRefresh = true;
+            abp.ui.setBusy(
+                '',
+                this.dataGrid.instance.refresh()
+            );
+        }
     }
     
     ngOnInit(): void {
