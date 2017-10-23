@@ -19,6 +19,11 @@
     }
 
     /deep/ .dx-tabs-wrapper {
+      .dx-state-disabled {
+        .dx-item-content {
+          opacity: 1!important;
+        }
+      }
       .dx-tab {
         padding: 0px;
         background-color: #FFF;
@@ -26,6 +31,9 @@
         border-bottom: 3px solid #FFF;
         &.dx-tab-selected {      
           border-bottom: 3px solid #00aeef;
+          &.dx-state-focused {
+            box-shadow: none;
+          }
           &.dx-state-hover {
             border-bottom: 3px solid #00aeef;
           }
