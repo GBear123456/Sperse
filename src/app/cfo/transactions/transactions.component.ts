@@ -58,7 +58,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
             widget: 'dxButton',
             options: {
                 hint: 'Export to Excel',
-                iconSrc: 'assets/common/images/icons/download-icon.svg',
+                iconSrc: 'assets/common/icons/download-icon.svg',
                 onClick: this.exportData.bind(this)
             }
         }, {
