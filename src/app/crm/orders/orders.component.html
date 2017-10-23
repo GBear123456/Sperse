@@ -1,4 +1,4 @@
-﻿<div [@routerTransition]>
+<div [@routerTransition]>
     <div class="row">
         <div class="col-xs-6">
             <div class="page-head">
@@ -14,7 +14,7 @@
             <button ng-if="vm.permissions.create" class="btn btn-layout" (click)="createClient()"><i class="fa fa-plus"></i>{{l("CreateNewCustomer")}}</button>
         </div>
     </div>
-    <div class="portlet light margin-bottom-0">
+    <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
                 <div class="dx-datagrid-header-panel">
@@ -40,35 +40,33 @@
                                 mode="popup"
                                 [allowUpdating]="true">
                             </dxo-editing>
-                            <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"></dxi-column>
-                            <dxi-column dataField="Id" caption="{{l('Id')}}"></dxi-column>
-                            <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate" [width]="50"></dxi-column>
+                            <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false"></dxi-column>
+                            <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate" [width]="50" [showInColumnChooser]="false"></dxi-column>
                             <div *dxTemplate="let data of 'photoTemplate'">
-                                <img [src]="data.value ? 'data:image/jpeg;base64,'+data.value : 'assets/common/images/no-photo.png'"
+                                <img [src]="data.data.Photo ? 'data:image/jpeg;base64,' + data.data.Photo : 'assets/common/images/no-photo.png'"
                                      alt="Person Photo"
                                      width="38"
                                      class="img-circle"/>
                             </div>
-
-                            <dxi-column dataField="FullName" caption="{{l('Contact.FullName')}}"></dxi-column>
-                            <dxi-column dataField="State" caption="{{l('Contact.State')}}"></dxi-column>
-                            <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
-                            <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}"></dxi-column>
-
-                            <dxi-column dataField="Amount" caption="{{l('Amount')}}"></dxi-column>
-                            <dxi-column dataField="CurrentNumber" caption="{{l('CurrentNumber')}}"></dxi-column>
-                            <dxi-column dataField="TotalNumber" caption="{{l('TotalNumber')}}"></dxi-column>
-                            <dxi-column dataField="NoteCount" caption="{{l('NoteCount')}}"></dxi-column>
-                            <dxi-column dataField="DocumentCount" caption="{{l('DocumentCount')}}"></dxi-column>
-
+                            <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
+                            <dxi-column dataField="State" caption="{{l('Contact.State')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="Email" caption="{{l('Contact.Email')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
-                            <dxi-column dataField="BillingSubscriptionStatus" caption="{{l('BillingSubscriptionStatus')}}"></dxi-column>
-                            <dxi-column dataField="CreationTime" caption="{{l('CreationTime')}}" dataType="date" format="shortDateShortTime"></dxi-column>
-
-                            <dxo-paging [pageSize]="10"></dxo-paging>
+                            <dxi-column dataField="Amount" caption="{{l('Amount')}}"></dxi-column>
+                            <dxi-column dataField="OrderType" caption="{{l('Type')}}"></dxi-column>
+                            <dxi-column dataField="CurrentNumber" caption="{{l('CurrentNumber')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="TotalNumber" caption="{{l('TotalNumber')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="NoteCount" caption="{{l('NoteCount')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="DocumentCount" caption="{{l('DocumentCount')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="BillingSubscriptionStatus" caption="{{l('BillingStatus')}}"></dxi-column>
+                            <dxi-column dataField="CreationTime" caption="{{l('Created')}}" dataType="date" format="shortDateShortTime"></dxi-column>
+                            <dxo-sorting mode="multiple"></dxo-sorting>
+                            <dxo-paging [pageSize]="20"></dxo-paging>
                             <dxo-pager
                                 [showPageSizeSelector]="true"
-                                [allowedPageSizes]="[5, 10, 20]"
+                                [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
                                 [showInfo]="true">
                             </dxo-pager>
                         </dx-data-grid>

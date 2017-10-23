@@ -1,6 +1,6 @@
 ﻿import {Component, Injector, Input, OnInit, AfterViewInit} from '@angular/core';
 import {AppComponentBase} from '@shared/common/app-component-base';
-import {PipelineDto, PipelineServiceProxy} from '@shared/service-proxies/service-proxies';
+import { PipelineDto, PipelineServiceProxy, PipelineData } from '@shared/service-proxies/service-proxies';
 
 import DataSource from 'devextreme/data/data_source';
 
@@ -23,11 +23,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
 
     ngOnInit(): void {
         this._pipelineService
-        .getPipelines(this.pipelinePurposeId)
-        .subscribe((result: number[]) => {
+        .getPipelinesData(this.pipelinePurposeId)
+        .subscribe((result: PipelineData[]) => {
             if (result.length > 0)
             {
-                this.getPipelineDefinition(result[0]);
+                this.getPipelineDefinition(result[0].id);
             }
         });
     }

@@ -1027,6 +1027,56 @@ export class CashflowServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    reconcileBankAccountBalance(bankAccountId: number): Observable<ReconcileBankAccountBalanceResult> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/ReconcileBankAccountBalance?";
+        if (bankAccountId !== undefined)
+            url_ += "bankAccountId=" + encodeURIComponent("" + bankAccountId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processReconcileBankAccountBalance(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processReconcileBankAccountBalance(response_);
+                } catch (e) {
+                    return <Observable<ReconcileBankAccountBalanceResult>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ReconcileBankAccountBalanceResult>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processReconcileBankAccountBalance(response: Response): Observable<ReconcileBankAccountBalanceResult> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ReconcileBankAccountBalanceResult = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ReconcileBankAccountBalanceResult.fromJS(resultData200) : new ReconcileBankAccountBalanceResult();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ReconcileBankAccountBalanceResult>(<any>null);
+    }
 }
 
 @Injectable()
@@ -2334,10 +2384,8 @@ export class CreditReportServiceProxy {
     /**
      * @return Success
      */
-    downloadCreditReportView(userId: number, reportId: number): Observable<void> {
-        let url_ = this.baseUrl + "/Reports/CreditReport/DownloadCreditReportView?";
-        if (userId !== undefined)
-            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+    downloadCreditReport(reportId: number): Observable<string> {
+        let url_ = this.baseUrl + "/Reports/CreditReport/DownloadCreditReport?";
         if (reportId !== undefined)
             url_ += "reportId=" + encodeURIComponent("" + reportId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -2354,30 +2402,33 @@ export class CreditReportServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processDownloadCreditReportView(response_);
+            return this.processDownloadCreditReport(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processDownloadCreditReportView(response_);
+                    return this.processDownloadCreditReport(response_);
                 } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
+                    return <Observable<string>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<void>><any>Observable.throw(response_);
+                return <Observable<string>><any>Observable.throw(response_);
         });
     }
 
-    protected processDownloadCreditReportView(response: Response): Observable<void> {
+    protected processDownloadCreditReport(response: Response): Observable<string> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            return Observable.of<void>(<any>null);
+            let result200: string = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<void>(<any>null);
+        return Observable.of<string>(<any>null);
     }
 
     /**
@@ -3292,7 +3343,7 @@ export class FinancialInformationServiceProxy {
     syncAllAccounts(syncHistory: boolean): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
         if (syncHistory !== undefined)
-            url_ += "SyncHistory=" + encodeURIComponent("" + syncHistory) + "&"; 
+            url_ += "syncHistory=" + encodeURIComponent("" + syncHistory) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -5767,8 +5818,8 @@ export class PipelineServiceProxy {
     /**
      * @return Success
      */
-    getPipelines(purposeId: string): Observable<number[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelines?";
+    getPipelinesData(purposeId: string): Observable<PipelineData[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelinesData?";
         if (purposeId !== undefined)
             url_ += "purposeId=" + encodeURIComponent("" + purposeId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -5785,37 +5836,37 @@ export class PipelineServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetPipelines(response_);
+            return this.processGetPipelinesData(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processGetPipelines(response_);
+                    return this.processGetPipelinesData(response_);
                 } catch (e) {
-                    return <Observable<number[]>><any>Observable.throw(e);
+                    return <Observable<PipelineData[]>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<number[]>><any>Observable.throw(response_);
+                return <Observable<PipelineData[]>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetPipelines(response: Response): Observable<number[]> {
+    protected processGetPipelinesData(response: Response): Observable<PipelineData[]> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: number[] = null;
+            let result200: PipelineData[] = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(item);
+                    result200.push(PipelineData.fromJS(item));
             }
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<number[]>(<any>null);
+        return Observable.of<PipelineData[]>(<any>null);
     }
 
     /**
@@ -11473,6 +11524,53 @@ export interface IRecalculateCategoriesInput {
     cashflowCategoryId: number;
 }
 
+export class ReconcileBankAccountBalanceResult implements IReconcileBankAccountBalanceResult {
+    date: moment.Moment;
+    type: ReconcileBankAccountBalanceResultType;
+    currencyId: string;
+    amount: number;
+
+    constructor(data?: IReconcileBankAccountBalanceResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.type = data["type"];
+            this.currencyId = data["currencyId"];
+            this.amount = data["amount"];
+        }
+    }
+
+    static fromJS(data: any): ReconcileBankAccountBalanceResult {
+        let result = new ReconcileBankAccountBalanceResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["type"] = this.type;
+        data["currencyId"] = this.currencyId;
+        data["amount"] = this.amount;
+        return data; 
+    }
+}
+
+export interface IReconcileBankAccountBalanceResult {
+    date: moment.Moment;
+    type: ReconcileBankAccountBalanceResultType;
+    currencyId: string;
+    amount: number;
+}
+
 export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
     serverTime: moment.Moment;
     friends: FriendDto[];
@@ -13151,8 +13249,8 @@ export class CreditReportOutput implements ICreditReportOutput {
     isPaymentDelayed: boolean;
     isSubscriptionCancelled: boolean;
     previousReportExists: boolean;
-    memberName: string;
-    memberLastName: string;
+    memberFullName: string;
+    providerCreatedDate: moment.Moment;
 
     constructor(data?: ICreditReportOutput) {
         if (data) {
@@ -13173,8 +13271,8 @@ export class CreditReportOutput implements ICreditReportOutput {
             this.isPaymentDelayed = data["isPaymentDelayed"];
             this.isSubscriptionCancelled = data["isSubscriptionCancelled"];
             this.previousReportExists = data["previousReportExists"];
-            this.memberName = data["memberName"];
-            this.memberLastName = data["memberLastName"];
+            this.memberFullName = data["memberFullName"];
+            this.providerCreatedDate = data["providerCreatedDate"] ? moment(data["providerCreatedDate"].toString()) : <any>undefined;
         }
     }
 
@@ -13194,8 +13292,8 @@ export class CreditReportOutput implements ICreditReportOutput {
         data["isPaymentDelayed"] = this.isPaymentDelayed;
         data["isSubscriptionCancelled"] = this.isSubscriptionCancelled;
         data["previousReportExists"] = this.previousReportExists;
-        data["memberName"] = this.memberName;
-        data["memberLastName"] = this.memberLastName;
+        data["memberFullName"] = this.memberFullName;
+        data["providerCreatedDate"] = this.providerCreatedDate ? this.providerCreatedDate.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -13209,8 +13307,8 @@ export interface ICreditReportOutput {
     isPaymentDelayed: boolean;
     isSubscriptionCancelled: boolean;
     previousReportExists: boolean;
-    memberName: string;
-    memberLastName: string;
+    memberFullName: string;
+    providerCreatedDate: moment.Moment;
 }
 
 export class CreditReportDto implements ICreditReportDto {
@@ -19708,6 +19806,45 @@ export interface IFlatPermissionWithLevelDto {
     isGrantedByDefault: boolean;
 }
 
+export class PipelineData implements IPipelineData {
+    id: number;
+    name: string;
+
+    constructor(data?: IPipelineData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): PipelineData {
+        let result = new PipelineData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IPipelineData {
+    id: number;
+    name: string;
+}
+
 export class PipelineDto implements IPipelineDto {
     id: number;
     name: string;
@@ -24614,6 +24751,12 @@ export enum IsTenantAvailableOutputState {
 
 export enum TransactionStatsDtoAdjustmentType {
     _0 = 0, 
+    _1 = 1, 
+}
+
+export enum ReconcileBankAccountBalanceResultType {
+    _0 = 0, 
+    _1 = 1, 
 }
 
 export enum FriendDtoState {

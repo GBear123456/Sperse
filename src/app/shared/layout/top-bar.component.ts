@@ -48,7 +48,7 @@ export class TopBarComponent extends AppComponentBase {
       let value = val.slice(0);
       if (val.length == 5)
         value.push(this.initMenu(value.pop()));          
-      navList.push(new PanelMenuItem(value[0], 
+      navList.push(new PanelMenuItem(this.l(value[0]), 
         value[1], value[2], value[3], value[4])
       );
     });
