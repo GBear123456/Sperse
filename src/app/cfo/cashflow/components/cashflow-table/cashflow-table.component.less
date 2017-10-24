@@ -164,7 +164,7 @@
                         content: '';
                         position: absolute;
                         top: 15px;
-                        left: 19px;
+                        left: 18px;
                         display: block;
                         border-right: 2px solid @expendedLineColor;
                         height: 100%;
@@ -202,9 +202,12 @@
                         color: #000;
                         font-size: 18px;
                         position: absolute;
-                        top: 7px;
+                        top: 9px;
                         left: 0;
-                        border-radius: 5px;
+                        width: 16px;
+                        height: 15px;
+                        line-height: 14px;
+                        border-radius: 3px;
                     }
                 }
                 &.dx-pivotgrid-collapsed {
@@ -216,7 +219,8 @@
                 &.dx-pivotgrid-expanded {
                     position: relative;
                     .dx-expand:before {
-                        content: '-';
+                        content: url('../../../../../assets/common/icons/minus-icon.svg');
+                        border: none
                     }
                     .dx-expand-icon-container {
                         position: relative;
@@ -225,8 +229,8 @@
                             display: block;
                             position: absolute;
                             height: 7px;
-                            top: -8px;
-                            left: 0;
+                            top: -7px;
+                            left: -1px;
                             border-right: 2px solid @expendedLineColor;
                         }
                     }
@@ -235,6 +239,8 @@
                     background: #00aff0;
                     color: #fff;
                     font-weight: 700;
+                    letter-spacing: 0.6px;
+                    padding-left: 22px;
                 }
 
                 &.startedBalance {
@@ -264,6 +270,7 @@
             //}
             &.reconciliation {
                 td {
+                    padding-left: 22px;
                     font-weight: 700;
                     background: @reconciliationVerticalHeaderBackgroundColor;
                 }
@@ -339,6 +346,7 @@
             width: auto;
             max-width: 120px;
             padding-right: 0;
+            font-size: 15px;
         }
         .dx-texteditor-buttons-container {
             position: relative;
