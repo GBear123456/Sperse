@@ -5,6 +5,8 @@ import { CashflowModule } from './cashflow/cashflow.module';
 import { CfoRoutingModule } from './cfo-routing.module';
 import { BankAccountsComponent } from './bank-accounts/bank-accounts.component';
 import { TransactionsComponent } from './transactions/transactions.component';
+import { CashflowSetupComponent } from './cashflow-setup/cashflow-setup.component';
+import { SetupStepComponent } from './shared/setup-steps/setup-steps.component';
 
 import {
     DxDataGridModule,
@@ -39,7 +41,9 @@ import {
     ],
     declarations: [
         BankAccountsComponent,
-        TransactionsComponent
+        TransactionsComponent,
+        CashflowSetupComponent,
+        SetupStepComponent
     ]
 })
 
