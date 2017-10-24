@@ -25,7 +25,7 @@ export class BankAccountsComponent extends AppComponentBase implements OnInit {
 
     ngOnInit() {
         this._financialInformationServiceProxy.getSetupAccountsLink(
-            'https://dl.dropboxusercontent.com/s/jfn70y0kyg4hoc1/kba-override.css',
+            'https://dl.dropboxusercontent.com/s/v4loqzjr4ysezvc/custom.css',
             ''
         ).subscribe((data) => {
             this.sourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data.setupAccountsLink);
