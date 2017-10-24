@@ -58,8 +58,7 @@
     .dx-area-description-cell {
         background-color: #fff;
         min-width: @left-column-width;
-        //min-height: 61px;
-        //display: block;
+        vertical-align: middle;
     }
 
     /** upper right column (historical row and dates rows) */
@@ -165,9 +164,9 @@
                         content: '';
                         position: absolute;
                         top: 15px;
-                        left: 16px;
+                        left: 19px;
                         display: block;
-                        border-right: 4px solid @expendedLineColor;
+                        border-right: 2px solid @expendedLineColor;
                         height: 100%;
                     }
                 }
@@ -227,8 +226,8 @@
                             position: absolute;
                             height: 7px;
                             top: -8px;
-                            left: -2px;
-                            border-right: 4px solid @expendedLineColor;
+                            left: 0;
+                            border-right: 2px solid @expendedLineColor;
                         }
                     }
                 }
@@ -276,8 +275,13 @@
     .dx-area-data-cell {
         tr {
             td {
+                font-family: Lato!important;
+                font-weight: 400;
                 background: @dataCellColor;
                 color: #000;
+                span {
+                    font-family: Lato!important;
+                }
                 &.startedBalance.dx-total {
                     background: @startedBalanceDataCellColor;
                     & + td:not(.startedBalance) {
@@ -286,6 +290,7 @@
                 }
                 &.dx-total {
                     background: @totalDataCellBackgroundColor;
+                    font-weight: 700;
                     &.income {
                         background: @incomeDataCellBackgroundColor;
                     }
@@ -301,7 +306,6 @@
                 &.reconciliation {
                     font-weight: 700;
                 }
-
             }
             &.reconciliation {
                 td {
@@ -317,7 +321,7 @@
 /deep/ .dx-dropdowneditor[accesskey="cashflowGroupby"] {
 
     &.dx-dropdowneditor-field-clickable {
-        width: 160px;
+        max-width: none;
         input {
             border-bottom: none;
         }
@@ -326,12 +330,29 @@
         }
     }
 
-    .dx-dropdowneditor-button {
-        width: 10px
+    .dx-texteditor-container {
+        width: auto;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-around;
+        input.dx-texteditor-input {
+            width: auto;
+            max-width: 120px;
+            padding-right: 0;
+        }
+        .dx-texteditor-buttons-container {
+            position: relative;
+            .dx-dropdowneditor-button {
+                width: 10px;
+                padding: 0;
+            }
+        }
     }
+
 
     .dx-dropdowneditor-button-visible .dx-texteditor-input {
         padding-right: 10px;
+        width: auto;
     }
 
     &.dx-state-hover .dx-dropdowneditor-icon,
@@ -339,25 +360,21 @@
     &.dx-dropdowneditor-active .dx-dropdowneditor-icon {
         background: none !important;
     }
+
+    .dx-dropdowneditor-icon {
+        font: 14px/1 DXIcons !important;
+    }
 }
 
 .cashflow {
     position: relative;
 }
 
-.group_by {
-    padding-left: 10px;
+.groupBy {
+    padding-left: 22px;
     display: flex;
     align-items: center;
-    position: absolute;
-    top: 21px;
-    left: 0;
-    z-index: 1;
     span {
         margin-right: 10px;
     }
 }
-
-
-
-

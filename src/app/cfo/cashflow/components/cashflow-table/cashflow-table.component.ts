@@ -296,7 +296,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             rowHeaderLayout: 'tree',
             showTotals: true,
             customizeText: cellInfo => {
-                let key = cellInfo.valueText === '0' ? 'Total Cash Inflows' : 'Total Cash Ourflows';
+                let key = cellInfo.valueText === '0' ? 'Total Cash Inflows' : 'Total Cash Outflows';
                 return  this.l(key).toUpperCase();
             },
             selector: data => {
@@ -575,6 +575,9 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             //     $(this).addClass('dataFieldHidden');
             // });
         }
+        /** Get the groupBy element and append the dx-area-description-cell with it */
+        $('.groupBy')
+            .appendTo(event.element.find('.dx-area-description-cell'));
     }
 
     changeColspanUntil(selector1, selector2) {
