@@ -1,57 +1,71 @@
-﻿<div [@routerTransition]>
-    <h3 class="form-title">{{l("LogIn")}}</h3>
+﻿<div class="container-fluid" [@routerTransition]>
+    <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12 text-center form-wrapper">
+            <h1>{{l("SperseLogin")}}</h1>
 
-    <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
+            <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
 
-        <div class="form-group">
-            <label class="control-label visible-ie8 visible-ie9">{{l("UserNameOrEmail")}}</label>
-            <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off" placeholder="{{l('UserNameOrEmail')}}" name="userNameOrEmailAddress" required />
-        </div>
+                <div class="form-group clearfix">
+                    <label class="control-label visible-ie8 visible-ie9">{{l("UserNameOrEmail")}}</label>
+                    <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off" placeholder="{{l('UserNameOrEmail')}}" name="userNameOrEmailAddress" required />
 
-        <div class="form-group">
-            <label class="control-label visible-ie8 visible-ie9">{{l('Password')}}</label>
-            <input [(ngModel)]="loginService.authenticateModel.password" class="form-control form-control-solid placeholder-no-fix input-ltr" type="password" autocomplete="off" placeholder="{{l('Password')}}" name="password" required maxlength="32" />
-        </div>
+                    <div class="form-group clearfix">
+                        <div class="mt-checkbox-list pull-right">
+                            <label class="mt-checkbox mt-checkbox-outline">
+                                <input class="form-control" [(ngModel)]="loginService.rememberMe" type="checkbox" name="rememberMe" value="true" />{{l("RememberMe")}}
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="form-group">
-            <div class="mt-checkbox-list">
-                <label class="mt-checkbox mt-checkbox-outline">
-                    <input class="form-control" [(ngModel)]="loginService.rememberMe" type="checkbox" name="rememberMe" value="true" />{{l("RememberMe")}}
-                    <span></span>
-                </label>
+                <div class="form-group clearfix">
+                    <label class="control-label visible-ie8 visible-ie9">{{l('Password')}}</label>
+                    <input [(ngModel)]="loginService.authenticateModel.password" class="form-control form-control-solid placeholder-no-fix input-ltr" type="password" autocomplete="off" placeholder="{{l('Password')}}" name="password" required maxlength="32" />
+                    <div class="form-group clearfix">
+                        <a routerLink="/account/forgot-password" id="forget-password" class="forget-password pull-right">{{l("ForgotPassword")}}</a>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit" [disabled]="!loginForm.form.valid">
+                        {{l("LoginBtn")}}
+                        <img src="/assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">
+                    </button>
+                </div>
+
+                <p class="agree-rights">By continuing I agree to <a href="javascript:;">Terms & Policies</a>.</p>
+            </form>
+
+            <div class="login-options" *ngIf="multiTenancySideIsTeanant && loginService.externalLoginProviders.length > 0">
+                <h4>{{l("LoginWith")}}</h4>
+                <ul class="social-icons">
+                    <li *ngFor="let provider of loginService.externalLoginProviders">
+                        <a class="social-login-icon social-icon-color {{provider.icon}}"
+                           (click)="externalLogin(provider)"
+                           title="{{provider.name}}"></a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="create-account">
+                <p *ngIf="!multiTenancySideIsTeanant && isTenantRegistrationAllowed">
+                    <a routerLink="/account/select-edition" id="register-btn" class="uppercase">{{l("NewTenant")}}</a>
+                    <span class="pipe-divider"> | </span>
+                </p>
+                <p *ngIf="isSelfRegistrationAllowed" class="register-account">
+                    {{l("DontHaveAnAccount")}}
+                    <a routerLink="/account/register" id="register-btn" class="uppercase">{{l("CreateAnAccount")}}</a>
+                </p>
+                <!--<span *ngIf="multiTenancySideIsTeanant">
+                    <a routerLink="/account/email-activation" id="email-activation-btn" class="uppercase">{{l("EmailActivation")}}</a>
+                </span>-->
             </div>
         </div>
-
-        <div class="form-actions">
-            <button type="submit" class="btn btn-success uppercase" [disabled]="!loginForm.form.valid">{{l("LogIn")}}</button>
-            <a routerLink="/account/forgot-password" id="forget-password" class="forget-password">{{l("ForgotPassword")}}</a>
+        <div class="col-md-6 col-sm-12 hidden-xs text-center slogan-side">
+            <img src="assets/common/images/brain.svg" alt="The digital brain of your business" width="488" class="img-responsive">
+            <h2 class="slogan">The digital brain of your business</h2>
+            <p class="slogan-description">Augumented by Artificial Intelligence</p>
         </div>
-    </form>
-
-    <div class="login-options" *ngIf="multiTenancySideIsTeanant && loginService.externalLoginProviders.length > 0">
-        <h4>{{l("LoginWith")}}</h4>
-        <ul class="social-icons">
-            <li *ngFor="let provider of loginService.externalLoginProviders">
-                <a class="social-login-icon social-icon-color {{provider.icon}}"
-                   (click)="externalLogin(provider)"
-                   title="{{provider.name}}"></a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="create-account">
-        <p>
-            <span *ngIf="!multiTenancySideIsTeanant && isTenantRegistrationAllowed">
-                <a routerLink="/account/select-edition" id="register-btn" class="uppercase">{{l("NewTenant")}}</a>
-                <span class="pipe-divider"> | </span>
-            </span>
-            <span *ngIf="isSelfRegistrationAllowed">
-                <a routerLink="/account/register" id="register-btn" class="uppercase">{{l("CreateAnAccount")}}</a>
-                <span class="pipe-divider"> | </span>
-            </span>
-            <span *ngIf="multiTenancySideIsTeanant">
-                <a routerLink="/account/email-activation" id="email-activation-btn" class="uppercase">{{l("EmailActivation")}}</a>
-            </span>
-        </p>
     </div>
 </div>

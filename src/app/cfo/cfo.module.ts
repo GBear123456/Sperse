@@ -4,16 +4,42 @@ import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { CashflowModule } from './cashflow/cashflow.module';
 import { CfoRoutingModule } from './cfo-routing.module';
 import { BankAccountsComponent } from './bank-accounts/bank-accounts.component';
+import { TransactionsComponent } from './transactions/transactions.component';
+
+import {
+    DxDataGridModule,
+    DxToolbarModule,
+    DxTemplateModule,
+    DxDateBoxModule,
+    DxTextBoxModule,
+    DxValidatorModule,
+    DxValidationSummaryModule,
+    DxButtonModule,
+    DxFileUploaderModule,
+    DxSelectBoxModule
+} from 'devextreme-angular';
 
 @NgModule({
     imports: [
         CashflowModule,
         CfoRoutingModule,
         CommonModule,
-        AppCommonModule
+        AppCommonModule,
+
+        DxDataGridModule,
+        DxToolbarModule,
+        DxTemplateModule,
+        DxDateBoxModule,
+        DxTextBoxModule,
+        DxValidatorModule,
+        DxValidationSummaryModule,
+        DxButtonModule,
+        DxFileUploaderModule,
+        DxSelectBoxModule,
     ],
     declarations: [
-        BankAccountsComponent
+        BankAccountsComponent,
+        TransactionsComponent
     ]
 })
 

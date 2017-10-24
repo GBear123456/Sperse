@@ -9,6 +9,9 @@ import { UrlHelper } from 'shared/helpers/UrlHelper';
 
 @Component({
     templateUrl: './login.component.html',
+    styleUrls: [
+        './login.component.less'
+    ],
     animations: [accountModuleAnimation()]
 })
 export class LoginComponent extends AppComponentBase implements OnInit {

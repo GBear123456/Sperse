@@ -1,5 +1,5 @@
-﻿<div class="sidebar-filter-links" *ngIf="filters.length">
-	<b>{{l('SideBarFilterHeader')}}</b>
+<div class="sidebar-filter-links" *ngIf="filters.length">
+	<b>{{ls('Platform', 'SideBarFilterHeader')}}</b>
 	<div class="filter-link">
     <ng-template ngFor let-filter [ngForOf]="filters" let-i="index">
 			<a href="javascript:;" (click)="showFilterDialog($event, filter)">{{l('FilterBy' + capitalize(filter.caption) + 'Header')}}</a>
@@ -10,8 +10,8 @@
 
 <div class="sidebar-filters" *ngIf="activeFilter">
 	<div class="sidebar-filter-head">
-		{{l('SideBarFilterHeader')}} {{l('FilterBy' + capitalize(activeFilter.caption) + 'Header')}} 
-    <button class="button-layout button-primary" (click)="filterApply($event)"><i class="fa fa-check" aria-hidden="true"></i>{{l('Apply')}}</button>
+		{{ls('Platform', 'SideBarFilterHeader')}} {{l('FilterBy' + capitalize(activeFilter.caption) + 'Header')}} 
+    <button class="button-layout button-primary" (click)="filterApply($event)"><i class="fa fa-check" aria-hidden="true"></i>{{ls('Platform', 'Apply')}}</button>
 	</div>
 
   <filter [config]="activeFilter" (onApply)="filterApply($event)"></filter>

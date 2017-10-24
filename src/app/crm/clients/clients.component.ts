@@ -1,4 +1,4 @@
-import {
+﻿import {
     Component,
     OnInit,
     AfterViewInit,
@@ -43,17 +43,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     private readonly dataSourceURI = 'Customer';
     private filters: FilterModel[];
     private rootComponent: any;
-    
+
     constructor(injector: Injector,
                 private _router: Router,
                 private _filtersService: FiltersService,
                 private _activatedRoute: ActivatedRoute,
                 private _commonLookupService: CommonLookupServiceProxy) {
         super(injector);
-        
+
         this._filtersService.enabled = true;
+        this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-        
+
         this.dataSource = {
             store: {
                 type: 'odata',
@@ -71,7 +72,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             widget: 'dxButton',
             options: {
                 hint: 'Back',
-                iconSrc: 'assets/common/images/icons/back-arrow.svg',
+                iconSrc: 'assets/common/icons/back-arrow.svg',
                 onClick: Function()
             }
         }, {
@@ -79,7 +80,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             widget: 'dxButton',
             options: {
                 text: 'Assign',
-                iconSrc: 'assets/common/images/icons/assign-icon.svg',
+                iconSrc: 'assets/common/icons/assign-icon.svg',
                 onClick: Function()
             }
         }, {
@@ -87,7 +88,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             widget: 'dxButton',
             options: {
                 text: 'Status',
-                iconSrc: 'assets/common/images/icons/status-icon.svg',
+                iconSrc: 'assets/common/icons/status-icon.svg',
                 onClick: Function()
             }
         }, {
@@ -95,7 +96,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             widget: 'dxButton',
             options: {
                 text: 'Delete',
-                iconSrc: 'assets/common/images/icons/delete-icon.svg',
+                iconSrc: 'assets/common/icons/delete-icon.svg',
                 onClick: Function()
             }
         }, {
@@ -111,7 +112,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             widget: 'dxButton',
             options: {
                 hint: 'Export to Excel',
-                iconSrc: 'assets/common/images/icons/download-icon.svg',
+                iconSrc: 'assets/common/icons/download-icon.svg',
                 onClick: this.exportData.bind(this)
             }
         }, {
@@ -127,7 +128,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             widget: 'dxButton',
             options: {
                 hint: 'Box',
-                iconSrc: 'assets/common/images/icons/box-icon.svg',
+                iconSrc: 'assets/common/icons/box-icon.svg',
                 onClick: Function()
             }
         }, {
@@ -135,7 +136,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             widget: 'dxButton',
             options: {
                 hint: 'Pipeline',
-                iconSrc: 'assets/common/images/icons/pipeline-icon.svg',
+                iconSrc: 'assets/common/icons/pipeline-icon.svg',
                 onClick: Function()
             }
         }, {
@@ -143,7 +144,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             widget: 'dxButton',
             options: {
                 hint: 'Grid',
-                iconSrc: 'assets/common/images/icons/table-icon.svg',
+                iconSrc: 'assets/common/icons/table-icon.svg',
                 onClick: Function()
             }
         }];
@@ -156,7 +157,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     showColumnChooser() {
         this.dataGrid.instance.showColumnChooser();
     }
-    
+
     onContentReady(event) {
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
@@ -214,6 +215,36 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     caption: 'creation',
                     field: 'CreationTime',
                     items: {from: '', to: ''}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'email',
+                    items: { email: '' }
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'phone',
+                    items: { phone: '' }
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'city',
+                    items: { }
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'address',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'zipCode',
+                    items: {}
                 }
             ]
         );
@@ -268,8 +299,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     ngOnDestroy() {
-        this._filtersService.unsubscribe();
         this._filtersService.enabled = false;
+        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+        this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }
 }

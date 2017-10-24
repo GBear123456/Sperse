@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 //import { FinancialService } from '../../services/financial/financial.service';
 
 @Component({
@@ -10,15 +10,15 @@ export class ClientScoresComponent implements OnInit {
 
   scores = {
     experian_score: {
-      'amount' : 825,
+      'amount' : 803,
       'label' : 'Experian Score'
     },
     equifax_score: {
-      'amount' : 242,
+      'amount' : 809,
       'label' : 'Equifax Score'
     },
     transunion_score: {
-      'amount' : 425,
+      'amount' : 799,
       'label'  : 'TransUnion Score'
     }
   };

@@ -13,7 +13,7 @@ DxPivotGridModule,
 DxToolbarModule,
 DxButtonModule,
 DxSelectBoxModule
-} from '@extended_modules/devextreme-angular';
+} from 'devextreme-angular';
 
 /** services */
 import { CashflowService } from './services/cashflow.service';
