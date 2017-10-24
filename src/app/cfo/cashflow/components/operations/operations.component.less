@@ -4,7 +4,7 @@
     background: #fff;
     display: flex;
     padding: 10px 10px;
-
+    overflow-x: hidden;
     button,
     input {
         height: 37px;
@@ -29,16 +29,14 @@
         }
 
         &:before {
-            content: "\f002";
-            font-family: FontAwesome;
-            font-style: normal;
-            font-weight: normal;
+            content: "";
+            background: url('../../../../../assets/common/icons/search-icon.svg');
             text-decoration: inherit;
             position: absolute;
             font-size: 20px;
             width: 16px;
             height: 16px;
-            top: 5px;
+            top: 11px;
             left: 12px;
             color: #677380;
         }
@@ -64,114 +62,170 @@
                     position: relative;
                 }
 
+                .dx-toolbar-item {
+                    display: inline-flex;
+                }
+
                 .dx-toolbar-button {
                     padding: 0;
                 }
 
-                .dx-button[aria-label="back-arrow"] {
-                    .dx-button-content {
-                        padding: 12px 15px 13px;
-                        .dx-icon {
-                            height: 10px;
-                            width: 17px;
+                .dx-toolbar-before {
+                    padding-right: 24px;
+
+                    /** Back button */
+                    .dx-item:first-child {
+                        margin-right: 20px;
+                        .dx-button-content {
+                            padding: 12px 15px 13px;
+                            .dx-icon {
+                                height: 10px;
+                                width: 17px;
+                            }
+                        }
+                    }
+
+                    /** Edit button */
+                    .dx-item:nth-child(2) {
+                        .dx-button {
+                            border-top-right-radius: 0;
+                            border-bottom-right-radius: 0;
+                            border-right: 0;
+                        }
+                    }
+
+                    /** Rules button */
+                    .dx-item:nth-child(3) {
+                        .dx-button {
+                            border-radius: 0;
+                            border-right: 0;
+                        }
+                    }
+
+                    /** Expand button */
+                    .dx-item:last-child {
+                        .dx-button {
+                            border-top-left-radius: 0;
+                            border-bottom-left-radius: 0;
                         }
                     }
                 }
 
-                .dx-button[aria-label="Assign"] {
-                    margin-left: 40px;
-                    border-right: 0;
-                    border-top-right-radius: 0;
-                    border-bottom-right-radius: 0;
+                .dx-toolbar-center {
+                    /** General for flag, label and more buttons */
+                    .dx-item {
+                        .dx-button {
+                            position: relative;
+                            width: 72px;
+                            &:after {
+                                content: '';
+                                display: block;
+                                background: url('../../../../../assets/common/icons/down-arrow-icon.svg');
+                                position: absolute;
+                                width: 8px;
+                                height: 4px;
+                                right: 19px;
+                                top: 48%;
+                            }
+                            .dx-button-content {
+                                padding-right: 28px;
+                            }
+                        }
+                    }
+
+                    /** Flag button */
+                    .dx-item:first-child {
+                        .dx-button{
+                            border-top-right-radius: 0;
+                            border-bottom-right-radius: 0;
+                            border-right: 0;
+                        }
+                    }
+
+                    /** Label button */
+                    .dx-item:nth-child(2) {
+                        .dx-button{
+                            border-top-left-radius: 0;
+                            border-bottom-left-radius: 0;
+                        }
+                    }
+
+                    /** More button */
+                    .dx-item:last-child {
+                        margin-left: 24px;
+                        .dx-button {
+                            width: auto;
+                            .dx-button-content {
+                                padding-right: 30px;
+                            }
+                        }
+                    }
                 }
 
-                .dx-button[aria-label="Status"] {
-                    border-right: 0;
-                    border-radius: 0;
-                }
+                .dx-toolbar-after {
+                    padding-left: 115px;
 
-                .dx-button[aria-label="Delete"] {
-                    margin-right: 40px;
-                    border-top-left-radius: 0;
-                    border-bottom-left-radius: 0;
-                }
+                    /** General for right group */
+                    .dx-item {
+                        .dx-button {
+                            width: 57px;
+                        }
+                    }
 
-                .dx-button[aria-label="icon icon-refresh"] {
-                    border-top-right-radius: 0;
-                    border-bottom-right-radius: 0;
-                    border-right: 0;
-                }
+                    /** Download button */
+                    .dx-item:first-child {
+                        .dx-button {
+                            border-top-right-radius: 0;
+                            border-bottom-right-radius: 0;
+                            border-right: 0;
+                        }
+                    }
 
-                .dx-button[aria-label="download-icon"] {
-                    border-radius: 0;
-                }
+                    /** Print button */
+                    .dx-item:nth-child(2) {
+                        margin-right: 24px;
+                        .dx-button {
+                            border-top-left-radius: 0;
+                            border-bottom-left-radius: 0;
+                        }
+                    }
 
-                .dx-button[aria-label="clmn-chooser-icon"] {
-                    border-left: 0;
-                    border-top-left-radius: 0;
-                    border-bottom-left-radius: 0;
-                }
+                    /** Box button */
+                    .dx-item:nth-child(3) {
+                        .dx-button {
+                            border-top-right-radius: 0;
+                            border-bottom-right-radius: 0;
+                            border-right: 0;
+                        }
+                    }
 
-                .dx-button[aria-label="pipeline-icon"] {
-                    margin-left: 24px;
-                    border-top-right-radius: 0;
-                    border-bottom-right-radius: 0;
-                }
-                .dx-button[aria-label="table-icon"] {
-                    margin-left: -1px;
-                    border-top-left-radius: 0;
-                    border-bottom-left-radius: 0;
+                    /** Pipeline button */
+                    .dx-item:nth-child(4) {
+                        .dx-button {
+                            border-radius: 0;
+                            border-right: 0;
+                        }
+                    }
+
+                    /** Grid button */
+                    .dx-item:last-child {
+                        .dx-button {
+                            border-top-left-radius: 0;
+                            border-bottom-left-radius: 0;
+                        }
+                    }
                 }
 
                 .dx-button {
+                    height: 37px;
                     .dx-button-content {
                         padding: 8px 15px;
                     }
                     .dx-icon {
+                        width: auto;
+                        height: auto;
                         color: #959a9f;
                     }
-                }
-            }
-        }
-    }
-
-    button {
-        &:not(:first-child):not(:last-child) {
-            border-radius: 0;
-        }
-        & + button {
-            border-left: none;
-        }
-        &:first-child:not(:only-child) {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-        &:last-child:not(:only-child) {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-
-        &.expand-button {
-            position: relative;
-            width: 72px;
-            img {
-                padding-right: 17px;
-            }
-            &::after {
-                display: block;
-                content: '';
-                width: 8px;
-                height: 4px;
-                right: 16px;
-                top: 50%;
-                background: no-repeat center url("/assets/icons/arrow_3.svg");
-                position: absolute;
-            }
-            &.more {
-                width: 77px;
-                padding-right: 20px;
-                &::after {
-                    right: 10px;
                 }
             }
         }

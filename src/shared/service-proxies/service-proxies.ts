@@ -939,53 +939,6 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    syncTransactions(bankAccountId: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/SyncTransactions?";
-        if (bankAccountId !== undefined)
-            url_ += "bankAccountId=" + encodeURIComponent("" + bankAccountId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processSyncTransactions(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processSyncTransactions(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processSyncTransactions(response: Response): Observable<void> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
     recalculateCategories(input: RecalculateCategoriesInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/RecalculateCategories";
         url_ = url_.replace(/[?&]$/, "");
@@ -1026,56 +979,6 @@ export class CashflowServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    reconcileBankAccountBalance(bankAccountId: number): Observable<ReconcileBankAccountBalanceResult> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/ReconcileBankAccountBalance?";
-        if (bankAccountId !== undefined)
-            url_ += "bankAccountId=" + encodeURIComponent("" + bankAccountId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processReconcileBankAccountBalance(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processReconcileBankAccountBalance(response_);
-                } catch (e) {
-                    return <Observable<ReconcileBankAccountBalanceResult>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<ReconcileBankAccountBalanceResult>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processReconcileBankAccountBalance(response: Response): Observable<ReconcileBankAccountBalanceResult> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: ReconcileBankAccountBalanceResult = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ReconcileBankAccountBalanceResult.fromJS(resultData200) : new ReconcileBankAccountBalanceResult();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<ReconcileBankAccountBalanceResult>(<any>null);
     }
 }
 
@@ -3340,7 +3243,7 @@ export class FinancialInformationServiceProxy {
     /**
      * @return Success
      */
-    syncAllAccounts(syncHistory: boolean): Observable<void> {
+    syncAllAccounts(syncHistory: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
         if (syncHistory !== undefined)
             url_ += "syncHistory=" + encodeURIComponent("" + syncHistory) + "&"; 
@@ -3364,24 +3267,27 @@ export class FinancialInformationServiceProxy {
                 try {
                     return this.processSyncAllAccounts(response_);
                 } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
+                    return <Observable<SyncAllAccountsOutput>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<void>><any>Observable.throw(response_);
+                return <Observable<SyncAllAccountsOutput>><any>Observable.throw(response_);
         });
     }
 
-    protected processSyncAllAccounts(response: Response): Observable<void> {
+    protected processSyncAllAccounts(response: Response): Observable<SyncAllAccountsOutput> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            return Observable.of<void>(<any>null);
+            let result200: SyncAllAccountsOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SyncAllAccountsOutput.fromJS(resultData200) : new SyncAllAccountsOutput();
+            return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<void>(<any>null);
+        return Observable.of<SyncAllAccountsOutput>(<any>null);
     }
 }
 
@@ -11524,53 +11430,6 @@ export interface IRecalculateCategoriesInput {
     cashflowCategoryId: number;
 }
 
-export class ReconcileBankAccountBalanceResult implements IReconcileBankAccountBalanceResult {
-    date: moment.Moment;
-    type: ReconcileBankAccountBalanceResultType;
-    currencyId: string;
-    amount: number;
-
-    constructor(data?: IReconcileBankAccountBalanceResult) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
-            this.type = data["type"];
-            this.currencyId = data["currencyId"];
-            this.amount = data["amount"];
-        }
-    }
-
-    static fromJS(data: any): ReconcileBankAccountBalanceResult {
-        let result = new ReconcileBankAccountBalanceResult();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["type"] = this.type;
-        data["currencyId"] = this.currencyId;
-        data["amount"] = this.amount;
-        return data; 
-    }
-}
-
-export interface IReconcileBankAccountBalanceResult {
-    date: moment.Moment;
-    type: ReconcileBankAccountBalanceResultType;
-    currencyId: string;
-    amount: number;
-}
-
 export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
     serverTime: moment.Moment;
     friends: FriendDto[];
@@ -16169,6 +16028,41 @@ export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
 
 export interface IGetSetupAccountsLinkOutput {
     setupAccountsLink: string;
+}
+
+export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
+    syncInProgressAccountsCount: number;
+
+    constructor(data?: ISyncAllAccountsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.syncInProgressAccountsCount = data["syncInProgressAccountsCount"];
+        }
+    }
+
+    static fromJS(data: any): SyncAllAccountsOutput {
+        let result = new SyncAllAccountsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["syncInProgressAccountsCount"] = this.syncInProgressAccountsCount;
+        return data; 
+    }
+}
+
+export interface ISyncAllAccountsOutput {
+    syncInProgressAccountsCount: number;
 }
 
 export class CreateFriendshipRequestInput implements ICreateFriendshipRequestInput {
@@ -24750,11 +24644,6 @@ export enum IsTenantAvailableOutputState {
 }
 
 export enum TransactionStatsDtoAdjustmentType {
-    _0 = 0, 
-    _1 = 1, 
-}
-
-export enum ReconcileBankAccountBalanceResultType {
     _0 = 0, 
     _1 = 1, 
 }
