@@ -1,33 +1,28 @@
 <dx-drop-down-box
-  width="570px"
+  width="700px"
   [value]="module"
   [dataSource]="modules"
+  [accessKey]="module-select-dialog"
   (onInitialized)="onDropDownInit($event)">
     <div *dxTemplate="let data of 'content'" style="display:flex;">
-        <dx-list (onItemClick)="changeModule($event)" accessKey="module-select" width="200px">
-
-          <dxi-item *ngFor="let item of modules" (mouseenter)="onHover(item)">
-              <div class="module-select-item {{item | lowercase }}">
-                  <input value="{{item}}" readonly>
-                  <div>{{item}}</div>
-                  <i *ngIf="item==module" class="dx-icon-check"></i>
-              </div>
-          </dxi-item>
-
+        <dx-list (onItemClick)="changeModule($event)" accessKey="module-select-list" width="280px">
+            <dxi-item *ngFor="let item of modules" (mouseover)="onHover(item)">
+                <div class="module-select-item {{item | lowercase }}">
+                    <input value="{{item}}" readonly>
+                    <div [class]="isDisabled(item) ? 'disabled': ''">{{item}}</div>
+                    <i *ngIf="item==module" class="dx-icon-check"></i>
+                </div>
+            </dxi-item>
         </dx-list>
         <div class="module-description">
-          <div *ngIf="hoverModule=='Admin'">
-            <h3>Admin: Administration Tools</h3>
-          </div>
-          <div *ngIf="hoverModule=='API'">
-            <h3>API: Available Endpoints List</h3>
-          </div>
-          <div *ngIf="hoverModule=='CRM'">
-            <h3>CRM: Connect All Your Bussines Applications</h3>
-          </div>
-          <div *ngIf="hoverModule=='CFO'">
-            <h3>CFO: Connect All Your Bussines Applications</h3>
-          </div>
+          <ng-template ngFor let-module [ngForOf]="modules" let-i="index">
+            <div *ngIf="hoverModule==module" [class]="module.toLowerCase()">
+              <h3><input [value]="module" readonly>{{l(module + 'ModuleHeader')}}</h3>
+              <div class="description-container">
+                {{l(module + 'ModuleDescription')}}
+              </div>
+            </div>
+          </ng-template>      
         </div>
     </div>
 </dx-drop-down-box>

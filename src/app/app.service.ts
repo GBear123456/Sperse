@@ -6,7 +6,7 @@ import { Subject } from 'rxjs/Subject';
 export class AppService {
 	private _config: Subject<Object>;
   private _subscribers: Array<Subscription> = [];
-  private _modules = ['Admin', 'API', 'CFO', 'CRM' /*, 'Cloud', 'Feeds', 'Forms', 'HR', 'HUB', 'Slice', 'Store' */];
+  private _modules = ['Admin', 'API', 'CFO', 'CRM', 'Cloud', 'Feeds', 'Forms', 'HR', 'HUB', 'Slice', 'Store'];
   //!!VP should be considered to use lazy loading
   private _configs = {
     admin: require('./admin/module.config.json'),

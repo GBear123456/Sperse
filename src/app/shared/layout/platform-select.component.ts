@@ -24,11 +24,10 @@ export class PlatformSelect extends AppComponentBase {
   ) {
     super(injector);
     
-    this.module = _appService.getModule();
-    this.hoverModule = this.module;
     this.modules = _appService.getModules();
     _appService.subscribeModuleChange((config) => {
       this.cssClass = (this.module = config['name']).toLowerCase();    
+      this.hoverModule = this.module;
     });
   }
  
@@ -41,9 +40,12 @@ export class PlatformSelect extends AppComponentBase {
       this._appService.switchModule(this.module);
       this._router.navigate(['app/' + 
         this.module.toLowerCase() + '/']);   
+      this._dropDown.close();
     } 
+  }
 
-    this._dropDown.close();
+  isDisabled(item) {
+    return !this._appService.isModuleActive(item);
   }
 
   onHover(module) {
