@@ -13,24 +13,9 @@ import { CashflowSetupComponent } from './cashflow-setup/cashflow-setup.componen
             {
                 path: '',
                 children: [
-                    { path: 'cashflow', component: CashflowComponent, data: { permission: '' } }
-                ]
-            },
-            {
-                path: '',
-                children: [
-                    { path: 'cashflow-setup', component: CashflowSetupComponent, data: { permission: '' } }
-                ]
-            },
-            {
-                path: '',
-                children: [
-                    { path: 'transactions', component: TransactionsComponent, data: { permission: '' } }
-                ]
-            },
-            {
-                path: '',
-                children: [
+                    { path: 'cashflow', component: CashflowComponent, data: { permission: '' } },
+                    { path: 'cashflow-setup', component: CashflowSetupComponent, data: { permission: '' } },
+                    { path: 'transactions', component: TransactionsComponent, data: { permission: '' } },
                     { path: 'bank-accounts', component: BankAccountsComponent, data: { permission: '' } }
                 ]
             }
