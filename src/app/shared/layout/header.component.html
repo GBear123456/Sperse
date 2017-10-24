@@ -5,8 +5,7 @@
                 <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/common/images/app-logo-on-light.png" alt="logo" class="logo-layout" width="200" height="60" />
                 <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" class="logo-layout" width="200" height="60" />			
             </a>
-      			<!-- i class="icon-menu filter-toggle sidebar-toggler"></i -->
-            <platform-select></platform-select>
+      			<!-- i class="icon-menu filter-toggle sidebar-toggler"></i -->            
         </div>
         <div class="page-top">
             <div class="top-menu">
@@ -30,6 +29,17 @@
                     <li headerNotifications class="dropdown dropdown-extended dropdown-notification dropdown-dark" id="header_notification_bar"></li>
                     <li class="separator hide"> </li>
                     <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+                    <li *ngIf="chatEnabled && !chatConnected" class="dropdown dropdown-extended">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <img *ngIf="!chatConnected" src="../../../assets/metronic/global/img/loading.gif" tooltip="{{l('ChatIsConnecting')}}" placement="left" />
+                        </a>
+                    </li>
+                    <li class="dropdown dropdown-extended quick-sidebar-toggler" *ngIf="chatEnabled && chatConnected">
+                        <span class="sr-only">Toggle Quick Sidebar</span>
+                        <!-- i class="icon-speech"></i -->
+                        <img src="./assets/common/icons/feedback.svg">
+                        <span id="UnreadChatMessageCount" class="badge badge-danger" [ngClass]="{'hidden': !unreadChatMessageCount}">{{unreadChatMessageCount}}</span>
+                    </li>
                     <li class="dropdown dropdown-user dropdown-dark">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
                             <span class="username username-hide-on-mobile">
@@ -75,16 +85,6 @@
                                 <a href="javascript:;" (click)="logout()"><i class="icon-logout"></i> {{l("Logout")}}</a>
                             </li>
                         </ul>
-                    </li>
-                    <li *ngIf="chatEnabled && !chatConnected" class="dropdown dropdown-extended">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <img *ngIf="!chatConnected" src="../../../assets/metronic/global/img/loading.gif" tooltip="{{l('ChatIsConnecting')}}" placement="left" />
-                        </a>
-                    </li>
-                    <li class="dropdown dropdown-extended quick-sidebar-toggler" *ngIf="chatEnabled && chatConnected">
-                        <span class="sr-only">Toggle Quick Sidebar</span>
-                        <i class="icon-speech"></i>
-                        <span id="UnreadChatMessageCount" class="badge badge-danger" [ngClass]="{'hidden': !unreadChatMessageCount}">{{unreadChatMessageCount}}</span>
                     </li>
                 </ul>
             </div>

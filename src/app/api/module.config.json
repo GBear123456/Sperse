@@ -1,6 +1,6 @@
 {
   "name": "API",
-  "search": true,
+  "search": false,
   "navigation": [
     ["API Documentation", "", "icon-home", "/app/api/swagger"]
   ]
