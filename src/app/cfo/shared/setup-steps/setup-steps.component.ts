@@ -9,7 +9,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 export class SetupStepComponent extends AppComponentBase implements OnInit {
 
-    @Input() selectedStepIndex: number;
+    @Input() SelectedStepIndex: number;
     public readonly SetupSteps = [
         "BusinessEntity",
         "Chart",
@@ -27,8 +27,8 @@ export class SetupStepComponent extends AppComponentBase implements OnInit {
     }
 
     getItemClass(index: number) {
-        if (index < this.selectedStepIndex) return 'passed';
-        else if (index == this.selectedStepIndex) return 'current';
+        if (index < this.SelectedStepIndex) return 'passed';
+        else if (index == this.SelectedStepIndex) return 'current';
         else return '';
     }
 }
