@@ -5,7 +5,7 @@
     ["Setup", "", "", ""],
     ["Cashflow", "", "icon-home", "/app/cfo/cashflow"],
     ["Accounts", "", "icon-home", "/app/cfo/bank-accounts"],
-    ["Transactions", "", "", ""],
+    ["Transactions", "", "icon-home", "/app/cfo/transactions"],
     ["Rules", "", "", ""],
     ["Stats", "", "", ""],
     ["Logs", "", "", ""]

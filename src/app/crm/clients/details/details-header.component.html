@@ -1,4 +1,4 @@
-<header>
+﻿<header>
   <div class="avatar">
       <div class="active"></div>
       <img src="{{ data?.primaryContactInfo.photo ? 'data:image/png;base64,' + data.primaryContactInfo.photo.thumbnail: person.person_photo_url }}" alt="Person Photo">
@@ -16,13 +16,6 @@
       </div>
   </div>
   <div class="header_financial_info">
-      <div class="approved">
-          <h3 class="lab">Approved</h3>
-          <span>${{person.approved_sum}}</span>
-      </div>
-      <div class="requested">
-          <h3 class="lab">Requested</h3>
-          <span>${{person.requested_sum_min}}-${{person.requested_sum_max}}</span>
-      </div>
+      
   </div>
 </header>

@@ -1,4 +1,4 @@
-import {
+﻿import {
     Component,
     OnInit,
     AfterViewInit,
@@ -52,6 +52,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         super(injector);
 
         this._filtersService.enabled = true;
+        this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
         this.dataSource = {
@@ -214,6 +215,36 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     caption: 'creation',
                     field: 'CreationTime',
                     items: {from: '', to: ''}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'email',
+                    items: { email: '' }
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'phone',
+                    items: { phone: '' }
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'city',
+                    items: { }
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'address',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'zipCode',
+                    items: {}
                 }
             ]
         );
@@ -268,8 +299,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     ngOnDestroy() {
-        this._filtersService.unsubscribe();
         this._filtersService.enabled = false;
+        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+        this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }
 }

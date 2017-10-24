@@ -1,0 +1,60 @@
+<div [@routerTransition]>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="page-head">
+                <div class="page-title">
+                    <h1>
+                        <i class="icon-globe"></i>
+                        <span>{{l("Transactions")}}</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 text-right">
+        </div>
+    </div>
+    <div class="portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+            <div>
+                <div class="dx-datagrid-header-panel custom">
+                    <div class="dx-toolbar">
+                        <dx-toolbar [items]="items"></dx-toolbar>
+                    </div>
+                </div>
+                <div id="ClientsTable">
+                    <dx-data-grid id="gridContainer"
+                                  [dataSource]="dataSource"
+                                  [allowColumnReordering]="true"
+                                  [columnAutoWidth]="true"
+                                  [allowColumnResizing]="true"
+                                  [hoverStateEnabled]="true">
+                        <dxo-selection
+                            selectAllMode="page"
+                            showCheckBoxesMode="always"
+                            mode="multiple">
+                        </dxo-selection>
+                        <dxo-group-panel [visible]="true"></dxo-group-panel>
+                        <dxo-sorting mode="multiple"></dxo-sorting>
+
+                        <dxi-column dataField="Id" caption="{{l('Transactions_Id')}}" sortOrder="desc"></dxi-column>
+                        <dxi-column dataField="AccountNumber" caption="{{l('Transactions_AccountNumber')}}"></dxi-column>
+                        <dxi-column dataField="CurrencyName" caption="{{l('Transactions_CurrencyName')}}"></dxi-column>
+                        <dxi-column dataField="Date" caption="{{l('Transactions_Date')}}" dataType="date" format="shortDateShortTime"></dxi-column>
+                        <dxi-column dataField="PostDate" caption="{{l('Transactions_PostDate')}}" dataType="date" format="shortDateShortTime"></dxi-column>
+                        <dxi-column dataField="Amount" caption="{{l('Transactions_Amount')}}"></dxi-column>
+                        <dxi-column dataField="CategoryName" caption="{{l('Transactions_CategoryName')}}"></dxi-column>
+                        <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}"></dxi-column>
+
+                        <dxo-paging [pageSize]="20"></dxo-paging>
+                        <dxo-pager
+                            [showPageSizeSelector]="true"
+                            [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
+                            [showInfo]="true">
+                        </dxo-pager>
+                    </dx-data-grid>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -11,6 +11,7 @@ export class FiltersService {
   private subscribers: Array<Subscription> = [];
 
   public enabled: boolean = false;
+  public localizationSourceName: string;
 
 	constructor() {
 		this.filters = new Subject<FilterModel[]>();

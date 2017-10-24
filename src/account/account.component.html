@@ -1,20 +1,31 @@
-﻿<div class="logo">
-    <a routerLink="/">
-      <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/common/images/app-logo-on-dark.png" alt="logo" width="200" height="60" />
-      <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" width="200" height="60" />
-    </a>
-</div>
+﻿<div class="login-wrap">
+    <header>
+        <div class="logo">
+            <a routerLink="/">
+                <img *ngIf="!appSession.tenant || !appSession.tenant.logoId"
+                     src="/assets/common/images/app-logo-on-dark.png"
+                     alt="logo" width="200" height="60"/>
+                <img *ngIf="appSession.tenant && appSession.tenant.logoId"
+                     [src]="remoteServiceBaseUrl + '/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId"
+                     alt="logo"
+                     width="200" height="60"/>
+            </a>
+        </div>
+    </header>
 
-<div *ngIf="showTenantChange()" class="content tenant-change-box">
-    <tenant-change></tenant-change>
-</div>
+    <main class="main-content">
+        <div *ngIf="showTenantChange()" class="content tenant-change-box">
+            <tenant-change></tenant-change>
+        </div>
 
-<div class="content account-forms">
-    <router-outlet></router-outlet>
-</div>
+        <div class="account-forms">
+            <router-outlet></router-outlet>
+        </div>
+    </main>
 
-<languageSwitch></languageSwitch>
-
-<div class="copyright">
-    {{currentYear}} © Platform.
+    <footer>
+        <div class="copyright">
+            {{currentYear}} © {{l("SpersePlatform")}}
+        </div>
+    </footer>
 </div>

@@ -1,0 +1,131 @@
+.slogan-side {
+    img {
+        margin: 60px auto;
+    }
+    .slogan {
+        font-size: 24px;
+        font-weight: 600;
+        color: #424c56;
+        text-transform: uppercase;
+    }
+    .slogan-description {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.44;
+        color: #888d92;
+    }
+}
+
+.form-wrapper {
+    h1 {
+        margin-top: 90px;
+        margin-bottom: 75px;
+        font-size: 32px;
+        font-weight: 600;
+        text-align: center;
+        color: #424c56;
+    }
+    
+    .login-form {
+        max-width: 520px;
+        margin: 0 auto;
+    }
+    
+    .dx-texteditor-input, input.form-control {
+        font-size: 16px;
+        font-weight: 300;
+        color: #888d92;
+    }
+    
+    .form-actions {
+        .submit {
+            min-width: 300px;
+            border-radius: 100px;
+            background-color: #00aeef;
+            font-size: 18px;
+            font-weight: 500;
+            color: #ffffff;
+            border: 0;
+            box-shadow: none;
+            line-height: 54px;
+            position: relative;
+            &[disabled] {
+                opacity: .7;
+                cursor: not-allowed;
+            }
+            img {
+                position: absolute;
+                right: 70px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+    }
+    .mt-checkbox-list {
+        .mt-checkbox.mt-checkbox-outline {
+            margin-bottom: 0;
+            padding-left: 25px;
+            font-size: 14px;
+            font-weight: 300;
+            color: #888d92;
+            &:hover {
+                color: darken(#888d92, 20%);
+            }
+            > span {
+                border-radius: 50%;
+                top: -1px;
+                &::after {
+                    left: 5px;
+                    width: 6px;
+                }
+            }
+            > input:checked ~ span {
+                border-color: #00aeef;
+                background-color: #00aeef;
+                &::after {
+                    border-color: #fff;
+                }
+            }
+        }
+    }
+    
+    .forget-password {
+        padding-top: 10px;
+        font-size: 14px;
+        font-weight: 300;
+        color: #888d92;
+        &:hover {
+            color: darken(#888d92, 20%);
+            text-decoration: none;
+        }
+    }
+    
+    .register-account {
+        font-size: 15px;
+        font-weight: 300;
+        color: #888d92;
+        a {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            color: #00aeef;
+            &:hover {
+                color: darken(#00aeef, 10%);
+            }
+        }
+    }
+    
+    .agree-rights {
+        font-size: 15px;
+        font-weight: 300;
+        color: #888d92;
+        margin-bottom: 75px;
+        a {
+            font-weight: 400;
+            color: #888d92;
+            &:hover {
+                color: darken(#888d92, 20%);
+            }
+        }
+    }
+}
