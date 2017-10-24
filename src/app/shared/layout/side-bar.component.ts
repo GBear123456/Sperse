@@ -1,4 +1,4 @@
-import { Component, Injector, ElementRef } from '@angular/core';
+﻿import { Component, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -76,10 +76,11 @@ export class SideBarComponent extends AppComponentBase {
             || val && val.selectedElement && val.selectedElement.name;
         })
       ).filter(Boolean);
-      if (!isBoolValues || (values.length 
-        != _.values(filter.items).length)
+      if (!isBoolValues || (values.length != _.values(filter.items).length)
       )
           filter.value = values.join(', ');
+      else
+          filter.value = null;
     });
   }
 
