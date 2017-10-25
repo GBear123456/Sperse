@@ -1,1 +1,9 @@
+<div class="setup-steps">
+    <ul class="steps-progress">
+        <ng-template ngFor let-step [ngForOf]="['Platform API', 'CRM API Methods', 'CFO API Methods', 'Credit Reports API', 'Sperse Tenant API']" let-i="index">
+            <li class="steps-progress-item">{{l(step)}}</li>
+        </ng-template>
+    </ul>
+</div>
+
 <iframe [src]="link" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen width="100%"></iframe>

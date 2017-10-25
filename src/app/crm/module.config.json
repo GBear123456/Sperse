@@ -1,12 +1,15 @@
 {
   "name": "CRM",
-  "search": true,
+  "search": false,
   "navigation": [
     ["Dashboard", "Pages.Tenant.Dashboard", "icon-home", "/app/main/dashboard"],    
-    ["Customers", "Pages.CRM.Customers", "icon-globe", "/app/crm/clients"],
     ["Leads", "Pages.CRM.Leads", "icon-globe", "/app/crm/leads"],
+    ["Clients", "Pages.CRM.Customers", "icon-globe", "/app/crm/clients"],
     ["Orders", "Pages.CRM.Orders", "icon-globe", "/app/crm/orders"],
+    ["Partners", "Pages.Administration.OrganizationUnits", "icon-layers", "/app/admin/organization-units"],
     ["Tenants", "Pages.Tenants", "icon-globe", "/app/crm/tenants"],
+    ["Reports", "", "", ""],
+    ["Products", "", "", ""],
     ["Editions", "Pages.Editions", "icon-grid", "/app/crm/editions"]
   ]
 }

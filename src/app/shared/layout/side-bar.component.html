@@ -1,4 +1,8 @@
 <div class="sidebar-filter-links" *ngIf="filters.length">
+  <div class="search-field">
+    <input type="text" placeholder="Search" value="">
+  </div>
+
 	<b>{{ls('Platform', 'SideBarFilterHeader')}}</b>
 	<div class="filter-link">
     <ng-template ngFor let-filter [ngForOf]="filters" let-i="index">
