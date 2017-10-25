@@ -12,6 +12,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
 
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
+import * as moment from "moment";
 
 @Component({
     templateUrl: "./transactions.component.html",
@@ -155,7 +156,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         let data = {};
         data[filter.field] = {};
         _.each(filter.items, (val, key) => {
-            val && (data[filter.field][filter.operator[key]] = val);
+            val && (data[filter.field][filter.operator[key]] = moment.utc(val, 'YYYY-MM-DD').toDate());
         });
         return data;
     }
