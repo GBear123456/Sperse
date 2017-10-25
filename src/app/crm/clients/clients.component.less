@@ -55,21 +55,21 @@
                 border-top-left-radius: 0;
                 border-bottom-left-radius: 0;
             }
-            
+    
             .dx-button[aria-label="icon icon-refresh"] {
                 border-top-right-radius: 0;
                 border-bottom-right-radius: 0;
-                border-right: 0;
             }
-            
+    
             .dx-button[aria-label="download-icon"] {
                 border-radius: 0;
+                margin-left: -1px;
             }
     
             .dx-button[aria-label="column-chooser"] {
-                border-left: 0;
                 border-top-left-radius: 0;
                 border-bottom-left-radius: 0;
+                margin-left: -2px;
             }
     
             .dx-button[aria-label="table-icon"] {
@@ -96,6 +96,16 @@
                 }
             }
             
+        }
+        .dx-button {
+            &.dx-state-hover,
+            &.dx-state-focused {
+                position: relative;
+                z-index: 100;
+            }
+            .dx-button-content {
+                text-overflow: clip;
+            }
         }
     }
 }
