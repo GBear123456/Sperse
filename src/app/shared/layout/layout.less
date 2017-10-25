@@ -21,69 +21,77 @@
 	.row {
 		margin-right: 0px;
 	}
-	.col-xs-6:first-child {
-    height: 75px;
-    padding-top: 15px;
-		position: fixed;
-		left: 0px;
 
-		/deep/ * {
-			color: #202b35;
-		}
+  .col-xs-6 {
+    background-color: #f3f7fa;
+  	&:first-child {
+      height: 74px;
+      padding-top: 15px;
+  		position: fixed;
+  		left: 0px;
 
-		.page-title span {
-			font-size: 26px;
-			font-weight: 600;
-			margin-left: 10px;
-		}
+  		/deep/ * {
+  			color: #202b35;
+  		}
 
-		.page-title small {
-			display: none;
-		}
-	}
-	.col-xs-6.text-right {
-    padding-top: 10px;
-		float: right;
-		width: 100%;
-    height: 75px;
-		z-index: 3;
+  		.page-title {
+        padding-top: 8px;
 
-		.tab-filter {			
-			color: #9999A6;
-			font-size: 16px;
-			font-weight: 600;
-			line-height: 1.6;
-			letter-spacing: 0.3px;
-			display: inline-block;
-			position: absolute;
-			padding: 15px;
-			min-width: 115px;
-			z-index: 1;	
-			text-align: center;	
-			cursor: pointer;
-			border-radius: 4px 4px 0px 0px;
-			border: 1px solid #f3f5f9;
-			border-bottom: none;
+        span {
+  			  font-size: 26px;
+    			font-weight: 600;
+    			margin-left: 10px;
+  	  	}
 
-			&.tab-selected {
-				border-color: #dfdfdf;
-				padding-bottom: 16px;
-				border-bottom: none;				
-			    background-color: #FFF;
-				color: #202b35;
-				cursor: default;
-			}
-			&.tab-all {			
-				left: 15px;
-			}
-			&.tab-active {			
-				left: 130px;
-			}
-			&.tab-archived {			
-				left: 245px;
-			}
-		}
-	}
+  		  small {
+  			  display: none;
+    		}             
+      }
+  	}
+  	&.text-right {
+      padding-top: 10px;
+  		float: right;
+  		width: 100%;
+      height: 74px;
+  		z-index: 3;
+
+  		.tab-filter {			
+  			color: #9999A6;
+  			font-size: 16px;
+  			font-weight: 600;
+  			line-height: 1.6;
+  			letter-spacing: 0.3px;
+  			display: inline-block;
+  			position: absolute;
+  			padding: 15px;
+  			min-width: 115px;
+  			z-index: 1;	
+  			text-align: center;	
+  			cursor: pointer;
+  			border-radius: 4px 4px 0px 0px;
+  			border: 1px solid #f3f5f9;
+  			border-bottom: none;
+
+  			&.tab-selected {
+  				border-color: #dfdfdf;
+  				padding-bottom: 16px;
+  				border-bottom: none;				
+  			    background-color: #FFF;
+  				color: #202b35;
+  				cursor: default;
+  			}
+  			&.tab-all {			
+  				left: 15px;
+  			}
+  			&.tab-active {			
+  				left: 130px;
+  			}
+  			&.tab-archived {			
+  				left: 245px;
+  			}
+  		}
+  	}
+  }
 }
 
 .page-footer-inner {
