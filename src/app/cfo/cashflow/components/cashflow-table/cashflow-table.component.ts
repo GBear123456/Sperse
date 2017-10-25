@@ -378,7 +378,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
                     }
                     return sum;
                 }
-                return summaryCell.value();
+                return summaryCell.value() || 0;
             }
         },
         {
@@ -491,23 +491,32 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
 
     ngOnInit() {
         /** @todo change default currency for dynamic value (and start and end dates) */
-        let now = new Date();
-        let lastThreeYearsDate = new Date(now.setFullYear(now.getFullYear() - 3));
-        /** moment(lastTwoYearsDate.toString()), moment(new Date().toString()), 'USD' */
-        this._CashflowServiceProxy.getStats(moment(lastThreeYearsDate .toString()),
-                                            moment(new Date().toString()), 'USD')
+        this._CashflowServiceProxy.getStats(undefined, undefined, 'USD')
             .subscribe(result => {
                 let transactions = result.transactionStats;
                 this.cashflowTypes = result.cashflowTypes;
                 let expenseCategories = result.expenseCategories;
                 let transactionCategories = result.transactionCategories;
-                /** categoris - object with categories */
+                /** categories - object with categories */
                 this.cashflowData = transactions.map(function(transactionObj){
                     transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
                     transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
                     return transactionObj;
                 });
-                 this.dataSource = this.getApiDataSource();
+
+                /** @todo remove stub reconsiliation row */
+                // this.cashflowData.push({
+                //     adjustmentType: null,
+                //     amount: -6.7,
+                //     cashflowTypeId: 'D',
+                //     comment: null,
+                //     currencyId: 'USD',
+                //     date: '2016-05-03T00:00:00Z',
+                //     expenseCategoryId: null,
+                //     transactionCategoryId: null
+                // });
+
+                this.dataSource = this.getApiDataSource();
             });
     }
 
