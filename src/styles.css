@@ -1,8 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
-:not(i) {
-  font-family: Montserrat!important;
+:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker) {
+  font-family: Montserrat !important;
 }
 
 .overflow-hidden {
