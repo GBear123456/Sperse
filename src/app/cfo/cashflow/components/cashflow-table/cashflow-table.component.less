@@ -30,359 +30,346 @@
 @totalDataCellBackgroundColor: #ecf7fc;
 @reconciliationDataCellTextColor: #a9b2ba;
 
-/deep/ .dx-pivotgrid {
+:host {
+    /deep/ .dx-pivotgrid {
 
-    /** general */
-    .dx-grandtotal {
-        background: @grandTotalBackgroundColor;
-        color: @grandTotalTextColor;
-    }
+        /** general */
+        .dx-grandtotal {
+            background: @grandTotalBackgroundColor;
+            color: @grandTotalTextColor;
+        }
 
-    .dx-total,
-    .dx-data-header,
-    .dx-column-header {
-        background: #f0f9fd;
-    }
+        .dx-total,
+        .dx-data-header,
+        .dx-column-header {
+            background: #f0f9fd;
+        }
 
-    .dx-texteditor {
-        border: none;
-        max-width: 80px
-    }
+        .dx-texteditor {
+            border: none;
+            max-width: 80px
+        }
 
-    .dx-pivotgrid-container {
-        border-top: 1px solid @tableBorderColor;
-        vertical-align: inherit;
-    }
+        .dx-pivotgrid-container {
+            border-top: 1px solid @tableBorderColor;
+            vertical-align: inherit;
+        }
 
-    /** upper left column */
-    .dx-area-description-cell {
-        background-color: #fff;
-        min-width: @left-column-width;
-        vertical-align: middle;
-    }
+        /** upper left column */
+        .dx-area-description-cell {
+            background-color: #fff;
+            min-width: @left-column-width;
+            vertical-align: middle;
+        }
 
-    /** upper right column (historical row and dates rows) */
-    .dx-area-column-cell {
-        /** @todo move general classes like dateField and historicalField  from td to tr */
-        td {
-            font-size: 10px;
-            &.cashflow {
-                color: #00aeef;
-            }
-            .totals {
+        /** upper right column (historical row and dates rows) */
+        .dx-area-column-cell {
+            /** @todo move general classes like dateField and historicalField  from td to tr */
+            td {
                 font-size: 10px;
-            }
-            &.dx-pivotgrid-expanded,
-            &.dx-pivotgrid-collapsed {
-                text-align: center;
-            }
-            .dx-expand-icon-container {
-                display: none;
-            }
-            &.year {
-                color: @yearTextColor;
-                font-weight: 600;
-                font-size: 20px;
-            }
-            &.month,
-            &.quarter,
-            &.day,
-            &.dx-row-total {
-                color: #212c36;
-                font-weight: 600;
-                font-size: 18px;
-                &.current {
-                    color: #fff;
-                    background: @currentTextColor;
+                &.cashflow {
+                    color: #00aeef;
                 }
-            }
-            &.dataFieldHidden {
-                padding: 0;
-                height: 0;
-                max-height: 0;
-            }
-            &.historicalField {
-                cursor: default;
-                font-size: 10px;
-                letter-spacing: 0.6px;
-                &.historical {
-                    color: @historicalTextColor;
+                .totals {
+                    font-size: 10px;
                 }
-                &.current {
-                    background: @currentTextColor;
-                    color: #fff;
+                &.dx-pivotgrid-expanded,
+                &.dx-pivotgrid-collapsed {
+                    text-align: center;
                 }
-                &.forecast {
-                    color: @forecastTextColor
+                .dx-expand-icon-container {
+                    display: none;
                 }
-            }
-            &.projectedField.projectedHidden {
-                border: none;
-                padding: 0;
+                &.year {
+                    color: @yearTextColor;
+                    font-weight: 600;
+                    font-size: 20px;
+                }
+                &.month,
+                &.quarter,
+                &.day,
+                &.dx-row-total {
+                    color: #212c36;
+                    font-weight: 600;
+                    font-size: 18px;
+                    &.current {
+                        color: #fff;
+                        background: @currentTextColor;
+                    }
+                }
+                &.dataFieldHidden {
+                    padding: 0;
+                    height: 0;
+                    max-height: 0;
+                }
+                &.historicalField {
+                    cursor: default;
+                    font-size: 10px;
+                    letter-spacing: 0.6px;
+                    &.historical {
+                        color: @historicalTextColor;
+                    }
+                    &.current {
+                        background: @currentTextColor;
+                        color: #fff;
+                    }
+                    &.forecast {
+                        color: @forecastTextColor
+                    }
+                }
+                &.projectedField.projectedHidden {
+                    border: none;
+                    padding: 0;
+                }
             }
         }
-    }
 
-    /** bottom left column (labels cells) */
-    .dx-area-row-cell {
-        tr {
-            &:nth-child(2) {
-                .dx-white-space-column {
-                    &:nth-child(1),
-                    &:nth-child(2) {
-                        border-right: none;
-                        min-width: 0;
-                        &:after {
-                            display: none;
-                        }
-                    }
-
-                }
-            }
-
-            &.incomeRow + tr {
-                .dx-white-space-column {
-                    &:nth-child(1) {
-                        min-width: 0;
-                        border-right: none;
-                        &:after {
-                            display: none;
+        /** bottom left column (labels cells) */
+        .dx-area-row-cell {
+            tr {
+                &:nth-child(2),
+                &.incomeRow + tr {
+                    .dx-white-space-column {
+                        &:nth-child(1) {
+                            border-right: none;
+                            min-width: 0;
+                            &:after {
+                                display: none;
+                            }
                         }
                     }
                 }
-            }
 
-            td {
-                text-align: left;
-                color: inherit;
-                &.dx-white-space-column {
-                    background: #fff;
-                    border-top: 1px solid #ddd;
-                    border-right: none;
-                    position: relative;
-                    &:after {
-                        content: '';
-                        position: absolute;
-                        top: 15px;
-                        left: 18px;
-                        display: block;
-                        border-right: 2px solid @expendedLineColor;
-                        height: 100%;
+                td {
+                    text-align: left;
+                    color: inherit;
+                    &.dx-white-space-column {
+                        background: #fff;
+                        border-top: 1px solid #ddd;
+                        border-right: none;
+                        position: relative;
+                        &:after {
+                            content: '';
+                            position: absolute;
+                            top: 15px;
+                            left: 18px;
+                            display: block;
+                            border-right: 2px solid @expendedLineColor;
+                            height: 100%;
+                        }
                     }
-                }
-                &.dx-total {
-                    font-weight: 700;
-                    &.income {
-                        background: @incomeVerticalHeaderBackgroundColor;
+                    &.dx-total {
+                        font-weight: 700;
+                        &.income {
+                            background: @incomeVerticalHeaderBackgroundColor;
+                        }
+                        &.expenses {
+                            background: @expensesVerticalHeaderBackgroundColor;
+                        }
+                        &.income,
+                        &.expenses {
+                            cursor: default;
+                            text-align: left;
+                            padding-left: 20px;
+                            border: none;
+                            .dx-expand-icon-container {
+                                display: none;
+                            }
+                        }
                     }
-                    &.expenses {
-                        background: @expensesVerticalHeaderBackgroundColor;
+                    &.dx-last-cell {
+                        width: 100%;
+                        padding-left: 9px;
                     }
-                    &.income,
-                    &.expenses {
-                        cursor: default;
-                        text-align: left;
+                    .dx-expand-icon-container {
+                        font: inherit;
+                        margin-left: 10px;
+                        margin-right: 10px;
+                        .dx-expand:before {
+                            border: 1px solid #91969b;
+                            color: #000;
+                            font-size: 18px;
+                            position: absolute;
+                            top: 9px;
+                            left: 0;
+                            width: 16px;
+                            height: 15px;
+                            line-height: 14px;
+                            border-radius: 3px;
+                        }
+                    }
+                    &.dx-pivotgrid-collapsed {
+                        .dx-expand:before {
+                            content: '+';
+                        }
+                    }
+
+                    &.dx-pivotgrid-expanded {
+                        position: relative;
+                        .dx-expand:before {
+                            content: url('../../../../../assets/common/icons/minus-icon.svg');
+                            border: none
+                        }
+                        .dx-expand-icon-container {
+                            position: relative;
+                            &:after {
+                                content: '';
+                                display: block;
+                                position: absolute;
+                                height: 7px;
+                                top: -7px;
+                                left: -1px;
+                                border-right: 2px solid @expendedLineColor;
+                            }
+                        }
+                    }
+                    &.dx-grandtotal {
+                        background: #00aff0;
+                        color: #fff;
+                        font-weight: 700;
+                        letter-spacing: 0.6px;
+                        padding-left: 22px;
+                    }
+
+                    &.startedBalance {
+                        font-weight: 700;
+                        background: @startedBalanceBackgroundColor;
                         padding-left: 20px;
-                        border: none;
+                        cursor: default;
                         .dx-expand-icon-container {
                             display: none;
                         }
                     }
                 }
-                &.dx-last-cell {
-                    width: 100%;
-                    padding-left: 9px;
+                &.dx-expand-border:not(.incomeRow):not(.expensesRow) {
+                    //& ~ tr td:not(.dx-white-space-column):not([colspan]) {
+                    //    padding-left: 30px;
+                    //}
                 }
-                .dx-expand-icon-container {
-                    font: inherit;
-                    margin-left: 10px;
-                    margin-right: 10px;
-                    .dx-expand:before {
-                        border: 1px solid #91969b;
-                        color: #000;
-                        font-size: 18px;
-                        position: absolute;
-                        top: 9px;
-                        left: 0;
-                        width: 16px;
-                        height: 15px;
-                        line-height: 14px;
-                        border-radius: 3px;
+                //&.incomeRow,
+                //&.expensesRow {
+                //    .dx-white-space-column,
+                //    & + tr td.dx-white-space-column {
+                //        width: 0;
+                //        min-width: 0;
+                //        margin-right: 0;
+                //        border-right: none
+                //    }
+                //}
+                &.reconciliation {
+                    td {
+                        padding-left: 22px;
+                        font-weight: 700;
+                        background: @reconciliationVerticalHeaderBackgroundColor;
                     }
                 }
-                &.dx-pivotgrid-collapsed {
-                    .dx-expand:before {
-                        content: '+';
-                    }
-                }
+            }
+        }
 
-                &.dx-pivotgrid-expanded {
-                    position: relative;
-                    .dx-expand:before {
-                        content: url('../../../../../assets/common/icons/minus-icon.svg');
-                        border: none
+        /** bottom right column (data cells) */
+        .dx-area-data-cell {
+            tr {
+                td {
+                    background: @dataCellColor;
+                    color: #000;
+                    span {
+                        font-weight: 400;
+                        font-feature-settings: 'tnum';
+                        -webkit-font-feature-settings: 'tnum';
+                        -moz-font-feature-settings: 'tnum';
+                        font-family: Lato !important;
                     }
-                    .dx-expand-icon-container {
-                        position: relative;
-                        &:after {
-                            content: '';
-                            display: block;
-                            position: absolute;
-                            height: 7px;
-                            top: -7px;
-                            left: -1px;
-                            border-right: 2px solid @expendedLineColor;
+                    &.startedBalance {
+                        background: @startedBalanceDataCellColor;
+                    }
+                    &.dx-total {
+                        background: @totalDataCellBackgroundColor;
+                        font-weight: 700;
+                        &.income {
+                            background: @incomeDataCellBackgroundColor;
+                        }
+                        &.expenses {
+                            background: @expensesDataCellBackgroundColor;
                         }
                     }
-                }
-                &.dx-grandtotal {
-                    background: #00aff0;
-                    color: #fff;
-                    font-weight: 700;
-                    letter-spacing: 0.6px;
-                    padding-left: 22px;
-                }
-
-                &.startedBalance {
-                    font-weight: 700;
-                    background: @startedBalanceBackgroundColor;
-                    padding-left: 20px;
-                    cursor: default;
-                    .dx-expand-icon-container {
-                        display: none;
+                    &.dx-grandtotal {
+                        background: @grandTotalBackgroundColor;
+                        color: @grandTotalTextColor;
+                        font-weight: 700;
                     }
-                }
-            }
-            &.dx-expand-border:not(.incomeRow):not(.expensesRow) {
-                //& ~ tr td:not(.dx-white-space-column):not([colspan]) {
-                //    padding-left: 30px;
-                //}
-            }
-            //&.incomeRow,
-            //&.expensesRow {
-            //    .dx-white-space-column,
-            //    & + tr td.dx-white-space-column {
-            //        width: 0;
-            //        min-width: 0;
-            //        margin-right: 0;
-            //        border-right: none
-            //    }
-            //}
-            &.reconciliation {
-                td {
-                    padding-left: 22px;
-                    font-weight: 700;
-                    background: @reconciliationVerticalHeaderBackgroundColor;
-                }
-            }
-        }
-    }
-
-    /** bottom right column (data cells) */
-    .dx-area-data-cell {
-        tr {
-            td {
-                font-family: Lato!important;
-                font-weight: 400;
-                background: @dataCellColor;
-                color: #000;
-                span {
-                    font-family: Lato!important;
-                }
-                &.startedBalance.dx-total {
-                    background: @startedBalanceDataCellColor;
-                    & + td:not(.startedBalance) {
-                        display: none;
+                    &.reconciliation {
+                        font-weight: 700;
                     }
-                }
-                &.dx-total {
-                    background: @totalDataCellBackgroundColor;
-                    font-weight: 700;
-                    &.income {
-                        background: @incomeDataCellBackgroundColor;
-                    }
-                    &.expenses {
-                        background: @expensesDataCellBackgroundColor;
-                    }
-                }
-                &.dx-grandtotal {
-                    background: @grandTotalBackgroundColor;
-                    color: @grandTotalTextColor;
-                    font-weight: 700;
                 }
                 &.reconciliation {
-                    font-weight: 700;
-                }
-            }
-            &.reconciliation {
-                td {
-                    background: @reconciliationDataCellBackgroundColor;
-                    color: @reconciliationDataCellTextColor;
+                    td {
+                        background: @reconciliationDataCellBackgroundColor;
+                        color: @reconciliationDataCellTextColor;
+                    }
                 }
             }
         }
+
     }
 
-}
+    /deep/ .dx-dropdowneditor[accesskey="cashflowGroupby"] {
 
-/deep/ .dx-dropdowneditor[accesskey="cashflowGroupby"] {
-
-    &.dx-dropdowneditor-field-clickable {
-        max-width: none;
-        input {
-            border-bottom: none;
+        &.dx-dropdowneditor-field-clickable {
+            max-width: none;
+            input {
+                border-bottom: none;
+            }
+            .dx-placeholder {
+                display: none !important;
+            }
         }
-        .dx-placeholder {
-            display: none !important;
-        }
-    }
 
-    .dx-texteditor-container {
-        width: auto;
-        display: flex;
-        align-items: baseline;
-        justify-content: space-around;
-        input.dx-texteditor-input {
+        .dx-texteditor-container {
             width: auto;
-            max-width: 120px;
-            padding-right: 0;
-            font-size: 15px;
-        }
-        .dx-texteditor-buttons-container {
-            position: relative;
-            .dx-dropdowneditor-button {
-                width: 10px;
-                padding: 0;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-around;
+            input.dx-texteditor-input {
+                width: auto;
+                max-width: 120px;
+                padding-right: 0;
+                font-size: 15px;
+            }
+            .dx-texteditor-buttons-container {
+                position: relative;
+                .dx-dropdowneditor-button {
+                    width: 10px;
+                    padding: 0;
+                }
             }
         }
+
+        .dx-dropdowneditor-button-visible .dx-texteditor-input {
+            padding-right: 10px;
+            width: auto;
+        }
+
+        &.dx-state-hover .dx-dropdowneditor-icon,
+        &.dx-dropdowneditor.dx-state-active .dx-dropdowneditor-icon,
+        &.dx-dropdowneditor-active .dx-dropdowneditor-icon {
+            background: none !important;
+        }
+
+        .dx-dropdowneditor-icon {
+            font: 14px/1 DXIcons !important;
+        }
     }
 
-
-    .dx-dropdowneditor-button-visible .dx-texteditor-input {
-        padding-right: 10px;
-        width: auto;
+    .cashflow {
+        position: relative;
     }
 
-    &.dx-state-hover .dx-dropdowneditor-icon,
-    &.dx-dropdowneditor.dx-state-active .dx-dropdowneditor-icon,
-    &.dx-dropdowneditor-active .dx-dropdowneditor-icon {
-        background: none !important;
-    }
-
-    .dx-dropdowneditor-icon {
-        font: 14px/1 DXIcons !important;
-    }
-}
-
-.cashflow {
-    position: relative;
-}
-
-.groupBy {
-    padding-left: 22px;
-    display: flex;
-    align-items: center;
-    span {
-        margin-right: 10px;
+    .groupBy {
+        padding-left: 22px;
+        display: flex;
+        align-items: center;
+        span {
+            margin-right: 10px;
+        }
     }
 }

@@ -1,6 +1,7 @@
 import { Directive, Component, Injector, Input, Output, EventEmitter, ViewContainerRef, ComponentFactoryResolver, ViewChild  } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterComponent, FilterModel } from './filter.model';
+import { FiltersService } from '@shared/filters/filters.service';
 
 @Directive({
   selector: '[ad-host]'
@@ -26,7 +27,8 @@ export class FilterManagerComponent extends AppComponentBase {
 	@Output() onApply = new EventEmitter();
 	
   constructor(injector: Injector,
-    private _componentFactoryResolver: ComponentFactoryResolver
+      private _componentFactoryResolver: ComponentFactoryResolver,
+      private _filtersService: FiltersService
   ) {
     super(injector);
   }
@@ -38,6 +40,7 @@ export class FilterManagerComponent extends AppComponentBase {
       this._componentFactoryResolver.resolveComponentFactory(filter.component)
     ).instance;
 
+    componentRef.localizationSourceName = this._filtersService.localizationSourceName;
     componentRef.items = filter.items || {};
     componentRef.apply = (event) => {
       this.onApply.emit(event);
