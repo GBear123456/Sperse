@@ -57,6 +57,7 @@ export class OperationsWidgetComponent implements OnInit {
       widget: 'dxButton',
       options: {
           text: 'More',
+          icon: 'spindown',
           onClick: Function()
       }
   }, {
