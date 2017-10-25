@@ -1,11 +1,12 @@
 :host {
   .operations-widget {
     float: right;
-    padding: 10px 20px;
+    padding: 13px 20px;
     color: #c5c7ca;
     background: #FFF;
     width: calc(~"100% - 289px");
     border-bottom: 1px solid #e5e9ec;
+    padding-right: 65px;
     white-space: nowrap;
   }
 
@@ -37,5 +38,118 @@
   .operations-widget > div > div {
       margin-right: 0;
       display: inline-block;
+  }
+
+  /deep/ .dx-toolbar {
+      .dx-button-text {
+        color: #677380!important;
+      }
+
+      .dx-toolbar-before,
+      .dx-toolbar-center,
+      .dx-toolbar-after {
+          margin: 0px 15px 0px 15px;
+      }
+      
+      .dx-toolbar-before {
+          top: 0 !important;
+      }
+      
+      .dx-toolbar-button {
+          padding: 0;
+      }
+      
+      .dx-button[aria-label="back-arrow"] {
+          .dx-button-content {
+              padding: 12px 15px 13px;
+              .dx-icon {
+                  height: 10px;
+                  width: 17px;
+              }
+          }
+      }
+      
+      .dx-button[aria-label="Assign"] {
+          margin-left: 40px;
+          border-right: 0;
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+      }
+      
+      .dx-button[aria-label="Status"] {
+          border-right: 0;
+          border-radius: 0;
+      }
+      
+      .dx-button[aria-label="Delete"] {
+          margin-right: 40px;
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+      }
+      
+      .dx-button[aria-label="icon icon-refresh"] {
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+          border-right: 0;
+      }
+      
+      .dx-button[aria-label="download-icon"] {
+          border-radius: 0;
+      }
+
+      .dx-button[aria-label="column-chooser"] {
+          border-left: 0;
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+      }
+
+      .dx-button[aria-label="table-icon"] {
+          margin-left: -2px;
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+      }
+      .dx-button[aria-label="pipeline-icon"] {
+          margin-left: -1px;
+          border-radius: 0;
+      }
+      .dx-button[aria-label="box-icon"] {
+          margin-right: -2px;
+          margin-left: 30px;
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+      }
+
+      .dx-button[aria-label="chevronnext"] {
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+      }
+      .dx-button[aria-label="chevronprev"] {
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+      }
+
+      .dx-button[aria-label="More"] {
+          margin-left: -2px;
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+      }
+      .dx-button[aria-label="pen"] {
+          margin-left: -1px;
+          border-radius: 0;
+      }
+      .dx-button[aria-label="folder"] {
+          margin-right: -2px;
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+      }
+      
+      .dx-button {
+          .dx-button-content {
+              padding: 8px 15px;
+          }
+          .dx-icon {
+              color: #959a9f;
+          }
+      }      
   }
 }

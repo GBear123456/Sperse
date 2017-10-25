@@ -7,7 +7,6 @@
     ["Clients", "Pages.CRM.Customers", "icon-globe", "/app/crm/clients"],
     ["Orders", "Pages.CRM.Orders", "icon-globe", "/app/crm/orders"],
     ["Partners", "Pages.Administration.OrganizationUnits", "icon-layers", "/app/admin/organization-units"],
-    ["Tenants", "Pages.Tenants", "icon-globe", "/app/crm/tenants"],
     ["Reports", "", "", ""],
     ["Products", "", "", ""],
     ["Editions", "Pages.Editions", "icon-grid", "/app/crm/editions"]

@@ -3,7 +3,7 @@
   "search": false,
   "navigation": [    
     ["Dashboard", "Pages.Administration.Host.Dashboard", "icon-home", "/app/admin/hostDashboard"],
-    ["OrganizationUnits", "Pages.Administration.OrganizationUnits", "icon-layers", "/app/admin/organization-units"],
+    ["Tenants", "Pages.Tenants", "icon-globe", "/app/crm/tenants"],
     ["Roles", "Pages.Administration.Roles", "icon-briefcase", "/app/admin/roles"],
     ["Users", "Pages.Administration.Users", "icon-people", "/app/admin/users"],
     ["Languages", "Pages.Administration.Languages", "icon-flag", "/app/admin/languages"],
