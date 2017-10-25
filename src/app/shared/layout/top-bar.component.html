@@ -1,4 +1,4 @@
-﻿<div class="adaptive-menu" *ngIf="showAdaptiveMenu">
+﻿<div class="adaptive-menu" *ngIf="showAdaptiveMenu==true">
   <dx-menu 
     [accessKey]="nav-menu"
     [dataSource]="menu.items" 
@@ -10,8 +10,7 @@
     [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
     [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
     (onItemClick)="navigate($event)"
-    (onItemRendered)="menuItemRendered($event)"
-    (onInitialized)="toogleNavMenu()">
+    (onItemRendered)="menuItemRendered($event)">
   </dx-menu>
 </div>
 
@@ -22,13 +21,12 @@
 
 <platform-select></platform-select>
 
-<div class="top-bar-nav" *ngIf="!showAdaptiveMenu">
+<div class="top-bar-nav" *ngIf="showAdaptiveMenu==false">
   <dx-nav-bar
     height="74px"
     [hoverStateEnabled]="true"
     [selectedIndex]="selectedIndex"
-    selectionMode="single"
-    (onInitialized)="toogleNavMenu()">
+    selectionMode="single">
       <dxi-item                     
         *ngFor="let link of menu.items; let i = index;" 
         [visible]="showMenuItem(link)"

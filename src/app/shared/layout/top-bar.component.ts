@@ -1,5 +1,5 @@
 import { Component, Injector } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { PanelMenu } from './panel-menu';
 import { PanelMenuItem } from './panel-menu-item';
 
@@ -21,7 +21,7 @@ export class TopBarComponent extends AppComponentBase {
   config: any = {};
   selectedIndex: number;
   visibleMenuItems: number = 0;
-  showAdaptiveMenu: boolean = true;
+  showAdaptiveMenu: boolean;
   menu: PanelMenu = <PanelMenu>{
     items: []
   };
@@ -32,13 +32,33 @@ export class TopBarComponent extends AppComponentBase {
       public router: Router
   ) {
     super(injector);
-    
+/*
+    this.router.events.subscribe(event => {
+      console.log(event);
+      if(event instanceof NavigationEnd) {
+        console.log(this.router.url);
+        this.menu.items.forEach((item, i) => {
+          if (this.router.url == item.route)
+            this.selectedIndex = i;
+        });
+        this.toogleNavMenu();
+      }
+    });
+*/
     _appService.subscribeModuleChange((config) => {
       this.config = config;
-      this.showAdaptiveMenu = !this.showAdaptiveMenu;
+      this.showAdaptiveMenu = undefined;
       this.menu = new PanelMenu("MainMenu", "MainMenu", 
         this.initMenu(config['navigation'])
       );
+
+      setTimeout(() => {
+        this.menu.items.forEach((item, i) => {
+          if (this.router.url == item.route)
+            this.selectedIndex = i;
+        });
+        this.toogleNavMenu();
+      }, 300);
     });
   }
 
@@ -47,7 +67,7 @@ export class TopBarComponent extends AppComponentBase {
     config.forEach((val) => {
       let value = val.slice(0);
       if (val.length == 5)
-        value.push(this.initMenu(value.pop()));          
+        value.push(this.initMenu(value.pop()));
       navList.push(new PanelMenuItem(this.l(value[0]), 
         value[1], value[2], value[3], value[4])
       );
@@ -56,11 +76,6 @@ export class TopBarComponent extends AppComponentBase {
   }
 
   menuItemRendered(event, index){
-    if (this.router.url == event.itemData.route)
-      setTimeout(() => {
-        this.selectedIndex = isNaN(index) ? event.itemIndex: index;
-      }, 0);      
-
     if(event.itemData.visible = this.showMenuItem(event.itemData))
       this.visibleMenuItems++;
     if (event.itemData.items)
@@ -70,17 +85,15 @@ export class TopBarComponent extends AppComponentBase {
   }
 
   navigate(event, index){   
-    if (event.itemData.route) {
+    if (event.itemData.route)
       this.router.navigate([event.itemData.route]);
-      this.selectedIndex = isNaN(index) ? event.itemIndex: index;
-    } 
   }
 
   toogleNavMenu() {   
     setTimeout(() => {
       let prevValue = this.showAdaptiveMenu;
       this.showAdaptiveMenu = 
-        window.innerWidth - 600 < this.visibleMenuItems * 70;
+        window.innerWidth - 500 < this.visibleMenuItems * 60;
       if (prevValue != this.showAdaptiveMenu)
         this.visibleMenuItems = 0;
     }, 0);
