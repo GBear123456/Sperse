@@ -2,8 +2,8 @@
     <div class="page-header-inner">
         <div class="page-logo">
             <a routerLink="/" target="_blank">
-                <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/common/images/app-logo-on-light.png" alt="logo" class="logo-layout" width="200" height="60" />
-                <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" class="logo-layout" width="200" height="60" />			
+                <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/common/images/sperse-logo.png" alt="logo" class="logo-layout" />
+                <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" class="logo-layout" />			
             </a>
       			<!-- i class="icon-menu filter-toggle sidebar-toggler"></i -->            
         </div>

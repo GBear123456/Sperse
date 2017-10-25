@@ -1,4 +1,4 @@
-﻿:host {
+:host {
 	top: 75px;
 	position: absolute;
 	/deep/ * {
@@ -6,12 +6,43 @@
 		font-size: 16px;
 	}
 
+  .search-field {
+    margin-bottom: 40px;
+    input {
+        height: 37px;
+        color: #677380;
+        font-weight: 300;
+        line-height: 1.71;
+        letter-spacing: 0.3px;
+        text-align: left;
+        padding-left: 36px;
+        border: 1px solid #dadee1;
+        border-radius: 3px;
+        font-size: 14px;
+        height: 37px;
+        width: 245px;
+        outline: none;
+    }    
+    &:before {
+        content: "";
+        background: url('../../../assets/common/icons/search-icon.svg');
+        text-decoration: inherit;
+        position: absolute;
+        font-size: 20px;
+        width: 16px;
+        height: 16px;
+        top: 27px;
+        left: 35px;
+        color: #677380;
+    }
+  }
+
 	.sidebar-filter-links {
 		border: 1px solid #e5e9ec;
 		width: 321px;
 		height: calc(~"100vh - 150px");
 		background-color: #fff;
-		padding: 25px;
+		padding: 15px 25px;
 
 		b {
 			text-transform: uppercase;
