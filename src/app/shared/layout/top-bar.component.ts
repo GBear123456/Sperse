@@ -87,6 +87,15 @@ export class TopBarComponent extends AppComponentBase {
   }
 
 	private checkMenuItemPermission(item): boolean {
+    //!!VP Should be considered on module configuration level
+    if (this.config['name'] == 'CRM') {
+      if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
+        if (["Partners", "Products"].indexOf(item.text) >= 0)
+          return false;
+      } else if (["Tenants", "Editions"].indexOf(item.text) >= 0)
+        return false;
+    }
+
     return (item.permissionName && this.isGranted(item.permissionName)) ||
 			(item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permissionName);
 	}
