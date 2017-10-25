@@ -272,11 +272,10 @@
                 td {
                     background: @dataCellColor;
                     color: #000;
+                    font-weight: 400;
+                    font-family: Lato !important;
                     span {
                         font-weight: 400;
-                        font-feature-settings: 'tnum';
-                        -webkit-font-feature-settings: 'tnum';
-                        -moz-font-feature-settings: 'tnum';
                         font-family: Lato !important;
                     }
                     &.startedBalance {
@@ -285,6 +284,9 @@
                     &.dx-total {
                         background: @totalDataCellBackgroundColor;
                         font-weight: 700;
+                        span {
+                            font-weight: 700;
+                        }
                         &.income {
                             background: @incomeDataCellBackgroundColor;
                         }
@@ -332,6 +334,7 @@
             input.dx-texteditor-input {
                 width: auto;
                 max-width: 120px;
+                padding: 8px 8px;
                 padding-right: 0;
                 font-size: 15px;
             }
