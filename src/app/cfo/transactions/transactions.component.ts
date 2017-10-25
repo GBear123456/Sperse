@@ -96,9 +96,22 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                 },
                 <FilterModel>{
                     component: FilterInputsComponent,
-                    //operator: 'contains',
-                    caption: 'AccountType',
-                    //items: { accountType: '' }
+                    operator: 'contains',
+                    caption: 'Account',
+                    items: { BankAccountNumber: '' }
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'Description',
+                    items: { Description: '' }
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: { from: "ge", to: "le" },
+                    caption: 'Amount',
+                    field: 'Amount',
+                    items: { from: '', to: '' }
                 },
                 <FilterModel>{
                     component: FilterInputsComponent,
@@ -127,12 +140,6 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                 <FilterModel>{
                     component: FilterInputsComponent,
                     //operator: 'contains',
-                    caption: 'BankAccount',
-                    //items: { BankAccount: '' }
-                },
-                <FilterModel>{
-                    component: FilterInputsComponent,
-                    //operator: 'contains',
                     caption: 'BusinessEntity',
                     //items: { BusinessEntity: '' }
                 }
@@ -156,6 +163,15 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         data[filter.field] = {};
         _.each(filter.items, (val, key) => {
             val && (data[filter.field][filter.operator[key]] = val);
+        });
+        return data;
+    }
+    
+    filterByAmount(filter) {
+        let data = {};
+        data[filter.field] = {};
+        _.each(filter.items, (val, key) => {
+            val && (data[filter.field][filter.operator[key]] = +val);
         });
         return data;
     }
