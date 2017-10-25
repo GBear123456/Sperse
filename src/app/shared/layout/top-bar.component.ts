@@ -90,9 +90,9 @@ export class TopBarComponent extends AppComponentBase {
     //!!VP Should be considered on module configuration level
     if (this.config['name'] == 'CRM') {
       if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
-        if (["Partners", "Products"].indexOf(item.text) >= 0)
+        if (["Tenants", "Editions"].indexOf(item.text) >= 0)
           return false;
-      } else if (["Tenants", "Editions"].indexOf(item.text) >= 0)
+      } else if (["Partners", "Products"].indexOf(item.text) >= 0)
         return false;
     }
 
