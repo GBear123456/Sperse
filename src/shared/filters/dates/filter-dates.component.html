@@ -9,7 +9,8 @@
       [showClearButton]="true"
       (onEnterKey)="apply($event)"
       (onFocusIn)="onFocusIn($event)"
-      (onKeyDown)="validateDate($event)">
+      (onKeyDown)="validateDate($event)"
+      dateSerializationFormat="yyyy-MM-dd">
     </dx-date-box>  
   </ng-template>
 </div>

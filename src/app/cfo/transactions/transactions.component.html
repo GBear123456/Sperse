@@ -36,11 +36,14 @@
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
 
-                        <dxi-column dataField="Date" caption="{{l('Transactions_Date')}}" dataType="date" format="shortDateShortTime"></dxi-column>
+                        <dxi-column dataField="Date" caption="{{l('Transactions_Date')}}" dataType="date" format="shortDate"></dxi-column>
                         <dxi-column dataField="BankAccountNumber" caption="{{l('Transactions_BankAccountNumber')}}"></dxi-column>
-                        <dxi-column dataField="Amount" caption="{{l('Transactions_Amount')}}"></dxi-column>
+                        <dxi-column dataField="Amount" caption="{{l('Transactions_Amount')}}" cellTemplate="amountTemplate"></dxi-column>
+                        <div *dxTemplate="let cell of 'amountTemplate'">
+                            <span [ngClass]="{'red': cell.value < 0}"> {{ cell.text | number:'1.2-2' }} </span>
+                        </div>
                         <dxi-column dataField="CurrencyId" caption="{{l('Transactions_Currency')}}"></dxi-column>
-                        <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}"></dxi-column>
+                        <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}" [width]="600"></dxi-column>
                         <dxi-column dataField="CategoryName" caption="{{l('Transactions_CategoryName')}}"></dxi-column>
                         <dxi-column dataField="TypeName" caption="{{l('Transactions_Type')}}"></dxi-column>
                         

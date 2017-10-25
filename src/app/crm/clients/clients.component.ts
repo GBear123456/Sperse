@@ -280,7 +280,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         let data = {};
         data[filter.field] = {};
         _.each(filter.items, (val, key) => {
-            val && (data[filter.field][filter.operator[key]] = val);
+            val && (data[filter.field][filter.operator[key]] = moment(val, 'YYYY-MM-DD').toDate());
         });
         return data;
     }
