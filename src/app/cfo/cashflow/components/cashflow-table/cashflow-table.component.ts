@@ -515,8 +515,9 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
                 //     expenseCategoryId: null,
                 //     transactionCategoryId: null
                 // });
-
-                this.dataSource = this.getApiDataSource();
+                if (this.cashflowData.length) {
+                    this.dataSource = this.getApiDataSource();
+                }
             });
     }
 
@@ -575,14 +576,17 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
      * @param event
      */
     onContentReady(event) {
+
         /** collapse the starting balances field */
-        event.element.find('.dx-pivotgrid-vertical-headers td.startedBalance').trigger('click');
-        let closeStartingBalance = event.element.find('.dx-pivotgrid-vertical-headers tr:first-child td.dx-last-cell');
-        closeStartingBalance.addClass('startedBalance');
-        closeStartingBalance.addClass('startedBalance');
-        closeStartingBalance.on('click', (e) => {
-            e.stopImmediatePropagation();
-        });
+        if (this.cashflowData && this.cashflowData.length) {
+            event.element.find('.dx-pivotgrid-vertical-headers td.startedBalance').trigger('click');
+            let closeStartingBalance = event.element.find('.dx-pivotgrid-vertical-headers tr:first-child td.dx-last-cell');
+            closeStartingBalance.addClass('startedBalance');
+            closeStartingBalance.addClass('startedBalance');
+            closeStartingBalance.on('click', (e) => {
+                e.stopImmediatePropagation();
+            });
+        }
 
         const allDateIntervals = this.groupbyItems.map(group => group.groupInterval);
         const datesIntervalsToBeHide = allDateIntervals.slice(0, allDateIntervals.indexOf(this.groupInterval));
@@ -594,9 +598,9 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             //     $(this).addClass('dataFieldHidden');
             // });
         }
+
         /** Get the groupBy element and append the dx-area-description-cell with it */
-        $('.groupBy')
-            .appendTo(event.element.find('.dx-area-description-cell'));
+        $('.groupBy').appendTo(event.element.find('.dx-area-description-cell'));
     }
 
     changeColspanUntil(selector1, selector2) {
@@ -975,7 +979,9 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
         const historical_field = this.getHistoricField();
         historical_field['selector'] = event.value.historicalSelectionFunction();
         historical_field['customizeText'] = event.value.historicalCustomizerFunction();
-        this.dataSource = this.getApiDataSource();
+        if (this.cashflowData.length) {
+            this.dataSource = this.getApiDataSource();
+        }
     }
 
     cutCssFromValue(text) {
@@ -1079,6 +1085,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             const cssClass = 'startedBalance';
             e.cellElement.addClass(cssClass);
         }
+
         /** added css class to the income and outcomes columns */
         if ((this.isIncomeOrExpensesHeaderCell(e)) ||
             (this.isIncomeOrExpensesDataCell(e))) {
@@ -1113,12 +1120,12 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
         }
         /** @todo change logic for reconciliation */
         /** added reconciliation rows to the table */
-        if (this.isGrandTotalLabelCell(e)) {
+        if (this.isGrandTotalLabelCell(e) && this.cashflowData && this.cashflowData.length) {
             this.createReconsiliationLabelCell(e);
         }
 
         /** added reconciliation and starting balances rows to the table data cells */
-        if (this.isDataCell(e) && this.isGrandTotalDataCell(e)) {
+        if (this.isDataCell(e) && this.isGrandTotalDataCell(e) && this.cashflowData && this.cashflowData.length) {
             /** if the reconciliations and starting balances rows haven't already added */
             if (e.cellElement.parent().is(':last-child')) {
                 this.createReconciliationDataRow(e);
