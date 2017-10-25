@@ -18,16 +18,8 @@ export class FilterDatesComponent extends AppComponentBase implements OnInit, Fi
     return Object.keys(this.items);
   }
 
-  onFocusIn(event){
-    setTimeout(function() {
-      event.component._popup._$popupContent
-        .find('.dx-calendar').dxCalendar({
-          zoomLevel: 'decade'
-        }
-      );
-    }, 0);
-
-    event.component.open();
+  onFocusIn(event) {
+      event.component.open();
   }
 
   getCaretPosition(field) {  

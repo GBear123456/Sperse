@@ -6,7 +6,7 @@ import { MdSidenavModule, MdProgressBarModule, MdTabsModule, MdDialogModule,
   MdDialogRef, MdProgressSpinnerModule, MdSelectModule } from '@angular/material';
 
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxButtonModule,
-  DxTextBoxModule, DxValidatorModule, DxValidationGroupComponent } from 'devextreme-angular';
+  DxTextBoxModule, DxValidatorModule, DxValidationGroupComponent, DxToolbarModule } from 'devextreme-angular';
 
 import { RouterModule, Routes } from '@angular/router';
 
@@ -69,7 +69,8 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     DxTextBoxModule,
     DxValidatorModule,
     DxNumberBoxModule,
-    DxScrollViewModule
+    DxScrollViewModule,
+    DxToolbarModule
   ],
   exports: [
     ClientDetailsComponent,

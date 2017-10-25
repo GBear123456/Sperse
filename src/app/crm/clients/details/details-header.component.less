@@ -1,5 +1,6 @@
 :host {
   header {
+      height: 82px;
       background: #f3f7fa;
       display: flex;
       border-bottom: 1px solid #e5e9ec;
@@ -14,6 +15,10 @@
           stroke: #00aeef;
         }
       }
+  }
+
+  .full_name h1 {
+    font-size: 28px!important;
   }
 
   .avatar {
@@ -49,22 +54,22 @@
   }
 
   .personal_info {
-      margin: 0 200px 0 150px;
-  }
+    margin: 20px 200px 0 150px;
 
-  .personal_info .rating {
+    .rating {
       display: flex;
+      bottom: 8px;
       align-items: center;
+      position: relative;
       justify-content: flex-start;
-      margin-bottom: 10px;
-  }
 
-  .personal_info .rating > * {
-      max-width: 50%;
-  }
-
-  .personal_info .rating md-progress-bar {
-      margin-right: 10px;
+      & > * {
+        max-width: 50%;
+      }
+      md-progress-bar {
+        margin-right: 10px;
+      }
+    }
   }
 
   .header_financial_info {
