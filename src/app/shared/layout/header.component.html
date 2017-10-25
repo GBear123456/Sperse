@@ -46,9 +46,10 @@
                                 <i *ngIf="isImpersonatedLogin" class="icon-action-undo font-red-sunglo"></i>
                                 {{shownLoginName}}
                             </span>
-                            <img *ngIf="profilePicture" id="HeaderProfilePicture" alt="" class="img-circle" [src]="profilePicture" />
+                            <img *ngIf="profilePicture" id="HeaderProfilePicture" alt="{{shownLoginName}}" class="img-circle" [src]="profilePicture" title="{{shownLoginName}}"/>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-default">
+                            <li class="username-header">{{shownLoginName}}</li>
                             <li *ngIf="isImpersonatedLogin">
                                 <a (click)="backToMyAccount()"><i class="icon-action-undo"></i> <strong>{{l("BackToMyAccount")}}</strong></a>
                             </li>
