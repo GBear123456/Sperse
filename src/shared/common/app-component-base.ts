@@ -50,6 +50,10 @@ export abstract class AppComponentBase {
   }
 
   ls(sourcename: string, key: string, ...args: any[]): string {
+    let source = abp.localization.values[sourcename];
+    if (!source || !source[key])
+      sourcename = AppConsts.localization.defaultLocalizationSourceName;
+
     let localizedText = this.localization.localize(key, sourcename);
 
     if (!localizedText)
