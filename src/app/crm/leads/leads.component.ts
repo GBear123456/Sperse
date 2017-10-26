@@ -1,4 +1,4 @@
-﻿import {
+import {
     Component,
     OnInit,
     AfterViewInit,
@@ -210,6 +210,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             }
                         }
                     }
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'SourceCode',
+                    items: { SourceCode: '' }
                 },
                 <FilterModel>{
                     component: FilterDatesComponent,
