@@ -335,16 +335,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         data[filter.field] = {};
         _.each(filter.items, (val, key) => {
             if (val) {
-                var date = moment.utc(val, 'YYYY-MM-DDT').toDate();
+                var date = moment.utc(val, 'YYYY-MM-DDT');
                 if (key.toString() === "to")
                 {
-                    date.setHours(23, 59, 59);
+                    date.add(1, 'd').add(-1, 's')
                 }
 
-                data[filter.field][filter.operator[key]] = date;
+                data[filter.field][filter.operator[key]] = date.toDate();
             }
         });
-        
+
         return data;
     }
 
