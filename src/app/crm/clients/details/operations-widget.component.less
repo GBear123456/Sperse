@@ -41,25 +41,26 @@
   }
 
   /deep/ .dx-toolbar {
-      .dx-button-text {
-        color: #677380!important;
-      }
+    .dx-button-text {
+      color: #677380!important;
+    }
 
-      .dx-toolbar-before,
-      .dx-toolbar-center,
-      .dx-toolbar-after {
-          margin: 0px 15px 0px 15px;
-      }
-      
-      .dx-toolbar-before {
-          top: 0 !important;
-      }
-      
-      .dx-toolbar-button {
-          padding: 0;
-      }
-      
-      .dx-button[aria-label="back-arrow"] {
+    .dx-toolbar-before,
+    .dx-toolbar-center,
+    .dx-toolbar-after {
+        margin: 0px 15px 0px 15px;
+    }
+    
+    .dx-toolbar-before {
+        top: 0 !important;
+    }
+    
+    .dx-toolbar-button {
+        padding: 0;
+    }
+
+    .dx-button {    
+      &[aria-label="back-arrow"] {
           .dx-button-content {
               padding: 12px 15px 13px;
               .dx-icon {
@@ -69,84 +70,104 @@
           }
       }
       
-      .dx-button[aria-label="Assign"] {
+      &[aria-label="Assign"] {
           margin-left: 40px;
           border-right: 0;
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
       }
       
-      .dx-button[aria-label="Status"] {
+      &[aria-label="Status"] {
           border-right: 0;
           border-radius: 0;
       }
       
-      .dx-button[aria-label="Delete"] {
+      &[aria-label="Delete"] {
           margin-right: 40px;
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
       }
       
-      .dx-button[aria-label="icon icon-refresh"] {
+      &[aria-label="icon icon-refresh"] {
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
           border-right: 0;
       }
       
-      .dx-button[aria-label="download-icon"] {
+      &[aria-label="download-icon"] {
           border-radius: 0;
       }
 
-      .dx-button[aria-label="column-chooser"] {
+      &[aria-label="column-chooser"] {
           border-left: 0;
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
       }
 
-      .dx-button[aria-label="table-icon"] {
+      &[aria-label="table-icon"] {
           margin-left: -2px;
+          margin-right: 25px;
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
       }
-      .dx-button[aria-label="pipeline-icon"] {
+      &[aria-label="pipeline-icon"] {
           margin-left: -1px;
           border-radius: 0;
       }
-      .dx-button[aria-label="box-icon"] {
+      &[aria-label="box-icon"] {
           margin-right: -2px;
-          margin-left: 30px;
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
       }
 
-      .dx-button[aria-label="chevronnext"] {
+      &[aria-label="chevronnext"] {
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
       }
-      .dx-button[aria-label="chevronprev"] {
+      &[aria-label="chevronprev"] {
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
       }
 
-      .dx-button[aria-label="pen"] {
+      &[aria-label="pen"] {
+          width: 72px;
           margin-left: -1px;
-          margin-right: 30px;
+          margin-right: 25px;
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
       }
-      .dx-button[aria-label="folder"] {
+      &[aria-label="folder"] {
+          width: 72px;
           margin-right: -2px;
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
       }
-      
-      .dx-button {
+
+      &[aria-label="More"],
+      &[aria-label="pen"],
+      &[aria-label="folder"] {
+          position: relative;
+          &:after {
+              content: '';
+              display: block;
+              background: url('../../../../assets/common/icons/down-arrow-icon.svg');
+              position: absolute;
+              width: 8px;
+              height: 4px;
+              right: 12px;
+              top: 48%;
+          }
           .dx-button-content {
-              padding: 8px 15px;
+              padding-right: 28px;
           }
-          .dx-icon {
-              color: #959a9f;
-          }
-      }      
+      }
+          
+      .dx-button-content {
+          padding: 8px 15px;
+      }
+      .dx-icon {
+          color: #959a9f;
+      }
+    }      
   }
 }

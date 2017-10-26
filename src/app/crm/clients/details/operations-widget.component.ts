@@ -57,11 +57,10 @@ export class OperationsWidgetComponent implements OnInit {
       widget: 'dxButton',
       options: {
           text: 'More',
-          icon: 'spindown',
           onClick: Function()
       }
   }, {
-      location: 'center',
+      location: 'after',
       widget: 'dxButton',
       options: {
           hint: 'Box',
@@ -69,7 +68,7 @@ export class OperationsWidgetComponent implements OnInit {
           onClick: Function()
       }
   }, {
-      location: 'center',
+      location: 'after',
       widget: 'dxButton',
       options: {
           hint: 'Pipeline',
@@ -77,7 +76,7 @@ export class OperationsWidgetComponent implements OnInit {
           onClick: Function()
       }
   }, {
-      location: 'center',
+      location: 'after',
       widget: 'dxButton',
       options: {
           hint: 'Grid',
