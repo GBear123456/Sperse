@@ -32,33 +32,25 @@ export class TopBarComponent extends AppComponentBase {
       public router: Router
   ) {
     super(injector);
-/*
+
     this.router.events.subscribe(event => {
-      console.log(event);
       if(event instanceof NavigationEnd) {
-        console.log(this.router.url);
-        this.menu.items.forEach((item, i) => {
-          if (this.router.url == item.route)
-            this.selectedIndex = i;
-        });
-        this.toogleNavMenu();
+        setTimeout(() => {
+          this.menu.items.forEach((item, i) => {
+            if (this.router.url == item.route)
+              this.selectedIndex = i;
+          });
+          this.toogleNavMenu();
+        }, 300);
       }
     });
-*/
+
     _appService.subscribeModuleChange((config) => {
       this.config = config;
       this.showAdaptiveMenu = undefined;
       this.menu = new PanelMenu("MainMenu", "MainMenu", 
         this.initMenu(config['navigation'])
       );
-
-      setTimeout(() => {
-        this.menu.items.forEach((item, i) => {
-          if (this.router.url == item.route)
-            this.selectedIndex = i;
-        });
-        this.toogleNavMenu();
-      }, 300);
     });
   }
 
