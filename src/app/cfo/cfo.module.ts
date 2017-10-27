@@ -7,6 +7,7 @@ import { BankAccountsComponent } from './bank-accounts/bank-accounts.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { CashflowSetupComponent } from './cashflow-setup/cashflow-setup.component';
 import { SetupStepComponent } from './shared/setup-steps/setup-steps.component';
+import { SynchProgressComponent } from './shared/synch-progress/synch-progress.component';
 
 import {
     DxDataGridModule,
@@ -18,7 +19,9 @@ import {
     DxValidationSummaryModule,
     DxButtonModule,
     DxFileUploaderModule,
-    DxSelectBoxModule
+    DxSelectBoxModule,
+    DxLoadIndicatorModule,
+    DxTooltipModule
 } from 'devextreme-angular';
 
 @NgModule({
@@ -38,12 +41,15 @@ import {
         DxButtonModule,
         DxFileUploaderModule,
         DxSelectBoxModule,
+        DxLoadIndicatorModule,
+        DxTooltipModule
     ],
     declarations: [
         BankAccountsComponent,
         TransactionsComponent,
         CashflowSetupComponent,
-        SetupStepComponent
+        SetupStepComponent,
+        SynchProgressComponent
     ]
 })
 

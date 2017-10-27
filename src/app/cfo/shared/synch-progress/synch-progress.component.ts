@@ -1,0 +1,47 @@
+import { Component, OnInit, Injector, EventEmitter, Output } from '@angular/core';
+import { FinancialInformationServiceProxy, SyncProgressOutput } from '@shared/service-proxies/service-proxies';
+import { AppConsts } from '@shared/AppConsts';
+import { AppComponentBase } from '@shared/common/app-component-base';
+
+@Component({
+    templateUrl: "./synch-progress.component.html",
+    styleUrls: ["./synch-progress.component.less"],
+    selector: 'synch-progress',
+    providers: [FinancialInformationServiceProxy]
+})
+export class SynchProgressComponent extends AppComponentBase implements OnInit {
+    @Output() onComplete = new EventEmitter();
+    @Output() completed: boolean;
+    synchData: SyncProgressOutput;
+
+    tooltipVisible: boolean;
+
+    constructor(injector: Injector,
+        private _financialInformationServiceProxy: FinancialInformationServiceProxy) {
+        super(injector);
+
+        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
+    }
+
+    ngOnInit(): void {
+        this.getSynchProgress();
+    }
+
+    getSynchProgress() {
+        this._financialInformationServiceProxy.getSyncProgress()
+            .subscribe((result) => {
+                if (result.totalProgress.progressPercent != 100) {
+                    this.synchData = result;
+                    setTimeout(() => this.getSynchProgress(), 10 * 1000);
+                }
+                else {
+                    this.completed = true;
+                    this.onComplete.emit();
+                }
+            });
+    }
+
+    toggleTooltip() {
+        this.tooltipVisible = !this.tooltipVisible;
+    }
+}
