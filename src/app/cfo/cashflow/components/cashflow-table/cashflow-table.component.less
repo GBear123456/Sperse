@@ -136,6 +136,9 @@
                             &:after {
                                 display: none;
                             }
+                            &:before {
+                                content: '';
+                            }
                         }
                     }
                 }
@@ -148,11 +151,19 @@
                         border-top: 1px solid #ddd;
                         border-right: none;
                         position: relative;
+                        cursor: pointer;
+                        &:before {
+                            content: url('../../../../../assets/common/icons/collapse-icon.svg');
+                            position: absolute;
+                            top: 6px;
+                            left: 10px;
+                            width: 16px;
+                        }
                         &:after {
                             content: '';
                             position: absolute;
-                            top: 15px;
-                            left: 18px;
+                            top: 21px;
+                            left: 17px;
                             display: block;
                             border-right: 2px solid @expendedLineColor;
                             height: 100%;
@@ -186,7 +197,6 @@
                         margin-left: 10px;
                         margin-right: 10px;
                         .dx-expand:before {
-                            border: 1px solid #91969b;
                             color: #000;
                             font-size: 18px;
                             position: absolute;
@@ -200,15 +210,14 @@
                     }
                     &.dx-pivotgrid-collapsed {
                         .dx-expand:before {
-                            content: '+';
+                            content: url('../../../../../assets/common/icons/expand-icon.svg');
                         }
                     }
 
                     &.dx-pivotgrid-expanded {
                         position: relative;
                         .dx-expand:before {
-                            content: url('../../../../../assets/common/icons/minus-icon.svg');
-                            border: none
+                            content: url('../../../../../assets/common/icons/collapse-icon.svg');
                         }
                         .dx-expand-icon-container {
                             position: relative;
@@ -218,7 +227,7 @@
                                 position: absolute;
                                 height: 7px;
                                 top: -7px;
-                                left: -1px;
+                                left: -2px;
                                 border-right: 2px solid @expendedLineColor;
                             }
                         }

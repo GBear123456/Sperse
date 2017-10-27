@@ -4472,6 +4472,51 @@ export class LeadServiceProxy {
         }
         return Observable.of<LeadStatsDto[]>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    submitContactUsRequest(model: SubmitContactUsRequestInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitContactUsRequest";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(model ? model.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSubmitContactUsRequest(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSubmitContactUsRequest(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSubmitContactUsRequest(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -17900,6 +17945,69 @@ export interface ILeadStatsDto {
     pipelineId: number;
     pipelineName: string;
     count: number;
+}
+
+export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    website: string;
+    comments: string;
+    sourceCode: string;
+    tenancyName: string;
+
+    constructor(data?: ISubmitContactUsRequestInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.email = data["email"];
+            this.phone = data["phone"];
+            this.website = data["website"];
+            this.comments = data["comments"];
+            this.sourceCode = data["sourceCode"];
+            this.tenancyName = data["tenancyName"];
+        }
+    }
+
+    static fromJS(data: any): SubmitContactUsRequestInput {
+        let result = new SubmitContactUsRequestInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["website"] = this.website;
+        data["comments"] = this.comments;
+        data["sourceCode"] = this.sourceCode;
+        data["tenancyName"] = this.tenancyName;
+        return data; 
+    }
+}
+
+export interface ISubmitContactUsRequestInput {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    website: string;
+    comments: string;
+    sourceCode: string;
+    tenancyName: string;
 }
 
 export class SelectPackageResponseDto implements ISelectPackageResponseDto {

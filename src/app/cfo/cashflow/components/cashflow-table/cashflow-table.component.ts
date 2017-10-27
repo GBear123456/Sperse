@@ -26,14 +26,14 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
     groupbyItems: GroupbyItem[] = [
         {
             'groupInterval': 'year',
-            'optionText': 'YEARS',
+            'optionText': this.l('Years').toUpperCase(),
             'customizeTextFunction': this.getYearHeaderCustomizer,
             'historicalSelectionFunction': this.getYearHistoricalSelector,
             'historicalCustomizerFunction': this.getYearHistoricalCustomizer
         },
         {
             'groupInterval': 'quarter',
-            'optionText': 'QUARTERS',
+            'optionText': this.l('Quarters').toUpperCase(),
             'customizeTextFunction': this.getQuarterHeaderCustomizer,
             'historicalSelectionFunction': this.getQuarterHistoricalSelector,
             'historicalCustomizerFunction': this.getQuarterHistoricalCustomizer,
@@ -44,7 +44,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
         },
         {
             'groupInterval': 'month',
-            'optionText': 'MONTHS',
+            'optionText': this.l('Months').toUpperCase(),
             'customizeTextFunction': this.getMonthHeaderCustomizer,
             'historicalSelectionFunction': this.getMonthHistoricalSelector,
             'historicalCustomizerFunction': this.getMonthHistoricalCustomizer,
@@ -64,7 +64,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
         /** @todo implement the day interval in short long future */
         {
           'groupInterval': 'day',
-          'optionText': 'DAYS',
+          'optionText': this.l('Days').toUpperCase(),
           'customizeTextFunction': this.getDayHeaderCustomizer,
           'historicalSelectionFunction': this.getDayHistoricalSelector,
           'historicalCustomizerFunction': this.getDayHistoricalCustomizer,
@@ -1227,7 +1227,19 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
         cellObj.cellElement.parent().after(clonedRow);
     }
 
-    onCellClick(event) {
+    /**
+     * initialize the click trigger for the cell column if user click for the left empty cell
+     * @param cellObj
+     */
+    bindCollapseActionOnWhiteSpaceColumn(cellObj) {
+        let totalCell = cellObj.cellElement.parent().nextAll('.dx-expand-border').first().find('td.dx-total');
+        totalCell.trigger('click');
+    }
 
+    onCellClick(cellObj) {
+        /** bind the collapse action on white space column */
+        if (cellObj.cell.isWhiteSpace) {
+            this.bindCollapseActionOnWhiteSpaceColumn(cellObj);
+        }
     }
 }

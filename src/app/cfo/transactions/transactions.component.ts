@@ -163,8 +163,17 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         let data = {};
         data[filter.field] = {};
         _.each(filter.items, (val, key) => {
-            val && (data[filter.field][filter.operator[key]] = moment.utc(val, 'YYYY-MM-DD').toDate());
+            if (val) {
+                var date = moment.utc(val, 'YYYY-MM-DDT');
+                if (key.toString() === "to")
+                {
+                    date.add(1, 'd').add(-1, 's')
+                }
+
+                data[filter.field][filter.operator[key]] = date.toDate();
+            }
         });
+
         return data;
     }
     
