@@ -330,15 +330,24 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             area: 'data',
             showColumnTotals: true,
             calculateSummaryValue: (summaryCell) => {
+
+                summaryCell.prevWithParent = function () {
+                    let prev = this.prev(arguments);
+                    if (prev === null && summaryCell.parent('column')) {
+                        prev = summaryCell.parent('column').prev(arguments);
+                    }
+                    return prev;
+                };
+
                 /** if the value is a balance value - then get the prev column grand total for the column and add*/
                 if (summaryCell.field('row') &&
                     summaryCell.field('row').caption === 'Type' &&
                     summaryCell.value(summaryCell.field('row')) === 'B') {
                     if (summaryCell.prev('column', true)) {
-                       let currentValue = summaryCell.value() || 0;
-                       let prevColumnGrandTotalValue = summaryCell.prev('column', true).grandTotal('row').value(true) || 0;
-                       let sum = currentValue + prevColumnGrandTotalValue;
-                       return sum;
+                        let currentValue = summaryCell.value() || 0;
+                        let prevColumnGrandTotalValue = summaryCell.prev('column', true).grandTotal('row').value(true) || 0;
+                        let sum = currentValue + prevColumnGrandTotalValue;
+                        return sum;
                     }
                 }
 
@@ -350,8 +359,10 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
                 let field = summaryCell.field('row', true);
                 /** if field === null - then it is the grand total row and if dataField is a - it starting balance row
                  *  that we alse need to calculate */
+                let prevSummaryCell = summaryCell.prevWithParent('column', true);
 
-                let prevSummaryCell = summaryCell.prev('column', true);
+                console.log('summaryCell', summaryCell.value());
+                console.log('prevSummaryCell', prevSummaryCell ? prevSummaryCell.value() : '');
 
                 /** @todo find out why allowCrossGroup is not working */
                 if ((field === null || field.dataField === 'startingBalance') && prevSummaryCell === null) {
@@ -366,8 +377,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
                     //     }
                     // }
                 }
-
-                if ((field === null || field.dataField === 'startingBalance') && prevSummaryCell !== null) {
+                if (field === null && prevSummaryCell !== null) {
 
                     let sum = summaryCell.value();
                     sum += prevSummaryCell.value();
@@ -378,6 +388,11 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
                     }
                     return sum;
                 }
+
+                if (field.dataField === 'startingBalance' && prevSummaryCell !== null) {
+
+                }
+
                 return summaryCell.value() || 0;
             }
         },
