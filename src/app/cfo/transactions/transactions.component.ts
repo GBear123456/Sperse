@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
@@ -142,6 +142,18 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                     component: FilterInputsComponent,
                     //operator: 'contains',
                     caption: 'BusinessEntity',
+                    //items: { BusinessEntity: '' }
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    //operator: 'contains',
+                    caption: 'CheckNumber',
+                    //items: { BusinessEntity: '' }
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    //operator: 'contains',
+                    caption: 'Reference',
                     //items: { BusinessEntity: '' }
                 }
             ]
