@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Route } from '@angular/router';
-import { CashflowComponent } from './cashflow/components/main/cashflow.component';
+import { CashflowComponent } from './cashflow/cashflow.component';
 import { BankAccountsComponent } from './bank-accounts/bank-accounts.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { CashflowSetupComponent } from './cashflow-setup/cashflow-setup.component';
