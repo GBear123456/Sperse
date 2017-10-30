@@ -1,18 +1,22 @@
 :host {
   /deep/ .mat-tab-label {
-      color: grey;
+      color: #677380;
       text-transform: uppercase;
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.71;
+      letter-spacing: 0.6px;
+      opacity: 1;
+  }
+
+  /deep/ .mat-tab-label-active {
+      border-bottom: none;
+      background: none;
+      font-weight: 500;
+      color: #202b35;
   }
 
   .col-md-6 {
     min-width: 400px;
-  }
-
-  .mat-tab-label-active {
-      color: #000;
-      border-bottom: none;
-      border-right: 1px solid #e5e9ec;
-      border-left: 1px solid #e5e9ec;
-      background: none;
   }
 }
