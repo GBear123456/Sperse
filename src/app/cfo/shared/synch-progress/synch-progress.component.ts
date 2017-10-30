@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Injector, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { FinancialInformationServiceProxy, SyncProgressOutput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -9,12 +9,13 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     selector: 'synch-progress',
     providers: [FinancialInformationServiceProxy]
 })
-export class SynchProgressComponent extends AppComponentBase implements OnInit {
+export class SynchProgressComponent extends AppComponentBase implements OnInit, OnDestroy {
     @Output() onComplete = new EventEmitter();
     @Output() completed: boolean;
     synchData: SyncProgressOutput;
 
     tooltipVisible: boolean;
+    timeoutHandler: any;
 
     constructor(injector: Injector,
         private _financialInformationServiceProxy: FinancialInformationServiceProxy) {
@@ -26,13 +27,13 @@ export class SynchProgressComponent extends AppComponentBase implements OnInit {
     ngOnInit(): void {
         this.getSynchProgress();
     }
-
+    
     getSynchProgress() {
         this._financialInformationServiceProxy.getSyncProgress()
             .subscribe((result) => {
                 if (result.totalProgress.progressPercent != 100) {
                     this.synchData = result;
-                    setTimeout(() => this.getSynchProgress(), 10 * 1000);
+                    this.timeoutHandler = setTimeout(() => this.getSynchProgress(), 10 * 1000);
                 }
                 else {
                     this.completed = true;
@@ -43,5 +44,10 @@ export class SynchProgressComponent extends AppComponentBase implements OnInit {
 
     toggleTooltip() {
         this.tooltipVisible = !this.tooltipVisible;
+    }
+
+    ngOnDestroy(): void {
+        if (!this.completed)
+            clearTimeout(this.timeoutHandler);
     }
 }
