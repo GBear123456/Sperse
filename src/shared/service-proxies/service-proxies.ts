@@ -3289,6 +3289,54 @@ export class FinancialInformationServiceProxy {
         }
         return Observable.of<SyncAllAccountsOutput>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getSyncProgress(): Observable<SyncProgressOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetSyncProgress(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetSyncProgress(response_);
+                } catch (e) {
+                    return <Observable<SyncProgressOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<SyncProgressOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetSyncProgress(response: Response): Observable<SyncProgressOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: SyncProgressOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SyncProgressOutput.fromJS(resultData200) : new SyncProgressOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<SyncProgressOutput>(<any>null);
+    }
 }
 
 @Injectable()
@@ -16108,6 +16156,96 @@ export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
 
 export interface ISyncAllAccountsOutput {
     syncInProgressAccountsCount: number;
+}
+
+export class SyncProgressOutput implements ISyncProgressOutput {
+    totalProgress: SyncProgressDto;
+    accountProgresses: SyncProgressDto[];
+
+    constructor(data?: ISyncProgressOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalProgress = data["totalProgress"] ? SyncProgressDto.fromJS(data["totalProgress"]) : <any>undefined;
+            if (data["accountProgresses"] && data["accountProgresses"].constructor === Array) {
+                this.accountProgresses = [];
+                for (let item of data["accountProgresses"])
+                    this.accountProgresses.push(SyncProgressDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SyncProgressOutput {
+        let result = new SyncProgressOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalProgress"] = this.totalProgress ? this.totalProgress.toJSON() : <any>undefined;
+        if (this.accountProgresses && this.accountProgresses.constructor === Array) {
+            data["accountProgresses"] = [];
+            for (let item of this.accountProgresses)
+                data["accountProgresses"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ISyncProgressOutput {
+    totalProgress: SyncProgressDto;
+    accountProgresses: SyncProgressDto[];
+}
+
+export class SyncProgressDto implements ISyncProgressDto {
+    accountName: string;
+    progressStatus: string;
+    progressPercent: number;
+
+    constructor(data?: ISyncProgressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accountName = data["accountName"];
+            this.progressStatus = data["progressStatus"];
+            this.progressPercent = data["progressPercent"];
+        }
+    }
+
+    static fromJS(data: any): SyncProgressDto {
+        let result = new SyncProgressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accountName"] = this.accountName;
+        data["progressStatus"] = this.progressStatus;
+        data["progressPercent"] = this.progressPercent;
+        return data; 
+    }
+}
+
+export interface ISyncProgressDto {
+    accountName: string;
+    progressStatus: string;
+    progressPercent: number;
 }
 
 export class CreateFriendshipRequestInput implements ICreateFriendshipRequestInput {
