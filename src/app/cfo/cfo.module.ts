@@ -1,49 +1,61 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
-import { CashflowModule } from './cashflow/cashflow.module';
 import { CfoRoutingModule } from './cfo-routing.module';
 import { BankAccountsComponent } from './bank-accounts/bank-accounts.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { CashflowSetupComponent } from './cashflow-setup/cashflow-setup.component';
 import { SetupStepComponent } from './shared/setup-steps/setup-steps.component';
+import { SynchProgressComponent } from './shared/synch-progress/synch-progress.component';
+
+import { CashflowComponent } from './cashflow/cashflow.component';
+import { OperationsComponent } from './cashflow/operations/operations.component';
 
 import {
-    DxDataGridModule,
-    DxToolbarModule,
-    DxTemplateModule,
-    DxDateBoxModule,
-    DxTextBoxModule,
-    DxValidatorModule,
-    DxValidationSummaryModule,
     DxButtonModule,
+    DxDataGridModule,
+    DxDateBoxModule,
     DxFileUploaderModule,
-    DxSelectBoxModule
+    DxLoadIndicatorModule,
+    DxPivotGridModule,
+    DxSelectBoxModule,
+    DxTemplateModule,
+    DxTextBoxModule,
+    DxToolbarModule,
+    DxTooltipModule,
+    DxValidationSummaryModule,
+    DxValidatorModule
 } from 'devextreme-angular';
 
 @NgModule({
     imports: [
-        CashflowModule,
         CfoRoutingModule,
         CommonModule,
         AppCommonModule,
 
-        DxDataGridModule,
-        DxToolbarModule,
-        DxTemplateModule,
-        DxDateBoxModule,
-        DxTextBoxModule,
-        DxValidatorModule,
-        DxValidationSummaryModule,
         DxButtonModule,
+        DxDataGridModule,
+        DxDateBoxModule,
         DxFileUploaderModule,
+        DxLoadIndicatorModule,
+        DxPivotGridModule,
         DxSelectBoxModule,
+        DxTemplateModule,
+        DxTextBoxModule,
+        DxToolbarModule,
+        DxTooltipModule,
+        DxValidationSummaryModule,
+        DxValidatorModule
     ],
     declarations: [
         BankAccountsComponent,
         TransactionsComponent,
         CashflowSetupComponent,
-        SetupStepComponent
+        SetupStepComponent,
+        SynchProgressComponent,
+
+        CashflowComponent,
+        OperationsComponent
     ]
 })
 

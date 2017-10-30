@@ -1550,6 +1550,158 @@ export class ContactAddressServiceProxy {
 }
 
 @Injectable()
+export class ContactBusinessServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    createContactBusiness(input: CreateContactBusinessInput): Observable<CreateContactBusinessOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactBusiness/CreateContactBusiness";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateContactBusiness(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateContactBusiness(response_);
+                } catch (e) {
+                    return <Observable<CreateContactBusinessOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateContactBusinessOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateContactBusiness(response: Response): Observable<CreateContactBusinessOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CreateContactBusinessOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateContactBusinessOutput.fromJS(resultData200) : new CreateContactBusinessOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CreateContactBusinessOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateContactBusiness(input: UpdateContactBusinessInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactBusiness/UpdateContactBusiness";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateContactBusiness(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateContactBusiness(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateContactBusiness(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteContactBusiness(id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactBusiness/DeleteContactBusiness?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteContactBusiness(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteContactBusiness(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteContactBusiness(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class ContactEmailServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -3289,6 +3441,54 @@ export class FinancialInformationServiceProxy {
         }
         return Observable.of<SyncAllAccountsOutput>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getSyncProgress(): Observable<SyncProgressOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetSyncProgress(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetSyncProgress(response_);
+                } catch (e) {
+                    return <Observable<SyncProgressOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<SyncProgressOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetSyncProgress(response: Response): Observable<SyncProgressOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: SyncProgressOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SyncProgressOutput.fromJS(resultData200) : new SyncProgressOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<SyncProgressOutput>(<any>null);
+    }
 }
 
 @Injectable()
@@ -4471,6 +4671,51 @@ export class LeadServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<LeadStatsDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    submitContactUsRequest(model: SubmitContactUsRequestInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitContactUsRequest";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(model ? model.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSubmitContactUsRequest(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSubmitContactUsRequest(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSubmitContactUsRequest(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
     }
 }
 
@@ -12316,6 +12561,337 @@ export interface IAddressOwnershipTypeDto {
     name: string;
 }
 
+export class CreateContactBusinessInput implements ICreateContactBusinessInput {
+    contactBusinessInfo: ContactBusinessInfo = new ContactBusinessInfo();
+
+    constructor(data?: ICreateContactBusinessInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactBusinessInfo = data["contactBusinessInfo"] ? ContactBusinessInfo.fromJS(data["contactBusinessInfo"]) : new ContactBusinessInfo();
+        }
+    }
+
+    static fromJS(data: any): CreateContactBusinessInput {
+        let result = new CreateContactBusinessInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactBusinessInfo"] = this.contactBusinessInfo ? this.contactBusinessInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ICreateContactBusinessInput {
+    contactBusinessInfo: ContactBusinessInfo;
+}
+
+export class ContactBusinessInfo implements IContactBusinessInfo {
+    personId: number;
+    relationTypeId: string;
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    mobilePhoneNumber: string;
+    orgName: string;
+    orgEntityType: string;
+    orgEin: string;
+    orgFormedCountryId: string;
+    orgFormedStateId: string;
+    orgFormedDate: moment.Moment;
+    annualRevenue: number;
+    acceptCc: boolean;
+    annualVolumesOnCards: number;
+    productServicesSold: number;
+    businessSicCode: number;
+
+    constructor(data?: IContactBusinessInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.personId = data["personId"];
+            this.relationTypeId = data["relationTypeId"];
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.city = data["city"];
+            this.streetAddress = data["streetAddress"];
+            this.zip = data["zip"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.mobilePhoneNumber = data["mobilePhoneNumber"];
+            this.orgName = data["orgName"];
+            this.orgEntityType = data["orgEntityType"];
+            this.orgEin = data["orgEin"];
+            this.orgFormedCountryId = data["orgFormedCountryId"];
+            this.orgFormedStateId = data["orgFormedStateId"];
+            this.orgFormedDate = data["orgFormedDate"] ? moment(data["orgFormedDate"].toString()) : <any>undefined;
+            this.annualRevenue = data["annualRevenue"];
+            this.acceptCc = data["acceptCc"];
+            this.annualVolumesOnCards = data["annualVolumesOnCards"];
+            this.productServicesSold = data["productServicesSold"];
+            this.businessSicCode = data["businessSicCode"];
+        }
+    }
+
+    static fromJS(data: any): ContactBusinessInfo {
+        let result = new ContactBusinessInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["personId"] = this.personId;
+        data["relationTypeId"] = this.relationTypeId;
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["city"] = this.city;
+        data["streetAddress"] = this.streetAddress;
+        data["zip"] = this.zip;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["mobilePhoneNumber"] = this.mobilePhoneNumber;
+        data["orgName"] = this.orgName;
+        data["orgEntityType"] = this.orgEntityType;
+        data["orgEin"] = this.orgEin;
+        data["orgFormedCountryId"] = this.orgFormedCountryId;
+        data["orgFormedStateId"] = this.orgFormedStateId;
+        data["orgFormedDate"] = this.orgFormedDate ? this.orgFormedDate.toISOString() : <any>undefined;
+        data["annualRevenue"] = this.annualRevenue;
+        data["acceptCc"] = this.acceptCc;
+        data["annualVolumesOnCards"] = this.annualVolumesOnCards;
+        data["productServicesSold"] = this.productServicesSold;
+        data["businessSicCode"] = this.businessSicCode;
+        return data; 
+    }
+}
+
+export interface IContactBusinessInfo {
+    personId: number;
+    relationTypeId: string;
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    mobilePhoneNumber: string;
+    orgName: string;
+    orgEntityType: string;
+    orgEin: string;
+    orgFormedCountryId: string;
+    orgFormedStateId: string;
+    orgFormedDate: moment.Moment;
+    annualRevenue: number;
+    acceptCc: boolean;
+    annualVolumesOnCards: number;
+    productServicesSold: number;
+    businessSicCode: number;
+}
+
+export class CreateContactBusinessOutput implements ICreateContactBusinessOutput {
+    id: number;
+
+    constructor(data?: ICreateContactBusinessOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactBusinessOutput {
+        let result = new CreateContactBusinessOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateContactBusinessOutput {
+    id: number;
+}
+
+export class UpdateContactBusinessInput implements IUpdateContactBusinessInput {
+    id: number;
+    contactBusinessEditInfo: ContactBusinessEditInfo = new ContactBusinessEditInfo();
+
+    constructor(data?: IUpdateContactBusinessInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.contactBusinessEditInfo = data["contactBusinessEditInfo"] ? ContactBusinessEditInfo.fromJS(data["contactBusinessEditInfo"]) : new ContactBusinessEditInfo();
+        }
+    }
+
+    static fromJS(data: any): UpdateContactBusinessInput {
+        let result = new UpdateContactBusinessInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["contactBusinessEditInfo"] = this.contactBusinessEditInfo ? this.contactBusinessEditInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IUpdateContactBusinessInput {
+    id: number;
+    contactBusinessEditInfo: ContactBusinessEditInfo;
+}
+
+export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    mobilePhoneNumber: string;
+    orgName: string;
+    orgEntityType: string;
+    orgEin: string;
+    orgFormedCountryId: string;
+    orgFormedStateId: string;
+    orgFormedDate: moment.Moment;
+    annualRevenue: number;
+    acceptCc: boolean;
+    annualVolumesOnCards: number;
+    productServicesSold: number;
+    businessSicCode: number;
+
+    constructor(data?: IContactBusinessEditInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.city = data["city"];
+            this.streetAddress = data["streetAddress"];
+            this.zip = data["zip"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.mobilePhoneNumber = data["mobilePhoneNumber"];
+            this.orgName = data["orgName"];
+            this.orgEntityType = data["orgEntityType"];
+            this.orgEin = data["orgEin"];
+            this.orgFormedCountryId = data["orgFormedCountryId"];
+            this.orgFormedStateId = data["orgFormedStateId"];
+            this.orgFormedDate = data["orgFormedDate"] ? moment(data["orgFormedDate"].toString()) : <any>undefined;
+            this.annualRevenue = data["annualRevenue"];
+            this.acceptCc = data["acceptCc"];
+            this.annualVolumesOnCards = data["annualVolumesOnCards"];
+            this.productServicesSold = data["productServicesSold"];
+            this.businessSicCode = data["businessSicCode"];
+        }
+    }
+
+    static fromJS(data: any): ContactBusinessEditInfo {
+        let result = new ContactBusinessEditInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["city"] = this.city;
+        data["streetAddress"] = this.streetAddress;
+        data["zip"] = this.zip;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["mobilePhoneNumber"] = this.mobilePhoneNumber;
+        data["orgName"] = this.orgName;
+        data["orgEntityType"] = this.orgEntityType;
+        data["orgEin"] = this.orgEin;
+        data["orgFormedCountryId"] = this.orgFormedCountryId;
+        data["orgFormedStateId"] = this.orgFormedStateId;
+        data["orgFormedDate"] = this.orgFormedDate ? this.orgFormedDate.toISOString() : <any>undefined;
+        data["annualRevenue"] = this.annualRevenue;
+        data["acceptCc"] = this.acceptCc;
+        data["annualVolumesOnCards"] = this.annualVolumesOnCards;
+        data["productServicesSold"] = this.productServicesSold;
+        data["businessSicCode"] = this.businessSicCode;
+        return data; 
+    }
+}
+
+export interface IContactBusinessEditInfo {
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    mobilePhoneNumber: string;
+    orgName: string;
+    orgEntityType: string;
+    orgEin: string;
+    orgFormedCountryId: string;
+    orgFormedStateId: string;
+    orgFormedDate: moment.Moment;
+    annualRevenue: number;
+    acceptCc: boolean;
+    annualVolumesOnCards: number;
+    productServicesSold: number;
+    businessSicCode: number;
+}
+
 export class CreateContactEmailInput implements ICreateContactEmailInput {
     contactId: number;
     emailAddress: string;
@@ -16065,6 +16641,96 @@ export interface ISyncAllAccountsOutput {
     syncInProgressAccountsCount: number;
 }
 
+export class SyncProgressOutput implements ISyncProgressOutput {
+    totalProgress: SyncProgressDto;
+    accountProgresses: SyncProgressDto[];
+
+    constructor(data?: ISyncProgressOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalProgress = data["totalProgress"] ? SyncProgressDto.fromJS(data["totalProgress"]) : <any>undefined;
+            if (data["accountProgresses"] && data["accountProgresses"].constructor === Array) {
+                this.accountProgresses = [];
+                for (let item of data["accountProgresses"])
+                    this.accountProgresses.push(SyncProgressDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SyncProgressOutput {
+        let result = new SyncProgressOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalProgress"] = this.totalProgress ? this.totalProgress.toJSON() : <any>undefined;
+        if (this.accountProgresses && this.accountProgresses.constructor === Array) {
+            data["accountProgresses"] = [];
+            for (let item of this.accountProgresses)
+                data["accountProgresses"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ISyncProgressOutput {
+    totalProgress: SyncProgressDto;
+    accountProgresses: SyncProgressDto[];
+}
+
+export class SyncProgressDto implements ISyncProgressDto {
+    accountName: string;
+    progressStatus: string;
+    progressPercent: number;
+
+    constructor(data?: ISyncProgressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accountName = data["accountName"];
+            this.progressStatus = data["progressStatus"];
+            this.progressPercent = data["progressPercent"];
+        }
+    }
+
+    static fromJS(data: any): SyncProgressDto {
+        let result = new SyncProgressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accountName"] = this.accountName;
+        data["progressStatus"] = this.progressStatus;
+        data["progressPercent"] = this.progressPercent;
+        return data; 
+    }
+}
+
+export interface ISyncProgressDto {
+    accountName: string;
+    progressStatus: string;
+    progressPercent: number;
+}
+
 export class CreateFriendshipRequestInput implements ICreateFriendshipRequestInput {
     userId: number;
     tenantId: number;
@@ -17900,6 +18566,69 @@ export interface ILeadStatsDto {
     pipelineId: number;
     pipelineName: string;
     count: number;
+}
+
+export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    website: string;
+    comments: string;
+    sourceCode: string;
+    tenancyName: string;
+
+    constructor(data?: ISubmitContactUsRequestInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.email = data["email"];
+            this.phone = data["phone"];
+            this.website = data["website"];
+            this.comments = data["comments"];
+            this.sourceCode = data["sourceCode"];
+            this.tenancyName = data["tenancyName"];
+        }
+    }
+
+    static fromJS(data: any): SubmitContactUsRequestInput {
+        let result = new SubmitContactUsRequestInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["website"] = this.website;
+        data["comments"] = this.comments;
+        data["sourceCode"] = this.sourceCode;
+        data["tenancyName"] = this.tenancyName;
+        return data; 
+    }
+}
+
+export interface ISubmitContactUsRequestInput {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    website: string;
+    comments: string;
+    sourceCode: string;
+    tenancyName: string;
 }
 
 export class SelectPackageResponseDto implements ISelectPackageResponseDto {

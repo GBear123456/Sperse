@@ -153,7 +153,7 @@
                         position: relative;
                         cursor: pointer;
                         &:before {
-                            content: url('../../../../../assets/common/icons/collapse-icon.svg');
+                            content: url('../../../assets/common/icons/collapse-icon.svg');
                             position: absolute;
                             top: 6px;
                             left: 11px;
@@ -210,14 +210,14 @@
                     }
                     &.dx-pivotgrid-collapsed {
                         .dx-expand:before {
-                            content: url('../../../../../assets/common/icons/expand-icon.svg');
+                            content: url('../../../assets/common/icons/expand-icon.svg');
                         }
                     }
 
                     &.dx-pivotgrid-expanded {
                         position: relative;
                         .dx-expand:before {
-                            content: url('../../../../../assets/common/icons/collapse-icon.svg');
+                            content: url('../../../assets/common/icons/collapse-icon.svg');
                         }
                         .dx-expand-icon-container {
                             position: relative;
@@ -383,5 +383,59 @@
         span {
             margin-right: 10px;
         }
+    }
+}
+
+.title {
+    background-color: #f3f7fa;
+    padding: 16px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #212c36;
+    font-size: 24px;
+    border-bottom: 1px solid #e5e9ec;
+
+    h1 {
+        font-size: 24px;
+        line-height: 19px;
+        text-align: left;
+        color: #212c36;
+        margin: 0;
+        font-weight: 400;
+    }
+
+    .synch-progress{
+        float: right;
+        margin-top: -7px;
+        margin-left: 10px;
+    }
+
+    .add-new {
+        width: 192px;
+        height: 42px;
+        border-radius: 21px;
+        background-color: #00aeef;
+        border: none;
+        color: #fff;
+        font-size: 15px;
+        line-height: 1.6;
+        letter-spacing: 0.3px;
+        float: right;
+        position: relative;
+        //padding-right: 42px;
+        //&::after {
+        //    content: '';
+        //    background: no-repeat 47% 50% url("/assets/icons/arrow_2.svg") ;
+        //    width: 42px;
+        //    height: 100%;
+        //    background-color: #00a0dc;
+        //    border-top-right-radius: 21px;
+        //    border-bottom-right-radius: 21px;
+        //    display: block;
+        //    right: 0;
+        //    position: absolute;
+        //    top: 0;
+        //}
     }
 }

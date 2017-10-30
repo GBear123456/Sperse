@@ -1,0 +1,21 @@
+<div *ngIf="!completed && synchData" class="synch-progress">
+    <div id="synchProgressContainer" class="synch-container"
+         (mouseenter)="toggleTooltip()"
+         (mouseleave)="toggleTooltip()">
+        <dx-load-indicator class="load-indicator"></dx-load-indicator>
+        <span>{{synchData.totalProgress.progressPercent}}%</span>
+    </div>
+    <dx-tooltip target="#synchProgressContainer"
+                [(visible)]="tooltipVisible">
+        <div *dxTemplate="let data = data of 'content'">
+            <div class="tooltip-container">
+                {{l('SynchProgress')}}:
+                <ul>
+                    <li *ngFor="let acc of synchData.accountProgresses">
+                        {{ acc.accountName }}: {{acc.progressPercent}}% | {{acc.progressStatus }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </dx-tooltip>
+</div>

@@ -42,7 +42,11 @@
 
   /deep/ .dx-toolbar {
     .dx-button-text {
-      color: #677380!important;
+       color: #677380;
+       font-size: 13px;
+       font-weight: 300;
+       line-height: 1.85;
+       letter-spacing: 0.3px;
     }
 
     .dx-toolbar-before,
@@ -78,12 +82,11 @@
       }
       
       &[aria-label="Status"] {
-          border-right: 0;
           border-radius: 0;
       }
       
       &[aria-label="Delete"] {
-          margin-right: 40px;
+          border-left: 0;
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
       }
@@ -123,6 +126,7 @@
       &[aria-label="chevronnext"] {
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
+          margin-left: -1px;
       }
       &[aria-label="chevronprev"] {
           border-top-right-radius: 0;
@@ -138,7 +142,6 @@
       }
       &[aria-label="folder"] {
           width: 72px;
-          margin-right: -2px;
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
       }
@@ -161,12 +164,28 @@
               padding-right: 28px;
           }
       }
-          
+      
+      &:not(.dx-button-has-text) {
+        .dx-button-content {
+          position: relative;
+        }
+        .dx-icon {
+          position: absolute;
+          margin: auto;
+          bottom: 0;
+          top: 0;
+          left: 15px;
+        }
+
+      }
+
       .dx-button-content {
-          padding: 8px 15px;
+          height: 37px;
+          min-width: 50px;
+          padding: 6px 15px;
       }
       .dx-icon {
-          color: #959a9f;
+        color: #959a9f;
       }
     }      
   }

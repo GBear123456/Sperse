@@ -1,22 +1,22 @@
 import { Component, OnInit, Injector, ViewChild } from '@angular/core';
-import { CashflowService } from '../../services/cashflow.service';
-import { Operation } from '../../models/operation';
-import { GroupbyItem } from '../../models/groupbyItem';
+import { Operation } from './models/operation';
+import { GroupbyItem } from './models/groupbyItem';
 
 import { CashflowServiceProxy } from '@shared/service-proxies/service-proxies';
 import * as moment from 'moment';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { DxPivotGridComponent } from 'devextreme-angular';
 
 @Component({
-    selector: 'app-cashflow-table',
-    templateUrl: './cashflow-table.component.html',
-    styleUrls: ['./cashflow-table.component.less'],
-    providers: [ CashflowService, CashflowServiceProxy ]
+    selector: 'app-cashflow',
+    templateUrl: './cashflow.component.html',
+    styleUrls: ['./cashflow.component.less'],
+    providers: [ CashflowServiceProxy ]
 })
 
-export class CashflowTableComponent extends AppComponentBase implements OnInit {
-    cashflowService: CashflowService;
+export class CashflowComponent extends AppComponentBase implements OnInit {
+    @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     /** @todo change for Operation model */
     cashflowData: any/*Operation[]*/;
     cashflowTypes: any;
@@ -199,12 +199,15 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
     ];
     cssMarker = ' @css';
 
-    constructor(injector: Injector, CashflowService: CashflowService, private _CashflowServiceProxy: CashflowServiceProxy) {
+    constructor(injector: Injector, private _CashflowServiceProxy: CashflowServiceProxy) {
         super(injector);
-        this.cashflowService = CashflowService;
     }
 
     ngOnInit() {
+        this.loadGridDataSource();
+    }
+
+    loadGridDataSource() {
         /** @todo change default currency for dynamic value (and start and end dates) */
         this._CashflowServiceProxy.getStats(undefined, undefined, 'USD')
             .subscribe(result => {
@@ -213,7 +216,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
                 let expenseCategories = result.expenseCategories;
                 let transactionCategories = result.transactionCategories;
                 /** categories - object with categories */
-                this.cashflowData = transactions.map(function(transactionObj){
+                this.cashflowData = transactions.map(function (transactionObj) {
                     transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
                     transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
                     return transactionObj;
@@ -234,6 +237,10 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
                     this.dataSource = this.getApiDataSource();
                 }
             });
+    }
+
+    refreshDataGrid() {
+        this.loadGridDataSource();
     }
 
     getApiDataSource() {

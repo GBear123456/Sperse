@@ -3,6 +3,28 @@
   left: 60px;
   position: relative;
 
+  /deep/ i.icons {
+    background-repeat: no-repeat;
+
+    &.email {
+      background-image: url("../../../../assets/common/icons/email.png");
+    }
+
+    &.phone {
+      &.type-1 {
+        background-image: url("../../../../assets/common/icons/phone.png");
+      }
+
+      &.type-2 {
+        background-image: url("../../../../assets/common/icons/phone-home.png");
+      }
+
+      &.type-3 {
+        background-image: url("../../../../assets/common/icons/phone-mobile.png");
+      }
+    }
+  }
+
   .box-shadow-wrapper {
     box-shadow: -2px 0px 6px 0 rgba(0, 0, 0, 0.1);
   }
@@ -81,11 +103,12 @@
         line-height: 1.83;
         letter-spacing: 0.2px;
         color: #677380;
-        .material-icons {
+        i.icons {
+          width: 20px;
+          height: 16px;
           position: relative;
-          font-size: 16px;
-          font-weight: bold;
-          padding-right: 10px;
+          display: inline-block;
+          background-size: 16px;
           top: 3px;
         }
       }
@@ -99,6 +122,25 @@
   md-sidenav.right_sidenav {
     width: 400px;
     padding-top: 0;
+
+    /deep/ .mat-tab-label {
+        color: #677380;
+        text-transform: uppercase;
+        font-size: 12px;
+        line-height: 1.67;
+        letter-spacing: 0.5px;
+        text-align: left;
+        font-weight: 300;
+        color: #7f8790;
+        opacity: 1;
+    }
+
+    /deep/ .mat-tab-label-active {
+        border-bottom: none;
+        background: none;
+        font-weight: 500;
+        color: #202b35;
+    }
   }
 
   md-sidenav-container {
@@ -124,6 +166,10 @@
     margin-left: 14px;
     font-weight: 300;
     color: #424c56;
+    font-size: 14px;
+    line-height: 1.71;
+    letter-spacing: 0.6px;
+    opacity: 1;
     height: 45px;
     width: 100%;
   }

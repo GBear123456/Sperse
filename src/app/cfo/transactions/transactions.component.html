@@ -8,6 +8,7 @@
                         <span>{{l("Transactions")}}</span>
                     </h1>
                 </div>
+                <synch-progress class="synch-tooltip" (onComplete)="refreshDataGrid()"></synch-progress>
             </div>
         </div>
         <div class="col-xs-6 text-right">
@@ -42,6 +43,7 @@
                         <dxi-column dataField="Currency" caption="{{l('Transactions_Currency')}}"></dxi-column>
                         <dxi-column dataField="Amount" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate"></dxi-column>
                         <dxi-column dataField="Amount" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate"></dxi-column>
+                        <dxi-column dataField="EndingBalance" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate"></dxi-column>
                 
                         <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}" [width]="600"></dxi-column>
                         <dxi-column dataField="CategoryName" caption="{{l('Transactions_CategoryName')}}"></dxi-column>
@@ -60,6 +62,9 @@
                             <ng-container *ngIf="(cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit')">
                                 <span [ngClass]="{'red': cell.value < 0}"> {{ cell.text | number:'1.2-2' }} </span>
                             </ng-container>
+                        </div>
+                        <div *dxTemplate="let cell of 'endBalanceTemplate'">
+                            <span class="end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ cell.text | number:'1.2-2' }} </span>
                         </div>
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-pager
