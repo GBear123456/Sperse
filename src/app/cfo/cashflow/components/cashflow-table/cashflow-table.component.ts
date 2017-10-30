@@ -74,204 +74,6 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
         }
     ];
     leftMenuOrder = ['B', 'I', 'E', 'D'];
-    tableFields: any = [
-        {
-            caption: 'Cash Starting Balances',
-            area: 'row',
-            areaIndex: 0,
-            width: 120,
-            showTotals: false,
-            expanded: true,
-            isMeasure: false,
-            runningTotal: 'row',
-            allowCrossGroupCalculation: true,
-            // allowExpand: false,
-            dataField: 'startingBalance',
-            // dataType: 'string',
-            customizeText: function () {
-                return 'CASH STARTING BALANCES';
-            }
-        },
-        {
-            caption: 'Type',
-            width: 120,
-            area: 'row',
-            areaIndex: 0,
-            expanded: true,
-            allowExpandAll: false,
-            allowExpand: false,
-            dataField: 'type',
-            rowHeaderLayout: 'tree',
-            showTotals: true,
-            /** @todo find out how to remove total from the total field */
-            customizeText: cellInfo => {
-                let key = cellInfo.valueText === '0' ? 'Total Cash Inflows' : 'Total Cash Outflows';
-                return this.l(key).toUpperCase();
-            },
-            selector: function (data) {
-                return data.type === 'income' ? 0 : 1;
-            }
-        },
-        {
-            caption: 'Group',
-            width: 120,
-            area: 'row',
-            areaIndex: 1,
-            dataField: 'group',
-            expanded: false,
-            showTotals: true
-        },
-        {
-            caption: 'Subgroup',
-            width: 120,
-            showTotals: false,
-            area: 'row',
-            areaIndex: 2,
-            dataField: 'subgroup',
-            rowHeaderLayout: 'tree'
-        },
-        {
-            // caption: 'Name',
-            width: 120,
-            area: 'row',
-            areaIndex: 3,
-            showTotals: false,
-            dataField: 'name',
-            rowHeaderLayout: 'tree'
-        },
-        {
-            caption: 'Historical',
-            area: 'column',
-            showTotals: false,
-            selector: this.groupbyItems[0].historicalSelectionFunction(),
-            customizeText: this.groupbyItems[0].historicalCustomizerFunction(),
-            expanded: true,
-            allowExpand: false
-        },
-        {
-            caption: 'Amount',
-            dataField: 'amount',
-            dataType: 'number',
-            summaryType: 'sum',
-            format: 'currency',
-            area: 'data',
-            showColumnTotals: true,
-            calculateSummaryValue: function (summaryCell) {
-                /** changed the ending cash position result using internal devexpress methods to calculate the
-                 *  ending balances with the accounting of the starting balances
-                 */
-                /** check if current cell is the grand total cell */
-                let field = summaryCell.field('row', true);
-                /** if field === null - then it is the grand total row and if dataField is a - it starting balance row
-                 *  that we alse need to calculate */
-
-                let prevSummaryCell = summaryCell.prev('column', true);
-
-                /** @todo find out why allowCrossGroup is not working */
-                if ((field === null || field.dataField === 'startingBalance') && prevSummaryCell === null) {
-                    // let parent = summaryCell.parent('column');
-                    // /** check the previous value of the parent */
-                    // while (parent !== null) {
-                    //     prevSummaryCell = parent.prev('column', true);
-                    //     if (prevSummaryCell !== null) {
-                    //         break;
-                    //     } else {
-                    //         parent = summaryCell.parent('column');
-                    //     }
-                    // }
-                }
-
-                if ((field === null || field.dataField === 'startingBalance') && prevSummaryCell !== null) {
-
-                    let sum = summaryCell.value();
-                    sum += prevSummaryCell.value();
-                    /** add all previous grand totals cells values and redefine the previous cell */
-                    while (prevSummaryCell.prev('column', true) !== null) {
-                        sum += prevSummaryCell.prev('column', true).value();
-                        prevSummaryCell = prevSummaryCell.prev('column', true);
-                    }
-                    //return sum;
-                }
-                return summaryCell.value();
-            }
-        },
-        {
-            caption: 'Date',
-            dataField: 'date',
-            dataType: 'date',
-            area: 'column',
-            groupInterval: 'year',
-            showTotals: false,
-            customizeText: this.getYearHeaderCustomizer(),
-            visible: true,
-            summaryDisplayMode: 'percentVariation'
-        },
-        {
-            caption: 'Date',
-            dataField: 'date',
-            dataType: 'date',
-            area: 'column',
-            groupInterval: 'quarter',
-            showTotals: false,
-            customizeText: this.getQuarterHeaderCustomizer(),
-            visible: true
-        },
-        {
-            caption: 'Date',
-            dataField: 'date',
-            dataType: 'date',
-            area: 'column',
-            showTotals: false,
-            groupInterval: 'month',
-            customizeText: this.getMonthHeaderCustomizer(),
-            visible: true
-        },
-        {
-            caption: 'Projected',
-            area: 'column',
-            showTotals: false,
-            selector: function (data) {
-                const date = new Date(data.date);
-                const current = new Date();
-                let result;
-                // if (date.getMonth() + date.getFullYear() === current.getMonth() + current.getFullYear()) {
-                if (current.getDate() > date.getDate()) {
-                    result = 0;
-                } else {
-                    result = 1;
-                }
-                // }
-                return result;
-            },
-            customizeText: function (cellInfo) {
-                const cellValue = (cellInfo.value === 1 ? 'PROJECTED' : 'MTD');
-                const cssMarker = ' @css:{projectedField ' + (cellInfo.value === 1 ? 'projected' : 'mtd') + '}';
-                return cellValue + cssMarker;
-            },
-            expanded: true,
-            allowExpand: false
-        },
-        /** @todo implement the week interval in the long future */
-        // {
-        //   caption: 'Date',
-        //   dataField: 'date',
-        //   dataType: 'date',
-        //   area: 'column',
-        //   groupInterval: 'dayOfWeek',
-        //   customizeText: this.getWeekHeaderCustomizer(),
-        //   visible: true
-        // },
-        /** @todo implement the day interval in short long future */
-        {
-          caption: 'Date',
-          dataField: 'date',
-          dataType: 'date',
-          area: 'column',
-          groupInterval: 'day',
-          customizeText: this.getDayHeaderCustomizer(),
-          visible: true
-        }
-    ];
     apiTableFields: any = [
         {
             caption: 'Type',
@@ -329,72 +131,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             format: 'currency',
             area: 'data',
             showColumnTotals: true,
-            calculateSummaryValue: (summaryCell) => {
-
-                summaryCell.prevWithParent = function () {
-                    let prev = this.prev(arguments);
-                    if (prev === null && summaryCell.parent('column')) {
-                        prev = summaryCell.parent('column').prev(arguments);
-                    }
-                    return prev;
-                };
-
-                /** if the value is a balance value - then get the prev column grand total for the column and add*/
-                if (summaryCell.field('row') &&
-                    summaryCell.field('row').caption === 'Type' &&
-                    summaryCell.value(summaryCell.field('row')) === 'B') {
-                    if (summaryCell.prev('column', true)) {
-                        let currentValue = summaryCell.value() || 0;
-                        let prevColumnGrandTotalValue = summaryCell.prev('column', true).grandTotal('row').value(true) || 0;
-                        let sum = currentValue + prevColumnGrandTotalValue;
-                        return sum;
-                    }
-                }
-
-                /**
-                 * changed the ending cash position result using internal devexpress methods to calculate the
-                 *  ending balances with the accounting of the starting balances
-                 */
-                /** check if current cell is the grand total cell */
-                let field = summaryCell.field('row', true);
-                /** if field === null - then it is the grand total row and if dataField is a - it starting balance row
-                 *  that we alse need to calculate */
-                let prevSummaryCell = summaryCell.prevWithParent('column', true);
-
-                console.log('summaryCell', summaryCell.value());
-                console.log('prevSummaryCell', prevSummaryCell ? prevSummaryCell.value() : '');
-
-                /** @todo find out why allowCrossGroup is not working */
-                if ((field === null || field.dataField === 'startingBalance') && prevSummaryCell === null) {
-                    // let parent = summaryCell.parent('column');
-                    // /** check the previous value of the parent */
-                    // while (parent !== null) {
-                    //     prevSummaryCell = parent.prev('column', true);
-                    //     if (prevSummaryCell !== null) {
-                    //         break;
-                    //     } else {
-                    //         parent = summaryCell.parent('column');
-                    //     }
-                    // }
-                }
-                if (field === null && prevSummaryCell !== null) {
-
-                    let sum = summaryCell.value();
-                    sum += prevSummaryCell.value();
-                    /** add all previous grand totals cells values and redefine the previous cell */
-                    while (prevSummaryCell.prev('column', true) !== null) {
-                        sum += prevSummaryCell.prev('column', true).value();
-                        prevSummaryCell = prevSummaryCell.prev('column', true);
-                    }
-                    return sum;
-                }
-
-                if (field.dataField === 'startingBalance' && prevSummaryCell !== null) {
-
-                }
-
-                return summaryCell.value() || 0;
-            }
+            calculateSummaryValue: this.calculateSummaryValue()
         },
         {
             caption: 'Date',
@@ -431,17 +168,15 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             caption: 'Projected',
             area: 'column',
             showTotals: false,
-            selector: function (data) {
+            selector: function(data) {
                 const date = new Date(data.date);
                 const current = new Date();
                 let result;
-                // if (date.getMonth() + date.getFullYear() === current.getMonth() + current.getFullYear()) {
                 if (current.getDate() > date.getDate()) {
                     result = 0;
                 } else {
                     result = 1;
                 }
-                // }
                 return result;
             },
             customizeText: function (cellInfo) {
@@ -452,16 +187,6 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             expanded: true,
             allowExpand: false
         },
-        /** @todo implement the week interval in the long future */
-        // {
-        //   caption: 'Date',
-        //   dataField: 'date',
-        //   dataType: 'date',
-        //   area: 'column',
-        //   groupInterval: 'dayOfWeek',
-        //   customizeText: this.getWeekHeaderCustomizer(),
-        //   visible: true
-        // },
         {
             caption: 'Date',
             dataField: 'date',
@@ -472,31 +197,6 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             visible: true
         }
     ];
-    cssClasses: any = {
-        'historical': {
-            'groupClass': 'historicalField',
-            'specificClasses': [
-                'historical',
-                'current',
-                'forecast'
-            ]
-        },
-        'date': {
-            'groupClass': 'dateField',
-            'specificClasses': [
-                'year',
-                'quarter',
-                'month'
-            ]
-        },
-        'projected': {
-            'groupClass': 'dateField',
-            'specificClasses': [
-                'mtd',
-                'projected'
-            ]
-        }
-    };
     cssMarker = ' @css';
 
     constructor(injector: Injector, CashflowService: CashflowService, private _CashflowServiceProxy: CashflowServiceProxy) {
@@ -540,13 +240,6 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
         return {
             fields: this.apiTableFields,
             store: this.cashflowData
-        };
-    }
-
-    getDataSource() {
-        return {
-            fields: this.tableFields,
-            store: this.cashflowService.getOperations()
         };
     }
 
@@ -941,7 +634,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
      * @returns {string}
      */
     getMonthHeaderCustomizer(): any {
-        return function (cellInfo) {
+        return function(cellInfo) {
             return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField month}';
         };
     }
@@ -1125,7 +818,7 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
             }
 
             /** Historical horizontal header columns */
-            /** @todo exclude disabling for current month */
+            /** @todo exclude disabling for current month (in future) */
             if (this.isHistoricalCell(e)) {
                 /** disable collapsing for historical columns */
                 e.cellElement.click(function (event) {
@@ -1256,5 +949,49 @@ export class CashflowTableComponent extends AppComponentBase implements OnInit {
         if (cellObj.cell.isWhiteSpace) {
             this.bindCollapseActionOnWhiteSpaceColumn(cellObj);
         }
+    }
+
+    /**
+     *  recalculates sum of the starting balance (including previous totals)
+     *  and recalculates ending cash positions values (including previous totals)
+     *  @param summaryCell
+     *  @return {number}
+     */
+    calculateSummaryValue() {
+        return summaryCell => {
+            let counter = this.groupbyItems.length;
+            summaryCell.__proto__.prevWithParent = function() {
+                let prev = this.prev(arguments);
+                let currentCell = this;
+                while (counter > 0) {
+                    if (prev === null) {
+                        if (currentCell.parent('column')) {
+                            prev = currentCell.parent('column').prev(arguments);
+                            currentCell = currentCell.parent('column');
+                        }
+                        counter--;
+                    } else {
+                        break;
+                    }
+                }
+                return prev;
+            };
+            let prevWithParent = summaryCell.prevWithParent('column', true);
+            /** if the value is a balance value - then get the prev column grand total for the column and add*/
+            if (summaryCell.field('row') === null  || (summaryCell.field('row') &&
+                    summaryCell.field('row').caption === 'Type' &&
+                    summaryCell.value(summaryCell.field('row')) === 'B')) {
+                if (prevWithParent) {
+                    let currentValue = summaryCell.value() || 0;
+                    let sum = currentValue;
+                    while (prevWithParent !== null) {
+                        sum += prevWithParent.grandTotal('row').value();
+                        prevWithParent = prevWithParent.prevWithParent('column', true);
+                    }
+                    return sum;
+                }
+            }
+            return summaryCell.value() || 0;
+        };
     }
 }
