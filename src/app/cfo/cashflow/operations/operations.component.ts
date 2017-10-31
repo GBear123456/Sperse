@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
@@ -9,6 +9,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 
 export class OperationsComponent extends AppComponentBase implements OnInit {
     toolbarItems: any;
+    @Output() refreshCashflow: EventEmitter<any> = new EventEmitter();
     constructor(injector: Injector) {
         super(injector);
         this.toolbarItems = [{
@@ -71,6 +72,14 @@ export class OperationsComponent extends AppComponentBase implements OnInit {
             location: 'after',
             widget: 'dxButton',
             options: {
+                hint: this.l('Refresh'),
+                icon: 'icon icon-refresh',
+                onClick: this.refresh.bind(this)
+            }
+        }, {
+            location: 'after',
+            widget: 'dxButton',
+            options: {
                 hint: this.l('Download'),
                 iconSrc: 'assets/common/icons/download-icon.svg',
                 onClick: Function()
@@ -113,4 +122,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit {
     ngOnInit() {
     }
 
+    refresh() {
+        this.refreshCashflow.emit(null);
+    }
 }

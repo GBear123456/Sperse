@@ -151,7 +151,7 @@
                     }
 
                     /** More button */
-                    .dx-item:last-child {
+                    .dx-item:nth-child(3) {
                         margin-left: 24px;
                         .dx-button {
                             width: auto;
@@ -172,8 +172,15 @@
                         }
                     }
 
+                    /** Refresh button */
+                    .dx-item:first-child{
+                        .dx-button {
+                            margin-right: 20px;
+                        }
+                    }
+
                     /** Download button */
-                    .dx-item:first-child {
+                    .dx-item:nth-child(2) {
                         .dx-button {
                             border-top-right-radius: 0;
                             border-bottom-right-radius: 0;
@@ -182,7 +189,7 @@
                     }
 
                     /** Print button */
-                    .dx-item:nth-child(2) {
+                    .dx-item:nth-child(3) {
                         margin-right: 24px;
                         .dx-button {
                             border-top-left-radius: 0;
@@ -191,7 +198,7 @@
                     }
 
                     /** Box button */
-                    .dx-item:nth-child(3) {
+                    .dx-item:nth-child(4) {
                         .dx-button {
                             border-top-right-radius: 0;
                             border-bottom-right-radius: 0;
@@ -200,7 +207,7 @@
                     }
 
                     /** Pipeline button */
-                    .dx-item:nth-child(4) {
+                    .dx-item:nth-child(5) {
                         .dx-button {
                             border-radius: 0;
                             border-right: 0;
@@ -218,6 +225,10 @@
 
                 .dx-button {
                     height: 37px;
+                    &.dx-state-focused {
+                        background: inherit;
+                        border-color: #ddd
+                    }
                     .dx-button-content {
                         padding: 8px 15px;
                     }
