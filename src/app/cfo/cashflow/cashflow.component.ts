@@ -7,6 +7,18 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
 
+enum TransactionsTypes {
+    StartedBalance = 'B',
+    Income         = 'I',
+    Expense        = 'E',
+    Reconciliation = 'D'
+}
+
+enum CellTypes {
+    Total       = 'T',
+    GrandTotal  = 'GT'
+}
+
 @Component({
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
@@ -47,7 +59,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit {
           'historicalSelectionFunction': this.getDayHistoricalSelector.bind(this)
         }
     ];
-    leftMenuOrder = ['B', 'I', 'E', 'D'];
+
+    leftMenuOrder = [
+        TransactionsTypes.StartedBalance,
+        TransactionsTypes.Income,
+        TransactionsTypes.Expense,
+        TransactionsTypes.Reconciliation
+    ];
     apiTableFields: any = [
         {
             caption: 'Type',
@@ -393,10 +411,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit {
      * @param date
      * @returns {number}
      */
-    getQuarter(date) {
-        date = date || new Date(); // If no date supplied, use today
-        const quartersArr = [1, 2, 3, 4];
-        return quartersArr[Math.floor(date.getMonth() / 3)];
+    getQuarter(date: Date = new Date()) {
+        return Math.floor(date.getMonth() / 3) + 1;
     }
 
     /**
@@ -483,7 +499,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit {
      * return bool
      */
     isStartingBalanceHeaderColumn(cellObj) {
-        return cellObj.area === 'row' && cellObj.cell.type === 'T' && cellObj.cell.path[0] === 'B';
+        return cellObj.area === 'row' && cellObj.cell.type === CellTypes.Total && cellObj.cell.path[0] === TransactionsTypes.StartedBalance;
     }
 
     /**
@@ -492,7 +508,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit {
      * return {boolean}
      */
     isStartingBalanceDataColumn(cellObj) {
-        return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined && cellObj.cell.rowPath[0] === 'B';
+        return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined &&
+               cellObj.cell.rowPath[0] === TransactionsTypes.StartedBalance;
     }
 
     /**
@@ -501,9 +518,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit {
      * return {boolean}
      */
     isIncomeOrExpensesHeaderCell(cellObj) {
-        return cellObj.area === 'row' && cellObj.cell.type === 'T' &&
+        return cellObj.area === 'row' && cellObj.cell.type === CellTypes.Total &&
                cellObj.cell.path.length === 1 &&
-               (cellObj.cell.path[0] === 'I' || cellObj.cell.path[0] === 'E');
+               (cellObj.cell.path[0] === TransactionsTypes.Income || cellObj.cell.path[0] === TransactionsTypes.Expense);
     }
 
     /**
@@ -515,7 +532,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit {
         return cellObj.area === 'data' &&
                cellObj.cell.rowPath !== undefined &&
                cellObj.cell.rowPath.length === 1 &&
-               (cellObj.cell.rowPath[0] === 'I' || cellObj.cell.rowPath[0] === 'E');
+               (cellObj.cell.rowPath[0] === TransactionsTypes.Income || cellObj.cell.rowPath[0] === TransactionsTypes.Expense);
     }
 
     /**
@@ -524,7 +541,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit {
      * @returns {boolean}
      */
     isGrandTotalLabelCell(cellObj) {
-        return cellObj.cell.type === 'GT';
+        return cellObj.cell.type === CellTypes.GrandTotal;
     }
     /**
      * whether or not the cell is grand total data cell
@@ -532,7 +549,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit {
      * @returns {boolean}
      */
     isGrandTotalDataCell(cellObj) {
-        return cellObj.cell.rowType === 'GT';
+        return cellObj.cell.rowType === CellTypes.GrandTotal;
     }
 
     /**
@@ -580,7 +597,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit {
             (this.isIncomeOrExpensesDataCell(e))) {
             let isDataCell = this.isIncomeOrExpensesDataCell(e);
             let pathProp = isDataCell ? 'rowPath' : 'path';
-            let cssClass = e.cell[pathProp] !== undefined && e.cell[pathProp][0] === 'I' ? 'income' : 'expenses';
+            let cssClass = e.cell[pathProp] !== undefined && e.cell[pathProp][0] === TransactionsTypes.Income ? 'income' : 'expenses';
             e.cellElement.addClass(cssClass);
             e.cellElement.parent().addClass(cssClass + 'Row');
             /** disable collapsing for income and expenses columns */
@@ -760,7 +777,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit {
              *  then get the prev columns grand total for the column and add */
             if (summaryCell.field('row') === null  || (summaryCell.field('row') &&
                     summaryCell.field('row').caption === 'Type' &&
-                    summaryCell.value(summaryCell.field('row')) === 'B')) {
+                    summaryCell.value(summaryCell.field('row')) === TransactionsTypes.StartedBalance)) {
                 if (prevWithParent) {
                     let currentValue = summaryCell.value() || 0;
                     let sum = currentValue;
