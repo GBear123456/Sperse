@@ -933,8 +933,8 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    getBankAccounts(): Observable<BankAccountDto[]> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetBankAccounts";
+    getCashFlowInitialData(): Observable<CashFlowInitialData> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetCashFlowInitialData";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -949,37 +949,33 @@ export class CashflowServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetBankAccounts(response_);
+            return this.processGetCashFlowInitialData(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processGetBankAccounts(response_);
+                    return this.processGetCashFlowInitialData(response_);
                 } catch (e) {
-                    return <Observable<BankAccountDto[]>><any>Observable.throw(e);
+                    return <Observable<CashFlowInitialData>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<BankAccountDto[]>><any>Observable.throw(response_);
+                return <Observable<CashFlowInitialData>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetBankAccounts(response: Response): Observable<BankAccountDto[]> {
+    protected processGetCashFlowInitialData(response: Response): Observable<CashFlowInitialData> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: BankAccountDto[] = null;
+            let result200: CashFlowInitialData = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(BankAccountDto.fromJS(item));
-            }
+            result200 = resultData200 ? CashFlowInitialData.fromJS(resultData200) : new CashFlowInitialData();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<BankAccountDto[]>(<any>null);
+        return Observable.of<CashFlowInitialData>(<any>null);
     }
 
     /**
@@ -11777,9 +11773,6 @@ export interface IStatsFilter {
 
 export class CashFlowStatsDto implements ICashFlowStatsDto {
     transactionStats: TransactionStatsDto[];
-    cashflowTypes: { [key: string] : string; };
-    transactionCategories: { [key: string] : string; };
-    expenseCategories: { [key: string] : string; };
 
     constructor(data?: ICashFlowStatsDto) {
         if (data) {
@@ -11797,27 +11790,6 @@ export class CashFlowStatsDto implements ICashFlowStatsDto {
                 for (let item of data["transactionStats"])
                     this.transactionStats.push(TransactionStatsDto.fromJS(item));
             }
-            if (data["cashflowTypes"]) {
-                this.cashflowTypes = {};
-                for (let key in data["cashflowTypes"]) {
-                    if (data["cashflowTypes"].hasOwnProperty(key))
-                        this.cashflowTypes[key] = data["cashflowTypes"][key];
-                }
-            }
-            if (data["transactionCategories"]) {
-                this.transactionCategories = {};
-                for (let key in data["transactionCategories"]) {
-                    if (data["transactionCategories"].hasOwnProperty(key))
-                        this.transactionCategories[key] = data["transactionCategories"][key];
-                }
-            }
-            if (data["expenseCategories"]) {
-                this.expenseCategories = {};
-                for (let key in data["expenseCategories"]) {
-                    if (data["expenseCategories"].hasOwnProperty(key))
-                        this.expenseCategories[key] = data["expenseCategories"][key];
-                }
-            }
         }
     }
 
@@ -11834,36 +11806,12 @@ export class CashFlowStatsDto implements ICashFlowStatsDto {
             for (let item of this.transactionStats)
                 data["transactionStats"].push(item.toJSON());
         }
-        if (this.cashflowTypes) {
-            data["cashflowTypes"] = {};
-            for (let key in this.cashflowTypes) {
-                if (this.cashflowTypes.hasOwnProperty(key))
-                    data["cashflowTypes"][key] = this.cashflowTypes[key];
-            }
-        }
-        if (this.transactionCategories) {
-            data["transactionCategories"] = {};
-            for (let key in this.transactionCategories) {
-                if (this.transactionCategories.hasOwnProperty(key))
-                    data["transactionCategories"][key] = this.transactionCategories[key];
-            }
-        }
-        if (this.expenseCategories) {
-            data["expenseCategories"] = {};
-            for (let key in this.expenseCategories) {
-                if (this.expenseCategories.hasOwnProperty(key))
-                    data["expenseCategories"][key] = this.expenseCategories[key];
-            }
-        }
         return data; 
     }
 }
 
 export interface ICashFlowStatsDto {
     transactionStats: TransactionStatsDto[];
-    cashflowTypes: { [key: string] : string; };
-    transactionCategories: { [key: string] : string; };
-    expenseCategories: { [key: string] : string; };
 }
 
 export class TransactionStatsDto implements ITransactionStatsDto {
@@ -11931,6 +11879,97 @@ export interface ITransactionStatsDto {
     date: moment.Moment;
     amount: number;
     comment: string;
+}
+
+export class CashFlowInitialData implements ICashFlowInitialData {
+    bankAccounts: BankAccountDto[];
+    cashflowTypes: { [key: string] : string; };
+    transactionCategories: { [key: string] : string; };
+    expenseCategories: { [key: string] : string; };
+
+    constructor(data?: ICashFlowInitialData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
+                this.bankAccounts = [];
+                for (let item of data["bankAccounts"])
+                    this.bankAccounts.push(BankAccountDto.fromJS(item));
+            }
+            if (data["cashflowTypes"]) {
+                this.cashflowTypes = {};
+                for (let key in data["cashflowTypes"]) {
+                    if (data["cashflowTypes"].hasOwnProperty(key))
+                        this.cashflowTypes[key] = data["cashflowTypes"][key];
+                }
+            }
+            if (data["transactionCategories"]) {
+                this.transactionCategories = {};
+                for (let key in data["transactionCategories"]) {
+                    if (data["transactionCategories"].hasOwnProperty(key))
+                        this.transactionCategories[key] = data["transactionCategories"][key];
+                }
+            }
+            if (data["expenseCategories"]) {
+                this.expenseCategories = {};
+                for (let key in data["expenseCategories"]) {
+                    if (data["expenseCategories"].hasOwnProperty(key))
+                        this.expenseCategories[key] = data["expenseCategories"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): CashFlowInitialData {
+        let result = new CashFlowInitialData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.bankAccounts && this.bankAccounts.constructor === Array) {
+            data["bankAccounts"] = [];
+            for (let item of this.bankAccounts)
+                data["bankAccounts"].push(item.toJSON());
+        }
+        if (this.cashflowTypes) {
+            data["cashflowTypes"] = {};
+            for (let key in this.cashflowTypes) {
+                if (this.cashflowTypes.hasOwnProperty(key))
+                    data["cashflowTypes"][key] = this.cashflowTypes[key];
+            }
+        }
+        if (this.transactionCategories) {
+            data["transactionCategories"] = {};
+            for (let key in this.transactionCategories) {
+                if (this.transactionCategories.hasOwnProperty(key))
+                    data["transactionCategories"][key] = this.transactionCategories[key];
+            }
+        }
+        if (this.expenseCategories) {
+            data["expenseCategories"] = {};
+            for (let key in this.expenseCategories) {
+                if (this.expenseCategories.hasOwnProperty(key))
+                    data["expenseCategories"][key] = this.expenseCategories[key];
+            }
+        }
+        return data; 
+    }
+}
+
+export interface ICashFlowInitialData {
+    bankAccounts: BankAccountDto[];
+    cashflowTypes: { [key: string] : string; };
+    transactionCategories: { [key: string] : string; };
+    expenseCategories: { [key: string] : string; };
 }
 
 export class BankAccountDto implements IBankAccountDto {

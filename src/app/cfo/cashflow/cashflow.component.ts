@@ -229,7 +229,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
 
-        this._CashflowServiceProxy.getBankAccounts()
+        this._CashflowServiceProxy.getCashFlowInitialData()
             .subscribe(result => {
                 this._filtersService.setup(
                     this.filters = [
@@ -257,7 +257,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 );
             });
         
-
         this._filtersService.apply(() => {
 
             for (let filter of this.filters) {
