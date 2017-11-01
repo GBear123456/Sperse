@@ -2,7 +2,7 @@ import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild } from
 import { AppConsts } from '@shared/AppConsts';
 import { GroupbyItem } from './models/groupbyItem';
 
-import { CashflowServiceProxy, StatsFilter } from '@shared/service-proxies/service-proxies';
+import { CashflowServiceProxy, StatsFilter, BankAccountDto } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
@@ -10,7 +10,8 @@ import * as _ from 'underscore.string';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
-import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
+import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
+import { DropDownElement } from '@shared/filters/dropdown/dropdown_element';
 
 /** Constants */
 const StartedBalance = 'B',
@@ -207,7 +208,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         'forecast'
     ];
 
-    private filters: FilterModel[];
+    private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
     private requestFilter: StatsFilter;
 
@@ -224,26 +225,49 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
 
-        this._filtersService.setup(
-            this.filters = [
-                <FilterModel>{
-                    component: FilterInputsComponent,
-                    field: 'accountId',
-                    caption: 'Account',
-                    items: { BankAccountNumber: '' }
-                }
-            ]
-        );
-
-        this._filtersService.apply(() => {
-            _.each(this.filters, (val, key) => {
-                this.requestFilter[val.field] = val.value;
+        this._CashflowServiceProxy.getCashFlowInitialData()
+            .subscribe(result => {
+                this._filtersService.setup(
+                    this.filters = [
+                        <FilterModel>{
+                            component: FilterDropDownComponent,
+                            field: 'accountId',
+                            caption: 'Account',
+                            items: {
+                                acc: <DropDownElement>{
+                                    displayName: "Account",
+                                    filterField: "accountId",
+                                    displayElementExp: (item: BankAccountDto) => {
+                                        if (item) {
+                                            return item.accountName + '(' + item.accountNumber + ')'
+                                        }
+                                    },
+                                    elements: result,
+                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
+                                        filter.items["acc"].selectedElement = event.value;
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                );
             });
+        
+        this._filtersService.apply(() => {
+
+            for (let filter of this.filters) {
+                let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
+                this.requestFilter[filter.field] = filterMethod ? filterMethod(filter) : filter.value;
+            }
 
             this.loadGridDataSource();
         });
 
         this.loadGridDataSource();
+    }
+
+    filterByAccount(filter: FilterDropDownComponent) {
+        return filter.items && filter.items.acc && filter.items.acc.selectedElement && filter.items.acc.selectedElement.id;
     }
 
     ngAfterViewInit(): void {

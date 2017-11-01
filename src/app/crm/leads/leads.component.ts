@@ -195,6 +195,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         pipeline: <DropDownElement>{
                             displayName: "Pipeline",
                             elements: result,
+                            displayElementExp: "name",
                             filterField: "pipelineId",
                             onElementSelect: (event, filter: FilterDropDownComponent) => {
                                 filter.items["pipeline"].selectedElement = event.value;
@@ -204,6 +205,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         },
                         stage: <DropDownElement>{
                             displayName: "Stages",
+                            displayElementExp: "name",
                             filterField: "stageId",
                             onElementSelect: (event, filter: FilterDropDownComponent) => {
                                 filter.items["stage"].selectedElement = event.value;

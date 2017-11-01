@@ -1,5 +1,6 @@
-﻿export class DropDownElement {
+export class DropDownElement {
     displayName: string = "test";
+    displayElementExp: any;
     elements: any;
     selectedElement: any;
     filterField: any;
