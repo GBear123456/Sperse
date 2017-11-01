@@ -2,10 +2,14 @@
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
+import { TransactionsServiceProxy, BankAccountDto } from '@shared/service-proxies/service-proxies';
+
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterDatesComponent } from '@shared/filters/dates/filter-dates.component';
+import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
+import { DropDownElement } from '@shared/filters/dropdown/dropdown_element';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -17,7 +21,8 @@ import * as moment from "moment";
 @Component({
     templateUrl: "./transactions.component.html",
     styleUrls: ["./transactions.component.less"],
-    animations: [appModuleAnimation()]
+    animations: [appModuleAnimation()],
+    providers: [ TransactionsServiceProxy ]
 })
 export class TransactionsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -26,7 +31,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     private filters: FilterModel[];
     private rootComponent: any;
 
-    constructor(injector: Injector,
+    constructor(injector: Injector, private _TransactionsServiceProxy: TransactionsServiceProxy,
         private _filtersService: FiltersService) {
         super(injector);
 
@@ -86,78 +91,95 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
 
     ngOnInit(): void {
-        this._filtersService.setup(
-            this.filters = [
-                <FilterModel>{
-                    component: FilterDatesComponent,
-                    operator: { from: "ge", to: "le" },
-                    caption: 'Date',
-                    field: 'Date',
-                    items: { from: '', to: '' }
-                },
-                <FilterModel>{
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'Account',
-                    items: { BankAccountNumber: '' }
-                },
-                <FilterModel>{
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'Description',
-                    items: { Description: '' }
-                },
-                <FilterModel>{
-                    component: FilterInputsComponent,
-                    operator: { from: "ge", to: "le" },
-                    caption: 'Amount',
-                    field: 'Amount',
-                    items: { from: '', to: '' }
-                },
-                <FilterModel>{
-                    component: FilterInputsComponent,
-                    //operator: 'contains',
-                    caption: 'CashflowType',
-                    //items: { CashflowType: '' }
-                },
-                <FilterModel>{
-                    component: FilterInputsComponent,
-                    //operator: 'contains',
-                    caption: 'TransactionCategory',
-                    //items: { TransactionCategory: '' }
-                },
-                <FilterModel>{
-                    component: FilterInputsComponent,
-                    //operator: 'contains',
-                    caption: 'TransactionType',
-                    //items: { TransactionType: '' }
-                },
-                <FilterModel>{
-                    component: FilterInputsComponent,
-                    //operator: 'contains',
-                    caption: 'Currency',
-                    //items: { Currency: '' }
-                },
-                <FilterModel>{
-                    component: FilterInputsComponent,
-                    //operator: 'contains',
-                    caption: 'BusinessEntity',
-                    //items: { BusinessEntity: '' }
-                },
-                <FilterModel>{
-                    component: FilterInputsComponent,
-                    //operator: 'contains',
-                    caption: 'CheckNumber',
-                    //items: { BusinessEntity: '' }
-                },
-                <FilterModel>{
-                    component: FilterInputsComponent,
-                    //operator: 'contains',
-                    caption: 'Reference',
-                    //items: { BusinessEntity: '' }
-                }
-            ]
-        );
+        this._TransactionsServiceProxy.getFiltersInitialData()
+            .subscribe(result => {
+                this._filtersService.setup(
+                    this.filters = [
+                        <FilterModel>{
+                            component: FilterDatesComponent,
+                            operator: { from: "ge", to: "le" },
+                            caption: 'Date',
+                            field: 'Date',
+                            items: { from: '', to: '' }
+                        },
+                        <FilterModel>{
+                            component: FilterDropDownComponent,
+                            field: 'accountId',
+                            caption: 'Account',
+                            items: {
+                                bankAccount: <DropDownElement>{
+                                    displayName: "Account",
+                                    filterField: "BankAccountId",
+                                    displayElementExp: (item: BankAccountDto) => {
+                                        if (item) {
+                                            return item.accountName + '(' + item.accountNumber + ')'
+                                        }
+                                    },
+                                    elements: result.bankAccounts,
+                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
+                                        filter.items["bankAccount"].selectedElement = event.value;
+                                    }
+                                }
+                            }
+                        },
+                        <FilterModel>{
+                            component: FilterInputsComponent,
+                            operator: 'contains',
+                            caption: 'Description',
+                            items: { Description: '' }
+                        },
+                        <FilterModel>{
+                            component: FilterInputsComponent,
+                            operator: { from: "ge", to: "le" },
+                            caption: 'Amount',
+                            field: 'Amount',
+                            items: { from: '', to: '' }
+                        },
+                        <FilterModel>{
+                            component: FilterInputsComponent,
+                            //operator: 'contains',
+                            caption: 'CashflowType',
+                            //items: { CashflowType: '' }
+                        },
+                        <FilterModel>{
+                            component: FilterInputsComponent,
+                            //operator: 'contains',
+                            caption: 'TransactionCategory',
+                            //items: { TransactionCategory: '' }
+                        },
+                        <FilterModel>{
+                            component: FilterInputsComponent,
+                            //operator: 'contains',
+                            caption: 'TransactionType',
+                            //items: { TransactionType: '' }
+                        },
+                        <FilterModel>{
+                            component: FilterInputsComponent,
+                            //operator: 'contains',
+                            caption: 'Currency',
+                            //items: { Currency: '' }
+                        },
+                        <FilterModel>{
+                            component: FilterInputsComponent,
+                            //operator: 'contains',
+                            caption: 'BusinessEntity',
+                            //items: { BusinessEntity: '' }
+                        },
+                        <FilterModel>{
+                            component: FilterInputsComponent,
+                            //operator: 'contains',
+                            caption: 'CheckNumber',
+                            //items: { BusinessEntity: '' }
+                        },
+                        <FilterModel>{
+                            component: FilterInputsComponent,
+                            //operator: 'contains',
+                            caption: 'Reference',
+                            //items: { BusinessEntity: '' }
+                        }
+                    ]
+                );
+            });
 
         this._filtersService.apply(() => {
             this.processODataFilter(this.dataGrid.instance,
@@ -188,7 +210,16 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
 
         return data;
     }
-    
+
+    filterByAccount(filter) {
+        let data = {};
+        data[filter.field] = {};
+        _.each(filter.items, (val: DropDownElement, key) => {
+            val && val.filterField && val.selectedElement && (data[this.capitalize(val.filterField)] = val.selectedElement.id);
+        });
+        return data;
+    }
+
     filterByAmount(filter) {
         let data = {};
         data[filter.field] = {};

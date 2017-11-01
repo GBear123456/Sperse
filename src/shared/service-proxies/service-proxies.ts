@@ -1022,6 +1022,72 @@ export class CashflowServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getStatsDetails(cashFlowTypeId: string, transactionCategoryId: string, expenseCategoryId: string, startDate: moment.Moment, endDate: moment.Moment, currencyId: string, accountId: number): Observable<CashFlowStatsDetailDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStatsDetails?";
+        if (cashFlowTypeId !== undefined)
+            url_ += "CashFlowTypeId=" + encodeURIComponent("" + cashFlowTypeId) + "&"; 
+        if (transactionCategoryId !== undefined)
+            url_ += "TransactionCategoryId=" + encodeURIComponent("" + transactionCategoryId) + "&"; 
+        if (expenseCategoryId !== undefined)
+            url_ += "ExpenseCategoryId=" + encodeURIComponent("" + expenseCategoryId) + "&"; 
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
+        if (currencyId !== undefined)
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
+        if (accountId !== undefined)
+            url_ += "AccountId=" + encodeURIComponent("" + accountId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetStatsDetails(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetStatsDetails(response_);
+                } catch (e) {
+                    return <Observable<CashFlowStatsDetailDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CashFlowStatsDetailDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetStatsDetails(response: Response): Observable<CashFlowStatsDetailDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CashFlowStatsDetailDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CashFlowStatsDetailDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CashFlowStatsDetailDto[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -6812,6 +6878,63 @@ export class ProfileServiceProxy {
 }
 
 @Injectable()
+export class QuovoWebhookServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    get(input: QuovoWebhookInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/QuovoWebhook/Get";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGet(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGet(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGet(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class RoleServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -9991,6 +10114,66 @@ export class TokenAuthServiceProxy {
 }
 
 @Injectable()
+export class TransactionsServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getFiltersInitialData(): Observable<FiltersInitialData> {
+        let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetFiltersInitialData(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetFiltersInitialData(response_);
+                } catch (e) {
+                    return <Observable<FiltersInitialData>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<FiltersInitialData>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetFiltersInitialData(response: Response): Observable<FiltersInitialData> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: FiltersInitialData = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? FiltersInitialData.fromJS(resultData200) : new FiltersInitialData();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<FiltersInitialData>(<any>null);
+    }
+}
+
+@Injectable()
 export class UserServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -12060,6 +12243,65 @@ export interface IRecalculateCategoriesInput {
     startDate: moment.Moment;
     endDate: moment.Moment;
     cashflowCategoryId: number;
+}
+
+export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
+    id: number;
+    date: moment.Moment;
+    currencyId: string;
+    credit: number;
+    debit: number;
+    description: string;
+    comment: string;
+
+    constructor(data?: ICashFlowStatsDetailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.currencyId = data["currencyId"];
+            this.credit = data["credit"];
+            this.debit = data["debit"];
+            this.description = data["description"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): CashFlowStatsDetailDto {
+        let result = new CashFlowStatsDetailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["currencyId"] = this.currencyId;
+        data["credit"] = this.credit;
+        data["debit"] = this.debit;
+        data["description"] = this.description;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface ICashFlowStatsDetailDto {
+    id: number;
+    date: moment.Moment;
+    currencyId: string;
+    credit: number;
+    debit: number;
+    description: string;
+    comment: string;
 }
 
 export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
@@ -21848,6 +22090,293 @@ export interface IChangeUserLanguageDto {
     languageName: string;
 }
 
+export class QuovoWebhookInput implements IQuovoWebhookInput {
+    action: QuovoWebhookInputAction;
+    event: QuovoWebhookInputEvent;
+    account: QAccount;
+    sync: QSyncAccount;
+    user: User;
+
+    constructor(data?: IQuovoWebhookInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.action = data["action"];
+            this.event = data["event"];
+            this.account = data["account"] ? QAccount.fromJS(data["account"]) : <any>undefined;
+            this.sync = data["sync"] ? QSyncAccount.fromJS(data["sync"]) : <any>undefined;
+            this.user = data["user"] ? User.fromJS(data["user"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): QuovoWebhookInput {
+        let result = new QuovoWebhookInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["action"] = this.action;
+        data["event"] = this.event;
+        data["account"] = this.account ? this.account.toJSON() : <any>undefined;
+        data["sync"] = this.sync ? this.sync.toJSON() : <any>undefined;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IQuovoWebhookInput {
+    action: QuovoWebhookInputAction;
+    event: QuovoWebhookInputEvent;
+    account: QAccount;
+    sync: QSyncAccount;
+    user: User;
+}
+
+export class QAccount implements IQAccount {
+    brokerage: number;
+    brokerage_name: string;
+    config_instructions: string;
+    failures: number;
+    id: number;
+    is_inactive: boolean;
+    last_good_sync: moment.Moment;
+    nickname: string;
+    opened: moment.Moment;
+    status: string;
+    update_count: number;
+    updated: moment.Moment;
+    user: number;
+    username: string;
+    value: number;
+
+    constructor(data?: IQAccount) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.brokerage = data["brokerage"];
+            this.brokerage_name = data["brokerage_name"];
+            this.config_instructions = data["config_instructions"];
+            this.failures = data["failures"];
+            this.id = data["id"];
+            this.is_inactive = data["is_inactive"];
+            this.last_good_sync = data["last_good_sync"] ? moment(data["last_good_sync"].toString()) : <any>undefined;
+            this.nickname = data["nickname"];
+            this.opened = data["opened"] ? moment(data["opened"].toString()) : <any>undefined;
+            this.status = data["status"];
+            this.update_count = data["update_count"];
+            this.updated = data["updated"] ? moment(data["updated"].toString()) : <any>undefined;
+            this.user = data["user"];
+            this.username = data["username"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): QAccount {
+        let result = new QAccount();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["brokerage"] = this.brokerage;
+        data["brokerage_name"] = this.brokerage_name;
+        data["config_instructions"] = this.config_instructions;
+        data["failures"] = this.failures;
+        data["id"] = this.id;
+        data["is_inactive"] = this.is_inactive;
+        data["last_good_sync"] = this.last_good_sync ? this.last_good_sync.toISOString() : <any>undefined;
+        data["nickname"] = this.nickname;
+        data["opened"] = this.opened ? this.opened.toISOString() : <any>undefined;
+        data["status"] = this.status;
+        data["update_count"] = this.update_count;
+        data["updated"] = this.updated ? this.updated.toISOString() : <any>undefined;
+        data["user"] = this.user;
+        data["username"] = this.username;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface IQAccount {
+    brokerage: number;
+    brokerage_name: string;
+    config_instructions: string;
+    failures: number;
+    id: number;
+    is_inactive: boolean;
+    last_good_sync: moment.Moment;
+    nickname: string;
+    opened: moment.Moment;
+    status: string;
+    update_count: number;
+    updated: moment.Moment;
+    user: number;
+    username: string;
+    value: number;
+}
+
+export class QSyncAccount implements IQSyncAccount {
+    account: number;
+    has_realtime: boolean;
+    progress: SyncProgress;
+    status: string;
+
+    constructor(data?: IQSyncAccount) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.account = data["account"];
+            this.has_realtime = data["has_realtime"];
+            this.progress = data["progress"] ? SyncProgress.fromJS(data["progress"]) : <any>undefined;
+            this.status = data["status"];
+        }
+    }
+
+    static fromJS(data: any): QSyncAccount {
+        let result = new QSyncAccount();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["account"] = this.account;
+        data["has_realtime"] = this.has_realtime;
+        data["progress"] = this.progress ? this.progress.toJSON() : <any>undefined;
+        data["status"] = this.status;
+        return data; 
+    }
+}
+
+export interface IQSyncAccount {
+    account: number;
+    has_realtime: boolean;
+    progress: SyncProgress;
+    status: string;
+}
+
+export class User implements IUser {
+    id: number;
+    username: string;
+    name: string;
+    value: number;
+    phone: string;
+    email: string;
+
+    constructor(data?: IUser) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.username = data["username"];
+            this.name = data["name"];
+            this.value = data["value"];
+            this.phone = data["phone"];
+            this.email = data["email"];
+        }
+    }
+
+    static fromJS(data: any): User {
+        let result = new User();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["username"] = this.username;
+        data["name"] = this.name;
+        data["value"] = this.value;
+        data["phone"] = this.phone;
+        data["email"] = this.email;
+        return data; 
+    }
+}
+
+export interface IUser {
+    id: number;
+    username: string;
+    name: string;
+    value: number;
+    phone: string;
+    email: string;
+}
+
+export class SyncProgress implements ISyncProgress {
+    message: string;
+    percent: number;
+    state: string;
+
+    constructor(data?: ISyncProgress) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.message = data["message"];
+            this.percent = data["percent"];
+            this.state = data["state"];
+        }
+    }
+
+    static fromJS(data: any): SyncProgress {
+        let result = new SyncProgress();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["message"] = this.message;
+        data["percent"] = this.percent;
+        data["state"] = this.state;
+        return data; 
+    }
+}
+
+export interface ISyncProgress {
+    message: string;
+    percent: number;
+    state: string;
+}
+
 export class ListResultDtoOfRoleListDto implements IListResultDtoOfRoleListDto {
     items: RoleListDto[];
 
@@ -25389,6 +25918,49 @@ export interface IExternalAuthenticateResultModel {
     returnUrl: string;
 }
 
+export class FiltersInitialData implements IFiltersInitialData {
+    bankAccounts: BankAccountDto[];
+
+    constructor(data?: IFiltersInitialData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
+                this.bankAccounts = [];
+                for (let item of data["bankAccounts"])
+                    this.bankAccounts.push(BankAccountDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): FiltersInitialData {
+        let result = new FiltersInitialData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.bankAccounts && this.bankAccounts.constructor === Array) {
+            data["bankAccounts"] = [];
+            for (let item of this.bankAccounts)
+                data["bankAccounts"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IFiltersInitialData {
+    bankAccounts: BankAccountDto[];
+}
+
 export class PagedResultDtoOfUserListDto implements IPagedResultDtoOfUserListDto {
     totalCount: number;
     items: UserListDto[];
@@ -26516,6 +27088,22 @@ export enum ExecutePaymentDtoEditionPaymentType {
 export enum ExecutePaymentDtoPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum QuovoWebhookInputAction {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+    _5 = 5, 
+}
+
+export enum QuovoWebhookInputEvent {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
 }
 
 export enum TenantLoginInfoDtoPaymentPeriodType {
