@@ -49,7 +49,7 @@
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <img
                                 [src]="data.data.Photo ? 'data:image/jpeg;base64,' + data.data.Photo : 'assets/common/images/no-photo.png'"
-                                alt="Person Photo"
+                                alt="{{l('AltPersonPhoto')}}"
                                 width="38"
                                 class="img-circle"/>
                         </div>
