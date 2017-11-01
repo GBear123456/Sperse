@@ -885,21 +885,15 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    getStats(startDate: moment.Moment, endDate: moment.Moment, currencyId: string): Observable<CashFlowStatsDto> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStats?";
-        if (startDate !== undefined)
-            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
-        if (endDate !== undefined)
-            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
-        if (currencyId !== undefined)
-            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
+    getStats(filter: StatsFilter): Observable<CashFlowStatsDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStats";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = "";
+        const content_ = JSON.stringify(filter ? filter.toJSON() : null);
         
         let options_ = {
             body: content_,
-            method: "get",
+            method: "post",
             headers: new Headers({
                 "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
@@ -1563,6 +1557,56 @@ export class ContactBusinessServiceProxy {
     /**
      * @return Success
      */
+    getContactBusiness(personId: number): Observable<GetContactBusinessOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactBusiness/GetContactBusiness?";
+        if (personId !== undefined)
+            url_ += "PersonId=" + encodeURIComponent("" + personId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetContactBusiness(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetContactBusiness(response_);
+                } catch (e) {
+                    return <Observable<GetContactBusinessOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetContactBusinessOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetContactBusiness(response: Response): Observable<GetContactBusinessOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: GetContactBusinessOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetContactBusinessOutput.fromJS(resultData200) : new GetContactBusinessOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<GetContactBusinessOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     createContactBusiness(input: CreateContactBusinessInput): Observable<CreateContactBusinessOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactBusiness/CreateContactBusiness";
         url_ = url_.replace(/[?&]$/, "");
@@ -1900,6 +1944,208 @@ export class ContactEmailServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<ListResultDtoOfEmailUsageTypeDto>(<any>null);
+    }
+}
+
+@Injectable()
+export class ContactEmploymentServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    get(personId: number): Observable<GetContactEmploymentOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactEmployment/Get?";
+        if (personId !== undefined)
+            url_ += "PersonId=" + encodeURIComponent("" + personId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGet(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGet(response_);
+                } catch (e) {
+                    return <Observable<GetContactEmploymentOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetContactEmploymentOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGet(response: Response): Observable<GetContactEmploymentOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: GetContactEmploymentOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetContactEmploymentOutput.fromJS(resultData200) : new GetContactEmploymentOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<GetContactEmploymentOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    create(input: CreateContactEmploymentInput): Observable<CreateContactEmploymentOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactEmployment/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreate(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreate(response_);
+                } catch (e) {
+                    return <Observable<CreateContactEmploymentOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateContactEmploymentOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreate(response: Response): Observable<CreateContactEmploymentOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CreateContactEmploymentOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateContactEmploymentOutput.fromJS(resultData200) : new CreateContactEmploymentOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CreateContactEmploymentOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    update(input: UpdateContactEmploymentInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactEmployment/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdate(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdate(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdate(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    delete(id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactEmployment/Delete?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDelete(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDelete(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDelete(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
     }
 }
 
@@ -3342,54 +3588,6 @@ export class FinancialInformationServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<GetSetupAccountsLinkOutput>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getSyncUser(): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncUser";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetSyncUser(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetSyncUser(response_);
-                } catch (e) {
-                    return <Observable<number>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<number>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetSyncUser(response: Response): Observable<number> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: number = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<number>(<any>null);
     }
 
     /**
@@ -11478,6 +11676,53 @@ export interface IEntityDtoOfString {
     id: string;
 }
 
+export class StatsFilter implements IStatsFilter {
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    currencyId: string;
+    accountId: number;
+
+    constructor(data?: IStatsFilter) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.currencyId = data["currencyId"];
+            this.accountId = data["accountId"];
+        }
+    }
+
+    static fromJS(data: any): StatsFilter {
+        let result = new StatsFilter();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["currencyId"] = this.currencyId;
+        data["accountId"] = this.accountId;
+        return data; 
+    }
+}
+
+export interface IStatsFilter {
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    currencyId: string;
+    accountId: number;
+}
+
 export class CashFlowStatsDto implements ICashFlowStatsDto {
     transactionStats: TransactionStatsDto[];
     cashflowTypes: { [key: string] : string; };
@@ -12561,8 +12806,154 @@ export interface IAddressOwnershipTypeDto {
     name: string;
 }
 
+export class GetContactBusinessOutput implements IGetContactBusinessOutput {
+    contactBusinessInfo: ContactBusinessInfo;
+
+    constructor(data?: IGetContactBusinessOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactBusinessInfo = data["contactBusinessInfo"] ? ContactBusinessInfo.fromJS(data["contactBusinessInfo"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetContactBusinessOutput {
+        let result = new GetContactBusinessOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactBusinessInfo"] = this.contactBusinessInfo ? this.contactBusinessInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetContactBusinessOutput {
+    contactBusinessInfo: ContactBusinessInfo;
+}
+
+export class ContactBusinessInfo implements IContactBusinessInfo {
+    id: number;
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    mobilePhoneNumber: string;
+    orgName: string;
+    orgEntityType: string;
+    orgEin: string;
+    orgFormedCountryId: string;
+    orgFormedStateId: string;
+    orgFormedDate: moment.Moment;
+    annualRevenue: number;
+    acceptCc: boolean;
+    annualVolumesOnCards: number;
+    productServicesSold: number;
+    businessSicCode: number;
+
+    constructor(data?: IContactBusinessInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.city = data["city"];
+            this.streetAddress = data["streetAddress"];
+            this.zip = data["zip"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.mobilePhoneNumber = data["mobilePhoneNumber"];
+            this.orgName = data["orgName"];
+            this.orgEntityType = data["orgEntityType"];
+            this.orgEin = data["orgEin"];
+            this.orgFormedCountryId = data["orgFormedCountryId"];
+            this.orgFormedStateId = data["orgFormedStateId"];
+            this.orgFormedDate = data["orgFormedDate"] ? moment(data["orgFormedDate"].toString()) : <any>undefined;
+            this.annualRevenue = data["annualRevenue"];
+            this.acceptCc = data["acceptCc"];
+            this.annualVolumesOnCards = data["annualVolumesOnCards"];
+            this.productServicesSold = data["productServicesSold"];
+            this.businessSicCode = data["businessSicCode"];
+        }
+    }
+
+    static fromJS(data: any): ContactBusinessInfo {
+        let result = new ContactBusinessInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["city"] = this.city;
+        data["streetAddress"] = this.streetAddress;
+        data["zip"] = this.zip;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["mobilePhoneNumber"] = this.mobilePhoneNumber;
+        data["orgName"] = this.orgName;
+        data["orgEntityType"] = this.orgEntityType;
+        data["orgEin"] = this.orgEin;
+        data["orgFormedCountryId"] = this.orgFormedCountryId;
+        data["orgFormedStateId"] = this.orgFormedStateId;
+        data["orgFormedDate"] = this.orgFormedDate ? this.orgFormedDate.toISOString() : <any>undefined;
+        data["annualRevenue"] = this.annualRevenue;
+        data["acceptCc"] = this.acceptCc;
+        data["annualVolumesOnCards"] = this.annualVolumesOnCards;
+        data["productServicesSold"] = this.productServicesSold;
+        data["businessSicCode"] = this.businessSicCode;
+        return data; 
+    }
+}
+
+export interface IContactBusinessInfo {
+    id: number;
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    mobilePhoneNumber: string;
+    orgName: string;
+    orgEntityType: string;
+    orgEin: string;
+    orgFormedCountryId: string;
+    orgFormedStateId: string;
+    orgFormedDate: moment.Moment;
+    annualRevenue: number;
+    acceptCc: boolean;
+    annualVolumesOnCards: number;
+    productServicesSold: number;
+    businessSicCode: number;
+}
+
 export class CreateContactBusinessInput implements ICreateContactBusinessInput {
-    contactBusinessInfo: ContactBusinessInfo = new ContactBusinessInfo();
+    contactBusinessCreateInfo: ContactBusinessCreateInfo = new ContactBusinessCreateInfo();
 
     constructor(data?: ICreateContactBusinessInput) {
         if (data) {
@@ -12575,7 +12966,7 @@ export class CreateContactBusinessInput implements ICreateContactBusinessInput {
 
     init(data?: any) {
         if (data) {
-            this.contactBusinessInfo = data["contactBusinessInfo"] ? ContactBusinessInfo.fromJS(data["contactBusinessInfo"]) : new ContactBusinessInfo();
+            this.contactBusinessCreateInfo = data["contactBusinessCreateInfo"] ? ContactBusinessCreateInfo.fromJS(data["contactBusinessCreateInfo"]) : new ContactBusinessCreateInfo();
         }
     }
 
@@ -12587,16 +12978,16 @@ export class CreateContactBusinessInput implements ICreateContactBusinessInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["contactBusinessInfo"] = this.contactBusinessInfo ? this.contactBusinessInfo.toJSON() : <any>undefined;
+        data["contactBusinessCreateInfo"] = this.contactBusinessCreateInfo ? this.contactBusinessCreateInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface ICreateContactBusinessInput {
-    contactBusinessInfo: ContactBusinessInfo;
+    contactBusinessCreateInfo: ContactBusinessCreateInfo;
 }
 
-export class ContactBusinessInfo implements IContactBusinessInfo {
+export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
     personId: number;
     relationTypeId: string;
     countryId: string;
@@ -12619,7 +13010,7 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
     productServicesSold: number;
     businessSicCode: number;
 
-    constructor(data?: IContactBusinessInfo) {
+    constructor(data?: IContactBusinessCreateInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12654,8 +13045,8 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
         }
     }
 
-    static fromJS(data: any): ContactBusinessInfo {
-        let result = new ContactBusinessInfo();
+    static fromJS(data: any): ContactBusinessCreateInfo {
+        let result = new ContactBusinessCreateInfo();
         result.init(data);
         return result;
     }
@@ -12687,7 +13078,7 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
     }
 }
 
-export interface IContactBusinessInfo {
+export interface IContactBusinessCreateInfo {
     personId: number;
     relationTypeId: string;
     countryId: string;
@@ -13121,6 +13512,431 @@ export class EmailUsageTypeDto implements IEmailUsageTypeDto {
 export interface IEmailUsageTypeDto {
     id: string;
     name: string;
+}
+
+export class GetContactEmploymentOutput implements IGetContactEmploymentOutput {
+    contactEmploymentInfo: ContactEmploymentInfo;
+
+    constructor(data?: IGetContactEmploymentOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactEmploymentInfo = data["contactEmploymentInfo"] ? ContactEmploymentInfo.fromJS(data["contactEmploymentInfo"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetContactEmploymentOutput {
+        let result = new GetContactEmploymentOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactEmploymentInfo"] = this.contactEmploymentInfo ? this.contactEmploymentInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetContactEmploymentOutput {
+    contactEmploymentInfo: ContactEmploymentInfo;
+}
+
+export class ContactEmploymentInfo implements IContactEmploymentInfo {
+    id: number;
+    companyName: string;
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    mobilePhoneNumber: string;
+    jobTitle: string;
+    supervisorName: string;
+    seniorManager: string;
+    workEmail: string;
+    websiteUrl: string;
+    monthlyIncome: number;
+
+    constructor(data?: IContactEmploymentInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.companyName = data["companyName"];
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.city = data["city"];
+            this.streetAddress = data["streetAddress"];
+            this.zip = data["zip"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.mobilePhoneNumber = data["mobilePhoneNumber"];
+            this.jobTitle = data["jobTitle"];
+            this.supervisorName = data["supervisorName"];
+            this.seniorManager = data["seniorManager"];
+            this.workEmail = data["workEmail"];
+            this.websiteUrl = data["websiteUrl"];
+            this.monthlyIncome = data["monthlyIncome"];
+        }
+    }
+
+    static fromJS(data: any): ContactEmploymentInfo {
+        let result = new ContactEmploymentInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["companyName"] = this.companyName;
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["city"] = this.city;
+        data["streetAddress"] = this.streetAddress;
+        data["zip"] = this.zip;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["mobilePhoneNumber"] = this.mobilePhoneNumber;
+        data["jobTitle"] = this.jobTitle;
+        data["supervisorName"] = this.supervisorName;
+        data["seniorManager"] = this.seniorManager;
+        data["workEmail"] = this.workEmail;
+        data["websiteUrl"] = this.websiteUrl;
+        data["monthlyIncome"] = this.monthlyIncome;
+        return data; 
+    }
+}
+
+export interface IContactEmploymentInfo {
+    id: number;
+    companyName: string;
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    mobilePhoneNumber: string;
+    jobTitle: string;
+    supervisorName: string;
+    seniorManager: string;
+    workEmail: string;
+    websiteUrl: string;
+    monthlyIncome: number;
+}
+
+export class CreateContactEmploymentInput implements ICreateContactEmploymentInput {
+    contactEmploymentCreateInfo: ContactEmploymentCreateInfo = new ContactEmploymentCreateInfo();
+
+    constructor(data?: ICreateContactEmploymentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactEmploymentCreateInfo = data["contactEmploymentCreateInfo"] ? ContactEmploymentCreateInfo.fromJS(data["contactEmploymentCreateInfo"]) : new ContactEmploymentCreateInfo();
+        }
+    }
+
+    static fromJS(data: any): CreateContactEmploymentInput {
+        let result = new CreateContactEmploymentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactEmploymentCreateInfo"] = this.contactEmploymentCreateInfo ? this.contactEmploymentCreateInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ICreateContactEmploymentInput {
+    contactEmploymentCreateInfo: ContactEmploymentCreateInfo;
+}
+
+export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo {
+    personId: number;
+    companyName: string;
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    mobilePhoneNumber: string;
+    jobTitle: string;
+    supervisorName: string;
+    seniorManager: string;
+    workEmail: string;
+    websiteUrl: string;
+    monthlyIncome: number;
+
+    constructor(data?: IContactEmploymentCreateInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.personId = data["personId"];
+            this.companyName = data["companyName"];
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.city = data["city"];
+            this.streetAddress = data["streetAddress"];
+            this.zip = data["zip"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.mobilePhoneNumber = data["mobilePhoneNumber"];
+            this.jobTitle = data["jobTitle"];
+            this.supervisorName = data["supervisorName"];
+            this.seniorManager = data["seniorManager"];
+            this.workEmail = data["workEmail"];
+            this.websiteUrl = data["websiteUrl"];
+            this.monthlyIncome = data["monthlyIncome"];
+        }
+    }
+
+    static fromJS(data: any): ContactEmploymentCreateInfo {
+        let result = new ContactEmploymentCreateInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["personId"] = this.personId;
+        data["companyName"] = this.companyName;
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["city"] = this.city;
+        data["streetAddress"] = this.streetAddress;
+        data["zip"] = this.zip;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["mobilePhoneNumber"] = this.mobilePhoneNumber;
+        data["jobTitle"] = this.jobTitle;
+        data["supervisorName"] = this.supervisorName;
+        data["seniorManager"] = this.seniorManager;
+        data["workEmail"] = this.workEmail;
+        data["websiteUrl"] = this.websiteUrl;
+        data["monthlyIncome"] = this.monthlyIncome;
+        return data; 
+    }
+}
+
+export interface IContactEmploymentCreateInfo {
+    personId: number;
+    companyName: string;
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    mobilePhoneNumber: string;
+    jobTitle: string;
+    supervisorName: string;
+    seniorManager: string;
+    workEmail: string;
+    websiteUrl: string;
+    monthlyIncome: number;
+}
+
+export class CreateContactEmploymentOutput implements ICreateContactEmploymentOutput {
+    id: number;
+
+    constructor(data?: ICreateContactEmploymentOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactEmploymentOutput {
+        let result = new CreateContactEmploymentOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateContactEmploymentOutput {
+    id: number;
+}
+
+export class UpdateContactEmploymentInput implements IUpdateContactEmploymentInput {
+    id: number;
+    contactEmploymentEditInfo: ContactEmploymentEditInfo = new ContactEmploymentEditInfo();
+
+    constructor(data?: IUpdateContactEmploymentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.contactEmploymentEditInfo = data["contactEmploymentEditInfo"] ? ContactEmploymentEditInfo.fromJS(data["contactEmploymentEditInfo"]) : new ContactEmploymentEditInfo();
+        }
+    }
+
+    static fromJS(data: any): UpdateContactEmploymentInput {
+        let result = new UpdateContactEmploymentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["contactEmploymentEditInfo"] = this.contactEmploymentEditInfo ? this.contactEmploymentEditInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IUpdateContactEmploymentInput {
+    id: number;
+    contactEmploymentEditInfo: ContactEmploymentEditInfo;
+}
+
+export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
+    companyName: string;
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    mobilePhoneNumber: string;
+    jobTitle: string;
+    supervisorName: string;
+    seniorManager: string;
+    workEmail: string;
+    websiteUrl: string;
+    monthlyIncome: number;
+
+    constructor(data?: IContactEmploymentEditInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.companyName = data["companyName"];
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.city = data["city"];
+            this.streetAddress = data["streetAddress"];
+            this.zip = data["zip"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.mobilePhoneNumber = data["mobilePhoneNumber"];
+            this.jobTitle = data["jobTitle"];
+            this.supervisorName = data["supervisorName"];
+            this.seniorManager = data["seniorManager"];
+            this.workEmail = data["workEmail"];
+            this.websiteUrl = data["websiteUrl"];
+            this.monthlyIncome = data["monthlyIncome"];
+        }
+    }
+
+    static fromJS(data: any): ContactEmploymentEditInfo {
+        let result = new ContactEmploymentEditInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["companyName"] = this.companyName;
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["city"] = this.city;
+        data["streetAddress"] = this.streetAddress;
+        data["zip"] = this.zip;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["mobilePhoneNumber"] = this.mobilePhoneNumber;
+        data["jobTitle"] = this.jobTitle;
+        data["supervisorName"] = this.supervisorName;
+        data["seniorManager"] = this.seniorManager;
+        data["workEmail"] = this.workEmail;
+        data["websiteUrl"] = this.websiteUrl;
+        data["monthlyIncome"] = this.monthlyIncome;
+        return data; 
+    }
+}
+
+export interface IContactEmploymentEditInfo {
+    companyName: string;
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    mobilePhoneNumber: string;
+    jobTitle: string;
+    supervisorName: string;
+    seniorManager: string;
+    workEmail: string;
+    websiteUrl: string;
+    monthlyIncome: number;
 }
 
 export class CreateContactLinkInput implements ICreateContactLinkInput {
