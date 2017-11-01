@@ -933,6 +933,58 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
+    getBankAccounts(): Observable<BankAccountDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetBankAccounts";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetBankAccounts(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetBankAccounts(response_);
+                } catch (e) {
+                    return <Observable<BankAccountDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<BankAccountDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetBankAccounts(response: Response): Observable<BankAccountDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: BankAccountDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(BankAccountDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<BankAccountDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     recalculateCategories(input: RecalculateCategoriesInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/RecalculateCategories";
         url_ = url_.replace(/[?&]$/, "");
@@ -11819,6 +11871,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
     cashflowTypeId: string;
     transactionCategoryId: string;
     expenseCategoryId: string;
+    accountId: number;
     currencyId: string;
     date: moment.Moment;
     amount: number;
@@ -11839,6 +11892,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
             this.cashflowTypeId = data["cashflowTypeId"];
             this.transactionCategoryId = data["transactionCategoryId"];
             this.expenseCategoryId = data["expenseCategoryId"];
+            this.accountId = data["accountId"];
             this.currencyId = data["currencyId"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.amount = data["amount"];
@@ -11858,6 +11912,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data["cashflowTypeId"] = this.cashflowTypeId;
         data["transactionCategoryId"] = this.transactionCategoryId;
         data["expenseCategoryId"] = this.expenseCategoryId;
+        data["accountId"] = this.accountId;
         data["currencyId"] = this.currencyId;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["amount"] = this.amount;
@@ -11871,10 +11926,58 @@ export interface ITransactionStatsDto {
     cashflowTypeId: string;
     transactionCategoryId: string;
     expenseCategoryId: string;
+    accountId: number;
     currencyId: string;
     date: moment.Moment;
     amount: number;
     comment: string;
+}
+
+export class BankAccountDto implements IBankAccountDto {
+    id: number;
+    accountName: string;
+    accountNumber: string;
+    isActive: boolean;
+
+    constructor(data?: IBankAccountDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.accountName = data["accountName"];
+            this.accountNumber = data["accountNumber"];
+            this.isActive = data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): BankAccountDto {
+        let result = new BankAccountDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["accountName"] = this.accountName;
+        data["accountNumber"] = this.accountNumber;
+        data["isActive"] = this.isActive;
+        return data; 
+    }
+}
+
+export interface IBankAccountDto {
+    id: number;
+    accountName: string;
+    accountNumber: string;
+    isActive: boolean;
 }
 
 export class RecalculateCategoriesInput implements IRecalculateCategoriesInput {
@@ -12808,6 +12911,7 @@ export interface IAddressOwnershipTypeDto {
 
 export class GetContactBusinessOutput implements IGetContactBusinessOutput {
     contactBusinessInfo: ContactBusinessInfo;
+    organizationBusinessInfo: OrganizationBusinessInfo;
 
     constructor(data?: IGetContactBusinessOutput) {
         if (data) {
@@ -12821,6 +12925,7 @@ export class GetContactBusinessOutput implements IGetContactBusinessOutput {
     init(data?: any) {
         if (data) {
             this.contactBusinessInfo = data["contactBusinessInfo"] ? ContactBusinessInfo.fromJS(data["contactBusinessInfo"]) : <any>undefined;
+            this.organizationBusinessInfo = data["organizationBusinessInfo"] ? OrganizationBusinessInfo.fromJS(data["organizationBusinessInfo"]) : <any>undefined;
         }
     }
 
@@ -12833,16 +12938,19 @@ export class GetContactBusinessOutput implements IGetContactBusinessOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactBusinessInfo"] = this.contactBusinessInfo ? this.contactBusinessInfo.toJSON() : <any>undefined;
+        data["organizationBusinessInfo"] = this.organizationBusinessInfo ? this.organizationBusinessInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IGetContactBusinessOutput {
     contactBusinessInfo: ContactBusinessInfo;
+    organizationBusinessInfo: OrganizationBusinessInfo;
 }
 
 export class ContactBusinessInfo implements IContactBusinessInfo {
     id: number;
+    relationTypeId: string;
     countryId: string;
     stateId: string;
     city: string;
@@ -12852,16 +12960,7 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
     phoneExtension: string;
     mobilePhoneNumber: string;
     orgName: string;
-    orgEntityType: string;
-    orgEin: string;
-    orgFormedCountryId: string;
-    orgFormedStateId: string;
-    orgFormedDate: moment.Moment;
-    annualRevenue: number;
-    acceptCc: boolean;
-    annualVolumesOnCards: number;
-    productServicesSold: number;
-    businessSicCode: number;
+    orgId: number;
 
     constructor(data?: IContactBusinessInfo) {
         if (data) {
@@ -12875,6 +12974,7 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.relationTypeId = data["relationTypeId"];
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
             this.city = data["city"];
@@ -12884,16 +12984,7 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
             this.phoneExtension = data["phoneExtension"];
             this.mobilePhoneNumber = data["mobilePhoneNumber"];
             this.orgName = data["orgName"];
-            this.orgEntityType = data["orgEntityType"];
-            this.orgEin = data["orgEin"];
-            this.orgFormedCountryId = data["orgFormedCountryId"];
-            this.orgFormedStateId = data["orgFormedStateId"];
-            this.orgFormedDate = data["orgFormedDate"] ? moment(data["orgFormedDate"].toString()) : <any>undefined;
-            this.annualRevenue = data["annualRevenue"];
-            this.acceptCc = data["acceptCc"];
-            this.annualVolumesOnCards = data["annualVolumesOnCards"];
-            this.productServicesSold = data["productServicesSold"];
-            this.businessSicCode = data["businessSicCode"];
+            this.orgId = data["orgId"];
         }
     }
 
@@ -12906,6 +12997,7 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["relationTypeId"] = this.relationTypeId;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
         data["city"] = this.city;
@@ -12915,22 +13007,14 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
         data["phoneExtension"] = this.phoneExtension;
         data["mobilePhoneNumber"] = this.mobilePhoneNumber;
         data["orgName"] = this.orgName;
-        data["orgEntityType"] = this.orgEntityType;
-        data["orgEin"] = this.orgEin;
-        data["orgFormedCountryId"] = this.orgFormedCountryId;
-        data["orgFormedStateId"] = this.orgFormedStateId;
-        data["orgFormedDate"] = this.orgFormedDate ? this.orgFormedDate.toISOString() : <any>undefined;
-        data["annualRevenue"] = this.annualRevenue;
-        data["acceptCc"] = this.acceptCc;
-        data["annualVolumesOnCards"] = this.annualVolumesOnCards;
-        data["productServicesSold"] = this.productServicesSold;
-        data["businessSicCode"] = this.businessSicCode;
+        data["orgId"] = this.orgId;
         return data; 
     }
 }
 
 export interface IContactBusinessInfo {
     id: number;
+    relationTypeId: string;
     countryId: string;
     stateId: string;
     city: string;
@@ -12940,16 +13024,110 @@ export interface IContactBusinessInfo {
     phoneExtension: string;
     mobilePhoneNumber: string;
     orgName: string;
-    orgEntityType: string;
-    orgEin: string;
-    orgFormedCountryId: string;
-    orgFormedStateId: string;
-    orgFormedDate: moment.Moment;
+    orgId: number;
+}
+
+export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
+    name: string;
+    typeName: string;
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    ein: string;
+    formedCountryId: string;
+    formedStateId: string;
+    formedDate: moment.Moment;
     annualRevenue: number;
     acceptCc: boolean;
     annualVolumesOnCards: number;
     productServicesSold: number;
     businessSicCode: number;
+    phoneNumber: string;
+    phoneExtension: string;
+
+    constructor(data?: IOrganizationBusinessInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.typeName = data["typeName"];
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.city = data["city"];
+            this.streetAddress = data["streetAddress"];
+            this.zip = data["zip"];
+            this.ein = data["ein"];
+            this.formedCountryId = data["formedCountryId"];
+            this.formedStateId = data["formedStateId"];
+            this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
+            this.annualRevenue = data["annualRevenue"];
+            this.acceptCc = data["acceptCc"];
+            this.annualVolumesOnCards = data["annualVolumesOnCards"];
+            this.productServicesSold = data["productServicesSold"];
+            this.businessSicCode = data["businessSicCode"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationBusinessInfo {
+        let result = new OrganizationBusinessInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["typeName"] = this.typeName;
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["city"] = this.city;
+        data["streetAddress"] = this.streetAddress;
+        data["zip"] = this.zip;
+        data["ein"] = this.ein;
+        data["formedCountryId"] = this.formedCountryId;
+        data["formedStateId"] = this.formedStateId;
+        data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
+        data["annualRevenue"] = this.annualRevenue;
+        data["acceptCc"] = this.acceptCc;
+        data["annualVolumesOnCards"] = this.annualVolumesOnCards;
+        data["productServicesSold"] = this.productServicesSold;
+        data["businessSicCode"] = this.businessSicCode;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        return data; 
+    }
+}
+
+export interface IOrganizationBusinessInfo {
+    name: string;
+    typeName: string;
+    countryId: string;
+    stateId: string;
+    city: string;
+    streetAddress: string;
+    zip: string;
+    ein: string;
+    formedCountryId: string;
+    formedStateId: string;
+    formedDate: moment.Moment;
+    annualRevenue: number;
+    acceptCc: boolean;
+    annualVolumesOnCards: number;
+    productServicesSold: number;
+    businessSicCode: number;
+    phoneNumber: string;
+    phoneExtension: string;
 }
 
 export class CreateContactBusinessInput implements ICreateContactBusinessInput {
@@ -12999,16 +13177,7 @@ export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
     phoneExtension: string;
     mobilePhoneNumber: string;
     orgName: string;
-    orgEntityType: string;
-    orgEin: string;
-    orgFormedCountryId: string;
-    orgFormedStateId: string;
-    orgFormedDate: moment.Moment;
-    annualRevenue: number;
-    acceptCc: boolean;
-    annualVolumesOnCards: number;
-    productServicesSold: number;
-    businessSicCode: number;
+    orgId: number;
 
     constructor(data?: IContactBusinessCreateInfo) {
         if (data) {
@@ -13032,16 +13201,7 @@ export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
             this.phoneExtension = data["phoneExtension"];
             this.mobilePhoneNumber = data["mobilePhoneNumber"];
             this.orgName = data["orgName"];
-            this.orgEntityType = data["orgEntityType"];
-            this.orgEin = data["orgEin"];
-            this.orgFormedCountryId = data["orgFormedCountryId"];
-            this.orgFormedStateId = data["orgFormedStateId"];
-            this.orgFormedDate = data["orgFormedDate"] ? moment(data["orgFormedDate"].toString()) : <any>undefined;
-            this.annualRevenue = data["annualRevenue"];
-            this.acceptCc = data["acceptCc"];
-            this.annualVolumesOnCards = data["annualVolumesOnCards"];
-            this.productServicesSold = data["productServicesSold"];
-            this.businessSicCode = data["businessSicCode"];
+            this.orgId = data["orgId"];
         }
     }
 
@@ -13064,16 +13224,7 @@ export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
         data["phoneExtension"] = this.phoneExtension;
         data["mobilePhoneNumber"] = this.mobilePhoneNumber;
         data["orgName"] = this.orgName;
-        data["orgEntityType"] = this.orgEntityType;
-        data["orgEin"] = this.orgEin;
-        data["orgFormedCountryId"] = this.orgFormedCountryId;
-        data["orgFormedStateId"] = this.orgFormedStateId;
-        data["orgFormedDate"] = this.orgFormedDate ? this.orgFormedDate.toISOString() : <any>undefined;
-        data["annualRevenue"] = this.annualRevenue;
-        data["acceptCc"] = this.acceptCc;
-        data["annualVolumesOnCards"] = this.annualVolumesOnCards;
-        data["productServicesSold"] = this.productServicesSold;
-        data["businessSicCode"] = this.businessSicCode;
+        data["orgId"] = this.orgId;
         return data; 
     }
 }
@@ -13090,16 +13241,7 @@ export interface IContactBusinessCreateInfo {
     phoneExtension: string;
     mobilePhoneNumber: string;
     orgName: string;
-    orgEntityType: string;
-    orgEin: string;
-    orgFormedCountryId: string;
-    orgFormedStateId: string;
-    orgFormedDate: moment.Moment;
-    annualRevenue: number;
-    acceptCc: boolean;
-    annualVolumesOnCards: number;
-    productServicesSold: number;
-    businessSicCode: number;
+    orgId: number;
 }
 
 export class CreateContactBusinessOutput implements ICreateContactBusinessOutput {
@@ -13177,6 +13319,7 @@ export interface IUpdateContactBusinessInput {
 }
 
 export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
+    relationTypeId: string;
     countryId: string;
     stateId: string;
     city: string;
@@ -13186,16 +13329,7 @@ export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
     phoneExtension: string;
     mobilePhoneNumber: string;
     orgName: string;
-    orgEntityType: string;
-    orgEin: string;
-    orgFormedCountryId: string;
-    orgFormedStateId: string;
-    orgFormedDate: moment.Moment;
-    annualRevenue: number;
-    acceptCc: boolean;
-    annualVolumesOnCards: number;
-    productServicesSold: number;
-    businessSicCode: number;
+    orgId: number;
 
     constructor(data?: IContactBusinessEditInfo) {
         if (data) {
@@ -13208,6 +13342,7 @@ export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
 
     init(data?: any) {
         if (data) {
+            this.relationTypeId = data["relationTypeId"];
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
             this.city = data["city"];
@@ -13217,16 +13352,7 @@ export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
             this.phoneExtension = data["phoneExtension"];
             this.mobilePhoneNumber = data["mobilePhoneNumber"];
             this.orgName = data["orgName"];
-            this.orgEntityType = data["orgEntityType"];
-            this.orgEin = data["orgEin"];
-            this.orgFormedCountryId = data["orgFormedCountryId"];
-            this.orgFormedStateId = data["orgFormedStateId"];
-            this.orgFormedDate = data["orgFormedDate"] ? moment(data["orgFormedDate"].toString()) : <any>undefined;
-            this.annualRevenue = data["annualRevenue"];
-            this.acceptCc = data["acceptCc"];
-            this.annualVolumesOnCards = data["annualVolumesOnCards"];
-            this.productServicesSold = data["productServicesSold"];
-            this.businessSicCode = data["businessSicCode"];
+            this.orgId = data["orgId"];
         }
     }
 
@@ -13238,6 +13364,7 @@ export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["relationTypeId"] = this.relationTypeId;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
         data["city"] = this.city;
@@ -13247,21 +13374,13 @@ export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
         data["phoneExtension"] = this.phoneExtension;
         data["mobilePhoneNumber"] = this.mobilePhoneNumber;
         data["orgName"] = this.orgName;
-        data["orgEntityType"] = this.orgEntityType;
-        data["orgEin"] = this.orgEin;
-        data["orgFormedCountryId"] = this.orgFormedCountryId;
-        data["orgFormedStateId"] = this.orgFormedStateId;
-        data["orgFormedDate"] = this.orgFormedDate ? this.orgFormedDate.toISOString() : <any>undefined;
-        data["annualRevenue"] = this.annualRevenue;
-        data["acceptCc"] = this.acceptCc;
-        data["annualVolumesOnCards"] = this.annualVolumesOnCards;
-        data["productServicesSold"] = this.productServicesSold;
-        data["businessSicCode"] = this.businessSicCode;
+        data["orgId"] = this.orgId;
         return data; 
     }
 }
 
 export interface IContactBusinessEditInfo {
+    relationTypeId: string;
     countryId: string;
     stateId: string;
     city: string;
@@ -13271,16 +13390,7 @@ export interface IContactBusinessEditInfo {
     phoneExtension: string;
     mobilePhoneNumber: string;
     orgName: string;
-    orgEntityType: string;
-    orgEin: string;
-    orgFormedCountryId: string;
-    orgFormedStateId: string;
-    orgFormedDate: moment.Moment;
-    annualRevenue: number;
-    acceptCc: boolean;
-    annualVolumesOnCards: number;
-    productServicesSold: number;
-    businessSicCode: number;
+    orgId: number;
 }
 
 export class CreateContactEmailInput implements ICreateContactEmailInput {
@@ -13552,6 +13662,7 @@ export interface IGetContactEmploymentOutput {
 export class ContactEmploymentInfo implements IContactEmploymentInfo {
     id: number;
     companyName: string;
+    orgId: number;
     countryId: string;
     stateId: string;
     city: string;
@@ -13580,6 +13691,7 @@ export class ContactEmploymentInfo implements IContactEmploymentInfo {
         if (data) {
             this.id = data["id"];
             this.companyName = data["companyName"];
+            this.orgId = data["orgId"];
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
             this.city = data["city"];
@@ -13607,6 +13719,7 @@ export class ContactEmploymentInfo implements IContactEmploymentInfo {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["companyName"] = this.companyName;
+        data["orgId"] = this.orgId;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
         data["city"] = this.city;
@@ -13628,6 +13741,7 @@ export class ContactEmploymentInfo implements IContactEmploymentInfo {
 export interface IContactEmploymentInfo {
     id: number;
     companyName: string;
+    orgId: number;
     countryId: string;
     stateId: string;
     city: string;
@@ -13682,6 +13796,7 @@ export interface ICreateContactEmploymentInput {
 export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo {
     personId: number;
     companyName: string;
+    orgId: number;
     countryId: string;
     stateId: string;
     city: string;
@@ -13710,6 +13825,7 @@ export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo
         if (data) {
             this.personId = data["personId"];
             this.companyName = data["companyName"];
+            this.orgId = data["orgId"];
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
             this.city = data["city"];
@@ -13737,6 +13853,7 @@ export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo
         data = typeof data === 'object' ? data : {};
         data["personId"] = this.personId;
         data["companyName"] = this.companyName;
+        data["orgId"] = this.orgId;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
         data["city"] = this.city;
@@ -13758,6 +13875,7 @@ export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo
 export interface IContactEmploymentCreateInfo {
     personId: number;
     companyName: string;
+    orgId: number;
     countryId: string;
     stateId: string;
     city: string;
@@ -13850,6 +13968,7 @@ export interface IUpdateContactEmploymentInput {
 
 export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
     companyName: string;
+    orgId: number;
     countryId: string;
     stateId: string;
     city: string;
@@ -13877,6 +13996,7 @@ export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
     init(data?: any) {
         if (data) {
             this.companyName = data["companyName"];
+            this.orgId = data["orgId"];
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
             this.city = data["city"];
@@ -13903,6 +14023,7 @@ export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["companyName"] = this.companyName;
+        data["orgId"] = this.orgId;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
         data["city"] = this.city;
@@ -13923,6 +14044,7 @@ export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
 
 export interface IContactEmploymentEditInfo {
     companyName: string;
+    orgId: number;
     countryId: string;
     stateId: string;
     city: string;

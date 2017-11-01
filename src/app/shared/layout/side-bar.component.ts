@@ -1,4 +1,4 @@
-﻿import { Component, Injector, ElementRef } from '@angular/core';
+import { Component, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -73,7 +73,7 @@ export class SideBarComponent extends AppComponentBase {
             || isBoolValues && val && caption
             || val && val['getDate'] && (caption + ': ' + 
                   moment(val, 'YYYY-MM-DD').format('l'))
-            || val && val.selectedElement && val.selectedElement.name;
+            || val && val.selectedElement && (val.selectedElement[val.displayElementExp] || val.displayElementExp(val.selectedElement));
         })
       ).filter(Boolean);
       if (!isBoolValues || (values.length != _.values(filter.items).length)
