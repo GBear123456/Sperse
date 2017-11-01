@@ -2,7 +2,6 @@
   "name": "Admin",
   "search": false,
   "navigation": [    
-    ["Dashboard", "Pages.Administration.Host.Dashboard", "icon-home", "/app/admin/hostDashboard"],
     ["Tenants", "Pages.Tenants", "icon-globe", "/app/crm/tenants"],
     ["Roles", "Pages.Administration.Roles", "icon-briefcase", "/app/admin/roles"],
     ["Users", "Pages.Administration.Users", "icon-people", "/app/admin/users"],
