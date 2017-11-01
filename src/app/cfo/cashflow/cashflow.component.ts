@@ -2,7 +2,7 @@ import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild } from
 import { AppConsts } from '@shared/AppConsts';
 import { GroupbyItem } from './models/groupbyItem';
 
-import { CashflowServiceProxy, StatsFilter, BankAccountDto } from '@shared/service-proxies/service-proxies';
+import { CashflowServiceProxy, StatsFilter, BankAccountDto, CashFlowInitialData } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
@@ -208,6 +208,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         'forecast'
     ];
 
+    private initialData: CashFlowInitialData;
+
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
     private requestFilter: StatsFilter;
@@ -227,6 +229,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         this._CashflowServiceProxy.getCashFlowInitialData()
             .subscribe(result => {
+                this.initialData = result;
+
                 this._filtersService.setup(
                     this.filters = [
                         <FilterModel>{
@@ -242,7 +246,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                                             return item.accountName + '(' + item.accountNumber + ')'
                                         }
                                     },
-                                    elements: result,
+                                    elements: result.bankAccounts,
                                     onElementSelect: (event, filter: FilterDropDownComponent) => {
                                         filter.items["acc"].selectedElement = event.value;
                                     }
@@ -251,6 +255,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                         }
                     ]
                 );
+
+                this.loadGridDataSource();
             });
 
         this._filtersService.apply(() => {
@@ -262,8 +268,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
             this.loadGridDataSource();
         });
-
-        this.loadGridDataSource();
     }
 
     filterByAccount(filter: FilterDropDownComponent) {
@@ -286,18 +290,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this._CashflowServiceProxy.getStats(this.requestFilter)
             .subscribe(result => {
                 let transactions = result.transactionStats;
-                this._CashflowServiceProxy.getCashFlowInitialData().subscribe( initialData => {
-                    this.cashflowTypes = initialData.cashflowTypes;
-                    let expenseCategories = initialData.expenseCategories;
-                    let transactionCategories = initialData.transactionCategories;
-                    /** categories - object with categories */
-                    this.cashflowData = transactions.map(function(transactionObj) {
-                        transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
-                        transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
-                        return transactionObj;
-                    });
-                    this.dataSource = this.getApiDataSource();
+                this.cashflowTypes = this.initialData.cashflowTypes;
+                let expenseCategories = this.initialData.expenseCategories;
+                let transactionCategories = this.initialData.transactionCategories;
+                /** categories - object with categories */
+                this.cashflowData = transactions.map(function(transactionObj) {
+                    transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
+                    transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
+                    return transactionObj;
                 });
+                this.dataSource = this.getApiDataSource();
             });
     }
 
