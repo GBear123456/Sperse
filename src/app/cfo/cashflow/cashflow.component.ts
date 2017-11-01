@@ -252,7 +252,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     ]
                 );
             });
-        
+
         this._filtersService.apply(() => {
 
             for (let filter of this.filters) {
@@ -271,7 +271,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     ngAfterViewInit(): void {
-        this.rootComponent = this.getRootComponent()
+        this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }
 
@@ -286,17 +286,18 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this._CashflowServiceProxy.getStats(this.requestFilter)
             .subscribe(result => {
                 let transactions = result.transactionStats;
-                this.cashflowTypes = result.cashflowTypes;
-                let expenseCategories = result.expenseCategories;
-                let transactionCategories = result.transactionCategories;
-                /** categories - object with categories */
-                this.cashflowData = transactions.map(function (transactionObj) {
-                    transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
-                    transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
-                    return transactionObj;
+                this._CashflowServiceProxy.getCashFlowInitialData().subscribe( initialData => {
+                    this.cashflowTypes = initialData.cashflowTypes;
+                    let expenseCategories = initialData.expenseCategories;
+                    let transactionCategories = initialData.transactionCategories;
+                    /** categories - object with categories */
+                    this.cashflowData = transactions.map(function(transactionObj) {
+                        transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
+                        transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
+                        return transactionObj;
+                    });
+                    this.dataSource = this.getApiDataSource();
                 });
-
-                this.dataSource = this.getApiDataSource();
             });
     }
 
