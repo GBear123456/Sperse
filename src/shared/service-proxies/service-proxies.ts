@@ -25920,6 +25920,10 @@ export interface IExternalAuthenticateResultModel {
 
 export class FiltersInitialData implements IFiltersInitialData {
     bankAccounts: BankAccountDto[];
+    cashflowTypes: FilterElementDtoOfString[];
+    categories: FilterElementDtoOfString[];
+    types: FilterElementDtoOfString[];
+    currencies: FilterElementDtoOfString[];
 
     constructor(data?: IFiltersInitialData) {
         if (data) {
@@ -25937,6 +25941,26 @@ export class FiltersInitialData implements IFiltersInitialData {
                 for (let item of data["bankAccounts"])
                     this.bankAccounts.push(BankAccountDto.fromJS(item));
             }
+            if (data["cashflowTypes"] && data["cashflowTypes"].constructor === Array) {
+                this.cashflowTypes = [];
+                for (let item of data["cashflowTypes"])
+                    this.cashflowTypes.push(FilterElementDtoOfString.fromJS(item));
+            }
+            if (data["categories"] && data["categories"].constructor === Array) {
+                this.categories = [];
+                for (let item of data["categories"])
+                    this.categories.push(FilterElementDtoOfString.fromJS(item));
+            }
+            if (data["types"] && data["types"].constructor === Array) {
+                this.types = [];
+                for (let item of data["types"])
+                    this.types.push(FilterElementDtoOfString.fromJS(item));
+            }
+            if (data["currencies"] && data["currencies"].constructor === Array) {
+                this.currencies = [];
+                for (let item of data["currencies"])
+                    this.currencies.push(FilterElementDtoOfString.fromJS(item));
+            }
         }
     }
 
@@ -25953,12 +25977,75 @@ export class FiltersInitialData implements IFiltersInitialData {
             for (let item of this.bankAccounts)
                 data["bankAccounts"].push(item.toJSON());
         }
+        if (this.cashflowTypes && this.cashflowTypes.constructor === Array) {
+            data["cashflowTypes"] = [];
+            for (let item of this.cashflowTypes)
+                data["cashflowTypes"].push(item.toJSON());
+        }
+        if (this.categories && this.categories.constructor === Array) {
+            data["categories"] = [];
+            for (let item of this.categories)
+                data["categories"].push(item.toJSON());
+        }
+        if (this.types && this.types.constructor === Array) {
+            data["types"] = [];
+            for (let item of this.types)
+                data["types"].push(item.toJSON());
+        }
+        if (this.currencies && this.currencies.constructor === Array) {
+            data["currencies"] = [];
+            for (let item of this.currencies)
+                data["currencies"].push(item.toJSON());
+        }
         return data; 
     }
 }
 
 export interface IFiltersInitialData {
     bankAccounts: BankAccountDto[];
+    cashflowTypes: FilterElementDtoOfString[];
+    categories: FilterElementDtoOfString[];
+    types: FilterElementDtoOfString[];
+    currencies: FilterElementDtoOfString[];
+}
+
+export class FilterElementDtoOfString implements IFilterElementDtoOfString {
+    id: string;
+    name: string;
+
+    constructor(data?: IFilterElementDtoOfString) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): FilterElementDtoOfString {
+        let result = new FilterElementDtoOfString();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IFilterElementDtoOfString {
+    id: string;
+    name: string;
 }
 
 export class PagedResultDtoOfUserListDto implements IPagedResultDtoOfUserListDto {
