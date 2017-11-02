@@ -243,11 +243,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                                     filterField: "accountIds",
                                     displayElementExp: (item: BankAccountDto) => {
                                         if (item) {
-                                            return item.accountName + '(' + item.accountNumber + ')'
+                                            return item.accountName + ' (' + item.accountNumber + ')'
                                         }
                                     },
                                     dataSource: result.bankAccounts,
-                                    columns: ['accountName', 'accountNumber'],
+                                    columns: [{ dataField: 'accountName', caption: this.l('CashflowAccountFilter_AccountName') }, { dataField: 'accountNumber', caption: this.l('CashflowAccountFilter_AccountNumber') }],
                                 }
                             }
                         }

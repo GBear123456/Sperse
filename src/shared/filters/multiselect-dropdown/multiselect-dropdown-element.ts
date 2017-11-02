@@ -2,6 +2,6 @@ export class MultiselectDropDownElement {
     displayName: string;
     displayElementExp: any;
     dataSource: any;
-    columns: string[];
+    columns: any[];
     selectedElements?: any[];
 }
