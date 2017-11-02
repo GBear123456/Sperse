@@ -25932,6 +25932,7 @@ export class FiltersInitialData implements IFiltersInitialData {
     categories: FilterElementDtoOfString[];
     types: FilterElementDtoOfString[];
     currencies: FilterElementDtoOfString[];
+    businessEntities: FilterElementDtoOfInt32[];
 
     constructor(data?: IFiltersInitialData) {
         if (data) {
@@ -25969,6 +25970,11 @@ export class FiltersInitialData implements IFiltersInitialData {
                 for (let item of data["currencies"])
                     this.currencies.push(FilterElementDtoOfString.fromJS(item));
             }
+            if (data["businessEntities"] && data["businessEntities"].constructor === Array) {
+                this.businessEntities = [];
+                for (let item of data["businessEntities"])
+                    this.businessEntities.push(FilterElementDtoOfInt32.fromJS(item));
+            }
         }
     }
 
@@ -26005,6 +26011,11 @@ export class FiltersInitialData implements IFiltersInitialData {
             for (let item of this.currencies)
                 data["currencies"].push(item.toJSON());
         }
+        if (this.businessEntities && this.businessEntities.constructor === Array) {
+            data["businessEntities"] = [];
+            for (let item of this.businessEntities)
+                data["businessEntities"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -26015,6 +26026,7 @@ export interface IFiltersInitialData {
     categories: FilterElementDtoOfString[];
     types: FilterElementDtoOfString[];
     currencies: FilterElementDtoOfString[];
+    businessEntities: FilterElementDtoOfInt32[];
 }
 
 export class FilterElementDtoOfString implements IFilterElementDtoOfString {
@@ -26053,6 +26065,45 @@ export class FilterElementDtoOfString implements IFilterElementDtoOfString {
 
 export interface IFilterElementDtoOfString {
     id: string;
+    name: string;
+}
+
+export class FilterElementDtoOfInt32 implements IFilterElementDtoOfInt32 {
+    id: number;
+    name: string;
+
+    constructor(data?: IFilterElementDtoOfInt32) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): FilterElementDtoOfInt32 {
+        let result = new FilterElementDtoOfInt32();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IFilterElementDtoOfInt32 {
+    id: number;
     name: string;
 }
 
