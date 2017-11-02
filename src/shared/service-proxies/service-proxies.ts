@@ -1026,7 +1026,7 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    getStatsDetails(cashFlowTypeId: string, transactionCategoryId: string, expenseCategoryId: string, startDate: moment.Moment, endDate: moment.Moment, currencyId: string, accountId: number): Observable<CashFlowStatsDetailDto[]> {
+    getStatsDetails(cashFlowTypeId: string, transactionCategoryId: string, expenseCategoryId: string, startDate: moment.Moment, endDate: moment.Moment, currencyId: string, accountIds: number[]): Observable<CashFlowStatsDetailDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStatsDetails?";
         if (cashFlowTypeId !== undefined)
             url_ += "CashFlowTypeId=" + encodeURIComponent("" + cashFlowTypeId) + "&"; 
@@ -1040,8 +1040,8 @@ export class CashflowServiceProxy {
             url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
         if (currencyId !== undefined)
             url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
-        if (accountId !== undefined)
-            url_ += "AccountId=" + encodeURIComponent("" + accountId) + "&"; 
+        if (accountIds !== undefined)
+            accountIds.forEach(item => { url_ += "AccountIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -11911,7 +11911,7 @@ export class StatsFilter implements IStatsFilter {
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
-    accountId: number;
+    accountIds: number[];
 
     constructor(data?: IStatsFilter) {
         if (data) {
@@ -11927,7 +11927,11 @@ export class StatsFilter implements IStatsFilter {
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
-            this.accountId = data["accountId"];
+            if (data["accountIds"] && data["accountIds"].constructor === Array) {
+                this.accountIds = [];
+                for (let item of data["accountIds"])
+                    this.accountIds.push(item);
+            }
         }
     }
 
@@ -11942,7 +11946,11 @@ export class StatsFilter implements IStatsFilter {
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
-        data["accountId"] = this.accountId;
+        if (this.accountIds && this.accountIds.constructor === Array) {
+            data["accountIds"] = [];
+            for (let item of this.accountIds)
+                data["accountIds"].push(item);
+        }
         return data; 
     }
 }
@@ -11951,7 +11959,7 @@ export interface IStatsFilter {
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
-    accountId: number;
+    accountIds: number[];
 }
 
 export class CashFlowStatsDto implements ICashFlowStatsDto {

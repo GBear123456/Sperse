@@ -10,8 +10,8 @@ import * as _ from 'underscore.string';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
-import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
-import { DropDownElement } from '@shared/filters/dropdown/dropdown_element';
+import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
+import { MultiselectDropDownElement } from '@shared/filters/multiselect-dropdown/multiselect-dropdown-element';
 
 /** Constants */
 const StartedBalance = 'B',
@@ -234,22 +234,20 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 this._filtersService.setup(
                     this.filters = [
                         <FilterModel>{
-                            component: FilterDropDownComponent,
-                            field: 'accountId',
+                            component: FilterMultiselectDropDownComponent,
+                            field: 'accountIds',
                             caption: 'Account',
                             items: {
-                                acc: <DropDownElement>{
+                                acc: <MultiselectDropDownElement>{
                                     displayName: "Account",
-                                    filterField: "accountId",
+                                    filterField: "accountIds",
                                     displayElementExp: (item: BankAccountDto) => {
                                         if (item) {
                                             return item.accountName + '(' + item.accountNumber + ')'
                                         }
                                     },
-                                    elements: result.bankAccounts,
-                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                        filter.items["acc"].selectedElement = event.value;
-                                    }
+                                    dataSource: result.bankAccounts,
+                                    columns: ['accountName', 'accountNumber'],
                                 }
                             }
                         }
@@ -270,8 +268,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         });
     }
 
-    filterByAccount(filter: FilterDropDownComponent) {
-        return filter.items && filter.items.acc && filter.items.acc.selectedElement && filter.items.acc.selectedElement.id;
+    filterByAccount(filter: FilterMultiselectDropDownComponent) {
+        if (filter.items && filter.items.acc && filter.items.acc.selectedElements)
+            return filter.items.acc.selectedElements.map(x => x.id);
     }
 
     ngAfterViewInit(): void {

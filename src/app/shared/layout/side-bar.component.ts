@@ -53,8 +53,10 @@ export class SideBarComponent extends AppComponentBase {
             filter.items[key] = '';
         else if (typeof (val) == 'boolean')
             filter.items[key] = true;
-        else if (val)
+        else if (filter.items[key].selectedElement)
             filter.items[key].selectedElement = null;
+        else if (filter.items[key].selectedElements)
+            filter.items[key].selectedElements = [];
     });
     this._filtersService.change(filter);
     event.stopPropagation();    
@@ -69,11 +71,12 @@ export class SideBarComponent extends AppComponentBase {
         filter.items, (val, key) => { 
           let caption = this.capitalize(key);
           isBoolValues = typeof (val) == 'boolean';   
-          return (typeof (val) == 'string') && val 
-            || isBoolValues && val && caption
-            || val && val['getDate'] && (caption + ': ' + 
+          return (typeof (val) == 'string') && val
+              || isBoolValues && val && caption
+              || val && val['getDate'] && (caption + ': ' +
                   moment(val, 'YYYY-MM-DD').format('l'))
-            || val && val.selectedElement && (val.selectedElement[val.displayElementExp] || val.displayElementExp(val.selectedElement));
+              || val && val.selectedElement && (val.selectedElement[val.displayElementExp] || val.displayElementExp(val.selectedElement))
+              || val && val.selectedElements && val.selectedElements.length && (val.selectedElements[0][val.displayElementExp] || val.displayElementExp(val.selectedElements[0]));
         })
       ).filter(Boolean);
       if (!isBoolValues || (values.length != _.values(filter.items).length)

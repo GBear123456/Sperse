@@ -6,5 +6,5 @@ export class DropDownElement {
     filterField: any;
 
 
-    onElementSelect: (event) => void;    
+    onElementSelect: (event, element) => void;    
 }

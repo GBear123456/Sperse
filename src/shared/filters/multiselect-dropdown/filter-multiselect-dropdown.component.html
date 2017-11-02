@@ -1,0 +1,28 @@
+<div class="wrapper">
+    <ng-template ngFor let-item [ngForOf]="getItems()" let-i="index">
+        <p>
+            {{ items[item].displayName }}
+        </p>
+
+        <dx-drop-down-box [(value)]="items[item].selectedElements"
+                          [displayExpr]="items[item].displayElementExp"
+                          placeholder="Select a value..."
+                          [showClearButton]="true"
+                          [dataSource]="items[item].dataSource"
+                          (onValueChanged)="valueChanged($event)">
+
+            <div *dxTemplate="let data of 'content'">
+                <dx-data-grid [dataSource]="items[item].dataSource"
+                              [columns]="items[item].columns"
+                              [selection]="{ mode: 'multiple' }"
+                              [hoverStateEnabled]="true"
+                              [paging]="{ enabled: true, pageSize: 10 }"
+                              [filterRow]="{ visible: true }"
+                              [scrolling]="{ mode: 'infinite' }"
+                              [height]="265"
+                              [(selectedRowKeys)]="items[item].selectedElements">
+                </dx-data-grid>
+            </div>
+        </dx-drop-down-box>
+    </ng-template>
+</div>
