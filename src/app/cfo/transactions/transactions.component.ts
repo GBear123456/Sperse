@@ -136,28 +136,60 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             items: { from: '', to: '' }
                         },
                         <FilterModel>{
-                            component: FilterInputsComponent,
-                            //operator: 'contains',
                             caption: 'CashflowType',
-                            //items: { CashflowType: '' }
+                            component: FilterDropDownComponent,
+                            items: {
+                                cashflowType: <DropDownElement>{
+                                    filterField: "CashFlowTypeId",
+                                    displayElementExp: "name",
+                                    elements: result.cashflowTypes,
+                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
+                                        filter.items["cashflowType"].selectedElement = event.value;
+                                    }
+                                }
+                            }
                         },
                         <FilterModel>{
-                            component: FilterInputsComponent,
-                            //operator: 'contains',
                             caption: 'TransactionCategory',
-                            //items: { TransactionCategory: '' }
+                            component: FilterDropDownComponent,
+                            items: {
+                                category: <DropDownElement>{
+                                    filterField: "CategoryId",
+                                    displayElementExp: "name",
+                                    elements: result.categories,
+                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
+                                        filter.items["category"].selectedElement = event.value;
+                                    }
+                                }
+                            }
                         },
                         <FilterModel>{
-                            component: FilterInputsComponent,
-                            //operator: 'contains',
                             caption: 'TransactionType',
-                            //items: { TransactionType: '' }
+                            component: FilterDropDownComponent,
+                            items: {
+                                transactionType: <DropDownElement>{
+                                    filterField: "TypeId",
+                                    displayElementExp: "name",
+                                    elements: result.types,
+                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
+                                        filter.items["transactionType"].selectedElement = event.value;
+                                    }
+                                }
+                            }
                         },
                         <FilterModel>{
-                            component: FilterInputsComponent,
-                            //operator: 'contains',
                             caption: 'Currency',
-                            //items: { Currency: '' }
+                            component: FilterDropDownComponent,
+                            items: {
+                                currency: <DropDownElement>{
+                                    filterField: "CurrencyId",
+                                    displayElementExp: "name",
+                                    elements: result.currencies,
+                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
+                                        filter.items["currency"].selectedElement = event.value;
+                                    }
+                                }
+                            }
                         },
                         <FilterModel>{
                             component: FilterInputsComponent,
@@ -212,12 +244,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
 
     filterByAccount(filter) {
-        let data = {};
-        data[filter.field] = {};
-        _.each(filter.items, (val: DropDownElement, key) => {
-            val && val.filterField && val.selectedElement && (data[this.capitalize(val.filterField)] = val.selectedElement.id);
-        });
-        return data;
+        return this.filterByFilterElement(filter);
     }
 
     filterByAmount(filter) {
@@ -225,6 +252,27 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         data[filter.field] = {};
         _.each(filter.items, (val, key) => {
             val && (data[filter.field][filter.operator[key]] = +val);
+        });
+        return data;
+    }
+
+    filterByCashflowType(filter) {
+        return this.filterByFilterElement(filter);
+    }
+    filterByTransactionCategory(filter) {
+        return this.filterByFilterElement(filter);
+    }
+    filterByCurrency(filter) {
+        return this.filterByFilterElement(filter);
+    }
+    filterByTransactionType(filter) {
+        return this.filterByFilterElement(filter);
+    }
+    filterByFilterElement(filter) {
+        let data = {};
+        data[filter.field] = {};
+        _.each(filter.items, (val: DropDownElement, key) => {
+            val && val.filterField && val.selectedElement && (data[this.capitalize(val.filterField)] = val.selectedElement.id);
         });
         return data;
     }
