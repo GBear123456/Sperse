@@ -76,7 +76,7 @@ export class SideBarComponent extends AppComponentBase {
               || val && val['getDate'] && (caption + ': ' +
                   moment(val, 'YYYY-MM-DD').format('l'))
               || val && val.selectedElement && (val.selectedElement[val.displayElementExp] || val.displayElementExp(val.selectedElement))
-              || val && val.selectedElements && val.selectedElements.length && (val.selectedElements[0][val.displayElementExp] || val.displayElementExp(val.selectedElements[0]));
+              || val && val.selectedElements && val.selectedElements.length && val.selectedElements.map(x => x[val.displayElementExp] || val.displayElementExp(x)).join("; ");
         })
       ).filter(Boolean);
       if (!isBoolValues || (values.length != _.values(filter.items).length)

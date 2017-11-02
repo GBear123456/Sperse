@@ -7,7 +7,6 @@
         <dx-drop-down-box [(value)]="items[item].selectedElements"
                           [displayExpr]="items[item].displayElementExp"
                           placeholder="Select a value..."
-                          [showClearButton]="true"
                           [dataSource]="items[item].dataSource"
                           (onValueChanged)="valueChanged($event)">
 
