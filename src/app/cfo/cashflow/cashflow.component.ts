@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, DoCheck } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { GroupbyItem } from './models/groupbyItem';
 
@@ -28,7 +28,7 @@ const StartedBalance = 'B',
     providers: [ CashflowServiceProxy ]
 })
 
-export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy, DoCheck {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     cashflowData: any;
     cashflowTypes: any;
@@ -207,6 +207,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         'current',
         'forecast'
     ];
+    private expandedFieldObj;
+    private updateUncollapsedCells = false;
+    private emptyCellsObjects = [];
 
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
@@ -268,6 +271,28 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     filterByAccount(filter: FilterDropDownComponent) {
         return filter.items && filter.items.acc && filter.items.acc.selectedElement && filter.items.acc.selectedElement.id;
+    }
+
+    ngDoCheck() {
+        /** 3 - if we have an mark - we update the classes for every cell that has no childs
+         *  with crutch, because we could find the element by the path or anything else
+         */
+        if (this.updateUncollapsedCells) {
+            this.emptyCellsObjects.forEach( cell => {
+                let element = cell.element.find('tbody.dx-pivotgrid-vertical-headers tr:nth-child(' +
+                    (cell.rowIndex + 1) + ')').find('td.dx-pivotgrid-collapsed.dx-last-cell');
+                /** if index of element has changed */
+                if (!element.length) {
+                    /** @todo kostyl get the first element with the same text and add class to it! */
+                    let rowElement = cell.element.find('tbody.dx-pivotgrid-vertical-headers tr:nth-child(' +
+                        (cell.rowIndex + 1) + ')').nextAll(':contains("' + cell.cell.text + '")');
+                    element = rowElement.find('td.dx-pivotgrid-collapsed.dx-last-cell');
+                }
+                element.addClass('emptyChildren');
+            });
+            this.expandedFieldObj = undefined;
+            this.updateUncollapsedCells = false;
+        }
     }
 
     ngAfterViewInit(): void {
@@ -378,6 +403,42 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
         $('.groupBy').appendTo(event.element.find('.dx-area-description-cell'));
+
+        /** 2 - check the expandedField to collapse back if the element has no children -
+         * after that go to ngDoCheck to update classes */
+        if (this.expandedFieldObj !== undefined) {
+            let path = this.expandedFieldObj.cell.path;
+            let data = event.component.getDataSource().getData().rows;
+            let expandedCellChildren = this.findChildrenByPath(data, path);
+            if (expandedCellChildren && expandedCellChildren.length === 1 && expandedCellChildren[0].value === undefined) {
+                /** collapse the cell and add to the list of cells that should have class emptyChild that removes expand icon */
+                event.component.getDataSource().collapseHeaderItem('rows', path);
+                if (!~this.emptyCellsObjects.indexOf(this.expandedFieldObj)) {
+                    this.emptyCellsObjects.push(this.expandedFieldObj);
+                }
+            }
+        }
+
+        this.updateUncollapsedCells = true;
+    }
+
+    findChildrenByPath(data, path) {
+        if (data) {
+            /** clone the original path to not override it */
+            let clonedPath = path.slice();
+            while (clonedPath.length) {
+                if (data) {
+                    let pathShift = clonedPath.shift();
+                    data = data.filter( item => {
+                        return item.value === pathShift;
+                    });
+                    data = data[0].children;
+                } else {
+                    break;
+                }
+            }
+            return data;
+        }
     }
 
     /**
@@ -800,6 +861,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** bind the collapse action on white space column */
         if (cellObj.cell.isWhiteSpace) {
             this.bindCollapseActionOnWhiteSpaceColumn(cellObj);
+        }
+        /** 1 - mark the column to check in onContentReady */
+        if (cellObj.area === 'row' && cellObj.cell.path.length > 1) {
+            this.expandedFieldObj = cellObj;
         }
     }
 
