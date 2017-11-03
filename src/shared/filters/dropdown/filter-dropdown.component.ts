@@ -1,4 +1,4 @@
-﻿import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterComponent } from '../filter.model';
 import { DropDownElement} from './dropdown_element'
@@ -21,9 +21,5 @@ export class FilterDropDownComponent extends AppComponentBase implements OnInit,
     }
     
     ngOnInit(): void {
-    }       
-
-    excludeFilter(): void { }
-    public showSelected(): void {
     }
 }

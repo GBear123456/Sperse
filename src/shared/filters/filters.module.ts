@@ -1,4 +1,4 @@
-﻿import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,8 +14,9 @@ import { FilterInputsComponent } from './inputs/filter-inputs.component';
 import { FilterCBoxesComponent } from './cboxes/filter-cboxes.component';
 import { FilterDatesComponent } from './dates/filter-dates.component';
 import { FilterCalendarComponent } from './calendar/filter-calendar.component';
+import { FilterMultiselectDropDownComponent } from './multiselect-dropdown/filter-multiselect-dropdown.component';
 
-import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule } from 'devextreme-angular';
+import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule, DxDropDownBoxModule, DxDataGridModule } from 'devextreme-angular';
 
 @NgModule({
   imports: [
@@ -31,6 +32,7 @@ import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule }
       FilterManagerComponent,
       FilterStatesComponent,
       FilterDropDownComponent,
+      FilterMultiselectDropDownComponent,
       FilterInputsComponent,
       FilterCBoxesComponent,
       FilterDatesComponent,
@@ -50,12 +52,12 @@ import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule }
   ]
 })
 export class FiltersModule {
-  static forRoot(): ModuleWithProviders {
-    return {
-      ngModule: FiltersModule,
-      providers: [
-        FiltersService
-      ]
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: FiltersModule,
+            providers: [
+                FiltersService
+            ]
+        }
     }
-  }
 }

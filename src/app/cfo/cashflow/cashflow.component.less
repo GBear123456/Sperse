@@ -192,6 +192,14 @@
                         width: 100%;
                         padding-left: 9px;
                     }
+
+                    &.emptyChildren {
+                        padding-left: 40px;
+                        .dx-expand-icon-container {
+                            display: none;
+                        }
+                    }
+
                     .dx-expand-icon-container {
                         font: inherit;
                         margin-left: 10px;
@@ -250,21 +258,7 @@
                         }
                     }
                 }
-                &.dx-expand-border:not(.incomeRow):not(.expensesRow) {
-                    //& ~ tr td:not(.dx-white-space-column):not([colspan]) {
-                    //    padding-left: 30px;
-                    //}
-                }
-                //&.incomeRow,
-                //&.expensesRow {
-                //    .dx-white-space-column,
-                //    & + tr td.dx-white-space-column {
-                //        width: 0;
-                //        min-width: 0;
-                //        margin-right: 0;
-                //        border-right: none
-                //    }
-                //}
+
                 &.reconciliation {
                     td {
                         padding-left: 22px;

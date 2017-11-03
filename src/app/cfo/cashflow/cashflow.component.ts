@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, DoCheck } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { GroupbyItem } from './models/groupbyItem';
 
@@ -10,8 +10,8 @@ import * as _ from 'underscore.string';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
-import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
-import { DropDownElement } from '@shared/filters/dropdown/dropdown_element';
+import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
+import { MultiselectDropDownElement } from '@shared/filters/multiselect-dropdown/multiselect-dropdown-element';
 
 /** Constants */
 const StartedBalance = 'B',
@@ -28,7 +28,7 @@ const StartedBalance = 'B',
     providers: [ CashflowServiceProxy ]
 })
 
-export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy, DoCheck {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     cashflowData: any;
     cashflowTypes: any;
@@ -174,7 +174,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
                 return result;
             },
-            customizeText: function (cellInfo) {
+            customizeText: cellInfo => {
                 let projectedKey = cellInfo.value === 1 ? 'Projected' : 'Mtd';
                 let cellValue = this.l(projectedKey).toUpperCase();
                 let cssMarker = ' @css:{projectedField ' + (cellInfo.value === 1 ? 'projected' : 'mtd') + '}';
@@ -207,6 +207,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         'current',
         'forecast'
     ];
+    private expandedFieldObj;
+    private updateUncollapsedCells = false;
+    private emptyCellsObjects = [];
 
     private initialData: CashFlowInitialData;
 
@@ -234,22 +237,20 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 this._filtersService.setup(
                     this.filters = [
                         <FilterModel>{
-                            component: FilterDropDownComponent,
-                            field: 'accountId',
+                            component: FilterMultiselectDropDownComponent,
+                            field: 'accountIds',
                             caption: 'Account',
                             items: {
-                                acc: <DropDownElement>{
+                                acc: <MultiselectDropDownElement>{
                                     displayName: "Account",
-                                    filterField: "accountId",
+                                    filterField: "accountIds",
                                     displayElementExp: (item: BankAccountDto) => {
                                         if (item) {
-                                            return item.accountName + '(' + item.accountNumber + ')'
+                                            return item.accountName + ' (' + item.accountNumber + ')'
                                         }
                                     },
-                                    elements: result.bankAccounts,
-                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                        filter.items["acc"].selectedElement = event.value;
-                                    }
+                                    dataSource: result.bankAccounts,
+                                    columns: [{ dataField: 'accountName', caption: this.l('CashflowAccountFilter_AccountName') }, { dataField: 'accountNumber', caption: this.l('CashflowAccountFilter_AccountNumber') }],
                                 }
                             }
                         }
@@ -270,8 +271,31 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         });
     }
 
-    filterByAccount(filter: FilterDropDownComponent) {
-        return filter.items && filter.items.acc && filter.items.acc.selectedElement && filter.items.acc.selectedElement.id;
+    filterByAccount(filter: FilterMultiselectDropDownComponent) {
+        if (filter.items && filter.items.acc && filter.items.acc.selectedElements)
+            return filter.items.acc.selectedElements.map(x => x.id);
+    }
+
+    ngDoCheck() {
+        /** 3 - if we have an mark - we update the classes for every cell that has no childs
+         *  with crutch, because we could find the element by the path or anything else
+         */
+        if (this.updateUncollapsedCells) {
+            this.emptyCellsObjects.forEach( cell => {
+                let element = cell.element.find('tbody.dx-pivotgrid-vertical-headers tr:nth-child(' +
+                    (cell.rowIndex + 1) + ')').find('td.dx-pivotgrid-collapsed.dx-last-cell');
+                /** if index of element has changed */
+                if (!element.length) {
+                    /** @todo kostyl get the first element with the same text and add class to it! */
+                    let rowElement = cell.element.find('tbody.dx-pivotgrid-vertical-headers tr:nth-child(' +
+                        (cell.rowIndex + 1) + ')').nextAll(':contains("' + cell.cell.text + '")');
+                    element = rowElement.find('td.dx-pivotgrid-collapsed.dx-last-cell');
+                }
+                element.addClass('emptyChildren');
+            });
+            this.expandedFieldObj = undefined;
+            this.updateUncollapsedCells = false;
+        }
     }
 
     ngAfterViewInit(): void {
@@ -287,18 +311,25 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     loadGridDataSource() {
+        abp.ui.setBusy();
         this._CashflowServiceProxy.getStats(this.requestFilter)
+            .finally(() => abp.ui.clearBusy())
             .subscribe(result => {
-                let transactions = result.transactionStats;
-                this.cashflowTypes = this.initialData.cashflowTypes;
-                let expenseCategories = this.initialData.expenseCategories;
-                let transactionCategories = this.initialData.transactionCategories;
-                /** categories - object with categories */
-                this.cashflowData = transactions.map(function(transactionObj) {
-                    transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
-                    transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
-                    return transactionObj;
-                });
+                if (result.transactionStats.length) {
+                    let transactions = result.transactionStats;
+                    this.cashflowTypes = this.initialData.cashflowTypes;
+                    let expenseCategories = this.initialData.expenseCategories;
+                    let transactionCategories = this.initialData.transactionCategories;
+                    /** categories - object with categories */
+                    this.cashflowData = transactions.map(function (transactionObj) {
+                        transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
+                        transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
+                        return transactionObj;
+                    });
+                }
+                else {
+                    this.cashflowData = null;
+                }
                 this.dataSource = this.getApiDataSource();
             });
     }
@@ -380,6 +411,42 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
         $('.groupBy').appendTo(event.element.find('.dx-area-description-cell'));
+
+        /** 2 - check the expandedField to collapse back if the element has no children -
+         * after that go to ngDoCheck to update classes */
+        if (this.expandedFieldObj !== undefined) {
+            let path = this.expandedFieldObj.cell.path;
+            let data = event.component.getDataSource().getData().rows;
+            let expandedCellChildren = this.findChildrenByPath(data, path);
+            if (expandedCellChildren && expandedCellChildren.length === 1 && expandedCellChildren[0].value === undefined) {
+                /** collapse the cell and add to the list of cells that should have class emptyChild that removes expand icon */
+                event.component.getDataSource().collapseHeaderItem('rows', path);
+                if (!~this.emptyCellsObjects.indexOf(this.expandedFieldObj)) {
+                    this.emptyCellsObjects.push(this.expandedFieldObj);
+                }
+            }
+        }
+
+        this.updateUncollapsedCells = true;
+    }
+
+    findChildrenByPath(data, path) {
+        if (data) {
+            /** clone the original path to not override it */
+            let clonedPath = path.slice();
+            while (clonedPath.length) {
+                if (data) {
+                    let pathShift = clonedPath.shift();
+                    data = data.filter( item => {
+                        return item.value === pathShift;
+                    });
+                    data = data[0].children;
+                } else {
+                    break;
+                }
+            }
+            return data;
+        }
     }
 
     /**
@@ -802,6 +869,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** bind the collapse action on white space column */
         if (cellObj.cell.isWhiteSpace) {
             this.bindCollapseActionOnWhiteSpaceColumn(cellObj);
+        }
+        /** 1 - mark the column to check in onContentReady */
+        if (cellObj.area === 'row' && cellObj.cell.path.length > 1) {
+            this.expandedFieldObj = cellObj;
         }
     }
 
