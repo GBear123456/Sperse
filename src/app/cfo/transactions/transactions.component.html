@@ -49,7 +49,7 @@
                         <dxi-column dataField="CategoryName" caption="{{l('Transactions_CategoryName')}}"></dxi-column>
                         <dxi-column dataField="TypeName" caption="{{l('Transactions_Type')}}"></dxi-column>
 
-                        <dxi-column dataField="Id" caption="{{l('Transactions_Id')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Id" caption="{{l('Transactions_Id')}}" [visible]="false" sortOrder="desc"></dxi-column>
                         <dxi-column dataField="Amount" name="Amount" caption="{{l('Transactions_Amount')}}" cellTemplate="amountTemplate" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankAccountBankName" caption="{{l('Transactions_BankName')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankAccountTypeName" caption="{{l('Transactions_BankAccountType')}}" [visible]="false"></dxi-column>
