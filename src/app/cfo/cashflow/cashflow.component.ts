@@ -311,18 +311,25 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     loadGridDataSource() {
+        abp.ui.setBusy();
         this._CashflowServiceProxy.getStats(this.requestFilter)
+            .finally(() => abp.ui.clearBusy())
             .subscribe(result => {
-                let transactions = result.transactionStats;
-                this.cashflowTypes = this.initialData.cashflowTypes;
-                let expenseCategories = this.initialData.expenseCategories;
-                let transactionCategories = this.initialData.transactionCategories;
-                /** categories - object with categories */
-                this.cashflowData = transactions.map(function(transactionObj) {
-                    transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
-                    transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
-                    return transactionObj;
-                });
+                if (result.transactionStats.length) {
+                    let transactions = result.transactionStats;
+                    this.cashflowTypes = this.initialData.cashflowTypes;
+                    let expenseCategories = this.initialData.expenseCategories;
+                    let transactionCategories = this.initialData.transactionCategories;
+                    /** categories - object with categories */
+                    this.cashflowData = transactions.map(function (transactionObj) {
+                        transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
+                        transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
+                        return transactionObj;
+                    });
+                }
+                else {
+                    this.cashflowData = null;
+                }
                 this.dataSource = this.getApiDataSource();
             });
     }
