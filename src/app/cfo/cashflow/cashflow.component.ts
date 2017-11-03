@@ -2,11 +2,12 @@ import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, DoChe
 import { AppConsts } from '@shared/AppConsts';
 import { GroupbyItem } from './models/groupbyItem';
 
-import { CashflowServiceProxy, StatsFilter, BankAccountDto, CashFlowInitialData } from '@shared/service-proxies/service-proxies';
+import { CashflowServiceProxy, StatsFilter, BankAccountDto, CashFlowInitialData, StatsDetailFilter } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
+import * as moment from "moment";
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
@@ -34,6 +35,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     cashflowTypes: any;
     dataSource: any;
     groupInterval: any = 'year';
+    statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
+    statsDetailResult: any;
     /** posible groupIntervals year, quarter, month, dayofweek, day */
     groupbyItems: GroupbyItem[] = [
         {
@@ -258,6 +261,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 );
 
                 this.loadGridDataSource();
+                
             });
 
         this._filtersService.apply(() => {
@@ -874,6 +878,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         if (cellObj.area === 'row' && cellObj.cell.path.length > 1) {
             this.expandedFieldObj = cellObj;
         }
+
+        this.getStatsDetails();
     }
 
     /**
@@ -919,5 +925,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
             return summaryCell.value() || 0;
         };
+    }
+
+    getStatsDetails(): void {
+        this._CashflowServiceProxy
+            .getStatsDetails(this.statsDetailFilter)
+            .subscribe(result => {
+                this.statsDetailResult = result;
+            });
     }
 }
