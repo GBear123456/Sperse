@@ -110,8 +110,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             field: 'BankAccountId',
                             caption: 'Account',
                             items: {
-                                acc: <MultiselectDropDownElement>{
-                                    displayName: "Account",
+                                account: <MultiselectDropDownElement>{
                                     filterField: "BankAccountId",
                                     displayElementExp: (item: BankAccountDto) => {
                                         if (item) {
@@ -141,8 +140,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             field: 'CashFlowTypeId',
                             caption: 'CashflowType',
                             items: {
-                                acc: <MultiselectDropDownElement>{
-                                    displayName: "",
+                                cashflowType: <MultiselectDropDownElement>{
                                     filterField: "CashFlowTypeId",
                                     displayElementExp: "name",
                                     dataSource: result.cashflowTypes,
@@ -155,8 +153,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             field: 'CategoryId',
                             caption: 'TransactionCategory',
                             items: {
-                                acc: <MultiselectDropDownElement>{
-                                    displayName: "",
+                                category: <MultiselectDropDownElement>{
                                     filterField: "CategoryId",
                                     displayElementExp: "name",
                                     dataSource: result.categories,
@@ -169,8 +166,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             field: 'TypeId',
                             caption: 'TransactionType',
                             items: {
-                                acc: <MultiselectDropDownElement>{
-                                    displayName: "",
+                                type: <MultiselectDropDownElement>{
                                     filterField: "TypeId",
                                     displayElementExp: "name",
                                     dataSource: result.types,
@@ -183,8 +179,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             field: 'CurrencyId',
                             caption: 'Currency',
                             items: {
-                                acc: <MultiselectDropDownElement>{
-                                    displayName: "",
+                                currency: <MultiselectDropDownElement>{
                                     filterField: "CurrencyId",
                                     displayElementExp: "name",
                                     dataSource: result.currencies,
@@ -197,8 +192,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             field: 'BusinessEntityId',
                             caption: 'BusinessEntity',
                             items: {
-                                acc: <MultiselectDropDownElement>{
-                                    displayName: "",
+                                businessEntity: <MultiselectDropDownElement>{
                                     filterField: "BusinessEntityId",
                                     displayElementExp: "name",
                                     dataSource: result.businessEntities,
@@ -284,16 +278,16 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         let data = {};
         data[filter.field] = [];
         _.each(filter.items, (val: MultiselectDropDownElement, key) => {
-            if (val && val.selectedElements && val.selectedElements.length > 0) {
+            if (val && val.selectedElements && val.selectedElements.length) {
                 var filterParams: any[] = [];
-                for (var i = 0; i < val.selectedElements.length; i++) {
-                    if (typeof (val.selectedElements[i].id) === "string") {
-                        filterParams.push("( " + filter.field + " eq '" + val.selectedElements[i].id + "' )");
+                _.each(val.selectedElements, (el) => {
+                    if (typeof (el.id) === "string") {
+                        filterParams.push("( " + filter.field + " eq '" + el.id + "' )");
                     }
                     else {
-                        filterParams.push("( " + filter.field + " eq " + val.selectedElements[i].id + " )");
+                        filterParams.push("( " + filter.field + " eq " + el.id + " )");
                     }
-                }
+                });
                 var filterQuery = filterParams.join(' or ');
                 data = filterQuery;
             }
