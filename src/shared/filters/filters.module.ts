@@ -3,6 +3,8 @@
 import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+import { CommonModule } from '@shared/common/common.module';
+
 import { FiltersService } from './filters.service';
 
 import { FilterManagerComponent, AdDirective } from './filter.manager.component';
@@ -11,36 +13,40 @@ import { FilterDropDownComponent } from './dropdown/filter-dropdown.component';
 import { FilterInputsComponent } from './inputs/filter-inputs.component';
 import { FilterCBoxesComponent } from './cboxes/filter-cboxes.component';
 import { FilterDatesComponent } from './dates/filter-dates.component';
+import { FilterCalendarComponent } from './calendar/filter-calendar.component';
 
 import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule } from 'devextreme-angular';
 
 @NgModule({
   imports: [
-		ngCommon.CommonModule,
-		FormsModule,
-		DxCheckBoxModule,
-        DxSelectBoxModule,
-        DxTextBoxModule,
-        DxDateBoxModule
+  		ngCommon.CommonModule,
+  		FormsModule,
+  		DxCheckBoxModule,
+      DxSelectBoxModule,
+      DxTextBoxModule,
+      DxDateBoxModule,
+      CommonModule
 	],
   declarations: [
-        FilterManagerComponent,
-        FilterStatesComponent,
-        FilterDropDownComponent,
-        FilterInputsComponent,
-        FilterCBoxesComponent,
-        FilterDatesComponent,
-        AdDirective
+      FilterManagerComponent,
+      FilterStatesComponent,
+      FilterDropDownComponent,
+      FilterInputsComponent,
+      FilterCBoxesComponent,
+      FilterDatesComponent,
+      FilterCalendarComponent,
+      AdDirective
   ],
   entryComponents: [
-        FilterStatesComponent,
-        FilterDropDownComponent,
-        FilterCBoxesComponent,
-        FilterInputsComponent,
-        FilterDatesComponent
+      FilterStatesComponent,
+      FilterDropDownComponent,
+      FilterCBoxesComponent,
+      FilterInputsComponent,
+      FilterDatesComponent,
+      FilterCalendarComponent
   ],
   exports: [
-		FilterManagerComponent
+		  FilterManagerComponent
   ]
 })
 export class FiltersModule {
