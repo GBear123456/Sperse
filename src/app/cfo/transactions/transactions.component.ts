@@ -11,6 +11,9 @@ import { FilterDatesComponent } from '@shared/filters/dates/filter-dates.compone
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { DropDownElement } from '@shared/filters/dropdown/dropdown_element';
 
+import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
+import { MultiselectDropDownElement } from '@shared/filters/multiselect-dropdown/multiselect-dropdown-element';
+
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
 
@@ -103,22 +106,20 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             items: { from: '', to: '' }
                         },
                         <FilterModel>{
-                            component: FilterDropDownComponent,
-                            field: 'accountId',
+                            component: FilterMultiselectDropDownComponent,
+                            field: 'BankAccountId',
                             caption: 'Account',
                             items: {
-                                bankAccount: <DropDownElement>{
+                                acc: <MultiselectDropDownElement>{
                                     displayName: "Account",
                                     filterField: "BankAccountId",
                                     displayElementExp: (item: BankAccountDto) => {
                                         if (item) {
-                                            return item.accountName + '(' + item.accountNumber + ')'
+                                            return item.accountName + ' (' + item.accountNumber + ')'
                                         }
                                     },
-                                    elements: result.bankAccounts,
-                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                        filter.items["bankAccount"].selectedElement = event.value;
-                                    }
+                                    dataSource: result.bankAccounts,
+                                    columns: [{ dataField: 'accountName', caption: this.l('CashflowAccountFilter_AccountName') }, { dataField: 'accountNumber', caption: this.l('CashflowAccountFilter_AccountNumber') }],
                                 }
                             }
                         },
@@ -136,66 +137,74 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             items: { from: '', to: '' }
                         },
                         <FilterModel>{
+                            component: FilterMultiselectDropDownComponent,
+                            field: 'CashFlowTypeId',
                             caption: 'CashflowType',
-                            component: FilterDropDownComponent,
                             items: {
-                                cashflowType: <DropDownElement>{
+                                acc: <MultiselectDropDownElement>{
+                                    displayName: "",
                                     filterField: "CashFlowTypeId",
                                     displayElementExp: "name",
-                                    elements: result.cashflowTypes,
-                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                        filter.items["cashflowType"].selectedElement = event.value;
-                                    }
+                                    dataSource: result.cashflowTypes,
+                                    columns: [{ dataField: 'name', caption: this.l('TransactionCashflowTypeFilter_Name') }],
                                 }
                             }
                         },
                         <FilterModel>{
+                            component: FilterMultiselectDropDownComponent,
+                            field: 'CategoryId',
                             caption: 'TransactionCategory',
-                            component: FilterDropDownComponent,
                             items: {
-                                category: <DropDownElement>{
+                                acc: <MultiselectDropDownElement>{
+                                    displayName: "",
                                     filterField: "CategoryId",
                                     displayElementExp: "name",
-                                    elements: result.categories,
-                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                        filter.items["category"].selectedElement = event.value;
-                                    }
+                                    dataSource: result.categories,
+                                    columns: [{ dataField: 'name', caption: this.l('TransactionCategoryFilter_Name') }],
                                 }
                             }
                         },
                         <FilterModel>{
+                            component: FilterMultiselectDropDownComponent,
+                            field: 'TypeId',
                             caption: 'TransactionType',
-                            component: FilterDropDownComponent,
                             items: {
-                                transactionType: <DropDownElement>{
+                                acc: <MultiselectDropDownElement>{
+                                    displayName: "",
                                     filterField: "TypeId",
                                     displayElementExp: "name",
-                                    elements: result.types,
-                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                        filter.items["transactionType"].selectedElement = event.value;
-                                    }
+                                    dataSource: result.types,
+                                    columns: [{ dataField: 'name', caption: this.l('TransactionTypeFilter_Name') }],
                                 }
                             }
                         },
                         <FilterModel>{
+                            component: FilterMultiselectDropDownComponent,
+                            field: 'CurrencyId',
                             caption: 'Currency',
-                            component: FilterDropDownComponent,
                             items: {
-                                currency: <DropDownElement>{
+                                acc: <MultiselectDropDownElement>{
+                                    displayName: "",
                                     filterField: "CurrencyId",
                                     displayElementExp: "name",
-                                    elements: result.currencies,
-                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                        filter.items["currency"].selectedElement = event.value;
-                                    }
+                                    dataSource: result.currencies,
+                                    columns: [{ dataField: 'name', caption: this.l('TransactionCurrencyFilter_Name') }],
                                 }
                             }
                         },
                         <FilterModel>{
-                            component: FilterInputsComponent,
-                            //operator: 'contains',
+                            component: FilterMultiselectDropDownComponent,
+                            field: 'BusinessEntityId',
                             caption: 'BusinessEntity',
-                            //items: { BusinessEntity: '' }
+                            items: {
+                                acc: <MultiselectDropDownElement>{
+                                    displayName: "",
+                                    filterField: "BusinessEntityId",
+                                    displayElementExp: "name",
+                                    dataSource: result.businessEntities,
+                                    columns: [{ dataField: 'name', caption: this.l('TransactionBusinessEntityFilter_Name') }],
+                                }
+                            }
                         },
                         <FilterModel>{
                             component: FilterInputsComponent,
@@ -268,11 +277,26 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     filterByTransactionType(filter) {
         return this.filterByFilterElement(filter);
     }
+    filterByBusinessEntity(filter) {
+        return this.filterByFilterElement(filter);
+    }
     filterByFilterElement(filter) {
         let data = {};
-        data[filter.field] = {};
-        _.each(filter.items, (val: DropDownElement, key) => {
-            val && val.filterField && val.selectedElement && (data[this.capitalize(val.filterField)] = val.selectedElement.id);
+        data[filter.field] = [];
+        _.each(filter.items, (val: MultiselectDropDownElement, key) => {
+            if (val && val.selectedElements && val.selectedElements.length > 0) {
+                var filterParams: any[] = [];
+                for (var i = 0; i < val.selectedElements.length; i++) {
+                    if (typeof (val.selectedElements[i].id) === "string") {
+                        filterParams.push("( " + filter.field + " eq '" + val.selectedElements[i].id + "' )");
+                    }
+                    else {
+                        filterParams.push("( " + filter.field + " eq " + val.selectedElements[i].id + " )");
+                    }
+                }
+                var filterQuery = filterParams.join(' or ');
+                data = filterQuery;
+            }
         });
         return data;
     }
