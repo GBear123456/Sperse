@@ -2,7 +2,7 @@ import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, DoChe
 import { AppConsts } from '@shared/AppConsts';
 import { GroupbyItem } from './models/groupbyItem';
 
-import { CashflowServiceProxy, StatsFilter, BankAccountDto } from '@shared/service-proxies/service-proxies';
+import { CashflowServiceProxy, StatsFilter, BankAccountDto, CashFlowInitialData } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
@@ -10,8 +10,8 @@ import * as _ from 'underscore.string';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
-import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
-import { DropDownElement } from '@shared/filters/dropdown/dropdown_element';
+import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
+import { MultiselectDropDownElement } from '@shared/filters/multiselect-dropdown/multiselect-dropdown-element';
 
 /** Constants */
 const StartedBalance = 'B',
@@ -211,6 +211,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     private updateUncollapsedCells = false;
     private emptyCellsObjects = [];
 
+    private initialData: CashFlowInitialData;
+
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
     private requestFilter: StatsFilter;
@@ -230,30 +232,32 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         this._CashflowServiceProxy.getCashFlowInitialData()
             .subscribe(result => {
+                this.initialData = result;
+
                 this._filtersService.setup(
                     this.filters = [
                         <FilterModel>{
-                            component: FilterDropDownComponent,
-                            field: 'accountId',
+                            component: FilterMultiselectDropDownComponent,
+                            field: 'accountIds',
                             caption: 'Account',
                             items: {
-                                acc: <DropDownElement>{
+                                acc: <MultiselectDropDownElement>{
                                     displayName: "Account",
-                                    filterField: "accountId",
+                                    filterField: "accountIds",
                                     displayElementExp: (item: BankAccountDto) => {
                                         if (item) {
-                                            return item.accountName + '(' + item.accountNumber + ')'
+                                            return item.accountName + ' (' + item.accountNumber + ')'
                                         }
                                     },
-                                    elements: result,
-                                    onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                        filter.items["acc"].selectedElement = event.value;
-                                    }
+                                    dataSource: result.bankAccounts,
+                                    columns: [{ dataField: 'accountName', caption: this.l('CashflowAccountFilter_AccountName') }, { dataField: 'accountNumber', caption: this.l('CashflowAccountFilter_AccountNumber') }],
                                 }
                             }
                         }
                     ]
                 );
+
+                this.loadGridDataSource();
             });
 
         this._filtersService.apply(() => {
@@ -265,12 +269,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
             this.loadGridDataSource();
         });
-
-        this.loadGridDataSource();
     }
 
-    filterByAccount(filter: FilterDropDownComponent) {
-        return filter.items && filter.items.acc && filter.items.acc.selectedElement && filter.items.acc.selectedElement.id;
+    filterByAccount(filter: FilterMultiselectDropDownComponent) {
+        if (filter.items && filter.items.acc && filter.items.acc.selectedElements)
+            return filter.items.acc.selectedElements.map(x => x.id);
     }
 
     ngDoCheck() {
@@ -311,18 +314,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this._CashflowServiceProxy.getStats(this.requestFilter)
             .subscribe(result => {
                 let transactions = result.transactionStats;
-                this._CashflowServiceProxy.getCashFlowInitialData().subscribe( initialData => {
-                    this.cashflowTypes = initialData.cashflowTypes;
-                    let expenseCategories = initialData.expenseCategories;
-                    let transactionCategories = initialData.transactionCategories;
-                    /** categories - object with categories */
-                    this.cashflowData = transactions.map(function(transactionObj) {
-                        transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
-                        transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
-                        return transactionObj;
-                    });
-                    this.dataSource = this.getApiDataSource();
+                this.cashflowTypes = this.initialData.cashflowTypes;
+                let expenseCategories = this.initialData.expenseCategories;
+                let transactionCategories = this.initialData.transactionCategories;
+                /** categories - object with categories */
+                this.cashflowData = transactions.map(function(transactionObj) {
+                    transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
+                    transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
+                    return transactionObj;
                 });
+                this.dataSource = this.getApiDataSource();
             });
     }
 

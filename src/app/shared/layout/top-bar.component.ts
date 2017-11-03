@@ -20,7 +20,7 @@ import { AppService } from '@app/app.service';
 export class TopBarComponent extends AppComponentBase {
   config: any = {};
   selectedIndex: number;
-  visibleMenuItems: number = 0;
+  visibleMenuItemsWidth: number = 0;
   showAdaptiveMenu: boolean;
   menu: PanelMenu = <PanelMenu>{
     items: []
@@ -47,33 +47,28 @@ export class TopBarComponent extends AppComponentBase {
 
     _appService.subscribeModuleChange((config) => {
       this.config = config;
+      this.visibleMenuItemsWidth = 0;
       this.showAdaptiveMenu = undefined;
       this.menu = new PanelMenu("MainMenu", "MainMenu", 
-        this.initMenu(config['navigation'])
+        this.initMenu(config['navigation'], 0)
       );
     });
   }
 
-  initMenu(config): PanelMenuItem[] {
+  initMenu(config, level): PanelMenuItem[] {
     let navList: PanelMenuItem[] = [];
     config.forEach((val) => {
       let value = val.slice(0);
       if (val.length == 5)
-        value.push(this.initMenu(value.pop()));
-      navList.push(new PanelMenuItem(this.l(value[0]), 
-        value[1], value[2], value[3], value[4])
-      );
+        value.push(this.initMenu(value.pop(), ++level));
+      let item = new PanelMenuItem(this.l(value[0]), 
+        value[1], value[2], value[3], value[4]);
+      item.visible = this.showMenuItem(item);
+      if (!level && item.visible)
+        this.visibleMenuItemsWidth += (item.text.length * 10 + 32);
+      navList.push(item);
     });
     return navList;
-  }
-
-  menuItemRendered(event, index){
-    if(event.itemData.visible = this.showMenuItem(event.itemData))
-      this.visibleMenuItems++;
-    if (event.itemData.items)
-      event.itemData.items.forEach((item) => {
-        item.visible = this.showMenuItem(item);
-      });
   }
 
   navigate(event, index){   
@@ -81,14 +76,9 @@ export class TopBarComponent extends AppComponentBase {
       this.router.navigate([event.itemData.route]);
   }
 
-  toogleNavMenu() {   
-    setTimeout(() => {
-      let prevValue = this.showAdaptiveMenu;
-      this.showAdaptiveMenu = 
-        window.innerWidth - 500 < this.visibleMenuItems * 60;
-      if (prevValue != this.showAdaptiveMenu)
-        this.visibleMenuItems = 0;
-    }, 0);
+  toogleNavMenu() {    
+    this.showAdaptiveMenu = 
+      window.innerWidth - 550 < this.visibleMenuItemsWidth;
   }
 
 	private checkMenuItemPermission(item): boolean {

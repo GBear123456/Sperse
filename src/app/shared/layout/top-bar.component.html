@@ -9,8 +9,7 @@
     [adaptivityEnabled]="true"
     [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
     [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
-    (onItemClick)="navigate($event)"
-    (onItemRendered)="menuItemRendered($event)">
+    (onItemClick)="navigate($event)">
   </dx-menu>
 </div>
 
@@ -38,8 +37,7 @@
           [hideSubmenuOnMouseLeave]="true"
           [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
           [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
-          (onItemClick)="navigate($event, i)"
-          (onItemRendered)="menuItemRendered($event, i)">
+          (onItemClick)="navigate($event, i)">
         </dx-menu>
       </dxi-item>
   </dx-nav-bar>

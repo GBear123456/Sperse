@@ -1,4 +1,4 @@
-﻿import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,45 +11,50 @@ import { FilterDropDownComponent } from './dropdown/filter-dropdown.component';
 import { FilterInputsComponent } from './inputs/filter-inputs.component';
 import { FilterCBoxesComponent } from './cboxes/filter-cboxes.component';
 import { FilterDatesComponent } from './dates/filter-dates.component';
+import { FilterMultiselectDropDownComponent } from './multiselect-dropdown/filter-multiselect-dropdown.component';
 
-import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule } from 'devextreme-angular';
+import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule, DxDropDownBoxModule, DxDataGridModule } from 'devextreme-angular';
 
 @NgModule({
-  imports: [
-		ngCommon.CommonModule,
-		FormsModule,
-		DxCheckBoxModule,
+    imports: [
+        ngCommon.CommonModule,
+        FormsModule,
+        DxCheckBoxModule,
         DxSelectBoxModule,
         DxTextBoxModule,
-        DxDateBoxModule
-	],
-  declarations: [
+        DxDateBoxModule,
+        DxDropDownBoxModule,
+        DxDataGridModule
+    ],
+    declarations: [
         FilterManagerComponent,
         FilterStatesComponent,
         FilterDropDownComponent,
+        FilterMultiselectDropDownComponent,
         FilterInputsComponent,
         FilterCBoxesComponent,
         FilterDatesComponent,
         AdDirective
-  ],
-  entryComponents: [
+    ],
+    entryComponents: [
         FilterStatesComponent,
         FilterDropDownComponent,
+        FilterMultiselectDropDownComponent,
         FilterCBoxesComponent,
         FilterInputsComponent,
         FilterDatesComponent
-  ],
-  exports: [
-		FilterManagerComponent
-  ]
+    ],
+    exports: [
+        FilterManagerComponent
+    ]
 })
 export class FiltersModule {
-  static forRoot(): ModuleWithProviders {
-    return {
-      ngModule: FiltersModule,
-      providers: [
-        FiltersService
-      ]
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: FiltersModule,
+            providers: [
+                FiltersService
+            ]
+        }
     }
-  }
 }

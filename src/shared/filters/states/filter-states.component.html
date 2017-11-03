@@ -4,7 +4,8 @@
     [dataSource]="countries"
     [(value)]="country"
     (onValueChanged)="onChangeCountry($event)"
-    placeholder="{{l('Country')}}">
+    placeholder="{{l('Country')}}"
+    [searchEnabled]="true">
   </dx-select-box>
 
   <dx-select-box
@@ -12,6 +13,7 @@
     [dataSource]="states"
     [(value)]="state"
     (onValueChanged)="onChangeState($event)"
-    placeholder="{{l('State')}}">
+    placeholder="{{l('State')}}"
+    [searchEnabled]="true">
   </dx-select-box>
 </div>
