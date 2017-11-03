@@ -174,7 +174,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
                 return result;
             },
-            customizeText: function (cellInfo) {
+            customizeText: cellInfo => {
                 let projectedKey = cellInfo.value === 1 ? 'Projected' : 'Mtd';
                 let cellValue = this.l(projectedKey).toUpperCase();
                 let cssMarker = ' @css:{projectedField ' + (cellInfo.value === 1 ? 'projected' : 'mtd') + '}';
