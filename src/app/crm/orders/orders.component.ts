@@ -1,4 +1,4 @@
-import {
+﻿import {
     Component,
     OnInit,
     AfterViewInit,
@@ -170,6 +170,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     exportData() {
+        this.dataGrid.export.fileName = "Orders_" + this.getDateFormated();
         this.dataGrid.instance.exportToExcel(false);
     }
 

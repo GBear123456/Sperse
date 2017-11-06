@@ -82,6 +82,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
 
     exportData() {
+        this.dataGrid.export.fileName = "Transactions_" + this.getDateFormated();
         this.dataGrid.instance.exportToExcel(false);
     }
 
