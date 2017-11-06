@@ -8,12 +8,15 @@ import { AppSessionService } from './session/app-session.service';
 import { AppUrlService } from './nav/app-url.service';
 
 import { ConfirmDialog } from './dialogs/confirm/confirm-dialog.component';
+import { CalendarComponent } from './widgets/calendar/calendar.component';
 
 @NgModule({
     declarations: [
+      CalendarComponent,
       ConfirmDialog
     ],
     exports: [
+      CalendarComponent,
       ConfirmDialog
     ],
     entryComponents: [

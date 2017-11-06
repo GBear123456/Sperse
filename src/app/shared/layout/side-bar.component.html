@@ -18,5 +18,7 @@
     <button class="button-layout button-primary" (click)="filterApply($event)"><i class="fa fa-check" aria-hidden="true"></i>{{ls('Platform', 'Apply')}}</button>
 	</div>
 
-  <filter [config]="activeFilter" (onApply)="filterApply($event)"></filter>
+  <dx-scroll-view showScrollbar="onHover">
+    <filter [config]="activeFilter" (onApply)="filterApply($event)"></filter>
+  </dx-scroll-view>
 </div>

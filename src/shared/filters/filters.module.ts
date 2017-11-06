@@ -3,6 +3,8 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+import { CommonModule } from '@shared/common/common.module';
+
 import { FiltersService } from './filters.service';
 
 import { FilterManagerComponent, AdDirective } from './filter.manager.component';
@@ -11,6 +13,7 @@ import { FilterDropDownComponent } from './dropdown/filter-dropdown.component';
 import { FilterInputsComponent } from './inputs/filter-inputs.component';
 import { FilterCBoxesComponent } from './cboxes/filter-cboxes.component';
 import { FilterDatesComponent } from './dates/filter-dates.component';
+import { FilterCalendarComponent } from './calendar/filter-calendar.component';
 import { FilterMultiselectDropDownComponent } from './multiselect-dropdown/filter-multiselect-dropdown.component';
 
 import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule, DxDropDownBoxModule, DxDataGridModule } from 'devextreme-angular';
@@ -24,7 +27,8 @@ import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule, 
         DxTextBoxModule,
         DxDateBoxModule,
         DxDropDownBoxModule,
-        DxDataGridModule
+        DxDataGridModule,
+        CommonModule
     ],
     declarations: [
         FilterManagerComponent,
@@ -34,6 +38,7 @@ import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule, 
         FilterInputsComponent,
         FilterCBoxesComponent,
         FilterDatesComponent,
+        FilterCalendarComponent,
         AdDirective
     ],
     entryComponents: [
@@ -42,7 +47,8 @@ import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule, 
         FilterMultiselectDropDownComponent,
         FilterCBoxesComponent,
         FilterInputsComponent,
-        FilterDatesComponent
+        FilterDatesComponent,
+        FilterCalendarComponent
     ],
     exports: [
         FilterManagerComponent

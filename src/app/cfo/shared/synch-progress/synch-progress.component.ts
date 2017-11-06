@@ -11,7 +11,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 export class SynchProgressComponent extends AppComponentBase implements OnInit, OnDestroy {
     @Output() onComplete = new EventEmitter();
-    @Output() completed: boolean;
+    @Output() completed: boolean = true;
     synchData: SyncProgressOutput;
 
     tooltipVisible: boolean;
@@ -32,12 +32,15 @@ export class SynchProgressComponent extends AppComponentBase implements OnInit, 
         this._financialInformationServiceProxy.getSyncProgress()
             .subscribe((result) => {
                 if (result.totalProgress.progressPercent != 100) {
+                    this.completed = false;
                     this.synchData = result;
                     this.timeoutHandler = setTimeout(() => this.getSynchProgress(), 10 * 1000);
                 }
                 else {
-                    this.completed = true;
-                    this.onComplete.emit();
+                    if (!this.completed) {
+                        this.completed = true;
+                        this.onComplete.emit();
+                    }
                 }
             });
     }

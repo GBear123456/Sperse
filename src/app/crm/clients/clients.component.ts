@@ -1,4 +1,4 @@
-﻿import {
+import {
     Component,
     OnInit,
     AfterViewInit,
@@ -19,6 +19,7 @@ import {FilterStatesComponent} from '@shared/filters/states/filter-states.compon
 import {FilterInputsComponent} from '@shared/filters/inputs/filter-inputs.component';
 import {FilterCBoxesComponent} from '@shared/filters/cboxes/filter-cboxes.component';
 import {FilterDatesComponent} from '@shared/filters/dates/filter-dates.component';
+import {FilterCalendarComponent} from '@shared/filters/calendar/filter-calendar.component';
 
 import {CommonLookupServiceProxy} from '@shared/service-proxies/service-proxies';
 import {appModuleAnimation} from '@shared/animations/routerTransition';
@@ -211,6 +212,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 },
                 <FilterModel> {
                     component: FilterDatesComponent,
+                    operator: {from: "ge", to: "le"},
+                    caption: 'creation',
+                    field: 'CreationTime',
+                    items: {from: '', to: ''}
+                },
+                <FilterModel> {
+                    component: FilterCalendarComponent,
                     operator: {from: "ge", to: "le"},
                     caption: 'creation',
                     field: 'CreationTime',

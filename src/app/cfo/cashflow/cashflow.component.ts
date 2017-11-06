@@ -2,12 +2,13 @@ import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild } from
 import { AppConsts } from '@shared/AppConsts';
 import { GroupbyItem } from './models/groupbyItem';
 
-import { CashflowServiceProxy, StatsFilter, BankAccountDto, CashFlowInitialData } from '@shared/service-proxies/service-proxies';
+import { CashflowServiceProxy, StatsFilter, BankAccountDto, CashFlowInitialData, StatsDetailFilter } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
 import * as underscore from 'underscore';
+import * as moment from 'moment';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
@@ -36,6 +37,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     bankAccounts: any;
     dataSource: any;
     groupInterval: any = 'year';
+    statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
+    statsDetailResult: any;
     /** posible groupIntervals year, quarter, month, dayofweek, day */
     groupbyItems: GroupbyItem[] = [
         {
@@ -63,6 +66,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
           'historicalSelectionFunction': this.getDayHistoricalSelector.bind(this)
         }
     ];
+
     leftMenuOrder = [
         StartedBalance,
         Income,
@@ -218,7 +222,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     private expandedFieldObj;
     private updateUncollapsedCells = false;
     private emptyCellsObjects = [];
-    private startedBalanceExpanded;
 
     private initialData: CashFlowInitialData;
 
@@ -302,22 +305,28 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     loadGridDataSource() {
+        abp.ui.setBusy();
         this._CashflowServiceProxy.getStats(this.requestFilter)
+            .finally(() => abp.ui.clearBusy())
             .subscribe(result => {
-                let transactions = result.transactionStats;
-                this.cashflowTypes = this.initialData.cashflowTypes;
-                let expenseCategories = this.initialData.expenseCategories;
-                let transactionCategories = this.initialData.transactionCategories;
-                this.bankAccounts = this.initialData.bankAccounts;
-                /** categories - object with categories */
-                this.cashflowData = transactions.map(function(transactionObj) {
-                    transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
-                    transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
-                    if (transactionObj.cashflowTypeId === StartedBalance) {
-                        transactionObj.transactionCategoryId = <any>transactionObj.accountId;
-                    }
-                    return transactionObj;
-                });
+                if (result.transactionStats.length) {
+                    let transactions = result.transactionStats;
+                    this.cashflowTypes = this.initialData.cashflowTypes;
+                    let expenseCategories = this.initialData.expenseCategories;
+                    let transactionCategories = this.initialData.transactionCategories;
+                    this.bankAccounts = this.initialData.bankAccounts;
+                    /** categories - object with categories */
+                    this.cashflowData = transactions.map(function (transactionObj) {
+                        transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
+                        transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
+                        if (transactionObj.cashflowTypeId === StartedBalance) {
+                            transactionObj.transactionCategoryId = <any>transactionObj.accountId;
+                        }
+                        return transactionObj;
+                    });
+                } else {
+                    this.cashflowData = null;
+                }
                 this.dataSource = this.getApiDataSource();
             });
     }
@@ -388,9 +397,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** Get the groupBy element and append the dx-area-description-cell with it */
         $('.groupBy').appendTo(event.element.find('.dx-area-description-cell'));
 
-        /** 2 - check the expandedField to collapse back if the element has no children -
-         * after that go to ngDoCheck to update classes */
-        this.updateUncollapsedCells = true;
     }
 
     findChildrenByPath(data, path) {
@@ -848,6 +854,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         if (cellObj.cell.isWhiteSpace) {
             this.bindCollapseActionOnWhiteSpaceColumn(cellObj);
         }
+        /** 1 - mark the column to check in onContentReady */
+        if (cellObj.area === 'row' && cellObj.cell.path.length > 1) {
+            this.expandedFieldObj = cellObj;
+        }
+
+        this.getStatsDetails();
     }
 
     /**
@@ -912,5 +924,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
             return summaryCell.value() || 0;
         };
+    }
+
+    getStatsDetails(): void {
+        this._CashflowServiceProxy
+            .getStatsDetails(this.statsDetailFilter)
+            .subscribe(result => {
+                this.statsDetailResult = result;
+            });
     }
 }
