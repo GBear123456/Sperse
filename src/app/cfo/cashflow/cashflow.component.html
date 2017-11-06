@@ -38,4 +38,18 @@
     >
     </dx-pivot-grid>
 
+    <ng-container *ngIf="statsDetailResult !== 'undefined'">
+        <dx-data-grid id="gridContainer"
+                      [dataSource]="statsDetailResult">
+
+            <dxi-column dataField="date" width="130" dataType="date" format="shortDate"></dxi-column>
+            <dxi-column dataField="description"></dxi-column>
+            <dxi-column dataField="debit" width="110" format="currency"></dxi-column>
+            <dxi-column dataField="credit" width="110" format="currency"></dxi-column>
+            <dxi-column dataField="comments"></dxi-column>
+
+            <dxo-load-panel [enabled]="true"></dxo-load-panel>
+            <dxo-scrolling mode="virtual"></dxo-scrolling>
+        </dx-data-grid>
+    </ng-container>
 </div>

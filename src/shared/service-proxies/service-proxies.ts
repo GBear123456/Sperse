@@ -1026,29 +1026,15 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    getStatsDetails(cashFlowTypeId: string, transactionCategoryId: string, expenseCategoryId: string, startDate: moment.Moment, endDate: moment.Moment, currencyId: string, accountIds: number[]): Observable<CashFlowStatsDetailDto[]> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStatsDetails?";
-        if (cashFlowTypeId !== undefined)
-            url_ += "CashFlowTypeId=" + encodeURIComponent("" + cashFlowTypeId) + "&"; 
-        if (transactionCategoryId !== undefined)
-            url_ += "TransactionCategoryId=" + encodeURIComponent("" + transactionCategoryId) + "&"; 
-        if (expenseCategoryId !== undefined)
-            url_ += "ExpenseCategoryId=" + encodeURIComponent("" + expenseCategoryId) + "&"; 
-        if (startDate !== undefined)
-            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
-        if (endDate !== undefined)
-            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
-        if (currencyId !== undefined)
-            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
-        if (accountIds !== undefined)
-            accountIds.forEach(item => { url_ += "AccountIds=" + encodeURIComponent("" + item) + "&"; });
+    getStatsDetails(filter: StatsDetailFilter): Observable<CashFlowStatsDetailDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStatsDetails";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = "";
+        const content_ = JSON.stringify(filter ? filter.toJSON() : null);
         
         let options_ = {
             body: content_,
-            method: "get",
+            method: "post",
             headers: new Headers({
                 "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
@@ -12251,6 +12237,73 @@ export interface IRecalculateCategoriesInput {
     startDate: moment.Moment;
     endDate: moment.Moment;
     cashflowCategoryId: number;
+}
+
+export class StatsDetailFilter implements IStatsDetailFilter {
+    cashFlowTypeId: string;
+    transactionCategoryId: string;
+    expenseCategoryId: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    currencyId: string;
+    accountIds: number[];
+
+    constructor(data?: IStatsDetailFilter) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.cashFlowTypeId = data["cashFlowTypeId"];
+            this.transactionCategoryId = data["transactionCategoryId"];
+            this.expenseCategoryId = data["expenseCategoryId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.currencyId = data["currencyId"];
+            if (data["accountIds"] && data["accountIds"].constructor === Array) {
+                this.accountIds = [];
+                for (let item of data["accountIds"])
+                    this.accountIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): StatsDetailFilter {
+        let result = new StatsDetailFilter();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["cashFlowTypeId"] = this.cashFlowTypeId;
+        data["transactionCategoryId"] = this.transactionCategoryId;
+        data["expenseCategoryId"] = this.expenseCategoryId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["currencyId"] = this.currencyId;
+        if (this.accountIds && this.accountIds.constructor === Array) {
+            data["accountIds"] = [];
+            for (let item of this.accountIds)
+                data["accountIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IStatsDetailFilter {
+    cashFlowTypeId: string;
+    transactionCategoryId: string;
+    expenseCategoryId: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    currencyId: string;
+    accountIds: number[];
 }
 
 export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
