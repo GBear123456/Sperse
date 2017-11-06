@@ -127,7 +127,8 @@
         /** bottom left column (labels cells) */
         .dx-area-row-cell {
             tr {
-                &:nth-child(2),
+                &:nth-child(1),
+                &.startedBalance + tr,
                 &.incomeRow + tr {
                     .dx-white-space-column {
                         &:nth-child(1) {
@@ -195,6 +196,7 @@
 
                     &.emptyChildren {
                         padding-left: 40px;
+                        cursor: default;
                         .dx-expand-icon-container {
                             display: none;
                         }
@@ -247,12 +249,13 @@
                         letter-spacing: 0.6px;
                         padding-left: 22px;
                     }
+                }
 
-                    &.startedBalance {
+                &.startedBalance {
+                    td {
                         font-weight: 700;
                         background: @startedBalanceBackgroundColor;
                         padding-left: 20px;
-                        cursor: default;
                         .dx-expand-icon-container {
                             display: none;
                         }

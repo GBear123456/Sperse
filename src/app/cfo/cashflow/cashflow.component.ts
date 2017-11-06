@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, DoCheck } from '@angular/core';
+import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { GroupbyItem } from './models/groupbyItem';
 
@@ -7,6 +7,7 @@ import { CashflowServiceProxy, StatsFilter, BankAccountDto, CashFlowInitialData 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
+import * as underscore from 'underscore';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
@@ -28,10 +29,11 @@ const StartedBalance = 'B',
     providers: [ CashflowServiceProxy ]
 })
 
-export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy, DoCheck {
+export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     cashflowData: any;
     cashflowTypes: any;
+    bankAccounts: any;
     dataSource: any;
     groupInterval: any = 'year';
     /** posible groupIntervals year, quarter, month, dayofweek, day */
@@ -61,7 +63,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
           'historicalSelectionFunction': this.getDayHistoricalSelector.bind(this)
         }
     ];
-
     leftMenuOrder = [
         StartedBalance,
         Income,
@@ -97,8 +98,15 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             dataField: 'transactionCategoryId',
             expanded: false,
             showTotals: true,
-            customizeText: function(cellInfo) {
-                return cellInfo.valueText.toUpperCase();
+            customizeText: cellInfo => {
+                let value = cellInfo.value;
+                /** If the cell is int - then we have bank account as second level */
+                if (Number.isInteger(cellInfo.value) && this.bankAccounts) {
+                    value = this.bankAccounts.find( account => {
+                        return account.id === cellInfo.value;
+                    }).accountName;
+                }
+                return value.toUpperCase();
             },
             rowHeaderLayout: 'tree'
         },
@@ -210,6 +218,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     private expandedFieldObj;
     private updateUncollapsedCells = false;
     private emptyCellsObjects = [];
+    private startedBalanceExpanded;
 
     private initialData: CashFlowInitialData;
 
@@ -220,7 +229,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     constructor(injector: Injector, private _CashflowServiceProxy: CashflowServiceProxy,
         private _filtersService: FiltersService) {
         super(injector);
-
         this._filtersService.enabled = true;
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
@@ -229,7 +237,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     ngOnInit() {
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
-
         this._CashflowServiceProxy.getCashFlowInitialData()
             .subscribe(result => {
                 this.initialData = result;
@@ -242,15 +249,22 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                             caption: 'Account',
                             items: {
                                 acc: <MultiselectDropDownElement>{
-                                    displayName: "Account",
-                                    filterField: "accountIds",
+                                    displayName: 'Account',
+                                    filterField: 'accountIds',
                                     displayElementExp: (item: BankAccountDto) => {
                                         if (item) {
-                                            return item.accountName + ' (' + item.accountNumber + ')'
+                                            return item.accountName + ' (' + item.accountNumber + ')';
                                         }
                                     },
                                     dataSource: result.bankAccounts,
-                                    columns: [{ dataField: 'accountName', caption: this.l('CashflowAccountFilter_AccountName') }, { dataField: 'accountNumber', caption: this.l('CashflowAccountFilter_AccountNumber') }],
+                                    columns: [{
+                                        dataField: 'accountName',
+                                        caption: this.l('CashflowAccountFilter_AccountName') },
+                                        {
+                                            dataField: 'accountNumber',
+                                            caption: this.l('CashflowAccountFilter_AccountNumber')
+                                        }
+                                    ],
                                 }
                             }
                         }
@@ -261,40 +275,17 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             });
 
         this._filtersService.apply(() => {
-
             for (let filter of this.filters) {
                 let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
                 this.requestFilter[filter.field] = filterMethod ? filterMethod(filter) : filter.value;
             }
-
             this.loadGridDataSource();
         });
     }
 
     filterByAccount(filter: FilterMultiselectDropDownComponent) {
-        if (filter.items && filter.items.acc && filter.items.acc.selectedElements)
+        if (filter.items && filter.items.acc && filter.items.acc.selectedElements) {
             return filter.items.acc.selectedElements.map(x => x.id);
-    }
-
-    ngDoCheck() {
-        /** 3 - if we have an mark - we update the classes for every cell that has no childs
-         *  with crutch, because we could find the element by the path or anything else
-         */
-        if (this.updateUncollapsedCells) {
-            this.emptyCellsObjects.forEach( cell => {
-                let element = cell.element.find('tbody.dx-pivotgrid-vertical-headers tr:nth-child(' +
-                    (cell.rowIndex + 1) + ')').find('td.dx-pivotgrid-collapsed.dx-last-cell');
-                /** if index of element has changed */
-                if (!element.length) {
-                    /** @todo kostyl get the first element with the same text and add class to it! */
-                    let rowElement = cell.element.find('tbody.dx-pivotgrid-vertical-headers tr:nth-child(' +
-                        (cell.rowIndex + 1) + ')').nextAll(':contains("' + cell.cell.text + '")');
-                    element = rowElement.find('td.dx-pivotgrid-collapsed.dx-last-cell');
-                }
-                element.addClass('emptyChildren');
-            });
-            this.expandedFieldObj = undefined;
-            this.updateUncollapsedCells = false;
         }
     }
 
@@ -317,10 +308,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 this.cashflowTypes = this.initialData.cashflowTypes;
                 let expenseCategories = this.initialData.expenseCategories;
                 let transactionCategories = this.initialData.transactionCategories;
+                this.bankAccounts = this.initialData.bankAccounts;
                 /** categories - object with categories */
                 this.cashflowData = transactions.map(function(transactionObj) {
                     transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
                     transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
+                    if (transactionObj.cashflowTypeId === StartedBalance) {
+                        transactionObj.transactionCategoryId = <any>transactionObj.accountId;
+                    }
                     return transactionObj;
                 });
                 this.dataSource = this.getApiDataSource();
@@ -379,18 +374,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param event
      */
     onContentReady(event) {
-
-        /** collapse the starting balances field */
-        if (this.cashflowData && this.cashflowData.length) {
-            event.element.find('.dx-pivotgrid-vertical-headers td.startedBalance').trigger('click');
-            let closeStartingBalance = event.element.find('.dx-pivotgrid-vertical-headers tr:first-child td.dx-last-cell');
-            closeStartingBalance.addClass('startedBalance');
-            closeStartingBalance.addClass('startedBalance');
-            closeStartingBalance.on('click', (e) => {
-                e.stopImmediatePropagation();
-            });
-        }
-
         let allDateIntervals = this.groupbyItems.map(group => group.groupInterval);
         let datesIntervalsToBeHide = allDateIntervals.slice(0, allDateIntervals.indexOf(this.groupInterval));
         for (let dateInterval of datesIntervalsToBeHide) {
@@ -407,19 +390,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** 2 - check the expandedField to collapse back if the element has no children -
          * after that go to ngDoCheck to update classes */
-        if (this.expandedFieldObj !== undefined) {
-            let path = this.expandedFieldObj.cell.path;
-            let data = event.component.getDataSource().getData().rows;
-            let expandedCellChildren = this.findChildrenByPath(data, path);
-            if (expandedCellChildren && expandedCellChildren.length === 1 && expandedCellChildren[0].value === undefined) {
-                /** collapse the cell and add to the list of cells that should have class emptyChild that removes expand icon */
-                event.component.getDataSource().collapseHeaderItem('rows', path);
-                if (!~this.emptyCellsObjects.indexOf(this.expandedFieldObj)) {
-                    this.emptyCellsObjects.push(this.expandedFieldObj);
-                }
-            }
-        }
-
         this.updateUncollapsedCells = true;
     }
 
@@ -617,7 +587,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * return bool
      */
     isStartingBalanceHeaderColumn(cellObj) {
-        return cellObj.area === 'row' && cellObj.cell.type === Total && cellObj.cell.path[0] === StartedBalance;
+        return cellObj.area === 'row' &&
+               cellObj.cell.path !== undefined &&
+               cellObj.cell.path.length === 1 &&
+               cellObj.cell.rowspan === undefined &&
+               cellObj.cell.path[0] === StartedBalance;
     }
 
     /**
@@ -707,7 +681,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         if (this.isStartingBalanceHeaderColumn(e) ||
             this.isStartingBalanceDataColumn(e)) {
             let cssClass = 'startedBalance';
-            e.cellElement.addClass(cssClass);
+            e.cellElement.parent().addClass(cssClass);
         }
 
         /** added css class to the income and outcomes columns */
@@ -762,6 +736,17 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 e.cell.value = Math.abs(e.cell.value);
                 e.cell.text = e.cell.text.replace('-', '');
                 e.cellElement.text(e.cell.text);
+            }
+        }
+
+        /** disable expanding and hide the plus button of the elements that has no children */
+        if (e.area === 'row' && e.cell.path &&
+            e.cell.path.length !== e.component.getDataSource().getAreaFields('row').length) {
+            if (!this.hasChildsByPath(e.cell.path, e.component.getDataSource().getAreaFields('row'))) {
+                e.cellElement.addClass('emptyChildren');
+                e.cellElement.click(function (event) {
+                    event.stopImmediatePropagation();
+                });
             }
         }
     }
@@ -863,10 +848,25 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         if (cellObj.cell.isWhiteSpace) {
             this.bindCollapseActionOnWhiteSpaceColumn(cellObj);
         }
-        /** 1 - mark the column to check in onContentReady */
-        if (cellObj.area === 'row' && cellObj.cell.path.length > 1) {
-            this.expandedFieldObj = cellObj;
-        }
+    }
+
+    /**
+     * Find if the group has childs by path and fields list
+     * @param path
+     * @param fields
+     * @return {any}
+     */
+    hasChildsByPath(path, fields) {
+        let filterArr = {};
+        path.forEach( (pathItem, key) => {
+            filterArr[fields[key]['dataField']] = pathItem;
+        });
+        let filteredData = underscore.where(this.cashflowData, filterArr);
+
+        let result = filteredData.some( element => {
+            return element[fields[path.length]['dataField']];
+        });
+        return result;
     }
 
     /**
