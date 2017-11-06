@@ -170,7 +170,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     exportData() {
-        this.dataGrid.instance.exportToExcel(true);
+        this.dataGrid.instance.exportToExcel(false);
     }
 
     showColumnChooser() {

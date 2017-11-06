@@ -82,7 +82,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
 
     exportData() {
-        this.dataGrid.instance.exportToExcel(true);
+        this.dataGrid.instance.exportToExcel(false);
     }
 
     showColumnChooser() {

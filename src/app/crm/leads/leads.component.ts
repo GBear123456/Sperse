@@ -167,7 +167,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     exportData() {
-        this.dataGrid.instance.exportToExcel(true);
+        this.dataGrid.instance.exportToExcel(false);
     }
 
     showColumnChooser() {
