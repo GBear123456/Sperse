@@ -33,6 +33,7 @@ const StartedBalance = 'B',
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     cashflowData: any;
+    cashflowDataTree: any;
     cashflowTypes: any;
     bankAccounts: any;
     dataSource: any;
@@ -220,11 +221,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         'forecast'
     ];
     private expandedFieldObj;
-    private updateUncollapsedCells = false;
-    private emptyCellsObjects = [];
-
     private initialData: CashFlowInitialData;
-
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
     private requestFilter: StatsFilter;
@@ -324,11 +321,47 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                         }
                         return transactionObj;
                     });
+                    this.cashflowDataTree = this.getCashflowDataTree(
+                        this.cashflowData,
+                        this.apiTableFields.filter( field => {
+                            return field.area === 'row';
+                        })
+                    );
                 } else {
                     this.cashflowData = null;
                 }
                 this.dataSource = this.getApiDataSource();
             });
+    }
+
+    /**
+     * Build the nested object from array as the properties
+     * @param obj
+     * @param keyPath
+     * @param value
+     */
+    createNestedObject(base, names) {
+        for (let i = 0; i < names.length; i++ ) {
+            base = base[ names[i] ] = base[ names[i] ] || {};
+        }
+    }
+
+    /**
+     * Build the tree from cashflow data
+     * @param data
+     * @param fields
+     * @return {{}}
+     */
+    getCashflowDataTree(data, fields) {
+        let cashflowDataTree = {};
+        data.forEach( cashflowItem => {
+            let chainingArr = [];
+            fields.forEach( (field) => {
+                chainingArr.push(cashflowItem[field['dataField']]);
+            });
+            this.createNestedObject(cashflowDataTree, chainingArr);
+        });
+        return cashflowDataTree;
     }
 
     refreshDataGrid() {
@@ -396,26 +429,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
         $('.groupBy').appendTo(event.element.find('.dx-area-description-cell'));
-
-    }
-
-    findChildrenByPath(data, path) {
-        if (data) {
-            /** clone the original path to not override it */
-            let clonedPath = path.slice();
-            while (clonedPath.length) {
-                if (data) {
-                    let pathShift = clonedPath.shift();
-                    data = data.filter( item => {
-                        return item.value === pathShift;
-                    });
-                    data = data[0].children;
-                } else {
-                    break;
-                }
-            }
-            return data;
-        }
     }
 
     /**
@@ -748,7 +761,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** disable expanding and hide the plus button of the elements that has no children */
         if (e.area === 'row' && e.cell.path &&
             e.cell.path.length !== e.component.getDataSource().getAreaFields('row').length) {
-            if (!this.hasChildsByPath(e.cell.path, e.component.getDataSource().getAreaFields('row'))) {
+            if (!this.hasChildsByPath(e.cell.path, this.cashflowDataTree)) {
                 e.cellElement.addClass('emptyChildren');
                 e.cellElement.click(function (event) {
                     event.stopImmediatePropagation();
@@ -868,15 +881,17 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param fields
      * @return {any}
      */
-    hasChildsByPath(path, fields) {
-        let filterArr = {};
-        path.forEach( (pathItem, key) => {
-            filterArr[fields[key]['dataField']] = pathItem;
-        });
-        let filteredData = underscore.where(this.cashflowData, filterArr);
-
-        let result = filteredData.some( element => {
-            return element[fields[path.length]['dataField']];
+    hasChildsByPath(path, object) {
+        let result = true;
+        path.forEach( pathItem => {
+            if ( object.hasOwnProperty(pathItem) &&
+                 (Object.keys(object[pathItem]).length !== 1 ||
+                 Object.keys(object[pathItem])[0] === undefined)
+            ) {
+                object = object[pathItem];
+            } else {
+                result = false;
+            }
         });
         return result;
     }
