@@ -63,8 +63,6 @@ export class SideBarComponent extends AppComponentBase {
   }
 
   showSelectedFilters() {
-      console.log(this.filters);
-      let f = new FilterModel();
       this.filters.forEach((filter: FilterModel) => {
       let isBoolValues = false;
       let values = _.values(_.mapObject(

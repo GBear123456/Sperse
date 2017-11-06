@@ -1,4 +1,4 @@
-﻿import {
+import {
     Component,
     OnInit,
     AfterViewInit,
@@ -19,7 +19,10 @@ import { FilterDatesComponent } from '@shared/filters/dates/filter-dates.compone
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { DropDownElement } from '@shared/filters/dropdown/dropdown_element';
 
-import {CommonLookupServiceProxy} from '@shared/service-proxies/service-proxies';
+import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
+import { MultiselectDropDownElement } from '@shared/filters/multiselect-dropdown/multiselect-dropdown-element';
+
+import { CommonLookupServiceProxy, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 import {appModuleAnimation} from '@shared/animations/routerTransition';
 
 import {DxDataGridComponent} from 'devextreme-angular';
@@ -27,12 +30,14 @@ import query from 'devextreme/data/query';
 
 import 'devextreme/data/odata/store';
 
+import * as _ from 'underscore';
 import * as moment from "moment";
 
 @Component({
     templateUrl: "./orders.component.html",
     styleUrls: ["./orders.component.less"],
-    animations: [appModuleAnimation()]
+    animations: [appModuleAnimation()],
+    providers: [ OrderServiceProxy ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -42,9 +47,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     gridDataSource: any = {};
     private rootComponent: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
+    private readonly dataSourceURI = 'Order';
+    private filters: FilterModel[];
 
     constructor(injector: Injector,
                 private _filtersService: FiltersService,
+                private _orderService: OrderServiceProxy,
                 // private _clientService: ClientServiceProxy,
                 private _activatedRoute: ActivatedRoute,
                 private _commonLookupService: CommonLookupServiceProxy) {
@@ -57,7 +65,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL('Order'),
+                url: this.getODataURL(this.dataSourceURI),
                 version: 4,
                 beforeSend: function (request) {
                     request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
@@ -181,113 +189,212 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     ngOnInit(): void {
-        this._filtersService.setup([
-            <FilterModel>{
-                component: FilterDatesComponent,
-                operator: { from: "ge", to: "le" },
-                caption: 'creation',
-                field: 'CreationTime',
-                items: { from: '', to: '' }
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'product',
-                items: { product: '' }
-            },
-            <FilterModel>{
-                component: FilterDropDownComponent,
-                caption: 'paymentType',
-                items: {
-                    paymentType: <DropDownElement>{
-                        displayName: "Payment Type",
-                        elements: null,
-                        filterField: "paymentTypeId",
-                        onElementSelect: (event, filter: FilterDropDownComponent) => {
-                            filter.items["paymentType"].selectedElement = event.value;
+        this._orderService.getFiltersInitialData().subscribe(result => {
+
+            this._filtersService.setup(this.filters = [
+                <FilterModel>{
+                    component: FilterDatesComponent,
+                    operator: { from: "ge", to: "le" },
+                    caption: 'creation',
+                    field: 'CreationTime',
+                    items: { from: '', to: '' }
+                },
+                <FilterModel>{
+                    component: FilterDropDownComponent,
+                    caption: 'orderStages',
+                    items: {
+                        pipeline: <DropDownElement>{
+                            displayName: "Pipeline",
+                            elements: result.pipelines,
+                            displayElementExp: "name",
+                            filterField: "pipelineId",
+                            onElementSelect: (event, filter: FilterDropDownComponent) => {
+                                filter.items["pipeline"].selectedElement = event.value;
+                                filter.items["stage"].elements = event.value.stages;
+                                filter.items["stage"].selectedElement = null;
+                            }
+                        },
+                        stage: <DropDownElement>{
+                            displayName: "Stages",
+                            displayElementExp: "name",
+                            filterField: "stageId",
+                            onElementSelect: (event, filter: FilterDropDownComponent) => {
+                                filter.items["stage"].selectedElement = event.value;
+                            }
                         }
                     }
+                },
+                <FilterModel>{
+                    component: FilterMultiselectDropDownComponent,
+                    field: 'BillingSubscriptionStatusId',
+                    caption: 'BillingSubscriptionStatus',
+                    items: {
+                        cashflowType: <MultiselectDropDownElement>{
+                            filterField: "BillingSubscriptionStatusId",
+                            displayElementExp: "name",
+                            dataSource: result.subscriptionStatuses,
+                            columns: [{ dataField: 'name', caption: this.l('OrderFilters_BillingStatus') }],
+                        }
+                    }
+                },
+                <FilterModel>{
+                    component: FilterDropDownComponent,
+                    caption: 'paymentType',
+                    items: {
+                        paymentType: <DropDownElement>{
+                            displayName: "Payment Type",
+                            elements: null,
+                            filterField: "paymentTypeId",
+                            onElementSelect: (event, filter: FilterDropDownComponent) => {
+                                filter.items["paymentType"].selectedElement = event.value;
+                            }
+                        }
+                    }
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'product',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'orderTotals',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'currencies',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'recurrence',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'regions',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'zipCode',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'referringAffiliates',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'referringWebsites',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'utmSources',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'utmMediums',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'UtmCampaings',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'entryPages',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'salesAgents',
+                    items: {}
+                },
+                <FilterModel>{
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'cardBins',
+                    items: {}
                 }
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'orderTotals',
-                items: {}
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'currencies',
-                items: {}
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'recurrence',
-                items: {}
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'regions',
-                items: {}
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'zipCode',
-                items: {}
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'referringAffiliates',
-                items: {}
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'referringWebsites',
-                items: {}
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'utmSources',
-                items: {}
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'utmMediums',
-                items: {}
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'UtmCampaings',
-                items: {}
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'entryPages',
-                items: {}
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'salesAgents',
-                items: {}
-            },
-            <FilterModel>{
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'cardBins',
-                items: {}
+            ]);
+        });
+
+        this._filtersService.apply(() => {
+            this.processODataFilter(this.dataGrid.instance,
+                this.dataSourceURI, this.filters, (filter) => {
+                    let filterMethod = this['filterBy' +
+                        this.capitalize(filter.caption)];
+                    if (filterMethod)
+                        return filterMethod.call(this, filter);
+                }
+            );
+        });
+    }
+
+    filterByOrderStages(filter) {
+        let data = {};
+        data[filter.field] = {};
+        _.each(filter.items, (val: DropDownElement, key) => {
+            val && val.filterField && val.selectedElement && (data[this.capitalize(val.filterField)] = val.selectedElement.id);
+        });
+        return data;
+    }
+
+    filterByCreation(filter: FilterModel) {
+        let data = {};
+        data[filter.field] = {};
+        _.each(filter.items, (val, key) => {
+            if (val) {
+                var date = moment.utc(val, 'YYYY-MM-DDT');
+                if (key.toString() === "to") {
+                    date.add(1, 'd').add(-1, 's')
+                }
+
+                data[filter.field][filter.operator[key]] = date.toDate();
             }
-        ]);
+        });
+
+        return data;
+    }
+
+    filterByBillingSubscriptionStatus(filter) {
+        let data = {};
+        data[filter.field] = [];
+        _.each(filter.items, (val: MultiselectDropDownElement, key) => {
+            if (val && val.selectedElements && val.selectedElements.length) {
+                var filterParams: any[] = [];
+                _.each(val.selectedElements, (el) => {
+                    if (typeof (el.id) === "string") {
+                        filterParams.push("( " + filter.field + " eq '" + el.id + "' )");
+                    }
+                    else {
+                        filterParams.push("( " + filter.field + " eq " + el.id + " )");
+                    }
+                });
+                var filterQuery = filterParams.join(' or ');
+                data = filterQuery;
+            }
+        });
+        return data;
     }
 
     ngAfterViewInit(): void {
