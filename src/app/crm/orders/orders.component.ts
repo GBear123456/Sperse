@@ -15,7 +15,7 @@ import {AppComponentBase} from '@shared/common/app-component-base';
 import {FiltersService} from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
-import { FilterDatesComponent } from '@shared/filters/dates/filter-dates.component';
+import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { DropDownElement } from '@shared/filters/dropdown/dropdown_element';
 
@@ -183,7 +183,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ngOnInit(): void {
         this._filtersService.setup([
             <FilterModel>{
-                component: FilterDatesComponent,
+                component: FilterCalendarComponent,
                 operator: { from: "ge", to: "le" },
                 caption: 'creation',
                 field: 'CreationTime',

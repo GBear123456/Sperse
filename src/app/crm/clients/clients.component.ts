@@ -18,7 +18,6 @@ import {FilterModel} from '@shared/filters/filter.model';
 import {FilterStatesComponent} from '@shared/filters/states/filter-states.component';
 import {FilterInputsComponent} from '@shared/filters/inputs/filter-inputs.component';
 import {FilterCBoxesComponent} from '@shared/filters/cboxes/filter-cboxes.component';
-import {FilterDatesComponent} from '@shared/filters/dates/filter-dates.component';
 import {FilterCalendarComponent} from '@shared/filters/calendar/filter-calendar.component';
 
 import {CommonLookupServiceProxy} from '@shared/service-proxies/service-proxies';
@@ -209,13 +208,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     caption: 'status',
                     field: 'StatusId',
                     items: {active: true, inactive: true}
-                },
-                <FilterModel> {
-                    component: FilterDatesComponent,
-                    operator: {from: "ge", to: "le"},
-                    caption: 'creation',
-                    field: 'CreationTime',
-                    items: {from: '', to: ''}
                 },
                 <FilterModel> {
                     component: FilterCalendarComponent,

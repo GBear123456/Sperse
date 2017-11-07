@@ -7,7 +7,7 @@ import { TransactionsServiceProxy, BankAccountDto } from '@shared/service-proxie
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
-import { FilterDatesComponent } from '@shared/filters/dates/filter-dates.component';
+import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { DropDownElement } from '@shared/filters/dropdown/dropdown_element';
 
@@ -99,7 +99,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                 this._filtersService.setup(
                     this.filters = [
                         <FilterModel>{
-                            component: FilterDatesComponent,
+                            component: FilterCalendarComponent,
                             operator: { from: "ge", to: "le" },
                             caption: 'Date',
                             field: 'Date',
