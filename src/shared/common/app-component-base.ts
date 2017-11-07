@@ -105,4 +105,9 @@ export abstract class AppComponentBase {
   isGranted(permissionName: string): boolean {
     return this.permission.isGranted(permissionName);
   }
+  getDateFormated(): string {
+      var date = new Date();
+      var dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "_" + date.getHours() + "" + date.getMinutes() + "" + date.getSeconds();
+      return dateStr;
+  }
 }

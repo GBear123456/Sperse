@@ -1,4 +1,4 @@
-import {
+﻿import {
     Component,
     OnInit,
     AfterViewInit,
@@ -62,7 +62,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL('Lead'),
+                url: this.getODataURL(this.dataSourceURI),
                 version: this.getODataVersion(),
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
@@ -167,7 +167,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     exportData() {
-        this.dataGrid.instance.exportToExcel(true);
+        this.dataGrid.export.fileName = "Leads_" + this.getDateFormated();
+        this.dataGrid.instance.exportToExcel(false);
     }
 
     showColumnChooser() {
@@ -329,7 +330,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
 
-    filterByStages(filter) {
+    filterByStages(filter: FilterModel) {
         let data = {};
         data[filter.field] = {};
         _.each(filter.items, (val: DropDownElement, key) => {
@@ -338,7 +339,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         return data;
     }
 
-    filterByCreation(filter) {
+    filterByCreation(filter: FilterModel) {
         let data = {};
         data[filter.field] = {};
         _.each(filter.items, (val, key) => {

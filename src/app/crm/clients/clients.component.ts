@@ -1,4 +1,4 @@
-import {
+﻿import {
     Component,
     OnInit,
     AfterViewInit,
@@ -151,7 +151,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     exportData() {
-        this.dataGrid.instance.exportToExcel(true);
+        this.dataGrid.export.fileName = "Clients_" + this.getDateFormated();
+        this.dataGrid.instance.exportToExcel(false);
     }
 
     showColumnChooser() {
