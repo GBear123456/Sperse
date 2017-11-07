@@ -35,6 +35,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     cashflowData: any;
     cashflowDataTree: any;
     cashflowTypes: any;
+    transactionCategories: any;
+    expenseCategories: any;
     bankAccounts: any;
     dataSource: any;
     groupInterval: any = 'year';
@@ -92,7 +94,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 return this.leftMenuOrder.indexOf(firstItem.value) > this.leftMenuOrder.indexOf(secondItem.value);
             },
             customizeText: cellInfo => {
-                return  this.cashflowTypes[cellInfo.valueText].toUpperCase();
+                return this.cashflowTypes[cellInfo.valueText].toUpperCase();
             }
         },
         {
@@ -110,7 +112,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     value = this.bankAccounts.find( account => {
                         return account.id === cellInfo.value;
                     }).accountName;
+                } else {
+                    value = this.transactionCategories[cellInfo.valueText] ? this.transactionCategories[cellInfo.valueText] : cellInfo.valueText;
                 }
+
                 return value.toUpperCase();
             },
             rowHeaderLayout: 'tree'
@@ -120,7 +125,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             showTotals: false,
             area: 'row',
             areaIndex: 2,
-            dataField: 'expenseCategoryId'
+            dataField: 'expenseCategoryId',
+            customizeText: cellInfo => {
+                return this.expenseCategories[cellInfo.valueText] ? this.expenseCategories[cellInfo.valueText].toUpperCase() : cellInfo.valueText;
+            }
         },
         {
             caption: 'Historical',
@@ -309,13 +317,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 if (result.transactionStats.length) {
                     let transactions = result.transactionStats;
                     this.cashflowTypes = this.initialData.cashflowTypes;
-                    let expenseCategories = this.initialData.expenseCategories;
-                    let transactionCategories = this.initialData.transactionCategories;
+                    this.expenseCategories = this.initialData.expenseCategories;
+                    this.transactionCategories = this.initialData.transactionCategories;
                     this.bankAccounts = this.initialData.bankAccounts;
                     /** categories - object with categories */
                     this.cashflowData = transactions.map(function (transactionObj) {
-                        transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
-                        transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
+                        // transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
+                        // transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
                         if (transactionObj.cashflowTypeId === StartedBalance) {
                             transactionObj.transactionCategoryId = <any>transactionObj.accountId;
                         }
@@ -871,8 +879,47 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         if (cellObj.area === 'row' && cellObj.cell.path.length > 1) {
             this.expandedFieldObj = cellObj;
         }
+        if (cellObj.area == 'data') {
+            let datePeriod = this.formattingDate(cellObj.cell.columnPath);
+            $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
+            $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
+            this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
+            this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
+            this.statsDetailFilter.transactionCategoryId = cellObj.cell.rowPath[1];
+            this.statsDetailFilter.expenseCategoryId = cellObj.cell.rowPath[2];
+            this.statsDetailFilter.startDate = datePeriod.startDate;
+            this.statsDetailFilter.endDate = datePeriod.endDate;
+            this.getStatsDetails(this.statsDetailFilter);
+        }
+    }
 
-        this.getStatsDetails();
+    formattingDate(param = []) {
+        let startDate: moment.Moment = moment.utc('1970-01-01');
+        let endDate: moment.Moment = moment.utc('1970-01-01');
+        let year = param[1];
+        let quarter = param[2];
+        let month = param[3];
+        let day = param[5];
+
+        startDate.year(year);
+        endDate.year(year).endOf('year');
+        if (quarter) {
+            startDate.quarter(quarter);
+            endDate.quarter(quarter).endOf('quarter');
+        }
+        if (month) {
+            startDate.month(month - 1);
+            endDate.month(month - 1).endOf('month');
+        }
+        if (day) {
+            startDate.date(day);
+            endDate.month(month - 1).endOf('day');
+        }
+        return {startDate: startDate, endDate : endDate};
+    }
+
+    closeCashflow() {
+        this.statsDetailResult = undefined;
     }
 
     /**
@@ -941,9 +988,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         };
     }
 
-    getStatsDetails(): void {
+    getStatsDetails(params): void {
         this._CashflowServiceProxy
-            .getStatsDetails(this.statsDetailFilter)
+            .getStatsDetails(params)
             .subscribe(result => {
                 this.statsDetailResult = result;
             });
