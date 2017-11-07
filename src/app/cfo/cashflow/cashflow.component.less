@@ -129,11 +129,13 @@
             tr {
                 &:nth-child(1),
                 &.startedBalance + tr,
-                &.incomeRow + tr {
+                &.incomeRow + tr,
+                &.expensesRow + tr {
                     .dx-white-space-column {
                         &:nth-child(1) {
                             border-right: none;
                             min-width: 0;
+                            padding-left: 0;
                             &:after {
                                 display: none;
                             }
@@ -242,13 +244,6 @@
                             }
                         }
                     }
-                    &.dx-grandtotal {
-                        background: #00aff0;
-                        color: #fff;
-                        font-weight: 700;
-                        letter-spacing: 0.6px;
-                        padding-left: 22px;
-                    }
                 }
 
                 &.startedBalance {
@@ -261,7 +256,18 @@
                         }
                     }
                 }
-
+                &.endingCashPosition {
+                    td {
+                        background: #00aff0;
+                        color: #fff;
+                        font-weight: 700;
+                        letter-spacing: 0.6px;
+                        padding-left: 22px;
+                        .dx-expand-icon-container {
+                            display: none;
+                        }
+                    }
+                }
                 &.reconciliation {
                     td {
                         padding-left: 22px;
@@ -284,9 +290,6 @@
                         font-weight: 400;
                         font-family: Lato !important;
                     }
-                    &.startedBalance {
-                        background: @startedBalanceDataCellColor;
-                    }
                     &.dx-total {
                         background: @totalDataCellBackgroundColor;
                         font-weight: 700;
@@ -300,12 +303,27 @@
                             background: @expensesDataCellBackgroundColor;
                         }
                     }
-                    &.dx-grandtotal {
-                        background: @grandTotalBackgroundColor;
-                        color: @grandTotalTextColor;
+                    &.reconciliation {
                         font-weight: 700;
                     }
-                    &.reconciliation {
+                }
+                &.startedBalance {
+                    td {
+                        &.dx-total {
+                            background: @startedBalanceDataCellColor;
+                        }
+                    }
+                    &:first-child {
+                        td {
+                            background: @startedBalanceDataCellColor;
+                        }
+                    }
+
+                }
+                &.endingCashPosition {
+                    td {
+                        background: @grandTotalBackgroundColor;
+                        color: @grandTotalTextColor;
                         font-weight: 700;
                     }
                 }
