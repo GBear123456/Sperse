@@ -35,6 +35,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     cashflowData: any;
     cashflowDataTree: any;
     cashflowTypes: any;
+    transactionCategories: any;
+    expenseCategories: any;
     bankAccounts: any;
     dataSource: any;
     groupInterval: any = 'year';
@@ -114,7 +116,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 if (Number.isInteger(cellInfo.value) && this.bankAccounts) {
                     value = this.bankAccounts.find( account => {
                         return account.id === cellInfo.value;
-                    }).accountName + ' ' + cellInfo.value;
+                    }).accountName;
+                } else {
+                    value = this.transactionCategories[cellInfo.valueText] ? this.transactionCategories[cellInfo.valueText] : cellInfo.valueText;
                 }
                 return value.toUpperCase();
             },
@@ -125,99 +129,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             showTotals: false,
             area: 'row',
             areaIndex: 2,
-            dataField: 'expenseCategoryId'
-        },
-        {
-            caption: 'Historical',
-            area: 'column',
-            showTotals: false,
-            selector: this.groupbyItems[0].historicalSelectionFunction(),
-            customizeText: this.getHistoricalCustomizer.bind(this)(),
-            expanded: true,
-            allowExpand: false
-        },
-        {
-            caption: 'Amount',
-            dataField: 'amount',
-            dataType: 'number',
-            summaryType: 'sum',
-            format: 'currency',
-            area: 'data',
-            showColumnTotals: true,
-            calculateSummaryValue: this.calculateSummaryValue()
-        },
-        {
-            caption: 'Date',
-            dataField: 'date',
-            dataType: 'date',
-            area: 'column',
-            groupInterval: 'year',
-            showTotals: false,
-            customizeText: this.getDateIntervalHeaderCustomizer.bind(this)('year'),
-            visible: true,
-            summaryDisplayMode: 'percentVariation'
-        },
-        {
-            caption: 'Date',
-            dataField: 'date',
-            dataType: 'date',
-            area: 'column',
-            groupInterval: 'quarter',
-            showTotals: false,
-            customizeText: this.getQuarterHeaderCustomizer(),
-            visible: true
-        },
-        {
-            caption: 'Date',
-            dataField: 'date',
-            dataType: 'date',
-            area: 'column',
-            showTotals: false,
-            groupInterval: 'month',
-            customizeText: this.getMonthHeaderCustomizer(),
-            visible: true
-        },
-        {
-            caption: 'Projected',
-            area: 'column',
-            showTotals: false,
-            selector: function(data) {
-                let date = new Date(data.date);
-                let current = new Date();
-                let result;
-                if (current.getDate() > date.getDate()) {
-                    result = 0;
-                } else {
-                    result = 1;
-                }
-                return result;
-            },
+            dataField: 'expenseCategoryId',
             customizeText: cellInfo => {
-                let projectedKey = cellInfo.value === 1 ? 'Projected' : 'Mtd';
-                let cellValue = this.l(projectedKey).toUpperCase();
-                let cssMarker = ' @css:{projectedField ' + (cellInfo.value === 1 ? 'projected' : 'mtd') + '}';
-                return cellValue + cssMarker;
-            },
-            expanded: true,
-            allowExpand: false
-        },
-        {
-            caption: 'Date',
-            dataField: 'date',
-            dataType: 'date',
-            area: 'column',
-            groupInterval: 'day',
-            customizeText: this.getDateIntervalHeaderCustomizer.bind(this)('day'),
-            visible: true
-        }
-    ];
-    apiTotalTableFileds: any = [
-        {
-            caption: 'Accounts',
-            showTotals: false,
-            area: 'row',
-            areaIndex: 1,
-            dataField: 'accountId'
+                return this.expenseCategories[cellInfo.valueText] ? this.expenseCategories[cellInfo.valueText].toUpperCase() : cellInfo.valueText;
+            }
         },
         {
             caption: 'Historical',
@@ -405,14 +320,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 if (result.transactionStats.length) {
                     let transactions = result.transactionStats;
                     this.cashflowTypes = this.initialData.cashflowTypes;
-                    let expenseCategories = this.initialData.expenseCategories;
-                    let transactionCategories = this.initialData.transactionCategories;
+                    this.expenseCategories = this.initialData.expenseCategories;
+                    this.transactionCategories = this.initialData.transactionCategories;
                     this.bankAccounts = this.initialData.bankAccounts;
                     let cashflowDataCopy = [];
                     /** categories - object with categories */
                     this.cashflowData = transactions.map(function (transactionObj) {
-                        transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
-                        transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
+                        // transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
+                        // transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
                         if (transactionObj.cashflowTypeId === StartedBalance) {
                             transactionObj.transactionCategoryId = <any>transactionObj.accountId;
                         }
@@ -480,13 +395,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     getApiDataSource() {
         return {
             fields: this.apiTableFields,
-            store: this.cashflowData
-        };
-    }
-
-    getApiTotalsDataSource() {
-        return {
-            fields: this.apiTotalTableFileds,
             store: this.cashflowData
         };
     }
@@ -1019,7 +927,47 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         if (cellObj.cell.isWhiteSpace) {
             this.bindCollapseActionOnWhiteSpaceColumn(cellObj);
         }
-        this.getStatsDetails();
+        if (cellObj.area === 'data') {
+            let datePeriod = this.formattingDate(cellObj.cell.columnPath);
+            $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
+            $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
+            this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
+            this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
+            this.statsDetailFilter.transactionCategoryId = cellObj.cell.rowPath[1];
+            this.statsDetailFilter.expenseCategoryId = cellObj.cell.rowPath[2];
+            this.statsDetailFilter.startDate = datePeriod.startDate;
+            this.statsDetailFilter.endDate = datePeriod.endDate;
+            this.getStatsDetails(this.statsDetailFilter);
+        }
+    }
+
+    formattingDate(param = []) {
+        let startDate: moment.Moment = moment.utc('1970-01-01');
+        let endDate: moment.Moment = moment.utc('1970-01-01');
+        let year = param[1];
+        let quarter = param[2];
+        let month = param[3];
+        let day = param[5];
+
+        startDate.year(year);
+        endDate.year(year).endOf('year');
+        if (quarter) {
+            startDate.quarter(quarter);
+            endDate.quarter(quarter).endOf('quarter');
+        }
+        if (month) {
+            startDate.month(month - 1);
+            endDate.month(month - 1).endOf('month');
+        }
+        if (day) {
+            startDate.date(day);
+            endDate.month(month - 1).endOf('day');
+        }
+        return {startDate: startDate, endDate : endDate};
+    }
+
+    closeCashflow() {
+        this.statsDetailResult = undefined;
     }
 
     /**
@@ -1115,33 +1063,33 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     isGrandTotalSummary(summaryCell) {
         return summaryCell.field('row') !== null &&
-               summaryCell.field('row').dataField === 'cashflowTypeId' &&
-               summaryCell.value(summaryCell.field('row')) === Total;
+            summaryCell.field('row').dataField === 'cashflowTypeId' &&
+            summaryCell.value(summaryCell.field('row')) === Total;
     }
 
     isCellIsStartingBalanceSummary(summaryCell) {
         return summaryCell.field('row') !== null &&
-               summaryCell.field('row').dataField === 'cashflowTypeId' &&
-               summaryCell.value(summaryCell.field('row')) === StartedBalance;
+            summaryCell.field('row').dataField === 'cashflowTypeId' &&
+            summaryCell.value(summaryCell.field('row')) === StartedBalance;
     }
 
     isStartingBalanceAccountSummary(summaryCell) {
         return summaryCell.field('row') !== null &&
-               summaryCell.field('row').dataField === 'transactionCategoryId' &&
-               summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === StartedBalance &&
-               Number.isInteger(summaryCell.value(summaryCell.field('row')));
+            summaryCell.field('row').dataField === 'transactionCategoryId' &&
+            summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === StartedBalance &&
+            Number.isInteger(summaryCell.value(summaryCell.field('row')));
     }
 
     isEndingBalanceAccountSummary(summaryCell) {
         return summaryCell.field('row') !== null &&
-               summaryCell.field('row').dataField === 'transactionCategoryId' &&
-               summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === Total &&
-               Number.isInteger(summaryCell.value(summaryCell.field('row')));
+            summaryCell.field('row').dataField === 'transactionCategoryId' &&
+            summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === Total &&
+            Number.isInteger(summaryCell.value(summaryCell.field('row')));
     }
 
-    getStatsDetails(): void {
+    getStatsDetails(params): void {
         this._CashflowServiceProxy
-            .getStatsDetails(this.statsDetailFilter)
+            .getStatsDetails(params)
             .subscribe(result => {
                 this.statsDetailResult = result;
             });

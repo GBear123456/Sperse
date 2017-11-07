@@ -31,6 +31,7 @@
     }
 
     .footer {
+        display: none;
         font-size: 11px;
         padding-top: 3px;
         border-top: 2px solid;
@@ -46,18 +47,22 @@
         text-decoration: underline;
     }
 
-    .month-name-header {
+    .month-name-header, 
+    .year-number-header {
         text-transform: uppercase;
+        cursor:pointer;
     }
 
     .month-wrapper {
         border-radius: 3px;
         background-color: #fff;
+        margin-bottom: 20px;
         padding: 5px;
         cursor: default;
+        display: table; 
+        margin-right: auto;
+        margin-left: auto;
         position: relative;
-        width: 340px;
-        height:372px;
     }
 
     .month-wrapper table {
@@ -79,11 +84,15 @@
     }
 
     .month-wrapper table .day {
+        width: 45px;
+        height: 45px;
+        display: inline-block;
         padding: 14px 13px;
-        line-height: 1;
-        font-size: 18px;
-        margin-bottom: 1px;
-        color: #ccc;
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.3;
+        letter-spacing: 0.8px;
+        text-align: center;
         cursor: default;
     }
 
@@ -99,13 +108,6 @@
         color: #00aeef !important;
     }
 
-        .month-wrapper table .week-name {
-            height: 20px;
-            line-height: 20px;
-            font-weight: 100;
-            text-transform: uppercase;
-        }
-
     .month-wrapper table .day.has-tooltip {
         cursor: help !important;
     }
@@ -115,12 +117,12 @@
     }
 
     .month-wrapper table .day.toMonth.valid {
-        color: #333;
+        color: #677380;
         cursor: pointer;
     }
 
     .month-wrapper table .day.toMonth.invalid {
-        /*background: url("crossmark.png") center center no-repeat;*/
+        color: #DBD7E2;
     }
 
     .month-wrapper table .day.toMonth.hovering {
@@ -149,16 +151,42 @@
       background-color: #f8f9fa;
     }
 
-    table .caption .next,
-    table .caption .prev {
-        padding: 0 5px;
+    table .caption {
+      .nextyear i, .prevyear i,
+      .next i, .prev i,
+      .nextdecade i, .prevdecade i {
+        opacity: 0;
+      }
+      
+      .nextyear, .prevyear,
+      .next, .prev,
+      .nextdecade, .prevdecade {
+        top: 5px;
+        height: 41px;
+        width: 45px;
+        border-radius: 2px;
+        position: absolute;
         cursor: pointer;
-        color: #202b35;
-    }
+      }
 
-    table .caption .next:hover,
-    table .caption .prev:hover {
-        font-size:20px;
+      .next, .nextyear, .nextdecade {
+        background: url(../../../../assets/common/icons/arrow-right.svg) no-repeat center, #f8f9fa;
+      }
+      .next {
+        right: -35px;        
+      }
+      .nextyear, .nextdecade {
+        right: -26px;
+      }
+      .prev, .prevyear, .prevdecade {
+        background: url(../../../../assets/common/icons/arrow-left.svg) no-repeat center, #f8f9fa;
+      }
+      .prev {
+        left: -35px;
+      }
+      .prevyear, .prevdecade {
+        left: -26px;
+      }
     }
 
     .gap {
@@ -304,7 +332,6 @@
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ededed');
     }
 
-
     /*time styling*/
 
     .time {
@@ -357,7 +384,8 @@
         background-size: contain;
         color: white !important;
     }
-    .month-wrapper table .day.checked.first-date-selected.last-date-selected {
+    .month-wrapper table .day.checked.first-date-selected,
+    .month-wrapper table .day.checked.last-date-selected {
         background:none;
         background-color: #00aeef !important;
         border-radius: 50%;
@@ -414,7 +442,19 @@
 
     /* New style */
     .month-wrapper table.month1 {
+        tbody tr:last-child {
+          display: none;
+        }
         border-collapse: initial;
+        td.start-selected.end-selected {
+          background: none!important;
+        }
+        td.start-selected {
+          background: linear-gradient(to right, #FFF 50%, #e7f7ff 50%);
+        }
+        td.end-selected {
+          background: linear-gradient(to right, #e7f7ff 50%, #FFF 50%);
+        }
     }
 
     .month-wrapper table.month1 tr:first-child th:first-child {
@@ -426,7 +466,9 @@
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
     }
-    .month-wrapper table.month1 tr:first-child th.month-name-header {
+    .month-wrapper table.month1 tr:first-child th.month-name-header,
+    .month-wrapper table.year-header tr:first-child th.year-number-header,
+    .month-wrapper table.decade-header tr:first-child th.decade-number-header {
         color: #202b35;
         font-size: 14px;
         line-height: 1.3;
@@ -434,15 +476,22 @@
         text-align: center;
     }
 
-    .month-wrapper table.month1 tr:first-child th.month-name-header:hover {
-        cursor: pointer;
+    .month-wrapper table.month1 tr:first-child th.month-name-header:hover,
+    .month-wrapper table.year-header tr:first-child th.year-number-header:hover,
+    .month-wrapper table.decade-header tr:first-child th.decade-number-header {
         color: #00aeef;
     }
 
     .month-wrapper table .week-name th{
-        height: 40px;
-        border-bottom: 1px solid #ccc;
-        color: #999;
+        width: 40px;
+        height: 40px;        
+        text-transform: capitalize;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.3;
+        letter-spacing: 0.8px;
+        text-align: center;
+        color: #202b35;
     }
 
     .topBarDateWrapper .fa.fa-calendar-o {
@@ -471,7 +520,21 @@
     }
 
     table.dateSelections {
-        width: 100%;
+        width: 395px;
+        margin-right: auto;
+        margin-left: auto;
+
+        button {
+          width: 187px;
+          height: 37px;
+          border-radius: 2px;
+          background-color: #f9fbfc;
+          font-size: 13px;
+          font-weight: 300;
+          letter-spacing: 0.3px;
+          text-align: center;
+          color: #686f76;
+        }
     }
     table.dateSelections td {
         text-align: center;
@@ -531,9 +594,6 @@
     .custom-top {
         min-height: 25px;
     }
-    .month-name-header {
-        cursor:pointer;
-    }
 
     /* Year view design */
     .month-wrapper table.year-header {
@@ -543,39 +603,25 @@
     }
 
     .month-wrapper table.year-header tr:first-child th:first-child {
-        border: 2px solid;
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
         width: 47px;
     }
 
     .month-wrapper table.year-header tr:first-child th:last-child {
-        border: 2px solid;
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
         width: 47px;
     }
 
-    .month-wrapper table.year-header .year-number-header {
-        border-top: 2px solid #aaa;
-        border-bottom: 2px solid #aaa;
-        color: #000;
-        font-size: 18px;
-    }
-
-    .month-wrapper table.year-header .year-number-header:hover {
-        cursor: pointer;
-        color: #00aeef;
-    }
-
     .month-wrapper table.yearview {
         clear: both;
+        margin-left: 32px;
         border-color: #aaa;
-        /*border-bottom: 2px solid;*/
     }
 
     .month-wrapper table.yearview .month {
-        padding: 32px 24px;
+        padding: 25px 15px;
         line-height: 1;
         font-size: 18px;
         margin-bottom: 1px;
@@ -595,17 +641,6 @@
         color: #fff;
     }
 
-    .month-wrapper table.year-header .caption .nextyear,
-    .month-wrapper table.year-header .caption .prevyear {
-        cursor: pointer;
-        color: #00aeef;
-    }
-
-    .month-wrapper table.year-header .caption .nextyear:hover,
-    .month-wrapper table.year-header .caption .prevyear:hover {
-        font-size:20px;
-    }
-
     /* Decade view design */
     .month-wrapper table.decade-header {
         border-collapse: initial;
@@ -614,34 +649,26 @@
     }
 
     .month-wrapper table.decade-header tr:first-child th:first-child {
-        border: 2px solid;
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
         width: 47px;
     }
 
     .month-wrapper table.decade-header tr:first-child th:last-child {
-        border: 2px solid;
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
         width: 47px;
     }
 
-    .month-wrapper table.decade-header .decade-number-header {
-        border-top: 2px solid #aaa;
-        border-bottom: 2px solid #aaa;
-        color: #000;
-        font-size: 18px;
-    }
-
     .month-wrapper table.decadeview {
+        margin-left: 34px;
         clear: both;
         border-color: #aaa;
         /*border-bottom: 2px solid;*/
     }
 
     .month-wrapper table.decadeview .year {
-        padding: 32px 21px;
+        padding: 24px 10px;
         line-height: 1;
         font-size: 18px;
         margin-bottom: 1px;
@@ -650,7 +677,7 @@
     }
 
     .month-wrapper table.decadeview .year.invalid {
-        color:#999;
+        color: #DBD7E2;
     }
 
     .month-wrapper table.decadeview .year:hover {
@@ -663,17 +690,6 @@
         background-color: #00aeef;
         border-radius: 50%;
         color: #fff;
-    }
-
-    .month-wrapper table.decade-header .caption .nextdecade,
-    .month-wrapper table.decade-header .caption .prevdecade {
-        cursor: pointer;
-        color: #00aeef;
-    }
-
-    .month-wrapper table.decade-header .caption .nextdecade:hover,
-    .month-wrapper table.decade-header .caption .prevdecade:hover {
-        font-size:20px;
     }
 
     button {

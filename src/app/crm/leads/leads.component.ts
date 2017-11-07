@@ -15,8 +15,8 @@ import {AppComponentBase} from '@shared/common/app-component-base';
 import {FiltersService} from '@shared/filters/filters.service';
 import {FilterModel} from '@shared/filters/filter.model';
 import {FilterDropDownComponent} from '@shared/filters/dropdown/filter-dropdown.component';
-import {FilterDatesComponent} from '@shared/filters/dates/filter-dates.component';
 import {FilterInputsComponent} from '@shared/filters/inputs/filter-inputs.component';
+import {FilterCalendarComponent} from '@shared/filters/calendar/filter-calendar.component';
 import {DropDownElement} from '@shared/filters/dropdown/dropdown_element';
 
 import {CommonLookupServiceProxy, PipelineServiceProxy} from '@shared/service-proxies/service-proxies';
@@ -221,14 +221,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: { SourceCode: '' }
                 },
                 <FilterModel>{
-                    component: FilterDatesComponent,
+                    component: FilterCalendarComponent,
                     operator: { from: "ge", to: "le" },
                     caption: 'creation',
                     field: 'CreationTime',
                     items: { from: '', to: '' }
                 },
                 <FilterModel>{
-                    component: FilterDatesComponent,
+                    component: FilterCalendarComponent,
                     operator: { from: "ge", to: "le" },
                     caption: 'updating',
                     field: 'UpdatingTime',

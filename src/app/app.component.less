@@ -15,24 +15,32 @@
 }
 
 :host {
-	position: absolute;
-	width: 100%!important;
-
-	.page-container {
-  	padding: 0px;
-	}
-
-	.page-content-wrapper .page-content {
-    	margin-left: 0px;
-      &.enabled-filters {
-      	margin-left: 320px;
-      }
-	}
+    position: absolute;
+    width: 100% !important;
+    height: 100%;
+    
+    .page-container {
+        padding: 0;
+    }
+    
+    .page-container,
+    .page-content-wrapper,
+    .page-content {
+        height: 100%;
+    }
+    
+    .page-content-wrapper .page-content {
+        margin-left: 0;
+        &.enabled-filters {
+            margin-left: 320px;
+        }
+    }
 }
 
 /deep/ .modal-backdrop {
     z-index: 1001;
 }
+
 /deep/ .modal {
     z-index: 1002;
 }

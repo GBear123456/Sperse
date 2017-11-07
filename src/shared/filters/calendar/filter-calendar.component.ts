@@ -7,17 +7,16 @@ import { FilterComponent } from '../filter.model';
 	styleUrls: ['./filter-calendar.component.less']
 })
 export class FilterCalendarComponent extends AppComponentBase implements OnInit, FilterComponent {
-  items: {};   
+  items: {
+    from: any,
+    to: any
+  };   
 	apply: (event) => void;
   
   constructor(injector: Injector) {
     super(injector);
   }
   
-  getItems(): string[] {
-    return Object.keys(this.items);
-  }
-
   ngOnInit(): void {
   }
 }
