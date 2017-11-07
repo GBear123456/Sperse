@@ -1,4 +1,4 @@
-﻿import {
+import {
     Component,
     OnInit,
     AfterViewInit,
@@ -174,17 +174,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         this.createOrEditClientModal.show();
     }
 
-    private mousePos: any;
-
-    onMouseDown(event) {
-        this.mousePos = {x: event.clientX, y: event.clientY};
-    }
-
     showClientDetails(event) {
-        if (this.mousePos.x == event.jQueryEvent.clientX
-            && this.mousePos.y == event.jQueryEvent.clientY
-        )
-            this._router.navigate(['app/crm/client', event.data.Id]);
+        event.component.cancelEditData();
+        this._router.navigate(['app/crm/client', event.data.Id]);
     }
 
     ngOnInit(): void {

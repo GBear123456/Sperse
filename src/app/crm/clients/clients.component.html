@@ -28,19 +28,15 @@
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
-                                  [hoverStateEnabled]="true"
-                                  (mousedown)="onMouseDown($event)"
-                                  (onRowClick)="showClientDetails($event)"
-                                  (onContentReady)="onContentReady($event)">
+                                  [hoverStateEnabled]="true"                                  
+                                  (onContentReady)="onContentReady($event)"
+                                  (onEditingStart)="showClientDetails($event)">
                         <dxo-selection
                             selectAllMode="page"
                             showCheckBoxesMode="always"
                             mode="multiple">
                         </dxo-selection>
-                        <dxo-editing
-                            mode="popup"
-                            [allowUpdating]="true">
-                        </dxo-editing>
+                        <dxo-editing mode="row" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"
                                     [showInColumnChooser]="false"></dxi-column>
                         <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
