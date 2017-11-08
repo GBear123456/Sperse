@@ -940,6 +940,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.statsDetailFilter.startDate = datePeriod.startDate;
             this.statsDetailFilter.endDate = datePeriod.endDate;
             if (this.requestFilter) this.statsDetailFilter.accountIds = this.requestFilter.accountIds; // there will be another data from filter
+            this.getStatsDetails(this.statsDetailFilter);
         }
     }
 
