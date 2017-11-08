@@ -453,9 +453,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** Collapse starting and ending balances rows */
         if (!this.collapsedStartingAndEndingBalance) {
-            this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [StartedBalance]);
-            this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [Total]);
-            this.collapsedStartingAndEndingBalance = true;
+            if (this.pivotGrid.instance) {
+                this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [StartedBalance]);
+                this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [Total]);
+                this.collapsedStartingAndEndingBalance = true;
+            }
         }
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
@@ -937,7 +939,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.statsDetailFilter.expenseCategoryId = cellObj.cell.rowPath[2];
             this.statsDetailFilter.startDate = datePeriod.startDate;
             this.statsDetailFilter.endDate = datePeriod.endDate;
-            this.getStatsDetails(this.statsDetailFilter);
+            if (this.requestFilter) this.statsDetailFilter.accountIds = this.requestFilter.accountIds; // there will be another data from filter
         }
     }
 
