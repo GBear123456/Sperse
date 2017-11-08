@@ -21,14 +21,15 @@
     </div>
 
     <dx-pivot-grid id="operations"
-                   [allowSortingBySummary]="true"
+                   [allowSortingBySummary]="false"
                    [allowSorting]="false"
-                   [allowFiltering]="true"
+                   [allowFiltering]="false"
                    [allowExpandAll]="false"
                    [showBorders]="false"
                    [(dataSource)]="dataSource"
                    [rowHeaderLayout]="'tree'"
                    [showColumnGrandTotals]="false"
+                   [showRowGrandTotals]="false"
                    [texts] = "{'grandTotal': 'ENDING CASH POSITION', 'total': '{0}'}"
                    [fieldChooser]="false"
                    [export]="{'enabled': false}"

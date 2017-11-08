@@ -69,14 +69,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
           'historicalSelectionFunction': this.getDayHistoricalSelector.bind(this)
         }
     ];
-
+    collapsedStartingAndEndingBalance = false;
     leftMenuOrder = [
         StartedBalance,
         Income,
         Expense,
+        Total,
         Reconciliation
     ];
-
     apiTableFields: any = [
         {
             caption: 'Type',
@@ -94,7 +94,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 return this.leftMenuOrder.indexOf(firstItem.value) > this.leftMenuOrder.indexOf(secondItem.value);
             },
             customizeText: cellInfo => {
-                return this.cashflowTypes[cellInfo.valueText].toUpperCase();
+                let value = this.cashflowTypes[cellInfo.valueText];
+                /** If the type is income or expenses */
+                if (cellInfo.valueText === Income || cellInfo.valueText === Expense) {
+                    value = this.l('Total') + ' ' + value;
+                }
+                return  value.toUpperCase();
             }
         },
         {
@@ -115,7 +120,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 } else {
                     value = this.transactionCategories[cellInfo.valueText] ? this.transactionCategories[cellInfo.valueText] : cellInfo.valueText;
                 }
-
                 return value.toUpperCase();
             },
             rowHeaderLayout: 'tree'
@@ -228,7 +232,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         'current',
         'forecast'
     ];
-    private expandedFieldObj;
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
@@ -320,6 +323,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     this.expenseCategories = this.initialData.expenseCategories;
                     this.transactionCategories = this.initialData.transactionCategories;
                     this.bankAccounts = this.initialData.bankAccounts;
+                    let cashflowDataCopy = [];
                     /** categories - object with categories */
                     this.cashflowData = transactions.map(function (transactionObj) {
                         // transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
@@ -327,8 +331,21 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                         if (transactionObj.cashflowTypeId === StartedBalance) {
                             transactionObj.transactionCategoryId = <any>transactionObj.accountId;
                         }
+
+                        /** clone transaction to another array */
+                        if (transactionObj.cashflowTypeId === Income || transactionObj.cashflowTypeId === Expense) {
+                            let clonedTransaction = {...transactionObj};
+                            clonedTransaction.cashflowTypeId = Total;
+                            clonedTransaction.transactionCategoryId = <any>clonedTransaction.accountId;
+                            clonedTransaction.expenseCategoryId = null;
+                            cashflowDataCopy.push(clonedTransaction);
+                        }
                         return transactionObj;
                     });
+                    /** Make a copy of cashflow data to display it in custom total group on the top level */
+                    this.cashflowTypes[Total] = this.l('Ending Cash Position');
+                    this.cashflowData = this.cashflowData.concat(cashflowDataCopy);
+                    /** Get cashflow data tree to hide groups without children */
                     this.cashflowDataTree = this.getCashflowDataTree(
                         this.cashflowData,
                         this.apiTableFields.filter( field => {
@@ -344,9 +361,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     /**
      * Build the nested object from array as the properties
-     * @param obj
-     * @param keyPath
-     * @param value
+     * @param base - the object to create
+     * @param names - the array with nested keys
      */
     createNestedObject(base, names) {
         for (let i = 0; i < names.length; i++ ) {
@@ -433,6 +449,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             //     $(this).text('');
             //     $(this).addClass('dataFieldHidden');
             // });
+        }
+
+        /** Collapse starting and ending balances rows */
+        if (!this.collapsedStartingAndEndingBalance) {
+            this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [StartedBalance]);
+            this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [Total]);
+            this.collapsedStartingAndEndingBalance = true;
         }
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
@@ -628,7 +651,19 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     isStartingBalanceDataColumn(cellObj) {
         return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined &&
-               cellObj.cell.rowPath[0] === StartedBalance;
+               cellObj.cell.rowPath[0] === StartedBalance &&
+               cellObj.cell.rowType === 'D';
+    }
+
+    /**
+     * whether or not the cell is balance sheet total data cell
+     * @param cellObj - the object that pivot grid passes to the onCellPrepared event
+     * return {boolean}
+     */
+    isStartingBalanceTotalDataColumn(cellObj) {
+        return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined &&
+            cellObj.cell.rowPath[0] === StartedBalance &&
+            (cellObj.cell.rowType === 'T' || cellObj.cell.rowPath.length === 1);
     }
 
     /**
@@ -652,6 +687,21 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                cellObj.cell.rowPath !== undefined &&
                cellObj.cell.rowPath.length === 1 &&
                (cellObj.cell.rowPath[0] === Income || cellObj.cell.rowPath[0] === Expense);
+    }
+
+    /** Whether the cell is the ending cash position header cell */
+    isTotalEndingHeaderCell(cellObj) {
+        return cellObj.cell.path !== undefined &&
+               cellObj.cell.path.length === 1 &&
+               cellObj.cell.path[0] === Total &&
+               !cellObj.cell.isWhiteSpace;
+    }
+
+    /** Whether the cell is the ending cash position data cell */
+    isTotalEndingDataCell(cellObj) {
+        return cellObj.cell.rowPath !== undefined &&
+            cellObj.cell.rowPath.length === 1 &&
+            (cellObj.cell.rowPath[0] === Total);
     }
 
     /**
@@ -705,10 +755,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     onCellPrepared(e) {
 
         /** added css class to start balance row */
-        if (this.isStartingBalanceHeaderColumn(e) ||
-            this.isStartingBalanceDataColumn(e)) {
-            let cssClass = 'startedBalance';
-            e.cellElement.parent().addClass(cssClass);
+        if (this.isStartingBalanceHeaderColumn(e) || this.isStartingBalanceTotalDataColumn(e)) {
+            e.cellElement.parent().addClass('startedBalance');
+        }
+
+        /** added css class to ending position row */
+        if (this.isTotalEndingHeaderCell(e) || this.isTotalEndingDataCell(e)) {
+            e.cellElement.parent().addClass('endingCashPosition');
         }
 
         /** added css class to the income and outcomes columns */
@@ -758,17 +811,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
 
         /** remove minus sign from negative values */
-        if (this.isDataCell(e) && !this.isGrandTotalDataCell(e) && !this.isStartingBalanceDataColumn(e)) {
-            if (e.cell.value < 0) {
-                e.cell.value = Math.abs(e.cell.value);
-                e.cell.text = e.cell.text.replace('-', '');
-                e.cellElement.text(e.cell.text);
-            }
-        }
+        // if (this.isDataCell(e) && !this.isGrandTotalDataCell(e) && !this.isStartingBalanceDataColumn(e)) {
+        //     if (e.cell.value < 0) {
+        //         e.cell.value = Math.abs(e.cell.value);
+        //         e.cell.text = e.cell.text.replace('-', '');
+        //         e.cellElement.text(e.cell.text);
+        //     }
+        // }
 
         /** disable expanding and hide the plus button of the elements that has no children */
-        if (e.area === 'row' && e.cell.path &&
-            e.cell.path.length !== e.component.getDataSource().getAreaFields('row').length) {
+        if (e.area === 'row' && e.cell.path && e.cell.path.length !== e.component.getDataSource().getAreaFields('row').length) {
             if (!this.hasChildsByPath(e.cell.path, this.cashflowDataTree)) {
                 e.cellElement.addClass('emptyChildren');
                 e.cellElement.click(function (event) {
@@ -875,11 +927,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         if (cellObj.cell.isWhiteSpace) {
             this.bindCollapseActionOnWhiteSpaceColumn(cellObj);
         }
-        /** 1 - mark the column to check in onContentReady */
-        if (cellObj.area === 'row' && cellObj.cell.path.length > 1) {
-            this.expandedFieldObj = cellObj;
-        }
-        if (cellObj.area == 'data') {
+        if (cellObj.area === 'data') {
             let datePeriod = this.formattingDate(cellObj.cell.columnPath);
             $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
             $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
@@ -924,16 +972,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     /**
      * Find if the group has childs by path and fields list
-     * @param path
-     * @param fields
-     * @return {any}
+     * @param path - the array with the path
+     * @param object - the tree with the data
+     * @return {boolean}
      */
     hasChildsByPath(path, object) {
         let result = true;
         path.forEach( pathItem => {
-            if ( object.hasOwnProperty(pathItem) &&
-                 (Object.keys(object[pathItem]).length !== 1 ||
-                 Object.keys(object[pathItem])[0] === undefined)
+            if (object.hasOwnProperty(pathItem) &&
+                (Object.keys(object[pathItem]).length !== 1 ||
+                Object.keys(object[pathItem])[0] === undefined)
             ) {
                 object = object[pathItem];
             } else {
@@ -969,23 +1017,74 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 return prev;
             };
             let prevWithParent = summaryCell.prevWithParent('column', true);
+
+            /** if cell is starting balance account cell - then add account sum from previous period */
+            if (prevWithParent && this.isStartingBalanceAccountSummary(summaryCell)) {
+                let sum = summaryCell.value() || 0;
+                let accountId = summaryCell.value(summaryCell.field('row'), true);
+                let startedAccount = prevWithParent.parent('row').slice(0, Total).child('row', accountId);
+                sum += (startedAccount ? startedAccount.value() : 0);
+                while (prevWithParent !== null) {
+                    sum += (prevWithParent.value() || 0);
+                    prevWithParent = prevWithParent.prevWithParent('column', true);
+                }
+                return sum || 0;
+            }
+
             /** if the value is a balance value or grand total value -
              *  then get the prev columns grand total for the column and add */
-            if (summaryCell.field('row') === null  || (summaryCell.field('row') &&
-                    summaryCell.field('row').caption === 'Type' &&
-                    summaryCell.value(summaryCell.field('row')) === StartedBalance)) {
-                if (prevWithParent) {
-                    let currentValue = summaryCell.value() || 0;
-                    let sum = currentValue;
-                    while (prevWithParent !== null) {
-                        sum += prevWithParent.grandTotal('row').value();
-                        prevWithParent = prevWithParent.prevWithParent('column', true);
-                    }
-                    return sum;
+            if (prevWithParent && this.isCellIsStartingBalanceSummary(summaryCell)) {
+                let sum = (summaryCell.value() || 0) + (prevWithParent.slice(0, Total).value() || 0);
+                while (prevWithParent !== null) {
+                    sum += (prevWithParent.value() || 0);
+                    prevWithParent = prevWithParent.prevWithParent('column', true);
                 }
+                return sum;
             }
+
+            /** calculation for ending cash position value */
+            if (this.isGrandTotalSummary(summaryCell)) {
+                let sum = (summaryCell.value() || 0) + (summaryCell.slice(0, StartedBalance).value(true) || 0);
+                return sum || 0;
+            }
+
+            /** if cell is ending cash position account cell */
+            if (this.isEndingBalanceAccountSummary(summaryCell)) {
+                let sum = summaryCell.value() || 0;
+                let accountId = summaryCell.value(summaryCell.field('row'), true);
+                let startedBalanceAccount = summaryCell.parent('row').slice(0, StartedBalance).child('row', accountId);
+                sum += (startedBalanceAccount ? startedBalanceAccount.value(true) : 0);
+                return sum || 0;
+            }
+
             return summaryCell.value() || 0;
         };
+    }
+
+    isGrandTotalSummary(summaryCell) {
+        return summaryCell.field('row') !== null &&
+            summaryCell.field('row').dataField === 'cashflowTypeId' &&
+            summaryCell.value(summaryCell.field('row')) === Total;
+    }
+
+    isCellIsStartingBalanceSummary(summaryCell) {
+        return summaryCell.field('row') !== null &&
+            summaryCell.field('row').dataField === 'cashflowTypeId' &&
+            summaryCell.value(summaryCell.field('row')) === StartedBalance;
+    }
+
+    isStartingBalanceAccountSummary(summaryCell) {
+        return summaryCell.field('row') !== null &&
+            summaryCell.field('row').dataField === 'transactionCategoryId' &&
+            summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === StartedBalance &&
+            Number.isInteger(summaryCell.value(summaryCell.field('row')));
+    }
+
+    isEndingBalanceAccountSummary(summaryCell) {
+        return summaryCell.field('row') !== null &&
+            summaryCell.field('row').dataField === 'transactionCategoryId' &&
+            summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === Total &&
+            Number.isInteger(summaryCell.value(summaryCell.field('row')));
     }
 
     getStatsDetails(params): void {
