@@ -7,6 +7,7 @@ import { MdSidenavModule, MdProgressBarModule, MdTabsModule, MdDialogModule,
 
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxButtonModule,
   DxTextBoxModule, DxValidatorModule, DxValidationGroupComponent, DxToolbarModule } from 'devextreme-angular';
+import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { RouterModule, Routes } from '@angular/router';
 
@@ -70,7 +71,8 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     DxValidatorModule,
     DxNumberBoxModule,
     DxScrollViewModule,
-    DxToolbarModule
+    DxToolbarModule,
+    RoundProgressModule
   ],
   exports: [
     ClientDetailsComponent,
