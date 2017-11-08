@@ -59,12 +59,14 @@
                         <dxi-column dataField="ExpenseCategoryName" caption="{{l('Transactions_ExpenseCategory')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="CashFlowTypeName" caption="{{l('Transactions_CashFlowType')}}" [visible]="false"></dxi-column>
                         <div *dxTemplate="let cell of 'amountTemplate'">
-                            <ng-container *ngIf="(cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit')">
+                            <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit'))">
                                 <span [ngClass]="{'red': cell.value < 0}"> {{ cell.text | number:'1.2-2' }} </span>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'endBalanceTemplate'">
-                            <span class="end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ cell.text | number:'1.2-2' }} </span>
+                            <ng-container *ngIf="cell.text">
+                                <span class="end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ cell.text | number:'1.2-2' }} </span>
+                            </ng-container>                            
                         </div>
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-pager
