@@ -43,7 +43,7 @@
             background-color: #fbf3e4 !important;
             color: #333 !important;
         }
-        
+
         .dx-total,
         .dx-data-header,
         .dx-column-header {
@@ -132,10 +132,9 @@
         /** bottom left column (labels cells) */
         .dx-area-row-cell {
             tr {
-                &:nth-child(1),
+                position: relative;
                 &.startedBalance + tr,
-                &.incomeRow + tr,
-                &.expensesRow + tr {
+                &.incomeRow + tr {
                     .dx-white-space-column {
                         &:nth-child(1) {
                             border-right: none;
@@ -154,9 +153,10 @@
                 td {
                     text-align: left;
                     color: inherit;
+                    width: 23px;
+                    min-width: 23px;
                     &.dx-white-space-column {
                         background: #fff;
-                        border-top: 1px solid #ddd;
                         border-right: none;
                         position: relative;
                         cursor: pointer;
@@ -164,14 +164,14 @@
                             content: url('../../../assets/common/icons/collapse-icon.svg');
                             position: absolute;
                             top: 6px;
-                            left: 11px;
+                            left: 16px;
                             width: 16px;
                         }
                         &:after {
                             content: '';
                             position: absolute;
                             top: 21px;
-                            left: 18px;
+                            left: 23px;
                             display: block;
                             border-right: 2px solid @expendedLineColor;
                             height: 100%;
@@ -198,7 +198,7 @@
                     }
                     &.dx-last-cell {
                         width: 100%;
-                        padding-left: 9px;
+                        padding-left: 22px;
                     }
 
                     &.emptyChildren {
@@ -211,18 +211,16 @@
 
                     .dx-expand-icon-container {
                         font: inherit;
-                        margin-left: 10px;
                         margin-right: 10px;
+                        &:before {
+                            display: none;
+                        }
                         .dx-expand:before {
-                            color: #000;
-                            font-size: 18px;
-                            position: absolute;
-                            top: 9px;
-                            left: 0;
-                            width: 16px;
-                            height: 15px;
-                            line-height: 14px;
-                            border-radius: 3px;
+                            top: auto;
+                            left: auto;
+                            position: relative;
+                            width: auto;
+                            margin: auto;
                         }
                     }
                     &.dx-pivotgrid-collapsed {
@@ -241,11 +239,11 @@
                             &:after {
                                 content: '';
                                 display: block;
-                                position: absolute;
                                 height: 7px;
-                                top: -7px;
-                                left: -1px;
                                 border-right: 2px solid @expendedLineColor;
+                                top: -7px;
+                                position: absolute;
+                                left: 6px;
                             }
                         }
                     }
@@ -255,10 +253,6 @@
                     td {
                         font-weight: 700;
                         background: @startedBalanceBackgroundColor;
-                        padding-left: 20px;
-                        .dx-expand-icon-container {
-                            display: none;
-                        }
                     }
                 }
                 &.endingCashPosition {
@@ -268,9 +262,6 @@
                         font-weight: 700;
                         letter-spacing: 0.6px;
                         padding-left: 22px;
-                        .dx-expand-icon-container {
-                            display: none;
-                        }
                     }
                 }
                 &.reconciliation {
@@ -405,7 +396,7 @@
             margin-right: 10px;
         }
     }
-    
+
     .cashflow-wrap {
         height: 400px;
         position: fixed;
@@ -426,7 +417,7 @@
             }
         }
     }
-    
+
     /deep/ #cashflowGridContainer {
         height: 400px;
         .dx-datagrid-headers {

@@ -2,7 +2,7 @@ import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild } from
 import { AppConsts } from '@shared/AppConsts';
 import { GroupbyItem } from './models/groupbyItem';
 
-import { CashflowServiceProxy, StatsFilter, BankAccountDto, CashFlowInitialData, StatsDetailFilter } from '@shared/service-proxies/service-proxies';
+import { CashflowServiceProxy, StatsFilter, BankAccountDto, CashFlowInitialData, StatsDetailFilter, TransactionStatsDto } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
@@ -116,9 +116,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 if (Number.isInteger(cellInfo.value) && this.bankAccounts) {
                     value = this.bankAccounts.find( account => {
                         return account.id === cellInfo.value;
-                    }).accountName;
+                    }).accountName/* + ' ' + cellInfo.value*/;
                 } else {
-                    value = this.transactionCategories[cellInfo.valueText] ? this.transactionCategories[cellInfo.valueText] : cellInfo.valueText;
+                    value = this.transactionCategories[cellInfo.valueText] ?
+                            this.transactionCategories[cellInfo.valueText] :
+                            cellInfo.valueText;
                 }
                 return value.toUpperCase();
             },
@@ -131,7 +133,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             areaIndex: 2,
             dataField: 'expenseCategoryId',
             customizeText: cellInfo => {
-                return this.expenseCategories[cellInfo.valueText] ? this.expenseCategories[cellInfo.valueText].toUpperCase() : cellInfo.valueText;
+                return this.expenseCategories[cellInfo.valueText] ?
+                       this.expenseCategories[cellInfo.valueText].toUpperCase() :
+                       cellInfo.valueText;
             }
         },
         {
@@ -236,6 +240,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
     private requestFilter: StatsFilter;
+    private anotherPeriodAccountsValues: Map<object, number> = new Map();
 
     constructor(injector: Injector, private _CashflowServiceProxy: CashflowServiceProxy,
         private _filtersService: FiltersService) {
@@ -326,15 +331,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     let cashflowDataCopy = [];
                     /** categories - object with categories */
                     this.cashflowData = transactions.map(function (transactionObj) {
-                        // transactionObj.expenseCategoryId = expenseCategories[transactionObj.expenseCategoryId];
-                        // transactionObj.transactionCategoryId = transactionCategories[transactionObj.transactionCategoryId];
-                        if (transactionObj.cashflowTypeId === StartedBalance) {
+                        if (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation) {
                             transactionObj.transactionCategoryId = <any>transactionObj.accountId;
                         }
-
                         /** clone transaction to another array */
                         if (transactionObj.cashflowTypeId === Income || transactionObj.cashflowTypeId === Expense) {
-                            let clonedTransaction = {...transactionObj};
+                            let clonedTransaction = new TransactionStatsDto(transactionObj);
                             clonedTransaction.cashflowTypeId = Total;
                             clonedTransaction.transactionCategoryId = <any>clonedTransaction.accountId;
                             clonedTransaction.expenseCategoryId = null;
@@ -389,6 +391,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     refreshDataGrid() {
+        this.collapsedStartingAndEndingBalance = false;
         this.loadGridDataSource();
     }
 
@@ -453,9 +456,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** Collapse starting and ending balances rows */
         if (!this.collapsedStartingAndEndingBalance) {
-            this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [StartedBalance]);
-            this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [Total]);
-            this.collapsedStartingAndEndingBalance = true;
+            if (this.pivotGrid.instance) {
+                this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [StartedBalance]);
+                this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [Total]);
+                this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [Reconciliation]);
+                this.collapsedStartingAndEndingBalance = true;
+            }
         }
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
@@ -704,6 +710,21 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             (cellObj.cell.rowPath[0] === Total);
     }
 
+    /** Whether the cell is the reconciliation header cell */
+    isReconciliationHeaderCell(cellObj) {
+        return cellObj.cell.path !== undefined &&
+            cellObj.cell.path.length === 1 &&
+            cellObj.cell.path[0] === Reconciliation &&
+            !cellObj.cell.isWhiteSpace;
+    }
+
+    /** Whether the cell is the reconciliation data cell */
+    isReconciliationDataCell(cellObj) {
+        return cellObj.cell.rowPath !== undefined &&
+            cellObj.cell.rowPath.length === 1 &&
+            (cellObj.cell.rowPath[0] === Reconciliation);
+    }
+
     /**
      * whether or not the cell is grand total label cell
      * @param cellObj
@@ -764,6 +785,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             e.cellElement.parent().addClass('endingCashPosition');
         }
 
+        /** added css class to reconsiliation row */
+        if (this.isReconciliationHeaderCell(e) || this.isReconciliationDataCell(e)) {
+            e.cellElement.parent().addClass('reconciliation');
+        }
+
         /** added css class to the income and outcomes columns */
         if ((this.isIncomeOrExpensesHeaderCell(e)) ||
             (this.isIncomeOrExpensesDataCell(e))) {
@@ -794,19 +820,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 e.cellElement.click(function (event) {
                     event.stopImmediatePropagation();
                 });
-            }
-        }
-        /** @todo change logic for reconciliation */
-        /** added reconciliation rows to the table */
-        if (this.isGrandTotalLabelCell(e) && this.cashflowData && this.cashflowData.length) {
-            this.createReconsiliationLabelCell(e);
-        }
-
-        /** added reconciliation and starting balances rows to the table data cells */
-        if (this.isDataCell(e) && this.isGrandTotalDataCell(e) && this.cashflowData && this.cashflowData.length) {
-            /** if the reconciliations and starting balances rows haven't already added */
-            if (e.cellElement.parent().is(':last-child')) {
-                this.createReconciliationDataRow(e);
             }
         }
 
@@ -882,38 +895,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     /**
-     * Creates the reconciliation label it the left side
-     * @param cellObj
-     */
-    createReconsiliationLabelCell(cellObj) {
-        /** clone current row */
-        let clonedRow = cellObj.cellElement.parent().clone();
-        /** added the css class to the current row */
-        clonedRow.find('td').removeClass('dx-grandtotal');
-        clonedRow.addClass('reconciliation');
-        /** find the span inside and change the text to the reconciliation */
-        clonedRow.find('span').text('Reconciliation Differences');
-        /** append the grand total row with the new created reconciliation row to match the mock up */
-        cellObj.cellElement.parent().after(clonedRow);
-    }
-
-    /**
-     * Create the reconciliation row
-     * @param cellObj
-     */
-    createReconciliationDataRow(cellObj) {
-        /** clone current row for reconciliation */
-        let clonedRow = cellObj.cellElement.parent().clone();
-        /** for each child change the text, remove grand total class and add reconciliation class */
-        clonedRow.addClass('reconciliation');
-        clonedRow.children('td').each(function(){
-            $(this).text('$0.00');
-            $(this).removeClass('dx-grandtotal');
-        });
-        cellObj.cellElement.parent().after(clonedRow);
-    }
-
-    /**
      * initialize the click trigger for the cell column if user click for the left empty cell
      * @param cellObj
      */
@@ -979,9 +960,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     hasChildsByPath(path, object) {
         let result = true;
         path.forEach( pathItem => {
+            let keys = Object.keys(object[pathItem]);
+            let firstKey = Object.keys(object[pathItem])[0];
+            let firstSubKey = Object.keys(object[pathItem][firstKey])[0];
+
             if (object.hasOwnProperty(pathItem) &&
-                (Object.keys(object[pathItem]).length !== 1 ||
-                Object.keys(object[pathItem])[0] === undefined)
+                keys.length !== 1 ||
+                (keys.length === 1 && firstKey !== 'null')
             ) {
                 object = object[pathItem];
             } else {
@@ -1000,6 +985,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     calculateSummaryValue() {
         return summaryCell => {
             let counter = this.groupbyItems.length;
+            /** @todo refactor and fix a bug when the second call return wrong result */
             summaryCell.__proto__.prevWithParent = function() {
                 let prev = this.prev(arguments),
                     currentCell = this;
@@ -1019,46 +1005,202 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             let prevWithParent = summaryCell.prevWithParent('column', true);
 
             /** if cell is starting balance account cell - then add account sum from previous period */
-            if (prevWithParent && this.isStartingBalanceAccountSummary(summaryCell)) {
-                let sum = summaryCell.value() || 0;
-                let accountId = summaryCell.value(summaryCell.field('row'), true);
-                let startedAccount = prevWithParent.parent('row').slice(0, Total).child('row', accountId);
-                sum += (startedAccount ? startedAccount.value() : 0);
-                while (prevWithParent !== null) {
-                    sum += (prevWithParent.value() || 0);
-                    prevWithParent = prevWithParent.prevWithParent('column', true);
-                }
-                return sum || 0;
+            if (prevWithParent !== null && this.isStartingBalanceAccountSummary(summaryCell)) {
+                return this.modifyStartingBalanceAccountCell(summaryCell, prevWithParent);
             }
 
-            /** if the value is a balance value or grand total value -
+            /** if the value is a balance value -
              *  then get the prev columns grand total for the column and add */
             if (prevWithParent && this.isCellIsStartingBalanceSummary(summaryCell)) {
-                let sum = (summaryCell.value() || 0) + (prevWithParent.slice(0, Total).value() || 0);
-                while (prevWithParent !== null) {
-                    sum += (prevWithParent.value() || 0);
-                    prevWithParent = prevWithParent.prevWithParent('column', true);
-                }
-                return sum;
-            }
-
-            /** calculation for ending cash position value */
-            if (this.isGrandTotalSummary(summaryCell)) {
-                let sum = (summaryCell.value() || 0) + (summaryCell.slice(0, StartedBalance).value(true) || 0);
-                return sum || 0;
+                return this.modifyStartingBalanceSummaryCell(summaryCell, prevWithParent);
             }
 
             /** if cell is ending cash position account cell */
             if (this.isEndingBalanceAccountSummary(summaryCell)) {
-                let sum = summaryCell.value() || 0;
-                let accountId = summaryCell.value(summaryCell.field('row'), true);
-                let startedBalanceAccount = summaryCell.parent('row').slice(0, StartedBalance).child('row', accountId);
-                sum += (startedBalanceAccount ? startedBalanceAccount.value(true) : 0);
-                return sum || 0;
+                return this.modifyEndingBalanceAccountSummary(summaryCell, prevWithParent);
+            }
+
+            /** calculation for ending cash position value */
+            if (this.isGrandTotalSummary(summaryCell)) {
+                return this.modifyGrandTotalSummary(summaryCell);
             }
 
             return summaryCell.value() || 0;
         };
+    }
+
+    /**
+     * Modify the value of the starting balance account cell to have a proper calculation
+     * @param summaryCell
+     * @param prevWithParent
+     * @return {number}
+     */
+    modifyStartingBalanceAccountCell(summaryCell, prevWithParent) {
+        //console.log('prevWithParent', prevWithParent);
+
+        console.log('summaryCell', summaryCell.value());
+
+        let prevEndingAccountValue = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, Total),
+            sum = (summaryCell.value() || 0) + prevEndingAccountValue + (prevWithParent.value(true) || 0);
+        // while (prevWithParent !== null) {
+        //     sum += (prevWithParent.value() || 0);
+        //     console.log('prevWithParent', (prevWithParent.value() || 0));
+        //     prevWithParent = prevWithParent.prevWithParent('column', true);
+        // }
+        console.log('sum', sum);
+
+        return  sum || 0;
+    }
+
+    /**
+     * Modify the value of the starting balance summary cell to have a proper calculation
+     * @param summaryCell
+     * @param prevWithParent
+     * @return {number}
+     */
+    modifyStartingBalanceSummaryCell(summaryCell, prevWithParent) {
+        return (summaryCell.value() || 0) + (prevWithParent.slice(0, Total).value() || 0) + prevWithParent.value(true);
+    }
+
+    /**
+     * Modify the ending balance account cell to have a proper calculation
+     * @param summaryCell
+     * @param prevWithParent
+     * @return {number}
+     */
+    modifyEndingBalanceAccountSummary(summaryCell, prevWithParent) {
+        console.log('current', summaryCell.value());
+        console.log('current', summaryCell);
+        let startedBalanceAccountValue = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, StartedBalance);
+        console.log('startedBalanceAccountValue', startedBalanceAccountValue);
+        let sum = (summaryCell.value() || 0) + startedBalanceAccountValue;
+        console.log('sum', sum);
+        return sum || 0;
+    }
+
+    /**
+     * Modify the total balance summary cell to have a proper calculation
+     * @param summaryCell
+     * @return {number}
+     */
+    modifyGrandTotalSummary(summaryCell) {
+        return (summaryCell.value() || 0) + (summaryCell.slice(0, StartedBalance).value(true) || 0);
+    }
+
+    /**
+     * Get the value from target period for account. For example if we have the cell of total that belongs to the account -
+     * then we find the appropriate started balance account value for it
+     * @param summaryCell
+     * @param prev
+     * @param target
+     * @return {number}
+     */
+    /** @todo refactor this method */
+    getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, target) {
+        let accountId = summaryCell.value(summaryCell.field('row'), true);
+        let subject = target === StartedBalance ? summaryCell : prevWithParent;
+        console.log('subject', subject);
+        let anotherPeriodAccount = subject.parent('row').slice(0, target).child('row', accountId),
+        anotherPeriodAccountCashedValue,
+        isCalculatedValue = target === StartedBalance ? true : false,
+        groupInterval = subject.field('column').groupInterval,
+        columnValue = subject.value(subject.field('column')),
+        parent = subject.parent(),
+
+        /** object with cell data as the key for Map object cash */
+        cellData = {
+            'cashflowTypeId': target,
+            'accountId': accountId,
+            [groupInterval]: columnValue,
+            toString() {
+                let str = '';
+                for (let prop in this) {
+                    if (typeof this[prop] !== 'function') {
+                        str += prop.charAt(0) + this[prop];
+                    }
+                }
+                return str;
+            }
+        };
+
+        console.log('subject cell value', subject.value());
+
+        // if (cellData.year === 2015 && cellData.accountId === 9 && cellData.quarter === 1) {
+        //     debugger;
+        // }
+
+        while (parent.field('column') && parent.field('column').dataType === 'date') {
+            let parentGroupInterval = parent.field('column').groupInterval,
+                parentColumnValue = parent.value(parent.field('column'));
+            cellData[parentGroupInterval] = parentColumnValue;
+            parent = parent.parent();
+        }
+        /** @todo change defining of the key because now the same months or quarters from different years could have the same key
+         *  that will be overridden
+         */
+
+        console.log('cellData', cellData);
+
+        let calculatedValue = this.calculateCellValue(cellData);
+        // this.setAnotherPeriodAccountCashedValue(cellData, anotherPeriodAccountCashedValue);
+        console.log('calculatedValue', calculatedValue);
+        console.log('anotherPeriodAccountValue', (anotherPeriodAccount ? anotherPeriodAccount.value() || 0 : null));
+
+        /** if we haven't found the value from the another period -
+         *  then it hasn't been expanded and we should find out whether the value is in cash */
+        if (anotherPeriodAccount === null) {
+            console.log('get from cash');
+            anotherPeriodAccountCashedValue = this.getAnotherPeriodAccountCashedValue(cellData);
+            console.log('anotherPeriodAccountCashedValue', (anotherPeriodAccountCashedValue ? anotherPeriodAccountCashedValue || 0 : null));
+            /** if we haven't found the value in cash - then we should calculate the value in the cashflow data by ourselfs */
+            if (!anotherPeriodAccountCashedValue) {
+                anotherPeriodAccountCashedValue = this.calculateCellValue(cellData);
+                this.setAnotherPeriodAccountCashedValue(cellData, anotherPeriodAccountCashedValue);
+            }
+        } else {
+            /** add the prevEndingAccount value to the cash */
+            this.setAnotherPeriodAccountCashedValue(cellData, anotherPeriodAccount.value(isCalculatedValue));
+        }
+        console.log('anotherPeriodAccountsValues', this.anotherPeriodAccountsValues);
+
+        let result = anotherPeriodAccountCashedValue ?
+            anotherPeriodAccountCashedValue :
+            (anotherPeriodAccount ? anotherPeriodAccount.value(isCalculatedValue) || 0 : 0);
+        console.log('result', result)
+        return result;
+    }
+
+    /**
+     * Calculates the value of the cell using the cell data and cashflowData array
+     * @param cellData
+     */
+    calculateCellValue(cellData) {
+
+        /** {cashflowTypeId: "T", accountId: 10, quarter: 3, year: 2015, month: 5} */
+        let value = this.cashflowData.reduce( (sum, cashflowData) => {
+            if (
+                cashflowData.cashflowTypeId === cellData.cashflowTypeId &&
+                cashflowData.accountId === cellData.accountId &&
+                (!cellData.year || (cellData.year === cashflowData.date.year())) &&
+                (!cellData.quarter || (cellData.quarter === cashflowData.date.quarter())) &&
+                (!cellData.month || ( cellData.month - 1 === cashflowData.date.month())) &&
+                (!cellData.day || (cellData.day === cashflowData.date.date()))
+            ) {
+                sum += cashflowData.amount;
+            }
+            return sum;
+        }, 0);
+       return value;
+    }
+
+    /** get the prev ending account from the cash */
+    getAnotherPeriodAccountCashedValue(keyObject) {
+        return this.anotherPeriodAccountsValues.get(keyObject.toString());
+    }
+
+    /** set the prev ending account value to the cash */
+    setAnotherPeriodAccountCashedValue(keyObject, value) {
+        this.anotherPeriodAccountsValues.set(keyObject.toString(), value);
     }
 
     isGrandTotalSummary(summaryCell) {
