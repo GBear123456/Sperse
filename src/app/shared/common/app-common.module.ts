@@ -7,6 +7,9 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { AbpModule } from '@abp/abp.module';
 import { CommonModule } from '@shared/common/common.module';
 
+import { DxButtonModule, DxToolbarModule } from 'devextreme-angular';
+
+import { ToolBarComponent } from './toolbar/toolbar.component';
 import { TimeZoneComboComponent } from './timing/timezone-combo.component';
 import { AppAuthService } from './auth/app-auth.service';
 import { JqPluginDirective } from './libs/jq-plugin.directive';
@@ -24,21 +27,26 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
         ModalModule.forRoot(),
         UtilsModule,
         AbpModule,
-        CommonModule
+        CommonModule,
+
+        DxButtonModule, 
+        DxToolbarModule
     ],
     declarations: [
         TimeZoneComboComponent,
         JqPluginDirective,
         CommonLookupModalComponent,
         DateRangePickerComponent,
-        DatePickerComponent
+        DatePickerComponent,
+        ToolBarComponent
     ],
     exports: [
         TimeZoneComboComponent,
         JqPluginDirective,
         CommonLookupModalComponent,
         DateRangePickerComponent,
-        DatePickerComponent
+        DatePickerComponent,
+        ToolBarComponent
     ],
     providers: [
         DateTimeService,

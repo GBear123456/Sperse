@@ -8,14 +8,14 @@ import { SettingService } from '@abp/settings/setting.service';
 import { MessageService } from '@abp/message/message.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { ExportService } from '@shared/common/export/export.service';
 
 import buildQuery from 'odata-query';
 import * as _ from 'underscore';
 
 export abstract class AppComponentBase {  
+  dataGrid: any;
 	dataSource: any;
-	tabIndex: Number = 0;
-	filterTabs: String[] = [];
   localization: LocalizationService;
   permission: PermissionCheckerService;
   feature: FeatureCheckerService;
@@ -26,8 +26,10 @@ export abstract class AppComponentBase {
   appSession: AppSessionService;
 
   private _applicationRef: ApplicationRef;
+  private _exportService: ExportService;
 
-  constructor(private _injector: Injector, 
+  constructor(
+    private _injector: Injector, 
     public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName
   ) {
     this.localization = _injector.get(LocalizationService);
@@ -39,6 +41,7 @@ export abstract class AppComponentBase {
     this.multiTenancy = _injector.get(AbpMultiTenancyService);
     this.appSession = _injector.get(AppSessionService);
     this._applicationRef = _injector.get(ApplicationRef);
+    this._exportService = _injector.get(ExportService);
   }
 
   getRootComponent() {
@@ -105,9 +108,16 @@ export abstract class AppComponentBase {
   isGranted(permissionName: string): boolean {
     return this.permission.isGranted(permissionName);
   }
-  getDateFormated(): string {
-      var date = new Date();
-      var dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "_" + date.getHours() + "" + date.getMinutes() + "" + date.getSeconds();
-      return dateStr;
+
+  exportToXLS() {
+    this.dataGrid.export.fileName = 
+      this._exportService.getFileName();
+    this.dataGrid.instance.exportToExcel(false);
+  }
+
+  exportToCSV() {
+    this._exportService.saveAsCSV(
+      this.dataGrid.instance.getDataSource().items()
+    );
   }
 }

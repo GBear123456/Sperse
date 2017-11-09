@@ -37,7 +37,7 @@ import * as moment from 'moment';
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    items: any;
+
     firstRefresh: boolean = false;
     private rootComponent: any;
     gridDataSource: any = {};
@@ -46,6 +46,26 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
+
+    toolbarConfig = [
+      {location: 'before', items: [
+        {name: 'back'}
+      ]},
+      {location: 'before', items: [
+        {name: 'assign'}, {name: 'status'}, {name: 'delete'}
+      ]},
+      {location: 'after', items: [
+        {name: 'refresh', action: this.refreshDataGrid.bind(this)}, 
+        {name: 'download', options: {hint: this.l('Export to XLS')}, action: this.exportToXLS.bind(this)}, 
+        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)}, 
+        {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
+      ]},
+      {location: 'after', items: [
+        {name: 'box'}, 
+        {name: 'pipeline', action: this.togglePipeline.bind(this, true)}, 
+        {name: 'grid', action: this.togglePipeline.bind(this, false)}
+      ]}
+    ];
 
     constructor(injector: Injector,
                 private _filtersService: FiltersService,
@@ -71,88 +91,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 paginate: true
             }
         };
-
-        this.items = [{
-            location: 'before',
-            widget: 'dxButton',
-            options: {
-                hint: 'Back',
-                iconSrc: 'assets/common/icons/back-arrow.svg',
-                onClick: Function()
-            }
-        }, {
-            location: 'before',
-            widget: 'dxButton',
-            options: {
-                text: 'Assign',
-                iconSrc: 'assets/common/icons/assign-icon.svg',
-                onClick: Function()
-            }
-        }, {
-            location: 'before',
-            widget: 'dxButton',
-            options: {
-                text: 'Status',
-                iconSrc: 'assets/common/icons/status-icon.svg',
-                onClick: Function()
-            }
-        }, {
-            location: 'before',
-            widget: 'dxButton',
-            options: {
-                text: 'Delete',
-                iconSrc: 'assets/common/icons/delete-icon.svg',
-                onClick: Function()
-            }
-        }, {
-            location: 'after',
-            widget: 'dxButton',
-            options: {
-                hint: 'Refresh',
-                icon: 'icon icon-refresh',
-                onClick: this.refreshDataGrid.bind(this)
-            }
-        }, {
-            location: 'after',
-            widget: 'dxButton',
-            options: {
-                hint: 'Export to Excel',
-                iconSrc: 'assets/common/icons/download-icon.svg',
-                onClick: this.exportData.bind(this)
-            }
-        }, {
-            location: 'after',
-            widget: 'dxButton',
-            options: {
-                hint: 'Column chooser',
-                icon: 'column-chooser',
-                onClick: this.showColumnChooser.bind(this)
-            }
-        }, {
-            location: 'after',
-            widget: 'dxButton',
-            options: {
-                hint: 'Box',
-                iconSrc: 'assets/common/icons/box-icon.svg',
-                onClick: Function()
-            }
-        }, {
-            location: 'after',
-            widget: 'dxButton',
-            options: {
-                hint: 'Pipeline',
-                iconSrc: 'assets/common/icons/pipeline-icon.svg',
-                onClick: this.togglePipeline.bind(this, true)
-            }
-        }, {
-            location: 'after',
-            widget: 'dxButton',
-            options: {
-                hint: 'Grid',
-                iconSrc: 'assets/common/icons/table-icon.svg',
-                onClick: this.togglePipeline.bind(this, false)
-            }
-        }];
     }
 
     onContentReady(event) {
@@ -164,11 +102,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
-    }
-
-    exportData() {
-        this.dataGrid.export.fileName = "Leads_" + this.getDateFormated();
-        this.dataGrid.instance.exportToExcel(false);
     }
 
     showColumnChooser() {

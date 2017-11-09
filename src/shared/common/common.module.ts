@@ -6,6 +6,7 @@ import { MdDialogModule } from '@angular/material';
 
 import { AppSessionService } from './session/app-session.service';
 import { AppUrlService } from './nav/app-url.service';
+import { ExportService } from './export/export.service';
 
 import { ConfirmDialog } from './dialogs/confirm/confirm-dialog.component';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
@@ -34,7 +35,8 @@ export class CommonModule {
             ngModule: CommonModule,
             providers: [
                 AppSessionService,
-                AppUrlService
+                AppUrlService,
+                ExportService
             ]
         }
     }
