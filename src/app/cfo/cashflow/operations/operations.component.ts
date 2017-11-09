@@ -16,10 +16,12 @@ export class OperationsComponent extends AppComponentBase {
         {name: 'back'}
       ]},
       {location: 'before', items: [
-        {name: 'edit'}, {name: 'rules'}, {name: 'expand'}
+        {name: 'edit'}, {name: 'rules'}, 
+        {name: 'expand', options: {text: this.l('Expand All')}}
       ]},
       {location: 'center', items: [
-        {name: 'folder'}, {name: 'pen'}
+        {name: 'folder'}, 
+        {name: 'pen', options: {hint: this.l('Label')}}
       ]},
       {location: 'center', items: [
         {name: 'more'}

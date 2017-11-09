@@ -124,7 +124,7 @@ export class ToolBarComponent extends AppComponentBase {
                 (isLast ? 'last': 'inside') : (isLast ? 'single': 'first'),
               "group-item-count": count
             }
-          }, item.options || this.supportedButtons[item.name])
+          }, _.extend(this.supportedButtons[item.name] || {}, item.options))
         });       
       });
 
