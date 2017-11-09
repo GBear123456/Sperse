@@ -37,7 +37,8 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     toolbarConfig = [
       {location: 'after', items: [
         {name: 'refresh', action: this.refreshDataGrid.bind(this)}, 
-        {name: 'download', action: this.exportData.bind(this)}, 
+        {name: 'download', options: {hint: this.l('Export to XLS')}, action: this.exportToXLS.bind(this)}, 
+        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)}, 
         {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
       ]}
     ];
@@ -61,11 +62,6 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                 }
             }
         };
-    }
-
-    exportData() {
-        this.dataGrid.export.fileName = "Transactions_" + this.getDateFormated();
-        this.dataGrid.instance.exportToExcel(false);
     }
 
     showColumnChooser() {

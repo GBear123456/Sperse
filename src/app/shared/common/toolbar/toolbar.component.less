@@ -23,7 +23,7 @@
 
     .dx-button {        
       position: relative;
-      width: -webkit-fill-available;
+      width: stretch;
       background-color: transparent;
 
       &[group-item-position="single"] {      
@@ -31,19 +31,38 @@
           margin-right: 20px;
       }
       &[group-item-position="first"] {
-          right: -2px;
           border-top-right-radius: 0;
           border-bottom-right-radius: 0;
           &[group-item-count="2"] {
             right: -1px;
           }
+          &[group-item-count="3"] {
+            right: -2px;
+          }
+          &[group-item-count="4"] {
+            right: -3px;
+          }
+          &[group-item-count="5"] {
+            right: -4px;
+          }
+          &[group-item-count="6"] {
+            right: -5px;
+          }
       }      
       &[group-item-position="inside"] {
-          right: -1px;
           border-radius: 0;
           border-left: 1px solid transparent;
           &:hover, &.dx-state-focused {
             border-left: 1px solid #bebebe;
+          }
+          &[group-item-index="2"] {
+            right: -1px;
+          }
+          &[group-item-index="3"] {
+            right: -2px;
+          }
+          &[group-item-index="4"] {
+            right: -3px;
           }
       }      
       &[group-item-position="last"] {

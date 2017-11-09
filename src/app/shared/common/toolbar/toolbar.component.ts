@@ -122,7 +122,8 @@ export class ToolBarComponent extends AppComponentBase {
             elementAttr: {
               "group-item-position": index ? 
                 (isLast ? 'last': 'inside') : (isLast ? 'single': 'first'),
-              "group-item-count": count
+              "group-item-count": count,
+              "group-item-index": count - index
             }
           }, _.extend(this.supportedButtons[item.name] || {}, item.options))
         });       

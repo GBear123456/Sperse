@@ -37,14 +37,14 @@ import * as moment from "moment";
     animations: [appModuleAnimation()]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild('createOrEditClientModal') createOrEditClientModal: CreateOrEditClientModalComponent;
-    items: any;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+
     private readonly dataSourceURI = 'Customer';
     private filters: FilterModel[];
     private rootComponent: any;
 
-    toolbarConfig = [
+    public toolbarConfig = [
       {location: 'before', items: [
         {name: 'back'}
       ]},
@@ -53,7 +53,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
       ]},
       {location: 'after', items: [
         {name: 'refresh', action: this.refreshDataGrid.bind(this)}, 
-        {name: 'download', action: this.exportData.bind(this)}, 
+        {name: 'download', options: {hint: this.l('Export to Excel')}, action: this.exportToXLS.bind(this)}, 
+        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)}, 
         {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
       ]},
       {location: 'after', items: [
@@ -66,11 +67,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 private _filtersService: FiltersService,
                 private _activatedRoute: ActivatedRoute,
                 private _commonLookupService: CommonLookupServiceProxy) {
-        super(injector);
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this._filtersService.enabled = true;
-        this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+        this._filtersService.localizationSourceName = this.localizationSourceName;
 
         this.dataSource = {
             store: {
@@ -83,11 +83,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 }
             }
         };
-    }
-
-    exportData() {
-        this.dataGrid.export.fileName = "Clients_" + this.getDateFormated();
-        this.dataGrid.instance.exportToExcel(false);
     }
 
     showColumnChooser() {

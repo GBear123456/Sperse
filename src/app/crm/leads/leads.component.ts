@@ -37,7 +37,7 @@ import * as moment from 'moment';
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    items: any;
+
     firstRefresh: boolean = false;
     private rootComponent: any;
     gridDataSource: any = {};
@@ -56,7 +56,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
       ]},
       {location: 'after', items: [
         {name: 'refresh', action: this.refreshDataGrid.bind(this)}, 
-        {name: 'download', action: this.exportData.bind(this)}, 
+        {name: 'download', options: {hint: this.l('Export to XLS')}, action: this.exportToXLS.bind(this)}, 
+        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)}, 
         {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
       ]},
       {location: 'after', items: [
@@ -101,11 +102,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
-    }
-
-    exportData() {
-        this.dataGrid.export.fileName = "Leads_" + this.getDateFormated();
-        this.dataGrid.instance.exportToExcel(false);
     }
 
     showColumnChooser() {
