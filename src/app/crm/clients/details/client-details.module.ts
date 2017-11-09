@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AppCommonModule } from '@app/shared/common/app-common.module';
 
 import { MdSidenavModule, MdProgressBarModule, MdTabsModule, MdDialogModule, 
   MdDialogRef, MdProgressSpinnerModule, MdSelectModule } from '@angular/material';
@@ -56,6 +57,7 @@ import { PhoneFormatPipe } from './phone-format.pipe';
   imports: [
     FormsModule,
     CommonModule,
+    AppCommonModule,
     MdSidenavModule,
     MdProgressBarModule,
     MdTabsModule,

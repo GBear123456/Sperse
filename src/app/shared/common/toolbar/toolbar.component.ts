@@ -111,15 +111,18 @@ export class ToolBarComponent extends AppComponentBase {
 
   initToolbarItems() {
     this._config.forEach((group) => {
+      let count = group.items.length;
       group.items.forEach((item, index) => {  
-        let isLast = group.items.length == index + 1;
+        let isLast = count == index + 1;
         this.items.push({
           location: group.location,
           widget: 'dxButton',
           options: _.extend({
             onClick: item.action,
-            elementAttr: {"group-item-position": index ? 
-              (isLast ? 'last': 'inside') : (isLast ? 'single': 'first')
+            elementAttr: {
+              "group-item-position": index ? 
+                (isLast ? 'last': 'inside') : (isLast ? 'single': 'first'),
+              "group-item-count": count
             }
           }, item.options || this.supportedButtons[item.name])
         });       

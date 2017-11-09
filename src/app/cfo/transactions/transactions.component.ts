@@ -34,6 +34,14 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     private filters: FilterModel[];
     private rootComponent: any;
 
+    toolbarConfig = [
+      {location: 'after', items: [
+        {name: 'refresh', action: this.refreshDataGrid.bind(this)}, 
+        {name: 'download', action: this.exportData.bind(this)}, 
+        {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
+      ]}
+    ];
+
     constructor(injector: Injector, private _TransactionsServiceProxy: TransactionsServiceProxy,
         private _filtersService: FiltersService) {
         super(injector);
@@ -53,32 +61,6 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                 }
             }
         };
-
-        this.items = [{
-            location: 'after',
-            widget: 'dxButton',
-            options: {
-                hint: 'Refresh',
-                icon: 'icon icon-refresh',
-                onClick: this.refreshDataGrid.bind(this)
-            }
-        }, {
-            location: 'after',
-            widget: 'dxButton',
-            options: {
-                hint: 'Export to Excel',
-                iconSrc: 'assets/common/icons/download-icon.svg',
-                onClick: this.exportData.bind(this)
-            }
-        }, {
-            location: 'after',
-            widget: 'dxButton',
-            options: {
-                hint: 'Column chooser',
-                icon: 'column-chooser',
-                onClick: this.showColumnChooser.bind(this)
-            }
-        }];
     }
 
     exportData() {
