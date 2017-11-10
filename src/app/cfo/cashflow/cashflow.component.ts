@@ -307,7 +307,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
+        this.rootComponent.overflowHidden(false);
     }
 
     ngOnDestroy() {
@@ -647,7 +647,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                cellObj.cell.path !== undefined &&
                cellObj.cell.path.length === 1 &&
                cellObj.cell.rowspan === undefined &&
-               cellObj.cell.path[0] === StartedBalance;
+               cellObj.cell.path[0] === StartedBalance &&
+               !cellObj.cell.isWhiteSpace;
     }
 
     /**
@@ -777,6 +778,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** added css class to start balance row */
         if (this.isStartingBalanceHeaderColumn(e) || this.isStartingBalanceTotalDataColumn(e)) {
+            console.log(e);
             e.cellElement.parent().addClass('startedBalance');
         }
 
@@ -918,7 +920,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.statsDetailFilter.expenseCategoryId = cellObj.cell.rowPath[2];
             this.statsDetailFilter.startDate = datePeriod.startDate;
             this.statsDetailFilter.endDate = datePeriod.endDate;
-            if (this.requestFilter) this.statsDetailFilter.accountIds = this.requestFilter.accountIds; // there will be another data from filter
+            if (this.requestFilter) {
+                this.statsDetailFilter.accountIds = this.requestFilter.accountIds;
+            }
+            // there will be another data from filter
             this.getStatsDetails(this.statsDetailFilter);
         }
     }
@@ -1037,18 +1042,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @return {number}
      */
     modifyStartingBalanceAccountCell(summaryCell, prevWithParent) {
-        //console.log('prevWithParent', prevWithParent);
-
-        console.log('summaryCell', summaryCell.value());
-
         let prevEndingAccountValue = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, Total),
             sum = (summaryCell.value() || 0) + prevEndingAccountValue + (prevWithParent.value(true) || 0);
-        // while (prevWithParent !== null) {
-        //     sum += (prevWithParent.value() || 0);
-        //     console.log('prevWithParent', (prevWithParent.value() || 0));
-        //     prevWithParent = prevWithParent.prevWithParent('column', true);
-        // }
-        console.log('sum', sum);
 
         return  sum || 0;
     }
@@ -1070,12 +1065,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @return {number}
      */
     modifyEndingBalanceAccountSummary(summaryCell, prevWithParent) {
-        console.log('current', summaryCell.value());
-        console.log('current', summaryCell);
         let startedBalanceAccountValue = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, StartedBalance);
-        console.log('startedBalanceAccountValue', startedBalanceAccountValue);
         let sum = (summaryCell.value() || 0) + startedBalanceAccountValue;
-        console.log('sum', sum);
         return sum || 0;
     }
 
@@ -1100,19 +1091,18 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, target) {
         let accountId = summaryCell.value(summaryCell.field('row'), true);
         let subject = target === StartedBalance ? summaryCell : prevWithParent;
-        console.log('subject', subject);
         let anotherPeriodAccount = subject.parent('row').slice(0, target).child('row', accountId),
         anotherPeriodAccountCashedValue,
         isCalculatedValue = target === StartedBalance ? true : false,
         groupInterval = subject.field('column').groupInterval,
         columnValue = subject.value(subject.field('column')),
         parent = subject.parent(),
-
         /** object with cell data as the key for Map object cash */
         cellData = {
             'cashflowTypeId': target,
             'accountId': accountId,
             [groupInterval]: columnValue,
+            /** method for creating the key for cash from the object props and values */
             toString() {
                 let str = '';
                 for (let prop in this) {
@@ -1124,37 +1114,20 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
         };
 
-        console.log('subject cell value', subject.value());
-
-        // if (cellData.year === 2015 && cellData.accountId === 9 && cellData.quarter === 1) {
-        //     debugger;
-        // }
-
         while (parent.field('column') && parent.field('column').dataType === 'date') {
             let parentGroupInterval = parent.field('column').groupInterval,
                 parentColumnValue = parent.value(parent.field('column'));
             cellData[parentGroupInterval] = parentColumnValue;
             parent = parent.parent();
         }
-        /** @todo change defining of the key because now the same months or quarters from different years could have the same key
-         *  that will be overridden
-         */
-
-        console.log('cellData', cellData);
-
-        let calculatedValue = this.calculateCellValue(cellData);
-        // this.setAnotherPeriodAccountCashedValue(cellData, anotherPeriodAccountCashedValue);
-        console.log('calculatedValue', calculatedValue);
-        console.log('anotherPeriodAccountValue', (anotherPeriodAccount ? anotherPeriodAccount.value() || 0 : null));
 
         /** if we haven't found the value from the another period -
          *  then it hasn't been expanded and we should find out whether the value is in cash */
         if (anotherPeriodAccount === null) {
-            console.log('get from cash');
             anotherPeriodAccountCashedValue = this.getAnotherPeriodAccountCashedValue(cellData);
-            console.log('anotherPeriodAccountCashedValue', (anotherPeriodAccountCashedValue ? anotherPeriodAccountCashedValue || 0 : null));
             /** if we haven't found the value in cash - then we should calculate the value in the cashflow data by ourselfs */
             if (!anotherPeriodAccountCashedValue) {
+                /** calculate the cell value using the cell data and cashflowData */
                 anotherPeriodAccountCashedValue = this.calculateCellValue(cellData);
                 this.setAnotherPeriodAccountCashedValue(cellData, anotherPeriodAccountCashedValue);
             }
@@ -1162,13 +1135,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             /** add the prevEndingAccount value to the cash */
             this.setAnotherPeriodAccountCashedValue(cellData, anotherPeriodAccount.value(isCalculatedValue));
         }
-        console.log('anotherPeriodAccountsValues', this.anotherPeriodAccountsValues);
-
-        let result = anotherPeriodAccountCashedValue ?
+        return anotherPeriodAccountCashedValue ?
             anotherPeriodAccountCashedValue :
             (anotherPeriodAccount ? anotherPeriodAccount.value(isCalculatedValue) || 0 : 0);
-        console.log('result', result)
-        return result;
     }
 
     /**
@@ -1176,7 +1145,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param cellData
      */
     calculateCellValue(cellData) {
-
         /** {cashflowTypeId: "T", accountId: 10, quarter: 3, year: 2015, month: 5} */
         let value = this.cashflowData.reduce( (sum, cashflowData) => {
             if (
