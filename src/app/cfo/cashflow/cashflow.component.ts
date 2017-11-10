@@ -99,7 +99,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 if (cellInfo.valueText === Income || cellInfo.valueText === Expense) {
                     value = this.l('Total') + ' ' + value;
                 }
-                return  value.toUpperCase();
+                return  value ? value.toUpperCase() : cellInfo.value;
             }
         },
         {
@@ -122,7 +122,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                             this.transactionCategories[cellInfo.valueText] :
                             cellInfo.valueText;
                 }
-                return value.toUpperCase();
+                return value ? value.toUpperCase() : cellInfo.value;
             },
             rowHeaderLayout: 'tree'
         },
@@ -133,9 +133,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             areaIndex: 2,
             dataField: 'expenseCategoryId',
             customizeText: cellInfo => {
-                return this.expenseCategories[cellInfo.valueText] ?
-                       this.expenseCategories[cellInfo.valueText].toUpperCase() :
-                       cellInfo.valueText;
+                let value = this.expenseCategories[cellInfo.valueText];
+                return value ? value.toUpperCase() : cellInfo.valueText;
             }
         },
         {
