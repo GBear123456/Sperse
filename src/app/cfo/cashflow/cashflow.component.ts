@@ -116,7 +116,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 if (Number.isInteger(cellInfo.value) && this.bankAccounts) {
                     value = this.bankAccounts.find( account => {
                         return account.id === cellInfo.value;
-                    }).accountName/* + ' ' + cellInfo.value*/;
+                    });
+                    value = value ? value.accountName : cellInfo;
                 } else {
                     value = this.transactionCategories[cellInfo.valueText] ?
                             this.transactionCategories[cellInfo.valueText] :
@@ -1088,9 +1089,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     /** @todo refactor this method */
     getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, target) {
-        let accountId = summaryCell.value(summaryCell.field('row'), true);
-        let subject = target === StartedBalance ? summaryCell : prevWithParent;
-        let anotherPeriodAccount = subject.parent('row').slice(0, target).child('row', accountId),
+        let accountId = summaryCell.value(summaryCell.field('row'), true),
+        subject = target === StartedBalance ? summaryCell : prevWithParent,
+        anotherPeriodCell = subject.parent('row').slice(0, target),
+        anotherPeriodAccount = anotherPeriodCell ? anotherPeriodCell.child('row', accountId) : null,
         anotherPeriodAccountCashedValue,
         isCalculatedValue = target === StartedBalance ? true : false,
         groupInterval = subject.field('column').groupInterval,
@@ -1113,6 +1115,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
         };
 
+        /** add to the cell data other date intervals */
         while (parent.field('column') && parent.field('column').dataType === 'date') {
             let parentGroupInterval = parent.field('column').groupInterval,
                 parentColumnValue = parent.value(parent.field('column'));
