@@ -1,4 +1,4 @@
-export class DropDownElement {
+﻿export class DropDownElement {
     displayName: string = "test";
     displayElementExp: any;
     elements: any;
@@ -6,5 +6,6 @@ export class DropDownElement {
     filterField: any;
 
 
-    onElementSelect: (event, element) => void;    
+    onElementSelect: (event, element) => void;
+    clearSelectedElement: (filter) => void;   
 }
