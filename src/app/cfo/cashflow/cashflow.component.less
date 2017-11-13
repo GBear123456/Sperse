@@ -32,7 +32,32 @@
 
 :host {
     /deep/ .dx-pivotgrid {
+        .dx-pivotgrid-horizontal-headers {
+            .dx-pivotgrid-expanded.dateField {
+                padding: 5px 10px!important;
+                .head-cell-expand {
+                  position: relative;
+                  &:after {
+                    content: '';  
+                    position: absolute;
+                    visibility: visible;
+                    left: -10px;
+                    top: -5px;  
+                    width: 0;
+                    height: 0;
+                    border: 0 solid transparent;
+                    border-bottom-width: 10px;
+                    border-top-width: 0px;
+                    border-left: 10px solid #686f76;
+                  }
 
+                  &.closed {
+                    visibility: hidden;
+                    position: absolute;
+                  }
+                }
+            }
+        }
         /** general */
         .dx-grandtotal {
             background: @grandTotalBackgroundColor;

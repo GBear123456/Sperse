@@ -29,7 +29,6 @@ const StartedBalance = 'B',
     styleUrls: ['./cashflow.component.less'],
     providers: [ CashflowServiceProxy ]
 })
-
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     cashflowData: any;
@@ -297,6 +296,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
             this.loadGridDataSource();
         });
+
+        window['onHeaderExpanderClick'] = function($event) {                  
+          let rect = $event.target.getBoundingClientRect();
+          if (Math.abs($event.clientX - rect.x) < 10 && 
+            Math.abs($event.clientY - rect.y) < 10
+          ) $event.stopPropagation();
+          $event.target.classList.toggle('closed');          
+        };
     }
 
     filterByAccount(filter: FilterMultiselectDropDownComponent) {
@@ -775,10 +782,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxPivotGrid/Events/#cellPrepared
      */
     onCellPrepared(e) {
-
         /** added css class to start balance row */
         if (this.isStartingBalanceHeaderColumn(e) || this.isStartingBalanceTotalDataColumn(e)) {
-            console.log(e);
             e.cellElement.parent().addClass('startedBalance');
         }
 
@@ -858,7 +863,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param cellObj
      */
     prepareCell(cellObj) {
-
         /** get the css class from name */
         let valueWithoutCss = cellObj.cell.text.slice(0, (cellObj.cell.text.indexOf(this.cssMarker)));
         /** cut off the css from the cell text */
@@ -868,7 +872,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** Added "Total" text to the year and quarter headers */
         let fieldName = cssClass.slice(cssClass.indexOf(' ') + 1, cssClass.length).trim();
         if (fieldName === 'year' || fieldName === 'quarter') {
-            cellObj.cellElement.append('<div class="totals">' + this.l('Totals').toUpperCase() + '</div>');
+            let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') && fieldName === 'quarter';
+            cellObj.cellElement.html('<div onclick="onHeaderExpanderClick(event)" class="head-cell-expand ' + 
+              (hideHead ? 'closed': '') + '">' + cellObj.cellElement.html() + 
+              '<div class="totals">' + this.l('Totals').toUpperCase() + '</div></div>');
         }
         cellObj.cellElement.addClass(cssClass);
         /** hide projected field for not current months for mdk and projected */
