@@ -872,7 +872,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** Added "Total" text to the year and quarter headers */
         let fieldName = cssClass.slice(cssClass.indexOf(' ') + 1, cssClass.length).trim();
         if (fieldName === 'year' || fieldName === 'quarter') {
-            let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') && fieldName === 'quarter';
+            let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') && 
+              (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length == 6);
             cellObj.cellElement.html('<div onclick="onHeaderExpanderClick(event)" class="head-cell-expand ' + 
               (hideHead ? 'closed': '') + '">' + cellObj.cellElement.html() + 
               '<div class="totals">' + this.l('Totals').toUpperCase() + '</div></div>');
