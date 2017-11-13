@@ -1,4 +1,4 @@
-﻿import { Injector, Inject, Input, ApplicationRef } from '@angular/core';
+import { Injector, Inject, Input, ApplicationRef } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -119,5 +119,14 @@ export abstract class AppComponentBase {
     this._exportService.saveAsCSV(
       this.dataGrid.instance.getDataSource().items()
     );
+  }
+
+  getPhoto(photo, gender): string {
+      if (photo)
+          return 'data:image/jpeg;base64,' + photo;
+      if (gender)
+          return 'assets/common/images/no-photo-' + gender + '.png';
+
+      return 'assets/common/images/no-photo.png';
   }
 }
