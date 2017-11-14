@@ -267,7 +267,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                         filterParams.push("( " + filter.field + " eq " + el.id + " )");
                     }
                 });
-                var filterQuery = filterParams.join(' or ');
+                var filterQuery = "( " + filterParams.join(' or ') + " )";
                 data = filterQuery;
             }
         });

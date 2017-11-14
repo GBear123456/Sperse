@@ -1,4 +1,5 @@
-﻿import { Component, Injector, Input, OnInit, AfterViewInit } from '@angular/core';
+import { Component, Injector, Input, OnInit, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { BrowserModule } from '@angular/platform-browser';
@@ -12,35 +13,43 @@ import DataSource from 'devextreme/data/data_source';
 @Component({
     selector: 'leads-stats',
     templateUrl: './leads-stats.component.html',
+    styleUrls: ["./leads-stats.component.less"],
     providers: [LeadServiceProxy]
 })
 export class LeadsStatsComponent extends AppComponentBase {
-    sales: any;
+    types: string[] = new Array<string>();
+    pipelines: string[] = new Array<string>();
+    stages: string[] = new Array<string>();
 
     constructor(injector: Injector,
+        private _router: Router,
         private _leadService: LeadServiceProxy) {
         super(injector);
     }
 
     ngOnInit(): void {
         this._leadService.getLeadStats().subscribe(result => {
+            result.types.forEach((val, i, arr) => this.types[val.key] = val.value);
+            result.pipelines.forEach((val, i, arr) => this.pipelines[val.key] = val.value);
+            result.stages.forEach((val, i, arr) => this.stages[val.key] = val.value);
+            
             this.dataSource = {
                 fields: [{
                     caption: 'pipeline',
                     width: 120,
                     dataField: 'pipelineId',
                     area: 'row',
-                    selector: this.pipelineSelector
+                    customizeText: (data) => this.pipelines[data.value]
                 }, {
                     caption: 'Stage',
                     dataField: 'stageId',
                     width: 150,
                     area: 'row',
-                    selector: this.stageSelector
+                    customizeText: (data) => this.stages[data.value]
                 }, {
                     dataField: 'typeId',
                     area: 'column',
-                    selector: this.typeSelector
+                    customizeText: (data) => this.types[data.value]
                 }, {
                     caption: 'Sales',
                     dataField: 'count',
@@ -48,23 +57,24 @@ export class LeadsStatsComponent extends AppComponentBase {
                     summaryType: 'sum',
                     area: 'data'
                 }],
-                store: result
+                store: result.data
             }
         });
     }
     onPivotCellClick(e) {
         if (e.area == "data") {
-            var rowPathLength = e.cell.rowPath.length,
-                rowPathName = e.cell.rowPath[rowPathLength - 1];
+            var typeId = e.cell.columnPath[0];
+            var pipelineId = e.cell.rowPath[0];
+            var stageId = e.cell.rowPath[1];
+            //alert(this.types[typeId] + ' | ' + this.pipelines[pipelineId] + ' | ' + this.stages[stageId]);
+
+            this._router.navigate(['app/crm/leads']);
         }
     }
-    pipelineSelector(data) {
-        return data.pipelineName;
-    }
-    stageSelector(data) {
-        return data.stageName;
-    }
-    typeSelector(data) {
-        return data.typeName;
+
+    onCellPrepared(e) {
+        if (e.area == "data")
+            e.cellElement.addClass('filter-link');
+        //console.log(e);
     }
 }

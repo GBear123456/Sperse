@@ -35,7 +35,6 @@ const StartedBalance = 'B',
     styleUrls: ['./cashflow.component.less'],
     providers: [ CashflowServiceProxy ]
 })
-
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     cashflowData: any;
@@ -298,6 +297,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
             this.loadGridDataSource();
         });
+
+        window['onHeaderExpanderClick'] = function($event) {
+          let rect = $event.target.getBoundingClientRect();
+          if (Math.abs($event.clientX - rect.x) < 10 &&
+            Math.abs($event.clientY - rect.y) < 10
+          ) $event.stopPropagation();
+          $event.target.classList.toggle('closed');
+        };
     }
 
     filterByAccount(filter: FilterMultiselectDropDownComponent) {
@@ -829,7 +836,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxPivotGrid/Events/#cellPrepared
      */
     onCellPrepared(e) {
-
         /** added css class to start balance row */
         if (this.isStartingBalanceHeaderColumn(e) || this.isStartingBalanceTotalDataColumn(e)) {
             e.cellElement.parent().addClass('startedBalance');
@@ -911,7 +917,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param cellObj
      */
     prepareCell(cellObj) {
-
         /** get the css class from name */
         let valueWithoutCss = cellObj.cell.text.slice(0, (cellObj.cell.text.indexOf(this.cssMarker)));
         /** cut off the css from the cell text */
@@ -922,7 +927,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let fieldName = cssClass.slice(cssClass.indexOf(' ') + 1, cssClass.length).trim();
         let groupName = cssClass.slice(0, cssClass.indexOf(' ')).trim();
         if (fieldName === 'year' || fieldName === 'quarter') {
-            cellObj.cellElement.append('<div class="totals">' + this.l('Totals').toUpperCase() + '</div>');
+            let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
+              (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length == 6);
+            cellObj.cellElement.html('<div onclick="onHeaderExpanderClick(event)" class="head-cell-expand ' +
+              (hideHead ? 'closed': '') + '">' + cellObj.cellElement.html() +
+              '<div class="totals">' + this.l('Totals').toUpperCase() + '</div></div>');
         }
         if (groupName === 'historicalField' && !cellObj.cellElement.parent().hasClass('historicalRow')) {
             cellObj.cellElement.parent().addClass('historicalRow');
@@ -972,15 +981,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
             $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
             this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
+            this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
             this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
-            this.statsDetailFilter.transactionCategoryId = cellObj.cell.rowPath[1];
+            if (this.statsDetailFilter.cashFlowTypeId == 'B') {
+                this.statsDetailFilter.accountIds.push(cellObj.cell.rowPath[1]);
+            } else {
+                this.statsDetailFilter.transactionCategoryId = cellObj.cell.rowPath[1];
+            }
             this.statsDetailFilter.expenseCategoryId = cellObj.cell.rowPath[2];
             this.statsDetailFilter.startDate = datePeriod.startDate;
             this.statsDetailFilter.endDate = datePeriod.endDate;
-            if (this.requestFilter) {
-                this.statsDetailFilter.accountIds = this.requestFilter.accountIds;
-            }
-            // there will be another data from filter
             this.getStatsDetails(this.statsDetailFilter);
         }
     }
@@ -1005,7 +1015,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
         if (day) {
             startDate.date(day);
-            endDate.month(month - 1).endOf('day');
+            endDate.date(day).endOf('day');
         }
         return {startDate: startDate, endDate : endDate};
     }

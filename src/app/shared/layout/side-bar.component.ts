@@ -1,4 +1,4 @@
-import { Component, Injector, ElementRef } from '@angular/core';
+﻿import { Component, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -54,7 +54,7 @@ export class SideBarComponent extends AppComponentBase {
         else if (typeof (val) == 'boolean')
             filter.items[key] = true;
         else if (filter.items[key].selectedElement)
-            filter.items[key].selectedElement = null;
+            filter.items[key].clearSelectedElement(filter);
         else if (filter.items[key].selectedElements)
             filter.items[key].selectedElements = [];
     });

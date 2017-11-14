@@ -981,51 +981,6 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    recalculateCategories(input: RecalculateCategoriesInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/RecalculateCategories";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input ? input.toJSON() : null);
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processRecalculateCategories(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processRecalculateCategories(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processRecalculateCategories(response: Response): Observable<void> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
     getStatsDetails(filter: StatsDetailFilter): Observable<CashFlowStatsDetailDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStatsDetails";
         url_ = url_.replace(/[?&]$/, "");
@@ -1842,6 +1797,58 @@ export class ContactBusinessServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getPersonOrgRelationTypes(): Observable<PersonOrgRelationTypeDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactBusiness/GetPersonOrgRelationTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetPersonOrgRelationTypes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetPersonOrgRelationTypes(response_);
+                } catch (e) {
+                    return <Observable<PersonOrgRelationTypeDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<PersonOrgRelationTypeDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetPersonOrgRelationTypes(response: Response): Observable<PersonOrgRelationTypeDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: PersonOrgRelationTypeDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(PersonOrgRelationTypeDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<PersonOrgRelationTypeDto[]>(<any>null);
     }
 }
 
@@ -4922,7 +4929,7 @@ export class LeadServiceProxy {
     /**
      * @return Success
      */
-    getLeadStats(): Observable<LeadStatsDto[]> {
+    getLeadStats(): Observable<LeadStatsDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/GetLeadStats";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -4944,31 +4951,27 @@ export class LeadServiceProxy {
                 try {
                     return this.processGetLeadStats(response_);
                 } catch (e) {
-                    return <Observable<LeadStatsDto[]>><any>Observable.throw(e);
+                    return <Observable<LeadStatsDto>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<LeadStatsDto[]>><any>Observable.throw(response_);
+                return <Observable<LeadStatsDto>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetLeadStats(response: Response): Observable<LeadStatsDto[]> {
+    protected processGetLeadStats(response: Response): Observable<LeadStatsDto> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: LeadStatsDto[] = null;
+            let result200: LeadStatsDto = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(LeadStatsDto.fromJS(item));
-            }
+            result200 = resultData200 ? LeadStatsDto.fromJS(resultData200) : new LeadStatsDto();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<LeadStatsDto[]>(<any>null);
+        return Observable.of<LeadStatsDto>(<any>null);
     }
 
     /**
@@ -6924,63 +6927,6 @@ export class ProfileServiceProxy {
 }
 
 @Injectable()
-export class QuovoWebhookServiceProxy {
-    private http: Http;
-    private baseUrl: string;
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    get(input: QuovoWebhookInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/QuovoWebhook/Get";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input ? input.toJSON() : null);
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGet(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGet(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGet(response: Response): Observable<void> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-}
-
-@Injectable()
 export class RoleServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -7289,6 +7235,54 @@ export class SessionServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<UpdateUserSignInTokenOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getUserInformation(): Observable<GetUserInformationOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Session/GetUserInformation";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetUserInformation(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetUserInformation(response_);
+                } catch (e) {
+                    return <Observable<GetUserInformationOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetUserInformationOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetUserInformation(response: Response): Observable<GetUserInformationOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: GetUserInformationOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetUserInformationOutput.fromJS(resultData200) : new GetUserInformationOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<GetUserInformationOutput>(<any>null);
     }
 }
 
@@ -12256,49 +12250,6 @@ export interface IBankAccountDto {
     isActive: boolean;
 }
 
-export class RecalculateCategoriesInput implements IRecalculateCategoriesInput {
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    cashflowCategoryId: number;
-
-    constructor(data?: IRecalculateCategoriesInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.cashflowCategoryId = data["cashflowCategoryId"];
-        }
-    }
-
-    static fromJS(data: any): RecalculateCategoriesInput {
-        let result = new RecalculateCategoriesInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["cashflowCategoryId"] = this.cashflowCategoryId;
-        return data; 
-    }
-}
-
-export interface IRecalculateCategoriesInput {
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    cashflowCategoryId: number;
-}
-
 export class StatsDetailFilter implements IStatsDetailFilter {
     cashFlowTypeId: string;
     transactionCategoryId: string;
@@ -13793,6 +13744,49 @@ export interface IContactBusinessEditInfo {
     mobilePhoneNumber: string;
     orgName: string;
     orgId: number;
+}
+
+export class PersonOrgRelationTypeDto implements IPersonOrgRelationTypeDto {
+    id: string;
+    name: string;
+    isDeleted: boolean;
+
+    constructor(data?: IPersonOrgRelationTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.isDeleted = data["isDeleted"];
+        }
+    }
+
+    static fromJS(data: any): PersonOrgRelationTypeDto {
+        let result = new PersonOrgRelationTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["isDeleted"] = this.isDeleted;
+        return data; 
+    }
+}
+
+export interface IPersonOrgRelationTypeDto {
+    id: string;
+    name: string;
+    isDeleted: boolean;
 }
 
 export class CreateContactEmailInput implements ICreateContactEmailInput {
@@ -19850,13 +19844,10 @@ export interface ILeadCancellationReasonDto {
 }
 
 export class LeadStatsDto implements ILeadStatsDto {
-    typeId: number;
-    typeName: string;
-    stageId: number;
-    stageName: string;
-    pipelineId: number;
-    pipelineName: string;
-    count: number;
+    data: LeadStatsData[];
+    pipelines: KeyValuePairOfInt32AndString[];
+    stages: KeyValuePairOfInt32AndString[];
+    types: KeyValuePairOfInt32AndString[];
 
     constructor(data?: ILeadStatsDto) {
         if (data) {
@@ -19869,13 +19860,26 @@ export class LeadStatsDto implements ILeadStatsDto {
 
     init(data?: any) {
         if (data) {
-            this.typeId = data["typeId"];
-            this.typeName = data["typeName"];
-            this.stageId = data["stageId"];
-            this.stageName = data["stageName"];
-            this.pipelineId = data["pipelineId"];
-            this.pipelineName = data["pipelineName"];
-            this.count = data["count"];
+            if (data["data"] && data["data"].constructor === Array) {
+                this.data = [];
+                for (let item of data["data"])
+                    this.data.push(LeadStatsData.fromJS(item));
+            }
+            if (data["pipelines"] && data["pipelines"].constructor === Array) {
+                this.pipelines = [];
+                for (let item of data["pipelines"])
+                    this.pipelines.push(KeyValuePairOfInt32AndString.fromJS(item));
+            }
+            if (data["stages"] && data["stages"].constructor === Array) {
+                this.stages = [];
+                for (let item of data["stages"])
+                    this.stages.push(KeyValuePairOfInt32AndString.fromJS(item));
+            }
+            if (data["types"] && data["types"].constructor === Array) {
+                this.types = [];
+                for (let item of data["types"])
+                    this.types.push(KeyValuePairOfInt32AndString.fromJS(item));
+            }
         }
     }
 
@@ -19887,25 +19891,121 @@ export class LeadStatsDto implements ILeadStatsDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["typeId"] = this.typeId;
-        data["typeName"] = this.typeName;
-        data["stageId"] = this.stageId;
-        data["stageName"] = this.stageName;
-        data["pipelineId"] = this.pipelineId;
-        data["pipelineName"] = this.pipelineName;
-        data["count"] = this.count;
+        if (this.data && this.data.constructor === Array) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        if (this.pipelines && this.pipelines.constructor === Array) {
+            data["pipelines"] = [];
+            for (let item of this.pipelines)
+                data["pipelines"].push(item.toJSON());
+        }
+        if (this.stages && this.stages.constructor === Array) {
+            data["stages"] = [];
+            for (let item of this.stages)
+                data["stages"].push(item.toJSON());
+        }
+        if (this.types && this.types.constructor === Array) {
+            data["types"] = [];
+            for (let item of this.types)
+                data["types"].push(item.toJSON());
+        }
         return data; 
     }
 }
 
 export interface ILeadStatsDto {
+    data: LeadStatsData[];
+    pipelines: KeyValuePairOfInt32AndString[];
+    stages: KeyValuePairOfInt32AndString[];
+    types: KeyValuePairOfInt32AndString[];
+}
+
+export class LeadStatsData implements ILeadStatsData {
     typeId: number;
-    typeName: string;
     stageId: number;
-    stageName: string;
     pipelineId: number;
-    pipelineName: string;
     count: number;
+
+    constructor(data?: ILeadStatsData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.typeId = data["typeId"];
+            this.stageId = data["stageId"];
+            this.pipelineId = data["pipelineId"];
+            this.count = data["count"];
+        }
+    }
+
+    static fromJS(data: any): LeadStatsData {
+        let result = new LeadStatsData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["typeId"] = this.typeId;
+        data["stageId"] = this.stageId;
+        data["pipelineId"] = this.pipelineId;
+        data["count"] = this.count;
+        return data; 
+    }
+}
+
+export interface ILeadStatsData {
+    typeId: number;
+    stageId: number;
+    pipelineId: number;
+    count: number;
+}
+
+export class KeyValuePairOfInt32AndString implements IKeyValuePairOfInt32AndString {
+    key: number;
+    value: string;
+
+    constructor(data?: IKeyValuePairOfInt32AndString) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.key = data["key"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): KeyValuePairOfInt32AndString {
+        let result = new KeyValuePairOfInt32AndString();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["key"] = this.key;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface IKeyValuePairOfInt32AndString {
+    key: number;
+    value: string;
 }
 
 export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput {
@@ -22305,293 +22405,6 @@ export interface IChangeUserLanguageDto {
     languageName: string;
 }
 
-export class QuovoWebhookInput implements IQuovoWebhookInput {
-    action: QuovoWebhookInputAction;
-    event: QuovoWebhookInputEvent;
-    account: QAccount;
-    sync: QSyncAccount;
-    user: User;
-
-    constructor(data?: IQuovoWebhookInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.action = data["action"];
-            this.event = data["event"];
-            this.account = data["account"] ? QAccount.fromJS(data["account"]) : <any>undefined;
-            this.sync = data["sync"] ? QSyncAccount.fromJS(data["sync"]) : <any>undefined;
-            this.user = data["user"] ? User.fromJS(data["user"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): QuovoWebhookInput {
-        let result = new QuovoWebhookInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["action"] = this.action;
-        data["event"] = this.event;
-        data["account"] = this.account ? this.account.toJSON() : <any>undefined;
-        data["sync"] = this.sync ? this.sync.toJSON() : <any>undefined;
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IQuovoWebhookInput {
-    action: QuovoWebhookInputAction;
-    event: QuovoWebhookInputEvent;
-    account: QAccount;
-    sync: QSyncAccount;
-    user: User;
-}
-
-export class QAccount implements IQAccount {
-    brokerage: number;
-    brokerage_name: string;
-    config_instructions: string;
-    failures: number;
-    id: number;
-    is_inactive: boolean;
-    last_good_sync: moment.Moment;
-    nickname: string;
-    opened: moment.Moment;
-    status: string;
-    update_count: number;
-    updated: moment.Moment;
-    user: number;
-    username: string;
-    value: number;
-
-    constructor(data?: IQAccount) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.brokerage = data["brokerage"];
-            this.brokerage_name = data["brokerage_name"];
-            this.config_instructions = data["config_instructions"];
-            this.failures = data["failures"];
-            this.id = data["id"];
-            this.is_inactive = data["is_inactive"];
-            this.last_good_sync = data["last_good_sync"] ? moment(data["last_good_sync"].toString()) : <any>undefined;
-            this.nickname = data["nickname"];
-            this.opened = data["opened"] ? moment(data["opened"].toString()) : <any>undefined;
-            this.status = data["status"];
-            this.update_count = data["update_count"];
-            this.updated = data["updated"] ? moment(data["updated"].toString()) : <any>undefined;
-            this.user = data["user"];
-            this.username = data["username"];
-            this.value = data["value"];
-        }
-    }
-
-    static fromJS(data: any): QAccount {
-        let result = new QAccount();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["brokerage"] = this.brokerage;
-        data["brokerage_name"] = this.brokerage_name;
-        data["config_instructions"] = this.config_instructions;
-        data["failures"] = this.failures;
-        data["id"] = this.id;
-        data["is_inactive"] = this.is_inactive;
-        data["last_good_sync"] = this.last_good_sync ? this.last_good_sync.toISOString() : <any>undefined;
-        data["nickname"] = this.nickname;
-        data["opened"] = this.opened ? this.opened.toISOString() : <any>undefined;
-        data["status"] = this.status;
-        data["update_count"] = this.update_count;
-        data["updated"] = this.updated ? this.updated.toISOString() : <any>undefined;
-        data["user"] = this.user;
-        data["username"] = this.username;
-        data["value"] = this.value;
-        return data; 
-    }
-}
-
-export interface IQAccount {
-    brokerage: number;
-    brokerage_name: string;
-    config_instructions: string;
-    failures: number;
-    id: number;
-    is_inactive: boolean;
-    last_good_sync: moment.Moment;
-    nickname: string;
-    opened: moment.Moment;
-    status: string;
-    update_count: number;
-    updated: moment.Moment;
-    user: number;
-    username: string;
-    value: number;
-}
-
-export class QSyncAccount implements IQSyncAccount {
-    account: number;
-    has_realtime: boolean;
-    progress: SyncProgress;
-    status: string;
-
-    constructor(data?: IQSyncAccount) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.account = data["account"];
-            this.has_realtime = data["has_realtime"];
-            this.progress = data["progress"] ? SyncProgress.fromJS(data["progress"]) : <any>undefined;
-            this.status = data["status"];
-        }
-    }
-
-    static fromJS(data: any): QSyncAccount {
-        let result = new QSyncAccount();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["account"] = this.account;
-        data["has_realtime"] = this.has_realtime;
-        data["progress"] = this.progress ? this.progress.toJSON() : <any>undefined;
-        data["status"] = this.status;
-        return data; 
-    }
-}
-
-export interface IQSyncAccount {
-    account: number;
-    has_realtime: boolean;
-    progress: SyncProgress;
-    status: string;
-}
-
-export class User implements IUser {
-    id: number;
-    username: string;
-    name: string;
-    value: number;
-    phone: string;
-    email: string;
-
-    constructor(data?: IUser) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.username = data["username"];
-            this.name = data["name"];
-            this.value = data["value"];
-            this.phone = data["phone"];
-            this.email = data["email"];
-        }
-    }
-
-    static fromJS(data: any): User {
-        let result = new User();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["username"] = this.username;
-        data["name"] = this.name;
-        data["value"] = this.value;
-        data["phone"] = this.phone;
-        data["email"] = this.email;
-        return data; 
-    }
-}
-
-export interface IUser {
-    id: number;
-    username: string;
-    name: string;
-    value: number;
-    phone: string;
-    email: string;
-}
-
-export class SyncProgress implements ISyncProgress {
-    message: string;
-    percent: number;
-    state: string;
-
-    constructor(data?: ISyncProgress) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.message = data["message"];
-            this.percent = data["percent"];
-            this.state = data["state"];
-        }
-    }
-
-    static fromJS(data: any): SyncProgress {
-        let result = new SyncProgress();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["message"] = this.message;
-        data["percent"] = this.percent;
-        data["state"] = this.state;
-        return data; 
-    }
-}
-
-export interface ISyncProgress {
-    message: string;
-    percent: number;
-    state: string;
-}
-
 export class ListResultDtoOfRoleListDto implements IListResultDtoOfRoleListDto {
     items: RoleListDto[];
 
@@ -23316,6 +23129,45 @@ export interface IUpdateUserSignInTokenOutput {
     signInToken: string;
     encodedUserId: string;
     encodedTenantId: string;
+}
+
+export class GetUserInformationOutput implements IGetUserInformationOutput {
+    tenancyName: string;
+    userName: string;
+
+    constructor(data?: IGetUserInformationOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenancyName = data["tenancyName"];
+            this.userName = data["userName"];
+        }
+    }
+
+    static fromJS(data: any): GetUserInformationOutput {
+        let result = new GetUserInformationOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenancyName"] = this.tenancyName;
+        data["userName"] = this.userName;
+        return data; 
+    }
+}
+
+export interface IGetUserInformationOutput {
+    tenancyName: string;
+    userName: string;
 }
 
 export class PagedResultDtoOfTenancyListDto implements IPagedResultDtoOfTenancyListDto {
@@ -27441,22 +27293,6 @@ export enum ExecutePaymentDtoEditionPaymentType {
 export enum ExecutePaymentDtoPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
-}
-
-export enum QuovoWebhookInputAction {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
-    _3 = 3, 
-    _4 = 4, 
-    _5 = 5, 
-}
-
-export enum QuovoWebhookInputEvent {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
-    _3 = 3, 
 }
 
 export enum TenantLoginInfoDtoPaymentPeriodType {

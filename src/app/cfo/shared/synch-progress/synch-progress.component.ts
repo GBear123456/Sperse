@@ -25,7 +25,10 @@ export class SynchProgressComponent extends AppComponentBase implements OnInit, 
     }
 
     ngOnInit(): void {
-        this.getSynchProgress();
+        this._financialInformationServiceProxy.syncAllAccounts(true)
+            .subscribe((result) => {
+                this.getSynchProgress();
+            });
     }
     
     getSynchProgress() {

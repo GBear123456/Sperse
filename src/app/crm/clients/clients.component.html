@@ -44,7 +44,7 @@
                                     [width]="65" [showInColumnChooser]="false"></dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <img
-                                [src]="data.data.Photo ? 'data:image/jpeg;base64,' + data.data.Photo : 'assets/common/images/no-photo.png'"
+                                [src]="getPhoto(data.data.Photo, data.data.Gender)"
                                 alt="{{l('AltPersonPhoto')}}"
                                 width="38"
                                 class="img-circle"/>

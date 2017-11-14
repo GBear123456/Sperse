@@ -323,7 +323,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         filterParams.push("( " + filter.field + " eq " + el.id + " )");
                     }
                 });
-                var filterQuery = filterParams.join(' or ');
+                var filterQuery = "( " + filterParams.join(' or ') + " )";
                 data = filterQuery;
             }
         });
