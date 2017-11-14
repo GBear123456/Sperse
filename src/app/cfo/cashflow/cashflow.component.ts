@@ -297,12 +297,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.loadGridDataSource();
         });
 
-        window['onHeaderExpanderClick'] = function($event) {                  
+        window['onHeaderExpanderClick'] = function($event) {
           let rect = $event.target.getBoundingClientRect();
-          if (Math.abs($event.clientX - rect.x) < 10 && 
+          if (Math.abs($event.clientX - rect.x) < 10 &&
             Math.abs($event.clientY - rect.y) < 10
           ) $event.stopPropagation();
-          $event.target.classList.toggle('closed');          
+          $event.target.classList.toggle('closed');
         };
     }
 
@@ -872,10 +872,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** Added "Total" text to the year and quarter headers */
         let fieldName = cssClass.slice(cssClass.indexOf(' ') + 1, cssClass.length).trim();
         if (fieldName === 'year' || fieldName === 'quarter') {
-            let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') && 
+            let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
               (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length == 6);
-            cellObj.cellElement.html('<div onclick="onHeaderExpanderClick(event)" class="head-cell-expand ' + 
-              (hideHead ? 'closed': '') + '">' + cellObj.cellElement.html() + 
+            cellObj.cellElement.html('<div onclick="onHeaderExpanderClick(event)" class="head-cell-expand ' +
+              (hideHead ? 'closed': '') + '">' + cellObj.cellElement.html() +
               '<div class="totals">' + this.l('Totals').toUpperCase() + '</div></div>');
         }
         cellObj.cellElement.addClass(cssClass);
@@ -923,15 +923,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
             $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
             this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
+            this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
             this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
-            this.statsDetailFilter.transactionCategoryId = cellObj.cell.rowPath[1];
+            if (this.statsDetailFilter.cashFlowTypeId == 'B') {
+                this.statsDetailFilter.accountIds.push(cellObj.cell.rowPath[1]);
+            } else {
+                this.statsDetailFilter.transactionCategoryId = cellObj.cell.rowPath[1];
+            }
             this.statsDetailFilter.expenseCategoryId = cellObj.cell.rowPath[2];
             this.statsDetailFilter.startDate = datePeriod.startDate;
             this.statsDetailFilter.endDate = datePeriod.endDate;
-            if (this.requestFilter) {
-                this.statsDetailFilter.accountIds = this.requestFilter.accountIds;
-            }
-            // there will be another data from filter
             this.getStatsDetails(this.statsDetailFilter);
         }
     }
@@ -956,7 +957,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
         if (day) {
             startDate.date(day);
-            endDate.month(month - 1).endOf('day');
+            endDate.date(day).endOf('day');
         }
         return {startDate: startDate, endDate : endDate};
     }
