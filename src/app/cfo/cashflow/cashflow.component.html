@@ -25,18 +25,20 @@
                    [allowSorting]="false"
                    [allowFiltering]="false"
                    [allowExpandAll]="false"
-                   [showBorders]="false"
                    [(dataSource)]="dataSource"
                    [rowHeaderLayout]="'tree'"
                    [showColumnGrandTotals]="false"
+                   [hideEmptySummaryCells]="false"
                    [showRowGrandTotals]="false"
+                   [showRowTotals]="false"
+                   [showBorders]="true"
                    [texts] = "{'grandTotal': 'ENDING CASH POSITION', 'total': '{0}'}"
                    [fieldChooser]="false"
                    [export]="{'enabled': false}"
                    (onCellPrepared)="onCellPrepared($event)"
                    (onContentReady)="onContentReady($event)"
-                   (onCellClick)="onCellClick($event)"
-    >
+                   (onCellClick)="onCellClick($event)">
+        <dxo-scrolling mode="virtual"></dxo-scrolling>
     </dx-pivot-grid>
 
     <div *ngIf="statsDetailResult !== undefined" class="cashflow-wrap">

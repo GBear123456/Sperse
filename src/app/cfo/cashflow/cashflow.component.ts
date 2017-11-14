@@ -2,12 +2,18 @@ import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild } from
 import { AppConsts } from '@shared/AppConsts';
 import { GroupbyItem } from './models/groupbyItem';
 
-import { CashflowServiceProxy, StatsFilter, BankAccountDto, CashFlowInitialData, StatsDetailFilter, TransactionStatsDto } from '@shared/service-proxies/service-proxies';
+import {
+    CashflowServiceProxy,
+    StatsFilter,
+    BankAccountDto,
+    CashFlowInitialData,
+    StatsDetailFilter,
+    TransactionStatsDto
+} from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
-import * as underscore from 'underscore';
 import * as moment from 'moment';
 
 import { FiltersService } from '@shared/filters/filters.service';
@@ -54,19 +60,19 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             'groupInterval': 'quarter',
             'optionText': this.l('Quarters').toUpperCase(),
             'customizeTextFunction': this.getQuarterHeaderCustomizer,
-            'historicalSelectionFunction': this.getQuarterHistoricalSelector.bind(this)
+            'historicalSelectionFunction': this.getYearHistoricalSelectorWithCurrent
         },
         {
             'groupInterval': 'month',
             'optionText': this.l('Months').toUpperCase(),
             'customizeTextFunction': this.getMonthHeaderCustomizer,
-            'historicalSelectionFunction': this.getMonthHistoricalSelector.bind(this)
+            'historicalSelectionFunction': this.getYearHistoricalSelectorWithCurrent
         },
         {
           'groupInterval': 'day',
           'optionText': this.l('Days').toUpperCase(),
           'customizeTextFunction': this.getDateIntervalHeaderCustomizer.bind(this, 'day'),
-          'historicalSelectionFunction': this.getDayHistoricalSelector.bind(this)
+          'historicalSelectionFunction': this.getYearHistoricalSelectorWithCurrent
         }
     ];
     collapsedStartingAndEndingBalance = false;
@@ -97,9 +103,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 let value = this.cashflowTypes[cellInfo.valueText];
                 /** If the type is income or expenses */
                 if (cellInfo.valueText === Income || cellInfo.valueText === Expense) {
-                    value = this.l('Total') + ' ' + value;
+                     value = this.l('Total') + ' ' + value;
                 }
-                return  value ? value.toUpperCase() : cellInfo.value;
+                return value ? value.toUpperCase() : cellInfo.valueText;
             }
         },
         {
@@ -117,13 +123,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     value = this.bankAccounts.find( account => {
                         return account.id === cellInfo.value;
                     });
-                    value = value ? value.accountName : cellInfo;
+                    value = value ? value.accountName : cellInfo.valueText;
                 } else {
                     value = this.transactionCategories[cellInfo.valueText] ?
                             this.transactionCategories[cellInfo.valueText] :
                             cellInfo.valueText;
                 }
-                return value ? value.toUpperCase() : cellInfo.value;
+                return value ? value.toUpperCase() : cellInfo.valueText;
             },
             rowHeaderLayout: 'tree'
         },
@@ -139,6 +145,17 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
         },
         {
+            caption: 'Amount',
+            dataField: 'amount',
+            dataType: 'number',
+            summaryType: 'sum',
+            format: 'currency',
+            area: 'data',
+            showColumnTotals: true,
+            calculateSummaryValue: this.calculateSummaryValue(),
+            summaryDisplayMode: 'percentOfColumnTotal'
+        },
+        {
             caption: 'Historical',
             area: 'column',
             showTotals: false,
@@ -148,17 +165,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             allowExpand: false
         },
         {
-            caption: 'Amount',
-            dataField: 'amount',
-            dataType: 'number',
-            summaryType: 'sum',
-            format: 'currency',
-            area: 'data',
-            showColumnTotals: true,
-            calculateSummaryValue: this.calculateSummaryValue()
-        },
-        {
-            caption: 'Date',
+            caption: 'Year',
             dataField: 'date',
             dataType: 'date',
             area: 'column',
@@ -169,7 +176,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             summaryDisplayMode: 'percentVariation'
         },
         {
-            caption: 'Date',
+            caption: 'Historical',
+            area: 'column',
+            showTotals: false,
+            selector: this.getQuarterHistoricalSelector(),
+            customizeText: this.getHistoricalCustomizer.bind(this)(),
+            expanded: true,
+            allowExpand: false
+        },
+        {
+            caption: 'Quarter',
             dataField: 'date',
             dataType: 'date',
             area: 'column',
@@ -179,7 +195,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             visible: true
         },
         {
-            caption: 'Date',
+            caption: 'Historical',
+            area: 'column',
+            showTotals: false,
+            selector: this.getMonthHistoricalSelector(),
+            customizeText: this.getQuarterHeaderCustomizer.bind(this)(),
+            expanded: true,
+            allowExpand: false
+        },
+        {
+            caption: 'Month',
             dataField: 'date',
             dataType: 'date',
             area: 'column',
@@ -189,31 +214,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             visible: true
         },
         {
-            caption: 'Projected',
-            area: 'column',
-            showTotals: false,
-            selector: function(data) {
-                let date = new Date(data.date);
-                let current = new Date();
-                let result;
-                if (current.getDate() > date.getDate()) {
-                    result = 0;
-                } else {
-                    result = 1;
-                }
-                return result;
-            },
-            customizeText: cellInfo => {
-                let projectedKey = cellInfo.value === 1 ? 'Projected' : 'Mtd';
-                let cellValue = this.l(projectedKey).toUpperCase();
-                let cssMarker = ' @css:{projectedField ' + (cellInfo.value === 1 ? 'projected' : 'mtd') + '}';
-                return cellValue + cssMarker;
-            },
-            expanded: true,
-            allowExpand: false
-        },
-        {
-            caption: 'Date',
+            caption: 'Day',
             dataField: 'date',
             dataType: 'date',
             area: 'column',
@@ -423,12 +424,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     /**
      * Update the fields array with the date fields with different date intervals like year, quarter and month
-     * @param startedGroupInterval the groupInterval from wich we should start show headers
+     * @param startedGroupInterval - the groupInterval from which we should start show headers
      */
     updateDateFields(startedGroupInterval) {
         let allDateIntervals = this.groupbyItems.map(group => group.groupInterval);
         let datesIntervalsToBeHide = allDateIntervals.slice(0, allDateIntervals.indexOf(startedGroupInterval));
         for (let dateInterval of allDateIntervals) {
+            /** move historical period to the top of started interval by setting area index */
             let intervalField = this.getDateFieldByInterval(dateInterval);
             intervalField.expanded = false;
         }
@@ -447,7 +449,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let datesIntervalsToBeHide = allDateIntervals.slice(0, allDateIntervals.indexOf(this.groupInterval));
         for (let dateInterval of datesIntervalsToBeHide) {
             /** Hide the fields that are not chosen */
-            let intervalFieldsSelector = '.dateField:not(.dx-total).' + dateInterval;
+            let intervalFieldsSelector = `.dateField:not(.dx-total).${dateInterval}`;
             // $(intervalFieldsSelector).each(function(){
             //     $(this).text('');
             //     $(this).addClass('dataFieldHidden');
@@ -493,6 +495,20 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         };
     }
 
+    getYearHistoricalSelectorWithCurrent(): any {
+        return data => {
+            let currentYear = new Date().getFullYear(),
+                itemYear = new Date(data.date).getFullYear(),
+                result = 0;
+            if (currentYear < itemYear) {
+                result = 2;
+            } else if (currentYear === itemYear) {
+                result = 1;
+            }
+            return result;
+        };
+    }
+
     getMonthHistoricalSelector(): any {
         return data => {
             let result,
@@ -510,7 +526,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     getDayHistoricalSelector(): any {
-        return (data) => {
+        return data => {
             let result,
                 currentDate = new Date(),
                 itemDate = new Date(data.date),
@@ -570,14 +586,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         const intervals2methods = {
             'year': 'getFullYear',
             'month': 'getMonth',
-            'day': 'getDay'
+            'day': 'getDate'
         };
         let result = 0,
-            currentYear = date1[intervals2methods[interval]](),
-            itemYear = date2[intervals2methods[interval]]();
-        if (currentYear < itemYear) {
+            currentPeriod = date1[intervals2methods[interval]](),
+            itemPeriod = date2[intervals2methods[interval]]();
+        if (currentPeriod < itemPeriod) {
             result = 2;
-        } else if (currentYear === itemYear) {
+        } else if (currentPeriod === itemPeriod) {
             result = 1;
         }
         return result;
@@ -607,7 +623,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * Gets the field in apiTableFields by dateInterval (year, quarter, month or day)
      * @returns {Object}
      */
-    getDateFieldByInterval(dateInterval): any {
+    getDateFieldByInterval(dateInterval) {
         return this.apiTableFields.find(
             field => field['groupInterval'] === dateInterval
         );
@@ -617,10 +633,15 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * Gets the historical field object in tableFields
      * @returns {Object}
      */
-    getHistoricField(): Object {
+    getHistoricField(): any {
         return this.apiTableFields.find(
             field => field['caption'] === 'Historical'
         );
+    }
+
+    /** Get all column fields */
+    getColumnFields() {
+        return this.apiTableFields.filter(field => field.area === 'column');
     }
 
     changeGroupBy(event) {
@@ -628,9 +649,42 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this.groupInterval = startedGroupInterval;
         this.updateDateFields(startedGroupInterval);
         /** Change historical field for different date intervals */
-        let historical_field = this.getHistoricField();
-        historical_field['selector'] = event.value.historicalSelectionFunction();
+        let historicalField = this.getHistoricField();
+        //this.changeHistoricalFieldPosition(historicalField, startedGroupInterval);
+        historicalField ['selector'] = event.value.historicalSelectionFunction();
         this.refreshDataGrid();
+    }
+
+    /** Move the position of element in array */
+    move(arr, old_index, new_index) {
+        while (old_index < 0) {
+            old_index += arr.length;
+        }
+        while (new_index < 0) {
+            new_index += arr.length;
+        }
+        if (new_index >= arr.length) {
+            let k = new_index - arr.length;
+            while ((k--) + 1) {
+                arr.push(undefined);
+            }
+        }
+        arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+        return arr;
+    }
+
+    /** Change the position of the historical field */
+    changeHistoricalFieldPosition(historicalField, startedGroupInterval) {
+        let columnsNames = this.getColumnFields().sort((field1, field2) => field1.areaIndex > field2.areaIndex).map(field => field.caption),
+            historicalOldIndex = historicalField.areaIndex,
+            startedIntervalField = this.getDateFieldByInterval(startedGroupInterval),
+            dateColumns = this.apiTableFields.filter(field => field.dataType === 'date'),
+            historicalNewIndex = dateColumns.indexOf(startedIntervalField);
+        this.move(columnsNames, historicalOldIndex, historicalNewIndex);
+        let columnFields = this.getColumnFields();
+        columnFields.forEach( field => {
+            field.areaIndex = columnsNames.indexOf(field.caption);
+        });
     }
 
     cutCssFromValue(text) {
@@ -778,7 +832,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** added css class to start balance row */
         if (this.isStartingBalanceHeaderColumn(e) || this.isStartingBalanceTotalDataColumn(e)) {
-            console.log(e);
             e.cellElement.parent().addClass('startedBalance');
         }
 
@@ -867,8 +920,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         cellObj.cellElement.text(valueWithoutCss);
         /** Added "Total" text to the year and quarter headers */
         let fieldName = cssClass.slice(cssClass.indexOf(' ') + 1, cssClass.length).trim();
+        let groupName = cssClass.slice(0, cssClass.indexOf(' ')).trim();
         if (fieldName === 'year' || fieldName === 'quarter') {
             cellObj.cellElement.append('<div class="totals">' + this.l('Totals').toUpperCase() + '</div>');
+        }
+        if (groupName === 'historicalField' && !cellObj.cellElement.parent().hasClass('historicalRow')) {
+            cellObj.cellElement.parent().addClass('historicalRow');
         }
         cellObj.cellElement.addClass(cssClass);
         /** hide projected field for not current months for mdk and projected */
@@ -1043,9 +1100,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     modifyStartingBalanceAccountCell(summaryCell, prevWithParent) {
         let prevEndingAccountValue = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, Total),
-            sum = (summaryCell.value() || 0) + prevEndingAccountValue + (prevWithParent.value(true) || 0);
-
-        return  sum || 0;
+            currentCellValue = summaryCell.value() || 0,
+            prevCellValue = prevWithParent ? prevWithParent.value(true) || 0 : 0;
+        return  currentCellValue + prevEndingAccountValue + prevCellValue;
     }
 
     /**
@@ -1055,7 +1112,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @return {number}
      */
     modifyStartingBalanceSummaryCell(summaryCell, prevWithParent) {
-        return (summaryCell.value() || 0) + (prevWithParent.slice(0, Total).value() || 0) + prevWithParent.value(true);
+        let prevTotal = prevWithParent.slice(0, Total),
+            currentCellValue = summaryCell.value() || 0,
+            prevTotalValue = prevTotal ? prevTotal.value() || 0 : 0,
+            prevCellValue = prevWithParent ? prevWithParent.value(true) || 0 : 0;
+        return currentCellValue + prevTotalValue + prevCellValue;
     }
 
     /**
@@ -1065,9 +1126,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @return {number}
      */
     modifyEndingBalanceAccountSummary(summaryCell, prevWithParent) {
-        let startedBalanceAccountValue = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, StartedBalance);
-        let sum = (summaryCell.value() || 0) + startedBalanceAccountValue;
-        return sum || 0;
+        let startedBalanceAccountValue = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, StartedBalance),
+            currentCellValue = summaryCell.value() || 0;
+        return currentCellValue + startedBalanceAccountValue;
     }
 
     /**
@@ -1076,7 +1137,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @return {number}
      */
     modifyGrandTotalSummary(summaryCell) {
-        return (summaryCell.value() || 0) + (summaryCell.slice(0, StartedBalance).value(true) || 0);
+        let startedBalanceCell = summaryCell.slice(0, StartedBalance),
+            startedBalanceCellValue = startedBalanceCell ? (startedBalanceCell.value(true) || 0) : 0,
+            currentCellValue = summaryCell.value() || 0;
+        return currentCellValue + startedBalanceCellValue;
     }
 
     /**
@@ -1087,59 +1151,65 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param target
      * @return {number}
      */
-    /** @todo refactor this method */
     getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, target) {
+        /** if we want to get the value of the started balance - then we should get the
+         *  slice value from current cell, else - we should get the total value from previous cell */
+        let subject = target === StartedBalance ? summaryCell : prevWithParent;
+            if (!subject) {
+                return 0;
+            }
         let accountId = summaryCell.value(summaryCell.field('row'), true),
-        subject = target === StartedBalance ? summaryCell : prevWithParent,
-        anotherPeriodCell = subject.parent('row').slice(0, target),
-        anotherPeriodAccount = anotherPeriodCell ? anotherPeriodCell.child('row', accountId) : null,
-        anotherPeriodAccountCashedValue,
-        isCalculatedValue = target === StartedBalance ? true : false,
-        groupInterval = subject.field('column').groupInterval,
-        columnValue = subject.value(subject.field('column')),
-        parent = subject.parent(),
-        /** object with cell data as the key for Map object cash */
-        cellData = {
-            'cashflowTypeId': target,
-            'accountId': accountId,
-            [groupInterval]: columnValue,
-            /** method for creating the key for cash from the object props and values */
-            toString() {
-                let str = '';
-                for (let prop in this) {
-                    if (typeof this[prop] !== 'function') {
-                        str += prop.charAt(0) + this[prop];
+            anotherPeriodCell = subject.parent('row') ? subject.parent('row').slice(0, target) : null,
+            anotherPeriodAccount = anotherPeriodCell ? anotherPeriodCell.child('row', accountId) : null,
+            anotherPeriodAccountCashedValue,
+            isCalculatedValue = target === StartedBalance ? true : false,
+            groupInterval = subject.field('column').groupInterval,
+            columnValue = subject.value(subject.field('column')),
+            parent = subject ? subject.parent() : null,
+            /** object with cell data as the key for Map object cash */
+            cellData = {
+                'cashflowTypeId': target,
+                'accountId': accountId,
+                [groupInterval]: columnValue,
+                /** method for creating the key for cash from the object props and values */
+                toString() {
+                    let str = '';
+                    for (let prop in this) {
+                        if (typeof this[prop] !== 'function') {
+                            str += prop.charAt(0) + this[prop];
+                        }
                     }
+                    return str;
                 }
-                return str;
-            }
-        };
+            };
 
-        /** add to the cell data other date intervals */
-        while (parent.field('column') && parent.field('column').dataType === 'date') {
-            let parentGroupInterval = parent.field('column').groupInterval,
-                parentColumnValue = parent.value(parent.field('column'));
-            cellData[parentGroupInterval] = parentColumnValue;
-            parent = parent.parent();
-        }
-
-        /** if we haven't found the value from the another period -
-         *  then it hasn't been expanded and we should find out whether the value is in cash */
-        if (anotherPeriodAccount === null) {
-            anotherPeriodAccountCashedValue = this.getAnotherPeriodAccountCashedValue(cellData);
-            /** if we haven't found the value in cash - then we should calculate the value in the cashflow data by ourselfs */
-            if (!anotherPeriodAccountCashedValue) {
-                /** calculate the cell value using the cell data and cashflowData */
-                anotherPeriodAccountCashedValue = this.calculateCellValue(cellData);
-                this.setAnotherPeriodAccountCashedValue(cellData, anotherPeriodAccountCashedValue);
+            /** add to the cell data other date intervals */
+            if (parent) {
+                while (parent.field('column') && parent.field('column').dataType === 'date') {
+                    let parentGroupInterval = parent.field('column').groupInterval,
+                        parentColumnValue = parent.value(parent.field('column'));
+                    cellData[parentGroupInterval] = parentColumnValue;
+                    parent = parent.parent();
+                }
             }
-        } else {
-            /** add the prevEndingAccount value to the cash */
-            this.setAnotherPeriodAccountCashedValue(cellData, anotherPeriodAccount.value(isCalculatedValue));
-        }
-        return anotherPeriodAccountCashedValue ?
-            anotherPeriodAccountCashedValue :
-            (anotherPeriodAccount ? anotherPeriodAccount.value(isCalculatedValue) || 0 : 0);
+
+            /** if we haven't found the value from the another period -
+             *  then it hasn't been expanded and we should find out whether the value is in cash */
+            if (anotherPeriodAccount === null) {
+                anotherPeriodAccountCashedValue = this.getAnotherPeriodAccountCashedValue(cellData);
+                /** if we haven't found the value in cash - then we should calculate the value in the cashflow data by ourselfs */
+                if (!anotherPeriodAccountCashedValue) {
+                    /** calculate the cell value using the cell data and cashflowData */
+                    anotherPeriodAccountCashedValue = this.calculateCellValue(cellData);
+                    this.setAnotherPeriodAccountCashedValue(cellData, anotherPeriodAccountCashedValue);
+                }
+            } else {
+                /** add the prevEndingAccount value to the cash */
+                this.setAnotherPeriodAccountCashedValue(cellData, anotherPeriodAccount.value(isCalculatedValue));
+            }
+            return anotherPeriodAccountCashedValue ?
+                anotherPeriodAccountCashedValue :
+                (anotherPeriodAccount ? anotherPeriodAccount.value(isCalculatedValue) || 0 : 0);
     }
 
     /**

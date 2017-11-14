@@ -55,11 +55,6 @@
             max-width: 80px
         }
 
-        .dx-pivotgrid-container {
-            border-top: 1px solid @tableBorderColor;
-            vertical-align: inherit;
-        }
-
         /** upper left column */
         .dx-area-description-cell {
             background-color: #fff;
@@ -69,62 +64,70 @@
 
         /** upper right column (historical row and dates rows) */
         .dx-area-column-cell {
-            /** @todo move general classes like dateField and historicalField  from td to tr */
-            td {
-                font-size: 10px;
-                &.cashflow {
-                    color: #00aeef;
+            tr {
+                &.historicalRow {
+                    &:not(:first-child) {
+                        display: none;
+                    }
                 }
-                .totals {
+
+                /** @todo move general classes like dateField and historicalField  from td to tr */
+                td {
                     font-size: 10px;
-                }
-                &.dx-pivotgrid-expanded,
-                &.dx-pivotgrid-collapsed {
-                    text-align: center;
-                }
-                .dx-expand-icon-container {
-                    display: none;
-                }
-                &.year {
-                    color: @yearTextColor;
-                    font-weight: 600;
-                    font-size: 20px;
-                }
-                &.month,
-                &.quarter,
-                &.day,
-                &.dx-row-total {
-                    color: #212c36;
-                    font-weight: 600;
-                    font-size: 18px;
-                    &.current {
-                        color: #fff;
-                        background: @currentTextColor;
+                    &.cashflow {
+                        color: #00aeef;
                     }
-                }
-                &.dataFieldHidden {
-                    padding: 0;
-                    height: 0;
-                    max-height: 0;
-                }
-                &.historicalField {
-                    cursor: default;
-                    font-size: 10px;
-                    letter-spacing: 0.6px;
-                    &.historical {
-                        color: @historicalTextColor;
+                    .totals {
+                        font-size: 10px;
                     }
-                    &.current {
-                        background: @currentTextColor;
-                        color: #fff;
+                    &.dx-pivotgrid-expanded,
+                    &.dx-pivotgrid-collapsed {
+                        text-align: center;
                     }
-                    &.forecast {
-                        color: @forecastTextColor
+                    .dx-expand-icon-container {
+                        display: none;
                     }
-                }
-                &.projectedField.projectedHidden {
-                    border: none;
-                    padding: 0;
+                    &.year {
+                        color: @yearTextColor;
+                        font-weight: 600;
+                        font-size: 20px;
+                    }
+                    &.month,
+                    &.quarter,
+                    &.day,
+                    &.dx-row-total {
+                        color: #212c36;
+                        font-weight: 600;
+                        font-size: 18px;
+                        &.current {
+                            color: #fff;
+                            background: @currentTextColor;
+                        }
+                    }
+                    &.dataFieldHidden {
+                        padding: 0;
+                        height: 0;
+                        max-height: 0;
+                    }
+                    &.historicalField {
+                        cursor: default;
+                        font-size: 10px;
+                        letter-spacing: 0.6px;
+                        &.historical {
+                            color: @historicalTextColor;
+                        }
+                        &.current {
+                            background: @currentTextColor;
+                            color: #fff;
+                        }
+                        &.forecast {
+                            color: @forecastTextColor
+                        }
+                    }
+                    &.projectedField.projectedHidden {
+                        border: none;
+                        padding: 0;
+                    }
                 }
             }
         }
