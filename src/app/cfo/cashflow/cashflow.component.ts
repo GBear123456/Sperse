@@ -981,10 +981,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
             $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
             this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
-            this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
             this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
             if (this.statsDetailFilter.cashFlowTypeId == 'B') {
-                this.statsDetailFilter.accountIds.push(cellObj.cell.rowPath[1]);
+                this.statsDetailFilter.accountIds = [];
+                this.statsDetailFilter.transactionCategoryId = undefined;
+                if (cellObj.cell.rowPath[1]) this.statsDetailFilter.accountIds.push(cellObj.cell.rowPath[1]);
             } else {
                 this.statsDetailFilter.transactionCategoryId = cellObj.cell.rowPath[1];
             }
@@ -993,6 +994,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.statsDetailFilter.endDate = datePeriod.endDate;
             this.getStatsDetails(this.statsDetailFilter);
         }
+    }
+
+    customCurrency(value) {
+        return (value).toLocaleString('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 0});
     }
 
     formattingDate(param = []) {
