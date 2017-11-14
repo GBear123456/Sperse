@@ -145,6 +145,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                 filter.items["pipeline"].selectedElement = event.value;
                                 filter.items["stage"].elements = event.value.stages;
                                 filter.items["stage"].selectedElement = null;
+                            },
+                            clearSelectedElement: (filter: FilterDropDownComponent) => {
+                                filter.items["pipeline"].selectedElement = null;
+                                filter.items["stage"].elements = null;
+                                filter.items["stage"].selectedElement = null;
+
                             }
                         },
                         stage: <DropDownElement>{
