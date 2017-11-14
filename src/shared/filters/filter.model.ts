@@ -14,3 +14,8 @@ export class FilterModel {
   field?: any;
   items?: any;
 }
+
+export class FilterItemModel {
+    setValue(value: any, filter: FilterComponent) {
+    }
+}

@@ -6,7 +6,7 @@
             <dx-select-box [dataSource]="items[item].elements"                           
                            [displayExpr]="items[item].displayElementExp"
                            [(value)]="items[item].selectedElement"
-                           (onValueChanged)="items[item].onElementSelect($event, this)"
+                           (onValueChanged)="items[item].onElementSelect($event.value, this)"
                            [searchEnabled]="true">
             </dx-select-box>       
     </ng-template>
