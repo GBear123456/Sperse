@@ -19,7 +19,7 @@ import * as moment from 'moment';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
 import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
-import { MultiselectDropDownElement } from '@shared/filters/multiselect-dropdown/multiselect-dropdown-element';
+import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
 
 /** Constants */
 const StartedBalance = 'B',
@@ -264,7 +264,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                             field: 'accountIds',
                             caption: 'Account',
                             items: {
-                                acc: <MultiselectDropDownElement>{
+                                acc: <FilterMultiselectDropDownModel>{
                                     displayName: 'Account',
                                     filterField: 'accountIds',
                                     displayElementExp: (item: BankAccountDto) => {

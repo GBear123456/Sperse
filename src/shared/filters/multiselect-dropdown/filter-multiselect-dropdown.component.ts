@@ -1,14 +1,14 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterComponent } from '../filter.model';
-import { MultiselectDropDownElement } from './multiselect-dropdown-element'
+import { FilterMultiselectDropDownModel } from './filter-multiselect-dropdown.model'
 
 @Component({
     templateUrl: './filter-multiselect-dropdown.component.html',
     styleUrls: ['./filter-multiselect-dropdown.component.less']
 })
 export class FilterMultiselectDropDownComponent extends AppComponentBase implements OnInit, FilterComponent {
-    items: { [id: string]: MultiselectDropDownElement; };
+    items: { [id: string]: FilterMultiselectDropDownModel; };
     apply: (event) => void;
     value?: string;
     _gridBoxValue: any[] = []

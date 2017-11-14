@@ -1,4 +1,4 @@
-﻿import { Component, Injector, ElementRef } from '@angular/core';
+import { Component, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -6,7 +6,7 @@ import { FilterModel } from '@shared/filters/filter.model';
 import { Router, NavigationStart } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 
-import { DropDownElement } from '@shared/filters/dropdown/dropdown_element'
+import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model'
 
 import * as _ from 'underscore';
 import * as moment from 'moment';

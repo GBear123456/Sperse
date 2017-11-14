@@ -1,4 +1,4 @@
-﻿export class DropDownElement {
+export class FilterDropDownModel {
     displayName: string = "test";
     displayElementExp: any;
     elements: any;

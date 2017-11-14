@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
@@ -9,10 +9,10 @@ import { FilterModel } from '@shared/filters/filter.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
-import { DropDownElement } from '@shared/filters/dropdown/dropdown_element';
+import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 
 import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
-import { MultiselectDropDownElement } from '@shared/filters/multiselect-dropdown/multiselect-dropdown-element';
+import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -89,7 +89,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             field: 'BankAccountId',
                             caption: 'Account',
                             items: {
-                                account: <MultiselectDropDownElement>{
+                                account: <FilterMultiselectDropDownModel>{
                                     filterField: "BankAccountId",
                                     displayElementExp: (item: BankAccountDto) => {
                                         if (item) {
@@ -119,7 +119,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             field: 'CashFlowTypeId',
                             caption: 'CashflowType',
                             items: {
-                                cashflowType: <MultiselectDropDownElement>{
+                                cashflowType: <FilterMultiselectDropDownModel>{
                                     filterField: "CashFlowTypeId",
                                     displayElementExp: "name",
                                     dataSource: result.cashflowTypes,
@@ -132,7 +132,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             field: 'CategoryId',
                             caption: 'TransactionCategory',
                             items: {
-                                category: <MultiselectDropDownElement>{
+                                category: <FilterMultiselectDropDownModel>{
                                     filterField: "CategoryId",
                                     displayElementExp: "name",
                                     dataSource: result.categories,
@@ -145,7 +145,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             field: 'TypeId',
                             caption: 'TransactionType',
                             items: {
-                                type: <MultiselectDropDownElement>{
+                                type: <FilterMultiselectDropDownModel>{
                                     filterField: "TypeId",
                                     displayElementExp: "name",
                                     dataSource: result.types,
@@ -158,7 +158,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             field: 'CurrencyId',
                             caption: 'Currency',
                             items: {
-                                currency: <MultiselectDropDownElement>{
+                                currency: <FilterMultiselectDropDownModel>{
                                     filterField: "CurrencyId",
                                     displayElementExp: "name",
                                     dataSource: result.currencies,
@@ -171,7 +171,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             field: 'BusinessEntityId',
                             caption: 'BusinessEntity',
                             items: {
-                                businessEntity: <MultiselectDropDownElement>{
+                                businessEntity: <FilterMultiselectDropDownModel>{
                                     filterField: "BusinessEntityId",
                                     displayElementExp: "name",
                                     dataSource: result.businessEntities,
@@ -256,7 +256,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     filterByFilterElement(filter) {
         let data = {};
         data[filter.field] = [];
-        _.each(filter.items, (val: MultiselectDropDownElement, key) => {
+        _.each(filter.items, (val: FilterMultiselectDropDownModel, key) => {
             if (val && val.selectedElements && val.selectedElements.length) {
                 var filterParams: any[] = [];
                 _.each(val.selectedElements, (el) => {
