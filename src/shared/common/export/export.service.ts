@@ -16,8 +16,14 @@ export class ExportService {
   }
 
   saveAsCSV(data: any, name?: string) {
-    setTimeout(() => {
-      new Angular2Csv(data, name || this.getFileName());
-    });
+      if (data) {
+          setTimeout(() => {
+              var _headers = [''];
+              if (data.length > 0)
+                  _headers = Object.keys(data[0]);
+
+              new Angular2Csv(data, name || this.getFileName(), { headers: _headers });
+          });
+      }
   }
 }
