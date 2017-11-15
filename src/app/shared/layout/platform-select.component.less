@@ -40,6 +40,9 @@
   }
   div {
     padding-left: 10px;
+    &.selected {
+      font-weight: 500;
+    }
     &.disabled {
       opacity: 0.5;
     }
@@ -57,7 +60,7 @@
 }
 
 /deep/ .module-description {
-  width: 600px;
+  width: 480px;
   padding: 0px 24px 0px 24px;  
   h3 {
     line-height: 38px;
@@ -89,7 +92,7 @@
       background-image: url('../../../assets/common/images/crm-module.png');
       background-repeat: no-repeat;
       background-position: bottom right;
-      padding-right: 20px;
+      padding-right: 40px;
       font-size: 14px;
       font-weight: 300;
       line-height: 1.29;
@@ -121,6 +124,7 @@
     .dx-icon-check {
       float: right;
       top: 10px;
+      right: 15px;
       position: relative;
       color: #00aeef;
     }
