@@ -1,76 +1,80 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { CountryServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FilterComponent } from '../filter.model';
 
-import getCountriesInfo from 'get-countries-info';
+import * as _ from 'underscore';
 
 @Component({
   templateUrl: './filter-states.component.html',
-	styleUrls: ['./filter-states.component.less']
+	styleUrls: ['./filter-states.component.less'],
+  providers: [CountryServiceProxy]
 })
-export class FilterStatesComponent extends AppComponentBase implements OnInit, FilterComponent {
+export class FilterStatesComponent extends AppComponentBase implements FilterComponent {
   items: {
-    countryId: string;
-    stateId: string;
-    ISO: any;
-  };   
+    countryStates: string[]
+  };
+  component: any;
 	apply: (event) => void;
-  countries: string[] = [];
-  states: string[] = [];
-  country: string;
-  state: string;  
+  countryStates: any[];
+  preloadIndex: {
+    [code: string]: number
+  } = {};
 
-  constructor(injector: Injector) {
+  constructor(injector: Injector,
+    private _countryService: CountryServiceProxy
+  ) {
     super(injector);
 
-    this.countries = getCountriesInfo({}, 'name');
+    _countryService.getCountries().subscribe((data) => {
+      this.countryStates = data;
+      data.forEach((country, index) => {
+        this.preloadIndex[country.code] = 
+          this.countryStates.push({
+              code: index + country.code, 
+              parent: country.code
+          });
+      });
+    });    
   }
 
-  provinces = require('countries-provinces/data/provinces.json');
-  fromCountryCode(code) {
-    return this.provinces.filter((province) => {
-      return province.country == code
-    });
-  }
-
-  onChangeCountry(event) {
-    this.states = getCountriesInfo(
-      {name: event.value}, 'provinces').pop();
-
-    this.items.ISO = getCountriesInfo(
-      {name: event.value}, 'ISO').pop();
-    this.items.countryId = this.items.ISO.alpha2;
-  } 
-
-  onChangeState(event) {
-    if (this.fromCountryCode(this.items.countryId)
-      .every((row) => {        
-        if (event.value == row.name)
-          this.items.stateId = row.short;        
-        else
-          return true;
-      }
-    )) 
-      this.items.stateId = event.value;
-  }
-
-  ngOnInit(): void {
-    if (this.items.countryId) {
-      this.country = getCountriesInfo(
-        {ISO: this.items.ISO.alpha3}, 'name').pop();
-      this.states = getCountriesInfo(
-        {name: this.country}, 'provinces').pop();
-        
-      if (this.items.stateId)
-        if (this.fromCountryCode(this.items.countryId)
-          .every((row) => {
-            if (row.short == this.items.stateId)
-              this.state = row.name;
-            else
-              return true;
-          }
-        ))
-          this.state = this.items.stateId;
+  onExpand($event) {    
+    if (this.preloadIndex[$event.key]) {
+      this.countryStates.splice(
+        _.findIndex(this.countryStates, {parent: $event.key}), 1);
+      this.preloadIndex[$event.key] = 0;
+      this.component.beginCustomLoading();
+      this._countryService.getCountryStates($event.key)
+        .subscribe((data) => {
+          data.forEach((state) => {
+            this.countryStates.push({
+              parent: $event.key,
+              code: $event.key + ':' + state.code,
+              name: state.name
+            });
+          });
+          this.component.endCustomLoading();
+          this.applySelectedRowKeys();
+        }
+      );
     }
+  }
+
+  onSelect($event) { 
+    this.items.countryStates = _.union(_.difference(
+      this.items.countryStates, $event.currentDeselectedRowKeys),
+      $event.currentSelectedRowKeys
+    );
+  }
+
+  onInitialized($event) {
+    this.component = $event.component;
+    this.applySelectedRowKeys();
+  }
+
+  applySelectedRowKeys() {
+    this.component.option(
+      "selectedRowKeys", this.items.countryStates
+    );
   }
 }

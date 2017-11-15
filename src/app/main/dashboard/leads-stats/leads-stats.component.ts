@@ -66,15 +66,20 @@ export class LeadsStatsComponent extends AppComponentBase {
             var typeId = e.cell.columnPath[0];
             var pipelineId = e.cell.rowPath[0];
             var stageId = e.cell.rowPath[1];
-            //alert(this.types[typeId] + ' | ' + this.pipelines[pipelineId] + ' | ' + this.stages[stageId]);
-
-            this._router.navigate(['app/crm/leads']);
+            
+            let filters = {
+                typeId: typeId,
+                stages: {
+                    pipeline: pipelineId,
+                    stage: stageId
+                }
+            };
+            this._router.navigate(['app/crm/leads'], { queryParams: { filters: encodeURIComponent(JSON.stringify(filters)) } });
         }
     }
 
     onCellPrepared(e) {
         if (e.area == "data")
             e.cellElement.addClass('filter-link');
-        //console.log(e);
     }
 }

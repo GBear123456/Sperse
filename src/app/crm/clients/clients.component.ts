@@ -116,8 +116,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     component: FilterStatesComponent,
                     caption: 'states',
                     items: {
-                        countryId: '',
-                        stateId: ''
+                      countryStates: []
                     }
                 },
                 <FilterModel> {
@@ -185,16 +184,22 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     filterByStates(filter) {
-        let filterData = {};
-        _.mapObject(filter.items, (val, key) => {
-            return val && (typeof(val) == 'string')
-                && (filterData[this.capitalize(key)] = val);
+        let filterData = [];
+        filter.items.countryStates.forEach((val) => {
+            let parts = val.split(':');                        
+            filterData.push(parts.length == 2 ?
+            {
+              CountryId: parts[0],
+              StateId: parts[1]
+            } : {CountryId: val});
         });
 
-        if (Object.keys(filterData).length)
+        if (filterData.length)
             return {
                 Addresses: {
-                    any: filterData
+                    any: {
+                      or: filterData
+                    }
                 }
             };
     }

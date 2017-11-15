@@ -5,41 +5,56 @@ import { FilterModel } from './filter.model';
 
 @Injectable()
 export class FiltersService {
-	private filters: Subject<FilterModel[]>;
-	private filter: Subject<FilterModel>;
+    private filters: Subject<FilterModel[]>;
+    private filter: Subject<FilterModel>;
 
-  private subscribers: Array<Subscription> = [];
+    private subscribers: Array<Subscription> = [];
 
-  public enabled: boolean = false;
-  public localizationSourceName: string;
+    public enabled: boolean = false;
+    public localizationSourceName: string;
 
-	constructor() {
-		this.filters = new Subject<FilterModel[]>();
-		this.filter = new Subject<FilterModel>();
-	}
+    constructor() {
+        this.filters = new Subject<FilterModel[]>();
+        this.filter = new Subject<FilterModel>();
+    }
 
-	setup(filters: FilterModel[]) {
-		this.filters.next(filters);
-	}	
+    setup(filters: FilterModel[], initialValues?: any) {
+        if (initialValues && initialValues.filters) {
+            var initFilters = JSON.parse(decodeURIComponent(initialValues.filters));
+            filters.forEach((filter, i, arr) => {
+                if (initFilters[filter.caption]) {
+                    var props = Object.keys(initFilters[filter.caption]);
+                    props.forEach((val, i, arr) => {
+                        filter.items[val].setValue(initFilters[filter.caption][val], filter);
+                    });
+                }
+            });
+        }
+        this.filters.next(filters);
+        this.change(<FilterModel>{});
+    }
 
-	update(callback: (filters: FilterModel[]) => any) {
-    this.filters.asObservable().subscribe(callback);
-	}
+    update(callback: (filters: FilterModel[]) => any) {
+        this.filters.asObservable().subscribe(callback);
+    }
 
-	change(filter: FilterModel) {
-		this.filter.next(filter);
-	}
+    change(filter: FilterModel) {
+        this.filter.next(filter);
+    }
 
-	apply(callback: (filter: FilterModel) => any) {
-    this.subscribers.push(
-  		this.filter.asObservable().subscribe(callback)
-    );
-	}
+    apply(callback: (filter: FilterModel) => any, keepAlways: boolean = false) {
+        if (keepAlways)
+            this.filter.asObservable().subscribe(callback)
+        else
+            this.subscribers.push(
+                this.filter.asObservable().subscribe(callback)
+            );
+    }
 
-  unsubscribe() {
-    this.subscribers.map((sub) => {
-      return void(sub.unsubscribe());
-    });
-    this.subscribers.length = 0;
-  }
+    unsubscribe() {
+        this.subscribers.map((sub) => {
+            return void (sub.unsubscribe());
+        });
+        this.subscribers.length = 0;
+    }
 }

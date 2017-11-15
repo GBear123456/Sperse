@@ -1,4 +1,4 @@
-﻿export class MultiselectDropDownElement {
+export class FilterMultiselectDropDownModel {
     displayName?: string;
     displayElementExp: any;
     dataSource: any;

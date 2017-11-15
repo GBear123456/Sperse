@@ -1,4 +1,4 @@
-﻿import {
+import {
     Component,
     OnInit,
     AfterViewInit,
@@ -16,8 +16,8 @@ import {FiltersService} from '@shared/filters/filters.service';
 import {FilterModel} from '@shared/filters/filter.model';
 import {FilterDropDownComponent} from '@shared/filters/dropdown/filter-dropdown.component';
 import {FilterInputsComponent} from '@shared/filters/inputs/filter-inputs.component';
-import {FilterCalendarComponent} from '@shared/filters/calendar/filter-calendar.component';
-import {DropDownElement} from '@shared/filters/dropdown/dropdown_element';
+import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
+import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 
 import {CommonLookupServiceProxy, PipelineServiceProxy} from '@shared/service-proxies/service-proxies';
 import {appModuleAnimation} from '@shared/animations/routerTransition';
@@ -126,14 +126,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterDropDownComponent,
                     caption: 'stages',
                     items: {
-                        pipeline: <DropDownElement>{
+                        pipeline: new FilterDropDownModel({
                             displayName: "Pipeline",
                             elements: result,
                             displayElementExp: "name",
                             filterField: "pipelineId",
-                            onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                filter.items["pipeline"].selectedElement = event.value;
-                                filter.items["stage"].elements = event.value.stages;
+                            onElementSelect: (value, filter: FilterDropDownComponent) => {
+                                filter.items["pipeline"].selectedElement = value;
+                                filter.items["stage"].elements = value.stages;
                                 filter.items["stage"].selectedElement = null;
                             },
                             clearSelectedElement: (filter: FilterDropDownComponent) => {
@@ -141,15 +141,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 filter.items["stage"].elements = null;
                                 filter.items["stage"].selectedElement = null;
                             }
-                        },
-                        stage: <DropDownElement>{
+                        }),
+                        stage: new FilterDropDownModel({
                             displayName: "Stages",
                             displayElementExp: "name",
                             filterField: "stageId",
-                            onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                filter.items["stage"].selectedElement = event.value;
+                            onElementSelect: (value, filter: FilterDropDownComponent) => {
+                                filter.items["stage"].selectedElement = value;
                             }
-                        }
+                        })
                     }
                 },
                 <FilterModel>{
@@ -182,7 +182,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterDropDownComponent,
                     caption: 'paymentType',
                     items: {
-                        paymentType: <DropDownElement>{
+                        paymentType: <FilterDropDownModel>{
                             displayName: "Payment Type",
                             elements: null,
                             filterField: "paymentTypeId",
@@ -252,7 +252,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     caption: 'salesAgents',
                     items: {}
                 }
-            ]);
+            ], this._activatedRoute.snapshot.queryParams);
         });
 
         this._filtersService.apply(() => {
@@ -271,7 +271,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     filterByStages(filter: FilterModel) {
         let data = {};
         data[filter.field] = {};
-        _.each(filter.items, (val: DropDownElement, key) => {
+        _.each(filter.items, (val: FilterDropDownModel, key) => {
             val && val.filterField && val.selectedElement && (data[this.capitalize(val.filterField)] = val.selectedElement.id);
         });
         return data;

@@ -19,7 +19,7 @@ import * as moment from 'moment';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
 import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
-import { MultiselectDropDownElement } from '@shared/filters/multiselect-dropdown/multiselect-dropdown-element';
+import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
 
 /** Constants */
 const StartedBalance = 'B',
@@ -251,7 +251,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                             field: 'accountIds',
                             caption: 'Account',
                             items: {
-                                acc: <MultiselectDropDownElement>{
+                                acc: <FilterMultiselectDropDownModel>{
                                     displayName: 'Account',
                                     filterField: 'accountIds',
                                     displayElementExp: (item: BankAccountDto) => {
@@ -1056,10 +1056,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
             $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
             this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
-            this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
             this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
             if (this.statsDetailFilter.cashFlowTypeId == 'B') {
-                this.statsDetailFilter.accountIds.push(cellObj.cell.rowPath[1]);
+                this.statsDetailFilter.accountIds = [];
+                this.statsDetailFilter.transactionCategoryId = undefined;
+                if (cellObj.cell.rowPath[1]) this.statsDetailFilter.accountIds.push(cellObj.cell.rowPath[1]);
             } else {
                 this.statsDetailFilter.transactionCategoryId = cellObj.cell.rowPath[1];
             }
@@ -1068,6 +1069,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.statsDetailFilter.endDate = datePeriod.endDate;
             this.getStatsDetails(this.statsDetailFilter);
         }
+    }
+
+    customCurrency(value) {
+        return (value).toLocaleString('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 0});
     }
 
     formattingDate(param = []) {
