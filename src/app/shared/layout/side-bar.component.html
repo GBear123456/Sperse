@@ -1,24 +1,44 @@
 <div class="sidebar-filter-links" *ngIf="filters.length">
-  <div class="search-field">
-    <input type="text" placeholder="Search" value="">
-  </div>
+    <div class="search-field">
+        <input type="text" placeholder="Search" value="">
+    </div>
 
-	<b>{{ls('Platform', 'SideBarFilterHeader')}}</b>
-	<div class="filter-link">
-    <ng-template ngFor let-filter [ngForOf]="filters" let-i="index">
-			<a href="javascript:;" (click)="showFilterDialog($event, filter)">{{l('FilterBy' + capitalize(filter.caption) + 'Header')}}</a>
-      <span *ngIf="filter.value">{{filter.value}}<i class="fa fa-minus-circle" aria-hidden="true" (click)="excludeFilter($event, filter)"></i></span>
-		</ng-template>
-	</div>
+    <div class="filter-title">
+        <img src="assets/common/icons/pipeline-icon.svg" class="dx-icon">
+        {{ls('Platform', 'Filter')}}
+        <button class="clear-all" >
+            clear all
+        </button>
+    </div>
+        <ul class="filter-links">
+            <ng-template ngFor let-filter [ngForOf]="filters" let-i="index">
+                <li class="filter-link">
+                    <a href="javascript:;"
+                       (click)="showFilterDialog($event, filter)">
+                        {{l('FilterBy' + capitalize(filter.caption) + 'Header')}}
+                        <i class="fa fa-angle-right pull-right" aria-hidden="true"></i>
+                    </a>
+                    <ul class="sub-filter-list">
+                        <li *ngIf="filter.value" class="sub-filter-item">
+                            {{filter.value}}<i class="minus-icon" aria-hidden="true" (click)="excludeFilter($event, filter)"></i>
+                        </li>
+                    </ul>
+                </li>
+            </ng-template>
+        </ul>
 </div>
 
 <div class="sidebar-filters" *ngIf="activeFilter">
-	<div class="sidebar-filter-head">
-		{{ls('Platform', 'SideBarFilterHeader')}} {{l('FilterBy' + capitalize(activeFilter.caption) + 'Header')}} 
-    <button class="button-layout button-primary" (click)="filterApply($event)"><i class="fa fa-check" aria-hidden="true"></i>{{ls('Platform', 'Apply')}}</button>
-	</div>
+    <div class="close-details"></div>
+    <div class="sidebar-filter-head">
+        {{ls('Platform', 'SideBarFilterHeader')}} {{l('FilterBy' + capitalize(activeFilter.caption) + 'Header')}}
+        <button class="button-layout button-primary" (click)="filterApply($event)"><i class="fa fa-check"
+                                                                                      aria-hidden="true"></i>{{ls('Platform',
+            'Apply')}}
+        </button>
+    </div>
 
-  <dx-scroll-view showScrollbar="onHover">
-    <filter [config]="activeFilter" (onApply)="filterApply($event)"></filter>
-  </dx-scroll-view>
+    <dx-scroll-view showScrollbar="onHover">
+        <filter [config]="activeFilter" (onApply)="filterApply($event)"></filter>
+    </dx-scroll-view>
 </div>

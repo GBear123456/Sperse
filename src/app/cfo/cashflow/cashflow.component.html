@@ -25,18 +25,20 @@
                    [allowSorting]="false"
                    [allowFiltering]="false"
                    [allowExpandAll]="false"
-                   [showBorders]="false"
                    [(dataSource)]="dataSource"
                    [rowHeaderLayout]="'tree'"
                    [showColumnGrandTotals]="false"
+                   [hideEmptySummaryCells]="false"
                    [showRowGrandTotals]="false"
+                   [showRowTotals]="false"
+                   [showBorders]="true"
                    [texts] = "{'grandTotal': 'ENDING CASH POSITION', 'total': '{0}'}"
                    [fieldChooser]="false"
                    [export]="{'enabled': false}"
                    (onCellPrepared)="onCellPrepared($event)"
                    (onContentReady)="onContentReady($event)"
-                   (onCellClick)="onCellClick($event)"
-    >
+                   (onCellClick)="onCellClick($event)">
+        <dxo-scrolling mode="virtual"></dxo-scrolling>
     </dx-pivot-grid>
 
     <div *ngIf="statsDetailResult !== undefined" class="cashflow-wrap">
@@ -46,8 +48,8 @@
                       [dataSource]="statsDetailResult">
             <dxi-column dataField="date" width="130" dataType="date" format="shortDate"></dxi-column>
             <dxi-column dataField="description"></dxi-column>
-            <dxi-column dataField="debit" width="110" format="currency"></dxi-column>
-            <dxi-column dataField="credit" width="110" format="currency"></dxi-column>
+            <dxi-column dataField="debit" width="140" [format]="customCurrency"></dxi-column>
+            <dxi-column dataField="credit" width="140" [format]="customCurrency"></dxi-column>
             <dxi-column dataField="comments" [allowSorting]="false"></dxi-column>
             <dxo-load-panel [enabled]="true"></dxo-load-panel>
             <dxo-scrolling mode="virtual"></dxo-scrolling>
