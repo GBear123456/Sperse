@@ -29,6 +29,7 @@
 @reconciliationDataCellBackgroundColor: #ecf7fc;
 @totalDataCellBackgroundColor: #ecf7fc;
 @reconciliationDataCellTextColor: #a9b2ba;
+@currentPeriodCellBackgroundColor: rgba(250, 184, 0, .04);
 
 :host {
     /deep/ .dx-pivotgrid {
@@ -38,11 +39,11 @@
                 .head-cell-expand {
                   position: relative;
                   &:after {
-                    content: '';  
+                    content: '';
                     position: absolute;
                     visibility: visible;
                     left: -10px;
-                    top: -5px;  
+                    top: -5px;
                     width: 0;
                     height: 0;
                     border: 0 solid transparent;
@@ -90,11 +91,6 @@
         /** upper right column (historical row and dates rows) */
         .dx-area-column-cell {
             tr {
-                &.historicalRow {
-                    &:not(:first-child) {
-                        display: none;
-                    }
-                }
 
                 /** @todo move general classes like dateField and historicalField  from td to tr */
                 td {
@@ -116,6 +112,9 @@
                         color: @yearTextColor;
                         font-weight: 600;
                         font-size: 20px;
+                    }
+                    &.lowestOpenedCurrent {
+                        background-color: @currentPeriodCellBackgroundColor;
                     }
                     &.month,
                     &.quarter,
@@ -326,20 +325,36 @@
                         &.expenses {
                             background: @expensesDataCellBackgroundColor;
                         }
-                    }
-                    &.reconciliation {
-                        font-weight: 700;
+                        &.lowestOpenedCurrent {
+                            &.income {
+                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
+                                            linear-gradient(@incomeDataCellBackgroundColor, @incomeDataCellBackgroundColor);
+                            }
+                            &.expenses {
+                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
+                                            linear-gradient(@expensesDataCellBackgroundColor, @expensesDataCellBackgroundColor);
+                            }
+                        }
                     }
                 }
+
                 &.startedBalance {
                     td {
                         &.dx-total {
                             background: @startedBalanceDataCellColor;
                         }
+                        &.lowestOpenedCurrent {
+                            background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
+                                              linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
+                        }
                     }
                     &:first-child {
                         td {
                             background: @startedBalanceDataCellColor;
+                            &.lowestOpenedCurrent {
+                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
+                                            linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
+                            }
                         }
                     }
 
@@ -349,12 +364,21 @@
                         background: @grandTotalBackgroundColor;
                         color: @grandTotalTextColor;
                         font-weight: 700;
+                        &.lowestOpenedCurrent {
+                            background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
+                                              linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
+                        }
                     }
                 }
                 &.reconciliation {
                     td {
                         background: @reconciliationDataCellBackgroundColor;
                         color: @reconciliationDataCellTextColor;
+
+                        &.lowestOpenedCurrent {
+                            background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
+                                              linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
+                        }
                     }
                 }
             }
