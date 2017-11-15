@@ -3,7 +3,7 @@ import { ModalDirective } from 'ngx-bootstrap';
 import { LanguageServiceProxy, ApplicationLanguageEditDto, CreateOrUpdateLanguageInput, ComboboxItemDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'createOrEditLanguageModal',
@@ -48,7 +48,7 @@ export class CreateOrEditLanguageModalComponent extends AppComponentBase {
     }
 
     save(): void {
-        var input = new CreateOrUpdateLanguageInput();
+        let input = new CreateOrUpdateLanguageInput();
         input.language = this.language;
 
         this.saving = true;

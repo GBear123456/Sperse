@@ -9,13 +9,13 @@ import { MdDialog } from '@angular/material';
   templateUrl: './client-details.component.html',
   styleUrls: ['./client-details.component.less'],
   host: {
-    '(document:click)': "closeEditDialogs($event)"
-  }  
+    '(document:click)': 'closeEditDialogs($event)'
+  }
 })
 export class ClientDetailsComponent extends AppComponentBase implements OnInit, OnDestroy {
   customerInfo: CustomerInfoDto;
   primaryContact: ContactInfoDto;
-  
+
   person: any = {
     id: 1,
     first_name: 'Matthew',
@@ -55,7 +55,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     super(injector);
 
     _customerService['data'] = {customerInfo: null};
-    this.rootComponent = this.getRootComponent();    
+    this.rootComponent = this.getRootComponent();
     this.paramsSubscribe = this._route.params.subscribe(params => {
       _customerService.getCustomerInfo(params['clientId'])
         .subscribe(responce => {
@@ -73,7 +73,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
   }
 
   closeEditDialogs(event) {
-    if (document.body.contains(event.target) && 
+    if (document.body.contains(event.target) &&
       !event.target.closest('.mat-dialog-container, .dx-popup-wrapper')
     )
       this._dialog.closeAll();
@@ -81,7 +81,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
   ngOnInit() {
     this.rootComponent.overflowHidden(true);
-    this.rootComponent.pageHeaderFixed();   
+    this.rootComponent.pageHeaderFixed();
   }
 
   ngOnDestroy() {

@@ -50,7 +50,7 @@ export class CreditLinesComponent implements OnInit {
   }
 
   getStatuses(banks){
-      for (var i = 0; i < banks.length; i++) {
+      for (let i = 0; i < banks.length; i++) {
           if (banks[i].status === 'success')
               this.statuses.success_amount += 1;
           if (banks[i].status === 'unsuccess')
@@ -62,7 +62,7 @@ export class CreditLinesComponent implements OnInit {
   }
 
   getCheckStyle(status) {
-      var style = '';
+      let style = '';
       switch (status) {
         case 'success':
            style = 'check'; break;
@@ -78,5 +78,5 @@ export class CreditLinesComponent implements OnInit {
 
   changeColupsStatus() {
       this.credit_lines_colupsed = !this.credit_lines_colupsed;
-  }    
+  }
 }

@@ -3,8 +3,8 @@ import { ModalDirective } from 'ngx-bootstrap';
 import { TenantServiceProxy, CommonLookupServiceProxy, TenantEditDto, SubscribableEditionComboboxItemDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
-import * as moment from "moment";
-import * as _ from "lodash";
+import * as moment from 'moment';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'editTenantModal',
@@ -40,9 +40,9 @@ export class EditTenantModalComponent extends AppComponentBase {
 
         this._commonLookupService.getEditionsForCombobox(false).subscribe(result => {
             this.editions = result.items;
-            var notSelectedEdition = new SubscribableEditionComboboxItemDto();
+            let notSelectedEdition = new SubscribableEditionComboboxItemDto();
             notSelectedEdition.displayText = this.l('NotAssigned');
-            notSelectedEdition.value = "0";
+            notSelectedEdition.value = '0';
             this.editions.unshift(notSelectedEdition);
 
             this._tenantService.getTenantForEdit(tenantId).subscribe((result) => {
@@ -62,7 +62,7 @@ export class EditTenantModalComponent extends AppComponentBase {
             locale: abp.localization.currentLanguage.name,
             format: 'L',
             defaultDate: this.tenant.subscriptionEndDateUtc,
-        }).on("dp.change", (e) => {
+        }).on('dp.change', (e) => {
             this.subscriptionEndDateUtcIsValid = e.date !== '';
         });
     }
@@ -71,7 +71,7 @@ export class EditTenantModalComponent extends AppComponentBase {
         if (this.isUnlimited) {
             return '';
         }
-      
+
         if (!this.tenant.editionId) {
             return '';
         }
@@ -88,12 +88,12 @@ export class EditTenantModalComponent extends AppComponentBase {
             return true;
         }
 
-        var selectedEditions = _.filter(this.editions, { value: this.tenant.editionId + "" });
+        let selectedEditions = _.filter(this.editions, { value: this.tenant.editionId + '' });
         if (selectedEditions.length !== 1) {
             return true;
         }
 
-        var selectedEdition = selectedEditions[0];
+        let selectedEdition = selectedEditions[0];
         return selectedEdition.isFree;
     }
 
@@ -105,12 +105,12 @@ export class EditTenantModalComponent extends AppComponentBase {
 
         //take selected date as UTC
         if (!this.isUnlimited && this.tenant.editionId) {
-            var date = $(this.subscriptionEndDateUtc.nativeElement).data("DateTimePicker").date();
+            let date = $(this.subscriptionEndDateUtc.nativeElement).data('DateTimePicker').date();
             if (!date) {
                 date = this.tenant.subscriptionEndDateUtc;
             }
 
-            this.tenant.subscriptionEndDateUtc = moment(date.format("YYYY-MM-DDTHH:mm:ss") + 'Z');
+            this.tenant.subscriptionEndDateUtc = moment(date.format('YYYY-MM-DDTHH:mm:ss') + 'Z');
         } else {
             this.tenant.subscriptionEndDateUtc = null;
         }
@@ -139,11 +139,11 @@ export class EditTenantModalComponent extends AppComponentBase {
 
     onUnlimitedChange(): void {
         if (this.isUnlimited) {
-            $(this.subscriptionEndDateUtc.nativeElement).data("DateTimePicker").clear();
+            $(this.subscriptionEndDateUtc.nativeElement).data('DateTimePicker').clear();
             this.tenant.subscriptionEndDateUtc = null;
             this.subscriptionEndDateUtcIsValid = true;
         } else {
-            var date = $(this.subscriptionEndDateUtc.nativeElement).data("DateTimePicker").date();
+            let date = $(this.subscriptionEndDateUtc.nativeElement).data('DateTimePicker').date();
             if (!date) {
                 this.subscriptionEndDateUtcIsValid = false;
             }

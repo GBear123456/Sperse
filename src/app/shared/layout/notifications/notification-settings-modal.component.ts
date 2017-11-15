@@ -42,7 +42,7 @@ export class NotificationSettingsModalComponent extends AppComponentBase {
         input.receiveNotifications = this.settings.receiveNotifications;
         input.notifications = _.map(this.settings.notifications,
             (n) => {
-                var subscription = new NotificationSubscriptionDto();
+                let subscription = new NotificationSubscriptionDto();
                 subscription.name = n.name;
                 subscription.isSubscribed = n.isSubscribed;
                 return subscription;

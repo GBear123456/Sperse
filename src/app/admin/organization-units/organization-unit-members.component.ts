@@ -9,7 +9,7 @@ import { IUserWithOrganizationUnit } from './user-with-organization-unit';
 
 @Component({
     selector: 'organization-unit-members',
-    templateUrl: "./organization-unit-members.component.html"
+    templateUrl: './organization-unit-members.component.html'
 })
 export class OrganizationUnitMembersComponent extends AppComponentBase implements OnInit {
 
@@ -49,14 +49,14 @@ export class OrganizationUnitMembersComponent extends AppComponentBase implement
         this.memberLookupModal.configure({
             title: this.l('SelectAUser'),
             dataSource: (skipCount: number, maxResultCount: number, filter: string) => {
-                var input = new FindUsersInput();
+                let input = new FindUsersInput();
                 input.filter = filter;
                 input.maxResultCount = maxResultCount;
                 input.skipCount = skipCount;
                 return this._commonLookupService.findUsers(input);
             },
             canSelect: (item: NameValueDto) => {
-                var input = new UserToOrganizationUnitInput();
+                let input = new UserToOrganizationUnitInput();
 
                 input.userId = parseInt(item.value);
                 input.organizationUnitId = this.organizationUnit.id;
@@ -106,7 +106,7 @@ export class OrganizationUnitMembersComponent extends AppComponentBase implement
                     width: '15%',
                     list: this.isGranted('Pages.Administration.OrganizationUnits.ManageMembers'),
                     display: (data: JTableFieldOptionDisplayData<OrganizationUnitUserListDto>) => {
-                        var $span = $('<span></span>');
+                        let $span = $('<span></span>');
 
                         if (this.isGranted('Pages.Administration.OrganizationUnits.ManageMembers')) {
                             $('<button class="btn btn-default btn-xs" title="' + this.l('Delete') + '"><i class="fa fa-trash-o"></i></button>')

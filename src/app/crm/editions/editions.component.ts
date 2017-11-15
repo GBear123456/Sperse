@@ -5,11 +5,11 @@ import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-moda
 import { JTableHelper } from '@shared/helpers/JTableHelper';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
-    templateUrl: "./editions.component.html",
-    styleUrls: ["./editions.component.less"],
+    templateUrl: './editions.component.html',
+    styleUrls: ['./editions.component.less'],
     animations: [appModuleAnimation()]
 })
 export class EditionsComponent extends AppComponentBase implements AfterViewInit {
@@ -29,7 +29,7 @@ export class EditionsComponent extends AppComponentBase implements AfterViewInit
     ngAfterViewInit(): void {
         let self = this;
 
-        var initEditionsTable = () => {
+        let initEditionsTable = () => {
             self._$editionsTable = $('#EditionsTable');
 
             self._$editionsTable.jtable({

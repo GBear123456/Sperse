@@ -924,7 +924,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
         }
 
-        /** headers manipulation (adding css classes and appending "Totals text") */
+        /** headers manipulation (adding css classes and appending 'Totals text') */
         if (e.area === 'column') {
             if (this.isCellContainsCssMarker(e)) {
                 this.prepareColumnCell(e);
@@ -940,7 +940,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
         }
 
-        /** headers manipulation (adding css classes and appending "Totals text") */
+        /** headers manipulation (adding css classes and appending 'Totals text') */
         if (e.area === 'data' || (e.area === 'column' || e.rowIndex >= 1)) {
             /** add current classes for the cells that belongs to the current periods */
             this.addCurrentPeriodsClasses(e);
@@ -976,7 +976,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let cssClass = this.cutCssFromValue(cellObj.cell.text);
         /** update the columns with the text without the marker */
         cellObj.cellElement.text(valueWithoutCss);
-        /** Added "Total" text to the year and quarter headers */
+        /** Added 'Total' text to the year and quarter headers */
         let fieldName = cssClass.slice(cssClass.indexOf(' ') + 1, cssClass.length).trim();
         if (fieldName === 'year' || fieldName === 'quarter') {
             let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
@@ -1307,7 +1307,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param cellData
      */
     calculateCellValue(cellData) {
-        /** {cashflowTypeId: "T", accountId: 10, quarter: 3, year: 2015, month: 5} */
+        /** {cashflowTypeId: 'T', accountId: 10, quarter: 3, year: 2015, month: 5} */
         let value = this.cashflowData.reduce( (sum, cashflowData) => {
             if (
                 cashflowData.cashflowTypeId === cellData.cashflowTypeId &&

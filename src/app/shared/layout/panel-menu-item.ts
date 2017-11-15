@@ -15,9 +15,9 @@
         this.disabled = !route;
 
         if (items === undefined) {
-            this.items = [];    
+            this.items = [];
         } else {
             this.items = items;
-        }        
+        }
     }
 }

@@ -4,8 +4,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
-    templateUrl: "./synch-progress.component.html",
-    styleUrls: ["./synch-progress.component.less"],
+    templateUrl: './synch-progress.component.html',
+    styleUrls: ['./synch-progress.component.less'],
     selector: 'synch-progress',
     providers: [FinancialInformationServiceProxy]
 })
@@ -30,7 +30,7 @@ export class SynchProgressComponent extends AppComponentBase implements OnInit, 
                 this.getSynchProgress();
             });
     }
-    
+
     getSynchProgress() {
         this._financialInformationServiceProxy.getSyncProgress()
             .subscribe((result) => {

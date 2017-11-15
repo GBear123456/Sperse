@@ -3,7 +3,7 @@ import { ModalDirective } from 'ngx-bootstrap';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FileUploader, FileUploaderOptions, Headers } from '@node_modules/ng2-file-upload';
-import { ProfileServiceProxy, CurrentUserProfileEditDto, DefaultTimezoneScope, UserLoginInfoDto } from "@shared/service-proxies/service-proxies";
+import { ProfileServiceProxy, CurrentUserProfileEditDto, DefaultTimezoneScope, UserLoginInfoDto } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service'
 import { AppTimezoneScope } from '@shared/AppEnums';
 

@@ -4,7 +4,7 @@ import { SignalRHelper } from 'shared/helpers/SignalRHelper';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
-import { SubscriptionStartType } from "@shared/AppEnums";
+import { SubscriptionStartType } from '@shared/AppEnums';
 import { AppService } from './app.service';
 import { AppConsts } from '@shared/AppConsts';
 import * as moment from 'moment';

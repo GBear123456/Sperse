@@ -11,10 +11,10 @@ import { FileUploader, FileUploaderOptions, Headers } from '@node_modules/ng2-fi
 import { TokenService } from '@abp/auth/token.service';
 import { IAjaxResponse } from '@abp/abpHttp';
 
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
-    templateUrl: "./tenant-settings.component.html",
+    templateUrl: './tenant-settings.component.html',
     animations: [appModuleAnimation()]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit {
@@ -97,14 +97,14 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
                 this.settings = result;
                 if (this.settings.general) {
                     this.initialTimeZone = this.settings.general.timezone;
-                    this.usingDefaultTimeZone = this.settings.general.timezoneForComparison === abp.setting.values["Abp.Timing.TimeZone"];
+                    this.usingDefaultTimeZone = this.settings.general.timezoneForComparison === abp.setting.values['Abp.Timing.TimeZone'];
                 }
             });
     }
 
     initUploaders(): void {
         this.logoUploader = this.createUploader(
-            "/TenantCustomization/UploadLogo",
+            '/TenantCustomization/UploadLogo',
             result => {
                 this._appSessionService.tenant.logoFileType = result.fileType;
                 this._appSessionService.tenant.logoId = result.id;
@@ -112,7 +112,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         );
 
         this.customCssUploader = this.createUploader(
-            "/TenantCustomization/UploadCustomCss",
+            '/TenantCustomization/UploadCustomCss',
             result => {
                 this.appSession.tenant.customCssId = result.id;
                 $('#TenantCustomCss').remove();
@@ -121,7 +121,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         );
 
         this.faviconUploader = this.createUploader(
-            "/TenantCustomization/UploadFavicons",
+            '/TenantCustomization/UploadFavicons',
             result => {
             }
         );
@@ -205,7 +205,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         let input = new SendTestEmailInput();
         input.emailAddress = this.testEmailAddress;
         this._tenantSettingsService.sendTestEmail(input).subscribe(result => {
-            this.notify.info(this.l("TestEmailSentSuccessfully"));
+            this.notify.info(this.l('TestEmailSentSuccessfully'));
         });
     };
 

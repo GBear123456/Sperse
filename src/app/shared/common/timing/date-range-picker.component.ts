@@ -7,7 +7,7 @@ import * as moment from 'moment';
 @Component({
     selector: 'date-range-picker',
     template:
-    `<input #DateRangePicker type="text" class="form-control" [disabled]="isDisabled"/>`
+    `<input #DateRangePicker type='text' class='form-control' [disabled]='isDisabled'/>`
 })
 export class DateRangePickerComponent extends AppComponentBase implements AfterViewInit {
 
@@ -55,7 +55,7 @@ export class DateRangePickerComponent extends AppComponentBase implements AfterV
     ngAfterViewInit(): void {
         const $element = $(this.dateRangePickerElement.nativeElement);
 
-        var _selectedDateRange = {
+        let _selectedDateRange = {
             startDate: this._startDate,
             endDate: this._endDate
         };
@@ -65,7 +65,7 @@ export class DateRangePickerComponent extends AppComponentBase implements AfterV
                 singleDatePicker: this.isSingleDatePicker
             };
         }
-      
+
         $element.daterangepicker(
             $.extend(true, this.createDateRangePickerOptions(), this.dateRangePickerOptions, _selectedDateRange), (start, end, label) => {
                 this.startDate = start;

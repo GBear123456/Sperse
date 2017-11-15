@@ -4,7 +4,7 @@ import { TenantServiceProxy, ProfileServiceProxy, CreateTenantInput, CommonLooku
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import * as moment from 'moment';
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'createTenantModal',
@@ -70,7 +70,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
                 this.editions.unshift({ value: 0, displayText: this.l('NotAssigned') });
 
                 this._commonLookupService.getDefaultEditionName().subscribe((getDefaultEditionResult) => {
-                    var defaultEdition = _.filter(this.editions, { displayText: getDefaultEditionResult.name });
+                    let defaultEdition = _.filter(this.editions, { displayText: getDefaultEditionResult.name });
                     if (defaultEdition && defaultEdition[0]) {
                         this.tenant.editionId = parseInt(defaultEdition[0].value);
                         this.toggleSubscriptionFields();
@@ -84,12 +84,12 @@ export class CreateTenantModalComponent extends AppComponentBase {
     }
 
     selectedEditionIsFree(): boolean {
-        var selectedEditions = _.filter(this.editions, { value: this.tenant.editionId });
+        let selectedEditions = _.filter(this.editions, { value: this.tenant.editionId });
         if (selectedEditions.length !== 1) {
             this.isSelectedEditionFree = true;
         }
 
-        var selectedEdition = selectedEditions[0];
+        let selectedEdition = selectedEditions[0];
         this.isSelectedEditionFree = selectedEdition.isFree;
         return this.isSelectedEditionFree;
     }
@@ -107,7 +107,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
             return false;
         }
 
-        var subscriptionEndDateUtc = $(this.subscriptionEndDateUtc.nativeElement).val();
+        let subscriptionEndDateUtc = $(this.subscriptionEndDateUtc.nativeElement).val();
         return subscriptionEndDateUtc != undefined && subscriptionEndDateUtc !== '';
     }
 
@@ -124,7 +124,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
 
         //take selected date as UTC
         if (!this.isUnlimited && this.tenant.editionId > 0) {
-            this.tenant.subscriptionEndDateUtc = moment($(this.subscriptionEndDateUtc.nativeElement).data("DateTimePicker").date().format("YYYY-MM-DDTHH:mm:ss") + 'Z');
+            this.tenant.subscriptionEndDateUtc = moment($(this.subscriptionEndDateUtc.nativeElement).data('DateTimePicker').date().format('YYYY-MM-DDTHH:mm:ss') + 'Z');
         } else {
             this.tenant.subscriptionEndDateUtc = null;
         }

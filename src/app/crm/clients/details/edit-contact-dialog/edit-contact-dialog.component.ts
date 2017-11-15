@@ -5,7 +5,7 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
 import * as _ from 'underscore';
 
-import { 
+import {
   ContactEmailServiceProxy,
   ContactPhoneServiceProxy,
   ContactLinkServiceProxy
@@ -16,8 +16,8 @@ import {
   templateUrl: 'edit-contact-dialog.html',
   styleUrls: ['edit-contact-dialog.less'],
   host: {
-    '(document:mouseup)': "mouseUp($event)",
-    '(document:mousemove)': "mouseMove($event)"
+    '(document:mouseup)': 'mouseUp($event)',
+    '(document:mousemove)': 'mouseMove($event)'
   }
 })
 export class EditContactDialog extends AppComponentBase {
@@ -29,8 +29,8 @@ export class EditContactDialog extends AppComponentBase {
 
   isEditAllowed: boolean = false;
   private readonly INPUT_MASK = {
-    phone: "(000) 000-0000",
-    phoneExtension: "0000000000"
+    phone: '(000) 000-0000',
+    phoneExtension: '0000000000'
   }
 
   constructor(
@@ -41,7 +41,7 @@ export class EditContactDialog extends AppComponentBase {
     private _contactEmailService: ContactEmailServiceProxy,
     private _contactPhoneService: ContactPhoneServiceProxy,
     private _contactLinkService: ContactLinkServiceProxy
-  ) { 
+  ) {
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
     this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
@@ -58,28 +58,28 @@ export class EditContactDialog extends AppComponentBase {
   }
 
   emailAddressTypesLoad() {
-    this._contactEmailService.getEmailUsageTypes().subscribe(result => {      
+    this._contactEmailService.getEmailUsageTypes().subscribe(result => {
       this.types = result.items;
     });
   }
 
   phoneNumberTypesLoad() {
-    this._contactPhoneService.getPhoneUsageTypes().subscribe(result => {      
+    this._contactPhoneService.getPhoneUsageTypes().subscribe(result => {
       this.types = result.items;
     });
   }
 
   focusInput(event) {
     if (!(event.component._value && event.component._value.trim())) {
-      var input = event.jQueryEvent.originalEvent.target;
+      let input = event.jQueryEvent.originalEvent.target;
       event.component.option({
         mask: this.INPUT_MASK[input.name],
         isValid: true
       });
       setTimeout(function(){
         if (input.createTextRange) {
-          var part = input.createTextRange();
-          part.move("character", 0);
+          let part = input.createTextRange();
+          part.move('character', 0);
           part.select();
         } else if (input.setSelectionRange)
           input.setSelectionRange(0, 0);
@@ -91,10 +91,10 @@ export class EditContactDialog extends AppComponentBase {
 
   blurInput(event) {
     if (!(event.component._value && event.component._value.trim()))
-      event.component.option({mask: "", value: ""});
+      event.component.option({mask: '', value: ''});
   }
 
-  onTypeChanged(event) { 
+  onTypeChanged(event) {
     let type = _.findWhere(this.types, {id: event.value});
     if (type.isSocialNetwork)
       this.data.isSocialNetwork = true;
@@ -105,7 +105,7 @@ export class EditContactDialog extends AppComponentBase {
       this.dialogRef.close(true);
   }
 
-  initValidationGroup(event){
+  initValidationGroup(event) {
     this.validator = event.component;
   }
 
@@ -113,7 +113,7 @@ export class EditContactDialog extends AppComponentBase {
     this.movePos =  {
       x: event.clientX,
       y: event.clientY
-    }
+    };
   }
 
   mouseUp(event) {

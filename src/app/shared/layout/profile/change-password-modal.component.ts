@@ -50,7 +50,7 @@ export class ChangePasswordModalComponent extends AppComponentBase {
     }
 
     save(): void {
-        var input = new ChangePasswordInput();
+        let input = new ChangePasswordInput();
         input.currentPassword = this.currentPassword;
         input.newPassword = this.password;
 

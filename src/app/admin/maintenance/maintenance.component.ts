@@ -2,12 +2,12 @@
 import { CachingServiceProxy, EntityDtoOfString, WebLogServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileDownloadService } from '@shared/utils/file-download.service';
-import * as _ from "lodash";
+import * as _ from 'lodash';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 @Component({
-    templateUrl: "./maintenance.component.html",
-    styleUrls: ["./maintenance.component.less"],
+    templateUrl: './maintenance.component.html',
+    styleUrls: ['./maintenance.component.less'],
     animations: [appModuleAnimation()]
 })
 export class MaintenanceComponent extends AppComponentBase implements OnInit, AfterViewInit {
@@ -40,7 +40,7 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
         let self = this;
         let input = new EntityDtoOfString();
         input.id = cacheName;
-        
+
         self._cacheService.clearCache(input).subscribe(() => {
             self.notify.success(self.l('CacheSuccessfullyCleared'));
         });
@@ -70,51 +70,51 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
 
     getLogClass(log: string): string {
 
-        if (log.startsWith("DEBUG")) {
-            return "label label-default";
+        if (log.startsWith('DEBUG')) {
+            return 'label label-default';
         }
 
-        if (log.startsWith("INFO")) {
-            return "label label-info";
+        if (log.startsWith('INFO')) {
+            return 'label label-info';
         }
 
-        if (log.startsWith("WARN")) {
-            return "label label-warning";
+        if (log.startsWith('WARN')) {
+            return 'label label-warning';
         }
 
-        if (log.startsWith("ERROR")) {
-            return "label label-danger";
+        if (log.startsWith('ERROR')) {
+            return 'label label-danger';
         }
 
-        if (log.startsWith("FATAL")) {
-            return "label label-danger";
+        if (log.startsWith('FATAL')) {
+            return 'label label-danger';
         }
 
-        return "";
+        return '';
     }
 
     getLogType(log: string): string {
-        if (log.startsWith("DEBUG")) {
-            return "DEBUG";
+        if (log.startsWith('DEBUG')) {
+            return 'DEBUG';
         }
 
-        if (log.startsWith("INFO")) {
-            return "INFO";
+        if (log.startsWith('INFO')) {
+            return 'INFO';
         }
 
-        if (log.startsWith("WARN")) {
-            return "WARN";
+        if (log.startsWith('WARN')) {
+            return 'WARN';
         }
 
-        if (log.startsWith("ERROR")) {
-            return "ERROR";
+        if (log.startsWith('ERROR')) {
+            return 'ERROR';
         }
 
-        if (log.startsWith("FATAL")) {
-            return "FATAL";
+        if (log.startsWith('FATAL')) {
+            return 'FATAL';
         }
 
-        return "";
+        return '';
     }
 
     getRawLogContent(log: string): string {
@@ -127,10 +127,10 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
     }
 
     fixWebLogsPanelHeight(): void {
-        var windowHeight = $(window).height();
-        var panelHeight = $('.full-height').height();
-        var difference = windowHeight - panelHeight;
-        var fixedHeight = panelHeight + difference;
+        let windowHeight = $(window).height();
+        let panelHeight = $('.full-height').height();
+        let difference = windowHeight - panelHeight;
+        let fixedHeight = panelHeight + difference;
         $('.full-height').css('height', (fixedHeight - 350) + 'px');
     }
 

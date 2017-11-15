@@ -11,10 +11,10 @@ import { CreateOrEditRoleModalComponent } from './create-or-edit-role-modal.comp
 import { JTableHelper } from '@shared/helpers/JTableHelper';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
-    templateUrl: "./roles.component.html",
+    templateUrl: './roles.component.html',
     animations: [appModuleAnimation()]
 })
 export class RolesComponent extends AppComponentBase implements AfterViewInit {
@@ -36,9 +36,9 @@ export class RolesComponent extends AppComponentBase implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        var self = this;
+        let self = this;
 
-        var initRolesTable = () => {
+        let initRolesTable = () => {
             self._$rolesTable = $('#RolesTable');
 
             self._$rolesTable.jtable({
@@ -87,9 +87,9 @@ export class RolesComponent extends AppComponentBase implements AfterViewInit {
                         title: self.l('RoleName'),
                         width: '35%',
                         display(data) {
-                            var $span = $('<span></span>');
+                            let $span = $('<span></span>');
 
-                            $span.append(data.record.displayName + " &nbsp; ");
+                            $span.append(data.record.displayName + ' &nbsp; ');
 
                             if (data.record.isStatic) {
                                 $span.append('<span class="label label-info" data-toggle="tooltip" title="' + self.l('StaticRole_Tooltip') + '" data-placement="top">' + self.l('Static') + '</span>&nbsp;');
@@ -129,7 +129,7 @@ export class RolesComponent extends AppComponentBase implements AfterViewInit {
     }
 
     deleteRole(role: RoleListDto): void {
-        var self = this;
+        let self = this;
         self.message.confirm(
             self.l('RoleDeleteWarningMessage', role.displayName),
             function (isConfirmed) {

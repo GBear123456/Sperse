@@ -1,4 +1,4 @@
-import {
+﻿import {
     Component,
     OnInit,
     AfterViewInit,
@@ -55,14 +55,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         {name: 'assign'}, {name: 'status'}, {name: 'delete'}
       ]},
       {location: 'after', items: [
-        {name: 'refresh', action: this.refreshDataGrid.bind(this)}, 
-        {name: 'download', options: {hint: this.l('Export to XLS')}, action: this.exportToXLS.bind(this)}, 
-        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)}, 
+        {name: 'refresh', action: this.refreshDataGrid.bind(this)},
+        {name: 'download', options: {hint: this.l('Export to XLS')}, action: this.exportToXLS.bind(this)},
+        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)},
         {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
       ]},
       {location: 'after', items: [
-        {name: 'box'}, 
-        {name: 'pipeline', action: this.togglePipeline.bind(this, true)}, 
+        {name: 'box'},
+        {name: 'pipeline', action: this.togglePipeline.bind(this, true)},
         {name: 'grid', action: this.togglePipeline.bind(this, false)}
       ]}
     ];
@@ -120,34 +120,34 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     ngOnInit(): void {
-        this._pipelineService.getPipelinesFullData("L").subscribe(result => {
+        this._pipelineService.getPipelinesFullData('L').subscribe(result => {
             this._filtersService.setup(this.filters = [
                 <FilterModel>{
                     component: FilterDropDownComponent,
                     caption: 'stages',
                     items: {
                         pipeline: new FilterDropDownModel({
-                            displayName: "Pipeline",
+                            displayName: 'Pipeline',
                             elements: result,
-                            displayElementExp: "name",
-                            filterField: "pipelineId",
+                            displayElementExp: 'name',
+                            filterField: 'pipelineId',
                             onElementSelect: (value, filter: FilterDropDownComponent) => {
-                                filter.items["pipeline"].selectedElement = value;
-                                filter.items["stage"].elements = value.stages;
-                                filter.items["stage"].selectedElement = null;
+                                filter.items['pipeline'].selectedElement = value;
+                                filter.items['stage'].elements = value.stages;
+                                filter.items['stage'].selectedElement = null;
                             },
                             clearSelectedElement: (filter: FilterDropDownComponent) => {
-                                filter.items["pipeline"].selectedElement = null;
-                                filter.items["stage"].elements = null;
-                                filter.items["stage"].selectedElement = null;
+                                filter.items['pipeline'].selectedElement = null;
+                                filter.items['stage'].elements = null;
+                                filter.items['stage'].selectedElement = null;
                             }
                         }),
                         stage: new FilterDropDownModel({
-                            displayName: "Stages",
-                            displayElementExp: "name",
-                            filterField: "stageId",
+                            displayName: 'Stages',
+                            displayElementExp: 'name',
+                            filterField: 'stageId',
                             onElementSelect: (value, filter: FilterDropDownComponent) => {
-                                filter.items["stage"].selectedElement = value;
+                                filter.items['stage'].selectedElement = value;
                             }
                         })
                     }
@@ -160,14 +160,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 },
                 <FilterModel>{
                     component: FilterCalendarComponent,
-                    operator: { from: "ge", to: "le" },
+                    operator: { from: 'ge', to: 'le' },
                     caption: 'creation',
                     field: 'CreationTime',
                     items: { from: '', to: '' }
                 },
                 <FilterModel>{
                     component: FilterCalendarComponent,
-                    operator: { from: "ge", to: "le" },
+                    operator: { from: 'ge', to: 'le' },
                     caption: 'updating',
                     field: 'UpdatingTime',
                     items: { from: '', to: '' }
@@ -183,11 +183,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     caption: 'paymentType',
                     items: {
                         paymentType: <FilterDropDownModel>{
-                            displayName: "Payment Type",
+                            displayName: 'Payment Type',
                             elements: null,
-                            filterField: "paymentTypeId",
+                            filterField: 'paymentTypeId',
                             onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                filter.items["paymentType"].selectedElement = event.value;
+                                filter.items['paymentType'].selectedElement = event.value;
                             }
                         }
                     }
@@ -282,8 +282,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         data[filter.field] = {};
         _.each(filter.items, (val, key) => {
             if (val) {
-                var date = moment.utc(val, 'YYYY-MM-DDT');
-                if (key.toString() === "to")
+                let date = moment.utc(val, 'YYYY-MM-DDT');
+                if (key.toString() === 'to')
                 {
                     date.add(1, 'd').add(-1, 's')
                 }

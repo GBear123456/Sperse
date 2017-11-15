@@ -107,7 +107,7 @@ export class CommonLookupModalComponent extends AppComponentBase {
                     title: this.l('Select'),
                     width: '10%',
                     display: (data: JTableFieldOptionDisplayData<NameValueDto>) => {
-                        var $span = $('<span></span>');
+                        let $span = $('<span></span>');
                         $('<button class="btn btn-default btn-xs" title="' + this.l('Select') + '"><i class="fa fa-check"></i></button>')
                             .appendTo($span)
                             .click(() => {
@@ -125,7 +125,7 @@ export class CommonLookupModalComponent extends AppComponentBase {
     }
 
     selectItem(item: NameValueDto) {
-        var boolOrPromise = this.options.canSelect(item);
+        let boolOrPromise = this.options.canSelect(item);
         if (!boolOrPromise) {
             return;
         }

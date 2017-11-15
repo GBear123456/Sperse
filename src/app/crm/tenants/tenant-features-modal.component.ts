@@ -5,7 +5,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FeatureTreeComponent } from '../shared/feature-tree.component';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'tenantFeaturesModal',
@@ -52,7 +52,7 @@ export class TenantFeaturesModalComponent extends AppComponentBase {
             return;
         }
 
-        
+
         let input = new UpdateTenantFeaturesInput();
         input.id = this.tenantId;
         input.featureValues = this.featureTree.getGrantedFeatures();
@@ -67,7 +67,7 @@ export class TenantFeaturesModalComponent extends AppComponentBase {
     }
 
     resetFeatures(): void {
-        var input = new EntityDto();
+        let input = new EntityDto();
         input.id = this.tenantId;
 
         this.resettingFeatures = true;

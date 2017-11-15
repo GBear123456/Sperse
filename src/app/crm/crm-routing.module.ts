@@ -17,7 +17,7 @@ import { EditionsComponent } from './editions/editions.component';
                     { path: 'leads', component: LeadsComponent, data: { permission: 'Pages.CRM.Leads' } },
                     { path: 'orders', component: OrdersComponent, data: { permission: 'Pages.CRM.Orders' } },
                     { path: 'editions', component: EditionsComponent, data: { permission: 'Pages.Editions' } },
-                    { path: 'tenants', component: TenantsComponent, data: { permission: 'Pages.Tenants' } }              
+                    { path: 'tenants', component: TenantsComponent, data: { permission: 'Pages.Tenants' } }
                 ]
             }
         ])
@@ -35,7 +35,7 @@ export class CrmRoutingModule {
   }
 
   hideOpenJTableDropdownMenus(): void {
-    var $dropdownMenus = $('.dropdown-menu.tether-element');
+    let $dropdownMenus = $('.dropdown-menu.tether-element');
     $dropdownMenus.css({
       'display': 'none'
     });

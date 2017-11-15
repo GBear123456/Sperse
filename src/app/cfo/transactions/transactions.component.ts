@@ -19,11 +19,11 @@ import { DxDataGridComponent } from 'devextreme-angular';
 
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
-    templateUrl: "./transactions.component.html",
-    styleUrls: ["./transactions.component.less"],
+    templateUrl: './transactions.component.html',
+    styleUrls: ['./transactions.component.less'],
     animations: [appModuleAnimation()],
     providers: [ TransactionsServiceProxy ]
 })
@@ -36,9 +36,9 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
 
     toolbarConfig = [
       {location: 'after', items: [
-        {name: 'refresh', action: this.refreshDataGrid.bind(this)}, 
-        {name: 'download', options: {hint: this.l('Export to XLS')}, action: this.exportToXLS.bind(this)}, 
-        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)}, 
+        {name: 'refresh', action: this.refreshDataGrid.bind(this)},
+        {name: 'download', options: {hint: this.l('Export to XLS')}, action: this.exportToXLS.bind(this)},
+        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)},
         {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
       ]}
     ];
@@ -57,8 +57,8 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                 url: this.getODataURL(this.dataSourceURI),
                 version: this.getODataVersion(),
                 beforeSend: function (request) {
-                    request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
-                    request.headers["Abp.TenantId"] = abp.multiTenancy.getTenantIdCookie();
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
                 }
             }
         };
@@ -79,7 +79,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                     this.filters = [
                         <FilterModel>{
                             component: FilterCalendarComponent,
-                            operator: { from: "ge", to: "le" },
+                            operator: { from: 'ge', to: 'le' },
                             caption: 'Date',
                             field: 'Date',
                             items: { from: '', to: '' }
@@ -90,7 +90,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             caption: 'Account',
                             items: {
                                 account: <FilterMultiselectDropDownModel>{
-                                    filterField: "BankAccountId",
+                                    filterField: 'BankAccountId',
                                     displayElementExp: (item: BankAccountDto) => {
                                         if (item) {
                                             return item.accountName + ' (' + item.accountNumber + ')'
@@ -109,7 +109,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                         },
                         <FilterModel>{
                             component: FilterInputsComponent,
-                            operator: { from: "ge", to: "le" },
+                            operator: { from: 'ge', to: 'le' },
                             caption: 'Amount',
                             field: 'Amount',
                             items: { from: '', to: '' }
@@ -120,8 +120,8 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             caption: 'CashflowType',
                             items: {
                                 cashflowType: <FilterMultiselectDropDownModel>{
-                                    filterField: "CashFlowTypeId",
-                                    displayElementExp: "name",
+                                    filterField: 'CashFlowTypeId',
+                                    displayElementExp: 'name',
                                     dataSource: result.cashflowTypes,
                                     columns: [{ dataField: 'name', caption: this.l('TransactionCashflowTypeFilter_Name') }],
                                 }
@@ -133,8 +133,8 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             caption: 'TransactionCategory',
                             items: {
                                 category: <FilterMultiselectDropDownModel>{
-                                    filterField: "CategoryId",
-                                    displayElementExp: "name",
+                                    filterField: 'CategoryId',
+                                    displayElementExp: 'name',
                                     dataSource: result.categories,
                                     columns: [{ dataField: 'name', caption: this.l('TransactionCategoryFilter_Name') }],
                                 }
@@ -146,8 +146,8 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             caption: 'TransactionType',
                             items: {
                                 type: <FilterMultiselectDropDownModel>{
-                                    filterField: "TypeId",
-                                    displayElementExp: "name",
+                                    filterField: 'TypeId',
+                                    displayElementExp: 'name',
                                     dataSource: result.types,
                                     columns: [{ dataField: 'name', caption: this.l('TransactionTypeFilter_Name') }],
                                 }
@@ -159,8 +159,8 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             caption: 'Currency',
                             items: {
                                 currency: <FilterMultiselectDropDownModel>{
-                                    filterField: "CurrencyId",
-                                    displayElementExp: "name",
+                                    filterField: 'CurrencyId',
+                                    displayElementExp: 'name',
                                     dataSource: result.currencies,
                                     columns: [{ dataField: 'name', caption: this.l('TransactionCurrencyFilter_Name') }],
                                 }
@@ -172,8 +172,8 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             caption: 'BusinessEntity',
                             items: {
                                 businessEntity: <FilterMultiselectDropDownModel>{
-                                    filterField: "BusinessEntityId",
-                                    displayElementExp: "name",
+                                    filterField: 'BusinessEntityId',
+                                    displayElementExp: 'name',
                                     dataSource: result.businessEntities,
                                     columns: [{ dataField: 'name', caption: this.l('TransactionBusinessEntityFilter_Name') }],
                                 }
@@ -212,10 +212,9 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         data[filter.field] = {};
         _.each(filter.items, (val, key) => {
             if (val) {
-                var date = moment.utc(val, 'YYYY-MM-DDT');
-                if (key.toString() === "to")
-                {
-                    date.add(1, 'd').add(-1, 's')
+                let date = moment.utc(val, 'YYYY-MM-DDT');
+                if (key.toString() === 'to') {
+                    date.add(1, 'd').add(-1, 's');
                 }
 
                 data[filter.field][filter.operator[key]] = date.toDate();
@@ -258,16 +257,15 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         data[filter.field] = [];
         _.each(filter.items, (val: FilterMultiselectDropDownModel, key) => {
             if (val && val.selectedElements && val.selectedElements.length) {
-                var filterParams: any[] = [];
+                let filterParams: any[] = [];
                 _.each(val.selectedElements, (el) => {
-                    if (typeof (el.id) === "string") {
+                    if (typeof (el.id) === 'string') {
                         filterParams.push("( " + filter.field + " eq '" + el.id + "' )");
-                    }
-                    else {
+                    } else {
                         filterParams.push("( " + filter.field + " eq " + el.id + " )");
                     }
                 });
-                var filterQuery = "( " + filterParams.join(' or ') + " )";
+                let filterQuery = '( ' + filterParams.join(' or ') + ' )';
                 data = filterQuery;
             }
         });

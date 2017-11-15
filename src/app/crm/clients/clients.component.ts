@@ -29,11 +29,11 @@ import query from 'devextreme/data/query';
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
-    templateUrl: "./clients.component.html",
-    styleUrls: ["./clients.component.less"],
+    templateUrl: './clients.component.html',
+    styleUrls: ['./clients.component.less'],
     animations: [appModuleAnimation()]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -52,9 +52,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         {name: 'assign'}, {name: 'status'}, {name: 'delete'}
       ]},
       {location: 'after', items: [
-        {name: 'refresh', action: this.refreshDataGrid.bind(this)}, 
-        {name: 'download', options: {hint: this.l('Export to Excel')}, action: this.exportToXLS.bind(this)}, 
-        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)}, 
+        {name: 'refresh', action: this.refreshDataGrid.bind(this)},
+        {name: 'download', options: {hint: this.l('Export to Excel')}, action: this.exportToXLS.bind(this)},
+        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)},
         {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
       ]},
       {location: 'after', items: [
@@ -78,8 +78,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 url: this.getODataURL(this.dataSourceURI),
                 version: this.getODataVersion(),
                 beforeSend: function (request) {
-                    request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
-                    request.headers["Abp.TenantId"] = abp.multiTenancy.getTenantIdCookie();
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
                 }
             }
         };
@@ -133,7 +133,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 },
                 <FilterModel> {
                     component: FilterCalendarComponent,
-                    operator: {from: "ge", to: "le"},
+                    operator: {from: 'ge', to: 'le'},
                     caption: 'creation',
                     field: 'CreationTime',
                     items: {from: '', to: ''}
@@ -186,7 +186,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     filterByStates(filter) {
         let filterData = [];
         filter.items.countryStates.forEach((val) => {
-            let parts = val.split(':');                        
+            let parts = val.split(':');
             filterData.push(parts.length == 2 ?
             {
               CountryId: parts[0],
@@ -209,8 +209,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         data[filter.field] = {};
         _.each(filter.items, (val, key) => {
             if (val) {
-                var date = moment.utc(val, 'YYYY-MM-DDT');
-                if (key.toString() === "to")
+                let date = moment.utc(val, 'YYYY-MM-DDT');
+                if (key.toString() === 'to')
                 {
                     date.add(1, 'd').add(-1, 's')
                 }

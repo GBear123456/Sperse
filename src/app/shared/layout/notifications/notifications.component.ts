@@ -71,9 +71,9 @@ export class NotificationsComponent extends AppComponentBase implements AfterVie
                                 });
                             }).appendTo($span);
 
-                        var $i = $('<i class="fa" >').appendTo($button);
+                        let $i = $('<i class="fa" >').appendTo($button);
 
-                        var notificationState = this._userNotificationHelper.format(<any>data.record).state;
+                        let notificationState = this._userNotificationHelper.format(<any>data.record).state;
 
                         if (notificationState === 'READ') {
                             $button.attr('disabled', 'disabled');
@@ -91,8 +91,8 @@ export class NotificationsComponent extends AppComponentBase implements AfterVie
                     title: this.l('Notification'),
                     width: '70%',
                     display: (data: JTableFieldOptionDisplayData<UserNotification>) => {
-                        var formattedRecord = this._userNotificationHelper.format(<any>data.record, false);
-                        var rowClass = this.getRowClass(formattedRecord);
+                        let formattedRecord = this._userNotificationHelper.format(<any>data.record, false);
+                        let rowClass = this.getRowClass(formattedRecord);
 
                         if (formattedRecord.url) {
                             return $('<a href="' + formattedRecord.url + '" class="' + rowClass + '">' + abp.utils.truncateStringWithPostfix(formattedRecord.text, 120) + '</a>');
@@ -105,9 +105,9 @@ export class NotificationsComponent extends AppComponentBase implements AfterVie
                     title: this.l('CreationTime'),
                     width: '20%',
                     display: (data: JTableFieldOptionDisplayData<UserNotification>) => {
-                        var formattedRecord = this._userNotificationHelper.format(<any>data.record);
-                        var rowClass = this.getRowClass(formattedRecord);
-                        var $span = $('<span title="' + moment(data.record.notification.creationTime).format("llll") + '" class="' + rowClass + '">' + moment(data.record.notification.creationTime).fromNow() + '</span> &nbsp;');
+                        let formattedRecord = this._userNotificationHelper.format(<any>data.record);
+                        let rowClass = this.getRowClass(formattedRecord);
+                        let $span = $('<span title="' + moment(data.record.notification.creationTime).format("llll") + '" class="' + rowClass + '">' + moment(data.record.notification.creationTime).fromNow() + '</span> &nbsp;');
                         $span.timeago();
                         return $span;
                     }

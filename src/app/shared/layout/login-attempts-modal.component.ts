@@ -5,7 +5,7 @@ import { AppConsts } from '@shared/AppConsts';
 
 import { UserLoginServiceProxy, ProfileServiceProxy, UserLoginAttemptDto } from '@shared/service-proxies/service-proxies';
 
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
     selector: 'loginAttemptsModal',
@@ -16,7 +16,7 @@ export class LoginAttemptsModalComponent extends AppComponentBase {
     @ViewChild('loginAttemptsModal') modal: ModalDirective;
 
     userLoginAttempts: UserLoginAttemptDto[];
-    profilePicture: string = "/assets/common/images/default-profile-picture.png";
+    profilePicture: string = '/assets/common/images/default-profile-picture.png';
 
     constructor(
         injector: Injector,

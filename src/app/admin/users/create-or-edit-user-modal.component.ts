@@ -4,7 +4,7 @@ import { UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserI
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'createOrEditUserModal',
@@ -24,8 +24,8 @@ export class CreateOrEditUserModalComponent extends AppComponentBase {
     active: boolean = false;
     saving: boolean = false;
     canChangeUserName: boolean = true;
-    isTwoFactorEnabled: boolean = this.setting.getBoolean("Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled");
-    isLockoutEnabled: boolean = this.setting.getBoolean("Abp.Zero.UserManagement.UserLockOut.IsEnabled");
+    isTwoFactorEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled');
+    isLockoutEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
 
     user: UserEditDto = new UserEditDto();
@@ -77,23 +77,23 @@ export class CreateOrEditUserModalComponent extends AppComponentBase {
         this.passwordComplexityInfo = '<ul>';
 
         if (this.passwordComplexitySetting.requireDigit) {
-            this.passwordComplexityInfo += '<li>' + this.l("PasswordComplexity_RequireDigit_Hint") + '</li>';
+            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequireDigit_Hint') + '</li>';
         }
 
         if (this.passwordComplexitySetting.requireLowercase) {
-            this.passwordComplexityInfo += '<li>' + this.l("PasswordComplexity_RequireLowercase_Hint") + '</li>';
+            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequireLowercase_Hint') + '</li>';
         }
 
         if (this.passwordComplexitySetting.requireUppercase) {
-            this.passwordComplexityInfo += '<li>' + this.l("PasswordComplexity_RequireUppercase_Hint") + '</li>';
+            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequireUppercase_Hint') + '</li>';
         }
 
         if (this.passwordComplexitySetting.requireNonAlphanumeric) {
-            this.passwordComplexityInfo += '<li>' + this.l("PasswordComplexity_RequireNonAlphanumeric_Hint") + '</li>';
+            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequireNonAlphanumeric_Hint') + '</li>';
         }
 
         if (this.passwordComplexitySetting.requiredLength) {
-            this.passwordComplexityInfo += '<li>' + this.l("PasswordComplexity_RequiredLength_Hint", this.passwordComplexitySetting.requiredLength) + '</li>';
+            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequiredLength_Hint', this.passwordComplexitySetting.requiredLength) + '</li>';
         }
 
         this.passwordComplexityInfo += '</ul>';
@@ -101,14 +101,14 @@ export class CreateOrEditUserModalComponent extends AppComponentBase {
 
     getProfilePicture(profilePictureId: string): void {
         if (!profilePictureId) {
-            this.profilePicture = "/assets/common/images/default-profile-picture.png";
+            this.profilePicture = '/assets/common/images/default-profile-picture.png';
         } else {
             this._profileService.getProfilePictureById(profilePictureId).subscribe(result => {
 
                 if (result && result.profilePicture) {
                     this.profilePicture = 'data:image/jpeg;base64,' + result.profilePicture;
                 } else {
-                    this.profilePicture = "/assets/common/images/default-profile-picture.png";
+                    this.profilePicture = '/assets/common/images/default-profile-picture.png';
                 }
             });
         }
@@ -119,7 +119,7 @@ export class CreateOrEditUserModalComponent extends AppComponentBase {
     }
 
     save(): void {
-        var input = new CreateOrUpdateUserInput();
+        let input = new CreateOrUpdateUserInput();
 
         input.user = this.user;
         input.setRandomPassword = this.setRandomPassword;

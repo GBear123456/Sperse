@@ -9,12 +9,12 @@ import { FileDownloadService } from '@shared/utils/file-download.service';
 import { AuditLogDetailModalComponent } from './audit-log-detail-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import * as moment from "moment";
+import * as moment from 'moment';
 import { JTableHelper } from '@shared/helpers/JTableHelper';
 
 @Component({
-    templateUrl: "./audit-logs.component.html",
-    styleUrls: ["./audit-logs.component.less"],
+    templateUrl: './audit-logs.component.html',
+    styleUrls: ['./audit-logs.component.less'],
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
@@ -23,8 +23,8 @@ export class AuditLogsComponent extends AppComponentBase implements AfterViewIni
     @ViewChild('auditLogDetailModal') auditLogDetailModal: AuditLogDetailModalComponent;
 
     //Filters
-    public startDate: moment.Moment = moment().startOf("day");
-    public endDate: moment.Moment = moment().endOf("day");
+    public startDate: moment.Moment = moment().startOf('day');
+    public endDate: moment.Moment = moment().endOf('day');
     public username: string;
     public serviceName: string;
     public methodName: string;
@@ -88,7 +88,7 @@ export class AuditLogsComponent extends AppComponentBase implements AfterViewIni
                         width: '5%',
                         sorting: false,
                         display: function (data) {
-                            var $div = $('<div class=\"text-center\"></div>');
+                            let $div = $('<div class=\'text-center\'></div>');
 
                             $div.append('<button class="btn btn-default btn-xs"><i class="fa fa-search"></i></button>')
                                 .click(function () {
@@ -103,7 +103,7 @@ export class AuditLogsComponent extends AppComponentBase implements AfterViewIni
                         width: '5%',
                         sorting: false,
                         display: function (data) {
-                            var $div = $('<div class=\"text-center\"></div>');
+                            let $div = $('<div class="text-center"></div>');
 
                             if (data.record.exception) {
                                 $div.append('<i class="fa fa-warning font-yellow-gold"></i>');

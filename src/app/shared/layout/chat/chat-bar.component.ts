@@ -45,7 +45,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
 
     friends: ChatFriendDto[];
     currentUser: UserLoginInfoDto = this._appSessionService.user;
-    profilePicture: string = "/assets/common/images/default-profile-picture.png";
+    profilePicture: string = '/assets/common/images/default-profile-picture.png';
     chatMessage: string = '';
 
     tenantToTenantChatAllowed: boolean = false;
@@ -153,8 +153,8 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
             return;
         }
 
-        var unreadMessages = _.filter(user.messages, m => m.readState === AppChatMessageReadState.Unread);
-        var unreadMessageIds = _.map(unreadMessages, 'id');
+        let unreadMessages = _.filter(user.messages, m => m.readState === AppChatMessageReadState.Unread);
+        let unreadMessageIds = _.map(unreadMessages, 'id');
 
         if (!unreadMessageIds.length) {
             return;
@@ -176,7 +176,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     loadMessages(user: ChatFriendDto, callback: any): void {
         this.loadingPreviousUserMessages = true;
 
-        var minMessageId = undefined;
+        let minMessageId = undefined;
         if (user.messages && user.messages.length) {
             minMessageId = _.min(_.map(user.messages, m => m.id));
         }
@@ -207,7 +207,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     addFriendSelected(item: NameValueDto): void {
-        var userId = item.value;
+        let userId = item.value;
         let input = new CreateFriendshipRequestInput();
         input.userId = parseInt(userId);
         input.tenantId = this._appSessionService.tenant !== null ? this._appSessionService.tenant.id : null;
@@ -239,7 +239,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     getFriendOrNull(userId: number, tenantId?: number): ChatFriendDto {
-        var friends = _.filter(this.friends, friend => friend.friendUserId === userId && friend.friendTenantId === tenantId);
+        let friends = _.filter(this.friends, friend => friend.friendUserId === userId && friend.friendTenantId === tenantId);
         if (friends.length) {
             return friends[0];
         }
@@ -291,8 +291,8 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
 
     scrollToBottom(): void {
         setTimeout(() => {
-            var $scrollArea = $('.page-quick-sidebar-chat-user-messages');
-            var scrollToVal = $scrollArea.prop('scrollHeight') + 'px';
+            let $scrollArea = $('.page-quick-sidebar-chat-user-messages');
+            let scrollToVal = $scrollArea.prop('scrollHeight') + 'px';
             $scrollArea.slimScroll({ scrollTo: scrollToVal });
         }, 100);
     }
@@ -380,7 +380,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
             self.selectedUser = new ChatFriendDto();
         });
 
-        var $sidebarTogglers = $('.dropdown-quick-sidebar-toggler a, .page-quick-sidebar-toggler, .quick-sidebar-toggler');
+        let $sidebarTogglers = $('.dropdown-quick-sidebar-toggler a, .page-quick-sidebar-toggler, .quick-sidebar-toggler');
         $sidebarTogglers.on('click', () => {
             this.isOpen = $('body').hasClass('page-quick-sidebar-open');
         });
@@ -397,7 +397,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     ngAfterViewInit(): void {
-        this.$_chatMessageInput = $("#ChatMessage");
+        this.$_chatMessageInput = $('#ChatMessage');
     }
 
     adjustNotifyPosition(): void {
@@ -422,7 +422,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         let self = this;
 
         abp.event.on('app.chat.messageReceived', message => {
-            var user = this.getFriendOrNull(message.targetUserId, message.targetTenantId);
+            let user = this.getFriendOrNull(message.targetUserId, message.targetTenantId);
             if (!user) {
                 return;
             }
@@ -473,7 +473,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         });
 
         abp.event.on('app.chat.userConnectionStateChanged', data => {
-            var user = this.getFriendOrNull(data.friend.userId, data.friend.tenantId);
+            let user = this.getFriendOrNull(data.friend.userId, data.friend.tenantId);
             if (!user) {
                 return;
             }
@@ -482,7 +482,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         });
 
         abp.event.on('app.chat.userStateChanged', data => {
-            var user = this.getFriendOrNull(data.friend.userId, data.friend.tenantId);
+            let user = this.getFriendOrNull(data.friend.userId, data.friend.tenantId);
             if (!user) {
                 return;
             }
@@ -491,7 +491,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         });
 
         abp.event.on('app.chat.allUnreadMessagesOfUserRead', data => {
-            var user = this.getFriendOrNull(data.friend.userId, data.friend.tenantId);
+            let user = this.getFriendOrNull(data.friend.userId, data.friend.tenantId);
             if (!user) {
                 return;
             }
@@ -513,13 +513,13 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
             });
         });
     }
-    
+
     init(): void {
         this.registerEvents();
         this.userLookupModal.configure({
             title: this.l('SelectAUser'),
             dataSource: (skipCount: number, maxResultCount: number, filter: string, tenantId?: number) => {
-                var input = new FindUsersInput();
+                let input = new FindUsersInput();
                 input.filter = filter;
                 input.maxResultCount = maxResultCount;
                 input.skipCount = skipCount;
