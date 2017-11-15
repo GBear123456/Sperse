@@ -16,7 +16,8 @@ import { FilterDatesComponent } from './dates/filter-dates.component';
 import { FilterCalendarComponent } from './calendar/filter-calendar.component';
 import { FilterMultiselectDropDownComponent } from './multiselect-dropdown/filter-multiselect-dropdown.component';
 
-import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule, DxDropDownBoxModule, DxDataGridModule } from 'devextreme-angular';
+import { DxTreeListModule, DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, 
+    DxDateBoxModule, DxDropDownBoxModule, DxDataGridModule } from 'devextreme-angular';
 
 @NgModule({
     imports: [
@@ -28,6 +29,7 @@ import { DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxDateBoxModule, 
         DxDateBoxModule,
         DxDropDownBoxModule,
         DxDataGridModule,
+        DxTreeListModule,
         CommonModule
     ],
     declarations: [

@@ -1,19 +1,16 @@
+<!--    [searchPanel]="{visible: true, width: 393, placeholder: 'Country and States'}"  -->
 <div class="wrapper">
-  <dx-select-box
-    name="country"
-    [dataSource]="countries"
-    [(value)]="country"
-    (onValueChanged)="onChangeCountry($event)"
-    placeholder="{{l('Country')}}"
-    [searchEnabled]="true">
-  </dx-select-box>
-
-  <dx-select-box
-    name="state"    
-    [dataSource]="states"
-    [(value)]="state"
-    (onValueChanged)="onChangeState($event)"
-    placeholder="{{l('State')}}"
-    [searchEnabled]="true">
-  </dx-select-box>
+  <dx-tree-list 
+    [dataSource]="countryStates"
+    [dataStructure]="tree"
+    keyExpr="code"
+    parentIdExpr="parent"
+    [loadPanel]="{enabled: true, showPane: true, showIndicator: true}"
+    [selection]="{allowSelectAll: false, mode: 'multiple'}"
+    (onRowExpanding)="onExpand($event)"
+    (onSelectionChanged)="onSelect($event)"
+    (onInitialized)="onInitialized($event)"
+    scrolling="{mode: 'virtual', showScrollbar: 'always'}">
+      <dxi-column dataField="name" caption="Country States"></dxi-column>
+  </dx-tree-list>
 </div>
