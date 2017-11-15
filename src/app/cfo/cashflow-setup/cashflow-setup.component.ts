@@ -6,8 +6,8 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { SetupStepComponent } from '../shared/setup-steps/setup-steps.component';
 
 @Component({
-    templateUrl: "./cashflow-setup.component.html",
-    styleUrls: ["./cashflow-setup.component.less"],
+    templateUrl: './cashflow-setup.component.html',
+    styleUrls: ['./cashflow-setup.component.less'],
     animations: [appModuleAnimation()]
 })
 export class CashflowSetupComponent extends AppComponentBase implements OnInit {

@@ -5,7 +5,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { PermissionTreeComponent } from '../shared/permission-tree.component';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'createOrEditRoleModal',
@@ -49,7 +49,7 @@ export class CreateOrEditRoleModalComponent extends AppComponentBase {
     save(): void {
         let self = this;
 
-        var input = new CreateOrUpdateRoleInput();
+        let input = new CreateOrUpdateRoleInput();
         input.role = self.role;
         input.grantedPermissionNames = self.permissionTree.getGrantedPermissionNames();
 

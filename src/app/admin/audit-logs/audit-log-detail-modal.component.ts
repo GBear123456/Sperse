@@ -36,7 +36,7 @@ export class AuditLogDetailModalComponent extends AppComponentBase {
     getFormattedParameters(): string {
         let self = this;
         try {
-            var json = JSON.parse(self.auditLog.parameters);
+            let json = JSON.parse(self.auditLog.parameters);
             return JSON.stringify(json, null, 4);
         } catch (e) {
             return self.auditLog.parameters;

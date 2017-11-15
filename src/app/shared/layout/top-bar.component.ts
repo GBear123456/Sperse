@@ -11,16 +11,16 @@ import { AppService } from '@app/app.service';
 
 @Component({
   templateUrl: './top-bar.component.html',
-	styleUrls: ['./top-bar.component.less'],
+  styleUrls: ['./top-bar.component.less'],
   selector: 'top-bar',
   host: {
-    '(window:resize)': "toogleNavMenu()"
+    '(window:resize)': 'toogleNavMenu()'
   }
 })
 export class TopBarComponent extends AppComponentBase {
   config: any = {};
   selectedIndex: number;
-  visibleMenuItemsWidth: number = 0;
+  visibleMenuItemsWidth: 0;
   showAdaptiveMenu: boolean;
   menu: PanelMenu = <PanelMenu>{
     items: []
@@ -34,7 +34,7 @@ export class TopBarComponent extends AppComponentBase {
     super(injector);
 
     this.router.events.subscribe(event => {
-      if(event instanceof NavigationEnd) {
+      if (event instanceof NavigationEnd) {
         setTimeout(() => {
           this.menu.items.forEach((item, i) => {
             if (this.router.url == item.route)
@@ -49,7 +49,7 @@ export class TopBarComponent extends AppComponentBase {
       this.config = config;
       this.visibleMenuItemsWidth = 0;
       this.showAdaptiveMenu = undefined;
-      this.menu = new PanelMenu("MainMenu", "MainMenu", 
+      this.menu = new PanelMenu('MainMenu', 'MainMenu',
         this.initMenu(config['navigation'], 0)
       );
     });
@@ -59,9 +59,9 @@ export class TopBarComponent extends AppComponentBase {
     let navList: PanelMenuItem[] = [];
     config.forEach((val) => {
       let value = val.slice(0);
-      if (val.length == 5)
+      if (val.length === 5)
         value.push(this.initMenu(value.pop(), ++level));
-      let item = new PanelMenuItem(this.l(value[0]), 
+      let item = new PanelMenuItem(this.l(value[0]),
         value[1], value[2], value[3], value[4]);
       item.visible = this.showMenuItem(item);
       if (!level && item.visible)
@@ -71,23 +71,22 @@ export class TopBarComponent extends AppComponentBase {
     return navList;
   }
 
-  navigate(event, index){   
+  navigate(event, index){
     if (event.itemData.route)
       this.router.navigate([event.itemData.route]);
   }
 
-  toogleNavMenu() {    
-    this.showAdaptiveMenu = 
-      window.innerWidth - 550 < this.visibleMenuItemsWidth;
+  toogleNavMenu() {
+    this.showAdaptiveMenu = window.innerWidth - 550 < this.visibleMenuItemsWidth;
   }
 
-	private checkMenuItemPermission(item): boolean {
+  private checkMenuItemPermission(item): boolean {
     //!!VP Should be considered on module configuration level
     if (this.config['name'] == 'CRM') {
       if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
-        if (["Editions"].indexOf(item.text) >= 0)
+        if (['Editions'].indexOf(item.text) >= 0)
           return false;
-      } else if (["Products"].indexOf(item.text) >= 0)
+      } else if (['Products'].indexOf(item.text) >= 0)
         return false;
     }
 
@@ -102,7 +101,7 @@ export class TopBarComponent extends AppComponentBase {
   }
 
   showMenuItem(item): boolean {
-    if (item.permissionName === 'Pages.Administration.Tenant.SubscriptionManagement' 
+    if (item.permissionName === 'Pages.Administration.Tenant.SubscriptionManagement'
       && this._appSessionService.tenant && !this._appSessionService.tenant.edition
     ) {
         return false;

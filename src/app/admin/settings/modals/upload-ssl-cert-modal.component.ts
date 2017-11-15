@@ -41,8 +41,8 @@ export class UploadSSLCertificateModalComponent extends AppComponentBase {
         if (!this.validate(event)) return;
         this.saving = true;
 
-        var file = this.uploader.value[0];
-        var reader = new FileReader();
+        let file = this.uploader.value[0];
+        let reader = new FileReader();
 
         reader.onloadend = e => {
             this.model.base64EncodedCertificate = btoa(reader.result);

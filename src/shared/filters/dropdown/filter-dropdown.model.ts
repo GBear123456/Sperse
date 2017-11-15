@@ -8,7 +8,7 @@ export class FilterDropDownModel extends FilterItemModel {
     elements: any;
     selectedElement: any;
     filterField: any;
-    
+
     onElementSelect: (event, element) => void;
     clearSelectedElement: (filter) => void;
 
@@ -16,9 +16,9 @@ export class FilterDropDownModel extends FilterItemModel {
         super();
         Object.assign(this, init);
     }
-    
+
     setValue(value: any, filter: FilterDropDownComponent) {
-        var element = this.elements.find(x => x.id == value);
+        let element = this.elements.find(x => x.id == value);
         if (element)
             this.onElementSelect(element, filter);
     }

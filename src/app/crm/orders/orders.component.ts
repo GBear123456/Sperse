@@ -1,4 +1,4 @@
-import {
+﻿import {
     Component,
     OnInit,
     AfterViewInit,
@@ -31,11 +31,12 @@ import query from 'devextreme/data/query';
 import 'devextreme/data/odata/store';
 
 import * as _ from 'underscore';
-import * as moment from "moment";
+import * as _string from 'underscore.string';
+import * as moment from 'moment';
 
 @Component({
-    templateUrl: "./orders.component.html",
-    styleUrls: ["./orders.component.less"],
+    templateUrl: './orders.component.html',
+    styleUrls: ['./orders.component.less'],
     animations: [appModuleAnimation()],
     providers: [ OrderServiceProxy ]
 })
@@ -43,7 +44,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     items: any;
     showPipeline = true;
-    firstRefresh: boolean = false;
+    firstRefresh = false;
     gridDataSource: any = {};
     private rootComponent: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
@@ -58,14 +59,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         {name: 'assign'}, {name: 'status'}, {name: 'delete'}
       ]},
       {location: 'after', items: [
-        {name: 'refresh', action: this.refreshDataGrid.bind(this)}, 
-        {name: 'download', options: {hint: this.l('Export to XLS')}, action: this.exportToXLS.bind(this)}, 
-        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)}, 
+        {name: 'refresh', action: this.refreshDataGrid.bind(this)},
+        {name: 'download', options: {hint: this.l('Export to XLS')}, action: this.exportToXLS.bind(this)},
+        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)},
         {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
       ]},
       {location: 'after', items: [
-        {name: 'box'}, 
-        {name: 'pipeline', action: this.togglePipeline.bind(this, true)}, 
+        {name: 'box'},
+        {name: 'pipeline', action: this.togglePipeline.bind(this, true)},
         {name: 'grid', action: this.togglePipeline.bind(this, false)}
       ]}
     ];
@@ -88,8 +89,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 url: this.getODataURL(this.dataSourceURI),
                 version: 4,
                 beforeSend: function (request) {
-                    request.headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
-                    request.headers["Abp.TenantId"] = abp.multiTenancy.getTenantIdCookie();
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
                 },
                 paginate: true
             }
@@ -127,7 +128,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this._filtersService.setup(this.filters = [
                 <FilterModel>{
                     component: FilterCalendarComponent,
-                    operator: { from: "ge", to: "le" },
+                    operator: { from: 'ge', to: 'le' },
                     caption: 'creation',
                     field: 'CreationTime',
                     items: { from: '', to: '' }
@@ -137,28 +138,28 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     caption: 'orderStages',
                     items: {
                         pipeline: <FilterDropDownModel>{
-                            displayName: "Pipeline",
+                            displayName: 'Pipeline',
                             elements: result.pipelines,
-                            displayElementExp: "name",
-                            filterField: "pipelineId",
+                            displayElementExp: 'name',
+                            filterField: 'pipelineId',
                             onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                filter.items["pipeline"].selectedElement = event.value;
-                                filter.items["stage"].elements = event.value.stages;
-                                filter.items["stage"].selectedElement = null;
+                                filter.items['pipeline'].selectedElement = event.value;
+                                filter.items['stage'].elements = event.value.stages;
+                                filter.items['stage'].selectedElement = null;
                             },
                             clearSelectedElement: (filter: FilterDropDownComponent) => {
-                                filter.items["pipeline"].selectedElement = null;
-                                filter.items["stage"].elements = null;
-                                filter.items["stage"].selectedElement = null;
+                                filter.items['pipeline'].selectedElement = null;
+                                filter.items['stage'].elements = null;
+                                filter.items['stage'].selectedElement = null;
 
                             }
                         },
                         stage: <FilterDropDownModel>{
-                            displayName: "Stages",
-                            displayElementExp: "name",
-                            filterField: "stageId",
+                            displayName: 'Stages',
+                            displayElementExp: 'name',
+                            filterField: 'stageId',
                             onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                filter.items["stage"].selectedElement = event.value;
+                                filter.items['stage'].selectedElement = event.value;
                             }
                         }
                     }
@@ -169,8 +170,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     caption: 'BillingSubscriptionStatus',
                     items: {
                         cashflowType: <FilterMultiselectDropDownModel>{
-                            filterField: "BillingSubscriptionStatusId",
-                            displayElementExp: "name",
+                            filterField: 'BillingSubscriptionStatusId',
+                            displayElementExp: 'name',
                             dataSource: result.subscriptionStatuses,
                             columns: [{ dataField: 'name', caption: this.l('OrderFilters_BillingStatus') }],
                         }
@@ -181,11 +182,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     caption: 'paymentType',
                     items: {
                         paymentType: <FilterDropDownModel>{
-                            displayName: "Payment Type",
+                            displayName: 'Payment Type',
                             elements: null,
-                            filterField: "paymentTypeId",
+                            filterField: 'paymentTypeId',
                             onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                filter.items["paymentType"].selectedElement = event.value;
+                                filter.items['paymentType'].selectedElement = event.value;
                             }
                         }
                     }
@@ -293,7 +294,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         let data = {};
         data[filter.field] = {};
         _.each(filter.items, (val: FilterDropDownModel, key) => {
-            val && val.filterField && val.selectedElement && (data[this.capitalize(val.filterField)] = val.selectedElement.id);
+            return val && val.filterField && val.selectedElement && (data[this.capitalize(val.filterField)] = val.selectedElement.id);
         });
         return data;
     }
@@ -303,8 +304,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         data[filter.field] = {};
         _.each(filter.items, (val, key) => {
             if (val) {
-                var date = moment.utc(val, 'YYYY-MM-DDT');
-                if (key.toString() === "to") {
+                let date = moment.utc(val, 'YYYY-MM-DDT');
+                if (key.toString() === 'to') {
                     date.add(1, 'd').add(-1, 's')
                 }
 
@@ -320,16 +321,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         data[filter.field] = [];
         _.each(filter.items, (val: FilterMultiselectDropDownModel, key) => {
             if (val && val.selectedElements && val.selectedElements.length) {
-                var filterParams: any[] = [];
+                let filterParams: any[] = [];
                 _.each(val.selectedElements, (el) => {
-                    if (typeof (el.id) === "string") {
-                        filterParams.push("( " + filter.field + " eq '" + el.id + "' )");
-                    }
-                    else {
-                        filterParams.push("( " + filter.field + " eq " + el.id + " )");
-                    }
+                    filterParams.push('( ' + filter.field + ' eq ' + (typeof (el.id) === 'string' ? _string.quote(el.id) : '' ) + ' )');
                 });
-                var filterQuery = "( " + filterParams.join(' or ') + " )";
+                let filterQuery = '( ' + filterParams.join(' or ') + ' )';
                 data = filterQuery;
             }
         });

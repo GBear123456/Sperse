@@ -2,14 +2,14 @@
 import { Router } from '@angular/router';
 import { LanguageServiceProxy, ApplicationLanguageListDto, SetDefaultLanguageInput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import * as moment from "moment";
+import * as moment from 'moment';
 import { JTableHelper } from '@shared/helpers/JTableHelper';
 import { CreateOrEditLanguageModalComponent } from './create-or-edit-language-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 @Component({
-    templateUrl: "./languages.component.html",
-    styleUrls: ["./languages.component.less"],
+    templateUrl: './languages.component.html',
+    styleUrls: ['./languages.component.less'],
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })

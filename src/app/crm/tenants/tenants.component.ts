@@ -9,11 +9,11 @@ import { JTableHelper } from '@shared/helpers/JTableHelper';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
-    templateUrl: "./tenants.component.html",
-    styleUrls: ["./tenants.component.less"],
+    templateUrl: './tenants.component.html',
+    styleUrls: ['./tenants.component.less'],
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
@@ -70,7 +70,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
             this.filters.creationDateRangeActive = true;
             this.filters.creationDateEnd = moment(this._activatedRoute.snapshot.queryParams['creationDateEnd']);
         } else {
-            this.filters.creationDateEnd = moment().endOf("day");
+            this.filters.creationDateEnd = moment().endOf('day');
         }
     }
 
@@ -80,7 +80,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
         this.impersonateUserLookupModal.configure({
             title: this.l('SelectAUser'),
             dataSource: (skipCount: number, maxResultCount: number, filter: string, tenantId?: number) => {
-                var input = new FindUsersInput();
+                let input = new FindUsersInput();
                 input.filter = filter;
                 input.maxResultCount = maxResultCount;
                 input.skipCount = skipCount;
@@ -92,8 +92,8 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
 
     ngAfterViewInit(): void {
         let self = this;
-        
-        var initTenantsTable = () => {
+
+        let initTenantsTable = () => {
             self._$tenantsTable = $('#TenantsTable');
             self._$tenantsTable.jtable({
                 title: self.l('Tenants'),
@@ -110,7 +110,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
                                 self.filters.creationDateRangeActive ? self.filters.creationDateStart : undefined,
                                 self.filters.creationDateRangeActive ? self.filters.creationDateEnd : undefined,
                                 self.filters.selectedEditionId,
-                                self.filters.selectedEditionId !== undefined && (self.filters.selectedEditionId + "") !== "-1",
+                                self.filters.selectedEditionId !== undefined && (self.filters.selectedEditionId + '') !== '-1',
                                 jtParams.jtSorting,
                                 jtParams.jtPageSize,
                                 jtParams.jtStartIndex
@@ -135,7 +135,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
                         items: [{
                             text: this.l('LoginAsThisTenant'),
                             visible: (): boolean => {
-                                return self.permission.isGranted("Pages.Tenants.Impersonation");
+                                return self.permission.isGranted('Pages.Tenants.Impersonation');
                             },
                             enabled(data) {
                                 return data.record.isActive;
@@ -147,7 +147,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
                         }, {
                             text: this.l('Edit'),
                             visible: (): boolean => {
-                                return self.permission.isGranted("Pages.Tenants.Edit");
+                                return self.permission.isGranted('Pages.Tenants.Edit');
                             },
                             action(data) {
                                 self.editTenantModal.show(data.record.id);
@@ -155,7 +155,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
                         }, {
                             text: this.l('Features'),
                             visible: (): boolean => {
-                                return self.permission.isGranted("Pages.Tenants.ChangeFeatures");
+                                return self.permission.isGranted('Pages.Tenants.ChangeFeatures');
                             },
                             action(data) {
                                 self.tenantFeaturesModal.show(data.record.id, data.record.name);
@@ -163,7 +163,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
                         }, {
                             text: this.l('Delete'),
                             visible: (): boolean => {
-                                return self.permission.isGranted("Pages.Tenants.Delete");
+                                return self.permission.isGranted('Pages.Tenants.Delete');
                             },
                             action(data) {
                                 self.deleteTenant(data.record);
@@ -180,7 +180,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
                     tenancyName: {
                         title: self.l('TenancyCodeName'),
                         display(data) {
-                            var $div = $('<div> ' + data.record.tenancyName + '</div>');
+                            let $div = $('<div> ' + data.record.tenancyName + '</div>');
                             if (data.record.hasOwnDatabase) {
                                 $div.prepend($("<i class='fa fa-database' title=\"" + self.l('HasOwnDatabase') + "\"></i>"));
                             }
@@ -205,7 +205,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
                                 return moment(data.record.subscriptionEndDateUtc).format('L');
                             }
 
-                            return "";
+                            return '';
                         }
                     },
                     isActive: {

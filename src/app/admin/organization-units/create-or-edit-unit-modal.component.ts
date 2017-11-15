@@ -3,7 +3,7 @@ import { ModalDirective } from 'ngx-bootstrap';
 import { OrganizationUnitServiceProxy, CreateOrganizationUnitInput, UpdateOrganizationUnitInput, OrganizationUnitDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 export interface IOrganizationUnitOnEdit {
     id?: number;
@@ -39,7 +39,7 @@ export class CreateOrEditUnitModalComponent extends AppComponentBase {
     onShown(): void {
         $(this.organizationUnitDisplayNameInput.nativeElement).focus();
     }
-    
+
     show(organizationUnit: IOrganizationUnitOnEdit): void {
         this.organizationUnit = organizationUnit;
         this.active = true;

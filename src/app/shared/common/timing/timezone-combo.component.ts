@@ -6,10 +6,10 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     selector: 'timezone-combo',
     template:
     `<select #TimeZoneCombobox
-        class="form-control"
-        [(ngModel)]="selectedTimeZone"
-        (ngModelChange)="selectedTimeZoneChange.emit($event)">
-            <option *ngFor="let timeZone of timeZones" [value]="timeZone.value">{{timeZone.name}}</option>
+        class='form-control'
+        [(ngModel)]='selectedTimeZone'
+        (ngModelChange)='selectedTimeZoneChange.emit($event)'>
+            <option *ngFor='let timeZone of timeZones' [value]='timeZone.value'>{{timeZone.name}}</option>
     </select>`
 })
 export class TimeZoneComboComponent extends AppComponentBase implements OnInit {
@@ -29,7 +29,7 @@ export class TimeZoneComboComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
-        var self = this;
+        let self = this;
         self._timingService.getTimezones(self.defaultTimezoneScope).subscribe(result => {
             self.timeZones = result.items;
         });

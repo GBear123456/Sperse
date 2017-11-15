@@ -3,7 +3,7 @@ import { ModalDirective } from 'ngx-bootstrap';
 import { LanguageServiceProxy, ApplicationLanguageEditDto, UpdateLanguageTextInput, ComboboxItemDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'editTextModal',

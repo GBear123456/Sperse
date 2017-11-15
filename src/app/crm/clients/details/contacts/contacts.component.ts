@@ -5,7 +5,7 @@ import { ConfirmDialog } from '@shared/common/dialogs/confirm/confirm-dialog.com
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
-  ContactPhoneServiceProxy, CustomerInfoDto, CreateContactEmailInput, 
+  ContactPhoneServiceProxy, CustomerInfoDto, CreateContactEmailInput,
   UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -16,29 +16,29 @@ import { CustomersServiceProxy, ContactEmailServiceProxy, ContactEmailDto, Conta
 export class ContactsComponent extends AppComponentBase implements OnInit {
   data: {
     customerInfo: CustomerInfoDto
-  };  
+  };
   isEditAllowed: boolean = false;
-  
+
   constructor(
     injector: Injector,
     public dialog: MdDialog,
     private _customerService: CustomersServiceProxy,
-    private _contactEmailService: ContactEmailServiceProxy, 
+    private _contactEmailService: ContactEmailServiceProxy,
     private _contactPhoneService: ContactPhoneServiceProxy
-  ) { 
+  ) {
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
     this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
   }
 
   getDialogPossition(event) {
-    let shift = 160, parent = 
-      event.target.closest("ul");        
+    let shift = 160, parent =
+      event.target.closest('ul');
 
     if (parent) {
       let rect = parent.getBoundingClientRect();
       return {
-        top: (rect.top + rect.height / 2 - shift) + 'px', 
+        top: (rect.top + rect.height / 2 - shift) + 'px',
         left: (rect.left + rect.width / 2) + 'px'
       };
     } else
@@ -54,11 +54,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
 
   showDialog(field, data, event, index) {
     let dialogData = {
-      field: field, 
+      field: field,
       id: data && data.id,
       value: data && data[field],
       name: this.getFieldName(field),
-      contactId: data && data.contactId 
+      contactId: data && data.contactId
         || this.data.customerInfo
         .primaryContactInfo.id,
       emailAddress: data && data.emailAddress,
@@ -73,7 +73,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
           this.deleteEmailAddress(data, event, index);
         else
           this.deletePhoneNumber(data, event, index);
-      } 
+      }
     };
     this.dialog.closeAll();
     this.dialog.open(EditContactDialog, {
@@ -81,18 +81,18 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
       hasBackdrop: false,
       position: this.getDialogPossition(event)
     }).afterClosed().subscribe(result => {
-      if (result) 
+      if (result)
         this.updateDataField(field, data, dialogData);
     });
     event.stopPropagation();
   }
 
   updateDataField(field, dataItem, updatedData) {
-    let name = this.getFieldName(field), 
+    let name = this.getFieldName(field),
       isPhoneDialog = (name == 'Phone');
     this['_contact' + name + 'Service']
       [(dataItem ? 'update': 'create') + 'Contact' + name](
-        (isPhoneDialog ? 
+        (isPhoneDialog ?
           (dataItem ? UpdateContactPhoneInput: CreateContactPhoneInput) :
           (dataItem ? UpdateContactEmailInput: CreateContactEmailInput)
         ).fromJS(updatedData)
@@ -102,10 +102,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
           dataItem.comment = updatedData.comment;
           dataItem.usageTypeId = updatedData.usageTypeId;
           if (isPhoneDialog)
-            dataItem.phoneExtension = 
+            dataItem.phoneExtension =
               updatedData['phoneExtension'];
         } else if (result.id) {
-          updatedData.id = result.id;    
+          updatedData.id = result.id;
           if (isPhoneDialog)
             this.data.customerInfo.primaryContactInfo.phones
               .push(ContactPhoneDto.fromJS(updatedData));
@@ -113,13 +113,13 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
             this.data.customerInfo.primaryContactInfo.emails
               .push(ContactEmailDto.fromJS(updatedData));
         }
-      });           
+      });
   }
 
-  inPlaceEdit(field, item, event, index) {  
+  inPlaceEdit(field, item, event, index) {
     if (this.isEditAllowed) {
       item.inplaceEdit = true;
-      item.original = item[field]; 
+      item.original = item[field];
     } else
       this.showDialog(field, item, event, index);
   }
@@ -130,13 +130,13 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
   }
 
   updateItem(field, item, event) {
-    if(event.validationGroup.validate().isValid) {    
+    if(event.validationGroup.validate().isValid) {
       if (item[field] != item.original)
         this.updateDataField(field, item, item);
       item.inplaceEdit = false;
     }
   }
-    
+
   deleteEmailAddress(email, event, index) {
     this.dialog.open(ConfirmDialog, {
       data: {

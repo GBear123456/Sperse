@@ -9,7 +9,7 @@ import { LinkAccountModalComponent } from './link-account-modal.component';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
 
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
     selector: 'linkedAccountsModal',
@@ -54,7 +54,7 @@ export class LinkedAccountsModalComponent extends AppComponentBase implements Af
                     title: this.l('Actions'),
                     width: '20%',
                     display: (data: JTableFieldOptionDisplayData<LinkedUserDto>) => {
-                        var $div = $('<div></div>');
+                        let $div = $('<div></div>');
 
                         $('<button class="btn btn-xs btn-primary blue"><i class="icon-login"></i>' + this.l('LogIn') + '</button>')
                             .appendTo($div)
@@ -70,7 +70,7 @@ export class LinkedAccountsModalComponent extends AppComponentBase implements Af
                     title: this.l('UserName'),
                     width: '70%',
                     display: (data: JTableFieldOptionDisplayData<LinkedUserDto>) => {
-                        var $div = $('<div></div>');
+                        let $div = $('<div></div>');
                         $('<span>' + this.getShownLinkedUserName(data.record) + '</span>').appendTo($div);
                         return $div;
                     }
@@ -79,7 +79,7 @@ export class LinkedAccountsModalComponent extends AppComponentBase implements Af
                     title: this.l('Delete'),
                     width: '10%',
                     display: (data: JTableFieldOptionDisplayData<LinkedUserDto>) => {
-                        var $div = $('<span></span>');
+                        let $div = $('<span></span>');
 
                         $('<button class="btn btn-xs btn-danger red"><i class="icon-trash"></i></button>')
                             .appendTo($div)
@@ -99,7 +99,7 @@ export class LinkedAccountsModalComponent extends AppComponentBase implements Af
             return linkedUser.username;
         }
 
-        return (linkedUser.tenantId ? linkedUser.tenancyName : ".") + "\\" + linkedUser.username;
+        return (linkedUser.tenantId ? linkedUser.tenancyName : '.') + '\\' + linkedUser.username;
     }
 
     deleteLinkedUser(linkedUser: LinkedUserDto): void {

@@ -13,7 +13,7 @@ import DataSource from 'devextreme/data/data_source';
 @Component({
     selector: 'leads-stats',
     templateUrl: './leads-stats.component.html',
-    styleUrls: ["./leads-stats.component.less"],
+    styleUrls: ['./leads-stats.component.less'],
     providers: [LeadServiceProxy]
 })
 export class LeadsStatsComponent extends AppComponentBase {
@@ -32,7 +32,7 @@ export class LeadsStatsComponent extends AppComponentBase {
             result.types.forEach((val, i, arr) => this.types[val.key] = val.value);
             result.pipelines.forEach((val, i, arr) => this.pipelines[val.key] = val.value);
             result.stages.forEach((val, i, arr) => this.stages[val.key] = val.value);
-            
+
             this.dataSource = {
                 fields: [{
                     caption: 'pipeline',
@@ -62,11 +62,11 @@ export class LeadsStatsComponent extends AppComponentBase {
         });
     }
     onPivotCellClick(e) {
-        if (e.area == "data") {
-            var typeId = e.cell.columnPath[0];
-            var pipelineId = e.cell.rowPath[0];
-            var stageId = e.cell.rowPath[1];
-            
+        if (e.area == 'data') {
+            let typeId = e.cell.columnPath[0];
+            let pipelineId = e.cell.rowPath[0];
+            let stageId = e.cell.rowPath[1];
+
             let filters = {
                 typeId: typeId,
                 stages: {
@@ -79,7 +79,7 @@ export class LeadsStatsComponent extends AppComponentBase {
     }
 
     onCellPrepared(e) {
-        if (e.area == "data")
+        if (e.area == 'data')
             e.cellElement.addClass('filter-link');
     }
 }

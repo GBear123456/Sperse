@@ -1,7 +1,7 @@
 ﻿<div class="adaptive-menu" *ngIf="showAdaptiveMenu==true">
-  <dx-menu 
+  <dx-menu
     [accessKey]="nav-menu"
-    [dataSource]="menu.items" 
+    [dataSource]="menu.items"
     [selectionMode]="single"
     [hoverStateEnabled]="true"
     [submenuDirection]="rightOrBottom"
@@ -26,12 +26,12 @@
     [hoverStateEnabled]="true"
     [selectedIndex]="selectedIndex"
     selectionMode="single">
-      <dxi-item                     
-        *ngFor="let link of menu.items; let i = index;" 
+      <dxi-item
+        *ngFor="let link of menu.items; let i = index;"
         [visible]="showMenuItem(link)"
         [disabled]="link.disabled">
-        <dx-menu 
-          [dataSource]="[link]" 
+        <dx-menu
+          [dataSource]="[link]"
           [selectionMode]="none"
           [hoverStateEnabled]="true"
           [hideSubmenuOnMouseLeave]="true"

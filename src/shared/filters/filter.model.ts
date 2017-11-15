@@ -9,13 +9,12 @@ export interface FilterComponent {
 export class FilterModel {
   component: Type<any>;
   operator: any;
-  caption: string;  
+  caption: string;
   value?: string;
   field?: any;
   items?: any;
 }
 
 export class FilterItemModel {
-    setValue(value: any, filter: FilterComponent) {
-    }
+    setValue(value: any, filter: FilterComponent) {}
 }

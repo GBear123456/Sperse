@@ -5,7 +5,7 @@ import { OrganizationTreeComponent } from './organization-tree.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 @Component({
-    templateUrl: "./organization-units.component.html",
+    templateUrl: './organization-units.component.html',
     animations: [appModuleAnimation()]
 })
 export class OrganizationUnitsComponent extends AppComponentBase {

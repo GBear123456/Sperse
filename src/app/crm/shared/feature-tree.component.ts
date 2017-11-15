@@ -2,11 +2,11 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { NameValueDto, FlatFeatureDto } from '@shared/service-proxies/service-proxies';
 import { FeatureTreeEditModel } from '@app/crm/shared/feature-tree-edit.model';
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'feature-tree',
-    template: `<div class="feature-tree"></div>`,
+    template: `<div class='feature-tree'></div>`,
     styleUrls: ['./feature-tree.component.less']
 })
 export class FeatureTreeComponent extends AppComponentBase implements OnInit, AfterViewInit, AfterViewChecked {
@@ -45,7 +45,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
             return [];
         }
 
-        var selectedFeatures = this._$tree.jstree('get_selected', true);
+        let selectedFeatures = this._$tree.jstree('get_selected', true);
 
         return _.map(this._editData.features, item => {
             let feature = new NameValueDto();
@@ -53,17 +53,17 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
             feature.name = item.name;
 
             if (!item.inputType || item.inputType.name == 'CHECKBOX') {
-                feature.value = _.some(selectedFeatures, { original: { id: item.name } }) ? "true" : "false";
+                feature.value = _.some(selectedFeatures, { original: { id: item.name } }) ? 'true' : 'false';
             } else {
                 feature.value = this.getFeatureValueByName(item.name);
             }
-            
+
             return feature;
         });
     }
 
     refreshTree(): void {
-        var self = this;
+        let self = this;
 
         if (this._createdTreeBefore) {
             this._$tree.jstree('destroy');
@@ -75,17 +75,19 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
             return;
         }
 
-        var treeData = _.map(this._editData.features, function (item) {
+        let treeData = _.map(this._editData.features, function (item) {
             return {
                 id: item.name,
                 parent: item.parentName ? item.parentName : '#',
                 text: item.displayName,
                 state: {
                     opened: true,
-                    selected: _.some(self._editData.featureValues, { name: item.name, value: "true" })
+                    selected: _.some(self._editData.featureValues, { name: item.name, value: 'true' })
                 }
             };
         });
+
+        let inTreeChangeEvent = false;
 
         this._$tree
             .on('ready.jstree', function () {
@@ -100,17 +102,17 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
             .on('create_node.jstree', function () {
                 self.customizeTreeNodes();
             })
-            .on("changed.jstree", function (e, data) {
+            .on('changed.jstree', function (e, data) {
                 if (!data.node) {
                     return;
                 }
 
-                var wasInTreeChangeEvent = inTreeChangeEvent;
+                let wasInTreeChangeEvent = inTreeChangeEvent;
                 if (!wasInTreeChangeEvent) {
                     inTreeChangeEvent = true;
                 }
 
-                var childrenNodes;
+                let childrenNodes;
 
                 if (data.node.state.selected) {
                     selectNodeAndAllParents(self._$tree.jstree('get_parent', data.node));
@@ -124,10 +126,10 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
                 }
 
                 if (!wasInTreeChangeEvent) {
-                    var $nodeLi = self.getNodeLiByFeatureName(data.node.id);
-                    var feature = self.findFeatureByName(data.node.id);
+                    let $nodeLi = self.getNodeLiByFeatureName(data.node.id);
+                    let feature = self.findFeatureByName(data.node.id);
                     if (feature && (!feature.inputType || feature.inputType.name == 'CHECKBOX')) {
-                        var value = self._$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
+                        let value = self._$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
                         self.setFeatureValueByName(data.node.id, value);
                     }
 
@@ -138,12 +140,12 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
                 'core': {
                     data: treeData
                 },
-                "types": {
-                    "default": {
-                        "icon": "fa fa-folder tree-item-icon-color icon-lg"
+                'types': {
+                    'default': {
+                        'icon': 'fa fa-folder tree-item-icon-color icon-lg'
                     },
-                    "file": {
-                        "icon": "fa fa-file tree-item-icon-color icon-lg"
+                    'file': {
+                        'icon': 'fa fa-file tree-item-icon-color icon-lg'
                     }
                 },
                 'checkbox': {
@@ -156,27 +158,25 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
 
         this._createdTreeBefore = true;
 
-        let inTreeChangeEvent = false;
-
         function selectNodeAndAllParents(node) {
             self._$tree.jstree('select_node', node, true);
-            var parent = self._$tree.jstree('get_parent', node);
+            let parent = self._$tree.jstree('get_parent', node);
             if (parent) {
                 selectNodeAndAllParents(parent);
             }
         };
 
-        this._$tree.on("changed.jstree", function (e, data) {
+        this._$tree.on('changed.jstree', function (e, data) {
             if (!data.node) {
                 return;
             }
 
-            var wasInTreeChangeEvent = inTreeChangeEvent;
+            let wasInTreeChangeEvent = inTreeChangeEvent;
             if (!wasInTreeChangeEvent) {
                 inTreeChangeEvent = true;
             }
 
-            var childrenNodes;
+            let childrenNodes;
 
             if (data.node.state.selected) {
                 selectNodeAndAllParents(self._$tree.jstree('get_parent', data.node));
@@ -198,12 +198,12 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     customizeTreeNodes(): void {
         let self = this;
         self._$tree.find('.jstree-node').each(function () {
-            var $nodeLi = $(this);
-            var $nodeA = $nodeLi.find('.jstree-anchor');
+            let $nodeLi = $(this);
+            let $nodeA = $nodeLi.find('.jstree-anchor');
 
-            var featureName = $nodeLi.attr('id');
-            var feature = self.findFeatureByName(featureName);
-            var featureValue = self.findFeatureValueByName(featureName) || '';
+            let featureName = $nodeLi.attr('id');
+            let feature = self.findFeatureByName(featureName);
+            let featureValue = self.findFeatureValueByName(featureName) || '';
 
             if (!feature || !feature.inputType) {
                 return;
@@ -215,7 +215,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
                 if (!$nodeLi.find('.feature-tree-textbox').length) {
                     $nodeA.find('.jstree-checkbox').hide();
 
-                    var inputType = 'text';
+                    let inputType = 'text';
                     let validator = (feature.inputType.validator as any);
                     if (feature.inputType.validator) {
                         if (feature.inputType.validator.name == 'NUMERIC') {
@@ -285,7 +285,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     selectNodeAndAllParents(node: any): void {
         let self = this;
         self._$tree.jstree('select_node', node, true);
-        var parent = self._$tree.jstree('get_parent', node);
+        let parent = self._$tree.jstree('get_parent', node);
         if (parent) {
             self.selectNodeAndAllParents(parent);
         }
@@ -294,7 +294,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     findFeatureByName(featureName: string): FlatFeatureDto {
         let self = this;
 
-        var feature = _.find(self._editData.features, function (f) { return f.name == featureName });
+        let feature = _.find(self._editData.features, function (f) { return f.name == featureName });
 
         if (!feature) {
             abp.log.warn('Could not find a feature by name: ' + featureName);
@@ -305,12 +305,12 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
 
     findFeatureValueByName(featureName: string) {
         let self = this;
-        var feature = self.findFeatureByName(featureName);
+        let feature = self.findFeatureByName(featureName);
         if (!feature) {
             return '';
         }
 
-        var featureValue = _.find(self._editData.featureValues, function (f) { return f.name == featureName });
+        let featureValue = _.find(self._editData.featureValues, function (f) { return f.name == featureName });
         if (!featureValue) {
             return feature.defaultValue;
         }
@@ -320,12 +320,12 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
 
     isFeatureValueValid(featureName: string, value: string): boolean {
         let self = this;
-        var feature = self.findFeatureByName(featureName);
+        let feature = self.findFeatureByName(featureName);
         if (!feature || !feature.inputType || !feature.inputType.validator) {
             return true;
         }
 
-        var validator = (feature.inputType.validator as any);
+        let validator = (feature.inputType.validator as any);
         if (validator.name == 'STRING') {
             if (value == undefined || value == null) {
                 return validator.allowNull;
@@ -347,18 +347,18 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
                 return (new RegExp(validator.regularExpression)).test(value);
             }
         } else if (validator.name == 'NUMERIC') {
-            var numValue = parseInt(value);
+            let numValue = parseInt(value);
 
             if (isNaN(numValue)) {
                 return false;
             }
 
-            var minValue = validator.minValue;
+            let minValue = validator.minValue;
             if (minValue > numValue) {
                 return false;
             }
 
-            var maxValue = validator.maxValue;
+            let maxValue = validator.maxValue;
             if (maxValue > 0 && numValue > maxValue) {
                 return false;
             }
@@ -370,12 +370,12 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     areAllValuesValid(): boolean {
         let self = this;
         self._$tree.find('.jstree-node').each(function () {
-            var $nodeLi = $(this);
-            var featureName = $nodeLi.attr('id');
-            var feature = self.findFeatureByName(featureName);
+            let $nodeLi = $(this);
+            let featureName = $nodeLi.attr('id');
+            let feature = self.findFeatureByName(featureName);
 
             if (feature && (!feature.inputType || feature.inputType.name == 'CHECKBOX')) {
-                var value = self._$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
+                let value = self._$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
                 self.setFeatureValueByName(featureName, value);
             }
         });
@@ -384,7 +384,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     setFeatureValueByName(featureName: string, value: string): void {
-        var featureValue = _.find(this._editData.featureValues, f => f.name === featureName);
+        let featureValue = _.find(this._editData.featureValues, f => f.name === featureName);
         if (!featureValue) {
             return;
         }
@@ -393,7 +393,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     getFeatureValueByName(featureName: string): string {
-        var featureValue = _.find(this._editData.featureValues, f => f.name === featureName);
+        let featureValue = _.find(this._editData.featureValues, f => f.name === featureName);
         if (!featureValue) {
             return null;
         }
@@ -403,7 +403,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
 
     isFeatureEnabled(featureName: string): boolean {
         let self = this;
-        var value = self.findFeatureValueByName(featureName);
+        let value = self.findFeatureValueByName(featureName);
         return value.toLowerCase() === 'true';
     }
 }

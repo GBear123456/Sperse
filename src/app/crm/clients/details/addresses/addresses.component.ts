@@ -17,7 +17,7 @@ import * as _ from 'underscore';
 export class AddressesComponent extends AppComponentBase implements OnInit {
   data: {
     customerInfo: CustomerInfoDto
-  };  
+  };
   types: Object = {};
   country: string;
   streetNumber: string;
@@ -36,10 +36,10 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     private _customerService: CustomersServiceProxy,
     private _addressService: ContactAddressServiceProxy,
     private _countryService: CountryServiceProxy
-  ) { 
+  ) {
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-    _addressService.getAddressUsageTypes().subscribe(result => {      
+    _addressService.getAddressUsageTypes().subscribe(result => {
       result.items.reduce(function(obj, type){
         obj[type.id] = type.name;
         return obj;
@@ -56,12 +56,12 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
 
   getDialogPossition(event) {
     let shift = 245, parent = event.target
-      .closest(".address-wrapper");        
+      .closest('.address-wrapper');
 
     if (parent) {
       let rect = parent.getBoundingClientRect();
       return {
-        top: (rect.top + rect.height / 2 - shift) + 'px', 
+        top: (rect.top + rect.height / 2 - shift) + 'px',
         left: (rect.left + rect.width / 2) + 'px'
       };
     } else
@@ -72,8 +72,8 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
   }
 
   showDialog(address, event, index) {
-    let dialogData = _.pick(address || {}, 'id', 'city', 
-      'comment', 'country', 'isActive', 'isConfirmed', 
+    let dialogData = _.pick(address || {}, 'id', 'city',
+      'comment', 'country', 'isActive', 'isConfirmed',
       'state', 'streetAddress', 'usageTypeId', 'zip');
     dialogData.contactId = this.data
       .customerInfo.primaryContactInfo.id;
@@ -86,7 +86,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
       hasBackdrop: false,
       position: this.getDialogPossition(event)
     }).afterClosed().subscribe(result => {
-      if (result) 
+      if (result)
         this.updateDataField(address, dialogData);
     });
     event.stopPropagation();
@@ -94,9 +94,9 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
 
   updateDataField(address, data) {
     this._addressService
-      [(address ? 'update': 'create') + 'ContactAddress'](              
+      [(address ? 'update': 'create') + 'ContactAddress'](
         (address ? UpdateContactAddressInput: CreateContactAddressInput).fromJS(data)
-      ).subscribe(result => { 
+      ).subscribe(result => {
         if (!result && address) {
           address.city = data.city;
           address.country = data.country;
@@ -108,10 +108,10 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
           address.usageTypeId = data.usageTypeId;
           address.zip = data.zip;
         } else if (result.id) {
-          data.id = result.id;                  
+          data.id = result.id;
           this.data.customerInfo.primaryContactInfo.addresses
             .push(ContactAddressDto.fromJS(data));
-        }        
+        }
       }
     );
   }
@@ -134,15 +134,15 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     event.stopPropagation();
   }
 
-  inPlaceEdit(address, event, index) {  
+  inPlaceEdit(address, event, index) {
     if(!this.isEditAllowed || !window['google'])
       return this.showDialog(address, event, index);
 
     address.inplaceEdit = true;
     address.autoComplete = [
-      address.streetAddress, 
-      address.city, 
-      address.state, 
+      address.streetAddress,
+      address.city,
+      address.state,
       address.zip,
       address.country
     ].join(',');
@@ -170,12 +170,12 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
       .getCountryStates(countryId)
       .subscribe(states => {
         if(this.country && this.streetNumber && this.state &&
-          this.streetAddress && this.city && 
+          this.streetAddress && this.city &&
           ((this.country != address.country) ||
             (address.streetAddress != (this.streetAddress + ' ' + this.streetNumber)) ||
             (this.city != address.city) ||
             (this.state != address.state))
-        ) {    
+        ) {
           this.updateDataField(address, {
             id: address.id,
             contactId: this.data.customerInfo
@@ -193,7 +193,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
           });
           this.clearInplaceData();
         }
-      });    
+      });
     address.inplaceEdit = false;
     event.jQueryEvent.stopPropagation();
   }

@@ -3,7 +3,7 @@ import { Component, Inject, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
-import { 
+import {
   ContactAddressServiceProxy,
   CountryServiceProxy,
   CountryStateDto, CountryDto
@@ -16,8 +16,8 @@ import * as _ from 'underscore';
   templateUrl: 'edit-address-dialog.html',
   styleUrls: ['edit-address-dialog.less'],
   host: {
-    '(document:mouseup)': "mouseUp($event)",
-    '(document:mousemove)': "mouseMove($event)"
+    '(document:mouseup)': 'mouseUp($event)',
+    '(document:mousemove)': 'mouseMove($event)'
   }
 })
 export class EditAddressDialog extends AppComponentBase {
@@ -39,12 +39,12 @@ export class EditAddressDialog extends AppComponentBase {
     public dialogRef: MdDialogRef<EditAddressDialog>,
     private _contactAddressService: ContactAddressServiceProxy,
     private _countryService: CountryServiceProxy
-  ) { 
+  ) {
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
-    this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');        
+    this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
     if (data.city) {
       this.action = 'Edit';
-      this.address = 
+      this.address =
         this.googleAutoComplete ? [
           data.streetAddress,
           data.city,
@@ -81,7 +81,7 @@ export class EditAddressDialog extends AppComponentBase {
   }
 
   addressTypesLoad() {
-    this._contactAddressService.getAddressUsageTypes().subscribe(result => {      
+    this._contactAddressService.getAddressUsageTypes().subscribe(result => {
       this.types = result.items;
     });
   }

@@ -7,7 +7,7 @@ import {
     TenantLoginInfoDto,
     ApplicationInfoDto
 } from '@shared/service-proxies/service-proxies';
-import { SubscriptionStartType, EditionPaymentType } from "@shared/AppEnums";
+import { SubscriptionStartType, EditionPaymentType } from '@shared/AppEnums';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({

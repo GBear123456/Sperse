@@ -7,7 +7,7 @@ import { UploadSSLCertificateModalComponent } from './modals/upload-ssl-cert-mod
 import { AddOrEditSSLBindingModal } from './modals/add-or-edit-ssl-binding-modal.component';
 
 @Component({
-    templateUrl: "./system-settings.component.html",
+    templateUrl: './system-settings.component.html',
     animations: [appModuleAnimation()],
     providers: [TenantSslCertificateServiceProxy, TenantHostServiceProxy ]
 })
@@ -15,7 +15,7 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
 
     @ViewChild('customDomainsGrid') customDomainsGrid: DxDataGridComponent;
     @ViewChild('addOrEditSSLBindingModal') addOrEditSSLBindingModal: AddOrEditSSLBindingModal;
-    
+
     @ViewChild('sslGrid') sslGrid: DxDataGridComponent;
     @ViewChild('uploadSSLCertificateModal') uploadSSLCertificateModal: UploadSSLCertificateModalComponent;
 
@@ -23,9 +23,9 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
     public sslBindingsDataSource: any;
 
     public hostTypes: any = [
-        { "Id": 0, "Name": "Platform API" },
-        { "Id": 1, "Name": "Platform UI" },
-        { "Id": 2, "Name": "Funding UI" }
+        { 'Id': 0, 'Name': 'Platform API' },
+        { 'Id': 1, 'Name': 'Platform UI' },
+        { 'Id': 2, 'Name': 'Funding UI' }
     ];
 
     constructor(
@@ -68,7 +68,7 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
     }
 
     deleteCertificate(row, event) {
-        abp.message.confirm("", this.l('DeleteConfiramtion'), result => {
+        abp.message.confirm('', this.l('DeleteConfiramtion'), result => {
             if (result) {
                 this._tenantSslCertificateService.deleteTenantSslCertificate(row.data.id)
                     .subscribe(result => {
@@ -80,7 +80,7 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
     }
 
     deleteSSLBinding(row, event) {
-        abp.message.confirm("", this.l('DeleteConfiramtion'), result => {
+        abp.message.confirm('', this.l('DeleteConfiramtion'), result => {
             if (result) {
                 this._tenantHostService.deleteSslBinding(row.data.hostType)
                     .subscribe(result => {

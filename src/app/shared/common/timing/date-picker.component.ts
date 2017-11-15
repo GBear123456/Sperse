@@ -37,9 +37,9 @@ export class DatePickerComponent extends AppComponentBase implements AfterViewIn
         const $element = $(this.hostElement.nativeElement);
         $element.datepicker({
             language: abp.localization.currentLanguage.name
-        }).on("changeDate", e => {
+        }).on('changeDate', e => {
             this.selectedDate = moment(e.date);
-        }).on("clearDate", e => {
+        }).on('clearDate', e => {
             this.selectedDate = null;
         });
     }

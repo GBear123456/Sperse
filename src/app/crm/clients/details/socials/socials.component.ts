@@ -2,7 +2,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ConfirmDialog } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { Component, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CustomersServiceProxy, CustomerInfoDto, ContactLinkServiceProxy, 
+import { CustomersServiceProxy, CustomerInfoDto, ContactLinkServiceProxy,
   ContactLinkDto, CreateContactLinkInput, UpdateContactLinkInput } from '@shared/service-proxies/service-proxies';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 
@@ -16,7 +16,7 @@ import { MdDialog } from '@angular/material';
 export class SocialsComponent extends AppComponentBase implements OnInit {
   data: {
     customerInfo: CustomerInfoDto
-  };  
+  };
 
   isEditAllowed: boolean = false;
 
@@ -27,26 +27,26 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
     P: 'pinterest',
     T: 'twitter'
   }
-  
+
   constructor(
     injector: Injector,
     public dialog: MdDialog,
     private _customerService: CustomersServiceProxy,
     private _contactLinkService: ContactLinkServiceProxy
-  ) { 
+  ) {
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
     this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
   }
 
   getDialogPossition(event) {
-    let shift = 160, parent = 
-      event.target.closest("li");
+    let shift = 160, parent =
+      event.target.closest('li');
 
     if (parent) {
       let rect = parent.getBoundingClientRect();
       return {
-        top: (rect.top + rect.height / 2 - shift) + 'px', 
+        top: (rect.top + rect.height / 2 - shift) + 'px',
         left: (rect.left + rect.width / 2) + 'px'
       };
     } else
@@ -56,13 +56,13 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
       };
   }
 
-  showEditDialog(data, event, index) {    
+  showEditDialog(data, event, index) {
     let dialogData = {
-      field: 'url', 
+      field: 'url',
       id: data && data.id,
       value: data && data.url,
       name: this.l('Link'),
-      contactId: data && data.contactId 
+      contactId: data && data.contactId
         || this.data.customerInfo
         .primaryContactInfo.id,
       url: data && data.url,
@@ -72,7 +72,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
       comment: data && data.comment,
       deleteItem: (event) => {
         this.deleteLink(data, event, index);
-      } 
+      }
     };
     this.dialog.closeAll();
     this.dialog.open(EditContactDialog, {
@@ -82,7 +82,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
     }).afterClosed().subscribe(result => {
         if (result) {
           if (dialogData.usageTypeId != 'O')
-            dialogData['linkTypeId'] = dialogData.usageTypeId;            
+            dialogData['linkTypeId'] = dialogData.usageTypeId;
           this._contactLinkService
             [(data ? 'update': 'create') + 'ContactLink'](
               (data ? UpdateContactLinkInput: CreateContactLinkInput).fromJS(dialogData)
@@ -93,11 +93,11 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
                 data.usageTypeId = dialogData.usageTypeId;
                 data.isSocialNetwork = dialogData['isSocialNetwork'];
               } else if (result.id) {
-                dialogData.id = result.id;    
+                dialogData.id = result.id;
                 this.data.customerInfo.primaryContactInfo.links
                   .push(ContactLinkDto.fromJS(dialogData));
               }
-            });           
+            });
         }
     });
     event.stopPropagation();

@@ -5,14 +5,14 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import * as moment from "moment";
+import * as moment from 'moment';
 import { DateTimeService } from '@app/shared/common/timing/date-time.service';
 import { AppIncomeStatisticsDateInterval } from '@shared/AppEnums';
 import { JTableHelper } from '@shared/helpers/JTableHelper';
 
 @Component({
-    templateUrl: "./host-dashboard.component.html",
-    styleUrls: ["./host-dashboard.component.less"],
+    templateUrl: './host-dashboard.component.html',
+    styleUrls: ['./host-dashboard.component.less'],
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
@@ -27,9 +27,9 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
     loadingIncomeStatistics: boolean = false;
     isInitialized: boolean;
     hostDashboardData: HostDashboardData;
-    initialStartDate: moment.Moment = moment().add(-7, 'days').startOf("day");
-    initialEndDate: moment.Moment = moment().endOf("day");
-    currency = "$";
+    initialStartDate: moment.Moment = moment().add(-7, 'days').startOf('day');
+    initialEndDate: moment.Moment = moment().endOf('day');
+    currency = '$';
     appIncomeStatisticsDateInterval = AppIncomeStatisticsDateInterval;
     selectedIncomeStatisticsDateInterval: any;
     editionStatisticsHasData: boolean;
@@ -103,7 +103,7 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
     */
 
     normalizeEditionStatisticsData(data): Array<any> {
-        const colorPalette = ["#81A17E", "#BA9B7C", "#569BC6", "#e08283", "#888888"];
+        const colorPalette = ['#81A17E', '#BA9B7C', '#569BC6', '#e08283', '#888888'];
         let chartData = new Array(data.length);
         let pie: any;
         for (let i = 0; i < data.length; i++) {
@@ -128,7 +128,7 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             return;
         }
 
-        var self = this;
+        let self = this;
         const normalizedData = this.normalizeEditionStatisticsData(data);
         ($ as any).plot($(self.editionStatisticsChart.nativeElement), normalizedData, {
             series: {
@@ -140,7 +140,7 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
                         show: true,
                         radius: 1,
                         formatter(label, series) {
-                            return "<div class='pie-chart-label'>" + label + " : " + Math.round(series.percent) + "%</div>";
+                            return '<div class="pie-chart-label">' + label + ' : ' + Math.round(series.percent) + '%</div>';
                         },
                         background: {
                             opacity: 0.8
@@ -164,9 +164,9 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
 
 
     normalizeIncomeStatisticsData(data): Array<any> {
-        var chartData = [];
-        for (var i = 0; i < data.length; i++) {
-            var point = new Array(2);
+        let chartData = [];
+        for (let i = 0; i < data.length; i++) {
+            let point = new Array(2);
             point[0] = moment(data[i].date).utc().valueOf();
             point[1] = data[i].amount;
             chartData.push(point);
@@ -181,7 +181,7 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             return;
         }
 
-        var self = this;
+        let self = this;
         const normalizedData = this.normalizeIncomeStatisticsData(data);
         ($ as any).plot($(self.incomeStatisticsChart.nativeElement),
             [{
@@ -190,17 +190,17 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
                     fill: 0.2,
                     lineWidth: 1
                 },
-                color: ["#BAD9F5"]
+                color: ['#BAD9F5']
             }, {
                 data: normalizedData,
                 points: {
                     show: true,
                     fill: true,
                     radius: 4,
-                    fillColor: "#9ACAE6",
+                    fillColor: '#9ACAE6',
                     lineWidth: 2
                 },
-                color: "#9ACAE6",
+                color: '#9ACAE6',
                 shadowSize: 1
             }, {
                 data: normalizedData,
@@ -209,38 +209,38 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
                     fill: false,
                     lineWidth: 3
                 },
-                color: "#9ACAE6",
+                color: '#9ACAE6',
                 shadowSize: 0
             }],
             {
                 xaxis: {
-                    mode: "time",
-                    timeformat: this.l("ChartDateFormat"),
-                    minTickSize: [1, "day"],
+                    mode: 'time',
+                    timeformat: this.l('ChartDateFormat'),
+                    minTickSize: [1, 'day'],
                     font: {
                         lineHeight: 20,
-                        style: "normal",
-                        variant: "small-caps",
-                        color: "#6F7B8A",
+                        style: 'normal',
+                        variant: 'small-caps',
+                        color: '#6F7B8A',
                         size: 10
                     }
                 },
                 yaxis: {
                     ticks: 5,
                     tickDecimals: 0,
-                    tickColor: "#eee",
+                    tickColor: '#eee',
                     font: {
                         lineHeight: 14,
-                        style: "normal",
-                        variant: "small-caps",
-                        color: "#6F7B8A"
+                        style: 'normal',
+                        variant: 'small-caps',
+                        color: '#6F7B8A'
                     }
                 },
                 grid: {
                     hoverable: true,
                     clickable: false,
-                    tickColor: "#eee",
-                    borderColor: "#eee",
+                    tickColor: '#eee',
+                    borderColor: '#eee',
                     borderWidth: 1,
                     margin: {
                         bottom: 20
@@ -266,10 +266,10 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
     }
 
     bindToolTipForIncomeStatisticsChart(incomeStatisticsChartContainer: any): void {
-        var incomeStatisticsChartLastTooltipIndex = null;
+        let incomeStatisticsChartLastTooltipIndex = null;
 
-        var removeChartTooltipIfExists = () => {
-            var $chartTooltip = $("#chartTooltip");
+        let removeChartTooltipIfExists = () => {
+            let $chartTooltip = $('#chartTooltip');
             if ($chartTooltip.length === 0) {
                 return;
             }
@@ -277,52 +277,52 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             $chartTooltip.remove();
         };
 
-        var showChartTooltip = (x, y, label, value) => {
+        let showChartTooltip = (x, y, label, value) => {
             removeChartTooltipIfExists();
-            $("<div id='chartTooltip' class='chart-tooltip'>" + label + "<br/>" + value + "</div >")
+            $('<div id="chartTooltip" class="chart-tooltip">' + label + '<br/>' + value + '</div >')
                 .css({
-                    position: "absolute",
-                    display: "none",
+                    position: 'absolute',
+                    display: 'none',
                     top: y - 60,
                     left: x - 40,
-                    border: "0",
-                    padding: "2px 6px",
-                    opacity: "0.9"
+                    border: '0',
+                    padding: '2px 6px',
+                    opacity: '0.9'
                 })
-                .appendTo("body")
+                .appendTo('body')
                 .fadeIn(200);
         };
 
-        incomeStatisticsChartContainer.bind("plothover", (event, pos, item) => {
+        incomeStatisticsChartContainer.bind('plothover', (event, pos, item) => {
             if (!item) {
                 return;
             }
 
             if (incomeStatisticsChartLastTooltipIndex !== item.dataIndex) {
-                var label = "";
-                var isSingleDaySelected = this.selectedDateRange.startDate.format("L") === this.selectedDateRange.endDate.format("L");
+                let label = '';
+                let isSingleDaySelected = this.selectedDateRange.startDate.format('L') === this.selectedDateRange.endDate.format('L');
                 if (this.selectedIncomeStatisticsDateInterval === AppIncomeStatisticsDateInterval.Daily ||
                     isSingleDaySelected) {
-                    label = moment(item.datapoint[0]).format("dddd, DD MMMM YYYY");
+                    label = moment(item.datapoint[0]).format('dddd, DD MMMM YYYY');
                 }
                 else {
-                    var isLastItem = item.dataIndex === item.series.data.length - 1;
-                    label += moment(item.datapoint[0]).format("LL");
+                    let isLastItem = item.dataIndex === item.series.data.length - 1;
+                    label += moment(item.datapoint[0]).format('LL');
                     if (isLastItem) {
-                        label += " - " + this.selectedDateRange.endDate.format("LL");
+                        label += ' - ' + this.selectedDateRange.endDate.format('LL');
                     } else {
-                        var nextItem = item.series.data[item.dataIndex + 1];
-                        label += " - " + moment(nextItem[0]).format("LL");
+                        let nextItem = item.series.data[item.dataIndex + 1];
+                        label += ' - ' + moment(nextItem[0]).format('LL');
                     }
                 }
 
                 incomeStatisticsChartLastTooltipIndex = item.dataIndex;
-                var value = this.l("IncomeWithAmount", "<strong>" + item.datapoint[1] + this.currency + "</strong>");
+                let value = this.l('IncomeWithAmount', '<strong>' + item.datapoint[1] + this.currency + '</strong>');
                 showChartTooltip(item.pageX, item.pageY, label, value);
             }
         });
 
-        incomeStatisticsChartContainer.bind("mouseleave", () => {
+        incomeStatisticsChartContainer.bind('mouseleave', () => {
             incomeStatisticsChartLastTooltipIndex = null;
             removeChartTooltipIfExists();
         });
@@ -333,7 +333,7 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
      */
 
     initRecentTenantsTable(): void {
-        var self = this;
+        let self = this;
         $(this.recentTenantsTable.nativeElement).jtable({
             paging: false,
             sorting: false,
@@ -345,12 +345,12 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             },
             fields: {
                 name: {
-                    title: this.l("TenantName")
+                    title: this.l('TenantName')
                 },
                 creationTime: {
-                    title: this.l("CreationTime"),
+                    title: this.l('CreationTime'),
                     display(data) {
-                        return moment(data.record.creationTime).format("L LT");
+                        return moment(data.record.creationTime).format('L LT');
                     }
                 }
             }
@@ -363,8 +363,8 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
     }
 
     gotoAllRecentTenants(): void {
-        window.open(abp.appPath + "app/crm/tenants?" +
-            "creationDateStart=" + encodeURIComponent(this.hostDashboardData.tenantCreationStartDate.format()));
+        window.open(abp.appPath + 'app/crm/tenants?' +
+            'creationDateStart=' + encodeURIComponent(this.hostDashboardData.tenantCreationStartDate.format()));
     }
 
     /*
@@ -372,7 +372,7 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
      */
 
     initExpiringTenantsTable(): void {
-        var self = this;
+        let self = this;
         $(this.expiringTenantsTable.nativeElement).jtable({
             paging: false,
             sorting: false,
@@ -384,10 +384,10 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             },
             fields: {
                 tenantName: {
-                    title: this.l("TenantName")
+                    title: this.l('TenantName')
                 },
                 remainingDayCount: {
-                    title: this.l("RemainingDay")
+                    title: this.l('RemainingDay')
                 }
             }
         });
@@ -401,11 +401,11 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
 
     gotoAllExpiringTenants(): void {
         const url = abp.appPath +
-            "app/admin/tenants?" +
-            "subscriptionEndDateStart=" +
+            'app/admin/tenants?' +
+            'subscriptionEndDateStart=' +
             encodeURIComponent(this.hostDashboardData.subscriptionEndDateStart.format()) +
-            "&" +
-            "subscriptionEndDateEnd=" +
+            '&' +
+            'subscriptionEndDateEnd=' +
             encodeURIComponent(this.hostDashboardData.subscriptionEndDateEnd.format());
 
         window.open(url);

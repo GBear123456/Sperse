@@ -8,8 +8,8 @@ import { EditTextModalComponent } from './edit-text-modal.component';
 import * as _ from 'lodash';
 
 @Component({
-    templateUrl: "./language-texts.component.html",
-    styleUrls: ["./language-texts.component.less"]
+    templateUrl: './language-texts.component.html',
+    styleUrls: ['./language-texts.component.less']
 })
 export class LanguageTextsComponent extends AppComponentBase implements AfterViewInit, OnInit {
 
@@ -102,7 +102,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                     width: '10%',
                     sorting: false,
                     display: (data: JTableFieldOptionDisplayData<LanguageTextListDto>) => {
-                        var $span = $('<span></span>');
+                        let $span = $('<span></span>');
 
                         $('<button class="btn btn-default btn-xs" title="' + this.l('Edit') + '"><i class="fa fa-edit"></i></button>')
                             .appendTo($span)

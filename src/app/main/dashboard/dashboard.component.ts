@@ -4,7 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppSalesSummaryDatePeriod } from '@shared/AppEnums';
 declare let d3, Datamap: any;
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -20,12 +20,12 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     ) {
         super(injector);
     }
-    
+
     ngAfterViewInit(): void {
     }
 
     ngOnDestroy() {
-       
+
     }
 };
 

@@ -4,7 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { NotificationSettingsModalComponent } from './notification-settings-modal.component';
 
 import * as moment from 'moment';
-import * as Push from 'push.js'; // if using ES6 
+import * as Push from 'push.js'; // if using ES6
 
 export interface IFormattedUserNotification {
     userNotificationId: string;
@@ -61,10 +61,10 @@ export class UserNotificationHelper extends AppComponentBase {
     };
 
     format(userNotification: abp.notifications.IUserNotification, truncateText?: boolean): IFormattedUserNotification {
-        var formatted: IFormattedUserNotification = {
+        let formatted: IFormattedUserNotification = {
             userNotificationId: userNotification.id,
             text: abp.notifications.getFormattedMessageFromUserNotification(userNotification),
-            time: moment(userNotification.notification.creationTime).format("YYYY-MM-DD HH:mm:ss"),
+            time: moment(userNotification.notification.creationTime).format('YYYY-MM-DD HH:mm:ss'),
             icon: this.getUiIconBySeverity(userNotification.notification.severity),
             state: abp.notifications.getUserNotificationStateAsString(userNotification.state),
             data: userNotification.notification.data,
@@ -85,15 +85,15 @@ export class UserNotificationHelper extends AppComponentBase {
         abp.notifications.showUiNotifyForUserNotification(userNotification, {
             'onclick': () => {
                 //Take action when user clicks to live toastr notification
-                var url = this.getUrl(userNotification);
+                let url = this.getUrl(userNotification);
                 if (url) {
                     location.href = url;
                 }
             }
         });
-        
+
         //Desktop notification
-        Push.create("Platform", {
+        Push.create('Platform', {
             body: this.format(userNotification).text,
             icon: abp.appPath + 'assets/common/images/app-logo-small.png',
             timeout: 6000,

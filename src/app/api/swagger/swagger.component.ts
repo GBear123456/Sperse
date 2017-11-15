@@ -5,8 +5,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
-  templateUrl: "./swagger.component.html",
-  styleUrls: ["./swagger.component.less"]
+  templateUrl: './swagger.component.html',
+  styleUrls: ['./swagger.component.less']
 })
 export class SwaggerComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
   link: SafeResourceUrl;
@@ -26,9 +26,9 @@ export class SwaggerComponent extends AppComponentBase implements AfterViewInit,
   ngOnInit() {
     this.link = this._sanitizer
       .bypassSecurityTrustResourceUrl(
-        AppConsts.remoteServiceBaseUrl + 
-        '/swagger/index.html?tenantId=' + 
-        abp.multiTenancy.getTenantIdCookie() + 
+        AppConsts.remoteServiceBaseUrl +
+        '/swagger/index.html?tenantId=' +
+        abp.multiTenancy.getTenantIdCookie() +
         '&tokenAuth=' + abp.auth.getToken()
     );
   }

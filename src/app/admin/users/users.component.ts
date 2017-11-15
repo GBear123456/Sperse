@@ -15,11 +15,11 @@ import { ImpersonationService } from './impersonation.service';
 import { JTableHelper } from '@shared/helpers/JTableHelper';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
-    templateUrl: "./users.component.html",
-    styleUrls: ["./users.component.less"],
+    templateUrl: './users.component.html',
+    styleUrls: ['./users.component.less'],
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
@@ -53,7 +53,7 @@ export class UsersComponent extends AppComponentBase implements AfterViewInit {
 
         let self = this;
         this.filterText = this._activatedRoute.snapshot.queryParams['filterText'] || '';
-        var initUsersTable = () => {
+        let initUsersTable = () => {
             this._$usersTable = $('#UsersTable');
             this._$usersTable.jtable({
 
@@ -146,9 +146,9 @@ export class UsersComponent extends AppComponentBase implements AfterViewInit {
                         width: '12%',
                         sorting: false,
                         display: function (data: JTableFieldOptionDisplayData<UserListDto>) {
-                            var roleNames = '';
+                            let roleNames = '';
 
-                            for (var j = 0; j < data.record.roles.length; j++) {
+                            for (let j = 0; j < data.record.roles.length; j++) {
                                 if (roleNames.length) {
                                     roleNames = roleNames + ', ';
                                 }
@@ -227,7 +227,7 @@ export class UsersComponent extends AppComponentBase implements AfterViewInit {
 
     deleteUser(user: UserListDto): void {
         if (user.userName === AppConsts.userManagement.defaultAdminUserName) {
-            this.message.warn(this.l("{0}UserCannotBeDeleted", AppConsts.userManagement.defaultAdminUserName));
+            this.message.warn(this.l('{0}UserCannotBeDeleted', AppConsts.userManagement.defaultAdminUserName));
             return;
         }
 

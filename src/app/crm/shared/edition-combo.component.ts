@@ -17,11 +17,11 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     selector: 'edition-combo',
     template:
     `<select #EditionCombobox
-        class="form-control"
-        [(ngModel)]="selectedEdition"
-        (ngModelChange)="selectedEditionChange.emit($event)"
-        [attr.data-live-search]="true">        
-            <option *ngFor="let edition of editions" [value]="edition.value">{{edition.displayText}}</option>
+        class='form-control'
+        [(ngModel)]='selectedEdition'
+        (ngModelChange)='selectedEditionChange.emit($event)'
+        [attr.data-live-search]='true'>        
+            <option *ngFor='let edition of editions' [value]='edition.value'>{{edition.displayText}}</option>
     </select>`
 })
 export class EditionComboComponent extends AppComponentBase implements OnInit, AfterViewInit {
@@ -40,7 +40,7 @@ export class EditionComboComponent extends AppComponentBase implements OnInit, A
     }
 
     ngOnInit(): void {
-        var self = this;
+        let self = this;
         this._editionService.getEditionComboboxItems(0, true, false).subscribe(editions => {
             this.editions = editions;
             setTimeout(() => {
@@ -51,8 +51,8 @@ export class EditionComboComponent extends AppComponentBase implements OnInit, A
 
     ngAfterViewInit(): void {
         $(this.editionComboboxElement.nativeElement).selectpicker({
-            iconBase: "famfamfam-flag",
-            tickIcon: "fa fa-check"
+            iconBase: 'famfamfam-flag',
+            tickIcon: 'fa fa-check'
         });
     }
 }

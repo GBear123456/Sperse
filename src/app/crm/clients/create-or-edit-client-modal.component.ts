@@ -26,8 +26,8 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     profilePicture: string;
 
     readonly INPUT_MASK = {
-        Ssn: "000-00-0000",
-        PhoneNumber: "(000) 000-0000"
+        Ssn: '000-00-0000',
+        PhoneNumber: '(000) 000-0000'
     }
 
     constructor(
@@ -52,13 +52,13 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     }
 
     getProfilePicture(): void {
-        this.profilePicture = "/assets/common/images/default-profile-picture.png";
+        this.profilePicture = '/assets/common/images/default-profile-picture.png';
     }
-    
+
     save(event): void {
         if (!this.validate(event)) return;
 
-        var date = new Date(this.client.dob.toString()),
+        let date = new Date(this.client.dob.toString()),
             month = date.getMonth() + 1,
             day = date.getDate();
 
@@ -67,7 +67,7 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
                 date.getFullYear() + '-' +
                 this.twoDigitsFormat(month) + '-' +
                 this.twoDigitsFormat(day) +
-                "T00:00:00.000Z"
+                'T00:00:00.000Z'
             )
         );
 
@@ -129,12 +129,12 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     }
 
     twoDigitsFormat(value) {
-        return ("0" + value).slice(-2);
+        return ('0' + value).slice(-2);
     }
 
     focusInput(event) {
         if (!(event.component._value && event.component._value.trim())) {
-            var input = event.jQueryEvent.originalEvent.target;
+            let input = event.jQueryEvent.originalEvent.target;
             event.component.option({
                 mask: this.INPUT_MASK[input.name],
                 maskRules: { 'D': /\d?/ },
@@ -142,8 +142,8 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
             });
             setTimeout(function () {
                 if (input.createTextRange) {
-                    var part = input.createTextRange();
-                    part.move("character", 0);
+                    let part = input.createTextRange();
+                    part.move('character', 0);
                     part.select();
                 } else if (input.setSelectionRange)
                     input.setSelectionRange(0, 0);
@@ -155,6 +155,6 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
 
     blurInput(event) {
         if (!(event.component._value && event.component._value.trim()))
-            event.component.option({ mask: "", value: "", isValid: true });
+            event.component.option({ mask: '', value: '', isValid: true });
     }
 }

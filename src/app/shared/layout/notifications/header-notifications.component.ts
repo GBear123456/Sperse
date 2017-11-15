@@ -47,7 +47,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         });
 
         abp.event.on('app.notifications.read', userNotificationId => {
-            for (var i = 0; i < this.notifications.length; i++) {
+            for (let i = 0; i < this.notifications.length; i++) {
                 if (this.notifications[i].userNotificationId === userNotificationId) {
                     this.notifications[i].state = 'READ';
                 }

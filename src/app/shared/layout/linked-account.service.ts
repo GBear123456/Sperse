@@ -24,7 +24,7 @@ export class LinkedAccountService {
             .subscribe((result: SwitchToLinkedAccountOutput) => {
                 this._authService.logout(false);
 
-                var targetUrl = this._appUrlService.getAppRootUrlOfTenant(result.tenancyName) + "?switchAccountToken=" + result.switchAccountToken;
+                let targetUrl = this._appUrlService.getAppRootUrlOfTenant(result.tenancyName) + '?switchAccountToken=' + result.switchAccountToken;
                 if (input.targetTenantId) {
                     targetUrl = targetUrl + '&tenantId=' + input.targetTenantId;
                 }

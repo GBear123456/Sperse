@@ -3,18 +3,18 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
-    templateUrl: "./setup-steps.component.html",
-    styleUrls: ["./setup-steps.component.less"],
+    templateUrl: './setup-steps.component.html',
+    styleUrls: ['./setup-steps.component.less'],
     selector: 'setup-steps',
 })
 export class SetupStepComponent extends AppComponentBase implements OnInit {
 
     @Input() SelectedStepIndex: number;
     public readonly SetupSteps = [
-        "BusinessEntity",
-        "Chart",
-        "FinancialAccounts",
-        "Rules"
+        'BusinessEntity',
+        'Chart',
+        'FinancialAccounts',
+        'Rules'
     ];
 
     constructor(injector: Injector) {

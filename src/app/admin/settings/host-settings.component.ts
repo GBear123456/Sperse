@@ -9,10 +9,10 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppTimezoneScope  } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
-    templateUrl: "./host-settings.component.html",
+    templateUrl: './host-settings.component.html',
     animations: [appModuleAnimation()]
 })
 export class HostSettingsComponent extends AppComponentBase implements OnInit {
@@ -42,7 +42,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit {
             .subscribe(setting => {
                 self.hostSettings = setting;
                 self.initialTimeZone = setting.general.timezone;
-                self.usingDefaultTimeZone = setting.general.timezoneForComparison === self.setting.get("Abp.Timing.TimeZone");
+                self.usingDefaultTimeZone = setting.general.timezoneForComparison === self.setting.get('Abp.Timing.TimeZone');
             });
     }
 
@@ -53,7 +53,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit {
 
             let notAssignedEdition = new ComboboxItemDto();
             notAssignedEdition.value = null;
-            notAssignedEdition.displayText = self.l("NotAssigned");
+            notAssignedEdition.displayText = self.l('NotAssigned');
 
             self.editions.unshift(notAssignedEdition);
         });
@@ -77,7 +77,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit {
         let input = new SendTestEmailInput();
         input.emailAddress = self.testEmailAddress;
         self._hostSettingService.sendTestEmail(input).subscribe(result => {
-            self.notify.info(self.l("TestEmailSentSuccessfully"));
+            self.notify.info(self.l('TestEmailSentSuccessfully'));
         });
     };
 
