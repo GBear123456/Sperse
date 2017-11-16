@@ -25,7 +25,10 @@ export class FiltersService {
                 if (initFilters[filter.caption]) {
                     var props = Object.keys(initFilters[filter.caption]);
                     props.forEach((val, i, arr) => {
-                        filter.items[val].setValue(initFilters[filter.caption][val], filter);
+                        if (filter.items[val].setValue)
+                            filter.items[val].setValue(initFilters[filter.caption][val], filter);
+                        else
+                            filter.items[val] = initFilters[filter.caption][val];
                     });
                 }
             });

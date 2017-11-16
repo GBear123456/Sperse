@@ -9,11 +9,11 @@ import { AppConsts } from '@shared/AppConsts';
     styleUrls: ['./platform-select.component.less'],
     selector: 'platform-select'
 })
-export class PlatformSelect extends AppComponentBase {
+export class PlatformSelectComponent extends AppComponentBase {
     @HostBinding('class') private cssClass = '';
 
-    hoverModule: string = '';
-    module: string = '';
+    hoverModule = '';
+    module = '';
     modules = [];
 
     private _dropDown: any;

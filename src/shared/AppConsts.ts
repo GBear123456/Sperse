@@ -1,9 +1,9 @@
 export class AppConsts {
 
-    static readonly tenancyNamePlaceHolderInUrl = "{TENANCY_NAME}";
+    static readonly tenancyNamePlaceHolderInUrl = '{TENANCY_NAME}';
     static readonly tenantHostType = 1;
 
-    static readonly googleMapsApiUrl = "https://maps.googleapis.com/maps/api/js?key={KEY}&libraries=places&language=en";
+    static readonly googleMapsApiUrl = 'https://maps.googleapis.com/maps/api/js?key={KEY}&libraries=places&language=en';
 
     static remoteServiceBaseUrl: string;
     static remoteServiceBaseUrlFormat: string;
@@ -28,15 +28,16 @@ export class AppConsts {
 
     static readonly grid = {
         defaultPageSize: 10
-    }
+    };
 
     static readonly tenantCustomizations = {
         uiCustomizationsGroupName: 'UiCustomizations',
         UiCustomizationsSiteTitleName: 'SiteTitle'
-    }
+    };
 
     static readonly PipelinePurposeIds = {
-        lead: "L",
-        order: "O"
-    }
+        lead: 'L',
+        order: 'O'
+    };
 }
+
