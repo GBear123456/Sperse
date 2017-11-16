@@ -2,7 +2,7 @@ import { Component, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterModel } from '@shared/filters/filter.model';
+import { FilterModel, FilterItemModel } from '@shared/filters/filter.model';
 import { Router, NavigationStart } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -40,7 +40,7 @@ export class SideBarComponent extends AppComponentBase {
             this.filters = filters;
         });
         _filtersService.apply(() => {
-            this.showSelectedFilters();
+            this.filters.forEach((filter: FilterModel) => filter.updateCaptions());
         }, true);
 
         router.events.subscribe((event) => {
@@ -49,46 +49,13 @@ export class SideBarComponent extends AppComponentBase {
         });
     }
 
-    excludeFilter(event, filter) {
-        filter.value = '';
-        _.each(filter.items, (val, key) => {
-            if ((typeof (val) == 'string') || (val instanceof Date))
-                filter.items[key] = '';
-            else if (typeof (val) == 'boolean')
-                filter.items[key] = true;
-            else if (filter.items[key].selectedElement)
-                filter.items[key].clearSelectedElement(filter);
-            else if (filter.items[key].selectedElements)
-                filter.items[key].selectedElements = [];
-        });
+    excludeFilter(event, filter: FilterModel, displayElement) {
+        filter.displayElements = undefined;
+        if (displayElement.item.removeFilterItem)
+            displayElement.item.removeFilterItem(filter, displayElement.args);
+
         this._filtersService.change(filter);
         event.stopPropagation();
-    }
-
-    showSelectedFilters() {
-        this.filters.forEach((filter: FilterModel) => {
-            let isBoolValues = false;
-            let values = _.values(_.mapObject(
-                filter.items, (val, key) => {
-                    let caption = this.capitalize(key);
-                    isBoolValues = typeof (val) == 'boolean';
-                    return (typeof (val) == 'string') && val
-                        || isBoolValues && val && caption
-                        || val && val['getDate'] && (caption + ': ' +
-                           moment(val, 'YYYY-MM-DD').format('l'))
-                        || val && val.selectedElement && (val.selectedElement[val.displayElementExp]
-                        || val.displayElementExp(val.selectedElement))
-                        || val && val.selectedElements && val.selectedElements.length
-                        && val.selectedElements.map(x => x[val.displayElementExp]
-                        || val.displayElementExp(x)).join('; ');
-                })
-            ).filter(Boolean);
-            if (!isBoolValues || (values.length != _.values(filter.items).length)
-            )
-                filter.value = values.join(', ');
-            else
-                filter.value = null;
-        });
     }
 
     filterApply(event) {

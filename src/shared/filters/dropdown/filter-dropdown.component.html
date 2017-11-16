@@ -5,7 +5,7 @@
         </p>
             <dx-select-box [dataSource]="items[item].elements"                           
                            [displayExpr]="items[item].displayElementExp"
-                           [(value)]="items[item].selectedElement"
+                           [(value)]="items[item].value"
                            (onValueChanged)="items[item].onElementSelect($event.value, this)"
                            [searchEnabled]="true">
             </dx-select-box>       

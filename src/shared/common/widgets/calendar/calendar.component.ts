@@ -28,10 +28,10 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
     private setDateRageValues() {
         if (this.calendar) {
             let dateRange = this.calendar.data('dateRangePicker');
-            if (this._values.from)
-                dateRange.setStart(this._values.from);
-            if (this._values.to)
-                dateRange.setEnd(this._values.to);
+            if (this._values.from.value)
+                dateRange.setStart(this._values.from.value);
+            if (this._values.to.value)
+                dateRange.setEnd(this._values.to.value);
         }
     }
 
@@ -39,14 +39,14 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
         this.calendar = JQCalendarInit('.calendar#' + this.UID, true);
         this.calendar.on('datepicker-first-date-selected',
             (event, obj) => {
-                this._values.from = obj.date1;
+                this._values.from.value = obj.date1;
             }
         ).on('datepicker-change',
             (event, obj) => {
-                this._values.from = obj.date1;
-                this._values.to = obj.date2;
+                this._values.from.value = obj.date1;
+                this._values.to.value = obj.date2;
             }
-        );
+            );
         this.setDateRageValues();
     }
 

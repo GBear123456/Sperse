@@ -1,4 +1,4 @@
-﻿import {
+import {
     Component,
     OnInit,
     AfterViewInit,
@@ -8,12 +8,12 @@
     ViewEncapsulation,
     ViewChild
 } from '@angular/core';
-import {AppConsts} from '@shared/AppConsts';
-import {ActivatedRoute} from '@angular/router';
-import {AppComponentBase} from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
+import { ActivatedRoute } from '@angular/router';
+import { AppComponentBase } from '@shared/common/app-component-base';
 
-import {FiltersService} from '@shared/filters/filters.service';
-import { FilterModel } from '@shared/filters/filter.model';
+import { FiltersService } from '@shared/filters/filters.service';
+import { FilterModel, FilterItemModel } from '@shared/filters/filter.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
@@ -23,9 +23,9 @@ import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-
 import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
 
 import { CommonLookupServiceProxy, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
-import {appModuleAnimation} from '@shared/animations/routerTransition';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import {DxDataGridComponent} from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular';
 import query from 'devextreme/data/query';
 
 import 'devextreme/data/odata/store';
@@ -38,7 +38,7 @@ import * as moment from 'moment';
     templateUrl: './orders.component.html',
     styleUrls: ['./orders.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ OrderServiceProxy ]
+    providers: [OrderServiceProxy]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -52,31 +52,39 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private filters: FilterModel[];
 
     toolbarConfig = [
-      {location: 'before', items: [
-        {name: 'back'}
-      ]},
-      {location: 'before', items: [
-        {name: 'assign'}, {name: 'status'}, {name: 'delete'}
-      ]},
-      {location: 'after', items: [
-        {name: 'refresh', action: this.refreshDataGrid.bind(this)},
-        {name: 'download', options: {hint: this.l('Export to XLS')}, action: this.exportToXLS.bind(this)},
-        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)},
-        {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
-      ]},
-      {location: 'after', items: [
-        {name: 'box'},
-        {name: 'pipeline', action: this.togglePipeline.bind(this, true)},
-        {name: 'grid', action: this.togglePipeline.bind(this, false)}
-      ]}
+        {
+            location: 'before', items: [
+                { name: 'back' }
+            ]
+        },
+        {
+            location: 'before', items: [
+                { name: 'assign' }, { name: 'status' }, { name: 'delete' }
+            ]
+        },
+        {
+            location: 'after', items: [
+                { name: 'refresh', action: this.refreshDataGrid.bind(this) },
+                { name: 'download', options: { hint: this.l('Export to XLS') }, action: this.exportToXLS.bind(this) },
+                { name: 'download', options: { hint: this.l('Export to CSV') }, action: this.exportToCSV.bind(this) },
+                { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+            ]
+        },
+        {
+            location: 'after', items: [
+                { name: 'box' },
+                { name: 'pipeline', action: this.togglePipeline.bind(this, true) },
+                { name: 'grid', action: this.togglePipeline.bind(this, false) }
+            ]
+        }
     ];
 
     constructor(injector: Injector,
-                private _filtersService: FiltersService,
-                private _orderService: OrderServiceProxy,
-                // private _clientService: ClientServiceProxy,
-                private _activatedRoute: ActivatedRoute,
-                private _commonLookupService: CommonLookupServiceProxy) {
+        private _filtersService: FiltersService,
+        private _orderService: OrderServiceProxy,
+        // private _clientService: ClientServiceProxy,
+        private _activatedRoute: ActivatedRoute,
+        private _commonLookupService: CommonLookupServiceProxy) {
         super(injector);
 
         this._filtersService.enabled = true;
@@ -126,155 +134,155 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ngOnInit(): void {
         this._orderService.getFiltersInitialData().subscribe(result => {
             this._filtersService.setup(this.filters = [
-                <FilterModel>{
+                new FilterModel({
                     component: FilterCalendarComponent,
                     operator: { from: 'ge', to: 'le' },
                     caption: 'creation',
                     field: 'CreationTime',
-                    items: { from: '', to: '' }
-                },
-                <FilterModel>{
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                }),
+                new FilterModel({
                     component: FilterDropDownComponent,
                     caption: 'orderStages',
                     items: {
-                        pipeline: <FilterDropDownModel>{
+                        pipeline: new FilterDropDownModel({
                             displayName: 'Pipeline',
                             elements: result.pipelines,
                             displayElementExp: 'name',
                             filterField: 'pipelineId',
-                            onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                filter.items['pipeline'].selectedElement = event.value;
-                                filter.items['stage'].elements = event.value.stages;
-                                filter.items['stage'].selectedElement = null;
+                            onElementSelect: (value, filter: FilterDropDownComponent) => {
+                                filter.items["pipeline"].value = value;
+                                filter.items['stage'].elements = value.stages;
+                                filter.items["stage"].value = null;
                             },
                             clearSelectedElement: (filter: FilterDropDownComponent) => {
-                                filter.items['pipeline'].selectedElement = null;
+                                filter.items["pipeline"].value = null;
                                 filter.items['stage'].elements = null;
-                                filter.items['stage'].selectedElement = null;
+                                filter.items["stage"].value = null;
 
                             }
-                        },
-                        stage: <FilterDropDownModel>{
+                        }),
+                        stage: new FilterDropDownModel({
                             displayName: 'Stages',
                             displayElementExp: 'name',
                             filterField: 'stageId',
-                            onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                filter.items['stage'].selectedElement = event.value;
+                            onElementSelect: (value, filter: FilterDropDownComponent) => {
+                                filter.items["stage"].value = value;
                             }
-                        }
+                        })
                     }
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterMultiselectDropDownComponent,
                     field: 'BillingSubscriptionStatusId',
                     caption: 'BillingSubscriptionStatus',
                     items: {
-                        cashflowType: <FilterMultiselectDropDownModel>{
+                        cashflowType: new FilterMultiselectDropDownModel({
                             filterField: 'BillingSubscriptionStatusId',
                             displayElementExp: 'name',
                             dataSource: result.subscriptionStatuses,
                             columns: [{ dataField: 'name', caption: this.l('OrderFilters_BillingStatus') }],
-                        }
+                        })
                     }
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterDropDownComponent,
                     caption: 'paymentType',
                     items: {
-                        paymentType: <FilterDropDownModel>{
+                        paymentType: new FilterDropDownModel({
                             displayName: 'Payment Type',
                             elements: null,
                             filterField: 'paymentTypeId',
                             onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                filter.items['paymentType'].selectedElement = event.value;
+                                filter.items["paymentType"].value = event.value;
                             }
-                        }
+                        })
                     }
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'product',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'orderTotals',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'currencies',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'recurrence',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'regions',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'zipCode',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'referringAffiliates',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'referringWebsites',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'utmSources',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'utmMediums',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'UtmCampaings',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'entryPages',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'salesAgents',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'cardBins',
                     items: {}
-                }
+                })
             ]);
         });
 
@@ -292,9 +300,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     filterByOrderStages(filter) {
         let data = {};
-        data[filter.field] = {};
-        _.each(filter.items, (val: FilterDropDownModel, key) => {
-            return val && val.filterField && val.selectedElement && (data[this.capitalize(val.filterField)] = val.selectedElement.id);
+        _.each(filter.items, (item: FilterDropDownModel, key) => {
+            return item && item.filterField && item.value && (data[this.capitalize(item.filterField)] = item.value.id);
         });
         return data;
     }
@@ -302,9 +309,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     filterByCreation(filter: FilterModel) {
         let data = {};
         data[filter.field] = {};
-        _.each(filter.items, (val, key) => {
-            if (val) {
-                let date = moment.utc(val, 'YYYY-MM-DDT');
+        _.each(filter.items, (item: FilterItemModel, key) => {
+            if (item && item.value) {
+                let date = moment.utc(item.value, 'YYYY-MM-DDT');
                 if (key.toString() === 'to') {
                     date.add(1, 'd').add(-1, 's')
                 }
@@ -319,11 +326,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     filterByBillingSubscriptionStatus(filter) {
         let data = {};
         data[filter.field] = [];
-        _.each(filter.items, (val: FilterMultiselectDropDownModel, key) => {
-            if (val && val.selectedElements && val.selectedElements.length) {
+        _.each(filter.items, (item: FilterMultiselectDropDownModel, key) => {
+            if (item && item.value && item.value.length) {
                 let filterParams: any[] = [];
-                _.each(val.selectedElements, (el) => {
-                    filterParams.push('( ' + filter.field + ' eq ' + (typeof (el.id) === 'string' ? _string.quote(el.id) : '' ) + ' )');
+                _.each(item.value, (el: any) => {
+                    if (typeof (el.id) === "string") {
+                        filterParams.push("( " + filter.field + " eq '" + el.id + "' )");
+                    }
+                    else {
+                        filterParams.push("( " + filter.field + " eq " + el.id + " )");
+                    }
                 });
                 let filterQuery = '( ' + filterParams.join(' or ') + ' )';
                 data = filterQuery;

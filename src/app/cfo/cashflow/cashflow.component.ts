@@ -246,12 +246,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 this.initialData = result;
                 this._filtersService.setup(
                     this.filters = [
-                        <FilterModel>{
+                        new FilterModel({
                             component: FilterMultiselectDropDownComponent,
                             field: 'accountIds',
                             caption: 'Account',
                             items: {
-                                acc: <FilterMultiselectDropDownModel>{
+                                acc: new FilterMultiselectDropDownModel({
                                     displayName: 'Account',
                                     filterField: 'accountIds',
                                     displayElementExp: (item: BankAccountDto) => {
@@ -268,9 +268,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                                             caption: this.l('CashflowAccountFilter_AccountNumber')
                                         }
                                     ],
-                                }
+                                })
                             }
-                        }
+                        })
                     ]
                 );
 
@@ -280,7 +280,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this._filtersService.apply(() => {
             for (let filter of this.filters) {
                 let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
-                this.requestFilter[filter.field] = filterMethod ? filterMethod(filter) : filter.value;
+                this.requestFilter[filter.field] = filterMethod ? filterMethod(filter) : undefined;
             }
             this.loadGridDataSource();
         });
@@ -299,8 +299,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     filterByAccount(filter: FilterMultiselectDropDownComponent) {
-        if (filter.items && filter.items.acc && filter.items.acc.selectedElements) {
-            return filter.items.acc.selectedElements.map(x => x.id);
+        if (filter.items && filter.items.acc && filter.items.acc.value) {
+            return filter.items.acc.value.map(x => x.id);
         }
     }
 

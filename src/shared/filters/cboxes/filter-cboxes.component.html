@@ -12,7 +12,7 @@
     <p>
       <dx-check-box
         name="item"    
-        [(value)]="items[item]"
+        [(value)]="items[item].value"
         (onValueChanged)="updateSelectAll($event)"
         text="{{l(capitalize(item))}}">
       </dx-check-box>  

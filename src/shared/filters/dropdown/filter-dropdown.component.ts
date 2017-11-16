@@ -19,7 +19,7 @@ export class FilterDropDownComponent extends AppComponentBase implements OnInit,
     getItems(): string[] {
         return Object.keys(this.items);
     }
-    
+
     ngOnInit(): void {
     }
 }

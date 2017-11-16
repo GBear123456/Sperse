@@ -3,7 +3,7 @@
     <dx-date-box
       name="item"    
       type="date"
-      [(value)]="items[item]"
+      [(value)]="items[item].value"
       placeholder="{{l(capitalize(item))}}"
       [displayFormat]="dd/MM/yyyy"
       [showClearButton]="true"

@@ -1,4 +1,4 @@
-﻿import {
+import {
     Component,
     OnInit,
     AfterViewInit,
@@ -8,21 +8,21 @@
     ViewEncapsulation,
     ViewChild
 } from '@angular/core';
-import {AppConsts} from '@shared/AppConsts';
-import {ActivatedRoute} from '@angular/router';
-import {AppComponentBase} from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
+import { ActivatedRoute } from '@angular/router';
+import { AppComponentBase } from '@shared/common/app-component-base';
 
-import {FiltersService} from '@shared/filters/filters.service';
-import {FilterModel} from '@shared/filters/filter.model';
-import {FilterDropDownComponent} from '@shared/filters/dropdown/filter-dropdown.component';
-import {FilterInputsComponent} from '@shared/filters/inputs/filter-inputs.component';
+import { FiltersService } from '@shared/filters/filters.service';
+import { FilterModel, FilterItemModel } from '@shared/filters/filter.model';
+import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
+import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 
-import {CommonLookupServiceProxy, PipelineServiceProxy} from '@shared/service-proxies/service-proxies';
-import {appModuleAnimation} from '@shared/animations/routerTransition';
+import { CommonLookupServiceProxy, PipelineServiceProxy } from '@shared/service-proxies/service-proxies';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import {DxDataGridComponent} from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular';
 import query from 'devextreme/data/query';
 
 import 'devextreme/data/odata/store';
@@ -48,31 +48,39 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private filters: FilterModel[];
 
     toolbarConfig = [
-      {location: 'before', items: [
-        {name: 'back'}
-      ]},
-      {location: 'before', items: [
-        {name: 'assign'}, {name: 'status'}, {name: 'delete'}
-      ]},
-      {location: 'after', items: [
-        {name: 'refresh', action: this.refreshDataGrid.bind(this)},
-        {name: 'download', options: {hint: this.l('Export to XLS')}, action: this.exportToXLS.bind(this)},
-        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)},
-        {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
-      ]},
-      {location: 'after', items: [
-        {name: 'box'},
-        {name: 'pipeline', action: this.togglePipeline.bind(this, true)},
-        {name: 'grid', action: this.togglePipeline.bind(this, false)}
-      ]}
+        {
+            location: 'before', items: [
+                { name: 'back' }
+            ]
+        },
+        {
+            location: 'before', items: [
+                { name: 'assign' }, { name: 'status' }, { name: 'delete' }
+            ]
+        },
+        {
+            location: 'after', items: [
+                { name: 'refresh', action: this.refreshDataGrid.bind(this) },
+                { name: 'download', options: { hint: this.l('Export to XLS') }, action: this.exportToXLS.bind(this) },
+                { name: 'download', options: { hint: this.l('Export to CSV') }, action: this.exportToCSV.bind(this) },
+                { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+            ]
+        },
+        {
+            location: 'after', items: [
+                { name: 'box' },
+                { name: 'pipeline', action: this.togglePipeline.bind(this, true) },
+                { name: 'grid', action: this.togglePipeline.bind(this, false) }
+            ]
+        }
     ];
 
     constructor(injector: Injector,
-                private _filtersService: FiltersService,
-                // private _clientService: ClientServiceProxy,
-                private _activatedRoute: ActivatedRoute,
-                private _commonLookupService: CommonLookupServiceProxy,
-                private _pipelineService: PipelineServiceProxy) {
+        private _filtersService: FiltersService,
+        // private _clientService: ClientServiceProxy,
+        private _activatedRoute: ActivatedRoute,
+        private _commonLookupService: CommonLookupServiceProxy,
+        private _pipelineService: PipelineServiceProxy) {
         super(injector);
 
         this._filtersService.enabled = true;
@@ -122,7 +130,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     ngOnInit(): void {
         this._pipelineService.getPipelinesFullData('L').subscribe(result => {
             this._filtersService.setup(this.filters = [
-                <FilterModel>{
+                new FilterModel({
                     component: FilterDropDownComponent,
                     caption: 'stages',
                     items: {
@@ -131,127 +139,127 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             elements: result,
                             displayElementExp: 'name',
                             filterField: 'pipelineId',
-                            onElementSelect: (value, filter: FilterDropDownComponent) => {
-                                filter.items['pipeline'].selectedElement = value;
+                            onElementSelect: (value, filter: FilterModel) => {
+                                filter.items["pipeline"].value = value;
                                 filter.items['stage'].elements = value.stages;
-                                filter.items['stage'].selectedElement = null;
+                                filter.items["stage"].value = null;
                             },
-                            clearSelectedElement: (filter: FilterDropDownComponent) => {
-                                filter.items['pipeline'].selectedElement = null;
+                            clearSelectedElement: (filter: FilterModel) => {
+                                filter.items["pipeline"].value = null;
                                 filter.items['stage'].elements = null;
-                                filter.items['stage'].selectedElement = null;
+                                filter.items["stage"].value = null;
                             }
                         }),
                         stage: new FilterDropDownModel({
                             displayName: 'Stages',
                             displayElementExp: 'name',
                             filterField: 'stageId',
-                            onElementSelect: (value, filter: FilterDropDownComponent) => {
-                                filter.items['stage'].selectedElement = value;
+                            onElementSelect: (value, filter: FilterModel) => {
+                                filter.items["stage"].value = value;
                             }
                         })
                     }
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'SourceCode',
-                    items: { SourceCode: '' }
-                },
-                <FilterModel>{
+                    items: { SourceCode: new FilterItemModel() }
+                }),
+                new FilterModel({
                     component: FilterCalendarComponent,
                     operator: { from: 'ge', to: 'le' },
                     caption: 'creation',
                     field: 'CreationTime',
-                    items: { from: '', to: '' }
-                },
-                <FilterModel>{
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                }),
+                new FilterModel({
                     component: FilterCalendarComponent,
                     operator: { from: 'ge', to: 'le' },
                     caption: 'updating',
                     field: 'UpdatingTime',
-                    items: { from: '', to: '' }
-                },
-                <FilterModel>{
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'product',
-                    items: { product: '' }
-                },
-                <FilterModel>{
+                    items: { product: new FilterItemModel() }
+                }),
+                new FilterModel({
                     component: FilterDropDownComponent,
                     caption: 'paymentType',
                     items: {
-                        paymentType: <FilterDropDownModel>{
+                        paymentType: new FilterDropDownModel({
                             displayName: 'Payment Type',
                             elements: null,
                             filterField: 'paymentTypeId',
-                            onElementSelect: (event, filter: FilterDropDownComponent) => {
-                                filter.items['paymentType'].selectedElement = event.value;
+                            onElementSelect: (value, filter: FilterDropDownComponent) => {
+                                filter.items["paymentType"].value = value;
                             }
-                        }
+                        })
                     }
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'priceRange',
-                    items: { }
-                },
-                <FilterModel>{
+                    items: {}
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'currencies',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'regions',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'referringAffiliates',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'referringWebsites',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'utmSources',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'utmMediums',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'UtmCampaings',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'entryPages',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'salesAgents',
                     items: {}
-                }
+                })
             ], this._activatedRoute.snapshot.queryParams);
         });
 
@@ -259,7 +267,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.processODataFilter(this.dataGrid.instance,
                 this.dataSourceURI, this.filters, (filter) => {
                     let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
+                        this.capitalize(filter.caption)];
                     if (filterMethod)
                         return filterMethod.call(this, filter);
                 }
@@ -270,9 +278,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     filterByStages(filter: FilterModel) {
         let data = {};
-        data[filter.field] = {};
         _.each(filter.items, (val: FilterDropDownModel, key) => {
-            val && val.filterField && val.selectedElement && (data[this.capitalize(val.filterField)] = val.selectedElement.id);
+            val && val.filterField && val.value && (data[this.capitalize(val.filterField)] = val.value.id);
         });
         return data;
     }
@@ -280,11 +287,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     filterByCreation(filter: FilterModel) {
         let data = {};
         data[filter.field] = {};
-        _.each(filter.items, (val, key) => {
-            if (val) {
-                let date = moment.utc(val, 'YYYY-MM-DDT');
-                if (key.toString() === 'to')
-                {
+        _.each(filter.items, (item: FilterItemModel, key) => {
+            if (item.value) {
+                var date = moment.utc(item.value, 'YYYY-MM-DDT');
+                if (key.toString() === 'to') {
                     date.add(1, 'd').add(-1, 's')
                 }
 

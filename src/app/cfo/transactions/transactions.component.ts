@@ -5,7 +5,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { TransactionsServiceProxy, BankAccountDto } from '@shared/service-proxies/service-proxies';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterModel } from '@shared/filters/filter.model';
+import { FilterModel, FilterItemModel } from '@shared/filters/filter.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
@@ -77,19 +77,19 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
             .subscribe(result => {
                 this._filtersService.setup(
                     this.filters = [
-                        <FilterModel>{
+                        new FilterModel({
                             component: FilterCalendarComponent,
                             operator: { from: 'ge', to: 'le' },
                             caption: 'Date',
                             field: 'Date',
-                            items: { from: '', to: '' }
-                        },
-                        <FilterModel>{
+                            items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                        }),
+                        new FilterModel({
                             component: FilterMultiselectDropDownComponent,
                             field: 'BankAccountId',
                             caption: 'Account',
                             items: {
-                                account: <FilterMultiselectDropDownModel>{
+                                account: new FilterMultiselectDropDownModel({
                                     filterField: 'BankAccountId',
                                     displayElementExp: (item: BankAccountDto) => {
                                         if (item) {
@@ -98,99 +98,99 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                                     },
                                     dataSource: result.bankAccounts,
                                     columns: [{ dataField: 'accountName', caption: this.l('CashflowAccountFilter_AccountName') }, { dataField: 'accountNumber', caption: this.l('CashflowAccountFilter_AccountNumber') }],
-                                }
+                                })
                             }
-                        },
-                        <FilterModel>{
+                        }),
+                        new FilterModel({
                             component: FilterInputsComponent,
                             operator: 'contains',
                             caption: 'Description',
-                            items: { Description: '' }
-                        },
-                        <FilterModel>{
+                            items: { Description: new FilterItemModel() }
+                        }),
+                        new FilterModel({
                             component: FilterInputsComponent,
                             operator: { from: 'ge', to: 'le' },
                             caption: 'Amount',
                             field: 'Amount',
-                            items: { from: '', to: '' }
-                        },
-                        <FilterModel>{
+                            items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                        }),
+                        new FilterModel({
                             component: FilterMultiselectDropDownComponent,
                             field: 'CashFlowTypeId',
                             caption: 'CashflowType',
                             items: {
-                                cashflowType: <FilterMultiselectDropDownModel>{
+                                cashflowType: new FilterMultiselectDropDownModel({
                                     filterField: 'CashFlowTypeId',
                                     displayElementExp: 'name',
                                     dataSource: result.cashflowTypes,
                                     columns: [{ dataField: 'name', caption: this.l('TransactionCashflowTypeFilter_Name') }],
-                                }
+                                })
                             }
-                        },
-                        <FilterModel>{
+                        }),
+                        new FilterModel({
                             component: FilterMultiselectDropDownComponent,
                             field: 'CategoryId',
                             caption: 'TransactionCategory',
                             items: {
-                                category: <FilterMultiselectDropDownModel>{
+                                category: new FilterMultiselectDropDownModel({
                                     filterField: 'CategoryId',
                                     displayElementExp: 'name',
                                     dataSource: result.categories,
                                     columns: [{ dataField: 'name', caption: this.l('TransactionCategoryFilter_Name') }],
-                                }
+                                })
                             }
-                        },
-                        <FilterModel>{
+                        }),
+                        new FilterModel({
                             component: FilterMultiselectDropDownComponent,
                             field: 'TypeId',
                             caption: 'TransactionType',
                             items: {
-                                type: <FilterMultiselectDropDownModel>{
+                                type: new FilterMultiselectDropDownModel({
                                     filterField: 'TypeId',
                                     displayElementExp: 'name',
                                     dataSource: result.types,
                                     columns: [{ dataField: 'name', caption: this.l('TransactionTypeFilter_Name') }],
-                                }
+                                })
                             }
-                        },
-                        <FilterModel>{
+                        }),
+                        new FilterModel({
                             component: FilterMultiselectDropDownComponent,
                             field: 'CurrencyId',
                             caption: 'Currency',
                             items: {
-                                currency: <FilterMultiselectDropDownModel>{
+                                currency: new FilterMultiselectDropDownModel({
                                     filterField: 'CurrencyId',
                                     displayElementExp: 'name',
                                     dataSource: result.currencies,
                                     columns: [{ dataField: 'name', caption: this.l('TransactionCurrencyFilter_Name') }],
-                                }
+                                })
                             }
-                        },
-                        <FilterModel>{
+                        }),
+                        new FilterModel({
                             component: FilterMultiselectDropDownComponent,
                             field: 'BusinessEntityId',
                             caption: 'BusinessEntity',
                             items: {
-                                businessEntity: <FilterMultiselectDropDownModel>{
+                                businessEntity: new FilterMultiselectDropDownModel({
                                     filterField: 'BusinessEntityId',
                                     displayElementExp: 'name',
                                     dataSource: result.businessEntities,
                                     columns: [{ dataField: 'name', caption: this.l('TransactionBusinessEntityFilter_Name') }],
-                                }
+                                })
                             }
-                        },
-                        <FilterModel>{
+                        }),
+                        new FilterModel({
                             component: FilterInputsComponent,
                             //operator: 'contains',
                             caption: 'CheckNumber',
                             //items: { BusinessEntity: '' }
-                        },
-                        <FilterModel>{
+                        }),
+                        new FilterModel({
                             component: FilterInputsComponent,
                             //operator: 'contains',
                             caption: 'Reference',
                             //items: { BusinessEntity: '' }
-                        }
+                        })
                     ]
                 );
             });
@@ -210,9 +210,9 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     filterByDate(filter) {
         let data = {};
         data[filter.field] = {};
-        _.each(filter.items, (val, key) => {
-            if (val) {
-                let date = moment.utc(val, 'YYYY-MM-DDT');
+        _.each(filter.items, (item: FilterItemModel, key) => {
+            if (item && item.value) {
+                let date = moment.utc(item.value, 'YYYY-MM-DDT');
                 if (key.toString() === 'to') {
                     date.add(1, 'd').add(-1, 's');
                 }
@@ -231,8 +231,8 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     filterByAmount(filter) {
         let data = {};
         data[filter.field] = {};
-        _.each(filter.items, (val, key) => {
-            val && (data[filter.field][filter.operator[key]] = +val);
+        _.each(filter.items, (item: FilterItemModel, key) => {
+            item && item.value && (data[filter.field][filter.operator[key]] = +item.value);
         });
         return data;
     }
@@ -255,10 +255,10 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     filterByFilterElement(filter) {
         let data = {};
         data[filter.field] = [];
-        _.each(filter.items, (val: FilterMultiselectDropDownModel, key) => {
-            if (val && val.selectedElements && val.selectedElements.length) {
+        _.each(filter.items, (item: FilterMultiselectDropDownModel, key) => {
+            if (item && item.value && item.value.length) {
                 let filterParams: any[] = [];
-                _.each(val.selectedElements, (el) => {
+                _.each(item.value, (el: any) => {
                     if (typeof (el.id) === 'string') {
                         filterParams.push("( " + filter.field + " eq '" + el.id + "' )");
                     } else {
