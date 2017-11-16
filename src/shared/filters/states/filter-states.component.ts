@@ -2,6 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CountryServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FilterComponent } from '../filter.model';
+import { FilterStatesModel } from './filter-states.model'
 
 import * as _ from 'underscore';
 
@@ -12,7 +13,7 @@ import * as _ from 'underscore';
 })
 export class FilterStatesComponent extends AppComponentBase implements FilterComponent {
     items: {
-        countryStates: any//string[]
+        countryStates: FilterStatesModel
     };
     component: any;
     apply: (event) => void;
@@ -35,6 +36,8 @@ export class FilterStatesComponent extends AppComponentBase implements FilterCom
                         parent: country.code
                     });
             });
+
+            this.items.countryStates.list = data;
         });
     }
 
@@ -61,8 +64,8 @@ export class FilterStatesComponent extends AppComponentBase implements FilterCom
     }
 
     onSelect($event) {
-        this.items.countryStates = _.union(_.difference(
-            this.items.countryStates, $event.currentDeselectedRowKeys),
+        this.items.countryStates.value = _.union(_.difference(
+            this.items.countryStates.value, $event.currentDeselectedRowKeys),
             $event.currentSelectedRowKeys
         );
     }
@@ -74,7 +77,7 @@ export class FilterStatesComponent extends AppComponentBase implements FilterCom
 
     applySelectedRowKeys() {
         this.component.option(
-            "selectedRowKeys", this.items.countryStates
+            "selectedRowKeys", this.items.countryStates.value
         );
     }
 }
