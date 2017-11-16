@@ -13,8 +13,7 @@
         <ul class="filter-links">
             <ng-template ngFor let-filter [ngForOf]="filters" let-i="index">
                 <li class="filter-link">
-                    <a href="javascript:;"
-                       (click)="showFilterDialog($event, filter)">
+                    <a (click)="showFilterDialog($event, filter)">
                         {{l('FilterBy' + capitalize(filter.caption) + 'Header')}}
                         <i class="fa fa-angle-right pull-right" aria-hidden="true"></i>
                     </a>

@@ -31,6 +31,9 @@ input.form-control {
     transition: .2s;
 }
 
-.dx-treelist-empty-space.dx-treelist-collapsed span:before {
-  font-family: DXIcons!important;
+.dx-treelist-empty-space {
+  &.dx-treelist-collapsed span:before,
+  &.dx-treelist-expanded span:before {
+    font-family: DXIcons!important;
+  }
 }

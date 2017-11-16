@@ -33,13 +33,6 @@ export class BankAccountsComponent extends AppComponentBase implements OnInit {
     }
 
     onNextClick() {
-        abp.ui.setBusy();
-        this._financialInformationServiceProxy.syncAllAccounts(true)
-            .finally(() => {
-                abp.ui.clearBusy();
-            })
-            .subscribe((result) => {
-                this._router.navigate(['app/cfo/cashflow']);
-            });
+        this._router.navigate(['app/cfo/cashflow']);
     }
 }
