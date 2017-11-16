@@ -285,12 +285,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.loadGridDataSource();
         });
 
-        window['onHeaderExpanderClick'] = function($event) {
-          let rect = $event.target.getBoundingClientRect();
-          if (Math.abs($event.clientX - rect.x) < 10 &&
-            Math.abs($event.clientY - rect.y) < 10
-          ) $event.stopPropagation();
-          $event.target.classList.toggle('closed');
+        window['onHeaderExpanderClick'] = function ($event) {
+            let rect = $event.target.getBoundingClientRect();
+            if (Math.abs($event.clientX - rect.x) < 10 &&
+                Math.abs($event.clientY - rect.y) < 10
+            ) $event.stopPropagation();
+            $($event.target).closest('tr').children().each(function () {
+                if ($(this).hasClass('dx-pivotgrid-expanded')) {
+                    $(this).find('div.head-cell-expand').toggleClass('closed');
+                }
+            });
         };
     }
 
