@@ -12,17 +12,17 @@ import { ImpersonationService } from '@admin/users/impersonation.service';
 
 @NgModule({
     declarations: [
-      AppComponent
+        AppComponent
     ],
     imports: [
-  		LayoutModule,
-      AppRoutingModule,
-      AppCommonModule.forRoot(),
-      BrowserModule
+        LayoutModule,
+        AppRoutingModule,
+        AppCommonModule.forRoot(),
+        BrowserModule
     ],
     providers: [
-      AppService,
-      ImpersonationService
+        AppService,
+        ImpersonationService
     ]
 })
-export class AppModule { }
+export class AppModule {}

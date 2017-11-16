@@ -75,9 +75,12 @@ export class SideBarComponent extends AppComponentBase {
                     return (typeof (val) == 'string') && val
                         || isBoolValues && val && caption
                         || val && val['getDate'] && (caption + ': ' +
-                            moment(val, 'YYYY-MM-DD').format('l'))
-                        || val && val.selectedElement && (val.selectedElement[val.displayElementExp] || val.displayElementExp(val.selectedElement))
-                        || val && val.selectedElements && val.selectedElements.length && val.selectedElements.map(x => x[val.displayElementExp] || val.displayElementExp(x)).join('; ');
+                           moment(val, 'YYYY-MM-DD').format('l'))
+                        || val && val.selectedElement && (val.selectedElement[val.displayElementExp]
+                        || val.displayElementExp(val.selectedElement))
+                        || val && val.selectedElements && val.selectedElements.length
+                        && val.selectedElements.map(x => x[val.displayElementExp]
+                        || val.displayElementExp(x)).join('; ');
                 })
             ).filter(Boolean);
             if (!isBoolValues || (values.length != _.values(filter.items).length)
@@ -99,7 +102,6 @@ export class SideBarComponent extends AppComponentBase {
 
     showFilterDialog(event, filter) {
         this.activeFilter = filter;
-
         event.stopPropagation();
     }
 

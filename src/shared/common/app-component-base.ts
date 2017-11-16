@@ -13,120 +13,117 @@ import { ExportService } from '@shared/common/export/export.service';
 import buildQuery from 'odata-query';
 import * as _ from 'underscore';
 
-export abstract class AppComponentBase {  
-  dataGrid: any;
-	dataSource: any;
-  localization: LocalizationService;
-  permission: PermissionCheckerService;
-  feature: FeatureCheckerService;
-  notify: NotifyService;
-  setting: SettingService;
-  message: MessageService;
-  multiTenancy: AbpMultiTenancyService;
-  appSession: AppSessionService;
+export abstract class AppComponentBase {
+    dataGrid: any;
+    dataSource: any;
+    localization: LocalizationService;
+    permission: PermissionCheckerService;
+    feature: FeatureCheckerService;
+    notify: NotifyService;
+    setting: SettingService;
+    message: MessageService;
+    multiTenancy: AbpMultiTenancyService;
+    appSession: AppSessionService;
 
-  private _applicationRef: ApplicationRef;
-  private _exportService: ExportService;
+    private _applicationRef: ApplicationRef;
+    private _exportService: ExportService;
 
-  constructor(
-    private _injector: Injector, 
-    public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName
-  ) {
-    this.localization = _injector.get(LocalizationService);
-    this.permission = _injector.get(PermissionCheckerService);
-    this.feature = _injector.get(FeatureCheckerService);
-    this.notify = _injector.get(NotifyService);
-    this.setting = _injector.get(SettingService);
-    this.message = _injector.get(MessageService);
-    this.multiTenancy = _injector.get(AbpMultiTenancyService);
-    this.appSession = _injector.get(AppSessionService);
-    this._applicationRef = _injector.get(ApplicationRef);
-    this._exportService = _injector.get(ExportService);
-  }
+    constructor(private _injector: Injector,
+                public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName) {
+        this.localization = _injector.get(LocalizationService);
+        this.permission = _injector.get(PermissionCheckerService);
+        this.feature = _injector.get(FeatureCheckerService);
+        this.notify = _injector.get(NotifyService);
+        this.setting = _injector.get(SettingService);
+        this.message = _injector.get(MessageService);
+        this.multiTenancy = _injector.get(AbpMultiTenancyService);
+        this.appSession = _injector.get(AppSessionService);
+        this._applicationRef = _injector.get(ApplicationRef);
+        this._exportService = _injector.get(ExportService);
+    }
 
-  getRootComponent() {
-    return this._injector.get(this._applicationRef.componentTypes[0]);
-  }
+    getRootComponent() {
+        return this._injector.get(this._applicationRef.componentTypes[0]);
+    }
 
-  l(key: string, ...args: any[]): string {
-    return this.ls(this.localizationSourceName, key, ...args);
-  }
+    l(key: string, ...args: any[]): string {
+        return this.ls(this.localizationSourceName, key, ...args);
+    }
 
-  ls(sourcename: string, key: string, ...args: any[]): string {
-    let source = abp.localization.values[sourcename];
-    if (!source || !source[key])
-      sourcename = AppConsts.localization.defaultLocalizationSourceName;
+    ls(sourcename: string, key: string, ...args: any[]): string {
+        let source = abp.localization.values[sourcename];
+        if (!source || !source[key])
+            sourcename = AppConsts.localization.defaultLocalizationSourceName;
 
-    let localizedText = this.localization.localize(key, sourcename);
+        let localizedText = this.localization.localize(key, sourcename);
 
-    if (!localizedText)
-      localizedText = key;
+        if (!localizedText)
+            localizedText = key;
 
-    if (!args || !args.length)
-      return localizedText;
+        if (!args || !args.length)
+            return localizedText;
 
+        args.unshift(localizedText);
+        return abp.utils.formatString.apply(this, args);
+    }
 
-    args.unshift(localizedText);
-    return abp.utils.formatString.apply(this, args);
-  }
+    capitalize = require('underscore.string/capitalize');
 
-	capitalize = require('underscore.string/capitalize');
+    getODataURL(uri: String, filter?: Object) {
+        return AppConsts.remoteServiceBaseUrl + '/odata/' +
+            uri + (filter ? buildQuery({filter}) : '');
+    }
 
-	getODataURL(uri: String, filter?: Object) {
-		return AppConsts.remoteServiceBaseUrl + '/odata/' +
-      uri + (filter ? buildQuery({ filter }): '');
-	}
+    getODataVersion() {
+        return 4;
+    }
 
-  getODataVersion() {
-    return 4;
-  }
+    advancedODataFilter(grid: any, uri: string, query: any[]) {
+        grid.getDataSource()['_store']['_url'] =
+            this.getODataURL(uri, query);
 
-  advancedODataFilter(grid: any, uri: string, query: any[]) {
-    grid.getDataSource()['_store']['_url'] =
-      this.getODataURL(uri, query);
+        grid.refresh();
+    }
 
-    grid.refresh();
-  }
+    processODataFilter(grid, uri, filters, getCheckCustom) {
+        this.advancedODataFilter(grid, uri,
+            filters.map((filter) => {
+                return getCheckCustom(filter) || _.pairs(filter.items)
+                    .reduce((obj, pair) => {
+                        let val = pair.pop(), key = pair.pop(), operator = {};
+                        if (filter.operator)
+                            operator[filter.operator] = val;
+                        if (val && (typeof(val) == 'string')) {
+                            obj[this.capitalize(key)] = filter.operator ? operator : val;
+                        }
+                        return obj;
+                    }, {});
+            })
+        );
+    }
 
-  processODataFilter(grid, uri, filters, getCheckCustom) {
-    this.advancedODataFilter(grid, uri,
-      filters.map((filter) => {
-        return getCheckCustom(filter) || _.pairs(filter.items)
-          .reduce((obj, pair)=>{
-            let val = pair.pop(), key = pair.pop(), operator = {};
-            if (filter.operator)
-              operator[filter.operator] = val;
-            if (val && (typeof(val) == 'string')) {
-              obj[this.capitalize(key)] =  filter.operator ? operator: val;
-            }
-            return obj;
-          }, {});
-      })
-    );
-  }
+    isGranted(permissionName: string): boolean {
+        return this.permission.isGranted(permissionName);
+    }
 
-  isGranted(permissionName: string): boolean {
-    return this.permission.isGranted(permissionName);
-  }
+    exportToXLS() {
+        this.dataGrid.export.fileName =
+            this._exportService.getFileName();
+        this.dataGrid.instance.exportToExcel(false);
+    }
 
-  exportToXLS() {
-    this.dataGrid.export.fileName = 
-      this._exportService.getFileName();
-    this.dataGrid.instance.exportToExcel(false);
-  }
+    exportToCSV() {
+        this._exportService.saveAsCSV(
+            this.dataGrid.instance.getDataSource().items()
+        );
+    }
 
-  exportToCSV() {
-    this._exportService.saveAsCSV(
-      this.dataGrid.instance.getDataSource().items()
-    );
-  }
+    getPhoto(photo, gender): string {
+        if (photo)
+            return 'data:image/jpeg;base64,' + photo;
+        if (gender)
+            return 'assets/common/images/no-photo-' + gender + '.png';
 
-  getPhoto(photo, gender): string {
-      if (photo)
-          return 'data:image/jpeg;base64,' + photo;
-      if (gender)
-          return 'assets/common/images/no-photo-' + gender + '.png';
-
-      return 'assets/common/images/no-photo.png';
-  }
+        return 'assets/common/images/no-photo.png';
+    }
 }
