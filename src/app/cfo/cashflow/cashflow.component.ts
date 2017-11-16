@@ -1066,6 +1066,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 this.statsDetailFilter.transactionCategoryId = undefined;
                 if (cellObj.cell.rowPath[1]) this.statsDetailFilter.accountIds.push(cellObj.cell.rowPath[1]);
             } else {
+                this.statsDetailFilter.accountIds = [];
                 this.statsDetailFilter.transactionCategoryId = cellObj.cell.rowPath[1];
             }
             this.statsDetailFilter.expenseCategoryId = cellObj.cell.rowPath[2];
