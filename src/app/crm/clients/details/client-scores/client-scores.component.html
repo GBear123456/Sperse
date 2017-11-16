@@ -1,67 +1,67 @@
 <h4>Scores</h4>
 <div class="scors">
-  <div class="experian_score">
-    <!-- #4edb5d -->
-    <round-progress
-      [current]="scores.experian_score?.amount/10"
-      [max]="100"
-      [color]="'#37d749'"
-      [background]="'#eaeaea'"
-      [radius]="50"
-      [stroke]="5"
-      [semicircle]="true"
-      [rounded]="true"
-      [clockwise]="true"
-      [responsive]="false"
-      [duration]="800"
-      [animation]="'easeInOutQuart'"
-      [animationDelay]="0">
-    </round-progress>
+    <div class="experian_score">
+        <!-- #4edb5d -->
+        <round-progress
+            [current]="scores.experian_score?.amount/10"
+            [max]="100"
+            [color]="'#37d749'"
+            [background]="'#eaeaea'"
+            [radius]="50"
+            [stroke]="5"
+            [semicircle]="true"
+            [rounded]="true"
+            [clockwise]="true"
+            [responsive]="false"
+            [duration]="800"
+            [animation]="'easeInOutQuart'"
+            [animationDelay]="0">
+        </round-progress>
 
-    <span>{{scores.experian_score?.amount}}</span>
-    <h5>{{scores.experian_score?.label}}</h5>
-  </div>
-  <div class="equifax_score">
-    <!-- #ea5080 -->
-    <round-progress
-      [current]="scores.equifax_score?.amount/10"
-      [max]="100"
-      [color]="'#e7326a'"
-      [background]="'#eaeaea'"
-      [radius]="50"
-      [stroke]="5"
-      [semicircle]="true"
-      [rounded]="true"
-      [clockwise]="true"
-      [responsive]="false"
-      [duration]="800"
-      [animation]="'easeInOutQuart'"
-      [animationDelay]="0">
-    </round-progress>
+        <span>{{scores.experian_score?.amount}}</span>
+        <h5>{{scores.experian_score?.label}}</h5>
+    </div>
+    <div class="equifax_score">
+        <!-- #ea5080 -->
+        <round-progress
+            [current]="scores.equifax_score?.amount/10"
+            [max]="100"
+            [color]="'#e7326a'"
+            [background]="'#eaeaea'"
+            [radius]="50"
+            [stroke]="5"
+            [semicircle]="true"
+            [rounded]="true"
+            [clockwise]="true"
+            [responsive]="false"
+            [duration]="800"
+            [animation]="'easeInOutQuart'"
+            [animationDelay]="0">
+        </round-progress>
 
-    <span>{{scores.equifax_score?.amount}}</span>
-    <h5>{{scores.equifax_score?.label}}</h5>
-  </div>
-  <div class="transunion_score">
-    <!-- #fac154 -->
-    <round-progress
-      [current]="scores.transunion_score?.amount/10"
-      [max]="100"
-      [color]="'#f9b532'"
-      [background]="'#eaeaea'"
-      [radius]="50"
-      [stroke]="5"
-      [semicircle]="true"
-      [rounded]="true"
-      [clockwise]="true"
-      [responsive]="false"
-      [duration]="800"
-      [animation]="'easeInOutQuart'"
-      [animationDelay]="0">
-    </round-progress>
+        <span>{{scores.equifax_score?.amount}}</span>
+        <h5>{{scores.equifax_score?.label}}</h5>
+    </div>
+    <div class="transunion_score">
+        <!-- #fac154 -->
+        <round-progress
+            [current]="scores.transunion_score?.amount/10"
+            [max]="100"
+            [color]="'#f9b532'"
+            [background]="'#eaeaea'"
+            [radius]="50"
+            [stroke]="5"
+            [semicircle]="true"
+            [rounded]="true"
+            [clockwise]="true"
+            [responsive]="false"
+            [duration]="800"
+            [animation]="'easeInOutQuart'"
+            [animationDelay]="0">
+        </round-progress>
 
-    <span>{{scores.transunion_score?.amount}}</span>
-    <h5>{{scores.transunion_score?.label}}</h5>
-  </div>
+        <span>{{scores.transunion_score?.amount}}</span>
+        <h5>{{scores.transunion_score?.label}}</h5>
+    </div>
 
 </div>
