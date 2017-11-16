@@ -60,8 +60,22 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
       ]},
       {location: 'after', items: [
         {name: 'refresh', action: this.refreshDataGrid.bind(this)},
-        {name: 'download', options: {hint: this.l('Export to XLS')}, action: this.exportToXLS.bind(this)},
-        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)},
+        {
+          name: 'download', 
+          widget: 'dxDropDownMenu', 
+          options: {
+            hint: this.l('Download'), 
+            items: [{
+              onClick: this.exportToXLS.bind(this),
+              text: this.l('Export to Excel'),
+              icon: 'xls',
+            }, {
+              onClick: this.exportToCSV.bind(this),
+              text: this.l('Export to CSV'),
+              icon: 'sheet'
+            }]
+          }
+        },
         {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
       ]},
       {location: 'after', items: [

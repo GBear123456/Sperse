@@ -1,7 +1,27 @@
+/deep/ .dx-popup-wrapper {
+  span.toolbar-dropdown-item {
+    width: 250px;
+    padding: 0px 10px 0px 10px; 
+    img {
+      vertical-align: text-bottom;
+      margin-right: 10px;
+    }
+  }
+}
+
 :host {
   /deep/ .dx-toolbar {
     padding: 12px 0px 13px 0px;
     margin: 0px;
+
+    [accesskey="download"] {
+      .dx-button-content {
+        background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
+        i {
+          display: none;
+        }
+      }
+    }
 
     .dx-button-text {
        color: #677380;
