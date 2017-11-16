@@ -9,15 +9,15 @@ export interface FilterComponent {
     localizationSourceName: string;
 }
 
-export class FilterModel {
+export class FilterModelBase<T extends FilterItemModel> {
     component: Type<FilterComponent>;
     operator: any;
     caption: string;
     field?: any;
-    items?: any; //items?: { [item: string]: FilterItemModel; };
+    items?: { [item: string]: T; };
     displayElements?: any[];
 
-    public constructor(init?: Partial<FilterModel>) {
+    public constructor(init?: Partial<FilterModelBase<T>>) {
         Object.assign(this, init);
     }
 
@@ -29,6 +29,10 @@ export class FilterModel {
         )), x => { displayElements = displayElements.concat(x); });
         this.displayElements = displayElements;
     }
+}
+
+export class FilterModel extends FilterModelBase<FilterItemModel>
+{
 }
 
 export class FilterItemModel {

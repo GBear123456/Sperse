@@ -13,7 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterModel, FilterItemModel } from '@shared/filters/filter.model';
+import { FilterModel, FilterItemModel, FilterModelBase } from '@shared/filters/filter.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
@@ -150,12 +150,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             elements: result.pipelines,
                             displayElementExp: 'name',
                             filterField: 'pipelineId',
-                            onElementSelect: (value, filter: FilterDropDownComponent) => {
+                            onElementSelect: (value, filter: FilterModelBase<FilterDropDownModel>) => {
                                 filter.items["pipeline"].value = value;
                                 filter.items['stage'].elements = value.stages;
                                 filter.items["stage"].value = null;
                             },
-                            clearSelectedElement: (filter: FilterDropDownComponent) => {
+                            clearSelectedElement: (filter: FilterModelBase<FilterDropDownModel>) => {
                                 filter.items["pipeline"].value = null;
                                 filter.items['stage'].elements = null;
                                 filter.items["stage"].value = null;
@@ -166,7 +166,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             displayName: 'Stages',
                             displayElementExp: 'name',
                             filterField: 'stageId',
-                            onElementSelect: (value, filter: FilterDropDownComponent) => {
+                            onElementSelect: (value, filter: FilterModelBase<FilterDropDownModel>) => {
                                 filter.items["stage"].value = value;
                             }
                         })
@@ -193,7 +193,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             displayName: 'Payment Type',
                             elements: null,
                             filterField: 'paymentTypeId',
-                            onElementSelect: (event, filter: FilterDropDownComponent) => {
+                            onElementSelect: (event, filter: FilterModelBase<FilterDropDownModel>) => {
                                 filter.items["paymentType"].value = event.value;
                             }
                         })
@@ -298,7 +298,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    filterByOrderStages(filter) {
+    filterByOrderStages(filter: FilterModel) {
         let data = {};
         _.each(filter.items, (item: FilterDropDownModel, key) => {
             return item && item.filterField && item.value && (data[this.capitalize(item.filterField)] = item.value.id);

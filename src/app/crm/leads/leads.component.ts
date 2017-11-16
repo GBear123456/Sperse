@@ -13,7 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterModel, FilterItemModel } from '@shared/filters/filter.model';
+import { FilterModel, FilterItemModel, FilterModelBase } from '@shared/filters/filter.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
@@ -139,12 +139,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             elements: result,
                             displayElementExp: 'name',
                             filterField: 'pipelineId',
-                            onElementSelect: (value, filter: FilterModel) => {
+                            onElementSelect: (value, filter: FilterModelBase<FilterDropDownModel>) => {
                                 filter.items["pipeline"].value = value;
                                 filter.items['stage'].elements = value.stages;
                                 filter.items["stage"].value = null;
                             },
-                            clearSelectedElement: (filter: FilterModel) => {
+                            clearSelectedElement: (filter: FilterModelBase<FilterDropDownModel>) => {
                                 filter.items["pipeline"].value = null;
                                 filter.items['stage'].elements = null;
                                 filter.items["stage"].value = null;
@@ -194,7 +194,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             displayName: 'Payment Type',
                             elements: null,
                             filterField: 'paymentTypeId',
-                            onElementSelect: (value, filter: FilterDropDownComponent) => {
+                            onElementSelect: (value, filter: FilterModelBase<FilterDropDownModel>) => {
                                 filter.items["paymentType"].value = value;
                             }
                         })
