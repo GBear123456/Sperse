@@ -28,10 +28,10 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
     private setDateRageValues() {
         if (this.calendar) {
             let dateRange = this.calendar.data('dateRangePicker');
-            if (this._values.from.value)
-                dateRange.setStart(this._values.from.value);
-            if (this._values.to.value)
-                dateRange.setEnd(this._values.to.value);
+            if (this._values.from.value || this._values.to.value)
+                dateRange.setDateRange(this._values.from.value || this._values.to.value,
+                    this._values.to.value || this._values.from.value
+                );
         }
     }
 

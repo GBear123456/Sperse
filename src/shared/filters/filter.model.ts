@@ -1,7 +1,8 @@
 import { Type } from '@angular/core';
 import * as _ from 'underscore';
-import capitalize from 'underscore.string/capitalize';
 import * as moment from 'moment';
+
+let capitalize = require('underscore.string/capitalize');
 
 export interface FilterComponent {
     items?: { [item: string]: FilterItemModel; };
@@ -29,10 +30,6 @@ export class FilterModelBase<T extends FilterItemModel> {
         )), x => { displayElements = displayElements.concat(x); });
         this.displayElements = displayElements;
     }
-}
-
-export class FilterModel extends FilterModelBase<FilterItemModel>
-{
 }
 
 export class FilterItemModel {
@@ -65,6 +62,8 @@ export class FilterItemModel {
             this.value = null;
     }
 }
+
+export class FilterModel extends FilterModelBase<FilterItemModel> {}
 
 export class DisplayElement {
     item: FilterItemModel;
