@@ -14,12 +14,15 @@ import {
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
-import * as moment from 'moment';
+import * as Moment from 'moment';
+import { extendMoment } from 'moment-range';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/filter.model';
 import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
 import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
+
+const moment = extendMoment(Moment);
 
 /** Constants */
 const StartedBalance = 'B',
@@ -327,37 +330,114 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     this.expenseCategories = this.initialData.expenseCategories;
                     this.transactionCategories = this.initialData.transactionCategories;
                     this.bankAccounts = this.initialData.bankAccounts;
-                    let cashflowDataCopy = [];
                     /** categories - object with categories */
-                    this.cashflowData = transactions.map(function(transactionObj) {
-                        if (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation) {
-                            transactionObj.transactionCategoryId = <any>transactionObj.accountId;
-                        }
-                        /** clone transaction to another array */
-                        if (transactionObj.cashflowTypeId === Income || transactionObj.cashflowTypeId === Expense) {
-                            let clonedTransaction = new TransactionStatsDto(transactionObj);
-                            clonedTransaction.cashflowTypeId = Total;
-                            clonedTransaction.transactionCategoryId = <any>clonedTransaction.accountId;
-                            clonedTransaction.expenseCategoryId = null;
-                            cashflowDataCopy.push(clonedTransaction);
-                        }
-                        return transactionObj;
-                    });
+                    this.cashflowData = this.getCashflowDataFromTransactions(transactions);
                     /** Make a copy of cashflow data to display it in custom total group on the top level */
-                    this.cashflowTypes[Total] = this.l('Ending Cash Position');
-                    this.cashflowData = this.cashflowData.concat(cashflowDataCopy);
+                    let stubCashflowDataForEndingCashPosition = this.getStubCashflowDataForEndingCashPosition(this.cashflowData);
+                    this.addCashflowType(Total, this.l('Ending Cash Position'));
+                    let stubCashflowDataForAllDays = this.getStubCashflowDataForAllDays(this.cashflowData);
+                    /** concat initial data and stubs from the different hacks */
+                    this.cashflowData = this.cashflowData.concat(stubCashflowDataForEndingCashPosition, stubCashflowDataForAllDays);
                     /** Get cashflow data tree to hide groups without children */
                     this.cashflowDataTree = this.getCashflowDataTree(
                         this.cashflowData,
-                        this.apiTableFields.filter( field => {
-                            return field.area === 'row';
-                        })
+                        this.apiTableFields.filter( field => { return field.area === 'row'; })
                     );
                 } else {
                     this.cashflowData = null;
                 }
                 this.dataSource = this.getApiDataSource();
             });
+    }
+
+    /**
+     * Get the cashflow data from the transactions from the server
+     * @param {Array<TransactionStatsDto>} cashflowData
+     * @return {TransactionStatsDto[]}
+     */
+    getCashflowDataFromTransactions(transactions: Array<TransactionStatsDto>) {
+        return transactions.map(function(transactionObj) {
+            /** change the second level for started balance and reconciliations for the account id */
+            if (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation) {
+                transactionObj.transactionCategoryId = <any>transactionObj.accountId;
+            }
+            return transactionObj;
+        });
+    }
+
+    /**
+     * Add the new cashflow type by the hand
+     * @param key
+     * @param value
+     */
+    addCashflowType(key, value) {
+        this.cashflowTypes[key] = value;
+    }
+
+    /**
+     * Get the Income and Expense transactions, clone and change the cashflowTypeId to total
+     * (hack to show ending balances with the ability to expand them into accounts)
+     * @param {Array<TransactionStatsDto>} cashflowData
+     * @return {Array<TransactionStatsDto>}
+     */
+    getStubCashflowDataForEndingCashPosition(cashflowData: Array<TransactionStatsDto>) {
+        let stubCashflowDataForEndingCashPosition: Array<TransactionStatsDto> = [];
+        cashflowData.forEach( cashflowDataItem => {
+            /** clone transaction to another array */
+            if (cashflowDataItem .cashflowTypeId === Income || cashflowDataItem .cashflowTypeId === Expense) {
+                let clonedTransaction = new TransactionStatsDto(cashflowDataItem );
+                clonedTransaction.cashflowTypeId = Total;
+                clonedTransaction.transactionCategoryId = <any>clonedTransaction.accountId;
+                clonedTransaction.expenseCategoryId = null;
+                stubCashflowDataForEndingCashPosition.push(clonedTransaction);
+            }
+        });
+        return stubCashflowDataForEndingCashPosition;
+    }
+
+    /**
+     * for every day that is absent in cashflow data add stub object
+     * (hack to show all days, months and quarters for all years in cashflow data page)
+     * @param {Array<TransactionStatsDto>} cashflowData
+     * @return {TransactionStatsDto[]}
+     */
+    getStubCashflowDataForAllDays(cashflowData: Array<TransactionStatsDto>) {
+        let stubCashflowData = Array<TransactionStatsDto>();
+        let allYears: Array<number> = [];
+        let existingDates: Array<string> = [];
+        let firstAccountId;
+        cashflowData.forEach(cashflowItem => {
+            /** Move the year to the years array if it is unique */
+            let transactionYear = cashflowItem.date.year();
+            let date = cashflowItem.date.format('DD.MM.YYYY');
+            if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
+            if (existingDates.indexOf(date) === -1) existingDates.push(date);
+            if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
+        });
+        allYears = allYears.sort();
+        /** get started date of the first year */
+        let startedDate = moment().year(allYears[0]).startOf('year');
+        /** get last date of the last year */
+        let endedDate = moment().year(allYears[allYears.length - 1]).endOf('year');
+        /** cycle from started date to ended date */
+        let datesRange = Array.from(moment.range(startedDate, endedDate).by('day'));
+        /** added fake data for each date that is not already exists in cashflow data */
+        datesRange.forEach((date: any) => {
+            if (existingDates.indexOf(date.format('DD.MM.YYYY')) === -1) {
+                stubCashflowData.push(new TransactionStatsDto({
+                    'adjustmentType': null,
+                    'cashflowTypeId': StartedBalance,
+                    'transactionCategoryId': firstAccountId,
+                    'expenseCategoryId': null,
+                    'accountId': null,
+                    'currencyId': 'USD',
+                    'amount': 0,
+                    'comment': null,
+                    'date': date
+                }));
+            }
+        });
+        return stubCashflowData;
     }
 
     /**
@@ -607,63 +687,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             if (currentYear < itemYear) {
                 result = 2;
             } else if (currentYear === itemYear) {
-                result = 1;
-            }
-            return result;
-        };
-    }
-
-    getMonthHistoricalSelector(): any {
-        return data => {
-            let result,
-                currentDate = new Date(),
-                itemDate = new Date(data.date),
-                yearCompare = this.compareDateIntervals(currentDate, itemDate, 'year');
-            /** if years not the same */
-            if (yearCompare !== 1) {
-                result = yearCompare;
-            } else {
-                result = this.compareDateIntervals(currentDate, itemDate, 'month');
-            }
-            return result;
-        };
-    }
-
-    getDayHistoricalSelector(): any {
-        return data => {
-            let result,
-                currentDate = new Date(),
-                itemDate = new Date(data.date),
-                yearCompare = this.compareDateIntervals(currentDate, itemDate, 'year');
-            /** if years not the same */
-            if (yearCompare !== 1) {
-                result = yearCompare;
-            } else {
-                let monthCompare = this.compareDateIntervals(currentDate, itemDate, 'month');
-                if (monthCompare !== 1) {
-                    result = monthCompare;
-                } else {
-                    result = this.compareDateIntervals(currentDate, itemDate, 'day');
-                }
-            }
-            return result;
-        };
-    }
-
-    getQuarterHistoricalSelector(): any {
-        return (data) => {
-            let result = 0,
-                currentDate = new Date(),
-                itemDate = new Date(data.date),
-                currentYear = currentDate.getFullYear(),
-                itemYear = itemDate.getFullYear(),
-                currentQuarter = this.getQuarter(currentDate),
-                itemQuarter = this.getQuarter(itemDate),
-                currentFullDate = currentYear.toString() + currentQuarter.toString(),
-                itemFullDate = itemYear.toString() + itemQuarter.toString();
-            if ( currentFullDate < itemFullDate ) {
-                result = 2;
-            } else if (currentFullDate === itemFullDate ) {
                 result = 1;
             }
             return result;
@@ -1081,8 +1104,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     formattingDate(param = []) {
-        let startDate: moment.Moment = moment.utc('1970-01-01');
-        let endDate: moment.Moment = moment.utc('1970-01-01');
+        let startDate: Moment.Moment = moment.utc('1970-01-01');
+        let endDate: Moment.Moment = moment.utc('1970-01-01');
         let year = param[1];
         let quarter = param[2];
         let month = param[3];
