@@ -35,6 +35,7 @@
 }
 
 .module-select-item {
+    position: relative;
     div, input {
         display: inline-block;
     }
@@ -58,6 +59,10 @@
         color: #ffffff;
         text-align: center;
     }
+}
+
+/deep/ .dx-popup-content {
+    padding: 0!important;    
 }
 
 /deep/ .module-description {
@@ -87,9 +92,10 @@
         height: 100%;
         .description-container {
             height: 95%;
-            right: -48px;
+            right: -26px;
             min-height: 460px;
             position: relative;
+            padding-left: 23px;
             background-image: url('../../../assets/common/images/crm-module.png');
             background-repeat: no-repeat;
             background-position: bottom right;
@@ -115,6 +121,7 @@
 
 /deep/ .dx-list[accesskey="module-select-list"] {
     .dx-list-item {
+        padding-left: 13px;
         border: none !important;
 
         &.dx-state-focused {
@@ -126,7 +133,7 @@
             float: right;
             top: 10px;
             right: 15px;
-            position: relative;
+            position: absolute;
             color: #00aeef;
         }
     }
