@@ -40,6 +40,7 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
         this.calendar.on('datepicker-first-date-selected',
             (event, obj) => {
                 this._values.from.value = obj.date1;
+                this._values.to.value = null;
             }
         ).on('datepicker-change',
             (event, obj) => {
