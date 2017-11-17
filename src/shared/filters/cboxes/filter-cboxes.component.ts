@@ -22,7 +22,7 @@ export class FilterCBoxesComponent extends AppComponentBase implements OnInit, F
   selectAllChanged(event){
     if (event.jQueryEvent)
       for (let item in this.items)
-        this.items[item] = event.value;
+        this.items[item].value = event.value;
   }
 
   updateSelectAll(event?){
@@ -32,7 +32,7 @@ export class FilterCBoxesComponent extends AppComponentBase implements OnInit, F
     this.selectAll = true;
     for (let item in this.items)
       this.selectAll = this.selectAll 
-        && this.items[item];
+        && this.items[item].value;
   }
 
   ngOnInit(): void {

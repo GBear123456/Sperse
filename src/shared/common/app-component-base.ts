@@ -29,7 +29,7 @@ export abstract class AppComponentBase {
     private _exportService: ExportService;
 
     constructor(private _injector: Injector,
-                public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName) {
+        public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName) {
         this.localization = _injector.get(LocalizationService);
         this.permission = _injector.get(PermissionCheckerService);
         this.feature = _injector.get(FeatureCheckerService);
@@ -71,7 +71,7 @@ export abstract class AppComponentBase {
 
     getODataURL(uri: String, filter?: Object) {
         return AppConsts.remoteServiceBaseUrl + '/odata/' +
-            uri + (filter ? buildQuery({filter}) : '');
+            uri + (filter ? buildQuery({ filter }) : '');
     }
 
     getODataVersion() {
@@ -90,10 +90,10 @@ export abstract class AppComponentBase {
             filters.map((filter) => {
                 return getCheckCustom(filter) || _.pairs(filter.items)
                     .reduce((obj, pair) => {
-                        let val = pair.pop(), key = pair.pop(), operator = {};
+                        let val = pair.pop().value, key = pair.pop(), operator = {};
                         if (filter.operator)
                             operator[filter.operator] = val;
-                        if (val && (typeof(val) == 'string')) {
+                        if (val && (typeof (val) == 'string')) {
                             obj[this.capitalize(key)] = filter.operator ? operator : val;
                         }
                         return obj;

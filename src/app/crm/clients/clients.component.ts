@@ -8,27 +8,27 @@ import {
     ViewEncapsulation,
     ViewChild
 } from '@angular/core';
-import {AppConsts} from '@shared/AppConsts';
-import {ActivatedRoute, Router} from '@angular/router';
-import {AppComponentBase} from '@shared/common/app-component-base';
-import {CreateOrEditClientModalComponent} from './create-or-edit-client-modal.component';
+import { AppConsts } from '@shared/AppConsts';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { CreateOrEditClientModalComponent } from './create-or-edit-client-modal.component';
 
-import {FiltersService} from '@shared/filters/filters.service';
-import {FilterModel} from '@shared/filters/filter.model';
-import {FilterStatesComponent} from '@shared/filters/states/filter-states.component';
-import {FilterInputsComponent} from '@shared/filters/inputs/filter-inputs.component';
-import {FilterCBoxesComponent} from '@shared/filters/cboxes/filter-cboxes.component';
-import {FilterCalendarComponent} from '@shared/filters/calendar/filter-calendar.component';
+import { FiltersService } from '@shared/filters/filters.service';
+import { FilterModel, FilterItemModel } from '@shared/filters/filter.model';
+import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
+import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
+import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
+import { FilterCBoxesComponent } from '@shared/filters/cboxes/filter-cboxes.component';
+import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 
-import {CommonLookupServiceProxy} from '@shared/service-proxies/service-proxies';
-import {appModuleAnimation} from '@shared/animations/routerTransition';
+import { CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import {DxDataGridComponent} from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular';
 import query from 'devextreme/data/query';
 
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
-
 import * as moment from 'moment';
 
 @Component({
@@ -53,8 +53,22 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
       ]},
       {location: 'after', items: [
         {name: 'refresh', action: this.refreshDataGrid.bind(this)},
-        {name: 'download', options: {hint: this.l('Export to Excel')}, action: this.exportToXLS.bind(this)},
-        {name: 'download', options: {hint: this.l('Export to CSV')}, action: this.exportToCSV.bind(this)},
+        {
+          name: 'download', 
+          widget: 'dxDropDownMenu', 
+          options: {
+            hint: this.l('Download'), 
+            items: [{
+              onClick: this.exportToXLS.bind(this),
+              text: this.l('Export to Excel'),
+              icon: 'xls',
+            }, {
+              onClick: this.exportToCSV.bind(this),
+              text: this.l('Export to CSV'),
+              icon: 'sheet'
+            }]
+          }
+        },
         {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
       ]},
       {location: 'after', items: [
@@ -63,10 +77,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     ];
 
     constructor(injector: Injector,
-                private _router: Router,
-                private _filtersService: FiltersService,
-                private _activatedRoute: ActivatedRoute,
-                private _commonLookupService: CommonLookupServiceProxy) {
+        private _router: Router,
+        private _filtersService: FiltersService,
+        private _activatedRoute: ActivatedRoute,
+        private _commonLookupService: CommonLookupServiceProxy) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this._filtersService.enabled = true;
@@ -112,62 +126,62 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     ngOnInit(): void {
         this._filtersService.setup(
             this.filters = [
-                <FilterModel> {
+                new FilterModel({
                     component: FilterStatesComponent,
                     caption: 'states',
                     items: {
-                      countryStates: []
+                        countryStates: new FilterStatesModel()
                     }
-                },
-                <FilterModel> {
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'name',
-                    items: {name: ''}
-                },
-                <FilterModel> {
+                    items: { name: new FilterItemModel() }
+                }),
+                new FilterModel({
                     component: FilterCBoxesComponent,
                     caption: 'status',
                     field: 'StatusId',
-                    items: {active: true, inactive: true}
-                },
-                <FilterModel> {
+                    items: { active: new FilterItemModel(), inactive: new FilterItemModel() }
+                }),
+                new FilterModel({
                     component: FilterCalendarComponent,
-                    operator: {from: 'ge', to: 'le'},
+                    operator: { from: 'ge', to: 'le' },
                     caption: 'creation',
                     field: 'CreationTime',
-                    items: {from: '', to: ''}
-                },
-                <FilterModel>{
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'email',
-                    items: { email: '' }
-                },
-                <FilterModel>{
+                    items: { email: new FilterItemModel() }
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'phone',
-                    items: { phone: '' }
-                },
-                <FilterModel>{
+                    items: { phone: new FilterItemModel() }
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'city',
-                    items: { }
-                },
-                <FilterModel>{
+                    items: {}
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'address',
                     items: {}
-                },
-                <FilterModel>{
+                }),
+                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'zipCode',
                     items: {}
-                }
+                })
             ]
         );
 
@@ -175,7 +189,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             this.processODataFilter(this.dataGrid.instance,
                 this.dataSourceURI, this.filters, (filter) => {
                     let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
+                        this.capitalize(filter.caption)];
                     if (filterMethod)
                         return filterMethod.call(this, filter);
                 }
@@ -183,35 +197,36 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         });
     }
 
-    filterByStates(filter) {
+    filterByStates(filter: FilterModel) {
         let filterData = [];
-        filter.items.countryStates.forEach((val) => {
-            let parts = val.split(':');
-            filterData.push(parts.length == 2 ?
-            {
-              CountryId: parts[0],
-              StateId: parts[1]
-            } : {CountryId: val});
-        });
+        if (filter.items.countryStates && filter.items.countryStates.value) {
+            filter.items.countryStates.value.forEach((val) => {
+                let parts = val.split(':');
+                filterData.push(parts.length == 2 ?
+                    {
+                        CountryId: parts[0],
+                        StateId: parts[1]
+                    } : { CountryId: val });
+            });
+        }
 
         if (filterData.length)
             return {
                 Addresses: {
                     any: {
-                      or: filterData
+                        or: filterData
                     }
                 }
             };
     }
 
-    filterByCreation(filter) {
+    filterByCreation(filter: FilterModel) {
         let data = {};
         data[filter.field] = {};
-        _.each(filter.items, (val, key) => {
-            if (val) {
-                let date = moment.utc(val, 'YYYY-MM-DDT');
-                if (key.toString() === 'to')
-                {
+        _.each(filter.items, (item: FilterItemModel, key) => {
+            if (item && item.value) {
+                let date = moment.utc(item.value, 'YYYY-MM-DDT');
+                if (key.toString() === 'to') {
                     date.add(1, 'd').add(-1, 's')
                 }
 
@@ -222,10 +237,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         return data;
     }
 
-    filterByStatus(filter) {
-        if (!filter.items.active || !filter.items.inactive) {
+    filterByStatus(filter: FilterModel) {
+        let isActive = filter.items.active.value;
+        let isInactive = filter.items.inactive.value;
+
+        if (isActive ^ isInactive) {
             let obj = {};
-            obj[filter.field] = filter.items.active ? 'A' : 'I';
+            obj[filter.field] = filter.items.active.value ? 'A' : 'I';
             return obj;
         }
     }

@@ -4,7 +4,7 @@
             {{ items[item].displayName }}
         </p>
 
-        <dx-drop-down-box [(value)]="items[item].selectedElements"
+        <dx-drop-down-box [(value)]="items[item].value"
                           [displayExpr]="items[item].displayElementExp"
                           placeholder="Select a value..."
                           [dataSource]="items[item].dataSource"
@@ -19,7 +19,7 @@
                               [filterRow]="{ visible: true }"
                               [scrolling]="{ mode: 'infinite' }"
                               [height]="265"
-                              [(selectedRowKeys)]="items[item].selectedElements">
+                              [(selectedRowKeys)]="items[item].value">
                 </dx-data-grid>
             </div>
         </dx-drop-down-box>

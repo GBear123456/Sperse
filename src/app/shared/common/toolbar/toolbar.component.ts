@@ -13,42 +13,42 @@ export class ToolBarComponent extends AppComponentBase {
   private supportedButtons = {
       back: {
           hint: this.l('Back'),
-          iconSrc: 'assets/common/icons/back-arrow.svg'
+          iconSrc: this.getImgURI('back-arrow')
       },
       assign: {
           text: this.l('Assign'),
-          iconSrc: 'assets/common/icons/assign-icon.svg'
+          iconSrc: this.getImgURI('assign-icon')
       },
       status: {
           text: this.l('Status'),
-          iconSrc: 'assets/common/icons/status-icon.svg'
+          iconSrc: this.getImgURI('status-icon')
       },
       delete: {
           text: this.l('Delete'),
-          iconSrc: 'assets/common/icons/delete-icon.svg'
+          iconSrc: this.getImgURI('delete-icon')
       },
       folder: {
           hint: this.l('Folder'),
-          iconSrc: 'assets/common/icons/folder.svg'
+          iconSrc: this.getImgURI('folder')
       },
       pen: {
           hint: this.l('Pen'),
-          iconSrc: 'assets/common/icons/pen.svg'
+          iconSrc: this.getImgURI('pen')
       },
       more: {
           text: this.l('More')
       },
       box: {
           hint: this.l('Box'),
-          iconSrc: 'assets/common/icons/box-icon.svg'
+          iconSrc: this.getImgURI('box-icon')
       },
       pipeline: {
           hint: this.l('Pipeline'),
-          iconSrc: 'assets/common/icons/pipeline-icon.svg'
+          iconSrc: this.getImgURI('pipeline-icon')
       },
       grid: {
           hint: this.l('Grid'),
-          iconSrc: 'assets/common/icons/table-icon.svg'
+          iconSrc: this.getImgURI('table-icon')
       },
       prev: {
           hint: this.l('Previous'),
@@ -64,7 +64,7 @@ export class ToolBarComponent extends AppComponentBase {
       },
       download: {
           hint: this.l('Download'),
-          iconSrc: 'assets/common/icons/download-icon.svg'
+          iconSrc: this.getImgURI('download-icon')
       },
       refresh: {
           hint: this.l('Refresh'),
@@ -72,23 +72,23 @@ export class ToolBarComponent extends AppComponentBase {
       },
       edit: {
           text: this.l('Edit'),
-          iconSrc: 'assets/common/icons/edit-pencil-icon.svg'
+          iconSrc: this.getImgURI('edit-pencil-icon')
       },
       rules: {
           text: this.l('Rules'),
-          iconSrc: 'assets/common/icons/rules-icon.svg'
+          iconSrc: this.getImgURI('rules-icon')
       },
       expand: {
           text: this.l('Expand'),
-          iconSrc: 'assets/common/icons/expand-all-icon.svg'
+          iconSrc: this.getImgURI('expand-all-icon')
       },
       flag: {
           hint: this.l('Flag'),
-          iconSrc: 'assets/common/icons/flag-icon.svg'
+          iconSrc: this.getImgURI('flag-icon')
       },
       print: {
           hint: this.l('Print'),
-          iconSrc: 'assets/common/icons/print-icon.svg'
+          iconSrc: this.getImgURI('print-icon')
       }
   };
 
@@ -109,14 +109,29 @@ export class ToolBarComponent extends AppComponentBase {
     super(injector);
   }
 
+  getImgURI(name: string) {
+    return 'assets/common/icons/' + name + '.svg';
+  }
+
+  getDropDownItemTemplate(link) { 
+    return '<span class="toolbar-dropdown-item"><img src="' + this.getImgURI(link.icon) + '">' + link.text + '</span>';
+  }
+
   initToolbarItems() {
     this._config.forEach((group) => {
       let count = group.items.length;
       group.items.forEach((item, index) => {
         let isLast = count == index + 1;
+        if (item.widget == 'dxDropDownMenu') {
+          item.options['accessKey'] = item.name;
+          item.options['items'].forEach((link) => {
+            link.html = this.getDropDownItemTemplate(link);
+          })
+        }
+
         this.items.push({
           location: group.location,
-          widget: 'dxButton',
+          widget: item.widget || 'dxButton',
           options: _.extend({
             onClick: item.action,
             elementAttr: {

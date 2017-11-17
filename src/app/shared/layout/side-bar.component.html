@@ -18,9 +18,11 @@
                         <i class="fa fa-angle-right pull-right" aria-hidden="true"></i>
                     </a>
                     <ul class="sub-filter-list">
-                        <li *ngIf="filter.value" class="sub-filter-item">
-                            {{filter.value}}<i class="minus-icon" aria-hidden="true" (click)="excludeFilter($event, filter)"></i>
-                        </li>
+                        <ng-template ngFor let-displayFilterElement [ngForOf]="filter.displayElements">
+                            <li *ngIf="displayFilterElement.displayValue" class="sub-filter-item">
+                                {{displayFilterElement.displayValue}}<i class="minus-icon" aria-hidden="true" (click)="excludeFilter($event, filter, displayFilterElement)"></i>
+                            </li>
+                        </ng-template>
                     </ul>
                 </li>
             </ng-template>
