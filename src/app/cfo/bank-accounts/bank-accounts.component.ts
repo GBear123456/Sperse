@@ -25,7 +25,7 @@ export class BankAccountsComponent extends AppComponentBase implements OnInit {
 
     ngOnInit() {
         this._financialInformationServiceProxy.getSetupAccountsLink(
-            'https://dl.dropboxusercontent.com/s/v4loqzjr4ysezvc/custom.css',
+            'https://testadmin.sperse.com/assets/cfo-css/custom.css',
             ''
         ).subscribe((data) => {
             this.sourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data.setupAccountsLink);
