@@ -34,7 +34,10 @@ export class FiltersService {
             });
         }
         this.filters.next(filters);
-        this.change(<FilterModel>{});
+
+        if (initialValues && initialValues.filters) {
+            this.change(<FilterModel>{});
+        }
     }
 
     update(callback: (filters: FilterModel[]) => any) {
