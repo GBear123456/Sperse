@@ -5,6 +5,7 @@
 @grandTotalTextColor: #fff;
 @expendedLineColor: #b3b7ba;
 @tableBorderColor: #ddd;
+@generalColor: #212c36;
 
 /** historical row colors */
 @historicalTextColor: #686f76;
@@ -119,7 +120,7 @@
                     &.quarter,
                     &.day,
                     &.dx-row-total {
-                        color: #212c36;
+                        color: @generalColor;
                         font-weight: 600;
                         font-size: 18px;
                         &.current {
@@ -275,9 +276,18 @@
                     }
                 }
 
+                &.startedBalance,
+                &.incomeRow,
+                &.expensesRow,
+                &.endingCashPosition {
+                    td {
+                        letter-spacing: 0.8px;
+                        font-weight: 600;
+                    }
+                }
+
                 &.startedBalance {
                     td {
-                        font-weight: 700;
                         background: @startedBalanceBackgroundColor;
                     }
                 }
@@ -285,15 +295,14 @@
                     td {
                         background: #00aff0;
                         color: #fff;
-                        font-weight: 700;
-                        letter-spacing: 0.6px;
                         padding-left: 22px;
                     }
                 }
                 &.reconciliation {
                     td {
+                        letter-spacing: 0.2px;
                         padding-left: 22px;
-                        font-weight: 700;
+                        font-weight: 600;
                         background: @reconciliationVerticalHeaderBackgroundColor;
                     }
                 }
@@ -407,19 +416,37 @@
             width: auto;
             display: flex;
             align-items: baseline;
-            justify-content: space-around;
+            justify-content: left;
             input.dx-texteditor-input {
-                width: auto;
-                max-width: 120px;
                 padding: 8px 8px;
                 padding-right: 0;
                 font-size: 15px;
+                display: block;
+                float: left;
+                max-width: inherit;
+                min-width: 0;
+                width: auto;
+                &:after {
+
+                }
             }
             .dx-texteditor-buttons-container {
-                position: relative;
+                position: static;
                 .dx-dropdowneditor-button {
                     width: 10px;
                     padding: 0;
+                    position: static;
+                    .dx-dropdowneditor-icon {
+                        font: 14px/1 DXIcons !important;
+                        &:before {
+                            content: url('../../../assets/common/icons/down-icon.svg');
+                            top: 9px;
+                            right: 0;
+                            left: auto;
+                            margin: auto;
+                            color: @generalColor;
+                        }
+                    }
                 }
             }
         }
@@ -435,9 +462,6 @@
             background: none !important;
         }
 
-        .dx-dropdowneditor-icon {
-            font: 14px/1 DXIcons !important;
-        }
     }
 
     .cashflow {
@@ -448,6 +472,7 @@
     .groupBy {
         padding-left: 22px;
         display: flex;
+        color: @generalColor;
         align-items: center;
         span {
             margin-right: 10px;
@@ -486,7 +511,7 @@
                         font-size: 13px;
                         font-weight: 500;
                         line-height: 24px;
-                        color: #212C36;
+                        color: @generalColor;
                     }
                 }
             }
@@ -511,13 +536,17 @@
     }
 }
 
+/deep/ .dx-overlay-content {
+    min-width: 100px;
+}
+
 .title {
     background-color: #f3f7fa;
     padding: 16px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #212c36;
+    color: @generalColor;
     font-size: 24px;
     border-bottom: 1px solid #e5e9ec;
 
@@ -525,7 +554,7 @@
         font-size: 24px;
         line-height: 19px;
         text-align: left;
-        color: #212c36;
+        color: @generalColor;
         margin: 0;
         font-weight: 400;
     }

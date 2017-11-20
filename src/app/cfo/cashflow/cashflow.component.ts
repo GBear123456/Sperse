@@ -546,6 +546,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
         $('.groupBy').appendTo(event.element.find('.dx-area-description-cell'));
+        this.changeIntervalWidth();
 
         /** Calculate the amount current cells to cut the current period current cell to change current from
          *  current for year to current for the grouping period */
@@ -554,6 +555,21 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             $(`.current${_.capitalize(lowestOpenedInterval)}`).addClass('lowestOpenedCurrent');
             this.changeHistoricalColspans(lowestOpenedInterval );
         }
+    }
+
+    /**
+     * Resize the width of the interval inputs
+     */
+    changeIntervalWidth() {
+        function textWidth(element): number {
+            let fakeEl = $('<span>').hide().appendTo(document.body);
+            fakeEl.text(element.val() || element.text()).css('font', element.css('font'));
+            let width = fakeEl.width();
+            fakeEl.remove();
+            return width;
+        };
+        let elemWidth = textWidth($('.groupBy .dx-texteditor-input')) + 23;
+        $('.groupBy .dx-texteditor-input').css('width', elemWidth);
     }
 
     /**
@@ -774,6 +790,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let historicalField = this.getHistoricField();
         //this.changeHistoricalFieldPosition(historicalField, startedGroupInterval);
         historicalField ['selector'] = event.value.historicalSelectionFunction();
+        this.changeIntervalWidth();
         this.refreshDataGrid();
     }
 
