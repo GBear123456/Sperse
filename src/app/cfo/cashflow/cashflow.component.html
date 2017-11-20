@@ -46,11 +46,29 @@
         <dx-data-grid id="cashflowGridContainer"
                       [rowAlternationEnabled]="true"
                       [dataSource]="statsDetailResult">
-            <dxi-column dataField="date" width="130" dataType="date" format="shortDate"></dxi-column>
-            <dxi-column dataField="description"></dxi-column>
-            <dxi-column dataField="debit" width="140" [format]="customCurrency"></dxi-column>
-            <dxi-column dataField="credit" width="140" [format]="customCurrency"></dxi-column>
-            <dxi-column dataField="comments" [allowSorting]="false"></dxi-column>
+            <dxo-header-filter [visible]="true"></dxo-header-filter>
+            <dxi-column dataField="date" width="130" dataType="date" format="shortDate" [alignment]="left"></dxi-column>
+            <dxi-column dataField="description">
+                <dxo-header-filter [visible]="true"></dxo-header-filter>
+            </dxi-column>
+            <dxi-column dataField="debit"
+                        width="140"
+                        [format]="customCurrency"
+                        [allowSorting]="false"
+                        [allowFiltering]="false"
+                        [alignment]="'right'">
+            </dxi-column>
+            <dxi-column dataField="credit"
+                        width="140"
+                        [format]="customCurrency"
+                        [allowSorting]="false"
+                        [allowFiltering]="false"
+                        [alignment]="'right'">
+            </dxi-column>
+            <dxi-column dataField="comments"
+                        [allowSorting]="false"
+                        [allowFiltering]="false">
+            </dxi-column>
             <dxo-load-panel [enabled]="true"></dxo-load-panel>
             <dxo-scrolling mode="virtual"></dxo-scrolling>
         </dx-data-grid>

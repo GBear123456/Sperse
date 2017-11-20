@@ -6,6 +6,7 @@
 @expendedLineColor: #b3b7ba;
 @tableBorderColor: #ddd;
 @generalColor: #212c36;
+@middleGrayColor: #686f76;
 
 /** historical row colors */
 @historicalTextColor: #686f76;
@@ -487,12 +488,14 @@
         right: 0;
         border-top: 1px solid #ddd;
         border-left: 1px solid #ddd;
+        padding: 0 15px;
+        background: #fff;
         .close-btn {
-            border: 0px;
-            padding: 5px;
+            border: 0;
+            padding: 0;
             position: absolute;
-            right: 10px;
-            top: 10px;
+            right: 5px;
+            top: 15px;
             z-index: 100;
             &:hover {
                 background: transparent !important;
@@ -506,12 +509,15 @@
             .dx-datagrid-content {
                 .dx-header-row {
                     td {
-                        padding: 20px 15px;
+                        padding: 20px;
                         text-transform: uppercase;
                         font-size: 13px;
-                        font-weight: 500;
+                        font-weight: 600;
                         line-height: 24px;
                         color: @generalColor;
+                        &[aria-sort='none'] {
+                            color: @middleGrayColor;
+                        }
                     }
                 }
             }
@@ -522,16 +528,20 @@
         .dx-datagrid-table {
             .dx-data-row {
                 td {
-                    color: #424C56;
+                    color: #424c56;
                     font-size: 14px;
-                    font-weight: 300;
+                    font-weight: 400;
                     line-height: 24px;
                     padding: 11px 20px;
                 }
             }
         }
         .dx-datagrid .dx-row-alt > td {
-            background: #F3F7FA;
+            background: #f3f7fa;
+        }
+        .dx-datagrid .dx-column-lines > td {
+            border-right: 0;
+            border-left: 0;
         }
     }
 }
