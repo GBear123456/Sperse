@@ -7,7 +7,7 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { AbpModule } from '@abp/abp.module';
 import { CommonModule } from '@shared/common/common.module';
 
-import { DxButtonModule, DxToolbarModule } from 'devextreme-angular';
+import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule } from 'devextreme-angular';
 
 import { ToolBarComponent } from './toolbar/toolbar.component';
 import { TimeZoneComboComponent } from './timing/timezone-combo.component';
@@ -29,8 +29,10 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
         AbpModule,
         CommonModule,
 
+        DxListModule,
         DxButtonModule, 
-        DxToolbarModule
+        DxToolbarModule,
+        DxDropDownBoxModule
     ],
     declarations: [
         TimeZoneComboComponent,

@@ -43,14 +43,18 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
           options: {
             hint: this.l('Download'), 
             items: [{
-              onClick: this.exportToXLS.bind(this),
+              action: Function(),
+              text: this.l('Save as PDF'),
+              icon: 'pdf',
+            }, {
+              action: this.exportToXLS.bind(this),
               text: this.l('Export to Excel'),
               icon: 'xls',
             }, {
-              onClick: this.exportToCSV.bind(this),
+              action: this.exportToCSV.bind(this),
               text: this.l('Export to CSV'),
               icon: 'sheet'
-            }]
+            }, {type: 'downloadOptions'}]
           }
         },
         {name: 'columnChooser', action: this.showColumnChooser.bind(this)}

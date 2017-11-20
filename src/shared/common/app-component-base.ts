@@ -106,10 +106,11 @@ export abstract class AppComponentBase {
         return this.permission.isGranted(permissionName);
     }
 
-    exportToXLS() {
+    exportToXLS(option) {
         this.dataGrid.export.fileName =
             this._exportService.getFileName();
-        this.dataGrid.instance.exportToExcel(false);
+        this.dataGrid.instance
+          .exportToExcel(option == 'selected');
     }
 
     exportToCSV() {

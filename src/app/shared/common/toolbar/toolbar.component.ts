@@ -10,6 +10,7 @@ import * as _ from 'underscore';
   styleUrls: ['./toolbar.component.less']
 })
 export class ToolBarComponent extends AppComponentBase {
+  public options = {};
   private supportedButtons = {
       back: {
           hint: this.l('Back'),
@@ -114,7 +115,17 @@ export class ToolBarComponent extends AppComponentBase {
   }
 
   getDropDownItemTemplate(link) { 
-    return '<span class="toolbar-dropdown-item"><img src="' + this.getImgURI(link.icon) + '">' + link.text + '</span>';
+    return {
+      item: '<span class="toolbar-dropdown-item"><img src="' + this.getImgURI(link.icon) + '">' + link.text + '</span>',
+      downloadOptions: '<div class="toolbar-download-options" onclick="event.stopPropagation()">' +
+        '<div><input type="radio" name="export" value="all" checked><label>' + this.l('Export all data') + '</label></div>' +
+        '<div><input type="radio" name="export" value="selected"><label>' + this.l('Export selected') + '</label></div>' +
+        '</div>'
+    }[link.type || 'item'];
+  }
+
+  getOptions() {
+    return document.querySelector('.toolbar-download-options input:checked').getAttribute('value');
   }
 
   initToolbarItems() {
@@ -126,6 +137,9 @@ export class ToolBarComponent extends AppComponentBase {
           item.options['accessKey'] = item.name;
           item.options['items'].forEach((link) => {
             link.html = this.getDropDownItemTemplate(link);
+            link.onClick = (event) => {
+              link.action && link.action.call(this, this.getOptions());
+            };
           })
         }
 
@@ -143,7 +157,6 @@ export class ToolBarComponent extends AppComponentBase {
           }, _.extend(this.supportedButtons[item.name] || {}, item.options))
         });
       });
-
     });
   }
 }
