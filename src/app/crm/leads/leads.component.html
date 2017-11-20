@@ -68,6 +68,7 @@
                             <dxi-column dataField="LastTransactionStatus" caption="{{l('LastTransactionStatus')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="LastTransactionAmount" caption="{{l('LastTransactionAmount')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="LastTransactionErrorMessage" caption="{{l('LastTransactionErrorMessage')}}" [visible]="false"></dxi-column>
+                            <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                             <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-sorting mode="multiple"></dxo-sorting>
                             <dxo-paging [pageSize]="20"></dxo-paging>
