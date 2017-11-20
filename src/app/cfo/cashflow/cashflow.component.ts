@@ -336,8 +336,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     let stubCashflowDataForEndingCashPosition = this.getStubCashflowDataForEndingCashPosition(this.cashflowData);
                     this.addCashflowType(Total, this.l('Ending Cash Position'));
                     let stubCashflowDataForAllDays = this.getStubCashflowDataForAllDays(this.cashflowData);
+                    let cashflowWithStubForEndingPosition = this.cashflowData.concat(stubCashflowDataForEndingCashPosition);
+                    let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(cashflowWithStubForEndingPosition);
                     /** concat initial data and stubs from the different hacks */
-                    this.cashflowData = this.cashflowData.concat(stubCashflowDataForEndingCashPosition, stubCashflowDataForAllDays);
+                    this.cashflowData = this.cashflowData.concat(
+                        cashflowWithStubForEndingPosition,
+                        stubCashflowDataForAccounts,
+                        stubCashflowDataForAllDays
+                    );
                     /** Get cashflow data tree to hide groups without children */
                     this.cashflowDataTree = this.getCashflowDataTree(
                         this.cashflowData,
@@ -348,6 +354,71 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
                 this.dataSource = this.getApiDataSource();
             });
+    }
+
+    /**
+     * Get the array of stub cashflow data to add stub empty columns for cashflow
+     * @param {Array<TransactionStatsDto>} transactions
+     */
+    getStubCashflowDataForAccounts(transactions: Array<TransactionStatsDto>) {
+        let stubCashflowDataForAccounts: Array<TransactionStatsDto> = [],
+            allAccountsIds: Array<number> = [],
+            currentAccountsIds = {
+                [StartedBalance]: [],
+                [Total]: [],
+                [Reconciliation]: []
+            },
+            firstDate;
+            transactions.forEach(transaction => {
+                /** get the first real date for stub data */
+                if (!firstDate && transaction.date)  {
+                    firstDate = transaction.date;
+                }
+                if (allAccountsIds.indexOf(transaction.accountId) === -1) {
+                    allAccountsIds.push(transaction.accountId);
+                }
+                for (let cashflowType in currentAccountsIds) {
+                    if (transaction.cashflowTypeId === cashflowType &&
+                        currentAccountsIds[cashflowType].indexOf(transaction.accountId) === -1) {
+                        currentAccountsIds[cashflowType].push(transaction.accountId);
+                    }
+                }
+            });
+            allAccountsIds.forEach(accountId => {
+                for (let cashflowType in currentAccountsIds) {
+                    if (currentAccountsIds[cashflowType].indexOf(accountId) === -1) {
+                        stubCashflowDataForAccounts.push(
+                            this.createStubTransaction({
+                                'cashflowTypeId': cashflowType,
+                                'date': firstDate,
+                                'accountId': accountId,
+                                'transactionCategoryId': accountId
+                            })
+                        );
+                    }
+                }
+            });
+        return stubCashflowDataForAccounts;
+    }
+
+    /**
+     * Return the stub transaction
+     * @param stubObj - the object with own custom data for stub transaction
+     * @return {TransactionStatsDto & any}
+     */
+    createStubTransaction(stubObj) {
+        let stubTransaction = new TransactionStatsDto({
+            'adjustmentType': null,
+            'cashflowTypeId': null,
+            'transactionCategoryId': null,
+            'expenseCategoryId': null,
+            'accountId': null,
+            'currencyId': 'USD',
+            'amount': 0,
+            'comment': null,
+            'date': null
+        });
+        return Object.assign(stubTransaction, stubObj);
     }
 
     /**
@@ -385,7 +456,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         cashflowData.forEach( cashflowDataItem => {
             /** clone transaction to another array */
             if (cashflowDataItem .cashflowTypeId === Income || cashflowDataItem .cashflowTypeId === Expense) {
-                let clonedTransaction = new TransactionStatsDto(cashflowDataItem );
+                let clonedTransaction = new TransactionStatsDto(cashflowDataItem);
                 clonedTransaction.cashflowTypeId = Total;
                 clonedTransaction.transactionCategoryId = <any>clonedTransaction.accountId;
                 clonedTransaction.expenseCategoryId = null;
@@ -424,17 +495,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** added fake data for each date that is not already exists in cashflow data */
         datesRange.forEach((date: any) => {
             if (existingDates.indexOf(date.format('DD.MM.YYYY')) === -1) {
-                stubCashflowData.push(new TransactionStatsDto({
-                    'adjustmentType': null,
-                    'cashflowTypeId': StartedBalance,
-                    'transactionCategoryId': firstAccountId,
-                    'expenseCategoryId': null,
-                    'accountId': null,
-                    'currencyId': 'USD',
-                    'amount': 0,
-                    'comment': null,
-                    'date': date
-                }));
+                stubCashflowData.push(
+                    this.createStubTransaction({
+                        'cashflowTypeId': StartedBalance,
+                        'transactionCategoryId': firstAccountId,
+                        'date': date
+                    })
+                );
             }
         });
         return stubCashflowData;
