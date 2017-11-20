@@ -74,7 +74,7 @@ body {
 }
 #client-details .banner.row .col-xs-12.col-sm-4::before {
   content: '';
-  background: url('https://dl.dropboxusercontent.com/s/1a8luezqa2hxqlp/copy-icon.svg') 50% 50% no-repeat;
+  background: url('https://testadmin.sperse.com/assets/cfo-css/copy-icon.svg') 50% 50% no-repeat;
   width: 24px;
   height: 24px;
   display: block;
@@ -94,10 +94,10 @@ body {
   font-weight: 300;
 }
 #client-details .banner.row .col-xs-12.col-sm-4:nth-child(2)::before {
-  background: url('https://dl.dropboxusercontent.com/s/d26l4sxi1bpxe83/total-icon.svg') 50% 50% no-repeat;
+  background: url('https://testadmin.sperse.com/assets/cfo-css/total-icon.svg') 50% 50% no-repeat;
 }
 #client-details .banner.row .col-xs-12.col-sm-4:nth-child(3)::before {
-  background: url('https://dl.dropboxusercontent.com/s/haljr2k9kdvwjyr/hand-icon.svg') 50% 50% no-repeat;
+  background: url('https://testadmin.sperse.com/assets/cfo-css/hand-icon.svg') 50% 50% no-repeat;
 }
 #client-details .accounts-list .accounts-list-header {
   color: #212c36;
@@ -188,7 +188,9 @@ body {
 #client-details .accounts-list .status .account-status.in-progress::before {
   background: #00b7fa;
 }
-#client-details .accounts-list .status .account-status.questions::before {
+#client-details .accounts-list .status .account-status.questions::before,
+#client-details .accounts-list .status .account-status.login::before,
+#client-details .accounts-list .status .account-status.config::before {
   background: #f9af47;
 }
 #client-details .accounts-list .status .account-status.good::before {
@@ -351,7 +353,7 @@ body {
 }
 .safe::before {
   content: '';
-  background: url("https://dl.dropboxusercontent.com/s/sghaioytlp6udv4/lock-icon.svg") 50% 50% no-repeat;
+  background: url("https://testadmin.sperse.com/assets/cfo-css/lock-icon.svg") 50% 50% no-repeat;
   width: 18px;
   height: 18px;
   position: absolute;
