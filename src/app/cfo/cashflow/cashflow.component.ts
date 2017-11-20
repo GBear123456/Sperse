@@ -831,7 +831,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     isStartingBalanceTotalDataColumn(cellObj) {
         return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined &&
             cellObj.cell.rowPath[0] === StartedBalance &&
-            (cellObj.cell.rowType === 'T' || cellObj.cell.rowPath.length === 1);
+            (cellObj.cell.rowType === Total || cellObj.cell.rowPath.length === 1);
     }
 
     /**
@@ -1101,9 +1101,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
             this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
             this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
-            if (this.statsDetailFilter.cashFlowTypeId == 'B' ||
-                this.statsDetailFilter.cashFlowTypeId == 'T' ||
-                this.statsDetailFilter.cashFlowTypeId == 'D'
+            if (this.statsDetailFilter.cashFlowTypeId == StartedBalance ||
+                this.statsDetailFilter.cashFlowTypeId == Total ||
+                this.statsDetailFilter.cashFlowTypeId == Reconciliation
             ) {
                 this.statsDetailFilter.accountIds = [];
                 this.statsDetailFilter.transactionCategoryId = undefined;
