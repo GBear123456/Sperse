@@ -17,6 +17,9 @@ export class FilterStatesModel extends FilterItemModel {
     }
 
     removeFilterItem(filter: FilterModel, args: any) {
-        _.remove(this.value, (val: any, i, arr) => val == args);
+        if (args)
+            _.remove(this.value, (val: any, i, arr) => val == args);
+        else
+            this.value = [];
     }
 }

@@ -30,7 +30,13 @@ export class FilterModelBase<T extends FilterItemModel> {
         )), x => { displayElements = displayElements.concat(x); });
         this.displayElements = displayElements;
     }
+
+    clearFilterItems() {
+        _.each(this.items, i => i.removeFilterItem(this));
+    }
 }
+
+export class FilterModel extends FilterModelBase<FilterItemModel> { }
 
 export class FilterItemModel {
     value: any = '';
@@ -62,8 +68,6 @@ export class FilterItemModel {
             this.value = null;
     }
 }
-
-export class FilterModel extends FilterModelBase<FilterItemModel> {}
 
 export class DisplayElement {
     item: FilterItemModel;

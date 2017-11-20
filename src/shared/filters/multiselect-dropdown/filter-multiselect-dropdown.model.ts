@@ -21,6 +21,9 @@ export class FilterMultiselectDropDownModel extends FilterItemModel {
     }
 
     removeFilterItem(filter: FilterModel, args: any) {
-        _.remove(this.value, (val: any, i, arr) => val.id == args);
+        if (args)
+            _.remove(this.value, (val: any, i, arr) => val.id == args);
+        else
+            this.value = [];
     }
 }

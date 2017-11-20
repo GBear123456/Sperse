@@ -2,7 +2,7 @@ import { Component, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterModel, FilterItemModel } from '@shared/filters/filter.model';
+import { FilterModel, FilterItemModel, DisplayElement } from '@shared/filters/filter.model';
 import { Router, NavigationStart } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -49,13 +49,18 @@ export class SideBarComponent extends AppComponentBase {
         });
     }
 
-    excludeFilter(event, filter: FilterModel, displayElement) {
+    excludeFilter(event, filter: FilterModel, displayElement: DisplayElement) {
         filter.displayElements = undefined;
         if (displayElement.item.removeFilterItem)
             displayElement.item.removeFilterItem(filter, displayElement.args);
 
         this._filtersService.change(filter);
         event.stopPropagation();
+    }
+
+    clearAllFilters() {
+        this.filters.forEach((filter: FilterModel) => filter.clearFilterItems());
+        this._filtersService.change(null);
     }
 
     filterApply(event) {
