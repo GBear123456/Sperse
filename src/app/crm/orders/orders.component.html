@@ -62,6 +62,7 @@
                             <dxi-column dataField="DocumentCount" caption="{{l('DocumentCount')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="BillingSubscriptionStatus" caption="{{l('BillingStatus')}}"></dxi-column>
                             <dxi-column dataField="CreationTime" caption="{{l('Created')}}" dataType="date" format="shortDateShortTime"></dxi-column>
+                            <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                             <dxo-sorting mode="multiple"></dxo-sorting>
                             <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-paging [pageSize]="20"></dxo-paging>
