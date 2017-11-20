@@ -1101,7 +1101,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
             this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
             this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
-            if (this.statsDetailFilter.cashFlowTypeId == 'B') {
+            if (this.statsDetailFilter.cashFlowTypeId == 'B' ||
+                this.statsDetailFilter.cashFlowTypeId == 'T' ||
+                this.statsDetailFilter.cashFlowTypeId == 'D'
+            ) {
                 this.statsDetailFilter.accountIds = [];
                 this.statsDetailFilter.transactionCategoryId = undefined;
                 if (cellObj.cell.rowPath[1]) this.statsDetailFilter.accountIds.push(cellObj.cell.rowPath[1]);
@@ -1126,7 +1129,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let year = param[1];
         let quarter = param[2];
         let month = param[3];
-        let day = param[5];
+        let day = param[4];
 
         startDate.year(year);
         endDate.year(year).endOf('year');
