@@ -1,6 +1,7 @@
 import { Directive, Component, Injector, Input, Output, EventEmitter, ViewContainerRef, ComponentFactoryResolver, ViewChild  } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FilterComponent, FilterModel } from './filter.model';
+import { FilterComponent } from './models/filter-component';
+import { FilterModel } from './models/filter.model';
 import { FiltersService } from '@shared/filters/filters.service';
 
 @Directive({

@@ -14,7 +14,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateOrEditClientModalComponent } from './create-or-edit-client-modal.component';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterModel, FilterItemModel } from '@shared/filters/filter.model';
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';

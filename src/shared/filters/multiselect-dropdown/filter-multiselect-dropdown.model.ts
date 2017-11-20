@@ -1,4 +1,5 @@
-import { FilterModel, FilterItemModel, DisplayElement } from '../filter.model';
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
 import { FilterMultiselectDropDownComponent } from './filter-multiselect-dropdown.component'
 import * as _ from 'lodash';
 
@@ -21,6 +22,9 @@ export class FilterMultiselectDropDownModel extends FilterItemModel {
     }
 
     removeFilterItem(filter: FilterModel, args: any) {
-        _.remove(this.value, (val: any, i, arr) => val.id == args);
+        if (args)
+            _.remove(this.value, (val: any, i, arr) => val.id == args);
+        else
+            this.value = [];
     }
 }

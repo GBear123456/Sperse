@@ -18,7 +18,7 @@ import * as Moment from 'moment';
 import { extendMoment } from 'moment-range';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterModel } from '@shared/filters/filter.model';
+import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
 import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
 
@@ -546,6 +546,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
         $('.groupBy').appendTo(event.element.find('.dx-area-description-cell'));
+        this.changeIntervalWidth();
 
         /** Calculate the amount current cells to cut the current period current cell to change current from
          *  current for year to current for the grouping period */
@@ -554,6 +555,21 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             $(`.current${_.capitalize(lowestOpenedInterval)}`).addClass('lowestOpenedCurrent');
             this.changeHistoricalColspans(lowestOpenedInterval );
         }
+    }
+
+    /**
+     * Resize the width of the interval inputs
+     */
+    changeIntervalWidth() {
+        function textWidth(element): number {
+            let fakeEl = $('<span>').hide().appendTo(document.body);
+            fakeEl.text(element.val() || element.text()).css('font', element.css('font'));
+            let width = fakeEl.width();
+            fakeEl.remove();
+            return width;
+        };
+        let elemWidth = textWidth($('.groupBy .dx-texteditor-input')) + 23;
+        $('.groupBy .dx-texteditor-input').css('width', elemWidth);
     }
 
     /**
@@ -774,6 +790,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let historicalField = this.getHistoricField();
         //this.changeHistoricalFieldPosition(historicalField, startedGroupInterval);
         historicalField ['selector'] = event.value.historicalSelectionFunction();
+        this.changeIntervalWidth();
         this.refreshDataGrid();
     }
 
@@ -814,7 +831,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     isStartingBalanceTotalDataColumn(cellObj) {
         return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined &&
             cellObj.cell.rowPath[0] === StartedBalance &&
-            (cellObj.cell.rowType === 'T' || cellObj.cell.rowPath.length === 1);
+            (cellObj.cell.rowType === Total || cellObj.cell.rowPath.length === 1);
     }
 
     /**
@@ -1084,7 +1101,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
             this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
             this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
-            if (this.statsDetailFilter.cashFlowTypeId == 'B') {
+            if (this.statsDetailFilter.cashFlowTypeId == StartedBalance ||
+                this.statsDetailFilter.cashFlowTypeId == Total ||
+                this.statsDetailFilter.cashFlowTypeId == Reconciliation
+            ) {
                 this.statsDetailFilter.accountIds = [];
                 this.statsDetailFilter.transactionCategoryId = undefined;
                 if (cellObj.cell.rowPath[1]) this.statsDetailFilter.accountIds.push(cellObj.cell.rowPath[1]);
@@ -1109,7 +1129,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let year = param[1];
         let quarter = param[2];
         let month = param[3];
-        let day = param[5];
+        let day = param[4];
 
         startDate.year(year);
         endDate.year(year).endOf('year');

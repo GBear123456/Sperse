@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FilterComponent } from '../filter.model';
+import { FilterComponent } from '../models/filter-component';
 import { FilterMultiselectDropDownModel } from './filter-multiselect-dropdown.model'
 
 @Component({

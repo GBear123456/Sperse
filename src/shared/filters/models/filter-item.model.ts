@@ -1,36 +1,7 @@
-import { Type } from '@angular/core';
-import * as _ from 'underscore';
+import { FilterModel } from './filter.model';
 import * as moment from 'moment';
 
 let capitalize = require('underscore.string/capitalize');
-
-export interface FilterComponent {
-    items?: { [item: string]: FilterItemModel; };
-    apply: (event) => void;
-    localizationSourceName: string;
-}
-
-export class FilterModelBase<T extends FilterItemModel> {
-    component: Type<FilterComponent>;
-    operator: any;
-    caption: string;
-    field?: any;
-    items?: { [item: string]: T; };
-    displayElements?: any[];
-
-    public constructor(init?: Partial<FilterModelBase<T>>) {
-        Object.assign(this, init);
-    }
-
-    updateCaptions() {
-        let displayElements = [];
-
-        _.each(_.values(_.mapObject(
-            this.items, (item: FilterItemModel, key: string) => item.getDisplayElements(key)
-        )), x => { displayElements = displayElements.concat(x); });
-        this.displayElements = displayElements;
-    }
-}
 
 export class FilterItemModel {
     value: any = '';
@@ -62,8 +33,6 @@ export class FilterItemModel {
             this.value = null;
     }
 }
-
-export class FilterModel extends FilterModelBase<FilterItemModel> {}
 
 export class DisplayElement {
     item: FilterItemModel;

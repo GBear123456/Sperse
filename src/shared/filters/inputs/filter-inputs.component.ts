@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FilterComponent } from '../filter.model';
+import { FilterComponent } from '../models/filter-component';
 
 @Component({
   templateUrl: './filter-inputs.component.html',

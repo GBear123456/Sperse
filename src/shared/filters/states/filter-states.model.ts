@@ -1,4 +1,5 @@
-import { FilterModel, FilterItemModel, DisplayElement } from '../filter.model';
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
 import * as _ from 'lodash';
 
 export class FilterStatesModel extends FilterItemModel {
@@ -17,6 +18,9 @@ export class FilterStatesModel extends FilterItemModel {
     }
 
     removeFilterItem(filter: FilterModel, args: any) {
-        _.remove(this.value, (val: any, i, arr) => val == args);
+        if (args)
+            _.remove(this.value, (val: any, i, arr) => val == args);
+        else
+            this.value = [];
     }
 }

@@ -188,7 +188,9 @@ body {
 #client-details .accounts-list .status .account-status.in-progress::before {
   background: #00b7fa;
 }
-#client-details .accounts-list .status .account-status.questions::before {
+#client-details .accounts-list .status .account-status.questions::before,
+#client-details .accounts-list .status .account-status.login::before,
+#client-details .accounts-list .status .account-status.config::before {
   background: #f9af47;
 }
 #client-details .accounts-list .status .account-status.good::before {

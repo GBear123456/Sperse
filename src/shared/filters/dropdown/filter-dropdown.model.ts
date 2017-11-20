@@ -1,4 +1,5 @@
-import { FilterModel, FilterItemModel, DisplayElement } from '../filter.model';
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
 import { FilterDropDownComponent } from './filter-dropdown.component'
 
 export class FilterDropDownModel extends FilterItemModel {

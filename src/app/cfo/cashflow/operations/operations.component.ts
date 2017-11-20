@@ -12,32 +12,66 @@ export class OperationsComponent extends AppComponentBase {
     @Output() refreshCashflow: EventEmitter<any> = new EventEmitter();
 
     toolbarConfig = [
-      {location: 'before', items: [
-        {name: 'back'}
-      ]},
-      {location: 'before', items: [
-        {name: 'edit'}, {name: 'rules'}, 
-        {name: 'expand', options: {text: this.l('Expand All')}}
-      ]},
-      {location: 'center', items: [
-        {name: 'folder'}, 
-        {name: 'pen', options: {hint: this.l('Label')}}
-      ]},
-      {location: 'center', items: [
-        {name: 'more'}
-      ]},
-      {location: 'after', items: [
-        {name: 'refresh', action: this.refresh.bind(this)}
-      ]},
-      {location: 'after', items: [
-        {name: 'download' }, 
-        {name: 'print'}
-      ]},
-      {location: 'after', items: [
-        {name: 'box'}, 
-        {name: 'pipeline'}, 
-        {name: 'grid'}
-      ]}
+        {
+            location: 'before',
+            items: [
+                { name: 'back' }
+            ]
+        },
+        {
+            location: 'before',
+            items: [
+                { name: 'edit' },
+                { name: 'rules' },
+                {
+                    name: 'expand',
+                    options: {
+                        text: this.l('Expand All')
+                    }
+                }
+            ]
+        },
+        {
+            location: 'before',
+            items: [
+                { name: 'flag' },
+                {
+                    name: 'pen',
+                    options: {
+                        hint: this.l('Label')
+                    }
+                }
+            ]
+        },
+        {
+            location: 'before',
+            items: [
+                { name: 'more' }
+            ]
+        },
+        {
+            location: 'after',
+            items: [
+                {
+                    name: 'refresh',
+                    action: this.refresh.bind(this)
+                }
+            ]
+        },
+        {
+            location: 'after',
+            items: [
+                { name: 'download' },
+                { name: 'print' }
+            ]
+        },
+        {
+            location: 'after', items: [
+                {name: 'box'},
+                {name: 'pipeline'},
+                {name: 'grid'}
+            ]
+        }
     ];
 
     constructor(injector: Injector) {

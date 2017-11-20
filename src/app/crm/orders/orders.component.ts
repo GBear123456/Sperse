@@ -13,7 +13,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterModel, FilterItemModel, FilterModelBase } from '@shared/filters/filter.model';
+import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
+import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';

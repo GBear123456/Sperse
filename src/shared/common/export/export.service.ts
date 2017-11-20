@@ -11,8 +11,7 @@ export class ExportService {
   constructor() {}
 
   getFileName() {
-      var date = new Date();
-      return capitalize(location.href.split('/').pop()) + "_" + moment().local().format('YYYY-MM-DD_hhmmss_a');
+      return capitalize(location.href.split('/').pop()) + '_' + moment().local().format('YYYY-MM-DD_hhmmss_a');
   }
 
   saveAsCSV(data: any, name?: string) {
