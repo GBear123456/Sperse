@@ -2,7 +2,8 @@ import { Component, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterModel, FilterItemModel, DisplayElement } from '@shared/filters/filter.model';
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
 import { Router, NavigationStart } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 

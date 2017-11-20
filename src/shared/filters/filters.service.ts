@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
-import { FilterModel } from './filter.model';
+import { FilterModel } from './models/filter.model';
 
 @Injectable()
 export class FiltersService {
