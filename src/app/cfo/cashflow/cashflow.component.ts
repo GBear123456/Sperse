@@ -1260,12 +1260,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             let counter = this.groupbyItems.length;
             /** @todo refactor and fix a bug when the second call return wrong result */
             summaryCell.__proto__.prevWithParent = function() {
-                let prev = this.prev(arguments),
+                let prev = this.prev(arguments[0], arguments[1]),
                     currentCell = this;
                 while (counter > 0) {
                     if (prev === null) {
                         if (currentCell.parent('column')) {
-                            prev = currentCell.parent('column').prev(arguments);
+                            prev = currentCell.parent('column').prev(arguments[0], arguments[1]);
                             currentCell = currentCell.parent('column');
                         }
                         counter--;
@@ -1276,7 +1276,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 return prev;
             };
             let prevWithParent = summaryCell.prevWithParent('column', true);
-
             /** if cell is starting balance account cell - then add account sum from previous period */
             if (prevWithParent !== null && this.isStartingBalanceAccountSummary(summaryCell)) {
                 return this.modifyStartingBalanceAccountCell(summaryCell, prevWithParent);
