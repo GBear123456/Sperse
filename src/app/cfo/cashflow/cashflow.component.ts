@@ -265,9 +265,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                                         }
                                     },
                                     dataSource: result.bankAccounts,
-                                    columns: [{
-                                        dataField: 'accountName',
-                                        caption: this.l('CashflowAccountFilter_AccountName') },
+                                    columns: [
+                                        {
+                                            dataField: 'accountName',
+                                            caption: this.l('CashflowAccountFilter_AccountName')
+                                        },
                                         {
                                             dataField: 'accountNumber',
                                             caption: this.l('CashflowAccountFilter_AccountNumber')
@@ -280,7 +282,20 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                             component: FilterCalendarComponent,
                             caption: 'Date',
                             items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                        })
+                        }),
+                        new FilterModel({
+                            component: FilterMultiselectDropDownComponent,
+                            field: 'businessEntityIds',
+                            caption: 'BusinessEntity',
+                            items: {
+                                businessEntity: new FilterMultiselectDropDownModel({
+                                    filterField: 'businessEntityIds',
+                                    displayElementExp: 'name',
+                                    dataSource: result.businessEntities,
+                                    columns: [{ dataField: 'name', caption: this.l('TransactionBusinessEntityFilter_Name') }],
+                                })
+                            }
+                        }),
                     ]
                 );
 
@@ -309,6 +324,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
             });
         };
+    }
+
+    filterByBusinessEntity(filter: FilterModel, requestFilter: StatsFilter) {
+        if (filter.items && filter.items.businessEntity && filter.items.businessEntity.value) {
+            requestFilter[filter.field] = filter.items.businessEntity.value.map(x => x.id);
+        }
     }
 
     filterByAccount(filter: FilterModel, requestFilter: StatsFilter) {
@@ -443,7 +464,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             'currencyId': 'USD',
             'amount': 0,
             'comment': null,
-            'date': null
+            'date': null,
+            categorization: null
         });
         return Object.assign(stubTransaction, stubObj);
     }

@@ -1029,6 +1029,141 @@ export class CashflowServiceProxy {
         }
         return Observable.of<CashFlowStatsDetailDto[]>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    recategorize(recategorizeInput: RecategorizeInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/Recategorize";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(recategorizeInput ? recategorizeInput.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processRecategorize(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRecategorize(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRecategorize(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    addCategorizationMapping(categorizationMapping: AddCategorizationMappingInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/AddCategorizationMapping";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(categorizationMapping ? categorizationMapping.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processAddCategorizationMapping(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAddCategorizationMapping(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAddCategorizationMapping(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteCategorizationMapping(categorizationMapping: DeleteCategorizationMappingInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/DeleteCategorizationMapping";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(categorizationMapping ? categorizationMapping.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteCategorizationMapping(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteCategorizationMapping(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteCategorizationMapping(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -3579,6 +3714,65 @@ export class EditionServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<SubscribableEditionComboboxItemDto[]>(<any>null);
+    }
+}
+
+@Injectable()
+export class EventServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    poll(eventName: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Event/Poll?";
+        if (eventName !== undefined)
+            url_ += "eventName=" + encodeURIComponent("" + eventName) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processPoll(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processPoll(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processPoll(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
     }
 }
 
@@ -11952,6 +12146,8 @@ export class StatsFilter implements IStatsFilter {
     endDate: moment.Moment;
     currencyId: string;
     accountIds: number[];
+    businessEntityIds: number[];
+    categorizationIds: string[];
 
     constructor(data?: IStatsFilter) {
         if (data) {
@@ -11972,6 +12168,16 @@ export class StatsFilter implements IStatsFilter {
                 for (let item of data["accountIds"])
                     this.accountIds.push(item);
             }
+            if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
+                this.businessEntityIds = [];
+                for (let item of data["businessEntityIds"])
+                    this.businessEntityIds.push(item);
+            }
+            if (data["categorizationIds"] && data["categorizationIds"].constructor === Array) {
+                this.categorizationIds = [];
+                for (let item of data["categorizationIds"])
+                    this.categorizationIds.push(item);
+            }
         }
     }
 
@@ -11991,6 +12197,16 @@ export class StatsFilter implements IStatsFilter {
             for (let item of this.accountIds)
                 data["accountIds"].push(item);
         }
+        if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
+            data["businessEntityIds"] = [];
+            for (let item of this.businessEntityIds)
+                data["businessEntityIds"].push(item);
+        }
+        if (this.categorizationIds && this.categorizationIds.constructor === Array) {
+            data["categorizationIds"] = [];
+            for (let item of this.categorizationIds)
+                data["categorizationIds"].push(item);
+        }
         return data; 
     }
 }
@@ -12000,6 +12216,8 @@ export interface IStatsFilter {
     endDate: moment.Moment;
     currencyId: string;
     accountIds: number[];
+    businessEntityIds: number[];
+    categorizationIds: string[];
 }
 
 export class CashFlowStatsDto implements ICashFlowStatsDto {
@@ -12050,6 +12268,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
     cashflowTypeId: string;
     transactionCategoryId: string;
     expenseCategoryId: string;
+    categorization: { [key: string] : string; };
     accountId: number;
     currencyId: string;
     date: moment.Moment;
@@ -12071,6 +12290,13 @@ export class TransactionStatsDto implements ITransactionStatsDto {
             this.cashflowTypeId = data["cashflowTypeId"];
             this.transactionCategoryId = data["transactionCategoryId"];
             this.expenseCategoryId = data["expenseCategoryId"];
+            if (data["categorization"]) {
+                this.categorization = {};
+                for (let key in data["categorization"]) {
+                    if (data["categorization"].hasOwnProperty(key))
+                        this.categorization[key] = data["categorization"][key];
+                }
+            }
             this.accountId = data["accountId"];
             this.currencyId = data["currencyId"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
@@ -12091,6 +12317,13 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data["cashflowTypeId"] = this.cashflowTypeId;
         data["transactionCategoryId"] = this.transactionCategoryId;
         data["expenseCategoryId"] = this.expenseCategoryId;
+        if (this.categorization) {
+            data["categorization"] = {};
+            for (let key in this.categorization) {
+                if (this.categorization.hasOwnProperty(key))
+                    data["categorization"][key] = this.categorization[key];
+            }
+        }
         data["accountId"] = this.accountId;
         data["currencyId"] = this.currencyId;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
@@ -12105,6 +12338,7 @@ export interface ITransactionStatsDto {
     cashflowTypeId: string;
     transactionCategoryId: string;
     expenseCategoryId: string;
+    categorization: { [key: string] : string; };
     accountId: number;
     currencyId: string;
     date: moment.Moment;
@@ -12114,6 +12348,7 @@ export interface ITransactionStatsDto {
 
 export class CashFlowInitialData implements ICashFlowInitialData {
     bankAccounts: BankAccountDto[];
+    businessEntities: BusinessEntityDto[];
     cashflowTypes: { [key: string] : string; };
     transactionCategories: { [key: string] : string; };
     expenseCategories: { [key: string] : string; };
@@ -12133,6 +12368,11 @@ export class CashFlowInitialData implements ICashFlowInitialData {
                 this.bankAccounts = [];
                 for (let item of data["bankAccounts"])
                     this.bankAccounts.push(BankAccountDto.fromJS(item));
+            }
+            if (data["businessEntities"] && data["businessEntities"].constructor === Array) {
+                this.businessEntities = [];
+                for (let item of data["businessEntities"])
+                    this.businessEntities.push(BusinessEntityDto.fromJS(item));
             }
             if (data["cashflowTypes"]) {
                 this.cashflowTypes = {};
@@ -12171,6 +12411,11 @@ export class CashFlowInitialData implements ICashFlowInitialData {
             for (let item of this.bankAccounts)
                 data["bankAccounts"].push(item.toJSON());
         }
+        if (this.businessEntities && this.businessEntities.constructor === Array) {
+            data["businessEntities"] = [];
+            for (let item of this.businessEntities)
+                data["businessEntities"].push(item.toJSON());
+        }
         if (this.cashflowTypes) {
             data["cashflowTypes"] = {};
             for (let key in this.cashflowTypes) {
@@ -12198,6 +12443,7 @@ export class CashFlowInitialData implements ICashFlowInitialData {
 
 export interface ICashFlowInitialData {
     bankAccounts: BankAccountDto[];
+    businessEntities: BusinessEntityDto[];
     cashflowTypes: { [key: string] : string; };
     transactionCategories: { [key: string] : string; };
     expenseCategories: { [key: string] : string; };
@@ -12250,6 +12496,45 @@ export interface IBankAccountDto {
     isActive: boolean;
 }
 
+export class BusinessEntityDto implements IBusinessEntityDto {
+    id: number;
+    name: string;
+
+    constructor(data?: IBusinessEntityDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): BusinessEntityDto {
+        let result = new BusinessEntityDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IBusinessEntityDto {
+    id: number;
+    name: string;
+}
+
 export class StatsDetailFilter implements IStatsDetailFilter {
     cashFlowTypeId: string;
     transactionCategoryId: string;
@@ -12258,6 +12543,8 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     endDate: moment.Moment;
     currencyId: string;
     accountIds: number[];
+    businessEntityIds: number[];
+    categorizationIds: string[];
 
     constructor(data?: IStatsDetailFilter) {
         if (data) {
@@ -12281,6 +12568,16 @@ export class StatsDetailFilter implements IStatsDetailFilter {
                 for (let item of data["accountIds"])
                     this.accountIds.push(item);
             }
+            if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
+                this.businessEntityIds = [];
+                for (let item of data["businessEntityIds"])
+                    this.businessEntityIds.push(item);
+            }
+            if (data["categorizationIds"] && data["categorizationIds"].constructor === Array) {
+                this.categorizationIds = [];
+                for (let item of data["categorizationIds"])
+                    this.categorizationIds.push(item);
+            }
         }
     }
 
@@ -12303,6 +12600,16 @@ export class StatsDetailFilter implements IStatsDetailFilter {
             for (let item of this.accountIds)
                 data["accountIds"].push(item);
         }
+        if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
+            data["businessEntityIds"] = [];
+            for (let item of this.businessEntityIds)
+                data["businessEntityIds"].push(item);
+        }
+        if (this.categorizationIds && this.categorizationIds.constructor === Array) {
+            data["categorizationIds"] = [];
+            for (let item of this.categorizationIds)
+                data["categorizationIds"].push(item);
+        }
         return data; 
     }
 }
@@ -12315,6 +12622,8 @@ export interface IStatsDetailFilter {
     endDate: moment.Moment;
     currencyId: string;
     accountIds: number[];
+    businessEntityIds: number[];
+    categorizationIds: string[];
 }
 
 export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
@@ -12374,6 +12683,143 @@ export interface ICashFlowStatsDetailDto {
     debit: number;
     description: string;
     comment: string;
+}
+
+export class RecategorizeInput implements IRecategorizeInput {
+    parseDescription: boolean;
+    bankAccountIds: number[];
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+
+    constructor(data?: IRecategorizeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.parseDescription = data["parseDescription"];
+            if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
+                this.bankAccountIds = [];
+                for (let item of data["bankAccountIds"])
+                    this.bankAccountIds.push(item);
+            }
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): RecategorizeInput {
+        let result = new RecategorizeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["parseDescription"] = this.parseDescription;
+        if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
+            data["bankAccountIds"] = [];
+            for (let item of this.bankAccountIds)
+                data["bankAccountIds"].push(item);
+        }
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IRecategorizeInput {
+    parseDescription: boolean;
+    bankAccountIds: number[];
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+}
+
+export class AddCategorizationMappingInput implements IAddCategorizationMappingInput {
+    categorizationId: string;
+    oldName: string;
+    newName: string;
+
+    constructor(data?: IAddCategorizationMappingInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.categorizationId = data["categorizationId"];
+            this.oldName = data["oldName"];
+            this.newName = data["newName"];
+        }
+    }
+
+    static fromJS(data: any): AddCategorizationMappingInput {
+        let result = new AddCategorizationMappingInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["categorizationId"] = this.categorizationId;
+        data["oldName"] = this.oldName;
+        data["newName"] = this.newName;
+        return data; 
+    }
+}
+
+export interface IAddCategorizationMappingInput {
+    categorizationId: string;
+    oldName: string;
+    newName: string;
+}
+
+export class DeleteCategorizationMappingInput implements IDeleteCategorizationMappingInput {
+    categorizationId: string;
+    name: string;
+
+    constructor(data?: IDeleteCategorizationMappingInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.categorizationId = data["categorizationId"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): DeleteCategorizationMappingInput {
+        let result = new DeleteCategorizationMappingInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["categorizationId"] = this.categorizationId;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IDeleteCategorizationMappingInput {
+    categorizationId: string;
+    name: string;
 }
 
 export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
@@ -13313,6 +13759,11 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
     phoneExtension: string;
     mobilePhoneNumber: string;
     orgName: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
     orgId: number;
 
     constructor(data?: IContactBusinessInfo) {
@@ -13337,6 +13788,11 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
             this.phoneExtension = data["phoneExtension"];
             this.mobilePhoneNumber = data["mobilePhoneNumber"];
             this.orgName = data["orgName"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
             this.orgId = data["orgId"];
         }
     }
@@ -13360,6 +13816,11 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
         data["phoneExtension"] = this.phoneExtension;
         data["mobilePhoneNumber"] = this.mobilePhoneNumber;
         data["orgName"] = this.orgName;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
         data["orgId"] = this.orgId;
         return data; 
     }
@@ -13377,6 +13838,11 @@ export interface IContactBusinessInfo {
     phoneExtension: string;
     mobilePhoneNumber: string;
     orgName: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
     orgId: number;
 }
 
@@ -13530,6 +13996,11 @@ export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
     phoneExtension: string;
     mobilePhoneNumber: string;
     orgName: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
     orgId: number;
 
     constructor(data?: IContactBusinessCreateInfo) {
@@ -13554,6 +14025,11 @@ export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
             this.phoneExtension = data["phoneExtension"];
             this.mobilePhoneNumber = data["mobilePhoneNumber"];
             this.orgName = data["orgName"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
             this.orgId = data["orgId"];
         }
     }
@@ -13577,6 +14053,11 @@ export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
         data["phoneExtension"] = this.phoneExtension;
         data["mobilePhoneNumber"] = this.mobilePhoneNumber;
         data["orgName"] = this.orgName;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
         data["orgId"] = this.orgId;
         return data; 
     }
@@ -13594,6 +14075,11 @@ export interface IContactBusinessCreateInfo {
     phoneExtension: string;
     mobilePhoneNumber: string;
     orgName: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
     orgId: number;
 }
 
@@ -13682,6 +14168,11 @@ export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
     phoneExtension: string;
     mobilePhoneNumber: string;
     orgName: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
     orgId: number;
 
     constructor(data?: IContactBusinessEditInfo) {
@@ -13705,6 +14196,11 @@ export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
             this.phoneExtension = data["phoneExtension"];
             this.mobilePhoneNumber = data["mobilePhoneNumber"];
             this.orgName = data["orgName"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
             this.orgId = data["orgId"];
         }
     }
@@ -13727,6 +14223,11 @@ export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
         data["phoneExtension"] = this.phoneExtension;
         data["mobilePhoneNumber"] = this.mobilePhoneNumber;
         data["orgName"] = this.orgName;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
         data["orgId"] = this.orgId;
         return data; 
     }
@@ -13743,6 +14244,11 @@ export interface IContactBusinessEditInfo {
     phoneExtension: string;
     mobilePhoneNumber: string;
     orgName: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
     orgId: number;
 }
 
@@ -14022,6 +14528,7 @@ export interface IEmailUsageTypeDto {
 
 export class GetContactEmploymentOutput implements IGetContactEmploymentOutput {
     contactEmploymentInfo: ContactEmploymentInfo;
+    organizationBusinessInfo: OrganizationBusinessInfo;
 
     constructor(data?: IGetContactEmploymentOutput) {
         if (data) {
@@ -14035,6 +14542,7 @@ export class GetContactEmploymentOutput implements IGetContactEmploymentOutput {
     init(data?: any) {
         if (data) {
             this.contactEmploymentInfo = data["contactEmploymentInfo"] ? ContactEmploymentInfo.fromJS(data["contactEmploymentInfo"]) : <any>undefined;
+            this.organizationBusinessInfo = data["organizationBusinessInfo"] ? OrganizationBusinessInfo.fromJS(data["organizationBusinessInfo"]) : <any>undefined;
         }
     }
 
@@ -14047,17 +14555,19 @@ export class GetContactEmploymentOutput implements IGetContactEmploymentOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactEmploymentInfo"] = this.contactEmploymentInfo ? this.contactEmploymentInfo.toJSON() : <any>undefined;
+        data["organizationBusinessInfo"] = this.organizationBusinessInfo ? this.organizationBusinessInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IGetContactEmploymentOutput {
     contactEmploymentInfo: ContactEmploymentInfo;
+    organizationBusinessInfo: OrganizationBusinessInfo;
 }
 
 export class ContactEmploymentInfo implements IContactEmploymentInfo {
     id: number;
-    companyName: string;
+    orgName: string;
     orgId: number;
     countryId: string;
     stateId: string;
@@ -14073,6 +14583,11 @@ export class ContactEmploymentInfo implements IContactEmploymentInfo {
     workEmail: string;
     websiteUrl: string;
     monthlyIncome: number;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
 
     constructor(data?: IContactEmploymentInfo) {
         if (data) {
@@ -14086,7 +14601,7 @@ export class ContactEmploymentInfo implements IContactEmploymentInfo {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.companyName = data["companyName"];
+            this.orgName = data["orgName"];
             this.orgId = data["orgId"];
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
@@ -14102,6 +14617,11 @@ export class ContactEmploymentInfo implements IContactEmploymentInfo {
             this.workEmail = data["workEmail"];
             this.websiteUrl = data["websiteUrl"];
             this.monthlyIncome = data["monthlyIncome"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
         }
     }
 
@@ -14114,7 +14634,7 @@ export class ContactEmploymentInfo implements IContactEmploymentInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["companyName"] = this.companyName;
+        data["orgName"] = this.orgName;
         data["orgId"] = this.orgId;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
@@ -14130,13 +14650,18 @@ export class ContactEmploymentInfo implements IContactEmploymentInfo {
         data["workEmail"] = this.workEmail;
         data["websiteUrl"] = this.websiteUrl;
         data["monthlyIncome"] = this.monthlyIncome;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
         return data; 
     }
 }
 
 export interface IContactEmploymentInfo {
     id: number;
-    companyName: string;
+    orgName: string;
     orgId: number;
     countryId: string;
     stateId: string;
@@ -14152,6 +14677,11 @@ export interface IContactEmploymentInfo {
     workEmail: string;
     websiteUrl: string;
     monthlyIncome: number;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
 }
 
 export class CreateContactEmploymentInput implements ICreateContactEmploymentInput {
@@ -14191,7 +14721,7 @@ export interface ICreateContactEmploymentInput {
 
 export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo {
     personId: number;
-    companyName: string;
+    orgName: string;
     orgId: number;
     countryId: string;
     stateId: string;
@@ -14207,6 +14737,11 @@ export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo
     workEmail: string;
     websiteUrl: string;
     monthlyIncome: number;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
 
     constructor(data?: IContactEmploymentCreateInfo) {
         if (data) {
@@ -14220,7 +14755,7 @@ export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo
     init(data?: any) {
         if (data) {
             this.personId = data["personId"];
-            this.companyName = data["companyName"];
+            this.orgName = data["orgName"];
             this.orgId = data["orgId"];
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
@@ -14236,6 +14771,11 @@ export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo
             this.workEmail = data["workEmail"];
             this.websiteUrl = data["websiteUrl"];
             this.monthlyIncome = data["monthlyIncome"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
         }
     }
 
@@ -14248,7 +14788,7 @@ export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["personId"] = this.personId;
-        data["companyName"] = this.companyName;
+        data["orgName"] = this.orgName;
         data["orgId"] = this.orgId;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
@@ -14264,13 +14804,18 @@ export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo
         data["workEmail"] = this.workEmail;
         data["websiteUrl"] = this.websiteUrl;
         data["monthlyIncome"] = this.monthlyIncome;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
         return data; 
     }
 }
 
 export interface IContactEmploymentCreateInfo {
     personId: number;
-    companyName: string;
+    orgName: string;
     orgId: number;
     countryId: string;
     stateId: string;
@@ -14286,6 +14831,11 @@ export interface IContactEmploymentCreateInfo {
     workEmail: string;
     websiteUrl: string;
     monthlyIncome: number;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
 }
 
 export class CreateContactEmploymentOutput implements ICreateContactEmploymentOutput {
@@ -14363,7 +14913,7 @@ export interface IUpdateContactEmploymentInput {
 }
 
 export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
-    companyName: string;
+    orgName: string;
     orgId: number;
     countryId: string;
     stateId: string;
@@ -14379,6 +14929,11 @@ export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
     workEmail: string;
     websiteUrl: string;
     monthlyIncome: number;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
 
     constructor(data?: IContactEmploymentEditInfo) {
         if (data) {
@@ -14391,7 +14946,7 @@ export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
 
     init(data?: any) {
         if (data) {
-            this.companyName = data["companyName"];
+            this.orgName = data["orgName"];
             this.orgId = data["orgId"];
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
@@ -14407,6 +14962,11 @@ export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
             this.workEmail = data["workEmail"];
             this.websiteUrl = data["websiteUrl"];
             this.monthlyIncome = data["monthlyIncome"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
         }
     }
 
@@ -14418,7 +14978,7 @@ export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["companyName"] = this.companyName;
+        data["orgName"] = this.orgName;
         data["orgId"] = this.orgId;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
@@ -14434,12 +14994,17 @@ export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
         data["workEmail"] = this.workEmail;
         data["websiteUrl"] = this.websiteUrl;
         data["monthlyIncome"] = this.monthlyIncome;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
         return data; 
     }
 }
 
 export interface IContactEmploymentEditInfo {
-    companyName: string;
+    orgName: string;
     orgId: number;
     countryId: string;
     stateId: string;
@@ -14455,6 +15020,11 @@ export interface IContactEmploymentEditInfo {
     workEmail: string;
     websiteUrl: string;
     monthlyIncome: number;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string;
 }
 
 export class CreateContactLinkInput implements ICreateContactLinkInput {
@@ -17250,6 +17820,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     phoneNumber: string;
     ssn: string;
     suppressSimilarContactWarning: boolean = false;
+    organizationUnitId: number;
 
     constructor(data?: ICreateCustomerInput) {
         if (data) {
@@ -17269,6 +17840,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             this.phoneNumber = data["phoneNumber"];
             this.ssn = data["ssn"];
             this.suppressSimilarContactWarning = data["suppressSimilarContactWarning"] !== undefined ? data["suppressSimilarContactWarning"] : false;
+            this.organizationUnitId = data["organizationUnitId"];
         }
     }
 
@@ -17287,6 +17859,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
         data["phoneNumber"] = this.phoneNumber;
         data["ssn"] = this.ssn;
         data["suppressSimilarContactWarning"] = this.suppressSimilarContactWarning;
+        data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
@@ -17299,6 +17872,7 @@ export interface ICreateCustomerInput {
     phoneNumber: string;
     ssn: string;
     suppressSimilarContactWarning: boolean;
+    organizationUnitId: number;
 }
 
 export class CreateCustomerOutput implements ICreateCustomerOutput {
