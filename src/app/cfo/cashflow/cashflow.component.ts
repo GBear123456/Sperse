@@ -19,6 +19,8 @@ import { extendMoment } from 'moment-range';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterItemModel } from '@shared/filters/models/filter-item.model';
+import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
 import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
 
@@ -273,6 +275,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                                     ],
                                 })
                             }
+                        }),
+                        new FilterModel({
+                            component: FilterCalendarComponent,
+                            caption: 'Date',
+                            items: { from: new FilterItemModel(), to: new FilterItemModel() }
                         })
                     ]
                 );
@@ -283,7 +290,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this._filtersService.apply(() => {
             for (let filter of this.filters) {
                 let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
-                this.requestFilter[filter.field] = filterMethod ? filterMethod(filter) : undefined;
+                if (filterMethod)
+                    filterMethod(filter, this.requestFilter);
+                else
+                    this.requestFilter[filter.field] = undefined;
             }
             this.loadGridDataSource();
         });
@@ -301,9 +311,27 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         };
     }
 
-    filterByAccount(filter: FilterMultiselectDropDownComponent) {
+    filterByAccount(filter: FilterModel, requestFilter: StatsFilter) {
         if (filter.items && filter.items.acc && filter.items.acc.value) {
-            return filter.items.acc.value.map(x => x.id);
+            requestFilter[filter.field] = filter.items.acc.value.map(x => x.id);
+        }
+    }
+
+    filterByDate(filter: FilterModel, requestFilter: StatsFilter) {
+        requestFilter.startDate = requestFilter.endDate = null;
+        var keys = Object.keys(filter.items);
+        for (let key in keys) {
+            let item = filter.items[keys[key]];
+            if (item && item.value) {
+                let date = moment.utc(item.value, 'YYYY-MM-DDT');
+                if (keys[key].toString() === 'to') {
+                    date.add(1, 'd').add(-1, 's');
+                    requestFilter.endDate = date.toDate();
+                }
+                else {
+                    requestFilter.startDate = date.toDate();
+                }
+            }
         }
     }
 
