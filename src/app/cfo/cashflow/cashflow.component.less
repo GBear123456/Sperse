@@ -565,12 +565,28 @@
                 }
             }
         }
-        .dx-datagrid .dx-row-alt > td {
-            background: #f3f7fa;
-        }
-        .dx-datagrid .dx-column-lines > td {
-            border-right: 0;
-            border-left: 0;
+        .dx-datagrid {
+            .dx-column-indicators {
+                .dx-sort {
+                    color: rgba(103, 115, 128, .5);
+                    font-weight: bold;
+                    font-size: 16px;
+                    position: relative;
+                    top: 1px;
+                }
+                .dx-header-filter {
+                    color: rgba(103, 115, 128, .5);
+                }
+            }
+    
+            .dx-row-alt > td {
+                background: #f3f7fa;
+            }
+    
+            .dx-column-lines > td {
+                border-right: 0;
+                border-left: 0;
+            }
         }
     }
 }
