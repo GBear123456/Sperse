@@ -1,4 +1,4 @@
-import { Injector, Inject, Input, ApplicationRef } from '@angular/core';
+﻿import { Injector, Inject, Input, ApplicationRef } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -117,6 +117,10 @@ export abstract class AppComponentBase {
         this._exportService.saveAsCSV(
             this.dataGrid.instance.getDataSource().items()
         );
+    }
+
+    exportToGoogleSheet(option) {
+        this._exportService.exportToGoogleSheets(this.dataGrid, option != 'selected');
     }
 
     getPhoto(photo, gender): string {
