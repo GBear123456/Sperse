@@ -339,8 +339,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     let cashflowWithStubForEndingPosition = this.cashflowData.concat(stubCashflowDataForEndingCashPosition);
                     let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(cashflowWithStubForEndingPosition);
                     /** concat initial data and stubs from the different hacks */
-                    this.cashflowData = this.cashflowData.concat(
-                        cashflowWithStubForEndingPosition,
+                    this.cashflowData = cashflowWithStubForEndingPosition.concat(
                         stubCashflowDataForAccounts,
                         stubCashflowDataForAllDays
                     );
@@ -455,7 +454,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let stubCashflowDataForEndingCashPosition: Array<TransactionStatsDto> = [];
         cashflowData.forEach( cashflowDataItem => {
             /** clone transaction to another array */
-            if (cashflowDataItem .cashflowTypeId === Income || cashflowDataItem .cashflowTypeId === Expense) {
+            if (cashflowDataItem.cashflowTypeId === Income || cashflowDataItem.cashflowTypeId === Expense) {
                 let clonedTransaction = new TransactionStatsDto(cashflowDataItem);
                 clonedTransaction.cashflowTypeId = Total;
                 clonedTransaction.transactionCategoryId = <any>clonedTransaction.accountId;
@@ -499,6 +498,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     this.createStubTransaction({
                         'cashflowTypeId': StartedBalance,
                         'transactionCategoryId': firstAccountId,
+                        'accountId': firstAccountId,
                         'date': date
                     })
                 );
