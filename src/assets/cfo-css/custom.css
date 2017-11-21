@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500');
+#loading-overlay {
+  background-color: #fff;
+}
 body {
   font-family: 'Montserrat', sans-serif !important;
   background: #fff;
@@ -74,7 +77,7 @@ body {
 }
 #client-details .banner.row .col-xs-12.col-sm-4::before {
   content: '';
-  background: url('https://testadmin.sperse.com/assets/cfo-css/copy-icon.svg') 50% 50% no-repeat;
+  background: url('https://dl.dropboxusercontent.com/s/1a8luezqa2hxqlp/copy-icon.svg') 50% 50% no-repeat;
   width: 24px;
   height: 24px;
   display: block;
@@ -94,10 +97,10 @@ body {
   font-weight: 300;
 }
 #client-details .banner.row .col-xs-12.col-sm-4:nth-child(2)::before {
-  background: url('https://testadmin.sperse.com/assets/cfo-css/total-icon.svg') 50% 50% no-repeat;
+  background: url('https://dl.dropboxusercontent.com/s/d26l4sxi1bpxe83/total-icon.svg') 50% 50% no-repeat;
 }
 #client-details .banner.row .col-xs-12.col-sm-4:nth-child(3)::before {
-  background: url('https://testadmin.sperse.com/assets/cfo-css/hand-icon.svg') 50% 50% no-repeat;
+  background: url('https://dl.dropboxusercontent.com/s/haljr2k9kdvwjyr/hand-icon.svg') 50% 50% no-repeat;
 }
 #client-details .accounts-list .accounts-list-header {
   color: #212c36;
@@ -210,10 +213,6 @@ body {
   color: #00aeef !important;
   font-weight: 400;
   font-family: 'Montserrat', sans-serif;
-  /*&::before {
-				content: '<';
-				margin-right: 5px;
-			}*/
 }
 #sync .sync-steps div {
   font-size: 16px;
@@ -353,7 +352,7 @@ body {
 }
 .safe::before {
   content: '';
-  background: url("https://testadmin.sperse.com/assets/cfo-css/lock-icon.svg") 50% 50% no-repeat;
+  background: url("https://dl.dropboxusercontent.com/s/sghaioytlp6udv4/lock-icon.svg") 50% 50% no-repeat;
   width: 18px;
   height: 18px;
   position: absolute;
