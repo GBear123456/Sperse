@@ -1057,6 +1057,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.addCurrentPeriodsClasses(e);
         }
 
+        /** add zeroValue class for the data cells that have zero values to style them with grey color */
+        if (e.area === 'data' && e.cell.value === 0) {
+            e.cellElement.addClass('zeroValue');
+        }
+
         /** disable expanding and hide the plus button of the elements that has no children */
         if (e.area === 'row' && e.cell.path && e.cell.path.length !== e.component.getDataSource().getAreaFields('row').length) {
             if (!this.hasChildsByPath(e.cell.path, this.cashflowDataTree)) {

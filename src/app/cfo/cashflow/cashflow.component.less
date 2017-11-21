@@ -2,11 +2,10 @@
 
 /** general */
 @grandTotalBackgroundColor: #00aff4;
-@grandTotalTextColor: #fff;
+@grandTotalTextColor: rgba(255, 255, 255, .75);
 @expendedLineColor: #b3b7ba;
 @tableBorderColor: #ddd;
 @generalColor: #212c36;
-@middleGrayColor: #686f76;
 
 /** historical row colors */
 @historicalTextColor: #686f76;
@@ -24,7 +23,7 @@
 @reconciliationVerticalHeaderBackgroundColor: #eff9fe;
 
 /** data cells colors */
-@dataCellColor: #f9fbfc;
+@dataCellBackgroundColor: #f9fbfc;
 @startedBalanceDataCellColor: #d9f0fa;
 @incomeDataCellBackgroundColor: #d9f5f0;
 @expensesDataCellBackgroundColor: #f9e1da;
@@ -32,9 +31,12 @@
 @totalDataCellBackgroundColor: #ecf7fc;
 @reconciliationDataCellTextColor: #a9b2ba;
 @currentPeriodCellBackgroundColor: rgba(250, 184, 0, .04);
+@totalsTextColor: #686f76;
+@middleGrayColor: #686f76;
+@dataCellColorForZeroValues: rgba(104, 111, 118, 0.52);
 
 :host {
-    /deep/ .dx-pivotgrid table.dx-pivotgrid-border {
+    /deep/ .cashflow .dx-pivotgrid .dx-pivotgrid-container table.dx-pivotgrid-border {
         .dx-pivotgrid-horizontal-headers {
             .dx-pivotgrid-expanded.dateField {
                 padding: 5px 10px!important;
@@ -314,20 +316,23 @@
         .dx-area-data-cell {
             tr {
                 td {
-                    background: @dataCellColor;
-                    color: #000;
-                    font-weight: 400;
-                    font-family: Lato !important;
+                    background: @dataCellBackgroundColor;
+                    color: @middleGrayColor;
+                    font-family: Lato!important;
+                    font-size: 13.5px;
+                    letter-spacing: 0.2px;
+                    &.zeroValue {
+                        &,
+                        & span {
+                            color: @dataCellColorForZeroValues;
+                            font-weight: 300;
+                        }
+                    }
                     span {
-                        font-weight: 400;
-                        font-family: Lato !important;
+                        font-family: Lato!important;
+                        color: @middleGrayColor;
                     }
                     &.dx-total {
-                        background: @totalDataCellBackgroundColor;
-                        font-weight: 700;
-                        span {
-                            font-weight: 700;
-                        }
                         &.income {
                             background: @incomeDataCellBackgroundColor;
                         }
@@ -345,11 +350,31 @@
                             }
                         }
                     }
-                    &.reconciliation {
-                        font-weight: 700;
-                    }
                     &.lowestOpenedCurrent {
-                        background-color: rgba(250, 184, 0, .04);
+                        background-color: @currentPeriodCellBackgroundColor;
+                    }
+                }
+
+                &.startedBalance,
+                &.incomeRow,
+                &.expensesRow,
+                &.endingCashPosition,
+                &.reconciliation {
+                    td {
+                        &,
+                        & span {
+                            color: @totalsTextColor;
+                            font-weight: 600;
+                            font-size: 14px;
+                        }
+
+                        &.zeroValue {
+                            &,
+                            & span {
+                                color: @dataCellColorForZeroValues;
+                                font-weight: 300;
+                            }
+                        }
                     }
                 }
 
@@ -360,7 +385,7 @@
                         }
                         &.lowestOpenedCurrent {
                             background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
-                                              linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
+                                        linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                         }
                     }
                     &:first-child {
@@ -377,11 +402,12 @@
                 &.endingCashPosition {
                     td {
                         background: @grandTotalBackgroundColor;
-                        color: @grandTotalTextColor;
-                        font-weight: 700;
                         &.lowestOpenedCurrent {
                             background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
-                                              linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
+                                        linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
+                        }
+                        span {
+                            color: @grandTotalTextColor;
                         }
                     }
                 }
@@ -389,10 +415,13 @@
                     td {
                         background: @reconciliationDataCellBackgroundColor;
                         color: @reconciliationDataCellTextColor;
-
+                        &,
+                        & span {
+                            font-size: 13.5px;
+                        }
                         &.lowestOpenedCurrent {
                             background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
-                                              linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
+                                        linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
                         }
                     }
                 }
