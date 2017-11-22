@@ -1,19 +1,5 @@
 <div [@routerTransition]>
-    <div class="row">
-        <div class="col-xs-6">
-            <div class="page-head">
-                <div class="page-title">
-                    <h1>
-						<i class="icon-globe"></i>
-                        <span>{{l("Orders")}}</span>
-                    </h1>
-                </div>
-            </div>
-        </div>
-        <div class="col-xs-6 text-right">
-            <button ng-if="vm.permissions.create" class="btn btn-layout" (click)="createClient()">+ {{l("CreateNewCustomer")}}</button>
-        </div>
-    </div>
+    <app-headline [config]="headlineConfig"></app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>

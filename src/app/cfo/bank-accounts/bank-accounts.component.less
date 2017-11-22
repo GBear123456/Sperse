@@ -1,21 +1,25 @@
-.content-wrap {
-    display: flex;
+:host {
+    position: relative;
+    top: 75px;
+    .content-wrap {
+        display: flex;
 
-    .frame-wrap {
-        flex: 1;
+        .frame-wrap {
+            flex: 1;
+        }
     }
-}
-.synch-progress {
-    float: left;
-    padding: 8px 14px 7px 14px !important;
-    margin-left: 10px;
-}
-.btn-layout,
-.btn-default {
-    width: 150px;
-    padding: 8px 14px 7px 14px !important;
+    .synch-progress {
+        float: left;
+        padding: 8px 14px 7px 14px !important;
+        margin-left: 10px;
+    }
+    /deep/ .back-button,
+    /deep/ .next-button {
+        width: 150px;
+        padding: 8px 14px 7px 14px !important;
 
-    &:after {
-        content: none;
+        &:after {
+            content: none;
+        }
     }
 }

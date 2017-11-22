@@ -13,6 +13,8 @@ import { Router } from '@angular/router';
 })
 export class BankAccountsComponent extends AppComponentBase implements OnInit {
     sourceUrl: any;
+    headlineConfig: any;
+
     constructor(
         injector: Injector,
         private sanitizer: DomSanitizer,
@@ -30,6 +32,29 @@ export class BankAccountsComponent extends AppComponentBase implements OnInit {
         ).subscribe((data) => {
             this.sourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data.setupAccountsLink);
         });
+
+        this.headlineConfig = { 
+          name: this.l("CashflowSetup_Title") + ' > ' + 
+              this.l("SetupStep_FinancialAccounts"), 
+          icon: 'globe', 
+          buttons: [
+            {
+              enabled: true, 
+              action: this.onBackClick.bind(this),   
+              lable: this.l('Back'),
+              class: 'btn-default back-button'
+            }, {
+              enabled: true, 
+              action: this.onNextClick.bind(this),   
+              lable: this.l('Next'),
+              class: 'btn-layout next-button'
+            }
+          ]
+        };
+    }
+
+    onBackClick() {
+        this._router.navigate(['/app/cfo/cashflow-setup']);
     }
 
     onNextClick() {

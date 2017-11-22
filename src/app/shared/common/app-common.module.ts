@@ -10,6 +10,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule } from 'devextreme-angular';
 
 import { ToolBarComponent } from './toolbar/toolbar.component';
+import { HeadLineComponent } from './headline/headline.component';
 import { TimeZoneComboComponent } from './timing/timezone-combo.component';
 import { AppAuthService } from './auth/app-auth.service';
 import { JqPluginDirective } from './libs/jq-plugin.directive';
@@ -40,7 +41,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
         CommonLookupModalComponent,
         DateRangePickerComponent,
         DatePickerComponent,
-        ToolBarComponent
+        ToolBarComponent,
+        HeadLineComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -48,6 +50,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
         CommonLookupModalComponent,
         DateRangePickerComponent,
         DatePickerComponent,
+        HeadLineComponent,
         ToolBarComponent
     ],
     providers: [

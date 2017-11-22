@@ -45,6 +45,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     private filters: FilterModel[];
     private rootComponent: any;
 
+    public headlineConfig = { 
+      name: this.l('Customers'), 
+      icon: 'people', 
+      buttons: [
+        {
+          enabled: true, 
+          action: this.createClient.bind(this),   
+          lable: this.l('CreateNewCustomer')
+        }
+      ]
+    };
+
     public toolbarConfig = [
       {location: 'before', items: [
         {name: 'back'}
@@ -120,7 +132,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     createClient() {
-        this.createOrEditClientModal.show();
+      this.createOrEditClientModal.show();
     }
 
     showClientDetails(event) {
