@@ -1,4 +1,4 @@
-import {
+﻿import {
     Component,
     OnInit,
     AfterViewInit,
@@ -86,6 +86,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
               action: this.exportToCSV.bind(this),
               text: this.l('Export to CSV'),
               icon: 'sheet'
+            }, {
+                action: this.exportToGoogleSheet.bind(this),
+                text: this.l('Export to Google Sheets'),
+                icon: 'sheet'
             }, {type: 'downloadOptions'}]
           }
         },

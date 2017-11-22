@@ -80,7 +80,7 @@
         .dx-total,
         .dx-data-header,
         .dx-column-header {
-            background: #f0f9fd;
+            background: @totalDataCellBackgroundColor;
         }
 
         .dx-texteditor {
@@ -191,6 +191,7 @@
                     &.dx-white-space-column {
                         background: #fff;
                         border-right: none;
+                        border-top: 1px solid @tableBorderColor;
                         position: relative;
                         cursor: pointer;
                         &:before {
@@ -336,6 +337,7 @@
                         color: @middleGrayColor;
                     }
                     &.dx-total {
+                        background: @totalDataCellBackgroundColor;
                         &.income {
                             background: @incomeDataCellBackgroundColor;
                         }
@@ -459,6 +461,7 @@
                 max-width: inherit;
                 min-width: 0;
                 width: auto;
+                color: @generalColor;
                 &:after {
 
                 }
@@ -581,11 +584,11 @@
                     color: rgba(103, 115, 128, .5);
                 }
             }
-    
+
             .dx-row-alt > td {
                 background: #f3f7fa;
             }
-    
+
             .dx-column-lines > td {
                 border-right: 0;
                 border-left: 0;

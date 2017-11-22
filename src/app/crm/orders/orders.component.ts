@@ -1,4 +1,4 @@
-import {
+﻿import {
     Component,
     OnInit,
     AfterViewInit,
@@ -90,6 +90,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
               action: this.exportToCSV.bind(this),
               text: this.l('Export to CSV'),
               icon: 'sheet'
+            }, {
+                action: this.exportToGoogleSheet.bind(this),
+                text: this.l('Export to Google Sheets'),
+                icon: 'sheet'
             }, {type: 'downloadOptions'}]
           }
         },

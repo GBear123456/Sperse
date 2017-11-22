@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
@@ -61,6 +61,10 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
               action: this.exportToCSV.bind(this),
               text: this.l('Export to CSV'),
               icon: 'sheet'
+            }, {
+                action: this.exportToGoogleSheet.bind(this),
+                text: this.l('Export to Google Sheets'),
+                icon: 'sheet'
             }, {type: 'downloadOptions'}]
           }
         },
