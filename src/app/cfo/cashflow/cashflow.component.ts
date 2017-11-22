@@ -46,7 +46,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     cashflowData: any;
     cashflowDataTree: any;
     cashflowTypes: any;
-    transactionCategories: any;
     expenseCategories: any;
     bankAccounts: any;
     dataSource: any;
@@ -325,16 +324,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
             });
         };
-        this.headlineConfig = { 
-          name: this.l('Cash Flow Statement and Forecast'), 
-          icon: 'globe', 
-          buttons: [
-            {
-              enabled: true, 
-              action: Function(),   
-              lable: this.l('Add New')
-            }
-          ]
+        this.headlineConfig = {
+            name: this.l('Cash Flow Statement and Forecast'),
+            icon: 'globe',
+            buttons: [
+                {
+                    enabled: true,
+                    action: Function(),
+                    lable: this.l('Add New')
+                }
+            ]
         };
     }
 
@@ -471,6 +470,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let stubTransaction = new TransactionStatsDto({
             'adjustmentType': null,
             'cashflowTypeId': null,
+            'transactionCategoryId': null,
+            'expenseCategoryId': null,
             'categorization': {
                 'category': null,
                 'desciptor': null,
