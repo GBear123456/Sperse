@@ -12374,8 +12374,6 @@ export interface ICashFlowStatsDto {
 export class TransactionStatsDto implements ITransactionStatsDto {
     adjustmentType: TransactionStatsDtoAdjustmentType;
     cashflowTypeId: string;
-    transactionCategoryId: string;
-    expenseCategoryId: string;
     categorization: { [key: string] : string; };
     accountId: number;
     currencyId: string;
@@ -12396,8 +12394,6 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         if (data) {
             this.adjustmentType = data["adjustmentType"];
             this.cashflowTypeId = data["cashflowTypeId"];
-            this.transactionCategoryId = data["transactionCategoryId"];
-            this.expenseCategoryId = data["expenseCategoryId"];
             if (data["categorization"]) {
                 this.categorization = {};
                 for (let key in data["categorization"]) {
@@ -12423,8 +12419,6 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data = typeof data === 'object' ? data : {};
         data["adjustmentType"] = this.adjustmentType;
         data["cashflowTypeId"] = this.cashflowTypeId;
-        data["transactionCategoryId"] = this.transactionCategoryId;
-        data["expenseCategoryId"] = this.expenseCategoryId;
         if (this.categorization) {
             data["categorization"] = {};
             for (let key in this.categorization) {
@@ -12444,8 +12438,6 @@ export class TransactionStatsDto implements ITransactionStatsDto {
 export interface ITransactionStatsDto {
     adjustmentType: TransactionStatsDtoAdjustmentType;
     cashflowTypeId: string;
-    transactionCategoryId: string;
-    expenseCategoryId: string;
     categorization: { [key: string] : string; };
     accountId: number;
     currencyId: string;
@@ -12458,8 +12450,6 @@ export class CashFlowInitialData implements ICashFlowInitialData {
     bankAccounts: BankAccountDto[];
     businessEntities: BusinessEntityDto[];
     cashflowTypes: { [key: string] : string; };
-    transactionCategories: { [key: string] : string; };
-    expenseCategories: { [key: string] : string; };
 
     constructor(data?: ICashFlowInitialData) {
         if (data) {
@@ -12487,20 +12477,6 @@ export class CashFlowInitialData implements ICashFlowInitialData {
                 for (let key in data["cashflowTypes"]) {
                     if (data["cashflowTypes"].hasOwnProperty(key))
                         this.cashflowTypes[key] = data["cashflowTypes"][key];
-                }
-            }
-            if (data["transactionCategories"]) {
-                this.transactionCategories = {};
-                for (let key in data["transactionCategories"]) {
-                    if (data["transactionCategories"].hasOwnProperty(key))
-                        this.transactionCategories[key] = data["transactionCategories"][key];
-                }
-            }
-            if (data["expenseCategories"]) {
-                this.expenseCategories = {};
-                for (let key in data["expenseCategories"]) {
-                    if (data["expenseCategories"].hasOwnProperty(key))
-                        this.expenseCategories[key] = data["expenseCategories"][key];
                 }
             }
         }
@@ -12531,20 +12507,6 @@ export class CashFlowInitialData implements ICashFlowInitialData {
                     data["cashflowTypes"][key] = this.cashflowTypes[key];
             }
         }
-        if (this.transactionCategories) {
-            data["transactionCategories"] = {};
-            for (let key in this.transactionCategories) {
-                if (this.transactionCategories.hasOwnProperty(key))
-                    data["transactionCategories"][key] = this.transactionCategories[key];
-            }
-        }
-        if (this.expenseCategories) {
-            data["expenseCategories"] = {};
-            for (let key in this.expenseCategories) {
-                if (this.expenseCategories.hasOwnProperty(key))
-                    data["expenseCategories"][key] = this.expenseCategories[key];
-            }
-        }
         return data; 
     }
 }
@@ -12553,8 +12515,6 @@ export interface ICashFlowInitialData {
     bankAccounts: BankAccountDto[];
     businessEntities: BusinessEntityDto[];
     cashflowTypes: { [key: string] : string; };
-    transactionCategories: { [key: string] : string; };
-    expenseCategories: { [key: string] : string; };
 }
 
 export class BankAccountDto implements IBankAccountDto {
@@ -12645,8 +12605,6 @@ export interface IBusinessEntityDto {
 
 export class StatsDetailFilter implements IStatsDetailFilter {
     cashFlowTypeId: string;
-    transactionCategoryId: string;
-    expenseCategoryId: string;
     categorization: { [key: string] : string; };
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -12666,8 +12624,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     init(data?: any) {
         if (data) {
             this.cashFlowTypeId = data["cashFlowTypeId"];
-            this.transactionCategoryId = data["transactionCategoryId"];
-            this.expenseCategoryId = data["expenseCategoryId"];
             if (data["categorization"]) {
                 this.categorization = {};
                 for (let key in data["categorization"]) {
@@ -12700,8 +12656,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["cashFlowTypeId"] = this.cashFlowTypeId;
-        data["transactionCategoryId"] = this.transactionCategoryId;
-        data["expenseCategoryId"] = this.expenseCategoryId;
         if (this.categorization) {
             data["categorization"] = {};
             for (let key in this.categorization) {
@@ -12728,8 +12682,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
 
 export interface IStatsDetailFilter {
     cashFlowTypeId: string;
-    transactionCategoryId: string;
-    expenseCategoryId: string;
     categorization: { [key: string] : string; };
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -13011,8 +12963,6 @@ export interface ICreateTransactionCommentOutput {
 export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
     comment: string;
     cashFlowTypeId: string;
-    transactionCategoryId: string;
-    expenseCategoryId: string;
     categorization: { [key: string] : string; };
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -13033,8 +12983,6 @@ export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
         if (data) {
             this.comment = data["comment"];
             this.cashFlowTypeId = data["cashFlowTypeId"];
-            this.transactionCategoryId = data["transactionCategoryId"];
-            this.expenseCategoryId = data["expenseCategoryId"];
             if (data["categorization"]) {
                 this.categorization = {};
                 for (let key in data["categorization"]) {
@@ -13068,8 +13016,6 @@ export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
         data = typeof data === 'object' ? data : {};
         data["comment"] = this.comment;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
-        data["transactionCategoryId"] = this.transactionCategoryId;
-        data["expenseCategoryId"] = this.expenseCategoryId;
         if (this.categorization) {
             data["categorization"] = {};
             for (let key in this.categorization) {
@@ -13097,8 +13043,6 @@ export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
 export interface ICreateCashFlowCommentInput {
     comment: string;
     cashFlowTypeId: string;
-    transactionCategoryId: string;
-    expenseCategoryId: string;
     categorization: { [key: string] : string; };
     startDate: moment.Moment;
     endDate: moment.Moment;

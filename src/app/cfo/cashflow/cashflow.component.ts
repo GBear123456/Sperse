@@ -52,7 +52,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     groupInterval: any = 'year';
     statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
     statsDetailResult: any;
-    categorization = [
+    categorization: Array<string> = [
         'category',
         'descriptor'
     ];
@@ -149,8 +149,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             areaIndex: 2,
             dataField: `categorization.${this.categorization[1]}`,
             customizeText: cellInfo => {
-                let value = this.expenseCategories[cellInfo.valueText];
-                return value ? value.toUpperCase() : cellInfo.valueText;
+                return cellInfo.valueText;
             }
         },
         {
@@ -386,7 +385,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 if (result.transactionStats.length) {
                     let transactions = result.transactionStats;
                     this.cashflowTypes = this.initialData.cashflowTypes;
-                    this.expenseCategories = this.initialData.expenseCategories;
                     this.bankAccounts = this.initialData.bankAccounts;
                     /** categories - object with categories */
                     this.cashflowData = this.getCashflowDataFromTransactions(transactions);
@@ -450,8 +448,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                                 'date': firstDate,
                                 'accountId': accountId,
                                 'categorization': {
-                                    'category': accountId,
-                                    'descriptor': undefined
+                                    'category': accountId
                                 }
                             })
                         );
@@ -466,23 +463,30 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param stubObj - the object with own custom data for stub transaction
      * @return {TransactionStatsDto & any}
      */
-    createStubTransaction(stubObj) {
+    createStubTransaction(stubObj): TransactionStatsDto {
+        let categorizationObject: { [key: string]: string; } = this.createCategorizationObject(this.categorization);
         let stubTransaction = new TransactionStatsDto({
             'adjustmentType': null,
             'cashflowTypeId': null,
-            'transactionCategoryId': null,
-            'expenseCategoryId': null,
-            'categorization': {
-                'category': null,
-                'desciptor': null,
-            },
             'accountId': null,
             'currencyId': 'USD',
             'amount': 0,
             'comment': null,
-            'date': null
+            'date': null,
+            'categorization': categorizationObject
         });
         return Object.assign(stubTransaction, stubObj);
+    }
+
+    /**
+     * For every categorization item create object with the categorization as properties
+     */
+    createCategorizationObject(categorization: Array<string>): { [key: string]: string; } {
+        let categorizationObject = {};
+        this.categorization.forEach(category => {
+            categorizationObject[category] = null;
+        });
+        return categorizationObject;
     }
 
     /**
@@ -491,11 +495,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @return {TransactionStatsDto[]}
      */
     getCashflowDataFromTransactions(transactions: Array<TransactionStatsDto>) {
-        return transactions.map(function(transactionObj) {
+        return transactions.map(transactionObj => {
             /** change the second level for started balance and reconciliations for the account id */
             if (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation) {
                 transactionObj.categorization = {
-                    'category': <any>transactionObj.accountId
+                    [this.categorization[0]]: <any>transactionObj.accountId
                 };
             }
             return transactionObj;
@@ -525,8 +529,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 let clonedTransaction = this.createStubTransaction({
                     'cashflowTypeId': Total,
                     'categorization': {
-                        'category': cashflowDataItem.accountId,
-                        'descriptor': undefined
+                        [this.categorization[0]]: cashflowDataItem.accountId
                     },
                     'expenseCategoryId': null,
                     'amount': cashflowDataItem.amount,
@@ -571,8 +574,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     this.createStubTransaction({
                         'cashflowTypeId': StartedBalance,
                         'categorization': {
-                            'category': firstAccountId,
-                            'descriptor': undefined
+                            [this.categorization[0]]: firstAccountId
                         },
                         'accountId': firstAccountId,
                         'date': date
@@ -1258,14 +1260,19 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 this.statsDetailFilter.cashFlowTypeId == Total ||
                 this.statsDetailFilter.cashFlowTypeId == Reconciliation
             ) {
-                this.statsDetailFilter.accountIds = [];
-                this.statsDetailFilter.categorization.category = undefined;
-                if (cellObj.cell.rowPath[1]) this.statsDetailFilter.accountIds.push(cellObj.cell.rowPath[1]);
+                this.statsDetailFilter.categorization[this.categorization[0]] = undefined;
+                if ((!this.requestFilter.accountIds || !this.requestFilter.accountIds.length)  &&
+                    cellObj.cell.rowPath[1] &&
+                    Number.isInteger(cellObj.cell.rowPath[1])) {
+                    this.statsDetailFilter.accountIds = [cellObj.cell.rowPath[1]];
+                } else {
+                    this.statsDetailFilter.accountIds = (this.requestFilter.accountIds && this.requestFilter.accountIds) || [];
+                }
             } else {
-                this.statsDetailFilter.accountIds = [];
-                this.statsDetailFilter.categorization.category = cellObj.cell.rowPath[1];
+                this.statsDetailFilter.accountIds = (this.requestFilter.accountIds && this.requestFilter.accountIds) || [];
+                this.statsDetailFilter.categorization[this.categorization[0]] = cellObj.cell.rowPath[1];
             }
-            this.statsDetailFilter.categorization.descriptor = cellObj.cell.rowPath[2];
+            this.statsDetailFilter.categorization[this.categorization[1]] = cellObj.cell.rowPath[2];
             this.statsDetailFilter.startDate = datePeriod.startDate;
             this.statsDetailFilter.endDate = datePeriod.endDate;
             this.statsDetailFilter.businessEntityIds = this.requestFilter.businessEntityIds;
