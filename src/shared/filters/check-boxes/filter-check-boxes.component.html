@@ -1,0 +1,16 @@
+<div class="wrapper">
+    <p>
+        {{ items.element.displayName }}
+    </p>
+    <dx-tree-list [dataSource]="items.element.dataSource"
+                  [dataStructure]="tree"
+                  [keyExpr]="items.element.keyExpr"
+                  [parentIdExpr]="items.element.parentExpr"
+                  [selection]="{allowSelectAll: false, mode: 'multiple'}"
+                  [showColumnHeaders]="false"
+                  [autoExpandAll]="true"
+                  [(selectedRowKeys)]="items.element.value"
+                  scrolling="{mode: 'virtual', showScrollbar: 'always'}">
+        <dxi-column [dataField]="items.element.nameField"></dxi-column>
+    </dx-tree-list>
+</div>

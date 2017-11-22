@@ -67,12 +67,12 @@ export class LeadsStatsComponent extends AppComponentBase {
             let pipelineId = e.cell.rowPath[0];
             let stageId = e.cell.rowPath[1];
 
+            let pipelinesFilter;
+            if (pipelineId)
+                pipelinesFilter = { element: [pipelineId + (stageId ? ':' + stageId : '')] };
             let filters = {
                 typeId: typeId,
-                stages: {
-                    pipeline: pipelineId,
-                    stage: stageId
-                }
+                stages: pipelinesFilter
             };
             this._router.navigate(['app/crm/leads'], { queryParams: { filters: encodeURIComponent(JSON.stringify(filters)) } });
         }

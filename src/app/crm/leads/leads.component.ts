@@ -1,4 +1,4 @@
-﻿import {
+import {
     Component,
     OnInit,
     AfterViewInit,
@@ -13,12 +13,15 @@ import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { FiltersService } from '@shared/filters/filters.service';
+import { FilterHelpers } from '@shared/filters/filter.helpers';
 import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
+import { FilterCheckBoxesComponent  } from '@shared/filters/check-boxes/filter-check-boxes.component';
+import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 
 import { CommonLookupServiceProxy, PipelineServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -158,33 +161,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._pipelineService.getPipelinesFullData('L').subscribe(result => {
             this._filtersService.setup(this.filters = [
                 new FilterModel({
-                    component: FilterDropDownComponent,
+                    component: FilterCheckBoxesComponent,
                     caption: 'stages',
                     items: {
-                        pipeline: new FilterDropDownModel({
-                            displayName: 'Pipeline',
-                            elements: result,
-                            displayElementExp: 'name',
-                            filterField: 'pipelineId',
-                            onElementSelect: (value, filter: FilterModelBase<FilterDropDownModel>) => {
-                                filter.items["pipeline"].value = value;
-                                filter.items['stage'].elements = value.stages;
-                                filter.items["stage"].value = null;
-                            },
-                            clearSelectedElement: (filter: FilterModelBase<FilterDropDownModel>) => {
-                                filter.items["pipeline"].value = null;
-                                filter.items['stage'].elements = null;
-                                filter.items["stage"].value = null;
-                            }
-                        }),
-                        stage: new FilterDropDownModel({
-                            displayName: 'Stages',
-                            displayElementExp: 'name',
-                            filterField: 'stageId',
-                            onElementSelect: (value, filter: FilterModel) => {
-                                filter.items["stage"].value = value;
-                            }
-                        })
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource: FilterHelpers.ConvertPipelinesToTreeSource(result),
+                                nameField: 'name',
+                                parentExpr: 'parentId',
+                                keyExpr: 'id'
+                            })
                     }
                 }),
                 new FilterModel({
@@ -301,13 +287,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             );
         });
     }
-
-
+    
     filterByStages(filter: FilterModel) {
         let data = {};
-        _.each(filter.items, (val: FilterDropDownModel, key) => {
-            val && val.filterField && val.value && (data[this.capitalize(val.filterField)] = val.value.id);
-        });
+        if (filter.items.element) {
+            let filterData = FilterHelpers.ParsePipelineIds(filter.items.element.value);
+            data = {
+                or: filterData
+            };
+        }
+
         return data;
     }
 

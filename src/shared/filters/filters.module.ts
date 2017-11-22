@@ -9,6 +9,7 @@ import { FiltersService } from './filters.service';
 
 import { FilterManagerComponent, AdDirective } from './filter.manager.component';
 import { FilterStatesComponent } from './states/filter-states.component';
+import { FilterCheckBoxesComponent } from './check-boxes/filter-check-boxes.component';
 import { FilterDropDownComponent } from './dropdown/filter-dropdown.component';
 import { FilterInputsComponent } from './inputs/filter-inputs.component';
 import { FilterCBoxesComponent } from './cboxes/filter-cboxes.component';
@@ -35,6 +36,7 @@ import { DxTreeListModule, DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule,
     declarations: [
         FilterManagerComponent,
         FilterStatesComponent,
+        FilterCheckBoxesComponent,
         FilterDropDownComponent,
         FilterMultiselectDropDownComponent,
         FilterInputsComponent,
@@ -45,6 +47,7 @@ import { DxTreeListModule, DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule,
     ],
     entryComponents: [
         FilterStatesComponent,
+        FilterCheckBoxesComponent,
         FilterDropDownComponent,
         FilterMultiselectDropDownComponent,
         FilterCBoxesComponent,
