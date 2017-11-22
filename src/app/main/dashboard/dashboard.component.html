@@ -1,19 +1,5 @@
 ﻿<div [@routerTransition]>
-
-  <div class="row">
-      <div class="col-xs-6">
-
-        <div class="page-head">
-            <div class="page-title">
-                <h1>
-                    <span>Dashboard</span> <small>statistics and reports</small>
-                </h1>
-            </div>
-        </div>
-
-      </div>
-  </div>
-
+  <app-headline [config]="headlineConfig"></app-headline>
   <div class="lead-status">
       <div class="col-lg-6 col-xs-12 col-sm-12">
           <!-- BEGIN PORTLET-->
@@ -33,5 +19,4 @@
           <!-- END PORTLET-->
       </div>
   </div>
-
 </div>

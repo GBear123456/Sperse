@@ -24,7 +24,8 @@ import {
     DxToolbarModule,
     DxTooltipModule,
     DxValidationSummaryModule,
-    DxValidatorModule
+    DxValidatorModule,
+    DxScrollViewModule
 } from 'devextreme-angular';
 
 @NgModule({
@@ -45,7 +46,8 @@ import {
         DxToolbarModule,
         DxTooltipModule,
         DxValidationSummaryModule,
-        DxValidatorModule
+        DxValidatorModule,
+        DxScrollViewModule
     ],
     declarations: [
         BankAccountsComponent,

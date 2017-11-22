@@ -48,6 +48,18 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
 
+    public headlineConfig = { 
+      name: this.l('Leads'), 
+      icon: 'basket', 
+      buttons: [
+        {
+          enabled: true, 
+          action: Function(),   
+          lable: this.l('CreateNewLead')
+        }
+      ]
+    };
+
     toolbarConfig = [
       {location: 'before', items: [
         {name: 'back'}

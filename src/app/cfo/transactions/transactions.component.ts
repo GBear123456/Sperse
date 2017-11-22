@@ -35,6 +35,12 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     private filters: FilterModel[];
     private rootComponent: any;
 
+    public headlineConfig = { 
+      name: this.l('Transactions'), 
+      icon: 'credit-card', 
+      buttons: []
+    };
+
     toolbarConfig = [
       {location: 'after', items: [
         {name: 'refresh', action: this.refreshDataGrid.bind(this)},

@@ -12,7 +12,12 @@ import * as _ from 'lodash';
   styleUrls: ['./dashboard.component.less']
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-
+    public headlineConfig = { 
+      name: this.l('Dashboard'), 
+      text: this.l('statistics and reports'),
+      icon: 'globe', 
+      buttons: []
+    };
 
     constructor(
         injector: Injector,

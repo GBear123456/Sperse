@@ -42,6 +42,7 @@ const StartedBalance = 'B',
 })
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
+    headlineConfig: any;
     cashflowData: any;
     cashflowDataTree: any;
     cashflowTypes: any;
@@ -324,6 +325,17 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
             });
         };
+        this.headlineConfig = { 
+          name: this.l('Cash Flow Statement and Forecast'), 
+          icon: 'globe', 
+          buttons: [
+            {
+              enabled: true, 
+              action: Function(),   
+              lable: this.l('Add New')
+            }
+          ]
+        };
     }
 
     filterByBusinessEntity(filter: FilterModel, requestFilter: StatsFilter) {
@@ -357,7 +369,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(false);
+        this.rootComponent.overflowHidden(true);
     }
 
     ngOnDestroy() {
@@ -1255,6 +1267,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.statsDetailFilter.categorization.descriptor = cellObj.cell.rowPath[2];
             this.statsDetailFilter.startDate = datePeriod.startDate;
             this.statsDetailFilter.endDate = datePeriod.endDate;
+            this.statsDetailFilter.businessEntityIds = this.requestFilter.businessEntityIds;
             this.getStatsDetails(this.statsDetailFilter);
         }
     }

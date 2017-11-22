@@ -6,12 +6,20 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 @Component({
     templateUrl: './organization-units.component.html',
+    styleUrls: ['./organization-units.component.less'],
     animations: [appModuleAnimation()]
 })
 export class OrganizationUnitsComponent extends AppComponentBase {
 
     @ViewChild('ouMembers') ouMembers: OrganizationUnitMembersComponent;
     @ViewChild('ouTree') ouTree: OrganizationTreeComponent;
+
+    public headlineConfig = { 
+      name: this.l('OrganizationUnits'), 
+      text: this.l('OrganizationUnitsHeaderInfo'),
+      icon: 'rocket', 
+      buttons: []
+    };
 
     constructor(
         injector: Injector

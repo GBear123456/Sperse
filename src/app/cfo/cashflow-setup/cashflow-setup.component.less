@@ -1,56 +1,61 @@
-.content {
-    display: flex;
-}
+:host {
+    position: relative;
+    top: 75px;
 
-.cashflow-setup {
-    flex: 1;
-    text-align: center;
-    height: calc(~"100vh - 150px");
-    border: none;
-
-    .sperse-cfo {
-        margin: 129px 0 0 0 !important;
-        color: #f3f6fa;
-        font-family: Montserrat;
-        font-size: 120px;
-        font-weight: 600;
+    .content {
+        display: flex;
     }
 
-    .logo-cfo {
-        height: 141px;
-        width: 141px;
-        margin-top: -68px;
-        margin-bottom: 63px;
+    .cashflow-setup {
+        flex: 1;
+        text-align: center;
+        height: calc(~"100vh - 150px");
+        border: none;
+
+        .sperse-cfo {
+            margin: 129px 0 0 0 !important;
+            color: #f3f6fa;
+            font-family: Montserrat;
+            font-size: 120px;
+            font-weight: 600;
+        }
+
+        .logo-cfo {
+            height: 141px;
+            width: 141px;
+            margin-top: -68px;
+            margin-bottom: 63px;
+        }
+
+        .welcome-cfo {
+            color: #202B35;
+            font-family: Montserrat;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .text-cfo {
+            color: #677380;
+            font-family: Montserrat;
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 22px;
+            max-width: 650px;
+            margin: 27px auto 44px;
+        }
     }
 
-    .welcome-cfo {
-        color: #202B35;
-        font-family: Montserrat;
-        font-size: 32px;
-        font-weight: 600;
-    }
+    .btn-layout {
+        padding: 18px 68px 21px 66px !important;
+        height: 52px;
+        text-transform: none !important;
+        line-height: 0 !important;
+        border-radius: 26px !important;
+        font-size: 16px !important;
+        font-weight: 500 !important;
 
-    .text-cfo {
-        color: #677380;
-        font-family: Montserrat;
-        font-size: 15px;
-        font-weight: 500;
-        line-height: 22px;
-        max-width: 650px;
-        margin: 27px auto 44px;
-    }
-}
-
-.btn-layout {
-    padding: 18px 68px 21px 66px !important;
-    height: 52px;
-    text-transform: none !important;
-    line-height: 0 !important;
-    border-radius: 26px !important;
-    font-size: 16px !important;
-    font-weight: 500 !important;
-
-    &:after {
-        content: none;
+        &:after {
+            content: none;
+        }
     }
 }

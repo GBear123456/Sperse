@@ -52,6 +52,18 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private readonly dataSourceURI = 'Order';
     private filters: FilterModel[];
 
+    public headlineConfig = { 
+      name: this.l('Orders'), 
+      icon: 'briefcase', 
+      buttons: [
+        {
+          enabled: true, 
+          action: Function(),   
+          lable: this.l('CreateNewOrder')
+        }
+      ]
+    };
+
     toolbarConfig = [
       {location: 'before', items: [
         {name: 'back'}

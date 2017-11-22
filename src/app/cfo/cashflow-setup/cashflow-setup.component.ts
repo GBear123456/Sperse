@@ -11,6 +11,8 @@ import { SetupStepComponent } from '../shared/setup-steps/setup-steps.component'
     animations: [appModuleAnimation()]
 })
 export class CashflowSetupComponent extends AppComponentBase implements OnInit {
+    public headlineConfig;
+
     constructor(injector: Injector) {
         super(injector);
 
@@ -18,5 +20,10 @@ export class CashflowSetupComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
+        this.headlineConfig = { 
+            name: this.l('CashflowSetup_Title'), 
+            icon: 'globe', 
+            buttons: []
+        }
     }
 }
