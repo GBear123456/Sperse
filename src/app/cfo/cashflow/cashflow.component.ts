@@ -1237,6 +1237,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.statsDetailFilter.expenseCategoryId = cellObj.cell.rowPath[2];
             this.statsDetailFilter.startDate = datePeriod.startDate;
             this.statsDetailFilter.endDate = datePeriod.endDate;
+            this.statsDetailFilter.businessEntityIds = this.requestFilter.businessEntityIds;
             this.getStatsDetails(this.statsDetailFilter);
         }
     }
