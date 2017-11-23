@@ -17,10 +17,9 @@ export class FilterCheckBoxesModel extends FilterItemModel {
         var result: DisplayElement[] = this.value && this.value.map(x => {
             let data = _.find(this.dataSource, (val: any, i, arr) => val.id == x);
             if (data) {
-                let displayValue = data.name + (data.parent ? ' (' + data.parent + ')' : '');
-                return <DisplayElement>{ item: this, displayValue: displayValue, args: x }
+                return <DisplayElement>{ item: this, displayValue: data.name, args: x, isNested: !!data.parent }
             }
-        });
+        }).filter(Boolean);
 
         return _.sortBy(result, x => x.args);
     }

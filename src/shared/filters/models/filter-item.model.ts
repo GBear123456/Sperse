@@ -38,5 +38,7 @@ export class DisplayElement {
     item: FilterItemModel;
     displayValue: string;
 
+    isNested?: boolean;
+
     args?: any;
 }
