@@ -19,8 +19,8 @@
                     </a>
                     <ul class="sub-filter-list">
                         <ng-template ngFor let-displayFilterElement [ngForOf]="filter.displayElements">
-                            <li *ngIf="displayFilterElement.displayValue" class="sub-filter-item" [ngClass]="{'nested': displayFilterElement.isNested}">
-                                {{displayFilterElement.displayValue}}<i class="minus-icon" aria-hidden="true" (click)="excludeFilter($event, filter, displayFilterElement)"></i>
+                            <li *ngIf="displayFilterElement.displayValue" class="sub-filter-item" [ngClass]="{'nested': displayFilterElement.parent}">
+                                {{displayFilterElement.displayValue}}<i *ngIf="!displayFilterElement.readonly" class="minus-icon" aria-hidden="true" (click)="excludeFilter($event, filter, displayFilterElement)"></i>
                             </li>
                         </ng-template>
                     </ul>
