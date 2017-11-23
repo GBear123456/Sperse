@@ -1167,6 +1167,114 @@ export class CashflowServiceProxy {
 }
 
 @Injectable()
+export class CashFlowCommentServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    createTransactionComment(input: CreateTransactionCommentInput): Observable<CreateTransactionCommentOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowComment/CreateTransactionComment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateTransactionComment(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateTransactionComment(response_);
+                } catch (e) {
+                    return <Observable<CreateTransactionCommentOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateTransactionCommentOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateTransactionComment(response: Response): Observable<CreateTransactionCommentOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CreateTransactionCommentOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateTransactionCommentOutput.fromJS(resultData200) : new CreateTransactionCommentOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CreateTransactionCommentOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    createCashFlowComment(input: CreateCashFlowCommentInput): Observable<CreateCashFlowCommentOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowComment/CreateCashFlowComment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateCashFlowComment(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateCashFlowComment(response_);
+                } catch (e) {
+                    return <Observable<CreateCashFlowCommentOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateCashFlowCommentOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateCashFlowComment(response: Response): Observable<CreateCashFlowCommentOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CreateCashFlowCommentOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateCashFlowCommentOutput.fromJS(resultData200) : new CreateCashFlowCommentOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CreateCashFlowCommentOutput>(<any>null);
+    }
+}
+
+@Injectable()
 export class ChatServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -12142,12 +12250,12 @@ export interface IEntityDtoOfString {
 }
 
 export class StatsFilter implements IStatsFilter {
+    categorizationIds: string[];
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
     accountIds: number[];
     businessEntityIds: number[];
-    categorizationIds: string[];
 
     constructor(data?: IStatsFilter) {
         if (data) {
@@ -12160,6 +12268,11 @@ export class StatsFilter implements IStatsFilter {
 
     init(data?: any) {
         if (data) {
+            if (data["categorizationIds"] && data["categorizationIds"].constructor === Array) {
+                this.categorizationIds = [];
+                for (let item of data["categorizationIds"])
+                    this.categorizationIds.push(item);
+            }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
@@ -12173,11 +12286,6 @@ export class StatsFilter implements IStatsFilter {
                 for (let item of data["businessEntityIds"])
                     this.businessEntityIds.push(item);
             }
-            if (data["categorizationIds"] && data["categorizationIds"].constructor === Array) {
-                this.categorizationIds = [];
-                for (let item of data["categorizationIds"])
-                    this.categorizationIds.push(item);
-            }
         }
     }
 
@@ -12189,6 +12297,11 @@ export class StatsFilter implements IStatsFilter {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        if (this.categorizationIds && this.categorizationIds.constructor === Array) {
+            data["categorizationIds"] = [];
+            for (let item of this.categorizationIds)
+                data["categorizationIds"].push(item);
+        }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
@@ -12202,22 +12315,17 @@ export class StatsFilter implements IStatsFilter {
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
-        if (this.categorizationIds && this.categorizationIds.constructor === Array) {
-            data["categorizationIds"] = [];
-            for (let item of this.categorizationIds)
-                data["categorizationIds"].push(item);
-        }
         return data; 
     }
 }
 
 export interface IStatsFilter {
+    categorizationIds: string[];
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
     accountIds: number[];
     businessEntityIds: number[];
-    categorizationIds: string[];
 }
 
 export class CashFlowStatsDto implements ICashFlowStatsDto {
@@ -12266,8 +12374,6 @@ export interface ICashFlowStatsDto {
 export class TransactionStatsDto implements ITransactionStatsDto {
     adjustmentType: TransactionStatsDtoAdjustmentType;
     cashflowTypeId: string;
-    transactionCategoryId: string;
-    expenseCategoryId: string;
     categorization: { [key: string] : string; };
     accountId: number;
     currencyId: string;
@@ -12288,8 +12394,6 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         if (data) {
             this.adjustmentType = data["adjustmentType"];
             this.cashflowTypeId = data["cashflowTypeId"];
-            this.transactionCategoryId = data["transactionCategoryId"];
-            this.expenseCategoryId = data["expenseCategoryId"];
             if (data["categorization"]) {
                 this.categorization = {};
                 for (let key in data["categorization"]) {
@@ -12315,8 +12419,6 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data = typeof data === 'object' ? data : {};
         data["adjustmentType"] = this.adjustmentType;
         data["cashflowTypeId"] = this.cashflowTypeId;
-        data["transactionCategoryId"] = this.transactionCategoryId;
-        data["expenseCategoryId"] = this.expenseCategoryId;
         if (this.categorization) {
             data["categorization"] = {};
             for (let key in this.categorization) {
@@ -12336,8 +12438,6 @@ export class TransactionStatsDto implements ITransactionStatsDto {
 export interface ITransactionStatsDto {
     adjustmentType: TransactionStatsDtoAdjustmentType;
     cashflowTypeId: string;
-    transactionCategoryId: string;
-    expenseCategoryId: string;
     categorization: { [key: string] : string; };
     accountId: number;
     currencyId: string;
@@ -12350,8 +12450,6 @@ export class CashFlowInitialData implements ICashFlowInitialData {
     bankAccounts: BankAccountDto[];
     businessEntities: BusinessEntityDto[];
     cashflowTypes: { [key: string] : string; };
-    transactionCategories: { [key: string] : string; };
-    expenseCategories: { [key: string] : string; };
 
     constructor(data?: ICashFlowInitialData) {
         if (data) {
@@ -12379,20 +12477,6 @@ export class CashFlowInitialData implements ICashFlowInitialData {
                 for (let key in data["cashflowTypes"]) {
                     if (data["cashflowTypes"].hasOwnProperty(key))
                         this.cashflowTypes[key] = data["cashflowTypes"][key];
-                }
-            }
-            if (data["transactionCategories"]) {
-                this.transactionCategories = {};
-                for (let key in data["transactionCategories"]) {
-                    if (data["transactionCategories"].hasOwnProperty(key))
-                        this.transactionCategories[key] = data["transactionCategories"][key];
-                }
-            }
-            if (data["expenseCategories"]) {
-                this.expenseCategories = {};
-                for (let key in data["expenseCategories"]) {
-                    if (data["expenseCategories"].hasOwnProperty(key))
-                        this.expenseCategories[key] = data["expenseCategories"][key];
                 }
             }
         }
@@ -12423,20 +12507,6 @@ export class CashFlowInitialData implements ICashFlowInitialData {
                     data["cashflowTypes"][key] = this.cashflowTypes[key];
             }
         }
-        if (this.transactionCategories) {
-            data["transactionCategories"] = {};
-            for (let key in this.transactionCategories) {
-                if (this.transactionCategories.hasOwnProperty(key))
-                    data["transactionCategories"][key] = this.transactionCategories[key];
-            }
-        }
-        if (this.expenseCategories) {
-            data["expenseCategories"] = {};
-            for (let key in this.expenseCategories) {
-                if (this.expenseCategories.hasOwnProperty(key))
-                    data["expenseCategories"][key] = this.expenseCategories[key];
-            }
-        }
         return data; 
     }
 }
@@ -12445,8 +12515,6 @@ export interface ICashFlowInitialData {
     bankAccounts: BankAccountDto[];
     businessEntities: BusinessEntityDto[];
     cashflowTypes: { [key: string] : string; };
-    transactionCategories: { [key: string] : string; };
-    expenseCategories: { [key: string] : string; };
 }
 
 export class BankAccountDto implements IBankAccountDto {
@@ -12537,14 +12605,12 @@ export interface IBusinessEntityDto {
 
 export class StatsDetailFilter implements IStatsDetailFilter {
     cashFlowTypeId: string;
-    transactionCategoryId: string;
-    expenseCategoryId: string;
+    categorization: { [key: string] : string; };
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
     accountIds: number[];
     businessEntityIds: number[];
-    categorizationIds: string[];
 
     constructor(data?: IStatsDetailFilter) {
         if (data) {
@@ -12558,8 +12624,13 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     init(data?: any) {
         if (data) {
             this.cashFlowTypeId = data["cashFlowTypeId"];
-            this.transactionCategoryId = data["transactionCategoryId"];
-            this.expenseCategoryId = data["expenseCategoryId"];
+            if (data["categorization"]) {
+                this.categorization = {};
+                for (let key in data["categorization"]) {
+                    if (data["categorization"].hasOwnProperty(key))
+                        this.categorization[key] = data["categorization"][key];
+                }
+            }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
@@ -12573,11 +12644,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
                 for (let item of data["businessEntityIds"])
                     this.businessEntityIds.push(item);
             }
-            if (data["categorizationIds"] && data["categorizationIds"].constructor === Array) {
-                this.categorizationIds = [];
-                for (let item of data["categorizationIds"])
-                    this.categorizationIds.push(item);
-            }
         }
     }
 
@@ -12590,8 +12656,13 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["cashFlowTypeId"] = this.cashFlowTypeId;
-        data["transactionCategoryId"] = this.transactionCategoryId;
-        data["expenseCategoryId"] = this.expenseCategoryId;
+        if (this.categorization) {
+            data["categorization"] = {};
+            for (let key in this.categorization) {
+                if (this.categorization.hasOwnProperty(key))
+                    data["categorization"][key] = this.categorization[key];
+            }
+        }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
@@ -12605,25 +12676,18 @@ export class StatsDetailFilter implements IStatsDetailFilter {
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
-        if (this.categorizationIds && this.categorizationIds.constructor === Array) {
-            data["categorizationIds"] = [];
-            for (let item of this.categorizationIds)
-                data["categorizationIds"].push(item);
-        }
         return data; 
     }
 }
 
 export interface IStatsDetailFilter {
     cashFlowTypeId: string;
-    transactionCategoryId: string;
-    expenseCategoryId: string;
+    categorization: { [key: string] : string; };
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
     accountIds: number[];
     businessEntityIds: number[];
-    categorizationIds: string[];
 }
 
 export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
@@ -12820,6 +12884,206 @@ export class DeleteCategorizationMappingInput implements IDeleteCategorizationMa
 export interface IDeleteCategorizationMappingInput {
     categorizationId: string;
     name: string;
+}
+
+export class CreateTransactionCommentInput implements ICreateTransactionCommentInput {
+    transactionId: number;
+    comment: string;
+
+    constructor(data?: ICreateTransactionCommentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.transactionId = data["transactionId"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): CreateTransactionCommentInput {
+        let result = new CreateTransactionCommentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["transactionId"] = this.transactionId;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface ICreateTransactionCommentInput {
+    transactionId: number;
+    comment: string;
+}
+
+export class CreateTransactionCommentOutput implements ICreateTransactionCommentOutput {
+    id: number;
+
+    constructor(data?: ICreateTransactionCommentOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateTransactionCommentOutput {
+        let result = new CreateTransactionCommentOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateTransactionCommentOutput {
+    id: number;
+}
+
+export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
+    comment: string;
+    cashFlowTypeId: string;
+    categorization: { [key: string] : string; };
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    currencyId: string;
+    accountIds: number[];
+    businessEntityIds: number[];
+
+    constructor(data?: ICreateCashFlowCommentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.comment = data["comment"];
+            this.cashFlowTypeId = data["cashFlowTypeId"];
+            if (data["categorization"]) {
+                this.categorization = {};
+                for (let key in data["categorization"]) {
+                    if (data["categorization"].hasOwnProperty(key))
+                        this.categorization[key] = data["categorization"][key];
+                }
+            }
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.currencyId = data["currencyId"];
+            if (data["accountIds"] && data["accountIds"].constructor === Array) {
+                this.accountIds = [];
+                for (let item of data["accountIds"])
+                    this.accountIds.push(item);
+            }
+            if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
+                this.businessEntityIds = [];
+                for (let item of data["businessEntityIds"])
+                    this.businessEntityIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateCashFlowCommentInput {
+        let result = new CreateCashFlowCommentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["comment"] = this.comment;
+        data["cashFlowTypeId"] = this.cashFlowTypeId;
+        if (this.categorization) {
+            data["categorization"] = {};
+            for (let key in this.categorization) {
+                if (this.categorization.hasOwnProperty(key))
+                    data["categorization"][key] = this.categorization[key];
+            }
+        }
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["currencyId"] = this.currencyId;
+        if (this.accountIds && this.accountIds.constructor === Array) {
+            data["accountIds"] = [];
+            for (let item of this.accountIds)
+                data["accountIds"].push(item);
+        }
+        if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
+            data["businessEntityIds"] = [];
+            for (let item of this.businessEntityIds)
+                data["businessEntityIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface ICreateCashFlowCommentInput {
+    comment: string;
+    cashFlowTypeId: string;
+    categorization: { [key: string] : string; };
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    currencyId: string;
+    accountIds: number[];
+    businessEntityIds: number[];
+}
+
+export class CreateCashFlowCommentOutput implements ICreateCashFlowCommentOutput {
+    id: number;
+
+    constructor(data?: ICreateCashFlowCommentOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateCashFlowCommentOutput {
+        let result = new CreateCashFlowCommentOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateCashFlowCommentOutput {
+    id: number;
 }
 
 export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {

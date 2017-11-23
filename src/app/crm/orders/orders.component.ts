@@ -1,4 +1,4 @@
-﻿import {
+import {
     Component,
     OnInit,
     AfterViewInit,
@@ -13,12 +13,15 @@ import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { FiltersService } from '@shared/filters/filters.service';
+import { FilterHelpers } from '@shared/filters/filter.helpers';
 import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
+import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
+import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 
 import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
 import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
@@ -169,46 +172,28 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     items: { from: new FilterItemModel(), to: new FilterItemModel() }
                 }),
                 new FilterModel({
-                    component: FilterDropDownComponent,
+                    component: FilterCheckBoxesComponent,
                     caption: 'orderStages',
                     items: {
-                        pipeline: new FilterDropDownModel({
-                            displayName: 'Pipeline',
-                            elements: result.pipelines,
-                            displayElementExp: 'name',
-                            filterField: 'pipelineId',
-                            onElementSelect: (value, filter: FilterModelBase<FilterDropDownModel>) => {
-                                filter.items["pipeline"].value = value;
-                                filter.items['stage'].elements = value.stages;
-                                filter.items["stage"].value = null;
-                            },
-                            clearSelectedElement: (filter: FilterModelBase<FilterDropDownModel>) => {
-                                filter.items["pipeline"].value = null;
-                                filter.items['stage'].elements = null;
-                                filter.items["stage"].value = null;
-
-                            }
-                        }),
-                        stage: new FilterDropDownModel({
-                            displayName: 'Stages',
-                            displayElementExp: 'name',
-                            filterField: 'stageId',
-                            onElementSelect: (value, filter: FilterModelBase<FilterDropDownModel>) => {
-                                filter.items["stage"].value = value;
-                            }
-                        })
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource: FilterHelpers.ConvertPipelinesToTreeSource(result.pipelines),
+                                nameField: 'name',
+                                parentExpr: 'parentId',
+                                keyExpr: 'id'
+                            })
                     }
                 }),
                 new FilterModel({
-                    component: FilterMultiselectDropDownComponent,
+                    component: FilterCheckBoxesComponent,
                     field: 'BillingSubscriptionStatusId',
                     caption: 'BillingSubscriptionStatus',
                     items: {
-                        cashflowType: new FilterMultiselectDropDownModel({
-                            filterField: 'BillingSubscriptionStatusId',
-                            displayElementExp: 'name',
+                        element: new FilterCheckBoxesModel({
                             dataSource: result.subscriptionStatuses,
-                            columns: [{ dataField: 'name', caption: this.l('OrderFilters_BillingStatus') }],
+                            nameField: 'name',
+                            parentExpr: 'parentId',
+                            keyExpr: 'id'
                         })
                     }
                 }),
@@ -327,9 +312,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     filterByOrderStages(filter: FilterModel) {
         let data = {};
-        _.each(filter.items, (item: FilterDropDownModel, key) => {
-            return item && item.filterField && item.value && (data[this.capitalize(item.filterField)] = item.value.id);
-        });
+        if (filter.items.element) {
+            let filterData = FilterHelpers.ParsePipelineIds(filter.items.element.value);
+            data = {
+                or: filterData
+            };
+        }
+
         return data;
     }
 
@@ -350,24 +339,20 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return data;
     }
 
-    filterByBillingSubscriptionStatus(filter) {
+    filterByBillingSubscriptionStatus(filter: FilterModel) {
         let data = {};
-        data[filter.field] = [];
-        _.each(filter.items, (item: FilterMultiselectDropDownModel, key) => {
-            if (item && item.value && item.value.length) {
-                let filterParams: any[] = [];
-                _.each(item.value, (el: any) => {
-                    if (typeof (el.id) === "string") {
-                        filterParams.push("( " + filter.field + " eq '" + el.id + "' )");
-                    }
-                    else {
-                        filterParams.push("( " + filter.field + " eq " + el.id + " )");
-                    }
-                });
-                let filterQuery = '( ' + filterParams.join(' or ') + ' )';
-                data = filterQuery;
-            }
-        });
+        if (filter.items.element && filter.items.element.value) {
+            let filterData = _.map(filter.items.element.value, x => {
+                let el = {};
+                el[filter.field] = x;
+                return el;
+            });
+
+            data = {
+                or: filterData
+            };
+        }
+
         return data;
     }
 

@@ -12,14 +12,14 @@
                 displayExpr="optionText"
                 accessKey="cashflowGroupby"
                 #selectBox
-                (onValueChanged)="changeGroupBy($event)"
-        >
+                (onValueChanged)="changeGroupBy($event)">
         </dx-select-box>
     </div>
 
     <dx-scroll-view>
-        <div style="margin-bottom: 300px;">     
+        <div class="pivot-grid-wrapper">
             <dx-pivot-grid id="operations"
+                           class="pivot-grid transition invisible"
                            [allowSortingBySummary]="false"
                            [allowSorting]="false"
                            [allowFiltering]="false"
@@ -34,12 +34,13 @@
                            [texts] = "{'grandTotal': 'ENDING CASH POSITION', 'total': '{0}'}"
                            [fieldChooser]="false"
                            [export]="{'enabled': false}"
+                           [loadPanel]="{enabled: false}"
                            (onCellPrepared)="onCellPrepared($event)"
                            (onContentReady)="onContentReady($event)"
                            (onCellClick)="onCellClick($event)">
                 <dxo-scrolling mode="standard"></dxo-scrolling>
             </dx-pivot-grid>
-        </div>          
+        </div>
     </dx-scroll-view>
 
     <div *ngIf="statsDetailResult !== undefined" class="cashflow-wrap">
