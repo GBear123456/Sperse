@@ -379,8 +379,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     loadGridDataSource() {
         abp.ui.setBusy();
+        $('.pivot-grid').addClass('invisible');
         this._CashflowServiceProxy.getStats(this.requestFilter)
-            .finally(() => abp.ui.clearBusy())
             .subscribe(result => {
                 if (result.transactionStats.length) {
                     let transactions = result.transactionStats;
@@ -703,6 +703,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             let lowestOpenedInterval = this.getLowestOpenedInterval();
             $(`.current${_.capitalize(lowestOpenedInterval)}`).addClass('lowestOpenedCurrent');
             this.changeHistoricalColspans(lowestOpenedInterval );
+        }
+
+        if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
+            abp.ui.clearBusy();
+            $('.pivot-grid').removeClass('invisible');
         }
     }
 
