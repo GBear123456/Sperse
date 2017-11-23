@@ -23,6 +23,8 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
 import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
+import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
+import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 
 const moment = extendMoment(Moment);
 
@@ -283,18 +285,17 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                             items: { from: new FilterItemModel(), to: new FilterItemModel() }
                         }),
                         new FilterModel({
-                            component: FilterMultiselectDropDownComponent,
+                            component: FilterCheckBoxesComponent,
                             field: 'businessEntityIds',
                             caption: 'BusinessEntity',
                             items: {
-                                businessEntity: new FilterMultiselectDropDownModel({
-                                    filterField: 'businessEntityIds',
-                                    displayElementExp: 'name',
+                                element: new FilterCheckBoxesModel({
                                     dataSource: result.businessEntities,
-                                    columns: [{ dataField: 'name', caption: this.l('TransactionBusinessEntityFilter_Name') }],
+                                    nameField: 'name',
+                                    keyExpr: 'id'
                                 })
                             }
-                        }),
+                        })
                     ]
                 );
 
@@ -337,8 +338,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     filterByBusinessEntity(filter: FilterModel, requestFilter: StatsFilter) {
-        if (filter.items && filter.items.businessEntity && filter.items.businessEntity.value) {
-            requestFilter[filter.field] = filter.items.businessEntity.value.map(x => x.id);
+        let data = {};
+        if (filter.items.element && filter.items.element.value) {
+            requestFilter[filter.field] = filter.items.element.value.map(x => x);
         }
     }
 
@@ -352,10 +354,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         requestFilter.startDate = requestFilter.endDate = null;
         let keys = Object.keys(filter.items);
         for (let key of keys) {
-            let item = filter.items[keys[key]];
+            let item = filter.items[key];
             if (item && item.value) {
                 let date = moment.utc(item.value, 'YYYY-MM-DDT');
-                if (keys[key].toString() === 'to') {
+                if (key.toString() === 'to') {
                     date.add(1, 'd').add(-1, 's');
                     requestFilter.endDate = date.toDate();
                 } else {
@@ -379,8 +381,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     loadGridDataSource() {
         abp.ui.setBusy();
+        $('.pivot-grid').addClass('invisible');
         this._CashflowServiceProxy.getStats(this.requestFilter)
-            .finally(() => abp.ui.clearBusy())
             .subscribe(result => {
                 if (result.transactionStats.length) {
                     let transactions = result.transactionStats;
@@ -703,6 +705,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             let lowestOpenedInterval = this.getLowestOpenedInterval();
             $(`.current${_.capitalize(lowestOpenedInterval)}`).addClass('lowestOpenedCurrent');
             this.changeHistoricalColspans(lowestOpenedInterval);
+        }
+
+        if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
+            abp.ui.clearBusy();
+            $('.pivot-grid').removeClass('invisible');
         }
     }
 

@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 export class FilterCheckBoxesModel extends FilterItemModel {
     dataSource: any;
     keyExpr: any;
-    parentExpr: any;
+    parentExpr?: any = 'parentId';
     nameField: string;
 
     public constructor(init?: Partial<FilterCheckBoxesModel>) {

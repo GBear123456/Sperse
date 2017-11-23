@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
@@ -9,11 +9,11 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
-import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 
 import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
 import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
+import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
+import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -144,67 +144,62 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             items: { from: new FilterItemModel(), to: new FilterItemModel() }
                         }),
                         new FilterModel({
-                            component: FilterMultiselectDropDownComponent,
+                            component: FilterCheckBoxesComponent,
                             field: 'CashFlowTypeId',
                             caption: 'CashflowType',
                             items: {
-                                cashflowType: new FilterMultiselectDropDownModel({
-                                    filterField: 'CashFlowTypeId',
-                                    displayElementExp: 'name',
+                                element: new FilterCheckBoxesModel({
                                     dataSource: result.cashflowTypes,
-                                    columns: [{ dataField: 'name', caption: this.l('TransactionCashflowTypeFilter_Name') }],
+                                    nameField: 'name',
+                                    keyExpr: 'id'
                                 })
                             }
                         }),
                         new FilterModel({
-                            component: FilterMultiselectDropDownComponent,
+                            component: FilterCheckBoxesComponent,
                             field: 'CategoryId',
                             caption: 'TransactionCategory',
                             items: {
-                                category: new FilterMultiselectDropDownModel({
-                                    filterField: 'CategoryId',
-                                    displayElementExp: 'name',
+                                element: new FilterCheckBoxesModel({
                                     dataSource: result.categories,
-                                    columns: [{ dataField: 'name', caption: this.l('TransactionCategoryFilter_Name') }],
+                                    nameField: 'name',
+                                    keyExpr: 'id'
                                 })
                             }
                         }),
                         new FilterModel({
-                            component: FilterMultiselectDropDownComponent,
+                            component: FilterCheckBoxesComponent,
                             field: 'TypeId',
                             caption: 'TransactionType',
                             items: {
-                                type: new FilterMultiselectDropDownModel({
-                                    filterField: 'TypeId',
-                                    displayElementExp: 'name',
+                                element: new FilterCheckBoxesModel({
                                     dataSource: result.types,
-                                    columns: [{ dataField: 'name', caption: this.l('TransactionTypeFilter_Name') }],
+                                    nameField: 'name',
+                                    keyExpr: 'id'
                                 })
                             }
                         }),
                         new FilterModel({
-                            component: FilterMultiselectDropDownComponent,
+                            component: FilterCheckBoxesComponent,
                             field: 'CurrencyId',
                             caption: 'Currency',
                             items: {
-                                currency: new FilterMultiselectDropDownModel({
-                                    filterField: 'CurrencyId',
-                                    displayElementExp: 'name',
+                                element: new FilterCheckBoxesModel({
                                     dataSource: result.currencies,
-                                    columns: [{ dataField: 'name', caption: this.l('TransactionCurrencyFilter_Name') }],
+                                    nameField: 'name',
+                                    keyExpr: 'id'
                                 })
                             }
                         }),
                         new FilterModel({
-                            component: FilterMultiselectDropDownComponent,
+                            component: FilterCheckBoxesComponent,
                             field: 'BusinessEntityId',
                             caption: 'BusinessEntity',
                             items: {
-                                businessEntity: new FilterMultiselectDropDownModel({
-                                    filterField: 'BusinessEntityId',
-                                    displayElementExp: 'name',
+                                element: new FilterCheckBoxesModel({
                                     dataSource: result.businessEntities,
-                                    columns: [{ dataField: 'name', caption: this.l('TransactionBusinessEntityFilter_Name') }],
+                                    nameField: 'name',
+                                    keyExpr: 'id'
                                 })
                             }
                         }),
@@ -283,21 +278,18 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
     filterByFilterElement(filter) {
         let data = {};
-        data[filter.field] = [];
-        _.each(filter.items, (item: FilterMultiselectDropDownModel, key) => {
-            if (item && item.value && item.value.length) {
-                let filterParams: any[] = [];
-                _.each(item.value, (el: any) => {
-                    if (typeof (el.id) === 'string') {
-                        filterParams.push("( " + filter.field + " eq '" + el.id + "' )");
-                    } else {
-                        filterParams.push("( " + filter.field + " eq " + el.id + " )");
-                    }
-                });
-                let filterQuery = '( ' + filterParams.join(' or ') + ' )';
-                data = filterQuery;
-            }
-        });
+        if (filter.items.element && filter.items.element.value) {
+            let filterData = _.map(filter.items.element.value, x => {
+                let el = {};
+                el[filter.field] = x;
+                return el;
+            });
+
+            data = {
+                or: filterData
+            };
+        }
+
         return data;
     }
 
