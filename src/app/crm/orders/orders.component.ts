@@ -185,15 +185,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     }
                 }),
                 new FilterModel({
-                    component: FilterMultiselectDropDownComponent,
+                    component: FilterCheckBoxesComponent,
                     field: 'BillingSubscriptionStatusId',
                     caption: 'BillingSubscriptionStatus',
                     items: {
-                        cashflowType: new FilterMultiselectDropDownModel({
-                            filterField: 'BillingSubscriptionStatusId',
-                            displayElementExp: 'name',
+                        element: new FilterCheckBoxesModel({
                             dataSource: result.subscriptionStatuses,
-                            columns: [{ dataField: 'name', caption: this.l('OrderFilters_BillingStatus') }],
+                            nameField: 'name',
+                            parentExpr: 'parentId',
+                            keyExpr: 'id'
                         })
                     }
                 }),
@@ -339,24 +339,20 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return data;
     }
 
-    filterByBillingSubscriptionStatus(filter) {
+    filterByBillingSubscriptionStatus(filter: FilterModel) {
         let data = {};
-        data[filter.field] = [];
-        _.each(filter.items, (item: FilterMultiselectDropDownModel, key) => {
-            if (item && item.value && item.value.length) {
-                let filterParams: any[] = [];
-                _.each(item.value, (el: any) => {
-                    if (typeof (el.id) === "string") {
-                        filterParams.push("( " + filter.field + " eq '" + el.id + "' )");
-                    }
-                    else {
-                        filterParams.push("( " + filter.field + " eq " + el.id + " )");
-                    }
-                });
-                let filterQuery = '( ' + filterParams.join(' or ') + ' )';
-                data = filterQuery;
-            }
-        });
+        if (filter.items.element && filter.items.element.value) {
+            let filterData = _.map(filter.items.element.value, x => {
+                let el = {};
+                el[filter.field] = x;
+                return el;
+            });
+
+            data = {
+                or: filterData
+            };
+        }
+
         return data;
     }
 
