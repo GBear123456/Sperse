@@ -29,11 +29,11 @@ export class FilterCheckBoxesModel extends FilterItemModel {
     private generateParents(arr: DisplayElement[]): DisplayElement[] {
         let result: DisplayElement[] = [];
         _.each(arr, x => {
-            if (x.parent) {
-                let parent = _.find(result, y => y.args == x.parent);
+            if (x.parentCode) {
+                let parent = _.find(result, y => y.args == x.parentCode);
                 if (!parent) {
-                    let parentName = _.find(this.dataSource, (val: any, i, arr) => val.id == x.parent).name;
-                    result.push(<DisplayElement>{ displayValue: parentName, readonly: true, args: x.parent });
+                    let parentName = _.find(this.dataSource, (val: any, i, arr) => val.id == x.parentCode).name;
+                    result.push(<DisplayElement>{ displayValue: parentName, readonly: true, args: x.parentCode });
                 }
                 result.push(x);
             }

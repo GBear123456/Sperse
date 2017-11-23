@@ -38,7 +38,8 @@ export class DisplayElement {
     item: FilterItemModel;
     displayValue: string;
     
-    parent?: any;
+    parentCode?: any;
+    parentName?: any;
     readonly?: boolean;
 
     args?: any;
