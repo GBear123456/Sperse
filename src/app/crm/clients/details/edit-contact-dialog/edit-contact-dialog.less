@@ -106,30 +106,28 @@
   }
 
   .emailAddress {
-    &.type-1, &.type-2 {
-      /deep/ input {
-        background-image: url("../../../../../assets/common/icons/email.png");
-        background-position: 10px 17px;
-      }
+    /deep/ input {
+      background-image: url("../../../../../assets/common/icons/email.svg");
+      background-position: 10px 17px;
     }
   }
 
   .phoneNumber {
-    &.type-1 {
+    &.type-P {
       /deep/ input {
-        background-image: url("../../../../../assets/common/icons/phone.png");
+        background-image: url("../../../../../assets/common/icons/phone.svg");
       }
     }
 
-    &.type-2 {
+    &.type-H {
       /deep/ input {
-        background-image: url("../../../../../assets/common/icons/phone-home.png");
+        background-image: url("../../../../../assets/common/icons/phone-home.svg");
       }
     }
 
-    &.type-3 {
+    &.type-M, &.type-W {
       /deep/ input {
-        background-image: url("../../../../../assets/common/icons/phone-mobile.png");
+        background-image: url("../../../../../assets/common/icons/phone-mobile.svg");
       }
     }
   }

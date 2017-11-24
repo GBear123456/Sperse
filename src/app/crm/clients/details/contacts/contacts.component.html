@@ -23,7 +23,7 @@
   </div>
   <div *ngIf="isEditAllowed" class="add-contact" (click)="showDialog('emailAddress', null, $event)">+</div>
   <div class="phone" *ngFor="let phone of data?.customerInfo?.primaryContactInfo.phones; let i = index;">
-    <i class="icons phone type-{{phone?.usageTypeId}}"></i>
+    <i class="icons phone type-{{phone?.usageTypeId || 'P'}}"></i>
     <ul *ngIf="!phone.inplaceEdit">
       <div class="actions" *ngIf="isEditAllowed"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog('phoneNumber', phone, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deletePhoneNumber(phone, $event, i)"></i></div>
       <li (click)="inPlaceEdit('phoneNumber', phone, $event, i)">{{ phone.phoneNumber | phone }}</li>
