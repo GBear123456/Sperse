@@ -18,11 +18,10 @@ import * as Moment from 'moment';
 import { extendMoment } from 'moment-range';
 
 import { FiltersService } from '@shared/filters/filters.service';
+import { FilterHelpers } from '@shared/filters/filter.helpers';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
-import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 
@@ -253,30 +252,17 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 this._filtersService.setup(
                     this.filters = [
                         new FilterModel({
-                            component: FilterMultiselectDropDownComponent,
                             field: 'accountIds',
+                            component: FilterCheckBoxesComponent,
                             caption: 'Account',
                             items: {
-                                acc: new FilterMultiselectDropDownModel({
-                                    displayName: 'Account',
-                                    filterField: 'accountIds',
-                                    displayElementExp: (item: BankAccountDto) => {
-                                        if (item) {
-                                            return item.accountName + ' (' + item.accountNumber + ')';
-                                        }
-                                    },
-                                    dataSource: result.bankAccounts,
-                                    columns: [
-                                        {
-                                            dataField: 'accountName',
-                                            caption: this.l('CashflowAccountFilter_AccountName')
-                                        },
-                                        {
-                                            dataField: 'accountNumber',
-                                            caption: this.l('CashflowAccountFilter_AccountNumber')
-                                        }
-                                    ],
-                                })
+                                element: new FilterCheckBoxesModel(
+                                    {
+                                        dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
+                                        nameField: 'name',
+                                        parentExpr: 'parentId',
+                                        keyExpr: 'id'
+                                    })
                             }
                         }),
                         new FilterModel({
@@ -345,13 +331,23 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     filterByAccount(filter: FilterModel, requestFilter: StatsFilter) {
-        if (filter.items && filter.items.acc && filter.items.acc.value) {
-            requestFilter[filter.field] = filter.items.acc.value.map(x => x.id);
+        if (filter.items && filter.items.element && filter.items.element.value) {
+            requestFilter.accountIds = [];
+            requestFilter.bankIds = [];
+            filter.items.element.value.forEach((id) => {
+                let parts = id.split(':');
+                if (parts.length == 2) {
+                    requestFilter.accountIds.push(+parts[1]);
+                } else {
+                    requestFilter.bankIds.push(+parts[0]);
+                }
+            });
         }
     }
 
     filterByDate(filter: FilterModel, requestFilter: StatsFilter) {
-        requestFilter.startDate = requestFilter.endDate = null;
+        requestFilter.startDate = null;
+        requestFilter.endDate = null;
         let keys = Object.keys(filter.items);
         for (let key of keys) {
             let item = filter.items[key];
@@ -387,7 +383,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 if (result.transactionStats.length) {
                     let transactions = result.transactionStats;
                     this.cashflowTypes = this.initialData.cashflowTypes;
-                    this.bankAccounts = this.initialData.bankAccounts;
+                    this.bankAccounts = this.initialData.banks.map(x => x.bankAccounts).reduce((x,y) => x.concat(y));
                     /** categories - object with categories */
                     this.cashflowData = this.getCashflowDataFromTransactions(transactions);
                     /** Make a copy of cashflow data to display it in custom total group on the top level */
@@ -478,7 +474,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             'amount': 0,
             'comment': null,
             'date': null,
-            'categorization': categorizationObject
+            'categorization': categorizationObject,
+            'forecastId': null
         });
         return Object.assign(stubTransaction, stubObj);
     }
@@ -1289,9 +1286,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     this.statsDetailFilter.accountIds = [cellObj.cell.rowPath[1]];
                 } else {
                     this.statsDetailFilter.accountIds = (this.requestFilter.accountIds && this.requestFilter.accountIds) || [];
+                    this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
                 }
             } else {
                 this.statsDetailFilter.accountIds = (this.requestFilter.accountIds && this.requestFilter.accountIds) || [];
+                this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
                 this.statsDetailFilter.categorization[this.categorization[0]] = cellObj.cell.rowPath[1];
             }
             this.statsDetailFilter.categorization[this.categorization[1]] = cellObj.cell.rowPath[2];

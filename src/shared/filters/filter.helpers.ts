@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { PipelineDto } from '@shared/service-proxies/service-proxies';
+import { PipelineDto, BankDto } from '@shared/service-proxies/service-proxies';
 
 export class FilterHelpers {
 
@@ -39,5 +39,28 @@ export class FilterHelpers {
         }
 
         return filterData;
+    }
+
+    static ConvertBanksToTreeSource(data: BankDto[]): any[] {
+        let result = [];
+        
+        data.forEach((bank, i) => {
+            result.push({
+                id: bank.id.toString(),
+                parent: 0,
+                name: bank.name
+            });
+
+            bank.bankAccounts.forEach((acc, j) => {
+                result.push({
+                    id: bank.id + ':' + acc.id,
+                    parent: bank.name,
+                    parentId: bank.id,
+                    name: acc.accountName + ' (' + acc.accountNumber + ')'
+                });
+            });
+        });
+
+        return result;
     }
 }
