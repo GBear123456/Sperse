@@ -10,17 +10,14 @@ export class FilterStatesModel extends FilterItemModel {
             let data = _.find(this.list, (val: any, i, arr) => val.code == x);
             if (data) {
                 let parentName = data.parent ? _.find(this.list, (val) => val.code == data.parent).name : null;
-                return <DisplayElement>{ item: this, displayValue: data.name, args: x, parentCode: data.parent, parentName: parentName }
+                let sortField = (parentName) ? parentName + ':' : '';
+                sortField += data.name;
+                return <DisplayElement>{ item: this, displayValue: data.name, args: x, parentCode: data.parent, sortField: sortField }
             }
         }).filter(Boolean);
-        
+
+        result = _.sortBy(result, x => x.sortField);
         result = this.generateParents(result);
-        result = _.sortBy(result, x => {
-            let res = '';
-            if (x.parentName) res = x.parentName + ':';
-            res += x.displayValue;
-            return res;
-        });
         return result;
     }
    
@@ -33,8 +30,6 @@ export class FilterStatesModel extends FilterItemModel {
 
     private generateParents(arr: DisplayElement[]): DisplayElement[] {
         let result: DisplayElement[] = [];
-
-        arr = _.sortBy(arr, x => x.args);
         _.each(arr, x => {
             if (x.parentCode) {
                 let parent = _.find(result, y => y.args == x.parentCode);

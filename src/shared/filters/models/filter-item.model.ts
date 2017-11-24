@@ -39,7 +39,7 @@ export class DisplayElement {
     displayValue: string;
     
     parentCode?: any;
-    parentName?: any;
+    sortField?: any;
     readonly?: boolean;
 
     args?: any;
