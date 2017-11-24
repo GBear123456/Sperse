@@ -10,25 +10,115 @@
     </div>
 </div>
 
+<!-- Top linear chart -->
 <dx-chart
     id="chart"
     [dataSource]="statsData"
-    defaultPane="bottomPane"
+    defaultPane="topPane"
     title="Trend Chart"
+    animation="{easing: 'easeOutCubic',duration: 2000}"
 >
+    <!-- common settings for charts -->
+    <dxo-common-series-settings argumentField="date" [showInLegend]="false"></dxo-common-series-settings>
+
     <dxi-series
-        pane="topPane"
-        valueField="inflow"
-        name="Stats chart, $">
-        <dxo-label [visible]="true"></dxo-label>
+        color="#01b0f0"
+        valueField="endingBalance">
+        <dxo-label
+            [visible]="true"
+            backgroundColor="#626b73">
+            <dxo-format
+                type="currency largeNumber"
+                [currency]="currency">
+            </dxo-format>
+        </dxo-label>
     </dxi-series>
+
     <dxi-series
-        type="bar"
-        valueField="outflow"
-        name="Stats bars, $">
-        <dxo-label [visible]="true"></dxo-label>
+        color="#f9bb4d"
+        valueField="forecastEndingBalance">
+        <dxo-label
+            [visible]="true"
+            backgroundColor="#626b73">
+            <dxo-format
+                type="currency largeNumber"
+                [currency]="currency">
+            </dxo-format>
+        </dxo-label>
     </dxi-series>
-    <dxo-common-series-settings argumentField="month"></dxo-common-series-settings>
-    <dxi-pane name="topPane"></dxi-pane>
+
+    <!-- Left axis -->
+    <dxi-value-axis>
+        <dxo-label>
+            <dxo-format
+                type="currency largeNumber"
+                [currency]="currency">
+            </dxo-format>
+        </dxo-label>
+    </dxi-value-axis>
+
+    <!-- Bottom axis -->
+    <dxo-argument-axis
+        argumentType="datetime"
+        visible="true">
+        <dxo-label>
+            <dxo-format
+                [type]="verticalAxisDateFormat">
+            </dxo-format>
+        </dxo-label>
+        <dxo-tick-interval
+            [days]="1"
+        ></dxo-tick-interval>
+    </dxo-argument-axis>
+
+    <!-- Common settings for axis -->
+    <dxo-common-axis-settings allowDecimals="false">
+        <dxo-label alignment="center"></dxo-label>
+        <dxo-strip-style>
+            <dxo-label horizontal-allignment="center"></dxo-label>
+        </dxo-strip-style>
+    </dxo-common-axis-settings>
+
+</dx-chart>
+
+<dx-chart
+    id="bar"
+    [dataSource]="statsData"
+    defaultPane="bottomPane"
+    animation="{easing: 'easeOutCubic',duration: 2000}"
+    [barWidth]="0.5"
+>
+    <!-- common settings for charts -->
+    <dxo-common-series-settings argumentField="date" type="stackedBar" [showInLegend]="false"></dxo-common-series-settings>
+
+    <!-- Bottom bar chart -->
+    <dxi-series color="#01b0f0" valueField="income" name="Incomes"></dxi-series>
+    <dxi-series color="rgba(1, 176, 240, .5)" valueField="expenses" name="Expenses"></dxi-series>
+
+    <dxi-series color="#f9bb4d" valueField="forecastIncome" name="Incomes"></dxi-series>
+    <dxi-series color="rgba(249, 187, 77, .5)" valueField="forecastExpenses" name="Expenses"></dxi-series>
+
+    <!-- Bottom axis -->
+    <dxo-argument-axis
+        argumentType="datetime"
+        visible="true">
+        <dxo-label>
+            <dxo-format
+                [type]="verticalAxisDateFormat">
+            </dxo-format>
+        </dxo-label>
+        <dxo-tick-interval
+            [days]="1"
+        ></dxo-tick-interval>
+    </dxo-argument-axis>
+
+    <!-- Common settings for axis -->
+    <dxo-common-axis-settings allowDecimals="false">
+        <dxo-label alignment="center"></dxo-label>
+        <dxo-strip-style>
+            <dxo-label horizontal-allignment="center"></dxo-label>
+        </dxo-strip-style>
+    </dxo-common-axis-settings>
+
     <dxi-pane name="bottomPane"></dxi-pane>
 </dx-chart>

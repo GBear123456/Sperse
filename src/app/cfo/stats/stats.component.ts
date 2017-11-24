@@ -9,17 +9,21 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
 import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
 
-import { StatsItem, StatsService } from './stats.service';
-import { StatsFilter, BankAccountDto, CashflowServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    StatsFilter,
+    BankAccountDto,
+    CashflowServiceProxy,
+    BankAccountsServiceProxy
+} from '@shared/service-proxies/service-proxies';
 
 @Component({
     'selector': 'app-stats',
-    'providers': [ StatsService, CashflowServiceProxy ],
+    'providers': [ CashflowServiceProxy, BankAccountsServiceProxy ],
     'templateUrl': './stats.component.html',
     'styleUrls': ['./stats.component.less']
 })
 export class StatsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    statsData: StatsItem[];
+    statsData: any;
     toolbarConfig = [
         {
             location: 'before',
@@ -61,17 +65,19 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     ];
     headlineConfig: any;
+    interval = 'date';
+    verticalAxisDateFormat = 'day';
+    currency = 'USD';
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
     constructor(
         injector: Injector,
-        private _statsService: StatsService,
         private _filtersService: FiltersService,
-        private _cashflowService: CashflowServiceProxy
+        private _cashflowService: CashflowServiceProxy,
+        private _bankAccountService: BankAccountsServiceProxy
     ) {
         super(injector);
-        this.statsData = _statsService.getStatsData();
         this._filtersService.enabled = true;
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
@@ -120,16 +126,6 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                 );
             });
 
-        this._filtersService.apply(() => {
-            for (let filter of this.filters) {
-                let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
-                if (filterMethod)
-                    filterMethod(filter, this.requestFilter);
-                else
-                    this.requestFilter[filter.field] = undefined;
-            }
-        });
-
         this.headlineConfig = {
             name: this.l('Daily Cash Balances'),
             icon: '',
@@ -141,11 +137,50 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                 }
             ]
         };
+
+        this.statsData = this._bankAccountService.getBankAccountDailyStats(undefined, undefined, [])
+            .subscribe(result => {
+                let allDates = result.map(statsItem => statsItem.date.date());
+                let middleDate = allDates[Math.round((allDates.length - 1) / 2)];
+                this.statsData = result.map(statsItem => {
+                    /** get the date and convert it to the day, month, quarter or year */
+                    let newStatsItem: any = {
+                        isForecast: null,
+                        forecastIncome: null,
+                        forecastExpenses: null,
+                        forecastEndingBalance: null
+                    };
+                    /** @todo remove after getting the data from the server */
+                    newStatsItem.isForecast = statsItem.date.date() > middleDate;
+                    if (newStatsItem.isForecast) {
+                        newStatsItem.forecastIncome = statsItem.income;
+                        newStatsItem.forecastExpenses = statsItem.expenses;
+                        newStatsItem.forecastEndingBalance = statsItem.endingBalance;
+                        statsItem.income = null;
+                        statsItem.expenses = null;
+                    } else {
+                        newStatsItem.forecastEndingBalance = statsItem.endingBalance + Math.floor(Math.random() * 21) - 10;
+                    }
+                    return Object.assign(newStatsItem, statsItem);
+                });
+
+                console.log(this.statsData);
+            });
+
+        this._filtersService.apply(() => {
+            for (let filter of this.filters) {
+                let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
+                if (filterMethod)
+                    filterMethod(filter, this.requestFilter);
+                else
+                    this.requestFilter[filter.field] = undefined;
+            }
+        });
     }
 
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
+        this.rootComponent.overflowHidden(false);
     }
 
     ngOnDestroy() {
@@ -153,5 +188,10 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         this._filtersService.unsubscribe();
         this._filtersService.enabled = false;
         this.rootComponent.overflowHidden();
+    }
+
+    customizeVerticalAxisText(o) {
+        console.log(o);
+        return 'asdf';
     }
 }
