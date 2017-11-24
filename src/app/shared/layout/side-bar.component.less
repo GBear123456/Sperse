@@ -38,8 +38,9 @@
     }
     
     .search-field {
-        margin-bottom: 40px;
+        margin-bottom: 32px;
         input {
+            width: 300px;
             color: #677380;
             font-weight: 300;
             line-height: 1.71;
@@ -50,7 +51,6 @@
             border-radius: 3px;
             font-size: 14px;
             height: 37px;
-            width: 245px;
             outline: none;
         }
         &:before {
@@ -61,18 +61,18 @@
             font-size: 20px;
             width: 16px;
             height: 16px;
-            top: 27px;
-            left: 35px;
+            top: 25px;
+            left: 33px;
             color: #677380;
         }
     }
     
     .sidebar-filter-links {
         border: 1px solid #e5e9ec;
-        width: 321px;
+        width: 341px;
         height: calc(~"100vh - 148px");
         background-color: #fff;
-        padding: 15px 25px;
+        padding: 13px 20px 15px 20px;
     
         .filter-title {
             font-size: 15px;
@@ -90,10 +90,12 @@
             }
             
             .clear-all {
+                height: 37px;
                 font-size: 11px;
                 line-height: 2.18;
                 letter-spacing: 0.4px;
                 color: #677380;
+                padding-right: 1px;
                 text-transform: uppercase;
                 background-color: transparent;
                 border: 0;
@@ -102,7 +104,57 @@
                 font-weight: 400;
                 outline: none;
             }
-            
+
+            /deep/ .dx-button {
+                width: 104px;
+                position: relative;
+                &:first-child {
+                    margin-right: 7px;
+                    border-color: #00aeef; 
+                    .dx-button-text {
+                        color: #00aeef;
+                    }
+                }
+                &:nth-child(2) {                
+                    min-width: 60px;
+                    &:after {
+                        content: '';
+                        display: block;
+                        background: url('../../../assets/common/icons/down-arrow-icon.svg');
+                        position: absolute;
+                        width: 8px;
+                        height: 4px;
+                        right: 12px;
+                        top: 48%;
+                    }
+                    .dx-icon {
+                      right: 10px!important;
+                    }
+                    .dx-button-content {
+                        padding-right: 28px;
+                    }
+                }
+                &.dx-state-hover, 
+                &.dx-state-focused, 
+                &.dx-state-active {
+                  background-color: #FFF;
+                } 
+                .dx-button-content {
+                    height: 37px;
+                    min-width: 50px;
+                    padding: 6px 15px;
+                    img.dx-icon {
+                        width: auto!important;
+                        height: auto!important;
+                    }
+                    .dx-button-text {
+                        font-size: 13px;
+                        font-weight: 300;
+                        line-height: 1.85;
+                        letter-spacing: 0.3px;
+                    }            
+                }
+            }
         }
         
         .filter-links {
@@ -143,7 +195,7 @@
     .sidebar-filters {
         position: absolute;
         top: -70px;
-        left: 320px;
+        left: 340px;
         width: 20vw;
         min-width: 435px;
         height: calc(~"100vh - 78px");
@@ -190,6 +242,7 @@
         padding: 20px 0 20px 0;
         line-height: 37px;
         font-weight: bold;
+
         button {
             float: right;
             color: #ffffff;

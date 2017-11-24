@@ -3,7 +3,8 @@ export class ToolbarGroupModel {
   items: {
     name: string,
     action: () => void,
-    options: object,
+    options: object,    
     widget?: string,
+    text?: string
   }[];
 }

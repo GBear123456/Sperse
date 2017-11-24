@@ -42,6 +42,9 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     };
 
     toolbarConfig = [
+      {location: 'before', items: [
+        {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
+      ]},
       {location: 'after', items: [
         {name: 'refresh', action: this.refreshDataGrid.bind(this)},
         {
@@ -76,7 +79,6 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         private _filtersService: FiltersService) {
         super(injector);
 
-        this._filtersService.enabled = true;
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
 

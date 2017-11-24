@@ -237,7 +237,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     constructor(injector: Injector, private _CashflowServiceProxy: CashflowServiceProxy,
         private _filtersService: FiltersService) {
         super(injector);
-        this._filtersService.enabled = true;
+        
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
@@ -330,7 +330,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 {
                     enabled: true,
                     action: Function(),
-                    lable: this.l('Add New')
+                    lable: this.l('+ Add New')
                 }
             ]
         };
@@ -694,7 +694,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
-        $('.groupBy').appendTo(event.element.find('.dx-area-description-cell'));
+        $('.filter-sort-options').appendTo(event.element.find('.dx-area-description-cell'));
         this.changeIntervalWidth();
 
         /** Calculate the amount current cells to cut the current period current cell to change current from
@@ -936,16 +936,25 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         return this.apiTableFields.filter(field => field.area === 'column');
     }
 
-    changeGroupBy(event) {
-        let startedGroupInterval = event.value.groupInterval;
+    changeGroupBy(event) {        
+        let value = this.groupbyItems[event.itemIndex],
+            startedGroupInterval = value.groupInterval;
         this.groupInterval = startedGroupInterval;
         this.updateDateFields(startedGroupInterval);
         /** Change historical field for different date intervals */
         let historicalField = this.getHistoricField();
         //this.changeHistoricalFieldPosition(historicalField, startedGroupInterval);
-        historicalField ['selector'] = event.value.historicalSelectionFunction();
+        historicalField ['selector'] = value.historicalSelectionFunction();
         this.changeIntervalWidth();
         this.refreshDataGrid();
+    }
+
+    toggleFilters(event){
+      this._filtersService.toggle();
+    }
+
+    clearAllFilters(event){
+      this._filtersService.clearAllFilters();
     }
 
     cutCssFromValue(text) {

@@ -21,6 +21,17 @@
     
     .page-container {
         padding: 0;
+        .page-sidebar-wrapper {
+//            left: -340px;
+//            transition: 1s;
+            z-index: 10;
+            position: relative;
+            display: none;
+            &.show-sidebar-wrapper {
+//              left: 0px;        
+                display: block;
+            }   
+        }
     }
     
     .page-container,

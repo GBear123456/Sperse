@@ -12,6 +12,10 @@ import * as _ from 'underscore';
 export class ToolBarComponent extends AppComponentBase {
   public options = {};
   private supportedButtons = {
+      filters: {
+          text: this.l('Filters'),
+          iconSrc: this.getImgURI('funnel-icon')
+      },
       back: {
           hint: this.l('Back'),
           iconSrc: this.getImgURI('back-arrow')
@@ -45,7 +49,7 @@ export class ToolBarComponent extends AppComponentBase {
       },
       pipeline: {
           hint: this.l('Pipeline'),
-          iconSrc: this.getImgURI('pipeline-icon')
+          iconSrc: this.getImgURI('funnel-icon')
       },
       grid: {
           hint: this.l('Grid'),
@@ -114,18 +118,29 @@ export class ToolBarComponent extends AppComponentBase {
     return 'assets/common/icons/' + name + '.svg';
   }
 
-  getDropDownItemTemplate(link) { 
+  getDropDownItemTemplate(link, width) { 
     return {
-      item: '<span class="toolbar-dropdown-item"><img src="' + this.getImgURI(link.icon) + '">' + link.text + '</span>',
+      item: '<div class="toolbar-dropdown-item" ' + (width ? 'style="width:' + width + 'px;"': '') + '>' +
+          (link.icon ? '<img src="' + this.getImgURI(link.icon) + '">': '') + link.text + '</div>',
       downloadOptions: '<div class="toolbar-download-options" onclick="event.stopPropagation()">' +
-        '<div><input type="radio" name="export" value="all" checked><label>' + this.l('Export all data') + '</label></div>' +
-        '<div><input type="radio" name="export" value="selected"><label>' + this.l('Export selected') + '</label></div>' +
-        '</div>'
+          '<div><input type="radio" name="export" value="all" checked><label>' + this.l('Export all data') + '</label></div>' +
+          '<div><input type="radio" name="export" value="selected"><label>' + this.l('Export selected') + '</label></div>' +
+          '</div>'
     }[link.type || 'item'];
   }
 
   getOptions() {
-    return document.querySelector('.toolbar-download-options input:checked').getAttribute('value');
+      let option = document.querySelector('.toolbar-download-options input:checked');
+      return option ? option.getAttribute('value'): undefined;
+  }
+
+  getElementAttr(item) {  
+      if(item.name == 'select-box')
+          return {
+              'select-caption': item.text,
+              'select-value': item.options['items'][0].text
+          };
+      return {};
   }
 
   initToolbarItems() {
@@ -133,12 +148,16 @@ export class ToolBarComponent extends AppComponentBase {
       let count = group.items.length;
       group.items.forEach((item, index) => {
         let isLast = count == index + 1;
-        if (item.widget == 'dxDropDownMenu') {
+        if (item.widget == 'dxDropDownMenu') {          
           item.options['accessKey'] = item.name;
           item.options['items'].forEach((link) => {
-            link.html = this.getDropDownItemTemplate(link);
+            link.html = this.getDropDownItemTemplate(
+                link, item.options['width']);
             link.onClick = (event) => {
-              link.action && link.action.call(this, this.getOptions());
+              if(item.name == 'select-box')
+                  $('.dx-dropdownmenu-button[select-caption="' + item.text + '"]')
+                      .attr('select-value', event.itemData.text);                   
+              link.action && link.action.call(this, this.getOptions() || event);
             };
           })
         }
@@ -148,12 +167,12 @@ export class ToolBarComponent extends AppComponentBase {
           widget: item.widget || 'dxButton',
           options: _.extend({
             onClick: item.action,
-            elementAttr: {
+            elementAttr: _.extend({
               'group-item-position': index ?
                 (isLast ? 'last': 'inside') : (isLast ? 'single': 'first'),
               'group-item-count': count,
               'group-item-index': count - index
-            }
+            }, this.getElementAttr(item))
           }, _.extend(this.supportedButtons[item.name] || {}, item.options))
         });
       });
