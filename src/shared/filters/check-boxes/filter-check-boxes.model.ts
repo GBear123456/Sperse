@@ -12,17 +12,37 @@ export class FilterCheckBoxesModel extends FilterItemModel {
         super();
         Object.assign(this, init);
     }
-    
+
     getDisplayElements(): DisplayElement[] {
         var result: DisplayElement[] = this.value && this.value.map(x => {
             let data = _.find(this.dataSource, (val: any, i, arr) => val.id == x);
             if (data) {
-                let displayValue = data.name + (data.parent ? ' (' + data.parent + ')' : '');
-                return <DisplayElement>{ item: this, displayValue: displayValue, args: x }
+                return <DisplayElement>{ item: this, displayValue: data.name, args: x, parent: data[this.parentExpr] }
+            }
+        }).filter(Boolean);
+
+        result = _.sortBy(result, x => x.args);
+        result = this.generateParents(result);
+        return result;
+    }
+
+    private generateParents(arr: DisplayElement[]): DisplayElement[] {
+        let result: DisplayElement[] = [];
+        _.each(arr, x => {
+            if (x.parentCode) {
+                let parent = _.find(result, y => y.args == x.parentCode);
+                if (!parent) {
+                    let parentName = _.find(this.dataSource, (val: any, i, arr) => val.id == x.parentCode).name;
+                    result.push(<DisplayElement>{ displayValue: parentName, readonly: true, args: x.parentCode });
+                }
+                result.push(x);
+            }
+            else {
+                result.push(x);
             }
         });
 
-        return _.sortBy(result, x => x.args);
+        return result;
     }
 
     removeFilterItem(filter: FilterModel, args: any) {

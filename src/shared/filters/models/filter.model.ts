@@ -1,5 +1,5 @@
 import { Type } from '@angular/core';
-import { FilterItemModel } from './filter-item.model';
+import { FilterItemModel, DisplayElement } from './filter-item.model';
 import { FilterComponent } from './filter-component';
 
 import * as _ from 'underscore';
@@ -17,12 +17,12 @@ export class FilterModelBase<T extends FilterItemModel> {
     }
 
     updateCaptions() {
-        let displayElements = [];
+        let displayElements: DisplayElement[] = [];
 
         _.each(_.values(_.mapObject(
             this.items, (item: FilterItemModel, key: string) => item.getDisplayElements(key)
         )), x => { displayElements = displayElements.concat(x); });
-        this.displayElements = displayElements;
+        this.displayElements = displayElements.filter((val, i, arr) =>  val && val.displayValue);
     }
 
     clearFilterItems() {
