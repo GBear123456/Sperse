@@ -1,0 +1,34 @@
+<app-headline [config]="headlineConfig">
+    <synch-progress class="synch-progress" (onComplete)="refreshDataGrid()"></synch-progress>
+</app-headline>
+
+<div>
+    <div class="operations">
+        <div class="toolbar">
+            <app-toolbar [config]="toolbarConfig"></app-toolbar>
+        </div>
+    </div>
+</div>
+
+<dx-chart
+    id="chart"
+    [dataSource]="statsData"
+    defaultPane="bottomPane"
+    title="Trend Chart"
+>
+    <dxi-series
+        pane="topPane"
+        valueField="inflow"
+        name="Stats chart, $">
+        <dxo-label [visible]="true"></dxo-label>
+    </dxi-series>
+    <dxi-series
+        type="bar"
+        valueField="outflow"
+        name="Stats bars, $">
+        <dxo-label [visible]="true"></dxo-label>
+    </dxi-series>
+    <dxo-common-series-settings argumentField="month"></dxo-common-series-settings>
+    <dxi-pane name="topPane"></dxi-pane>
+    <dxi-pane name="bottomPane"></dxi-pane>
+</dx-chart>

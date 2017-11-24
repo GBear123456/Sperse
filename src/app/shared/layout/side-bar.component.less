@@ -4,7 +4,7 @@
     /deep/ * {
         color: #202b35;
         font-size: 16px;
-        
+
         .dx-checkbox-icon {
             width: 20px;
             height: 20px;
@@ -27,7 +27,7 @@
         .dx-checkbox-checked .dx-checkbox-icon {
             color: #00aeef;
             font-size: 12px !important;
-            
+
             &::before {
                 margin-top: -6px;
             }
@@ -36,7 +36,7 @@
             border-color: #00aeef !important;
         }
     }
-    
+
     .search-field {
         margin-bottom: 40px;
         input {
@@ -66,14 +66,16 @@
             color: #677380;
         }
     }
-    
+
     .sidebar-filter-links {
         border: 1px solid #e5e9ec;
         width: 321px;
+        position: relative;
+        z-index: 1;
         height: calc(~"100vh - 148px");
         background-color: #fff;
         padding: 15px 25px;
-    
+
         .filter-title {
             font-size: 15px;
             line-height: 1.6;
@@ -82,13 +84,13 @@
             display: inline-block;
             width: 100%;
             font-weight: 500;
-            
+
             img {
                 margin-right: 10px;
                 position: relative;
                 top: -3px;
             }
-            
+
             .clear-all {
                 font-size: 11px;
                 line-height: 2.18;
@@ -102,9 +104,9 @@
                 font-weight: 400;
                 outline: none;
             }
-            
+
         }
-        
+
         .filter-links {
             margin: 15px 0 0;
             list-style-type: none;
@@ -139,7 +141,7 @@
             }
         }
     }
-    
+
     .sidebar-filters {
         position: absolute;
         top: -70px;
@@ -151,7 +153,7 @@
         padding: 0 20px;
         border: 1px solid #dfdfdf;
         background-color: #fff;
-    
+
         .close-details {
             position: absolute;
             width: 42px;
@@ -163,7 +165,7 @@
             border-right: none;
             background-color: #FFF;
             box-shadow: -2px 0px 6px 0 rgba(0, 0, 0, 0.1);
-        
+
             &:before, &:after {
                 position: absolute;
                 top: 10px;
@@ -183,9 +185,9 @@
                 opacity: 1;
             }
         }
-        
+
     }
-    
+
     .sidebar-filter-head {
         padding: 20px 0 20px 0;
         line-height: 37px;

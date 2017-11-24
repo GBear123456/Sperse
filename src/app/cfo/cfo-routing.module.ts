@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Route } from '@angular/router';
 import { CashflowComponent } from './cashflow/cashflow.component';
+import { StatsComponent } from './stats/stats.component';
 import { BankAccountsComponent } from './bank-accounts/bank-accounts.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { CashflowSetupComponent } from './cashflow-setup/cashflow-setup.component';
@@ -14,6 +15,7 @@ import { CashflowSetupComponent } from './cashflow-setup/cashflow-setup.componen
                 path: '',
                 children: [
                     { path: 'cashflow', component: CashflowComponent, data: { permission: '' } },
+                    { path: 'stats', component: StatsComponent, data: { permission: '' } },
                     { path: 'cashflow-setup', component: CashflowSetupComponent, data: { permission: '' } },
                     { path: 'transactions', component: TransactionsComponent, data: { permission: '' } },
                     { path: 'bank-accounts', component: BankAccountsComponent, data: { permission: '' } }

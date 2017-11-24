@@ -434,6 +434,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 if (allAccountsIds.indexOf(transaction.accountId) === -1) {
                     allAccountsIds.push(transaction.accountId);
                 }
+                /** find current accounts ids for started balances, totals and reconciliations */
                 for (let cashflowType in currentAccountsIds) {
                     if (transaction.cashflowTypeId === cashflowType &&
                         currentAccountsIds[cashflowType].indexOf(transaction.accountId) === -1) {
@@ -441,6 +442,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     }
                 }
             });
+            /** for all accounts that are absent add stub empty transactions to show
+             *  the empty accounts anyway */
             allAccountsIds.forEach(accountId => {
                 for (let cashflowType in currentAccountsIds) {
                     if (currentAccountsIds[cashflowType].indexOf(accountId) === -1) {
