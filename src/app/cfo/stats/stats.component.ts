@@ -3,11 +3,12 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
 import { FiltersService } from '@shared/filters/filters.service';
+import { FilterHelpers } from '@shared/filters/filter.helpers';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
-import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
+import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
+import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 
 import { StatsItem, StatsService } from './stats.service';
 import { StatsFilter, BankAccountDto, CashflowServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -90,30 +91,17 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                             items: { from: new FilterItemModel(), to: new FilterItemModel() }
                         }),
                         new FilterModel({
-                            component: FilterMultiselectDropDownComponent,
                             field: 'accountIds',
+                            component: FilterCheckBoxesComponent,
                             caption: 'Account',
                             items: {
-                                acc: new FilterMultiselectDropDownModel({
-                                    displayName: 'Account',
-                                    filterField: 'accountIds',
-                                    displayElementExp: (item: BankAccountDto) => {
-                                        if (item) {
-                                            return item.accountName + ' (' + item.accountNumber + ')';
-                                        }
-                                    },
-                                    dataSource: result.bankAccounts,
-                                    columns: [
-                                        {
-                                            dataField: 'accountName',
-                                            caption: this.l('CashflowAccountFilter_AccountName')
-                                        },
-                                        {
-                                            dataField: 'accountNumber',
-                                            caption: this.l('CashflowAccountFilter_AccountNumber')
-                                        }
-                                    ],
-                                })
+                                element: new FilterCheckBoxesModel(
+                                    {
+                                        dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
+                                        nameField: 'name',
+                                        parentExpr: 'parentId',
+                                        keyExpr: 'id'
+                                    })
                             }
                         })
                     ]
