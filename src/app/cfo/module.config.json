@@ -7,7 +7,7 @@
     ["Accounts", "", "icon-home", "/app/cfo/bank-accounts"],
     ["Transactions", "", "icon-home", "/app/cfo/transactions"],
     ["Rules", "", "", ""],
-    ["Stats", "", "", ""],
+    ["Stats", "", "icon-home", "/app/cfo/stats"],
     ["Logs", "", "", ""]
   ]
 }

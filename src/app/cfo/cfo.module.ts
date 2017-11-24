@@ -9,7 +9,10 @@ import { SetupStepComponent } from './shared/setup-steps/setup-steps.component';
 import { SynchProgressComponent } from './shared/synch-progress/synch-progress.component';
 
 import { CashflowComponent } from './cashflow/cashflow.component';
+import { StatsComponent } from './stats/stats.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
+
+import { DxChartModule } from 'devextreme-angular';
 
 import {
     DxButtonModule,
@@ -47,7 +50,9 @@ import {
         DxTooltipModule,
         DxValidationSummaryModule,
         DxValidatorModule,
-        DxScrollViewModule
+        DxScrollViewModule,
+
+        DxChartModule
     ],
     declarations: [
         BankAccountsComponent,
@@ -57,7 +62,8 @@ import {
         SynchProgressComponent,
 
         CashflowComponent,
-        OperationsComponent
+        OperationsComponent,
+        StatsComponent
     ]
 })
 

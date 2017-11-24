@@ -37,6 +37,10 @@ export class FilterItemModel {
 export class DisplayElement {
     item: FilterItemModel;
     displayValue: string;
+    
+    parentCode?: any;
+    sortField?: any;
+    readonly?: boolean;
 
     args?: any;
 }

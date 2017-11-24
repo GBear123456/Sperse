@@ -22,11 +22,11 @@ export class FiltersService {
     setup(filters: FilterModel[], initialValues?: any) {
         this.subjectFilters.next(this.filters = filters);
         if (initialValues && initialValues.filters) {
-            var initFilters = JSON.parse(decodeURIComponent(initialValues.filters));
+            let initFilters = JSON.parse(decodeURIComponent(initialValues.filters));
             filters.forEach((filter, i, arr) => {
                 if (initFilters[filter.caption]) {
-                    var props = Object.keys(initFilters[filter.caption]);
-                    props.forEach((val, i, arr) => {
+                    let props = Object.keys(initFilters[filter.caption]);
+                    props.forEach( val => {
                         if (filter.items[val].setValue)
                             filter.items[val].setValue(initFilters[filter.caption][val], filter);
                         else
