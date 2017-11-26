@@ -1,4 +1,4 @@
-<div [@routerTransition]>
+﻿<div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
@@ -26,9 +26,9 @@
                                 mode="popup"
                                 [allowUpdating]="true">
                             </dxo-editing>
-                            <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false"></dxi-column>
-                            <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate" [width]="50" [showInColumnChooser]="false"></dxi-column>
+                            <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                            <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" [allowExporting]="false"></dxi-column>
+                            <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate" [width]="50" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                             <div *dxTemplate="let data of 'photoTemplate'">
                                 <img [src]="getPhoto(data.data.Photo, data.data.Gender)"
                                      alt="{{l('AltPersonPhoto')}}"
