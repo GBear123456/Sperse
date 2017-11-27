@@ -16,12 +16,6 @@ export class OperationsComponent extends AppComponentBase {
         {
             location: 'before',
             items: [
-                {name: 'back'}
-            ]
-        },
-        {
-            location: 'before',
-            items: [
                 {
                     name: 'select-box',
                     text: this.l('Group By'),
@@ -47,32 +41,60 @@ export class OperationsComponent extends AppComponentBase {
         }, {
             location: 'before',
             items: [
-                {name: 'edit'},
-                {name: 'rules'},
-                {
-                    name: 'expand',
-                    options: {
-                        text: this.l('Expand All')
-                    }
-                }
+                { name: 'expandRows'},
+                { name: 'expandCols'},
+                { name: 'rules'}
             ]
         },
         {
-            location: 'before',
+            location: 'after',
             items: [
-                {name: 'flag'},
+                {
+                    name: 'flag',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        width: 62,
+                        hint: this.l('Flags'),
+                        items: [{
+                            action: Function(),
+                            text: 'Item one'
+                        }, {
+                            action: Function(),
+                            text: 'Item two'
+                        }]
+                    }
+                },
                 {
                     name: 'pen',
+                    widget: 'dxDropDownMenu',
                     options: {
-                        hint: this.l('Label')
+                        width: 62,
+                        hint: this.l('Tags'),
+                        items: [{
+                            action: Function(),
+                            text: 'Item one'
+                        }, {
+                            action: Function(),
+                            text: 'Item two'
+                        }]
+                    }
+                },
+                {
+                    name: 'more',
+                    widget: 'dxDropDownMenu',
+                    text: this.l('More'),
+                    options: {
+                        width: 66,
+                        hint: this.l('More'),
+                        items: [{
+                            action: Function(),
+                            text: 'Item one'
+                        }, {
+                            action: Function(),
+                            text: 'Item two'
+                        }]
                     }
                 }
-            ]
-        },
-        {
-            location: 'before',
-            items: [
-                {name: 'more'}
             ]
         },
         {
@@ -102,14 +124,18 @@ export class OperationsComponent extends AppComponentBase {
                         }]
                     }
                 },
-                {name: 'print'}
+                {
+                    name: 'print',
+                    options: {
+                        width: 58
+                    }
+                }
             ]
         },
         {
             location: 'after', items: [
-                {name: 'box'},
-                {name: 'pipeline'},
-                {name: 'grid'}
+                { name: 'comments'},
+                { name: 'expandView'}
             ]
         },
         {
