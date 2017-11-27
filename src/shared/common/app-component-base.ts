@@ -26,7 +26,7 @@ export abstract class AppComponentBase {
     appSession: AppSessionService;
 
     private _applicationRef: ApplicationRef;
-    private _exportService: ExportService;
+    public _exportService: ExportService;
 
     constructor(private _injector: Injector,
         public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName) {

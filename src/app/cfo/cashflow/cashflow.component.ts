@@ -24,7 +24,6 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-
 const moment = extendMoment(Moment);
 
 /** Constants */
@@ -238,7 +237,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     constructor(injector: Injector, private _CashflowServiceProxy: CashflowServiceProxy,
         private _filtersService: FiltersService) {
         super(injector);
-        
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
@@ -935,7 +933,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         return this.apiTableFields.filter(field => field.area === 'column');
     }
 
-    changeGroupBy(event) {        
+    changeGroupBy(event) {
         let value = this.groupbyItems[event.itemIndex],
             startedGroupInterval = value.groupInterval;
         this.groupInterval = startedGroupInterval;
@@ -948,11 +946,19 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this.refreshDataGrid();
     }
 
-    toggleFilters(event){
+    downloadData(event) {
+        let exportTo = event.itemData.text;
+        if (exportTo == 'Export to Excel') {
+            this.pivotGrid.export.fileName = this._exportService.getFileName();
+            this.pivotGrid.instance.exportToExcel();
+        }
+    }
+
+    toggleFilters(event) {
       this._filtersService.toggle();
     }
 
-    clearAllFilters(event){
+    clearAllFilters(event) {
       this._filtersService.clearAllFilters();
     }
 

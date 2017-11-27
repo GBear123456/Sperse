@@ -1,5 +1,5 @@
-import { Component, Injector, Output, EventEmitter } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import {Component, Injector, Output, EventEmitter} from '@angular/core';
+import {AppComponentBase} from '@shared/common/app-component-base';
 
 @Component({
     selector: 'cashflow-operations',
@@ -8,15 +8,15 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 
 export class OperationsComponent extends AppComponentBase {
-    toolbarItems: any;
     @Output() refreshCashflow: EventEmitter<any> = new EventEmitter();
     @Output() onGroupBy: EventEmitter<any> = new EventEmitter();
+    @Output() download: EventEmitter<any> = new EventEmitter();
 
     toolbarConfig = [
         {
             location: 'before',
             items: [
-                { name: 'back' }
+                {name: 'back'}
             ]
         },
         {
@@ -25,30 +25,30 @@ export class OperationsComponent extends AppComponentBase {
                 {
                     name: 'select-box',
                     text: this.l('Group By'),
-                    widget: 'dxDropDownMenu', 
+                    widget: 'dxDropDownMenu',
                     options: {
-                      width: 175,
-                      items: [{
-                          action: this.groupBy.bind(this),
-                          text: 'Years'
-                      }, {
-                          action: this.groupBy.bind(this),
-                          text: 'Quarters'
-                      }, {
-                          action: this.groupBy.bind(this),
-                          text: 'Months'
-                      }, {
-                          action: this.groupBy.bind(this),
-                          text: 'Days'
-                      }]
+                        width: 175,
+                        items: [{
+                            action: this.groupBy.bind(this),
+                            text: 'Years'
+                        }, {
+                            action: this.groupBy.bind(this),
+                            text: 'Quarters'
+                        }, {
+                            action: this.groupBy.bind(this),
+                            text: 'Months'
+                        }, {
+                            action: this.groupBy.bind(this),
+                            text: 'Days'
+                        }]
                     }
                 }
             ]
         }, {
             location: 'before',
             items: [
-                { name: 'edit' },
-                { name: 'rules' },
+                {name: 'edit'},
+                {name: 'rules'},
                 {
                     name: 'expand',
                     options: {
@@ -60,7 +60,7 @@ export class OperationsComponent extends AppComponentBase {
         {
             location: 'before',
             items: [
-                { name: 'flag' },
+                {name: 'flag'},
                 {
                     name: 'pen',
                     options: {
@@ -72,7 +72,7 @@ export class OperationsComponent extends AppComponentBase {
         {
             location: 'before',
             items: [
-                { name: 'more' }
+                {name: 'more'}
             ]
         },
         {
@@ -87,16 +87,39 @@ export class OperationsComponent extends AppComponentBase {
         {
             location: 'after',
             items: [
-                { name: 'download' },
-                { name: 'print' }
+                {
+                    name: 'download',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Download'),
+                        items: [{
+                            action: Function(),
+                            text: this.l('Save as PDF'),
+                            icon: 'pdf',
+                        }, {
+                            action: this.exportTo.bind(this),
+                            text: this.l('Export to Excel'),
+                            icon: 'xls',
+                        }, {
+                            action: Function(),
+                            text: this.l('Export to CSV'),
+                            icon: 'sheet'
+                        }, {
+                            action: this.exportTo.bind(this),
+                            text: this.l('Export to Google Sheets'),
+                            icon: 'sheet'
+                        }]
+                    }
+                },
+                {name: 'print'}
             ]
         },
         {
             location: 'after', items: [
-                {name: 'box'},
-                {name: 'pipeline'},
-                {name: 'grid'}
-            ]
+            {name: 'box'},
+            {name: 'pipeline'},
+            {name: 'grid'}
+        ]
         }
     ];
 
@@ -104,8 +127,12 @@ export class OperationsComponent extends AppComponentBase {
         super(injector);
     }
 
+    exportTo(event) {
+        this.download.emit(event);
+    }
+
     groupBy(event) {
-      this.onGroupBy.emit(event);
+        this.onGroupBy.emit(event);
     }
 
     refresh() {
