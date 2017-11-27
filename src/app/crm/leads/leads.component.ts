@@ -68,6 +68,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         {name: 'back'}
       ]},
       {location: 'before', items: [
+        {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
+      ]},
+      {location: 'before', items: [
         {name: 'assign'}, {name: 'status'}, {name: 'delete'}
       ]},
       {location: 'after', items: [
@@ -113,7 +116,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private _pipelineService: PipelineServiceProxy) {
         super(injector);
 
-        this._filtersService.enabled = true;
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 

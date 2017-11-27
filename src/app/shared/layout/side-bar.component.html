@@ -4,8 +4,15 @@
     </div>
 
     <div class="filter-title">
-        <img src="assets/common/icons/pipeline-icon.svg" class="dx-icon">
-        {{ls('Platform', 'Filter')}}
+        <dx-button
+          [text]="ls('Platform', 'Filters')"
+          [iconSrc]="'assets/common/icons/funnel-blue-icon.svg'"
+          (onClick)="closeFilters($event)"
+        ></dx-button>
+        <dx-button
+          [text]="ls('Platform', 'Sort')"
+          [iconSrc]="'assets/common/icons/sort-icon.svg'"
+        ></dx-button>
         <button class="clear-all" (click)="clearAllFilters()">
             clear all
         </button>
@@ -33,10 +40,7 @@
     <div class="close-details"></div>
     <div class="sidebar-filter-head">
         {{ls('Platform', 'SideBarFilterHeader')}} {{l('FilterBy' + capitalize(activeFilter.caption) + 'Header')}}
-        <button class="button-layout button-primary" (click)="filterApply($event)"><i class="fa fa-check"
-                                                                                      aria-hidden="true"></i>{{ls('Platform',
-            'Apply')}}
-        </button>
+        <button class="button-layout button-primary" (click)="filterApply($event)"><i class="fa fa-check" aria-hidden="true"></i>{{ls('Platform', 'Apply')}}</button>
     </div>
 
     <dx-scroll-view showScrollbar="onHover">

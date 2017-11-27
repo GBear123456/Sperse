@@ -14,7 +14,7 @@
       <div class="short-contact">
         <div class="small-phones">
           <div class="phone" *ngFor="let phone of primaryContact?.phones">
-            <i class="icons phone type-{{phone.usageTypeId}}"></i>{{phone.phoneNumber | phone}}
+            <i class="icons phone type-{{phone.usageTypeId || 'P'}}"></i>{{phone.phoneNumber | phone}}
           </div>        
         </div>
       </div>

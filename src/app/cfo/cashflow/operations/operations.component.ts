@@ -10,6 +10,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 export class OperationsComponent extends AppComponentBase {
     toolbarItems: any;
     @Output() refreshCashflow: EventEmitter<any> = new EventEmitter();
+    @Output() onGroupBy: EventEmitter<any> = new EventEmitter();
 
     toolbarConfig = [
         {
@@ -19,6 +20,31 @@ export class OperationsComponent extends AppComponentBase {
             ]
         },
         {
+            location: 'before',
+            items: [
+                {
+                    name: 'select-box',
+                    text: this.l('Group By'),
+                    widget: 'dxDropDownMenu', 
+                    options: {
+                      width: 175,
+                      items: [{
+                          action: this.groupBy.bind(this),
+                          text: 'Years'
+                      }, {
+                          action: this.groupBy.bind(this),
+                          text: 'Quarters'
+                      }, {
+                          action: this.groupBy.bind(this),
+                          text: 'Months'
+                      }, {
+                          action: this.groupBy.bind(this),
+                          text: 'Days'
+                      }]
+                    }
+                }
+            ]
+        }, {
             location: 'before',
             items: [
                 { name: 'edit' },
@@ -76,6 +102,10 @@ export class OperationsComponent extends AppComponentBase {
 
     constructor(injector: Injector) {
         super(injector);
+    }
+
+    groupBy(event) {
+      this.onGroupBy.emit(event);
     }
 
     refresh() {

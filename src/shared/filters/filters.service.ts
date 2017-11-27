@@ -5,8 +5,9 @@ import { FilterModel } from './models/filter.model';
 
 @Injectable()
 export class FiltersService {
-    private filters: Subject<FilterModel[]>;
-    private filter: Subject<FilterModel>;
+    private filters: FilterModel[];
+    private subjectFilters: Subject<FilterModel[]>;
+    private subjectFilter: Subject<FilterModel>;
 
     private subscribers: Array<Subscription> = [];
 
@@ -14,11 +15,12 @@ export class FiltersService {
     public localizationSourceName: string;
 
     constructor() {
-        this.filters = new Subject<FilterModel[]>();
-        this.filter = new Subject<FilterModel>();
+        this.subjectFilters = new Subject<FilterModel[]>();
+        this.subjectFilter = new Subject<FilterModel>();
     }
 
     setup(filters: FilterModel[], initialValues?: any) {
+        this.subjectFilters.next(this.filters = filters);
         if (initialValues && initialValues.filters) {
             let initFilters = JSON.parse(decodeURIComponent(initialValues.filters));
             filters.forEach((filter, i, arr) => {
@@ -32,35 +34,39 @@ export class FiltersService {
                     });
                 }
             });
-        }
-        this.filters.next(filters);
-
-        if (initialValues && initialValues.filters) {
             this.change(<FilterModel>{});
         }
     }
 
     update(callback: (filters: FilterModel[]) => any) {
-        this.filters.asObservable().subscribe(callback);
+        this.subjectFilters.asObservable().subscribe(callback);
     }
 
     change(filter: FilterModel) {
-        this.filter.next(filter);
+        this.subjectFilter.next(filter);
     }
 
     apply(callback: (filter: FilterModel) => any, keepAlways: boolean = false) {
-        if (keepAlways)
-            this.filter.asObservable().subscribe(callback)
-        else
-            this.subscribers.push(
-                this.filter.asObservable().subscribe(callback)
-            );
+        let sub = this.subjectFilter.asObservable().subscribe(callback);
+        if (!keepAlways)
+            this.subscribers.push(sub);
     }
 
+    clearAllFilters() {
+        this.filters.forEach(
+          (filter: FilterModel) => filter.clearFilterItems()
+        );
+        this.change(null);
+    }
+  
     unsubscribe() {
         this.subscribers.map((sub) => {
             return void (sub.unsubscribe());
         });
         this.subscribers.length = 0;
+    }
+
+    toggle() {
+        this.enabled = !this.enabled;
     }
 }

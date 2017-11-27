@@ -5,13 +5,12 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { TransactionsServiceProxy, BankAccountDto } from '@shared/service-proxies/service-proxies';
 
 import { FiltersService } from '@shared/filters/filters.service';
+import { FilterHelpers } from '@shared/filters/filter.helpers';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 
-import { FilterMultiselectDropDownComponent } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.component';
-import { FilterMultiselectDropDownModel } from '@shared/filters/multiselect-dropdown/filter-multiselect-dropdown.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 
@@ -42,6 +41,9 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     };
 
     toolbarConfig = [
+      {location: 'before', items: [
+        {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
+      ]},
       {location: 'after', items: [
         {name: 'refresh', action: this.refreshDataGrid.bind(this)},
         {
@@ -76,7 +78,6 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         private _filtersService: FiltersService) {
         super(injector);
 
-        this._filtersService.enabled = true;
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
 
@@ -114,20 +115,16 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             items: { from: new FilterItemModel(), to: new FilterItemModel() }
                         }),
                         new FilterModel({
-                            component: FilterMultiselectDropDownComponent,
-                            field: 'BankAccountId',
+                            component: FilterCheckBoxesComponent,
                             caption: 'Account',
                             items: {
-                                account: new FilterMultiselectDropDownModel({
-                                    filterField: 'BankAccountId',
-                                    displayElementExp: (item: BankAccountDto) => {
-                                        if (item) {
-                                            return item.accountName + ' (' + item.accountNumber + ')'
-                                        }
-                                    },
-                                    dataSource: result.bankAccounts,
-                                    columns: [{ dataField: 'accountName', caption: this.l('CashflowAccountFilter_AccountName') }, { dataField: 'accountNumber', caption: this.l('CashflowAccountFilter_AccountNumber') }],
-                                })
+                                element: new FilterCheckBoxesModel(
+                                    {
+                                        dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
+                                        nameField: 'name',
+                                        parentExpr: 'parentId',
+                                        keyExpr: 'id'
+                                    })
                             }
                         }),
                         new FilterModel({
@@ -249,7 +246,26 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
 
     filterByAccount(filter) {
-        return this.filterByFilterElement(filter);
+        let data = {};
+        if (filter.items.element) {
+            let filterData = [];
+            if (filter.items.element.value) {
+                filter.items.element.value.forEach((id) => {
+                    let parts = id.split(':');
+                    filterData.push(parts.length == 2 ?
+                        {
+                            BankId: +parts[0],
+                            BankAccountId: +parts[1]
+                        } : { BankId: +id });
+                });
+            }
+
+            data = {
+                or: filterData
+            };
+        }
+
+        return data;
     }
 
     filterByAmount(filter) {

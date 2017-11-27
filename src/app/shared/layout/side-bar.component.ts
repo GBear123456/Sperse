@@ -58,10 +58,9 @@ export class SideBarComponent extends AppComponentBase {
         this._filtersService.change(filter);
         event.stopPropagation();
     }
-
+    
     clearAllFilters() {
-        this.filters.forEach((filter: FilterModel) => filter.clearFilterItems());
-        this._filtersService.change(null);
+        this._filtersService.clearAllFilters();
     }
 
     filterApply(event) {
@@ -76,6 +75,11 @@ export class SideBarComponent extends AppComponentBase {
     showFilterDialog(event, filter) {
         this.activeFilter = filter;
         event.stopPropagation();
+    }
+
+    closeFilters(event) {
+      this.hideFilterDialog(event);
+      this._filtersService.toggle();
     }
 
     hideFilterDialog(event) {

@@ -69,6 +69,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         {name: 'back'}
       ]},
       {location: 'before', items: [
+        {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
+      ]},
+      {location: 'before', items: [
         {name: 'assign'}, {name: 'status'}, {name: 'delete'}
       ]},
       {location: 'after', items: [
@@ -114,7 +117,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         private _commonLookupService: CommonLookupServiceProxy) {
         super(injector);
 
-        this._filtersService.enabled = true;
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 

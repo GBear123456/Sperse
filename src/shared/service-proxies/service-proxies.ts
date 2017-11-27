@@ -661,6 +661,76 @@ export class AuditLogServiceProxy {
 }
 
 @Injectable()
+export class BankAccountsServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getBankAccountDailyStats(startDate: moment.Moment, endDate: moment.Moment, accounts: number[]): Observable<BankAccountDailyStatDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetBankAccountDailyStats?";
+        if (startDate !== undefined)
+            url_ += "startDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
+        if (endDate !== undefined)
+            url_ += "endDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
+        if (accounts !== undefined)
+            accounts.forEach(item => { url_ += "accounts=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetBankAccountDailyStats(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetBankAccountDailyStats(response_);
+                } catch (e) {
+                    return <Observable<BankAccountDailyStatDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<BankAccountDailyStatDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetBankAccountDailyStats(response: Response): Observable<BankAccountDailyStatDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: BankAccountDailyStatDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(BankAccountDailyStatDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<BankAccountDailyStatDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class BaseCommercePushNotificationHandlerServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -1123,15 +1193,19 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    deleteCategorizationMapping(categorizationMapping: DeleteCategorizationMappingInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/DeleteCategorizationMapping";
+    deleteCategorizationMapping(categorizationId: string, name: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/DeleteCategorizationMapping?";
+        if (categorizationId !== undefined)
+            url_ += "CategorizationId=" + encodeURIComponent("" + categorizationId) + "&"; 
+        if (name !== undefined)
+            url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(categorizationMapping ? categorizationMapping.toJSON() : null);
+        const content_ = "";
         
         let options_ = {
             body: content_,
-            method: "post",
+            method: "delete",
             headers: new Headers({
                 "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
@@ -1153,6 +1227,146 @@ export class CashflowServiceProxy {
     }
 
     protected processDeleteCategorizationMapping(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    addForecast(input: AddForecastInput): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/AddForecast";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processAddForecast(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAddForecast(response_);
+                } catch (e) {
+                    return <Observable<number>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAddForecast(response: Response): Observable<number> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: number = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<number>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateForecast(input: UpdateForecastInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/UpdateForecast";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateForecast(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateForecast(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateForecast(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteForecast(id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/DeleteForecast?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteForecast(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteForecast(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteForecast(response: Response): Observable<void> {
         const status = response.status; 
 
         if (status === 200) {
@@ -1271,6 +1485,112 @@ export class CashFlowCommentServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<CreateCashFlowCommentOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getCashFlowComments(filter: StatsDetailFilter): Observable<CashFlowCommentDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowComment/GetCashFlowComments";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(filter ? filter.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCashFlowComments(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCashFlowComments(response_);
+                } catch (e) {
+                    return <Observable<CashFlowCommentDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CashFlowCommentDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCashFlowComments(response: Response): Observable<CashFlowCommentDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CashFlowCommentDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CashFlowCommentDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CashFlowCommentDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getTransactionComments(transactionId: number): Observable<TransactionCommentDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowComment/GetTransactionComments?";
+        if (transactionId !== undefined)
+            url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetTransactionComments(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTransactionComments(response_);
+                } catch (e) {
+                    return <Observable<TransactionCommentDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<TransactionCommentDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTransactionComments(response: Response): Observable<TransactionCommentDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: TransactionCommentDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(TransactionCommentDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<TransactionCommentDto[]>(<any>null);
     }
 }
 
@@ -3826,65 +4146,6 @@ export class EditionServiceProxy {
 }
 
 @Injectable()
-export class EventServiceProxy {
-    private http: Http;
-    private baseUrl: string;
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    poll(eventName: string): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/Event/Poll?";
-        if (eventName !== undefined)
-            url_ += "eventName=" + encodeURIComponent("" + eventName) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processPoll(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processPoll(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processPoll(response: Response): Observable<void> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-}
-
-@Injectable()
 export class FinancialInformationServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -3893,58 +4154,6 @@ export class FinancialInformationServiceProxy {
     constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getBanks(): Observable<BankDto[]> {
-        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetBanks";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetBanks(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetBanks(response_);
-                } catch (e) {
-                    return <Observable<BankDto[]>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<BankDto[]>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetBanks(response: Response): Observable<BankDto[]> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: BankDto[] = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(BankDto.fromJS(item));
-            }
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<BankDto[]>(<any>null);
     }
 
     /**
@@ -12136,6 +12345,65 @@ export interface IFileDto {
     fileToken: string;
 }
 
+export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
+    date: moment.Moment;
+    startingBalance: number;
+    startingBalanceAdjustments: number;
+    income: number;
+    expenses: number;
+    adjustments: number;
+    endingBalance: number;
+
+    constructor(data?: IBankAccountDailyStatDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.startingBalance = data["startingBalance"];
+            this.startingBalanceAdjustments = data["startingBalanceAdjustments"];
+            this.income = data["income"];
+            this.expenses = data["expenses"];
+            this.adjustments = data["adjustments"];
+            this.endingBalance = data["endingBalance"];
+        }
+    }
+
+    static fromJS(data: any): BankAccountDailyStatDto {
+        let result = new BankAccountDailyStatDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["startingBalance"] = this.startingBalance;
+        data["startingBalanceAdjustments"] = this.startingBalanceAdjustments;
+        data["income"] = this.income;
+        data["expenses"] = this.expenses;
+        data["adjustments"] = this.adjustments;
+        data["endingBalance"] = this.endingBalance;
+        return data; 
+    }
+}
+
+export interface IBankAccountDailyStatDto {
+    date: moment.Moment;
+    startingBalance: number;
+    startingBalanceAdjustments: number;
+    income: number;
+    expenses: number;
+    adjustments: number;
+    endingBalance: number;
+}
+
 export class ListResultDtoOfCacheDto implements IListResultDtoOfCacheDto {
     items: CacheDto[];
 
@@ -12254,6 +12522,7 @@ export class StatsFilter implements IStatsFilter {
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
+    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 
@@ -12276,6 +12545,11 @@ export class StatsFilter implements IStatsFilter {
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
+            if (data["bankIds"] && data["bankIds"].constructor === Array) {
+                this.bankIds = [];
+                for (let item of data["bankIds"])
+                    this.bankIds.push(item);
+            }
             if (data["accountIds"] && data["accountIds"].constructor === Array) {
                 this.accountIds = [];
                 for (let item of data["accountIds"])
@@ -12305,6 +12579,11 @@ export class StatsFilter implements IStatsFilter {
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
+        if (this.bankIds && this.bankIds.constructor === Array) {
+            data["bankIds"] = [];
+            for (let item of this.bankIds)
+                data["bankIds"].push(item);
+        }
         if (this.accountIds && this.accountIds.constructor === Array) {
             data["accountIds"] = [];
             for (let item of this.accountIds)
@@ -12324,6 +12603,7 @@ export interface IStatsFilter {
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
+    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 }
@@ -12380,6 +12660,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
     date: moment.Moment;
     amount: number;
     comment: string;
+    forecastId: number;
 
     constructor(data?: ITransactionStatsDto) {
         if (data) {
@@ -12406,6 +12687,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.amount = data["amount"];
             this.comment = data["comment"];
+            this.forecastId = data["forecastId"];
         }
     }
 
@@ -12431,6 +12713,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["amount"] = this.amount;
         data["comment"] = this.comment;
+        data["forecastId"] = this.forecastId;
         return data; 
     }
 }
@@ -12444,10 +12727,11 @@ export interface ITransactionStatsDto {
     date: moment.Moment;
     amount: number;
     comment: string;
+    forecastId: number;
 }
 
 export class CashFlowInitialData implements ICashFlowInitialData {
-    bankAccounts: BankAccountDto[];
+    banks: BankDto[];
     businessEntities: BusinessEntityDto[];
     cashflowTypes: { [key: string] : string; };
 
@@ -12462,10 +12746,10 @@ export class CashFlowInitialData implements ICashFlowInitialData {
 
     init(data?: any) {
         if (data) {
-            if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
-                this.bankAccounts = [];
-                for (let item of data["bankAccounts"])
-                    this.bankAccounts.push(BankAccountDto.fromJS(item));
+            if (data["banks"] && data["banks"].constructor === Array) {
+                this.banks = [];
+                for (let item of data["banks"])
+                    this.banks.push(BankDto.fromJS(item));
             }
             if (data["businessEntities"] && data["businessEntities"].constructor === Array) {
                 this.businessEntities = [];
@@ -12490,10 +12774,10 @@ export class CashFlowInitialData implements ICashFlowInitialData {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.bankAccounts && this.bankAccounts.constructor === Array) {
-            data["bankAccounts"] = [];
-            for (let item of this.bankAccounts)
-                data["bankAccounts"].push(item.toJSON());
+        if (this.banks && this.banks.constructor === Array) {
+            data["banks"] = [];
+            for (let item of this.banks)
+                data["banks"].push(item.toJSON());
         }
         if (this.businessEntities && this.businessEntities.constructor === Array) {
             data["businessEntities"] = [];
@@ -12512,18 +12796,17 @@ export class CashFlowInitialData implements ICashFlowInitialData {
 }
 
 export interface ICashFlowInitialData {
-    bankAccounts: BankAccountDto[];
+    banks: BankDto[];
     businessEntities: BusinessEntityDto[];
     cashflowTypes: { [key: string] : string; };
 }
 
-export class BankAccountDto implements IBankAccountDto {
+export class BankDto implements IBankDto {
     id: number;
-    accountName: string;
-    accountNumber: string;
-    isActive: boolean;
+    name: string;
+    bankAccounts: BankAccountDto[];
 
-    constructor(data?: IBankAccountDto) {
+    constructor(data?: IBankDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12535,14 +12818,17 @@ export class BankAccountDto implements IBankAccountDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.accountName = data["accountName"];
-            this.accountNumber = data["accountNumber"];
-            this.isActive = data["isActive"];
+            this.name = data["name"];
+            if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
+                this.bankAccounts = [];
+                for (let item of data["bankAccounts"])
+                    this.bankAccounts.push(BankAccountDto.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): BankAccountDto {
-        let result = new BankAccountDto();
+    static fromJS(data: any): BankDto {
+        let result = new BankDto();
         result.init(data);
         return result;
     }
@@ -12550,18 +12836,20 @@ export class BankAccountDto implements IBankAccountDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["accountName"] = this.accountName;
-        data["accountNumber"] = this.accountNumber;
-        data["isActive"] = this.isActive;
+        data["name"] = this.name;
+        if (this.bankAccounts && this.bankAccounts.constructor === Array) {
+            data["bankAccounts"] = [];
+            for (let item of this.bankAccounts)
+                data["bankAccounts"].push(item.toJSON());
+        }
         return data; 
     }
 }
 
-export interface IBankAccountDto {
+export interface IBankDto {
     id: number;
-    accountName: string;
-    accountNumber: string;
-    isActive: boolean;
+    name: string;
+    bankAccounts: BankAccountDto[];
 }
 
 export class BusinessEntityDto implements IBusinessEntityDto {
@@ -12603,12 +12891,56 @@ export interface IBusinessEntityDto {
     name: string;
 }
 
+export class BankAccountDto implements IBankAccountDto {
+    id: number;
+    accountName: string;
+    accountNumber: string;
+
+    constructor(data?: IBankAccountDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.accountName = data["accountName"];
+            this.accountNumber = data["accountNumber"];
+        }
+    }
+
+    static fromJS(data: any): BankAccountDto {
+        let result = new BankAccountDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["accountName"] = this.accountName;
+        data["accountNumber"] = this.accountNumber;
+        return data; 
+    }
+}
+
+export interface IBankAccountDto {
+    id: number;
+    accountName: string;
+    accountNumber: string;
+}
+
 export class StatsDetailFilter implements IStatsDetailFilter {
     cashFlowTypeId: string;
     categorization: { [key: string] : string; };
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
+    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 
@@ -12634,6 +12966,11 @@ export class StatsDetailFilter implements IStatsDetailFilter {
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
+            if (data["bankIds"] && data["bankIds"].constructor === Array) {
+                this.bankIds = [];
+                for (let item of data["bankIds"])
+                    this.bankIds.push(item);
+            }
             if (data["accountIds"] && data["accountIds"].constructor === Array) {
                 this.accountIds = [];
                 for (let item of data["accountIds"])
@@ -12666,6 +13003,11 @@ export class StatsDetailFilter implements IStatsDetailFilter {
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
+        if (this.bankIds && this.bankIds.constructor === Array) {
+            data["bankIds"] = [];
+            for (let item of this.bankIds)
+                data["bankIds"].push(item);
+        }
         if (this.accountIds && this.accountIds.constructor === Array) {
             data["accountIds"] = [];
             for (let item of this.accountIds)
@@ -12686,6 +13028,7 @@ export interface IStatsDetailFilter {
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
+    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 }
@@ -12847,11 +13190,15 @@ export interface IAddCategorizationMappingInput {
     newName: string;
 }
 
-export class DeleteCategorizationMappingInput implements IDeleteCategorizationMappingInput {
-    categorizationId: string;
-    name: string;
+export class AddForecastInput implements IAddForecastInput {
+    bankAccountId: number;
+    date: moment.Moment;
+    cashFlowTypeId: string;
+    currencyId: string;
+    categorization: { [key: string] : string; };
+    amount: number;
 
-    constructor(data?: IDeleteCategorizationMappingInput) {
+    constructor(data?: IAddForecastInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -12862,28 +13209,91 @@ export class DeleteCategorizationMappingInput implements IDeleteCategorizationMa
 
     init(data?: any) {
         if (data) {
-            this.categorizationId = data["categorizationId"];
-            this.name = data["name"];
+            this.bankAccountId = data["bankAccountId"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.cashFlowTypeId = data["cashFlowTypeId"];
+            this.currencyId = data["currencyId"];
+            if (data["categorization"]) {
+                this.categorization = {};
+                for (let key in data["categorization"]) {
+                    if (data["categorization"].hasOwnProperty(key))
+                        this.categorization[key] = data["categorization"][key];
+                }
+            }
+            this.amount = data["amount"];
         }
     }
 
-    static fromJS(data: any): DeleteCategorizationMappingInput {
-        let result = new DeleteCategorizationMappingInput();
+    static fromJS(data: any): AddForecastInput {
+        let result = new AddForecastInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["categorizationId"] = this.categorizationId;
-        data["name"] = this.name;
+        data["bankAccountId"] = this.bankAccountId;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["cashFlowTypeId"] = this.cashFlowTypeId;
+        data["currencyId"] = this.currencyId;
+        if (this.categorization) {
+            data["categorization"] = {};
+            for (let key in this.categorization) {
+                if (this.categorization.hasOwnProperty(key))
+                    data["categorization"][key] = this.categorization[key];
+            }
+        }
+        data["amount"] = this.amount;
         return data; 
     }
 }
 
-export interface IDeleteCategorizationMappingInput {
-    categorizationId: string;
-    name: string;
+export interface IAddForecastInput {
+    bankAccountId: number;
+    date: moment.Moment;
+    cashFlowTypeId: string;
+    currencyId: string;
+    categorization: { [key: string] : string; };
+    amount: number;
+}
+
+export class UpdateForecastInput implements IUpdateForecastInput {
+    id: number;
+    amount: number;
+
+    constructor(data?: IUpdateForecastInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.amount = data["amount"];
+        }
+    }
+
+    static fromJS(data: any): UpdateForecastInput {
+        let result = new UpdateForecastInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["amount"] = this.amount;
+        return data; 
+    }
+}
+
+export interface IUpdateForecastInput {
+    id: number;
+    amount: number;
 }
 
 export class CreateTransactionCommentInput implements ICreateTransactionCommentInput {
@@ -12967,6 +13377,7 @@ export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
+    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 
@@ -12993,6 +13404,11 @@ export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
+            if (data["bankIds"] && data["bankIds"].constructor === Array) {
+                this.bankIds = [];
+                for (let item of data["bankIds"])
+                    this.bankIds.push(item);
+            }
             if (data["accountIds"] && data["accountIds"].constructor === Array) {
                 this.accountIds = [];
                 for (let item of data["accountIds"])
@@ -13026,6 +13442,11 @@ export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
+        if (this.bankIds && this.bankIds.constructor === Array) {
+            data["bankIds"] = [];
+            for (let item of this.bankIds)
+                data["bankIds"].push(item);
+        }
         if (this.accountIds && this.accountIds.constructor === Array) {
             data["accountIds"] = [];
             for (let item of this.accountIds)
@@ -13047,6 +13468,7 @@ export interface ICreateCashFlowCommentInput {
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
+    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 }
@@ -13084,6 +13506,144 @@ export class CreateCashFlowCommentOutput implements ICreateCashFlowCommentOutput
 
 export interface ICreateCashFlowCommentOutput {
     id: number;
+}
+
+export class CashFlowCommentDto implements ICashFlowCommentDto {
+    id: number;
+    comment: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    cashflowTypeId: string;
+    currencyId: string;
+    accountIds: number[];
+    categorization: { [key: string] : string; };
+    businessEntityIds: number[];
+
+    constructor(data?: ICashFlowCommentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.comment = data["comment"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.cashflowTypeId = data["cashflowTypeId"];
+            this.currencyId = data["currencyId"];
+            if (data["accountIds"] && data["accountIds"].constructor === Array) {
+                this.accountIds = [];
+                for (let item of data["accountIds"])
+                    this.accountIds.push(item);
+            }
+            if (data["categorization"]) {
+                this.categorization = {};
+                for (let key in data["categorization"]) {
+                    if (data["categorization"].hasOwnProperty(key))
+                        this.categorization[key] = data["categorization"][key];
+                }
+            }
+            if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
+                this.businessEntityIds = [];
+                for (let item of data["businessEntityIds"])
+                    this.businessEntityIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): CashFlowCommentDto {
+        let result = new CashFlowCommentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["comment"] = this.comment;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["cashflowTypeId"] = this.cashflowTypeId;
+        data["currencyId"] = this.currencyId;
+        if (this.accountIds && this.accountIds.constructor === Array) {
+            data["accountIds"] = [];
+            for (let item of this.accountIds)
+                data["accountIds"].push(item);
+        }
+        if (this.categorization) {
+            data["categorization"] = {};
+            for (let key in this.categorization) {
+                if (this.categorization.hasOwnProperty(key))
+                    data["categorization"][key] = this.categorization[key];
+            }
+        }
+        if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
+            data["businessEntityIds"] = [];
+            for (let item of this.businessEntityIds)
+                data["businessEntityIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface ICashFlowCommentDto {
+    id: number;
+    comment: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    cashflowTypeId: string;
+    currencyId: string;
+    accountIds: number[];
+    categorization: { [key: string] : string; };
+    businessEntityIds: number[];
+}
+
+export class TransactionCommentDto implements ITransactionCommentDto {
+    id: number;
+    transactionId: number;
+    comment: string;
+
+    constructor(data?: ITransactionCommentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.transactionId = data["transactionId"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): TransactionCommentDto {
+        let result = new TransactionCommentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["transactionId"] = this.transactionId;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface ITransactionCommentDto {
+    id: number;
+    transactionId: number;
+    comment: string;
 }
 
 export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
@@ -18678,69 +19238,6 @@ export class CreateOrUpdateEditionDto implements ICreateOrUpdateEditionDto {
 export interface ICreateOrUpdateEditionDto {
     edition: EditionEditDto;
     featureValues: NameValueDto[];
-}
-
-export class BankDto implements IBankDto {
-    id: number;
-    isTest: boolean;
-    name: string;
-    notes: string;
-    password: string;
-    userName: string;
-    website: string;
-    status: string;
-
-    constructor(data?: IBankDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.isTest = data["isTest"];
-            this.name = data["name"];
-            this.notes = data["notes"];
-            this.password = data["password"];
-            this.userName = data["userName"];
-            this.website = data["website"];
-            this.status = data["status"];
-        }
-    }
-
-    static fromJS(data: any): BankDto {
-        let result = new BankDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["isTest"] = this.isTest;
-        data["name"] = this.name;
-        data["notes"] = this.notes;
-        data["password"] = this.password;
-        data["userName"] = this.userName;
-        data["website"] = this.website;
-        data["status"] = this.status;
-        return data; 
-    }
-}
-
-export interface IBankDto {
-    id: number;
-    isTest: boolean;
-    name: string;
-    notes: string;
-    password: string;
-    userName: string;
-    website: string;
-    status: string;
 }
 
 export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
@@ -26824,7 +27321,7 @@ export interface IExternalAuthenticateResultModel {
 }
 
 export class FiltersInitialData implements IFiltersInitialData {
-    bankAccounts: BankAccountDto[];
+    banks: BankDto[];
     cashflowTypes: FilterElementDtoOfString[];
     categories: FilterElementDtoOfString[];
     types: FilterElementDtoOfString[];
@@ -26842,10 +27339,10 @@ export class FiltersInitialData implements IFiltersInitialData {
 
     init(data?: any) {
         if (data) {
-            if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
-                this.bankAccounts = [];
-                for (let item of data["bankAccounts"])
-                    this.bankAccounts.push(BankAccountDto.fromJS(item));
+            if (data["banks"] && data["banks"].constructor === Array) {
+                this.banks = [];
+                for (let item of data["banks"])
+                    this.banks.push(BankDto.fromJS(item));
             }
             if (data["cashflowTypes"] && data["cashflowTypes"].constructor === Array) {
                 this.cashflowTypes = [];
@@ -26883,10 +27380,10 @@ export class FiltersInitialData implements IFiltersInitialData {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.bankAccounts && this.bankAccounts.constructor === Array) {
-            data["bankAccounts"] = [];
-            for (let item of this.bankAccounts)
-                data["bankAccounts"].push(item.toJSON());
+        if (this.banks && this.banks.constructor === Array) {
+            data["banks"] = [];
+            for (let item of this.banks)
+                data["banks"].push(item.toJSON());
         }
         if (this.cashflowTypes && this.cashflowTypes.constructor === Array) {
             data["cashflowTypes"] = [];
@@ -26918,7 +27415,7 @@ export class FiltersInitialData implements IFiltersInitialData {
 }
 
 export interface IFiltersInitialData {
-    bankAccounts: BankAccountDto[];
+    banks: BankDto[];
     cashflowTypes: FilterElementDtoOfString[];
     categories: FilterElementDtoOfString[];
     types: FilterElementDtoOfString[];

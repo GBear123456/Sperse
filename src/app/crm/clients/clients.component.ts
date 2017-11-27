@@ -57,45 +57,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
       ]
     };
 
-    public toolbarConfig = [
-      {location: 'before', items: [
-        {name: 'back'}
-      ]},
-      {location: 'before', items: [
-        {name: 'assign'}, {name: 'status'}, {name: 'delete'}
-      ]},
-      {location: 'after', items: [
-        {name: 'refresh', action: this.refreshDataGrid.bind(this)},
-        {
-          name: 'download', 
-          widget: 'dxDropDownMenu', 
-          options: {
-            hint: this.l('Download'), 
-            items: [{
-              action: Function(),
-              text: this.l('Save as PDF'),
-              icon: 'pdf',
-            }, {
-              action: this.exportToXLS.bind(this),
-              text: this.l('Export to Excel'),
-              icon: 'xls',
-            }, {
-              action: this.exportToCSV.bind(this),
-              text: this.l('Export to CSV'),
-              icon: 'sheet'
-            }, {
-                action: this.exportToGoogleSheet.bind(this),
-                text: this.l('Export to Google Sheets'),
-                icon: 'sheet'
-            }, {type: 'downloadOptions'}]
-          }
-        },
-        {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
-      ]},
-      {location: 'after', items: [
-        {name: 'box'}, {name: 'pipeline'}, {name: 'grid'}
-      ]}
-    ];
+    public toolbarConfig;
 
     constructor(injector: Injector,
         private _router: Router,
@@ -104,7 +66,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         private _commonLookupService: CommonLookupServiceProxy) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-        this._filtersService.enabled = true;
         this._filtersService.localizationSourceName = this.localizationSourceName;
 
         this.dataSource = {
@@ -145,6 +106,49 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     ngOnInit(): void {
+        this.toolbarConfig = [
+          {location: 'before', items: [
+            {name: 'back'}
+          ]},
+          {location: 'before', items: [
+            {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
+          ]},
+          {location: 'before', items: [
+            {name: 'assign'}, {name: 'status'}, {name: 'delete'}
+          ]},
+          {location: 'after', items: [
+            {name: 'refresh', action: this.refreshDataGrid.bind(this)},
+            {
+              name: 'download', 
+              widget: 'dxDropDownMenu', 
+              options: {
+                hint: this.l('Download'), 
+                items: [{
+                  action: Function(),
+                  text: this.l('Save as PDF'),
+                  icon: 'pdf',
+                }, {
+                  action: this.exportToXLS.bind(this),
+                  text: this.l('Export to Excel'),
+                  icon: 'xls',
+                }, {
+                  action: this.exportToCSV.bind(this),
+                  text: this.l('Export to CSV'),
+                  icon: 'sheet'
+                }, {
+                    action: this.exportToGoogleSheet.bind(this),
+                    text: this.l('Export to Google Sheets'),
+                    icon: 'sheet'
+                }, {type: 'downloadOptions'}]
+              }
+            },
+            {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
+          ]},
+          {location: 'after', items: [
+            {name: 'box'}, {name: 'pipeline'}, {name: 'grid'}
+          ]}
+        ];
+
         this._filtersService.setup(
             this.filters = [
                 new FilterModel({
