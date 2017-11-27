@@ -3,7 +3,6 @@
 :host {
     position: relative;
     top: 75px;
-
     .operations {
         display: flex;
         overflow-x: hidden;
@@ -13,8 +12,42 @@
         }
     }
 
-    .dx-visibility-change-handler {
+    .mainStatsView {
         padding: 20px;
-    }
-}
+        margin-bottom: 200px;
+        position: relative;
+        /deep/ .dxc-labels rect {
+            rx: 5
+        }
 
+        md-tab-group {
+            /deep/ .mat-tab-header {
+                margin-bottom: 20px;
+                border-bottom: none;
+                .mat-tab-label {
+                    font-size: 30px;
+                    font-weight: 300;
+                    border-bottom: none;
+                    padding: 30px 20px;
+                    &.mat-tab-label-active {
+                        font-weight: 600;
+                        background-color: inherit;
+                    }
+                }
+            }
+        }
+
+        .showSourceButton {
+            position: absolute;
+            right: 36px;
+            top: 35px;
+            font-size: 22px;
+            z-index: 2;
+            color: #01b0f0;
+            cursor: pointer;
+        }
+    }
+
+
+
+}

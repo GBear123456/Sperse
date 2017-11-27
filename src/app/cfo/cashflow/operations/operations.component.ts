@@ -1,5 +1,5 @@
-import { Component, Injector, Output, EventEmitter } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import {Component, Injector, Output, EventEmitter} from '@angular/core';
+import {AppComponentBase} from '@shared/common/app-component-base';
 
 @Component({
     selector: 'cashflow-operations',
@@ -8,72 +8,135 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 
 export class OperationsComponent extends AppComponentBase {
-    toolbarItems: any;
     @Output() refreshCashflow: EventEmitter<any> = new EventEmitter();
     @Output() onGroupBy: EventEmitter<any> = new EventEmitter();
     @Output() handleFullscreen: EventEmitter<any> = new EventEmitter();
+    @Output() download: EventEmitter<any> = new EventEmitter();
 
     toolbarConfig = [
-        {
-            location: 'before',
-            items: [
-                { name: 'back' }
-            ]
-        },
         {
             location: 'before',
             items: [
                 {
                     name: 'select-box',
                     text: this.l('Group By'),
-                    widget: 'dxDropDownMenu', 
+                    widget: 'dxDropDownMenu',
                     options: {
-                      width: 175,
-                      items: [{
-                          action: this.groupBy.bind(this),
-                          text: 'Years'
-                      }, {
-                          action: this.groupBy.bind(this),
-                          text: 'Quarters'
-                      }, {
-                          action: this.groupBy.bind(this),
-                          text: 'Months'
-                      }, {
-                          action: this.groupBy.bind(this),
-                          text: 'Days'
-                      }]
+                        width: 175,
+                        items: [{
+                            action: this.groupBy.bind(this),
+                            text: 'Years'
+                        }, {
+                            action: this.groupBy.bind(this),
+                            text: 'Quarters'
+                        }, {
+                            action: this.groupBy.bind(this),
+                            text: 'Months'
+                        }, {
+                            action: this.groupBy.bind(this),
+                            text: 'Days'
+                        }]
                     }
                 }
             ]
         }, {
             location: 'before',
             items: [
-                { name: 'edit' },
-                { name: 'rules' },
-                {
-                    name: 'expand',
-                    options: {
-                        text: this.l('Expand All')
-                    }
-                }
+                { name: 'expandRows'},
+                { name: 'expandCols'},
+                { name: 'rules'}
             ]
         },
         {
-            location: 'before',
+            location: 'after',
             items: [
-                { name: 'flag' },
+                {
+                    name: 'flag',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        width: 62,
+                        hint: this.l('Flags'),
+                        items: [{
+                            action: Function(),
+                            text: 'Item one'
+                        }, {
+                            action: Function(),
+                            text: 'Item two'
+                        }]
+                    }
+                },
                 {
                     name: 'pen',
+                    widget: 'dxDropDownMenu',
                     options: {
-                        hint: this.l('Label')
+                        width: 62,
+                        hint: this.l('Tags'),
+                        items: [{
+                            action: Function(),
+                            text: 'Item one'
+                        }, {
+                            action: Function(),
+                            text: 'Item two'
+                        }]
+                    }
+                },
+                {
+                    name: 'more',
+                    widget: 'dxDropDownMenu',
+                    text: this.l('More'),
+                    options: {
+                        width: 66,
+                        hint: this.l('More'),
+                        items: [{
+                            action: Function(),
+                            text: 'Item one'
+                        }, {
+                            action: Function(),
+                            text: 'Item two'
+                        }]
                     }
                 }
             ]
         },
         {
-            location: 'before',
+            location: 'after',
             items: [
-                { name: 'more' }
+                {
+                    name: 'download',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Download'),
+                        items: [{
+                            action: Function(),
+                            text: this.l('Save as PDF'),
+                            icon: 'pdf',
+                        }, {
+                            action: this.exportTo.bind(this),
+                            text: this.l('Export to Excel'),
+                            icon: 'xls',
+                        }, {
+                            action: Function(),
+                            text: this.l('Export to CSV'),
+                            icon: 'sheet'
+                        }, {
+                            action: this.exportTo.bind(this),
+                            text: this.l('Export to Google Sheets'),
+                            icon: 'sheet'
+                        }]
+                    }
+                },
+                {
+                    name: 'print',
+                    options: {
+                        width: 58
+                    }
+                }
+            ]
+        },
+        {
+            location: 'after', items: [
+                { name: 'comments'},
+                { name: 'expandView'}
             ]
         },
         {
@@ -83,13 +146,6 @@ export class OperationsComponent extends AppComponentBase {
                     name: 'refresh',
                     action: this.refresh.bind(this)
                 }
-            ]
-        },
-        {
-            location: 'after',
-            items: [
-                { name: 'download' },
-                { name: 'print' }
             ]
         },
         {
@@ -104,8 +160,12 @@ export class OperationsComponent extends AppComponentBase {
         super(injector);
     }
 
+    exportTo(event) {
+        this.download.emit(event);
+    }
+
     groupBy(event) {
-      this.onGroupBy.emit(event);
+        this.onGroupBy.emit(event);
     }
 
     refresh() {

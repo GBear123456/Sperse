@@ -1,10 +1,12 @@
 <app-headline [config]="headlineConfig" *ngIf="!isFullscreenMode()">
     <synch-progress class="synch-progress" (onComplete)="refreshDataGrid()"></synch-progress>
 </app-headline>
+
 <cashflow-operations 
     (refreshCashflow)="refreshDataGrid($event)" 
     (onGroupBy)="changeGroupBy($event)"
     (handleFullscreen)="toggleFullscreen(getFullscreenElement())"
+    (download)="downloadData($event)"
 ></cashflow-operations>
 
 <div class="cashflow">
@@ -51,7 +53,7 @@
     </dx-scroll-view>
 
     <div *ngIf="statsDetailResult !== undefined" class="cashflow-wrap">
-        <dx-button icon="close" (onClick)="closeCashflow()" class="close-btn"></dx-button>
+        <dx-button icon="close" (onClick)="closeTransactionsDetail()" class="close-btn"></dx-button>
         <dx-data-grid id="cashflowGridContainer"
                       [rowAlternationEnabled]="true"
                       [dataSource]="statsDetailResult">

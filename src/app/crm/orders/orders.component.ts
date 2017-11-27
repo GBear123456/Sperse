@@ -13,7 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterHelpers } from '@shared/filters/filter.helpers';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
@@ -52,69 +52,79 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private readonly dataSourceURI = 'Order';
     private filters: FilterModel[];
 
-    public headlineConfig = { 
-      name: this.l('Orders'), 
-      icon: 'briefcase', 
-      buttons: [
-        {
-          enabled: true, 
-          action: Function(),   
-          lable: this.l('CreateNewOrder')
-        }
-      ]
+    public headlineConfig = {
+        name: this.l('Orders'),
+        icon: 'briefcase',
+        buttons: [
+            {
+                enabled: true,
+                action: Function(),
+                lable: this.l('CreateNewOrder')
+            }
+        ]
     };
 
     toolbarConfig = [
-      {location: 'before', items: [
-        {name: 'back'}
-      ]},
-      {location: 'before', items: [
-        {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
-      ]},
-      {location: 'before', items: [
-        {name: 'assign'}, {name: 'status'}, {name: 'delete'}
-      ]},
-      {location: 'after', items: [
-        {name: 'refresh', action: this.refreshDataGrid.bind(this)},
         {
-          name: 'download', 
-          widget: 'dxDropDownMenu', 
-          options: {
-            hint: this.l('Download'), 
-            items: [{
-              action: Function(),
-              text: this.l('Save as PDF'),
-              icon: 'pdf',
-            }, {
-              action: this.exportToXLS.bind(this),
-              text: this.l('Export to Excel'),
-              icon: 'xls',
-            }, {
-              action: this.exportToCSV.bind(this),
-              text: this.l('Export to CSV'),
-              icon: 'sheet'
-            }, {
-                action: this.exportToGoogleSheet.bind(this),
-                text: this.l('Export to Google Sheets'),
-                icon: 'sheet'
-            }, {type: 'downloadOptions'}]
-          }
+            location: 'before', items: [
+                {name: 'back'}
+            ]
         },
-        {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
-      ]},
-      {location: 'after', items: [
-        {name: 'box'},
-        {name: 'pipeline', action: this.togglePipeline.bind(this, true)},
-        {name: 'grid', action: this.togglePipeline.bind(this, false)}
-      ]}
+        {
+            location: 'before', items: [
+                {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
+            ]
+        },
+        {
+            location: 'before', items: [
+                {name: 'assign'}, {name: 'status'}, {name: 'delete'}
+            ]
+        },
+        {
+            location: 'after', items: [
+                {name: 'refresh', action: this.refreshDataGrid.bind(this)},
+                {
+                    name: 'download',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Download'),
+                        items: [{
+                            action: Function(),
+                            text: this.l('Save as PDF'),
+                            icon: 'pdf',
+                        }, {
+                            action: this.exportToXLS.bind(this),
+                            text: this.l('Export to Excel'),
+                            icon: 'xls',
+                        }, {
+                            action: this.exportToCSV.bind(this),
+                            text: this.l('Export to CSV'),
+                            icon: 'sheet'
+                        }, {
+                            action: this.exportToGoogleSheet.bind(this),
+                            text: this.l('Export to Google Sheets'),
+                            icon: 'sheet'
+                        }, {type: 'downloadOptions'}]
+                    }
+                },
+                {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
+            ]
+        },
+        {
+            location: 'after', items: [
+                {name: 'box'},
+                {name: 'pipeline', action: this.togglePipeline.bind(this, true)},
+                {name: 'grid', action: this.togglePipeline.bind(this, false)}
+            ]
+        }
     ];
 
     constructor(injector: Injector,
-        private _filtersService: FiltersService,
-        private _orderService: OrderServiceProxy,
-        // private _clientService: ClientServiceProxy,
-        private _activatedRoute: ActivatedRoute,
-        private _commonLookupService: CommonLookupServiceProxy) {
+                private _filtersService: FiltersService,
+                private _orderService: OrderServiceProxy,
+                // private _clientService: ClientServiceProxy,
+                private _activatedRoute: ActivatedRoute,
+                private _commonLookupService: CommonLookupServiceProxy) {
         super(injector);
 
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
@@ -165,10 +175,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this._filtersService.setup(this.filters = [
                 new FilterModel({
                     component: FilterCalendarComponent,
-                    operator: { from: 'ge', to: 'le' },
+                    operator: {from: 'ge', to: 'le'},
                     caption: 'creation',
                     field: 'CreationTime',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                    items: {from: new FilterItemModel(), to: new FilterItemModel()}
                 }),
                 new FilterModel({
                     component: FilterCheckBoxesComponent,
@@ -205,7 +215,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             elements: null,
                             filterField: 'paymentTypeId',
                             onElementSelect: (event, filter: FilterModelBase<FilterDropDownModel>) => {
-                                filter.items["paymentType"].value = event.value;
+                                filter.items['paymentType'].value = event.value;
                             }
                         })
                     }
@@ -301,7 +311,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.processODataFilter(this.dataGrid.instance,
                 this.dataSourceURI, this.filters, (filter) => {
                     let filterMethod = this['filterBy' +
-                        this.capitalize(filter.caption)];
+                    this.capitalize(filter.caption)];
                     if (filterMethod)
                         return filterMethod.call(this, filter);
                 }
@@ -328,7 +338,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             if (item && item.value) {
                 let date = moment.utc(item.value, 'YYYY-MM-DDT');
                 if (key.toString() === 'to') {
-                    date.add(1, 'd').add(-1, 's')
+                    date.add(1, 'd').add(-1, 's');
                 }
 
                 data[filter.field][filter.operator[key]] = date.toDate();

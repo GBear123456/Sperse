@@ -1,34 +1,124 @@
 <app-headline [config]="headlineConfig">
-    <synch-progress class="synch-progress" (onComplete)="refreshDataGrid()"></synch-progress>
+    <synch-progress class="synch-progress"></synch-progress>
 </app-headline>
 
-<div>
-    <div class="operations">
-        <div class="toolbar">
-            <app-toolbar [config]="toolbarConfig"></app-toolbar>
-        </div>
-    </div>
-</div>
+<app-toolbar [config]="toolbarConfig"></app-toolbar>
 
-<dx-chart
-    id="chart"
-    [dataSource]="statsData"
-    defaultPane="bottomPane"
-    title="Trend Chart"
->
-    <dxi-series
-        pane="topPane"
-        valueField="inflow"
-        name="Stats chart, $">
-        <dxo-label [visible]="true"></dxo-label>
-    </dxi-series>
-    <dxi-series
-        type="bar"
-        valueField="outflow"
-        name="Stats bars, $">
-        <dxo-label [visible]="true"></dxo-label>
-    </dxi-series>
-    <dxo-common-series-settings argumentField="month"></dxo-common-series-settings>
-    <dxi-pane name="topPane"></dxi-pane>
-    <dxi-pane name="bottomPane"></dxi-pane>
-</dx-chart>
+<dx-scroll-view showScrollbar="onHover">
+    <div class="mainStatsView">
+        <a *ngIf="statsData" (click)="showSourceData()" class="showSourceButton" md-raised-button>{{l('Show source data')}}</a>
+        <md-tab-group>
+            <md-tab label="{{l('Trend Chart')}}">
+                <!-- Top linear chart -->
+                <dx-chart
+                    id="chart"
+                    [dataSource]="statsData"
+                    defaultPane="topPane"
+                    animation="{easing: 'easeOutCubic',duration: 2000}">
+                    <!-- common settings for charts -->
+                    <dxo-common-series-settings argumentField="date"
+                                                [showInLegend]="false"
+                                                [maxLabelCount]="maxLabelCount">
+                        <dxo-label
+                            [visible]="true"
+                            [backgroundColor]="labelPositiveBackgroundColor">
+                            <dxo-format
+                                type="currency largeNumber"
+                                [currency]="currency">
+                            </dxo-format>
+                        </dxo-label>
+                    </dxo-common-series-settings>
+
+                    <dxi-series
+                        [color]="historicalEndingBalanceColor"
+                        valueField="endingBalance">
+                    </dxi-series>
+
+                    <dxi-series
+                        [color]="forecastEndingBalanceColor"
+                        valueField="forecastEndingBalance">
+                    </dxi-series>
+
+                    <!-- Left axis -->
+                    <dxi-value-axis>
+                        <dxo-label>
+                            <dxo-format
+                                type="currency largeNumber"
+                                [currency]="currency">
+                            </dxo-format>
+                        </dxo-label>
+                        <dxo-tick-interval
+                            [days]="1"
+                        ></dxo-tick-interval>
+                    </dxi-value-axis>
+
+                    <!-- Bottom axis -->
+                    <dxo-argument-axis
+                        argumentType="datetime"
+                        visible="true">
+                        <dxo-label>
+                            <dxo-format
+                                [type]="verticalAxisDateFormat">
+                            </dxo-format>
+                        </dxo-label>
+                        <dxo-tick-interval
+                            [days]="1"
+                        ></dxo-tick-interval>
+                    </dxo-argument-axis>
+
+                    <!-- Common settings for axis -->
+                    <dxo-common-axis-settings allowDecimals="false">
+                        <dxo-label alignment="center"
+                                   overlappingBehavior="hide"></dxo-label>
+                        <dxo-strip-style>
+                            <dxo-label horizontal-allignment="center"></dxo-label>
+                        </dxo-strip-style>
+                    </dxo-common-axis-settings>
+
+                </dx-chart>
+
+                <dx-chart
+                    id="bar"
+                    [dataSource]="statsData"
+                    defaultPane="bottomPane"
+                    animation="{easing: 'easeOutCubic',duration: 2000}"
+                    [barWidth]="0.5">
+                    <!-- common settings for charts -->
+                    <dxo-common-series-settings argumentField="date" type="stackedBar" [showInLegend]="false"></dxo-common-series-settings>
+
+                    <!-- Bottom bar chart -->
+                    <dxi-series [color]="historicalIncomeColor" valueField="income" name="Incomes"></dxi-series>
+                    <dxi-series [color]="historicalExpensesColor" valueField="expenses" name="Expenses"></dxi-series>
+                    <dxi-series [color]="forecastIncomeColor" valueField="forecastIncome" name="Incomes"></dxi-series>
+                    <dxi-series [color]="forecastExpensesColor" valueField="forecastExpenses" name="Expenses"></dxi-series>
+
+                    <!-- Bottom axis -->
+                    <dxo-argument-axis
+                        argumentType="datetime"
+                        visible="true">
+                        <dxo-label>
+                            <dxo-format
+                                [type]="verticalAxisDateFormat">
+                            </dxo-format>
+                        </dxo-label>
+                        <dxo-tick-interval
+                            [days]="1"
+                        ></dxo-tick-interval>
+                    </dxo-argument-axis>
+
+                    <!-- Common settings for axis -->
+                    <dxo-common-axis-settings allowDecimals="false">
+                        <dxo-label alignment="center"></dxo-label>
+                        <dxo-strip-style>
+                            <dxo-label horizontal-allignment="center"></dxo-label>
+                        </dxo-strip-style>
+                    </dxo-common-axis-settings>
+
+                    <dxi-pane name="bottomPane"></dxi-pane>
+                </dx-chart>
+            </md-tab>
+            <md-tab label="{{l('Details Chart')}}">
+            </md-tab>
+        </md-tab-group>
+    </div>
+</dx-scroll-view>

@@ -5,7 +5,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { TransactionsServiceProxy, BankAccountDto } from '@shared/service-proxies/service-proxies';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterHelpers } from '@shared/filters/filter.helpers';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
@@ -34,48 +34,52 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     private filters: FilterModel[];
     private rootComponent: any;
 
-    public headlineConfig = { 
-      name: this.l('Transactions'), 
-      icon: 'credit-card', 
-      buttons: []
+    public headlineConfig = {
+        name: this.l('Transactions'),
+        icon: 'credit-card',
+        buttons: []
     };
 
     toolbarConfig = [
-      {location: 'before', items: [
-        {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
-      ]},
-      {location: 'after', items: [
-        {name: 'refresh', action: this.refreshDataGrid.bind(this)},
         {
-          name: 'download', 
-          widget: 'dxDropDownMenu', 
-          options: {
-            hint: this.l('Download'), 
-            items: [{
-              action: Function(),
-              text: this.l('Save as PDF'),
-              icon: 'pdf',
-            }, {
-              action: this.exportToXLS.bind(this),
-              text: this.l('Export to Excel'),
-              icon: 'xls',
-            }, {
-              action: this.exportToCSV.bind(this),
-              text: this.l('Export to CSV'),
-              icon: 'sheet'
-            }, {
-                action: this.exportToGoogleSheet.bind(this),
-                text: this.l('Export to Google Sheets'),
-                icon: 'sheet'
-            }, {type: 'downloadOptions'}]
-          }
+            location: 'before', items: [
+                {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
+            ]
         },
-        {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
-      ]}
+        {
+            location: 'after', items: [
+                {name: 'refresh', action: this.refreshDataGrid.bind(this)},
+                {
+                    name: 'download',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Download'),
+                        items: [{
+                            action: Function(),
+                            text: this.l('Save as PDF'),
+                            icon: 'pdf',
+                        }, {
+                            action: this.exportToXLS.bind(this),
+                            text: this.l('Export to Excel'),
+                            icon: 'xls',
+                        }, {
+                            action: this.exportToCSV.bind(this),
+                            text: this.l('Export to CSV'),
+                            icon: 'sheet'
+                        }, {
+                            action: this.exportToGoogleSheet.bind(this),
+                            text: this.l('Export to Google Sheets'),
+                            icon: 'sheet'
+                        }, {type: 'downloadOptions'}]
+                    }
+                },
+                {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
+            ]
+        }
     ];
 
     constructor(injector: Injector, private _TransactionsServiceProxy: TransactionsServiceProxy,
-        private _filtersService: FiltersService) {
+                private _filtersService: FiltersService) {
         super(injector);
 
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
@@ -109,10 +113,10 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                     this.filters = [
                         new FilterModel({
                             component: FilterCalendarComponent,
-                            operator: { from: 'ge', to: 'le' },
+                            operator: {from: 'ge', to: 'le'},
                             caption: 'Date',
                             field: 'Date',
-                            items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                            items: {from: new FilterItemModel(), to: new FilterItemModel()}
                         }),
                         new FilterModel({
                             component: FilterCheckBoxesComponent,
@@ -131,14 +135,14 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             component: FilterInputsComponent,
                             operator: 'contains',
                             caption: 'Description',
-                            items: { Description: new FilterItemModel() }
+                            items: {Description: new FilterItemModel()}
                         }),
                         new FilterModel({
                             component: FilterInputsComponent,
-                            operator: { from: 'ge', to: 'le' },
+                            operator: {from: 'ge', to: 'le'},
                             caption: 'Amount',
                             field: 'Amount',
-                            items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                            items: {from: new FilterItemModel(), to: new FilterItemModel()}
                         }),
                         new FilterModel({
                             component: FilterCheckBoxesComponent,
@@ -220,7 +224,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
             this.processODataFilter(this.dataGrid.instance,
                 this.dataSourceURI, this.filters, (filter) => {
                     let filterMethod = this['filterBy' +
-                        this.capitalize(filter.caption)];
+                    this.capitalize(filter.caption)];
                     if (filterMethod)
                         return filterMethod.call(this, filter);
                 }
@@ -252,11 +256,10 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
             if (filter.items.element.value) {
                 filter.items.element.value.forEach((id) => {
                     let parts = id.split(':');
-                    filterData.push(parts.length == 2 ?
-                        {
-                            BankId: +parts[0],
-                            BankAccountId: +parts[1]
-                        } : { BankId: +id });
+                    filterData.push(parts.length == 2 ? {
+                        BankId: +parts[0],
+                        BankAccountId: +parts[1]
+                    } : {BankId: +id});
                 });
             }
 
@@ -280,18 +283,23 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     filterByCashflowType(filter) {
         return this.filterByFilterElement(filter);
     }
+
     filterByTransactionCategory(filter) {
         return this.filterByFilterElement(filter);
     }
+
     filterByCurrency(filter) {
         return this.filterByFilterElement(filter);
     }
+
     filterByTransactionType(filter) {
         return this.filterByFilterElement(filter);
     }
+
     filterByBusinessEntity(filter) {
         return this.filterByFilterElement(filter);
     }
+
     filterByFilterElement(filter) {
         let data = {};
         if (filter.items.element && filter.items.element.value) {
@@ -310,7 +318,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
 
     ngAfterViewInit(): void {
-        this.rootComponent = this.getRootComponent()
+        this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }
 

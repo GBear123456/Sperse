@@ -12,14 +12,6 @@ import * as _ from 'underscore';
 export class ToolBarComponent extends AppComponentBase {
   public options = {};
   private supportedButtons = {
-      comments: {
-          hint: this.l('Comments'),
-          iconSrc: this.getImgURI('comments')
-      },
-      fullscreen: {
-          hint: this.l('Fullscreen'),
-          iconSrc: this.getImgURI('fullscreen')
-      },
       filters: {
           text: this.l('Filters'),
           iconSrc: this.getImgURI('funnel-icon')
@@ -88,20 +80,36 @@ export class ToolBarComponent extends AppComponentBase {
           iconSrc: this.getImgURI('edit-pencil-icon')
       },
       rules: {
-          text: this.l('Rules'),
-          iconSrc: this.getImgURI('rules-icon')
+          text: this.l('Preferences'),
+          iconSrc: this.getImgURI('preferences-icon')
       },
       expand: {
           text: this.l('Expand'),
           iconSrc: this.getImgURI('expand-all-icon')
       },
+      expandRows: {
+          text: this.l('Expand rows'),
+          iconSrc: this.getImgURI('expand-rows-icon')
+      },
+      expandCols: {
+          text: this.l('Expand cols'),
+          iconSrc: this.getImgURI('expand-cols-icon')
+      },
       flag: {
-          hint: this.l('Flag'),
+          hint: this.l('Flags'),
           iconSrc: this.getImgURI('flag-icon')
       },
       print: {
           hint: this.l('Print'),
           iconSrc: this.getImgURI('print-icon')
+      },
+      comments: {
+          hint: this.l('Show/Hide Comments'),
+          iconSrc: this.getImgURI('comments-icon')
+      },
+      fullscreen: {
+          hint: this.l('Fullpage'),
+          iconSrc: this.getImgURI('expand-fullscreen-icon')
       }
   };
 
@@ -126,7 +134,7 @@ export class ToolBarComponent extends AppComponentBase {
     return 'assets/common/icons/' + name + '.svg';
   }
 
-  getDropDownItemTemplate(link, width) { 
+  getDropDownItemTemplate(link, width) {
     return {
       item: '<div class="toolbar-dropdown-item" ' + (width ? 'style="width:' + width + 'px;"': '') + '>' +
           (link.icon ? '<img src="' + this.getImgURI(link.icon) + '">': '') + link.text + '</div>',
@@ -142,7 +150,7 @@ export class ToolBarComponent extends AppComponentBase {
       return option ? option.getAttribute('value'): undefined;
   }
 
-  getElementAttr(item) {  
+  getElementAttr(item) {
       if(item.name == 'select-box')
           return {
               'select-caption': item.text,
@@ -156,7 +164,7 @@ export class ToolBarComponent extends AppComponentBase {
       let count = group.items.length;
       group.items.forEach((item, index) => {
         let isLast = count == index + 1;
-        if (item.widget == 'dxDropDownMenu') {          
+        if (item.widget == 'dxDropDownMenu') {
           item.options['accessKey'] = item.name;
           item.options['items'].forEach((link) => {
             link.html = this.getDropDownItemTemplate(
@@ -164,7 +172,7 @@ export class ToolBarComponent extends AppComponentBase {
             link.onClick = (event) => {
               if(item.name == 'select-box')
                   $('.dx-dropdownmenu-button[select-caption="' + item.text + '"]')
-                      .attr('select-value', event.itemData.text);                   
+                      .attr('select-value', event.itemData.text);
               link.action && link.action.call(this, this.getOptions() || event);
             };
           })
