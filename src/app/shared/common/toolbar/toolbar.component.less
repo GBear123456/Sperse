@@ -1,22 +1,22 @@
 /deep/ .dx-popup-wrapper {
-  span.toolbar-dropdown-item {
-    width: 250px;
-    padding: 0px 10px 0px 10px;
-    img {
-      vertical-align: text-bottom;
-      margin-right: 10px;
+    span.toolbar-dropdown-item {
+        width: 250px;
+        padding: 0 10px;
+        img {
+            vertical-align: text-bottom;
+            margin-right: 10px;
+        }
     }
-  }
 }
 
 /deep/ .dx-dropdownmenu-popup {
     .dx-item {
-      &.dx-state-hover,
-      &.dx-state-active,
-      &.dx-state-focused {
-        background-color: #FFF!important;
-        color: #424c56!important;
-      }
+        &.dx-state-hover,
+        &.dx-state-active,
+        &.dx-state-focused {
+            background-color: #FFF !important;
+            color: #424c56 !important;
+        }
     }
     .dx-list-item-content {
         padding: 10px 23px;
@@ -35,247 +35,308 @@
     }
     .toolbar-download-options {
         width: 270px;
-        padding: 15px 10px 0px 10px;
+        padding: 15px 10px 0 10px;
         cursor: default;
         border-top: 1px solid #ddd;
         div {
-          font-size: 13px;
-          font-weight: 300;
-          line-height: 2.92;
-          letter-spacing: 0.3px;
-          color: #677380;
-          input {
-            margin: 0px 10px 0px 0px;
-            cursor: pointer;
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            outline: none;
-            border: solid 1px #e5e9ec;
-          }
-          [type="radio"]:checked + label,
-          [type="radio"]:not(:checked) + label
-          {
-              position: relative;
-              cursor: pointer;
-              line-height: 27px;
-              display: inline-block;
-              vertical-align: top;
-          }
-          [type="radio"]:checked + label:after,
-          [type="radio"]:not(:checked) + label:after {
-              content: '';
-              width: 6px;
-              height: 6px;
-              background: #00aeef;
-              position: absolute;
-              top: 11px;
-              left: -22px;
-              border-radius: 100%;
-              -webkit-transition: all 0.2s ease;
-              transition: all 0.2s ease;
-          }
-          [type="radio"]:not(:checked) + label:after {
-              opacity: 0;
-              -webkit-transform: scale(0);
-              transform: scale(0);
-          }
-          [type="radio"]:checked + label:after {
-              opacity: 1;
-              -webkit-transform: scale(1);
-              transform: scale(1);
-          }
+            font-size: 13px;
+            font-weight: 300;
+            line-height: 2.92;
+            letter-spacing: 0.3px;
+            color: #677380;
+            input {
+                margin: 0 10px 0 0;
+                cursor: pointer;
+                -webkit-appearance: none;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                outline: none;
+                border: solid 1px #e5e9ec;
+            }
+            [type="radio"]:checked + label,
+            [type="radio"]:not(:checked) + label {
+                position: relative;
+                cursor: pointer;
+                line-height: 27px;
+                display: inline-block;
+                vertical-align: top;
+            }
+            [type="radio"]:checked + label:after,
+            [type="radio"]:not(:checked) + label:after {
+                content: '';
+                width: 6px;
+                height: 6px;
+                background: #00aeef;
+                position: absolute;
+                top: 11px;
+                left: -22px;
+                border-radius: 100%;
+                -webkit-transition: all 0.2s ease;
+                transition: all 0.2s ease;
+            }
+            [type="radio"]:not(:checked) + label:after {
+                opacity: 0;
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+            [type="radio"]:checked + label:after {
+                opacity: 1;
+                -webkit-transform: scale(1);
+                transform: scale(1);
+            }
         }
     }
 }
 
 :host {
-  /deep/ .dx-toolbar {
-    padding: 12px 0px 13px 0px;
-    margin: 0px;
-
-    [accesskey="select-box"] {
-        position: relative;
-        &:before, &:after {
-            font-family: Montserrat;
-            position: absolute;
-            letter-spacing: 0.3px;
+    /deep/ .dx-toolbar {
+        padding: 12px 0 13px 0;
+        margin: 0;
+        
+        [accesskey="select-box"] {
+            position: relative;
+            &:before, &:after {
+                font-family: Montserrat;
+                position: absolute;
+                letter-spacing: 0.3px;
+            }
+            &:before {
+                content: attr(select-caption) ":";
+                left: 16px;
+                top: 6px;
+                font-size: 13px;
+                font-weight: 300;
+                line-height: 1.85;
+                color: #677380;
+            }
+            &:after {
+                content: attr(select-value);
+                top: 7px;
+                left: 85px;
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 1.71;
+                color: #212c36;
+            }
+            .dx-button-content {
+                &:after {
+                    content: '';
+                    display: block;
+                    background: url('../../../../assets/common/icons/down-arrow-icon.svg');
+                    position: absolute;
+                    width: 8px;
+                    height: 4px;
+                    right: 12px;
+                    top: 48%;
+                }
+                i {
+                    display: none;
+                }
+            }
         }
-        &:before {
-            content: attr(select-caption) ":";
-            left: 16px;
-            top: 6px;
+        
+        .dx-dropdownmenu.dx-dropdownmenu-button {
+            &[accesskey="flag"] {
+                .dx-button-content {
+                    background: url('../../../../assets/common/icons/flag-icon.svg') 17px center no-repeat;
+                    &::after {
+                        right: 12px;
+                    }
+                }
+            }
+            &[accesskey="pen"] {
+                .dx-button-content {
+                    background: url('../../../../assets/common/icons/pen.svg') 14px center no-repeat;
+                    &::after {
+                        right: 12px;
+                    }
+                }
+            }
+            &[accesskey="more"] {
+                .dx-button-content {
+                    text-align: left;
+                    padding: 6px 11px;
+                    &::before {
+                        content: 'More';
+                        font-weight: 400;
+                        font-size: 13px;
+                        line-height: 1.85;
+                        letter-spacing: 0.3px;
+                        color: #677380;
+                        display: inline-block;
+                    }
+                    &::after {
+                        right: 8px;
+                    }
+                }
+            }
+            &[accesskey="download"] {
+                .dx-button-content {
+                    &::after {
+                        content: none;
+                    }
+                    background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
+                }
+            }
+            
+            .dx-button-content {
+                &::after {
+                    content: '';
+                    display: block;
+                    background: url('../../../../assets/common/icons/down-arrow-icon.svg');
+                    position: absolute;
+                    width: 8px;
+                    height: 4px;
+                    right: 12px;
+                    top: 48%;
+                }
+                i {
+                    display: none;
+                }
+            }
+            
+        }
+        
+        [accesskey="download"] {
+            .dx-button-content {
+                background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
+                i {
+                    display: none;
+                }
+            }
+        }
+        
+        .dx-button-text {
+            color: #677380;
             font-size: 13px;
             font-weight: 300;
             line-height: 1.85;
-            color: #677380;
+            letter-spacing: 0.3px;
         }
-        &:after {
-            content: attr(select-value);
-            top: 7px;
-            left: 85px;
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 1.71;
-            color: #212c36;
+        
+        .dx-toolbar-before,
+        .dx-toolbar-center,
+        .dx-toolbar-after {
+            margin: 0 15px 0 15px;
         }
-        .dx-button-content {
-            &:after {
-                content: '';
-                display: block;
-                background: url('../../../../assets/common/icons/down-arrow-icon.svg');
-                position: absolute;
-                width: 8px;
-                height: 4px;
-                right: 12px;
-                top: 48%;
+        
+        .dx-toolbar-button {
+            padding: 0;
+        }
+        
+        .dx-button {
+            position: relative;
+            width: stretch;
+            background-color: transparent;
+            
+            &[group-item-position="single"] {
+                margin-left: 0;
+                margin-right: 12px;
             }
-            i {
-                display: none;
+            &[group-item-position="first"] {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+                &[group-item-count="2"] {
+                    right: -1px;
+                }
+                &[group-item-count="3"] {
+                    right: -2px;
+                }
+                &[group-item-count="4"] {
+                    right: -3px;
+                }
+                &[group-item-count="5"] {
+                    right: -4px;
+                }
+                &[group-item-count="6"] {
+                    right: -5px;
+                }
+            }
+            &[group-item-position="inside"] {
+                border-radius: 0;
+                border-left: 1px solid transparent;
+                &:hover, &.dx-state-focused {
+                    border-left: 1px solid #bebebe;
+                }
+                &[group-item-index="2"] {
+                    right: -1px;
+                }
+                &[group-item-index="3"] {
+                    right: -2px;
+                }
+                &[group-item-index="4"] {
+                    right: -3px;
+                }
+            }
+            &[group-item-position="last"] {
+                margin-right: 12px;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+                border-left: 1px solid transparent;
+                &:hover, &.dx-state-focused {
+                    border-left: 1px solid #bebebe;
+                }
+            }
+            
+            &[aria-label="More"],
+            &[aria-label="pen"],
+            &[aria-label="folder"] {
+                &:not(.dx-button-has-text) {
+                    min-width: 60px;
+                }
+                &:after {
+                    content: '';
+                    display: block;
+                    background: url('../../../../assets/common/icons/down-arrow-icon.svg');
+                    position: absolute;
+                    width: 8px;
+                    height: 4px;
+                    right: 12px;
+                    top: 48%;
+                }
+                .dx-icon {
+                    right: 10px !important;
+                }
+                .dx-button-content {
+                    padding-right: 28px;
+                }
+            }
+            
+            &:not(.dx-button-has-text) {
+                .dx-button-content {
+                    position: relative;
+                }
+                i.dx-icon {
+                    position: absolute;
+                    margin: auto;
+                    left: 0px;
+                    right: 0px;
+                    top: 0px;
+                    bottom: 0px;
+                }
+                img.dx-icon {
+                    position: absolute;
+                    margin: auto;
+                    bottom: 0;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                }
+            }
+            
+            .dx-button-content {
+                height: 37px;
+                min-width: 50px;
+                padding: 6px 15px;
+            }
+            .dx-icon {
+                color: #959a9f;
+            }
+            img.dx-icon {
+                width: auto !important;
+                height: auto !important;
             }
         }
     }
-
-    [accesskey="download"] {
-      .dx-button-content {
-        background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
-        i {
-          display: none;
-        }
-      }
-    }
-
-    .dx-button-text {
-       color: #677380;
-       font-size: 13px;
-       font-weight: 300;
-       line-height: 1.85;
-       letter-spacing: 0.3px;
-    }
-
-    .dx-toolbar-before,
-    .dx-toolbar-center,
-    .dx-toolbar-after {
-        margin: 0px 15px 0px 15px;
-    }
-    
-    .dx-toolbar-button {
-        padding: 0;
-    }
-
-    .dx-button {
-      position: relative;
-      width: stretch;
-      background-color: transparent;
-
-      &[group-item-position="single"] {
-          margin-left: 0px;
-          margin-right: 20px;
-      }
-      &[group-item-position="first"] {
-          border-top-right-radius: 0;
-          border-bottom-right-radius: 0;
-          &[group-item-count="2"] {
-            right: -1px;
-          }
-          &[group-item-count="3"] {
-            right: -2px;
-          }
-          &[group-item-count="4"] {
-            right: -3px;
-          }
-          &[group-item-count="5"] {
-            right: -4px;
-          }
-          &[group-item-count="6"] {
-            right: -5px;
-          }
-      }
-      &[group-item-position="inside"] {
-          border-radius: 0;
-          border-left: 1px solid transparent;
-          &:hover, &.dx-state-focused {
-            border-left: 1px solid #bebebe;
-          }
-          &[group-item-index="2"] {
-            right: -1px;
-          }
-          &[group-item-index="3"] {
-            right: -2px;
-          }
-          &[group-item-index="4"] {
-            right: -3px;
-          }
-      }
-      &[group-item-position="last"] {
-          margin-right: 20px;
-          border-top-left-radius: 0;
-          border-bottom-left-radius: 0;
-          border-left: 1px solid transparent;
-          &:hover, &.dx-state-focused {
-            border-left: 1px solid #bebebe;
-          }
-      }
-
-      &[aria-label="More"],
-      &[aria-label="pen"],
-      &[aria-label="folder"] {
-          &:not(.dx-button-has-text) {
-            min-width: 60px;
-          }
-          &:after {
-              content: '';
-              display: block;
-              background: url('../../../../assets/common/icons/down-arrow-icon.svg');
-              position: absolute;
-              width: 8px;
-              height: 4px;
-              right: 12px;
-              top: 48%;
-          }
-          .dx-icon {
-            right: 10px!important;
-          }
-          .dx-button-content {
-              padding-right: 28px;
-          }
-      }
-      
-      &:not(.dx-button-has-text) {
-        .dx-button-content {
-          position: relative;
-        }
-        i.dx-icon {
-          position: absolute;
-          margin: auto;
-          left: 0px;
-          right: 0px;
-          top: 0px;
-          bottom: 0px;
-        }
-        img.dx-icon {
-          position: absolute;
-          margin: auto;
-          bottom: 0;
-          top: 0;
-          left: 0;
-          right: 0;
-        }
-      }
-
-      .dx-button-content {
-          height: 37px;
-          min-width: 50px;
-          padding: 6px 15px;
-      }
-      .dx-icon {
-        color: #959a9f;
-      }
-      img.dx-icon {
-        width: auto!important;
-        height: auto!important;
-      }
-    }
-  }
 }
