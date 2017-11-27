@@ -13,6 +13,7 @@ import { StatsComponent } from './stats/stats.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 
 import { DxChartModule } from 'devextreme-angular';
+import { MdTabsModule } from '@angular/material';
 
 import {
     DxButtonModule,
@@ -52,7 +53,8 @@ import {
         DxValidatorModule,
         DxScrollViewModule,
 
-        DxChartModule
+        DxChartModule,
+        MdTabsModule
     ],
     declarations: [
         BankAccountsComponent,

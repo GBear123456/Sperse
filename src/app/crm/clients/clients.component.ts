@@ -45,25 +45,25 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     private filters: FilterModel[];
     private rootComponent: any;
 
-    public headlineConfig = { 
-      name: this.l('Customers'), 
-      icon: 'people', 
-      buttons: [
-        {
-          enabled: true, 
-          action: this.createClient.bind(this),   
-          lable: this.l('CreateNewCustomer')
-        }
-      ]
+    public headlineConfig = {
+        name: this.l('Customers'),
+        icon: 'people',
+        buttons: [
+            {
+                enabled: true,
+                action: this.createClient.bind(this),
+                lable: this.l('CreateNewCustomer')
+            }
+        ]
     };
 
     public toolbarConfig;
 
     constructor(injector: Injector,
-        private _router: Router,
-        private _filtersService: FiltersService,
-        private _activatedRoute: ActivatedRoute,
-        private _commonLookupService: CommonLookupServiceProxy) {
+                private _router: Router,
+                private _filtersService: FiltersService,
+                private _activatedRoute: ActivatedRoute,
+                private _commonLookupService: CommonLookupServiceProxy) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this._filtersService.localizationSourceName = this.localizationSourceName;
@@ -97,7 +97,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     createClient() {
-      this.createOrEditClientModal.show();
+        this.createOrEditClientModal.show();
     }
 
     showClientDetails(event) {
@@ -107,46 +107,56 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
     ngOnInit(): void {
         this.toolbarConfig = [
-          {location: 'before', items: [
-            {name: 'back'}
-          ]},
-          {location: 'before', items: [
-            {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
-          ]},
-          {location: 'before', items: [
-            {name: 'assign'}, {name: 'status'}, {name: 'delete'}
-          ]},
-          {location: 'after', items: [
-            {name: 'refresh', action: this.refreshDataGrid.bind(this)},
             {
-              name: 'download', 
-              widget: 'dxDropDownMenu', 
-              options: {
-                hint: this.l('Download'), 
-                items: [{
-                  action: Function(),
-                  text: this.l('Save as PDF'),
-                  icon: 'pdf',
-                }, {
-                  action: this.exportToXLS.bind(this),
-                  text: this.l('Export to Excel'),
-                  icon: 'xls',
-                }, {
-                  action: this.exportToCSV.bind(this),
-                  text: this.l('Export to CSV'),
-                  icon: 'sheet'
-                }, {
-                    action: this.exportToGoogleSheet.bind(this),
-                    text: this.l('Export to Google Sheets'),
-                    icon: 'sheet'
-                }, {type: 'downloadOptions'}]
-              }
+                location: 'before', items: [
+                {name: 'back'}
+            ]
             },
-            {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
-          ]},
-          {location: 'after', items: [
-            {name: 'box'}, {name: 'pipeline'}, {name: 'grid'}
-          ]}
+            {
+                location: 'before', items: [
+                {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
+            ]
+            },
+            {
+                location: 'before', items: [
+                {name: 'assign'}, {name: 'status'}, {name: 'delete'}
+            ]
+            },
+            {
+                location: 'after', items: [
+                {name: 'refresh', action: this.refreshDataGrid.bind(this)},
+                {
+                    name: 'download',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Download'),
+                        items: [{
+                            action: Function(),
+                            text: this.l('Save as PDF'),
+                            icon: 'pdf',
+                        }, {
+                            action: this.exportToXLS.bind(this),
+                            text: this.l('Export to Excel'),
+                            icon: 'xls',
+                        }, {
+                            action: this.exportToCSV.bind(this),
+                            text: this.l('Export to CSV'),
+                            icon: 'sheet'
+                        }, {
+                            action: this.exportToGoogleSheet.bind(this),
+                            text: this.l('Export to Google Sheets'),
+                            icon: 'sheet'
+                        }, {type: 'downloadOptions'}]
+                    }
+                },
+                {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
+            ]
+            },
+            {
+                location: 'after', items: [
+                {name: 'box'}, {name: 'pipeline'}, {name: 'grid'}
+            ]
+            }
         ];
 
         this._filtersService.setup(
@@ -162,32 +172,32 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'name',
-                    items: { name: new FilterItemModel() }
+                    items: {name: new FilterItemModel()}
                 }),
                 new FilterModel({
                     component: FilterCBoxesComponent,
                     caption: 'status',
                     field: 'StatusId',
-                    items: { active: new FilterItemModel(), inactive: new FilterItemModel() }
+                    items: {active: new FilterItemModel(), inactive: new FilterItemModel()}
                 }),
                 new FilterModel({
                     component: FilterCalendarComponent,
-                    operator: { from: 'ge', to: 'le' },
+                    operator: {from: 'ge', to: 'le'},
                     caption: 'creation',
                     field: 'CreationTime',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                    items: {from: new FilterItemModel(), to: new FilterItemModel()}
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'email',
-                    items: { email: new FilterItemModel() }
+                    items: {email: new FilterItemModel()}
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'phone',
-                    items: { phone: new FilterItemModel() }
+                    items: {phone: new FilterItemModel()}
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
@@ -214,7 +224,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             this.processODataFilter(this.dataGrid.instance,
                 this.dataSourceURI, this.filters, (filter) => {
                     let filterMethod = this['filterBy' +
-                        this.capitalize(filter.caption)];
+                    this.capitalize(filter.caption)];
                     if (filterMethod)
                         return filterMethod.call(this, filter);
                 }
@@ -227,11 +237,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         if (filter.items.countryStates && filter.items.countryStates.value) {
             filter.items.countryStates.value.forEach((val) => {
                 let parts = val.split(':');
-                filterData.push(parts.length == 2 ?
-                    {
-                        CountryId: parts[0],
-                        StateId: parts[1]
-                    } : { CountryId: val });
+                filterData.push(parts.length == 2 ? {
+                    CountryId: parts[0],
+                    StateId: parts[1]
+                } : {CountryId: val});
             });
         }
 
@@ -252,7 +261,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             if (item && item.value) {
                 let date = moment.utc(item.value, 'YYYY-MM-DDT');
                 if (key.toString() === 'to') {
-                    date.add(1, 'd').add(-1, 's')
+                    date.add(1, 'd').add(-1, 's');
                 }
 
                 data[filter.field][filter.operator[key]] = date.toDate();
@@ -274,7 +283,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     ngAfterViewInit(): void {
-        this.rootComponent = this.getRootComponent()
+        this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }
 

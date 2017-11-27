@@ -10,6 +10,8 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 
+import { MdButtonModule } from '@angular/material';
+
 import {
     StatsFilter,
     BankAccountDto,
@@ -26,6 +28,15 @@ import {
 export class StatsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     statsData: any;
     toolbarConfig = [
+        {
+            location: 'before',
+            items: [
+                {
+                    name: 'filters',
+                    action: this._filtersService.toggle.bind(this._filtersService)
+                }
+            ]
+        },
         {
             location: 'before',
             items: [
@@ -69,6 +80,15 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     interval = 'date';
     verticalAxisDateFormat = 'day';
     currency = 'USD';
+    labelPositiveBackgroundColor = '#626b73';
+    historicalEndingBalanceColor = '#01b0f0';
+    forecastEndingBalanceColor = '#f9bb4d';
+    historicalIncomeColor = '#01b0f0';
+    historicalExpensesColor = '#e72f6a';
+    forecastIncomeColor = '#f9bb4d';
+    forecastExpensesColor = '#f15a25';
+    maxLabelCount = 0;
+    labelWidth = 45;
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
@@ -79,7 +99,6 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         private _bankAccountService: BankAccountsServiceProxy
     ) {
         super(injector);
-        this._filtersService.enabled = true;
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
@@ -95,20 +114,6 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                             component: FilterCalendarComponent,
                             caption: 'Date',
                             items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                        }),
-                        new FilterModel({
-                            field: 'accountIds',
-                            component: FilterCheckBoxesComponent,
-                            caption: 'Account',
-                            items: {
-                                element: new FilterCheckBoxesModel(
-                                    {
-                                        dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
-                                        nameField: 'name',
-                                        parentExpr: 'parentId',
-                                        keyExpr: 'id'
-                                    })
-                            }
                         })
                     ]
                 );
@@ -126,34 +131,18 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
             ]
         };
 
-        this.statsData = this._bankAccountService.getBankAccountDailyStats(undefined, undefined, [])
+        this.statsData = this._bankAccountService.getBankAccountDailyStats(undefined, undefined, [1])
             .subscribe(result => {
-                let allDates = result.map(statsItem => statsItem.date.date());
-                let middleDate = allDates[Math.round((allDates.length - 1) / 2)];
-                this.statsData = result.map(statsItem => {
-                    /** get the date and convert it to the day, month, quarter or year */
-                    let newStatsItem: any = {
-                        isForecast: null,
-                        forecastIncome: null,
-                        forecastExpenses: null,
-                        forecastEndingBalance: null
-                    };
-                    /** @todo remove after getting the data from the server */
-                    newStatsItem.isForecast = statsItem.date.date() > middleDate;
-                    if (newStatsItem.isForecast) {
-                        newStatsItem.forecastIncome = statsItem.income;
-                        newStatsItem.forecastExpenses = statsItem.expenses;
-                        newStatsItem.forecastEndingBalance = statsItem.endingBalance;
-                        statsItem.income = null;
-                        statsItem.expenses = null;
-                    } else {
-                        newStatsItem.forecastEndingBalance = statsItem.endingBalance + Math.floor(Math.random() * 21) - 10;
-                    }
-                    return Object.assign(newStatsItem, statsItem);
-                });
-
-                console.log(this.statsData);
-            });
+                if (result) {
+                    this.statsData = result;
+                    this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
+                    console.log(this.statsData);
+                } else {
+                    console.log('No daily stats');
+                }
+            },
+            error => console.log('Error: ' + error)
+            );
 
         this._filtersService.apply(() => {
             for (let filter of this.filters) {
@@ -178,8 +167,13 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         this.rootComponent.overflowHidden();
     }
 
-    customizeVerticalAxisText(o) {
-        console.log(o);
-        return 'asdf';
+    /** Calculates the max amount of the labels for displaying to not clutter the screen */
+    calcMaxLabelCount(labelWidth) {
+        let screnWidth = window.innerWidth;
+        return Math.floor(screnWidth / labelWidth);
+    }
+
+    showSourceData() {
+        console.log('show source data');
     }
 }

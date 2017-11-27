@@ -9,21 +9,21 @@ import { FileUploadModule } from '@node_modules/ng2-file-upload';
 import { CrmRoutingModule } from './crm-routing.module';
 import { FiltersModule } from '@shared/filters/filters.module';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
-import { ClientDetailsModule } from './clients/details/client-details.module';	
+import { ClientDetailsModule } from './clients/details/client-details.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 
 import { ClientsComponent } from './clients/clients.component';
 import { CreateOrEditClientModalComponent } from './clients/create-or-edit-client-modal.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
-import {EditionsComponent} from './editions/editions.component';
-import {CreateOrEditEditionModalComponent} from './editions/create-or-edit-edition-modal.component';
-import {TenantsComponent} from './tenants/tenants.component';
-import {CreateTenantModalComponent} from './tenants/create-tenant-modal.component';
-import {EditTenantModalComponent} from './tenants/edit-tenant-modal.component';
-import {TenantFeaturesModalComponent} from './tenants/tenant-features-modal.component';
+import { EditionsComponent } from './editions/editions.component';
+import { CreateOrEditEditionModalComponent } from './editions/create-or-edit-edition-modal.component';
+import { TenantsComponent } from './tenants/tenants.component';
+import { CreateTenantModalComponent } from './tenants/create-tenant-modal.component';
+import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component';
+import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
 
-import {EditionComboComponent} from './shared/edition-combo.component';
+import { EditionComboComponent } from './shared/edition-combo.component';
 import { FeatureTreeComponent } from './shared/feature-tree.component';
 
 import {
