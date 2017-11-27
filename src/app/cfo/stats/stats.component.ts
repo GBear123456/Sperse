@@ -114,6 +114,20 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                             component: FilterCalendarComponent,
                             caption: 'Date',
                             items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                        }),
+                        new FilterModel({
+                            field: 'accountIds',
+                            component: FilterCheckBoxesComponent,
+                            caption: 'Account',
+                            items: {
+                                element: new FilterCheckBoxesModel(
+                                    {
+                                        dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
+                                        nameField: 'name',
+                                        parentExpr: 'parentId',
+                                        keyExpr: 'id'
+                                    })
+                            }
                         })
                     ]
                 );
@@ -166,7 +180,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
 
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(false);
+        this.rootComponent.overflowHidden(true);
     }
 
     ngOnDestroy() {
