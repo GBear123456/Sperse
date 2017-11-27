@@ -12,6 +12,14 @@ import * as _ from 'underscore';
 export class ToolBarComponent extends AppComponentBase {
   public options = {};
   private supportedButtons = {
+      comments: {
+          hint: this.l('Comments'),
+          iconSrc: this.getImgURI('comments')
+      },
+      fullscreen: {
+          hint: this.l('Fullscreen'),
+          iconSrc: this.getImgURI('fullscreen')
+      },
       filters: {
           text: this.l('Filters'),
           iconSrc: this.getImgURI('funnel-icon')

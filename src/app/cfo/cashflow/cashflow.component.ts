@@ -323,6 +323,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         };
     }
 
+    getFullscreenElement() {
+      return document.body; //!!VP To avoid dropdown elements issue in fullscreen mode
+    }
+
     filterByBusinessEntity(filter: FilterModel, requestFilter: StatsFilter) {
         let data = {};
         if (filter.items.element && filter.items.element.value) {

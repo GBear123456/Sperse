@@ -36,8 +36,11 @@
 @dataCellColorForZeroValues: rgba(104, 111, 118, 0.52);
 
 :host {
-    position: relative;
     top: 75px;
+    position: relative;
+    &.fullscreen {
+        top:-75px!important;
+    }
 
     .filter-sort-options {
         padding: 20px 15px 0px 20px;
@@ -566,6 +569,7 @@
     }
 
     .cashflow {
+        background-color: #FFF;
         position: relative;
         height: 100%;
     }

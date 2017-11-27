@@ -17,7 +17,8 @@ import * as moment from 'moment';
     styleUrls: ['./side-bar.component.less'],
     selector: 'side-bar',
     host: {
-        '(document:click)': 'hideFilterDialog($event)'
+        '(document:click)': 'hideFilterDialog($event)',
+        '(document:webkitfullscreenchange)': 'fullscreenChanged($event)'
     }
 })
 export class SideBarComponent extends AppComponentBase {
@@ -92,5 +93,9 @@ export class SideBarComponent extends AppComponentBase {
             )
                 this.activeFilter = undefined;
         }
+    }
+
+    fullscreenChanged(event) {
+        this.cssClass = this.cssClass ? '': 'fullscreen';
     }
 }

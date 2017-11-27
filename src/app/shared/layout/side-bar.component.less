@@ -1,6 +1,17 @@
 :host {
     top: 74px;
     position: absolute;
+    &.fullscreen {
+        top: -74px;
+        .sidebar-filters, 
+        .sidebar-filter-links {
+            top: 0px;
+            height: 100vh;
+            .close-details {
+                display: none;
+            }
+        }
+    }
     /deep/ * {
         color: #202b35;
         font-size: 16px;

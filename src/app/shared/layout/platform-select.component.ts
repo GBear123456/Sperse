@@ -10,8 +10,6 @@ import { AppConsts } from '@shared/AppConsts';
     selector: 'platform-select'
 })
 export class PlatformSelectComponent extends AppComponentBase {
-    @HostBinding('class') private cssClass = '';
-
     hoverModule = '';
     module = '';
     modules = [];

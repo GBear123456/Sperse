@@ -11,6 +11,7 @@ export class OperationsComponent extends AppComponentBase {
     toolbarItems: any;
     @Output() refreshCashflow: EventEmitter<any> = new EventEmitter();
     @Output() onGroupBy: EventEmitter<any> = new EventEmitter();
+    @Output() handleFullscreen: EventEmitter<any> = new EventEmitter();
 
     toolbarConfig = [
         {
@@ -93,9 +94,8 @@ export class OperationsComponent extends AppComponentBase {
         },
         {
             location: 'after', items: [
-                {name: 'box'},
-                {name: 'pipeline'},
-                {name: 'grid'}
+                {name: 'comments'},
+                {name: 'fullscreen', action: this.fullscreen.bind(this)}
             ]
         }
     ];
@@ -110,5 +110,9 @@ export class OperationsComponent extends AppComponentBase {
 
     refresh() {
         this.refreshCashflow.emit(null);
+    }
+
+    fullscreen() {
+        this.handleFullscreen.emit();
     }
 }

@@ -1,4 +1,4 @@
-﻿import { Injector, Inject, Input, ApplicationRef } from '@angular/core';
+﻿import { Injector, Inject, Input, ApplicationRef, ElementRef, HostBinding } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -14,6 +14,8 @@ import buildQuery from 'odata-query';
 import * as _ from 'underscore';
 
 export abstract class AppComponentBase {
+  	@HostBinding('class') public cssClass = '';
+
     dataGrid: any;
     dataSource: any;
     localization: LocalizationService;
@@ -25,6 +27,7 @@ export abstract class AppComponentBase {
     multiTenancy: AbpMultiTenancyService;
     appSession: AppSessionService;
 
+    private _elementRef: ElementRef;
     private _applicationRef: ApplicationRef;
     private _exportService: ExportService;
 
@@ -44,6 +47,12 @@ export abstract class AppComponentBase {
 
     getRootComponent() {
         return this._injector.get(this._applicationRef.componentTypes[0]);
+    }
+
+    getElementRef() {
+        if (!this._elementRef)
+            this._elementRef = this._injector.get(ElementRef);
+        return this._elementRef;
     }
 
     l(key: string, ...args: any[]): string {
@@ -120,7 +129,39 @@ export abstract class AppComponentBase {
     }
 
     exportToGoogleSheet(option) {
-        this._exportService.exportToGoogleSheets(this.dataGrid, option != 'selected');
+        this._exportService.exportToGoogleSheets(
+            this.dataGrid, option == 'all');
+    }
+
+    openFullscreen(element?: any) {    
+        element = element || this.getElementRef().nativeElement;
+        let method = element.requestFullScreen || element.webkitRequestFullScreen 
+            || element.mozRequestFullScreen || element.msRequestFullScreen;
+        if (method) {
+            method.call(element);
+            this.cssClass = 'fullscreen';
+        }
+    }
+
+    exitFullscreen() {
+        let method = (document.exitFullscreen || document.webkitExitFullscreen 
+            || document['mozCancelFullScreen'] || document['msExitFullscreen']);
+        if (method) {
+            method.call(document);
+            this.cssClass = '';
+        }
+    }
+
+    isFullscreenMode() {
+        return document['fullScreen'] || document['mozFullScreen'] 
+            || document.webkitIsFullScreen;
+    }
+
+    toggleFullscreen(element?: any) {
+        if (this.isFullscreenMode())
+            this.exitFullscreen();
+        else
+            this.openFullscreen(element);
     }
 
     getPhoto(photo, gender): string {
