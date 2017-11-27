@@ -18,7 +18,7 @@ import * as Moment from 'moment';
 import { extendMoment } from 'moment-range';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterHelpers } from '@shared/filters/filter.helpers';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';

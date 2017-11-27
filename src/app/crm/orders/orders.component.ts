@@ -13,7 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterHelpers } from '@shared/filters/filter.helpers';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
