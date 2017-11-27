@@ -620,6 +620,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     refreshDataGrid() {
         this.collapsedStartingAndEndingBalance = false;
+        this.closeTransactionsDetail();
         this.loadGridDataSource();
     }
 
@@ -1336,7 +1337,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         return {startDate: startDate, endDate : endDate};
     }
 
-    closeCashflow() {
+    closeTransactionsDetail() {
         this.statsDetailResult = undefined;
     }
 

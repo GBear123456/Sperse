@@ -79,15 +79,6 @@ export class OperationsComponent extends AppComponentBase {
             location: 'after',
             items: [
                 {
-                    name: 'refresh',
-                    action: this.refresh.bind(this)
-                }
-            ]
-        },
-        {
-            location: 'after',
-            items: [
-                {
                     name: 'download',
                     widget: 'dxDropDownMenu',
                     options: {
@@ -116,11 +107,20 @@ export class OperationsComponent extends AppComponentBase {
         },
         {
             location: 'after', items: [
-            {name: 'box'},
-            {name: 'pipeline'},
-            {name: 'grid'}
-        ]
-        }
+                {name: 'box'},
+                {name: 'pipeline'},
+                {name: 'grid'}
+            ]
+        },
+        {
+            location: 'after',
+            items: [
+                {
+                    name: 'refresh',
+                    action: this.refresh.bind(this)
+                }
+            ]
+        },
     ];
 
     constructor(injector: Injector) {
