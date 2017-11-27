@@ -11,7 +11,7 @@ export class FiltersService {
 
     private subscribers: Array<Subscription> = [];
 
-    public enabled: boolean = false;
+    public enabled = false;
     public localizationSourceName: string;
 
     constructor() {
@@ -58,7 +58,7 @@ export class FiltersService {
         );
         this.change(null);
     }
-  
+
     unsubscribe() {
         this.subscribers.map((sub) => {
             return void (sub.unsubscribe());

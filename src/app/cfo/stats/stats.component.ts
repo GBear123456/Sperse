@@ -131,28 +131,37 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
             ]
         };
 
-        this.statsData = this._bankAccountService.getBankAccountDailyStats(undefined, undefined, [1])
-            .subscribe(result => {
-                if (result) {
-                    this.statsData = result;
-                    this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
-                    console.log(this.statsData);
-                } else {
-                    console.log('No daily stats');
-                }
-            },
-            error => console.log('Error: ' + error)
-            );
+        this.loadStatsData();
 
         this._filtersService.apply(() => {
             for (let filter of this.filters) {
-                let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
+                let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
+
                 if (filterMethod)
                     filterMethod(filter, this.requestFilter);
                 else
                     this.requestFilter[filter.field] = undefined;
             }
+
+            this.loadStatsData();
         });
+    }
+
+    /** load stats data from api */
+    loadStatsData() {
+        let {startDate = undefined, endDate = undefined, accountIds = []} = this.requestFilter;
+        this.statsData = this._bankAccountService.getBankAccountDailyStats(startDate, endDate, accountIds)
+            .subscribe(result => {
+                    if (result) {
+                        this.statsData = result;
+                        this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
+                        console.log(this.statsData);
+                    } else {
+                        console.log('No daily stats');
+                    }
+                },
+                error => console.log('Error: ' + error)
+            );
     }
 
     ngAfterViewInit(): void {

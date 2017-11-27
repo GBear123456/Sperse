@@ -17,7 +17,7 @@ export class FilterItemModel {
     getDisplayElements(key: string): DisplayElement[] {
         let caption = capitalize(key);
         let isBoolValues = typeof (this.value) == 'boolean';
-        var value = (typeof (this.value) == 'string') && this.value
+        let value = (typeof (this.value) == 'string') && this.value
             || isBoolValues && this.value && caption
             || this.value && this.value['getDate'] && (caption + ': ' +
                 moment(this.value, 'YYYY-MM-DD').format('l'));
@@ -30,14 +30,13 @@ export class FilterItemModel {
         else if (typeof (this.value) == 'boolean')
             this.value = false;
         else
-            this.value = null;
+            this.value = undefined;
     }
 }
 
 export class DisplayElement {
     item: FilterItemModel;
     displayValue: string;
-    
     parentCode?: any;
     sortField?: any;
     readonly?: boolean;
