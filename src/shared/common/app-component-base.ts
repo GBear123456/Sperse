@@ -133,9 +133,9 @@ export abstract class AppComponentBase {
             this.dataGrid, option == 'all');
     }
 
-    openFullscreen(element?: any) {    
+    openFullscreen(element?: any) {
         element = element || this.getElementRef().nativeElement;
-        let method = element.requestFullScreen || element.webkitRequestFullScreen 
+        let method = element.requestFullScreen || element.webkitRequestFullScreen
             || element.mozRequestFullScreen || element.msRequestFullScreen;
         if (method) {
             method.call(element);
@@ -144,7 +144,7 @@ export abstract class AppComponentBase {
     }
 
     exitFullscreen() {
-        let method = (document.exitFullscreen || document.webkitExitFullscreen 
+        let method = (document.exitFullscreen || document.webkitExitFullscreen
             || document['mozCancelFullScreen'] || document['msExitFullscreen']);
         if (method) {
             method.call(document);
@@ -153,7 +153,7 @@ export abstract class AppComponentBase {
     }
 
     isFullscreenMode() {
-        return document['fullScreen'] || document['mozFullScreen'] 
+        return document['fullScreen'] || document['mozFullScreen']
             || document.webkitIsFullScreen;
     }
 

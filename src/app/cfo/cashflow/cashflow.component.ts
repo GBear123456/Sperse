@@ -846,6 +846,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
     }
 
+    togglePivotGridRows(event) {
+        this.pivotGrid.instance.getDataSource().expandAll(1);
+    }
+
     toggleFilters(event) {
         this._filtersService.toggle();
     }

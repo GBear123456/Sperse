@@ -10,6 +10,7 @@ import {AppComponentBase} from '@shared/common/app-component-base';
 export class OperationsComponent extends AppComponentBase {
     @Output() refreshCashflow: EventEmitter<any> = new EventEmitter();
     @Output() onGroupBy: EventEmitter<any> = new EventEmitter();
+    @Output() onToggleRows: EventEmitter<any> = new EventEmitter();
     @Output() handleFullscreen: EventEmitter<any> = new EventEmitter();
     @Output() download: EventEmitter<any> = new EventEmitter();
 
@@ -42,8 +43,52 @@ export class OperationsComponent extends AppComponentBase {
         }, {
             location: 'before',
             items: [
-                { name: 'expandRows'},
-                { name: 'expandCols'},
+                {
+                    name: 'expandRows',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Expand rows'),
+                        items: [{
+                            action: this.toggleRows.bind(this),
+                            text: this.l('Level 1'),
+                        }, {
+                            action: this.toggleRows.bind(this),
+                            text: this.l('Level 2'),
+                        }, {
+                            action: this.toggleRows.bind(this),
+                            text: this.l('Level 3'),
+                        }, {
+                            action: this.toggleRows.bind(this),
+                            text: this.l('All'),
+                        }, {
+                            action: this.toggleRows.bind(this),
+                            text: this.l('None'),
+                        }]
+                    }
+                },
+                {
+                    name: 'expandCols',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Expand cols'),
+                        items: [{
+                            action: Function(),
+                            text: this.l('Level 1'),
+                        }, {
+                            action: Function(),
+                            text: this.l('Level 2'),
+                        }, {
+                            action: Function(),
+                            text: this.l('Level 3'),
+                        }, {
+                            action: Function(),
+                            text: this.l('All'),
+                        }, {
+                            action: Function(),
+                            text: this.l('None'),
+                        }]
+                    }
+                },
                 { name: 'rules'}
             ]
         },
@@ -135,8 +180,8 @@ export class OperationsComponent extends AppComponentBase {
         },
         {
             location: 'after', items: [
-                { name: 'comments'},
-                { name: 'expandView'}
+                {name: 'comments'},
+                {name: 'fullscreen', action: this.fullscreen.bind(this)}
             ]
         },
         {
@@ -146,12 +191,6 @@ export class OperationsComponent extends AppComponentBase {
                     name: 'refresh',
                     action: this.refresh.bind(this)
                 }
-            ]
-        },
-        {
-            location: 'after', items: [
-                {name: 'comments'},
-                {name: 'fullscreen', action: this.fullscreen.bind(this)}
             ]
         }
     ];
@@ -170,6 +209,10 @@ export class OperationsComponent extends AppComponentBase {
 
     refresh() {
         this.refreshCashflow.emit(null);
+    }
+
+    toggleRows(event) {
+        this.onToggleRows.emit(event);
     }
 
     fullscreen() {
