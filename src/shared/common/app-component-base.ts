@@ -14,16 +14,11 @@ import buildQuery from 'odata-query';
 import * as _ from 'underscore';
 
 export abstract class AppComponentBase {
-  	@HostBinding('class') public cssClass = '';
+  	@HostBinding('class.fullscreen') public isFullscreenMode = false;
     @HostListener('document:webkitfullscreenchange', ['$event'])
     onWebkitFullscreenChange($event) {
-        let classes = this.cssClass.split(' '),
-            index = classes.indexOf('fullscreen');
-        if (index >= 0)
-            classes.splice(index, 1);
-        else
-            classes.push('fullscreen');            
-        this.cssClass = classes.join(' ');
+        this.isFullscreenMode = document['fullScreen'] 
+            || document['mozFullScreen'] || document.webkitIsFullScreen;
     }
 
     dataGrid: any;
@@ -158,13 +153,8 @@ export abstract class AppComponentBase {
             method.call(document);
     }
 
-    isFullscreenMode() {
-        return document['fullScreen'] || document['mozFullScreen'] 
-            || document.webkitIsFullScreen;
-    }
-
     toggleFullscreen(element?: any) {
-        if (this.isFullscreenMode())
+        if (this.isFullscreenMode)
             this.exitFullscreen();
         else
             this.openFullscreen(element);
