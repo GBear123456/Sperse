@@ -16,7 +16,8 @@ import {
     StatsFilter,
     BankAccountDto,
     CashflowServiceProxy,
-    BankAccountsServiceProxy
+    BankAccountsServiceProxy,
+    GroupBy
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -78,7 +79,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     ];
     headlineConfig: any;
     interval = 'date';
-    verticalAxisDateFormat = 'day';
+    axisDateFormat = 'month';
     currency = 'USD';
     labelPositiveBackgroundColor = '#626b73';
     historicalEndingBalanceColor = '#01b0f0';
@@ -164,7 +165,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     /** load stats data from api */
     loadStatsData() {
         let {startDate = undefined, endDate = undefined, accountIds = []} = this.requestFilter;
-        this.statsData = this._bankAccountService.getBankAccountDailyStats(startDate, endDate, accountIds)
+        this.statsData = this._bankAccountService.getBankAccountDailyStats(accountIds, startDate, endDate, GroupBy.Monthly)
             .subscribe(result => {
                     if (result) {
                         this.statsData = result;
@@ -198,5 +199,9 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
 
     showSourceData() {
         console.log('show source data');
+    }
+
+    customizeBottomAxis(elem) {
+        return elem.valueText.substring(0, 3).toUpperCase();
     }
 }

@@ -674,14 +674,16 @@ export class BankAccountsServiceProxy {
     /**
      * @return Success
      */
-    getBankAccountDailyStats(startDate: moment.Moment, endDate: moment.Moment, accounts: number[]): Observable<BankAccountDailyStatDto[]> {
+    getBankAccountDailyStats(accounts: number[], startDate: moment.Moment, endDate: moment.Moment, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetBankAccountDailyStats?";
-        if (startDate !== undefined)
-            url_ += "startDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
-        if (endDate !== undefined)
-            url_ += "endDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
         if (accounts !== undefined)
-            accounts.forEach(item => { url_ += "accounts=" + encodeURIComponent("" + item) + "&"; });
+            accounts.forEach(item => { url_ += "Accounts=" + encodeURIComponent("" + item) + "&"; });
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
+        if (groupBy !== undefined)
+            url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -12353,6 +12355,7 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
     expenses: number;
     adjustments: number;
     endingBalance: number;
+    period: BankAccountDailyStatDtoPeriod;
 
     constructor(data?: IBankAccountDailyStatDto) {
         if (data) {
@@ -12372,6 +12375,7 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
             this.expenses = data["expenses"];
             this.adjustments = data["adjustments"];
             this.endingBalance = data["endingBalance"];
+            this.period = data["period"];
         }
     }
 
@@ -12390,6 +12394,7 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
         data["expenses"] = this.expenses;
         data["adjustments"] = this.adjustments;
         data["endingBalance"] = this.endingBalance;
+        data["period"] = this.period;
         return data; 
     }
 }
@@ -12402,6 +12407,7 @@ export interface IBankAccountDailyStatDto {
     expenses: number;
     adjustments: number;
     endingBalance: number;
+    period: BankAccountDailyStatDtoPeriod;
 }
 
 export class ListResultDtoOfCacheDto implements IListResultDtoOfCacheDto {
@@ -28407,6 +28413,14 @@ export interface IGetLatestWebLogsOutput {
     latestWebLogLines: string[];
 }
 
+export enum GroupBy {
+    Daily = <any>"Daily", 
+    Weekly = <any>"Weekly", 
+    Monthly = <any>"Monthly", 
+    Quarterly = <any>"Quarterly", 
+    Yearly = <any>"Yearly", 
+}
+
 export enum IncomeStatisticsDateInterval {
     _1 = 1, 
     _2 = 2, 
@@ -28459,6 +28473,14 @@ export enum IsTenantAvailableOutputState {
     _1 = 1, 
     _2 = 2, 
     _3 = 3, 
+}
+
+export enum BankAccountDailyStatDtoPeriod {
+    Daily = <any>"Daily", 
+    Weekly = <any>"Weekly", 
+    Monthly = <any>"Monthly", 
+    Quarterly = <any>"Quarterly", 
+    Yearly = <any>"Yearly", 
 }
 
 export enum TransactionStatsDtoAdjustmentType {
