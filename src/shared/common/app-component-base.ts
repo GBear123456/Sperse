@@ -1,4 +1,4 @@
-﻿import { Injector, Inject, Input, ApplicationRef, ElementRef, HostBinding } from '@angular/core';
+﻿import { Injector, Inject, Input, ApplicationRef, ElementRef, HostBinding, HostListener } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -15,6 +15,16 @@ import * as _ from 'underscore';
 
 export abstract class AppComponentBase {
   	@HostBinding('class') public cssClass = '';
+    @HostListener('document:webkitfullscreenchange', ['$event'])
+    onWebkitFullscreenChange($event) {
+        let classes = this.cssClass.split(' '),
+            index = classes.indexOf('fullscreen');
+        if (index >= 0)
+            classes.splice(index, 1);
+        else
+            classes.push('fullscreen');            
+        this.cssClass = classes.join(' ');
+    }
 
     dataGrid: any;
     dataSource: any;
@@ -137,19 +147,15 @@ export abstract class AppComponentBase {
         element = element || this.getElementRef().nativeElement;
         let method = element.requestFullScreen || element.webkitRequestFullScreen
             || element.mozRequestFullScreen || element.msRequestFullScreen;
-        if (method) {
+        if (method)
             method.call(element);
-            this.cssClass = 'fullscreen';
-        }
     }
 
     exitFullscreen() {
         let method = (document.exitFullscreen || document.webkitExitFullscreen
             || document['mozCancelFullScreen'] || document['msExitFullscreen']);
-        if (method) {
+        if (method)
             method.call(document);
-            this.cssClass = '';
-        }
     }
 
     isFullscreenMode() {

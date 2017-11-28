@@ -11,6 +11,7 @@ export class FilterModelBase<T extends FilterItemModel> {
     field?: any;
     items?: { [item: string]: T; };
     displayElements?: any[];
+    options?: any;
 
     public constructor(init?: Partial<FilterModelBase<T>>) {
         Object.assign(this, init);

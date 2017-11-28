@@ -7,6 +7,7 @@ import { FilterComponent } from '../models/filter-component';
     styleUrls: ['./filter-calendar.component.less']
 })
 export class FilterCalendarComponent extends AppComponentBase implements OnInit, FilterComponent {
+    options: any;
     items: {
         from: any,
         to: any

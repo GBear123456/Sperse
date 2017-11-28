@@ -258,7 +258,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                         new FilterModel({
                             component: FilterCalendarComponent,
                             caption: 'Date',
-                            items: {from: new FilterItemModel(), to: new FilterItemModel()}
+                            items: {from: new FilterItemModel(), to: new FilterItemModel()},
+                            options: {
+                                allowFutureDates: true,
+                                endDate: moment(new Date()).add(10, 'years').toDate()
+                            }
                         }),
                         new FilterModel({
                             component: FilterCheckBoxesComponent,
