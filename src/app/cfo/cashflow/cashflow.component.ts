@@ -394,7 +394,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         });
         /** for all accounts that are absent add stub empty transactions to show
          *  the empty accounts anyway */
-        allAccountsIds.forEach(accountId => {
+        allAccountsIds.filter(accountId => accountId).forEach(accountId => {
             for (let cashflowType in currentAccountsIds) {
                 if (currentAccountsIds[cashflowType].indexOf(accountId) === -1) {
                     stubCashflowDataForAccounts.push(
