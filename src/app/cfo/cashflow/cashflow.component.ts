@@ -5,7 +5,6 @@ import { GroupbyItem } from './models/groupbyItem';
 import {
     CashflowServiceProxy,
     StatsFilter,
-    BankAccountDto,
     CashFlowInitialData,
     StatsDetailFilter,
     TransactionStatsDto
@@ -46,10 +45,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     cashflowData: any;
     cashflowDataTree: any;
     cashflowTypes: any;
-    expenseCategories: any;
     bankAccounts: any;
     dataSource: any;
-    groupInterval: any = 'year';
+    groupInterval = 'year';
     statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
     statsDetailResult: any;
     categorization: Array<string> = [
@@ -62,7 +60,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             'groupInterval': 'year',
             'optionText': this.l('Years').toUpperCase(),
             'customizeTextFunction': this.getDateIntervalHeaderCustomizer.bind(this, 'year')(),
-            'historicalSelectionFunction': this.getYearHistoricalSelector
+            'historicalSelectionFunction': this.getYearHistoricalSelectorWithCurrent
         },
         {
             'groupInterval': 'quarter',
@@ -91,11 +89,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         Total,
         Reconciliation
     ];
-    intervals2methods = {
-        'year': 'getFullYear',
-        'month': 'getMonth',
-        'day': 'getDate'
-    };
     apiTableFields: any = [
         {
             caption: 'Type',
@@ -215,13 +208,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
     ];
     cssMarker = ' @css';
-    loading = {
-        'enabled': true
-    };
-    historicalTexts = [
-        this.l('Historical Cashflows - Current Period'),
-        this.l('Current'),
-        this.l('Cashflow - Forecast')
+    historicalTextsKeys = [
+        'Periods_Historical',
+        'Periods_Current',
+        'Periods_Forecast'
     ];
     historicalClasses = [
         'historical',
@@ -234,8 +224,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     private requestFilter: StatsFilter;
     private anotherPeriodAccountsValues: Map<object, number> = new Map();
 
-    constructor(injector: Injector, private _CashflowServiceProxy: CashflowServiceProxy,
-                private _filtersService: FiltersService) {
+    constructor(injector: Injector,
+                private _CashflowServiceProxy: CashflowServiceProxy,
+                private _filtersService: FiltersService
+    ) {
         super(injector);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
@@ -323,46 +315,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     getFullscreenElement() {
       return document.body; //!!VP To avoid dropdown elements issue in fullscreen mode
-    }
-
-    filterByBusinessEntity(filter: FilterModel, requestFilter: StatsFilter) {
-        let data = {};
-        if (filter.items.element && filter.items.element.value) {
-            requestFilter[filter.field] = filter.items.element.value.map(x => x);
-        }
-    }
-
-    filterByAccount(filter: FilterModel, requestFilter: StatsFilter) {
-        if (filter.items && filter.items.element && filter.items.element.value) {
-            requestFilter.accountIds = [];
-            requestFilter.bankIds = [];
-            filter.items.element.value.forEach((id) => {
-                let parts = id.split(':');
-                if (parts.length == 2) {
-                    requestFilter.accountIds.push(+parts[1]);
-                } else {
-                    requestFilter.bankIds.push(+parts[0]);
-                }
-            });
-        }
-    }
-
-    filterByDate(filter: FilterModel, requestFilter: StatsFilter) {
-        requestFilter.startDate = null;
-        requestFilter.endDate = null;
-        let keys = Object.keys(filter.items);
-        for (let key of keys) {
-            let item = filter.items[key];
-            if (item && item.value) {
-                let date = moment.utc(item.value, 'YYYY-MM-DDT');
-                if (key.toString() === 'to') {
-                    date.add(1, 'd').add(-1, 's');
-                    requestFilter.endDate = date.toDate();
-                } else {
-                    requestFilter.startDate = date.toDate();
-                }
-            }
-        }
     }
 
     ngAfterViewInit(): void {
@@ -636,25 +588,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     /**
-     * return the array of dates intervals that should be hidden
-     * @param startedGroupInterval
-     */
-    getFieldsToBeHide(startedGroupInterval) {
-        let datesIntervalsToBeHide = this.groupbyItems.map(group => group.groupInterval);
-        /** update date fields for table */
-        let startedIntervalAdded = false;
-        for (let group_by_item of this.groupbyItems) {
-            let intervalField = this.getDateFieldByInterval(group_by_item['groupInterval']);
-            if (group_by_item['groupInterval'] === startedGroupInterval || startedIntervalAdded) {
-                datesIntervalsToBeHide.splice(datesIntervalsToBeHide.indexOf(group_by_item['groupInterval']), 1);
-                startedIntervalAdded = true;
-                intervalField.expanded = true;
-            }
-        }
-        return datesIntervalsToBeHide;
-    }
-
-    /**
      * Update the fields array with the date fields with different date intervals like year, quarter and month
      * @param startedGroupInterval - the groupInterval from which we should start show headers
      */
@@ -677,17 +610,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param event
      */
     onContentReady(event) {
-        let allDateIntervals = this.groupbyItems.map(group => group.groupInterval);
-        let datesIntervalsToBeHide = allDateIntervals.slice(0, allDateIntervals.indexOf(this.groupInterval));
-        for (let dateInterval of datesIntervalsToBeHide) {
-            /** Hide the fields that are not chosen */
-            let intervalFieldsSelector = `.dateField:not(.dx-total).${dateInterval}`;
-            // $(intervalFieldsSelector).each(function(){
-            //     $(this).text('');
-            //     $(this).addClass('dataFieldHidden');
-            // });
-        }
-
         /** Collapse starting and ending balances rows */
         if (!this.collapsedStartingAndEndingBalance) {
             if (this.pivotGrid.instance) {
@@ -768,10 +690,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     createHistoricalCell(period) {
         let positionMethod = period === 'forecast' ? 'after' : 'before',
-            text = period === 'forecast' ? this.historicalTexts[2] : this.historicalTexts[0];
+            textKey = period === 'forecast' ? this.historicalTextsKeys[2] : this.historicalTextsKeys[0],
+            text = this.l(textKey);
         $('.historicalRow .current')
             [positionMethod](function () {
-            return `<td class="dx-pivotgrid-expanded historicalField ${period}">${text.toUpperCase()}</td>`;
+            return `<td class="dx-pivotgrid-expanded historicalField ${period}">
+                    ${text.toUpperCase()}</td>`;
         }).click(function (event) {
             event.stopImmediatePropagation();
         });
@@ -813,19 +737,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         return currentElement.first()[method]().length;
     }
 
-    getPrevGroupInterval(groupInterval) {
-        let currentIndex = this.groupbyItems.map(item => item.groupInterval).indexOf(groupInterval);
-        return this.groupbyItems[currentIndex - 1].groupInterval;
-    }
-
-    /**
-     * Return the index of next interval that leads for the interval in argument
-     */
-    getNextGroupInterval(groupInterval) {
-        let currentIndex = this.groupbyItems.map(item => item.groupInterval).indexOf(groupInterval);
-        return this.groupbyItems[currentIndex + 1].groupInterval;
-    }
-
     /**
      * @returns {function(any): string}
      */
@@ -838,16 +749,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     getHistoricalCustomizer() {
         return cellInfo => {
-            return this.historicalTexts[cellInfo.value].toUpperCase() +
+            return this.l(this.historicalTextsKeys[cellInfo.value]).toUpperCase() +
                 ' @css:{historicalField ' + this.historicalClasses[cellInfo.value] + '}';
-        };
-    }
-
-    getYearHistoricalSelector(): any {
-        return data => {
-            let currentYear = new Date().getFullYear(),
-                itemYear = new Date(data.date).getFullYear();
-            return currentYear <= itemYear ? 2 : 0;
         };
     }
 
@@ -872,25 +775,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     getQuarter(date: Date = new Date()) {
         return Math.floor(date.getMonth() / 3) + 1;
-    }
-
-    /**
-     * Compares two intervals of two dates with the method
-     * @param date1
-     * @param date2
-     * @param method - method of Date object to compare two dates
-     * @returns {number}
-     */
-    compareDateIntervals(date1, date2, interval: string) {
-        let result = 0,
-            currentPeriod = date1[this.intervals2methods[interval]](),
-            itemPeriod = date2[this.intervals2methods[interval]]();
-        if (currentPeriod < itemPeriod) {
-            result = 2;
-        } else if (currentPeriod === itemPeriod) {
-            result = 1;
-        }
-        return result;
     }
 
     /**
@@ -1179,13 +1063,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
     }
 
-    /**
-     * whether it belong to current period
-     * @param cellObj
-     */
-    // isMonthBelongToCurrentPeriod(cellObj) {
-    //     return this.getMonthHistoricalSelector();
-    // }
     /**
      * remove css from the cell text, add css as a class, and add the totals text for the fields
      * if it is year or quarter cells
