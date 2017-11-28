@@ -444,7 +444,9 @@
     /* New style */
     .month-wrapper table.month1 {
         tbody tr:last-child {
-          display: none;
+            td[colspan="7"] {
+                display: none;
+            }
         }
         border-collapse: initial;
         td.start-selected.end-selected {
