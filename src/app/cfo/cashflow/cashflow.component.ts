@@ -354,7 +354,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     /** Get cashflow data tree to hide groups without children */
                     this.cashflowDataTree = this.getCashflowDataTree(
                         this.cashflowData,
-                        this.apiTableFields.filter(field => { return field.area === 'row'; })
+                        this.apiTableFields.filter(field => field.area === 'row')
                     );
                 } else {
                     this.cashflowData = null;
@@ -823,16 +823,19 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     changeGroupBy(event) {
+        abp.ui.setBusy();
+        $('.pivot-grid').addClass('invisible');
         let value = this.groupbyItems[event.itemIndex],
             startedGroupInterval = value.groupInterval;
         this.groupInterval = startedGroupInterval;
         this.updateDateFields(startedGroupInterval);
         /** Change historical field for different date intervals */
         let historicalField = this.getHistoricField();
-        //this.changeHistoricalFieldPosition(historicalField, startedGroupInterval);
         historicalField ['selector'] = value.historicalSelectionFunction();
         this.changeIntervalWidth();
-        this.refreshDataGrid();
+        this.collapsedStartingAndEndingBalance = false;
+        this.closeTransactionsDetail();
+        this.dataSource = this.getApiDataSource();
     }
 
     downloadData(event) {
