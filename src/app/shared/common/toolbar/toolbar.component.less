@@ -171,6 +171,62 @@
                     }
                 }
             }
+            &[accesskey="expandRows"] {
+                padding: 6px 11px 7px;
+                .dx-button-content {
+                    display: none;
+                }
+                &::before {
+                    content: attr(title);
+                    font-weight: 400;
+                    font-size: 13px;
+                    line-height: 1.85;
+                    letter-spacing: 0.3px;
+                    color: #677380;
+                    display: inline-block;
+                    background: url('../../../../assets/common/icons/expand-rows-icon.svg') left center no-repeat;
+                    padding-left: 28px;
+                    padding-right: 10px;
+                }
+                &::after {
+                    content: '';
+                    display: block;
+                    background: url('../../../../assets/common/icons/down-arrow-icon.svg');
+                    position: absolute;
+                    width: 8px;
+                    height: 4px;
+                    right: 8px;
+                    top: 48%;
+                }
+            }
+            &[accesskey="expandCols"] {
+                padding: 6px 11px 7px;
+                .dx-button-content {
+                    display: none;
+                }
+                &::before {
+                    content: attr(title);
+                    font-weight: 400;
+                    font-size: 13px;
+                    line-height: 1.85;
+                    letter-spacing: 0.3px;
+                    color: #677380;
+                    display: inline-block;
+                    background: url('../../../../assets/common/icons/expand-cols-icon.svg') left center no-repeat;
+                    padding-left: 30px;
+                    padding-right: 10px;
+                }
+                &::after {
+                    content: '';
+                    display: block;
+                    background: url('../../../../assets/common/icons/down-arrow-icon.svg');
+                    position: absolute;
+                    width: 8px;
+                    height: 4px;
+                    right: 8px;
+                    top: 48%;
+                }
+            }
             &[accesskey="download"] {
                 .dx-button-content {
                     &::after {

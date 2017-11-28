@@ -138,16 +138,16 @@ export abstract class AppComponentBase {
             this.dataGrid, option == 'all');
     }
 
-    openFullscreen(element?: any) {    
+    openFullscreen(element?: any) {
         element = element || this.getElementRef().nativeElement;
-        let method = element.requestFullScreen || element.webkitRequestFullScreen 
+        let method = element.requestFullScreen || element.webkitRequestFullScreen
             || element.mozRequestFullScreen || element.msRequestFullScreen;
         if (method)
             method.call(element);
     }
 
     exitFullscreen() {
-        let method = (document.exitFullscreen || document.webkitExitFullscreen 
+        let method = (document.exitFullscreen || document.webkitExitFullscreen
             || document['mozCancelFullScreen'] || document['msExitFullscreen']);
         if (method)
             method.call(document);
