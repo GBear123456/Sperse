@@ -47,23 +47,17 @@
                                 [currency]="currency">
                             </dxo-format>
                         </dxo-label>
-                        <dxo-tick-interval
-                            [days]="1"
-                        ></dxo-tick-interval>
                     </dxi-value-axis>
 
                     <!-- Bottom axis -->
                     <dxo-argument-axis
                         argumentType="datetime"
                         visible="true">
-                        <dxo-label>
+                        <dxo-label [customizeText]="customizeBottomAxis">
                             <dxo-format
-                                [type]="verticalAxisDateFormat">
+                                [type]="axisDateFormat">
                             </dxo-format>
                         </dxo-label>
-                        <dxo-tick-interval
-                            [days]="1"
-                        ></dxo-tick-interval>
                     </dxo-argument-axis>
 
                     <!-- Common settings for axis -->
@@ -96,14 +90,11 @@
                     <dxo-argument-axis
                         argumentType="datetime"
                         visible="true">
-                        <dxo-label>
+                        <dxo-label [customizeText]="customizeBottomAxis">
                             <dxo-format
-                                [type]="verticalAxisDateFormat">
+                                [type]="axisDateFormat">
                             </dxo-format>
                         </dxo-label>
-                        <dxo-tick-interval
-                            [days]="1"
-                        ></dxo-tick-interval>
                     </dxo-argument-axis>
 
                     <!-- Common settings for axis -->
