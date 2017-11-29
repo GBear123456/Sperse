@@ -887,7 +887,32 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     togglePivotGridRows(event) {
-        this.pivotGrid.instance.getDataSource().expandAll(1);
+        let action = event.itemIndex;
+        switch (action) {
+            case 0:
+                this.pivotGrid.instance.getDataSource().expandAll(action);
+                break;
+            case 1:
+                this.pivotGrid.instance.getDataSource().expandAll(action);
+                break;
+            case 2:
+                this.pivotGrid.instance.getDataSource().expandAll(action);
+                break;
+            case 3:
+                this.pivotGrid.instance.getDataSource().expandAll(0);
+                this.pivotGrid.instance.getDataSource().expandAll(1);
+                this.pivotGrid.instance.getDataSource().expandAll(2);
+                // @todo need applied OS3 there
+                break;
+            case 4:
+                this.pivotGrid.instance.getDataSource().collapseAll(0);
+                this.pivotGrid.instance.getDataSource().collapseAll(1);
+                this.pivotGrid.instance.getDataSource().collapseAll(2);
+                break;
+            default:
+                // Don't know yet what to do by default.
+                break;
+        }
     }
 
     toggleFilters(event) {

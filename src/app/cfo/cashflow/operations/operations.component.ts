@@ -66,29 +66,6 @@ export class OperationsComponent extends AppComponentBase {
                         }]
                     }
                 },
-                {
-                    name: 'expandCols',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: this.l('Expand cols'),
-                        items: [{
-                            action: Function(),
-                            text: this.l('Level 1'),
-                        }, {
-                            action: Function(),
-                            text: this.l('Level 2'),
-                        }, {
-                            action: Function(),
-                            text: this.l('Level 3'),
-                        }, {
-                            action: Function(),
-                            text: this.l('All'),
-                        }, {
-                            action: Function(),
-                            text: this.l('None'),
-                        }]
-                    }
-                },
                 { name: 'rules'}
             ]
         },
