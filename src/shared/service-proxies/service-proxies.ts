@@ -1244,8 +1244,165 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
+    getCashFlowGridSettings(): Observable<CashFlowGridSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetCashFlowGridSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCashFlowGridSettings(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCashFlowGridSettings(response_);
+                } catch (e) {
+                    return <Observable<CashFlowGridSettingsDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CashFlowGridSettingsDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCashFlowGridSettings(response: Response): Observable<CashFlowGridSettingsDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CashFlowGridSettingsDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CashFlowGridSettingsDto.fromJS(resultData200) : new CashFlowGridSettingsDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CashFlowGridSettingsDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    saveCashFlowGridSettings(settings: CashFlowGridSettingsDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/SaveCashFlowGridSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(settings ? settings.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSaveCashFlowGridSettings(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSaveCashFlowGridSettings(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSaveCashFlowGridSettings(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class CashFlowForecastServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getModels(): Observable<ForecastModelDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetModels";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetModels(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetModels(response_);
+                } catch (e) {
+                    return <Observable<ForecastModelDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ForecastModelDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetModels(response: Response): Observable<ForecastModelDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ForecastModelDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ForecastModelDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ForecastModelDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     addForecast(input: AddForecastInput): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/AddForecast";
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/AddForecast";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -1293,7 +1450,7 @@ export class CashflowServiceProxy {
      * @return Success
      */
     updateForecast(input: UpdateForecastInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/UpdateForecast";
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/UpdateForecast";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -1338,7 +1495,7 @@ export class CashflowServiceProxy {
      * @return Success
      */
     deleteForecast(id: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/DeleteForecast?";
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/DeleteForecast?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -1379,220 +1536,6 @@ export class CashflowServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<void>(<any>null);
-    }
-}
-
-@Injectable()
-export class CashFlowCommentServiceProxy {
-    private http: Http;
-    private baseUrl: string;
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    createTransactionComment(input: CreateTransactionCommentInput): Observable<CreateTransactionCommentOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/CashFlowComment/CreateTransactionComment";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input ? input.toJSON() : null);
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processCreateTransactionComment(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processCreateTransactionComment(response_);
-                } catch (e) {
-                    return <Observable<CreateTransactionCommentOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<CreateTransactionCommentOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processCreateTransactionComment(response: Response): Observable<CreateTransactionCommentOutput> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: CreateTransactionCommentOutput = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateTransactionCommentOutput.fromJS(resultData200) : new CreateTransactionCommentOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<CreateTransactionCommentOutput>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    createCashFlowComment(input: CreateCashFlowCommentInput): Observable<CreateCashFlowCommentOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/CashFlowComment/CreateCashFlowComment";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input ? input.toJSON() : null);
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processCreateCashFlowComment(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processCreateCashFlowComment(response_);
-                } catch (e) {
-                    return <Observable<CreateCashFlowCommentOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<CreateCashFlowCommentOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processCreateCashFlowComment(response: Response): Observable<CreateCashFlowCommentOutput> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: CreateCashFlowCommentOutput = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateCashFlowCommentOutput.fromJS(resultData200) : new CreateCashFlowCommentOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<CreateCashFlowCommentOutput>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getCashFlowComments(filter: StatsDetailFilter): Observable<CashFlowCommentDto[]> {
-        let url_ = this.baseUrl + "/api/services/CFO/CashFlowComment/GetCashFlowComments";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(filter ? filter.toJSON() : null);
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetCashFlowComments(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetCashFlowComments(response_);
-                } catch (e) {
-                    return <Observable<CashFlowCommentDto[]>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<CashFlowCommentDto[]>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetCashFlowComments(response: Response): Observable<CashFlowCommentDto[]> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: CashFlowCommentDto[] = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(CashFlowCommentDto.fromJS(item));
-            }
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<CashFlowCommentDto[]>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getTransactionComments(transactionId: number): Observable<TransactionCommentDto[]> {
-        let url_ = this.baseUrl + "/api/services/CFO/CashFlowComment/GetTransactionComments?";
-        if (transactionId !== undefined)
-            url_ += "transactionId=" + encodeURIComponent("" + transactionId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetTransactionComments(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetTransactionComments(response_);
-                } catch (e) {
-                    return <Observable<TransactionCommentDto[]>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<TransactionCommentDto[]>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetTransactionComments(response: Response): Observable<TransactionCommentDto[]> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: TransactionCommentDto[] = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(TransactionCommentDto.fromJS(item));
-            }
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<TransactionCommentDto[]>(<any>null);
     }
 }
 
@@ -1752,6 +1695,254 @@ export class ChatServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class CommentServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    createComment(input: CreateCommentInput): Observable<CreateCommentOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateComment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateComment(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateComment(response_);
+                } catch (e) {
+                    return <Observable<CreateCommentOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateCommentOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateComment(response: Response): Observable<CreateCommentOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CreateCommentOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateCommentOutput.fromJS(resultData200) : new CreateCommentOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CreateCommentOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateComment(input: UpdateCommentInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/UpdateComment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateComment(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateComment(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateComment(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteComment(commentId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/DeleteComment?";
+        if (commentId !== undefined)
+            url_ += "commentId=" + encodeURIComponent("" + commentId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteComment(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteComment(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteComment(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    createTransactionComment(input: CreateTransactionCommentInput): Observable<CreateTransactionCommentOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateTransactionComment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateTransactionComment(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateTransactionComment(response_);
+                } catch (e) {
+                    return <Observable<CreateTransactionCommentOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateTransactionCommentOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateTransactionComment(response: Response): Observable<CreateTransactionCommentOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CreateTransactionCommentOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateTransactionCommentOutput.fromJS(resultData200) : new CreateTransactionCommentOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CreateTransactionCommentOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    createCashFlowComment(input: CreateCashFlowCommentInput): Observable<CreateCashFlowCommentOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateCashFlowComment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateCashFlowComment(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateCashFlowComment(response_);
+                } catch (e) {
+                    return <Observable<CreateCashFlowCommentOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateCashFlowCommentOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateCashFlowComment(response: Response): Observable<CreateCashFlowCommentOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CreateCashFlowCommentOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateCashFlowCommentOutput.fromJS(resultData200) : new CreateCashFlowCommentOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CreateCashFlowCommentOutput>(<any>null);
     }
 }
 
@@ -12525,6 +12716,7 @@ export interface IEntityDtoOfString {
 
 export class StatsFilter implements IStatsFilter {
     categorizationIds: string[];
+    forecastModelId: number;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
@@ -12548,6 +12740,7 @@ export class StatsFilter implements IStatsFilter {
                 for (let item of data["categorizationIds"])
                     this.categorizationIds.push(item);
             }
+            this.forecastModelId = data["forecastModelId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
@@ -12582,6 +12775,7 @@ export class StatsFilter implements IStatsFilter {
             for (let item of this.categorizationIds)
                 data["categorizationIds"].push(item);
         }
+        data["forecastModelId"] = this.forecastModelId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
@@ -12606,6 +12800,7 @@ export class StatsFilter implements IStatsFilter {
 
 export interface IStatsFilter {
     categorizationIds: string[];
+    forecastModelId: number;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
@@ -13196,7 +13391,215 @@ export interface IAddCategorizationMappingInput {
     newName: string;
 }
 
+export class CashFlowGridSettingsDto implements ICashFlowGridSettingsDto {
+    general: CashflowGridGeneralSettingsDto = new CashflowGridGeneralSettingsDto();
+    visualPreferences: CashflowGridVisualSettingsDto = new CashflowGridVisualSettingsDto();
+    localizationAndCurrency: LocalizationAndCurrencyDto = new LocalizationAndCurrencyDto();
+
+    constructor(data?: ICashFlowGridSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.general = data["general"] ? CashflowGridGeneralSettingsDto.fromJS(data["general"]) : new CashflowGridGeneralSettingsDto();
+            this.visualPreferences = data["visualPreferences"] ? CashflowGridVisualSettingsDto.fromJS(data["visualPreferences"]) : new CashflowGridVisualSettingsDto();
+            this.localizationAndCurrency = data["localizationAndCurrency"] ? LocalizationAndCurrencyDto.fromJS(data["localizationAndCurrency"]) : new LocalizationAndCurrencyDto();
+        }
+    }
+
+    static fromJS(data: any): CashFlowGridSettingsDto {
+        let result = new CashFlowGridSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["general"] = this.general ? this.general.toJSON() : <any>undefined;
+        data["visualPreferences"] = this.visualPreferences ? this.visualPreferences.toJSON() : <any>undefined;
+        data["localizationAndCurrency"] = this.localizationAndCurrency ? this.localizationAndCurrency.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ICashFlowGridSettingsDto {
+    general: CashflowGridGeneralSettingsDto;
+    visualPreferences: CashflowGridVisualSettingsDto;
+    localizationAndCurrency: LocalizationAndCurrencyDto;
+}
+
+export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSettingsDto {
+    showAmountsWithDecimals: number;
+    hideZeroValuesInCells: number;
+    showNegativeValuesInRed: number;
+    hideColumnsWithZeroActivity: number;
+
+    constructor(data?: ICashflowGridGeneralSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.showAmountsWithDecimals = data["showAmountsWithDecimals"];
+            this.hideZeroValuesInCells = data["hideZeroValuesInCells"];
+            this.showNegativeValuesInRed = data["showNegativeValuesInRed"];
+            this.hideColumnsWithZeroActivity = data["hideColumnsWithZeroActivity"];
+        }
+    }
+
+    static fromJS(data: any): CashflowGridGeneralSettingsDto {
+        let result = new CashflowGridGeneralSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["showAmountsWithDecimals"] = this.showAmountsWithDecimals;
+        data["hideZeroValuesInCells"] = this.hideZeroValuesInCells;
+        data["showNegativeValuesInRed"] = this.showNegativeValuesInRed;
+        data["hideColumnsWithZeroActivity"] = this.hideColumnsWithZeroActivity;
+        return data; 
+    }
+}
+
+export interface ICashflowGridGeneralSettingsDto {
+    showAmountsWithDecimals: number;
+    hideZeroValuesInCells: number;
+    showNegativeValuesInRed: number;
+    hideColumnsWithZeroActivity: number;
+}
+
+export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSettingsDto {
+    fontName: string;
+    fontSize: string;
+    cfoTheme: string;
+
+    constructor(data?: ICashflowGridVisualSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.fontName = data["fontName"];
+            this.fontSize = data["fontSize"];
+            this.cfoTheme = data["cfoTheme"];
+        }
+    }
+
+    static fromJS(data: any): CashflowGridVisualSettingsDto {
+        let result = new CashflowGridVisualSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fontName"] = this.fontName;
+        data["fontSize"] = this.fontSize;
+        data["cfoTheme"] = this.cfoTheme;
+        return data; 
+    }
+}
+
+export interface ICashflowGridVisualSettingsDto {
+    fontName: string;
+    fontSize: string;
+    cfoTheme: string;
+}
+
+export class LocalizationAndCurrencyDto implements ILocalizationAndCurrencyDto {
+    numberFormatting: string;
+
+    constructor(data?: ILocalizationAndCurrencyDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.numberFormatting = data["numberFormatting"];
+        }
+    }
+
+    static fromJS(data: any): LocalizationAndCurrencyDto {
+        let result = new LocalizationAndCurrencyDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["numberFormatting"] = this.numberFormatting;
+        return data; 
+    }
+}
+
+export interface ILocalizationAndCurrencyDto {
+    numberFormatting: string;
+}
+
+export class ForecastModelDto implements IForecastModelDto {
+    id: number;
+    name: string;
+
+    constructor(data?: IForecastModelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ForecastModelDto {
+        let result = new ForecastModelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IForecastModelDto {
+    id: number;
+    name: string;
+}
+
 export class AddForecastInput implements IAddForecastInput {
+    forecastModelId: number;
     bankAccountId: number;
     date: moment.Moment;
     cashFlowTypeId: string;
@@ -13215,6 +13618,7 @@ export class AddForecastInput implements IAddForecastInput {
 
     init(data?: any) {
         if (data) {
+            this.forecastModelId = data["forecastModelId"];
             this.bankAccountId = data["bankAccountId"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.cashFlowTypeId = data["cashFlowTypeId"];
@@ -13238,6 +13642,7 @@ export class AddForecastInput implements IAddForecastInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["forecastModelId"] = this.forecastModelId;
         data["bankAccountId"] = this.bankAccountId;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
@@ -13255,6 +13660,7 @@ export class AddForecastInput implements IAddForecastInput {
 }
 
 export interface IAddForecastInput {
+    forecastModelId: number;
     bankAccountId: number;
     date: moment.Moment;
     cashFlowTypeId: string;
@@ -13300,356 +13706,6 @@ export class UpdateForecastInput implements IUpdateForecastInput {
 export interface IUpdateForecastInput {
     id: number;
     amount: number;
-}
-
-export class CreateTransactionCommentInput implements ICreateTransactionCommentInput {
-    transactionId: number;
-    comment: string;
-
-    constructor(data?: ICreateTransactionCommentInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.transactionId = data["transactionId"];
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): CreateTransactionCommentInput {
-        let result = new CreateTransactionCommentInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["transactionId"] = this.transactionId;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface ICreateTransactionCommentInput {
-    transactionId: number;
-    comment: string;
-}
-
-export class CreateTransactionCommentOutput implements ICreateTransactionCommentOutput {
-    id: number;
-
-    constructor(data?: ICreateTransactionCommentOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): CreateTransactionCommentOutput {
-        let result = new CreateTransactionCommentOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ICreateTransactionCommentOutput {
-    id: number;
-}
-
-export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
-    comment: string;
-    cashFlowTypeId: string;
-    categorization: { [key: string] : string; };
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    currencyId: string;
-    bankIds: number[];
-    accountIds: number[];
-    businessEntityIds: number[];
-
-    constructor(data?: ICreateCashFlowCommentInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.comment = data["comment"];
-            this.cashFlowTypeId = data["cashFlowTypeId"];
-            if (data["categorization"]) {
-                this.categorization = {};
-                for (let key in data["categorization"]) {
-                    if (data["categorization"].hasOwnProperty(key))
-                        this.categorization[key] = data["categorization"][key];
-                }
-            }
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.currencyId = data["currencyId"];
-            if (data["bankIds"] && data["bankIds"].constructor === Array) {
-                this.bankIds = [];
-                for (let item of data["bankIds"])
-                    this.bankIds.push(item);
-            }
-            if (data["accountIds"] && data["accountIds"].constructor === Array) {
-                this.accountIds = [];
-                for (let item of data["accountIds"])
-                    this.accountIds.push(item);
-            }
-            if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
-                this.businessEntityIds = [];
-                for (let item of data["businessEntityIds"])
-                    this.businessEntityIds.push(item);
-            }
-        }
-    }
-
-    static fromJS(data: any): CreateCashFlowCommentInput {
-        let result = new CreateCashFlowCommentInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["comment"] = this.comment;
-        data["cashFlowTypeId"] = this.cashFlowTypeId;
-        if (this.categorization) {
-            data["categorization"] = {};
-            for (let key in this.categorization) {
-                if (this.categorization.hasOwnProperty(key))
-                    data["categorization"][key] = this.categorization[key];
-            }
-        }
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["currencyId"] = this.currencyId;
-        if (this.bankIds && this.bankIds.constructor === Array) {
-            data["bankIds"] = [];
-            for (let item of this.bankIds)
-                data["bankIds"].push(item);
-        }
-        if (this.accountIds && this.accountIds.constructor === Array) {
-            data["accountIds"] = [];
-            for (let item of this.accountIds)
-                data["accountIds"].push(item);
-        }
-        if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
-            data["businessEntityIds"] = [];
-            for (let item of this.businessEntityIds)
-                data["businessEntityIds"].push(item);
-        }
-        return data; 
-    }
-}
-
-export interface ICreateCashFlowCommentInput {
-    comment: string;
-    cashFlowTypeId: string;
-    categorization: { [key: string] : string; };
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    currencyId: string;
-    bankIds: number[];
-    accountIds: number[];
-    businessEntityIds: number[];
-}
-
-export class CreateCashFlowCommentOutput implements ICreateCashFlowCommentOutput {
-    id: number;
-
-    constructor(data?: ICreateCashFlowCommentOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): CreateCashFlowCommentOutput {
-        let result = new CreateCashFlowCommentOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ICreateCashFlowCommentOutput {
-    id: number;
-}
-
-export class CashFlowCommentDto implements ICashFlowCommentDto {
-    id: number;
-    comment: string;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    cashflowTypeId: string;
-    currencyId: string;
-    accountIds: number[];
-    categorization: { [key: string] : string; };
-    businessEntityIds: number[];
-
-    constructor(data?: ICashFlowCommentDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.comment = data["comment"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.cashflowTypeId = data["cashflowTypeId"];
-            this.currencyId = data["currencyId"];
-            if (data["accountIds"] && data["accountIds"].constructor === Array) {
-                this.accountIds = [];
-                for (let item of data["accountIds"])
-                    this.accountIds.push(item);
-            }
-            if (data["categorization"]) {
-                this.categorization = {};
-                for (let key in data["categorization"]) {
-                    if (data["categorization"].hasOwnProperty(key))
-                        this.categorization[key] = data["categorization"][key];
-                }
-            }
-            if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
-                this.businessEntityIds = [];
-                for (let item of data["businessEntityIds"])
-                    this.businessEntityIds.push(item);
-            }
-        }
-    }
-
-    static fromJS(data: any): CashFlowCommentDto {
-        let result = new CashFlowCommentDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["comment"] = this.comment;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["cashflowTypeId"] = this.cashflowTypeId;
-        data["currencyId"] = this.currencyId;
-        if (this.accountIds && this.accountIds.constructor === Array) {
-            data["accountIds"] = [];
-            for (let item of this.accountIds)
-                data["accountIds"].push(item);
-        }
-        if (this.categorization) {
-            data["categorization"] = {};
-            for (let key in this.categorization) {
-                if (this.categorization.hasOwnProperty(key))
-                    data["categorization"][key] = this.categorization[key];
-            }
-        }
-        if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
-            data["businessEntityIds"] = [];
-            for (let item of this.businessEntityIds)
-                data["businessEntityIds"].push(item);
-        }
-        return data; 
-    }
-}
-
-export interface ICashFlowCommentDto {
-    id: number;
-    comment: string;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    cashflowTypeId: string;
-    currencyId: string;
-    accountIds: number[];
-    categorization: { [key: string] : string; };
-    businessEntityIds: number[];
-}
-
-export class TransactionCommentDto implements ITransactionCommentDto {
-    id: number;
-    transactionId: number;
-    comment: string;
-
-    constructor(data?: ITransactionCommentDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.transactionId = data["transactionId"];
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): TransactionCommentDto {
-        let result = new TransactionCommentDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["transactionId"] = this.transactionId;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface ITransactionCommentDto {
-    id: number;
-    transactionId: number;
-    comment: string;
 }
 
 export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
@@ -13909,6 +13965,339 @@ export class MarkAllUnreadMessagesOfUserAsReadInput implements IMarkAllUnreadMes
 export interface IMarkAllUnreadMessagesOfUserAsReadInput {
     tenantId: number;
     userId: number;
+}
+
+export class CreateCommentInput implements ICreateCommentInput {
+    threadId: number;
+    comment: string;
+
+    constructor(data?: ICreateCommentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.threadId = data["threadId"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): CreateCommentInput {
+        let result = new CreateCommentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["threadId"] = this.threadId;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface ICreateCommentInput {
+    threadId: number;
+    comment: string;
+}
+
+export class CreateCommentOutput implements ICreateCommentOutput {
+    id: number;
+
+    constructor(data?: ICreateCommentOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateCommentOutput {
+        let result = new CreateCommentOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateCommentOutput {
+    id: number;
+}
+
+export class UpdateCommentInput implements IUpdateCommentInput {
+    comment: string;
+    id: number;
+
+    constructor(data?: IUpdateCommentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.comment = data["comment"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCommentInput {
+        let result = new UpdateCommentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["comment"] = this.comment;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IUpdateCommentInput {
+    comment: string;
+    id: number;
+}
+
+export class CreateTransactionCommentInput implements ICreateTransactionCommentInput {
+    transactionId: number;
+    comment: string;
+
+    constructor(data?: ICreateTransactionCommentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.transactionId = data["transactionId"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): CreateTransactionCommentInput {
+        let result = new CreateTransactionCommentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["transactionId"] = this.transactionId;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface ICreateTransactionCommentInput {
+    transactionId: number;
+    comment: string;
+}
+
+export class CreateTransactionCommentOutput implements ICreateTransactionCommentOutput {
+    threadId: number;
+    id: number;
+
+    constructor(data?: ICreateTransactionCommentOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.threadId = data["threadId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateTransactionCommentOutput {
+        let result = new CreateTransactionCommentOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["threadId"] = this.threadId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateTransactionCommentOutput {
+    threadId: number;
+    id: number;
+}
+
+export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
+    comment: string;
+    cashFlowTypeId: string;
+    categorization: { [key: string] : string; };
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    currencyId: string;
+    bankIds: number[];
+    accountIds: number[];
+    businessEntityIds: number[];
+
+    constructor(data?: ICreateCashFlowCommentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.comment = data["comment"];
+            this.cashFlowTypeId = data["cashFlowTypeId"];
+            if (data["categorization"]) {
+                this.categorization = {};
+                for (let key in data["categorization"]) {
+                    if (data["categorization"].hasOwnProperty(key))
+                        this.categorization[key] = data["categorization"][key];
+                }
+            }
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.currencyId = data["currencyId"];
+            if (data["bankIds"] && data["bankIds"].constructor === Array) {
+                this.bankIds = [];
+                for (let item of data["bankIds"])
+                    this.bankIds.push(item);
+            }
+            if (data["accountIds"] && data["accountIds"].constructor === Array) {
+                this.accountIds = [];
+                for (let item of data["accountIds"])
+                    this.accountIds.push(item);
+            }
+            if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
+                this.businessEntityIds = [];
+                for (let item of data["businessEntityIds"])
+                    this.businessEntityIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateCashFlowCommentInput {
+        let result = new CreateCashFlowCommentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["comment"] = this.comment;
+        data["cashFlowTypeId"] = this.cashFlowTypeId;
+        if (this.categorization) {
+            data["categorization"] = {};
+            for (let key in this.categorization) {
+                if (this.categorization.hasOwnProperty(key))
+                    data["categorization"][key] = this.categorization[key];
+            }
+        }
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["currencyId"] = this.currencyId;
+        if (this.bankIds && this.bankIds.constructor === Array) {
+            data["bankIds"] = [];
+            for (let item of this.bankIds)
+                data["bankIds"].push(item);
+        }
+        if (this.accountIds && this.accountIds.constructor === Array) {
+            data["accountIds"] = [];
+            for (let item of this.accountIds)
+                data["accountIds"].push(item);
+        }
+        if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
+            data["businessEntityIds"] = [];
+            for (let item of this.businessEntityIds)
+                data["businessEntityIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface ICreateCashFlowCommentInput {
+    comment: string;
+    cashFlowTypeId: string;
+    categorization: { [key: string] : string; };
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    currencyId: string;
+    bankIds: number[];
+    accountIds: number[];
+    businessEntityIds: number[];
+}
+
+export class CreateCashFlowCommentOutput implements ICreateCashFlowCommentOutput {
+    threadId: number;
+    id: number;
+
+    constructor(data?: ICreateCashFlowCommentOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.threadId = data["threadId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateCashFlowCommentOutput {
+        let result = new CreateCashFlowCommentOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["threadId"] = this.threadId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateCashFlowCommentOutput {
+    threadId: number;
+    id: number;
 }
 
 export class ListResultDtoOfSubscribableEditionComboboxItemDto implements IListResultDtoOfSubscribableEditionComboboxItemDto {
