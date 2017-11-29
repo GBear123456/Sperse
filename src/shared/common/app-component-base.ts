@@ -1,4 +1,4 @@
-﻿import { Injector, Inject, Input, ApplicationRef, ElementRef, HostBinding } from '@angular/core';
+﻿import { Injector, Inject, Input, ApplicationRef, ElementRef, HostBinding, HostListener } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -14,7 +14,12 @@ import buildQuery from 'odata-query';
 import * as _ from 'underscore';
 
 export abstract class AppComponentBase {
-  	@HostBinding('class') public cssClass = '';
+  	@HostBinding('class.fullscreen') public isFullscreenMode = false;
+    @HostListener('document:webkitfullscreenchange', ['$event'])
+    onWebkitFullscreenChange($event) {
+        this.isFullscreenMode = document['fullScreen'] 
+            || document['mozFullScreen'] || document.webkitIsFullScreen;
+    }
 
     dataGrid: any;
     dataSource: any;
@@ -133,32 +138,23 @@ export abstract class AppComponentBase {
             this.dataGrid, option == 'all');
     }
 
-    openFullscreen(element?: any) {    
+    openFullscreen(element?: any) {
         element = element || this.getElementRef().nativeElement;
-        let method = element.requestFullScreen || element.webkitRequestFullScreen 
+        let method = element.requestFullScreen || element.webkitRequestFullScreen
             || element.mozRequestFullScreen || element.msRequestFullScreen;
-        if (method) {
+        if (method)
             method.call(element);
-            this.cssClass = 'fullscreen';
-        }
     }
 
     exitFullscreen() {
-        let method = (document.exitFullscreen || document.webkitExitFullscreen 
+        let method = (document.exitFullscreen || document.webkitExitFullscreen
             || document['mozCancelFullScreen'] || document['msExitFullscreen']);
-        if (method) {
+        if (method)
             method.call(document);
-            this.cssClass = '';
-        }
-    }
-
-    isFullscreenMode() {
-        return document['fullScreen'] || document['mozFullScreen'] 
-            || document.webkitIsFullScreen;
     }
 
     toggleFullscreen(element?: any) {
-        if (this.isFullscreenMode())
+        if (this.isFullscreenMode)
             this.exitFullscreen();
         else
             this.openFullscreen(element);

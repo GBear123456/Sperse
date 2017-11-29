@@ -42,6 +42,7 @@ export class FilterManagerComponent extends AppComponentBase {
     ).instance;
 
     componentRef.localizationSourceName = this._filtersService.localizationSourceName;
+    componentRef.options = filter.options || {};
     componentRef.items = filter.items || {};
     componentRef.apply = (event) => {
       this.onApply.emit(event);

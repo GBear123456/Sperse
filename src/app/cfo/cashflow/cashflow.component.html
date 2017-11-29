@@ -1,4 +1,4 @@
-<app-headline [config]="headlineConfig" *ngIf="!isFullscreenMode()">
+<app-headline [config]="headlineConfig" *ngIf="!isFullscreenMode">
     <synch-progress class="synch-progress" (onComplete)="refreshDataGrid()"></synch-progress>
 </app-headline>
 
@@ -6,6 +6,7 @@
     (refreshCashflow)="refreshDataGrid($event)"
     (onGroupBy)="changeGroupBy($event)"
     (handleFullscreen)="toggleFullscreen(getFullscreenElement())"
+    (onToggleRows)="togglePivotGridRows($event)"
     (download)="downloadData($event)"
 ></cashflow-operations>
 

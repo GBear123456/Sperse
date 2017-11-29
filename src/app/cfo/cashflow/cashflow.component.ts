@@ -274,7 +274,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                         new FilterModel({
                             component: FilterCalendarComponent,
                             caption: 'Date',
-                            items: {from: new FilterItemModel(), to: new FilterItemModel()}
+                            items: {from: new FilterItemModel(), to: new FilterItemModel()},
+                            options: {
+                                allowFutureDates: true,
+                                endDate: moment(new Date()).add(10, 'years').toDate()
+                            }
                         }),
                         new FilterModel({
                             component: FilterCheckBoxesComponent,
@@ -880,6 +884,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.pivotGrid.export.fileName = this._exportService.getFileName();
             this.pivotGrid.instance.exportToExcel();
         }
+    }
+
+    togglePivotGridRows(event) {
+        this.pivotGrid.instance.getDataSource().expandAll(1);
     }
 
     toggleFilters(event) {
