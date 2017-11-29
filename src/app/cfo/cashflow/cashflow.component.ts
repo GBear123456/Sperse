@@ -198,6 +198,22 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             visible: true
         },
         {
+            caption: 'Projected',
+            area: 'column',
+            showTotals: false,
+            selector: function(dataItem) {
+                return dataItem.forecastId ? 1 : 0;
+            },
+            customizeText: cellInfo => {
+                let projectedKey = cellInfo.value === 1 ? 'Projected' : 'Mtd';
+                let cellValue = this.l(projectedKey).toUpperCase();
+                let cssMarker = ' @css:{projectedField ' + (cellInfo.value === 1 ? 'projected' : 'mtd') + '}';
+                return cellValue + cssMarker;
+            },
+            expanded: false,
+            allowExpand: false
+        },
+        {
             caption: 'Day',
             dataField: 'date',
             dataType: 'date',
@@ -592,17 +608,18 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param startedGroupInterval - the groupInterval from which we should start show headers
      */
     updateDateFields(startedGroupInterval) {
-        let allDateIntervals = this.groupbyItems.map(group => group.groupInterval);
-        let datesIntervalsToBeHide = allDateIntervals.slice(0, allDateIntervals.indexOf(startedGroupInterval));
-        for (let dateInterval of allDateIntervals) {
-            /** move historical period to the top of started interval by setting area index */
-            let intervalField = this.getDateFieldByInterval(dateInterval);
-            intervalField.expanded = false;
+        let allColumnsFields = this.getColumnFields();
+        for (let field of allColumnsFields) {
+            field.expanded = false;
         }
-        for (let dateInterval of datesIntervalsToBeHide) {
-            let intervalField = this.getDateFieldByInterval(dateInterval);
-            intervalField.expanded = true;
-        }
+        allColumnsFields.every(field => {
+            if (field.groupInterval === startedGroupInterval) {
+                return false;
+            } else {
+                field.expanded = true;
+                return true;
+            }
+        });
     }
 
     /**
@@ -627,7 +644,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** Calculate the amount current cells to cut the current period current cell to change current from
          *  current for year to current for the grouping period */
         if (this.groupInterval !== 'year') {
-            let lowestOpenedInterval = this.getLowestOpenedInterval();
+            let lowestOpenedInterval = this.getLowestOpenedCurrentInterval();
             $(`.current${_.capitalize(lowestOpenedInterval)}`).addClass('lowestOpenedCurrent');
             this.changeHistoricalColspans(lowestOpenedInterval);
         }
@@ -702,10 +719,15 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     getIntervalColspansAmountForCurrent(lowestInterval) {
-        let colspanAmount = 1;
-        let currentElement = $('.current' + _.capitalize(lowestInterval));
-        if (!currentElement.length) {
-            colspanAmount = 0;
+        let colspanAmount = 0;
+        while (lowestInterval) {
+            let currentElement = $(`.dx-pivotgrid-horizontal-headers .lowestOpenedCurrent.current${_.capitalize(lowestInterval)}:not(.projectedField)`);
+            if (currentElement.length) {
+                colspanAmount = +currentElement.attr('colspan');
+                break;
+            } else {
+                lowestInterval = this.getPrevGroupInterval(lowestInterval);
+            }
         }
         return colspanAmount;
     }
@@ -713,13 +735,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     /**
      * Get lowest opened interval
      */
-    getLowestOpenedInterval() {
+    getLowestOpenedCurrentInterval() {
         let allIntervals = this.groupbyItems.map(item => item.groupInterval);
         let lowestInterval = allIntervals[0];
         allIntervals.every(interval => {
             let currentElement = $('.current' + _.capitalize(interval));
             lowestInterval = interval;
-            if (currentElement.length && !currentElement.attr('colspan')) {
+            if (currentElement.length && (!currentElement.attr('colspan') ||
+               (interval === 'month' && currentElement.find('.projectedField') && !currentElement.find('.projectedField').attr('colspan'))) ) {
                 return false;
             }
             return true;
@@ -735,6 +758,19 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             return $('.dx-area-data-cell .' + period + _.capitalize(groupInterval))[elementPosition]()[method]().length + 1;
         }
         return currentElement.first()[method]().length;
+    }
+
+    getPrevGroupInterval(groupInterval) {
+        let currentIndex = this.groupbyItems.map(item => item.groupInterval).indexOf(groupInterval);
+        return currentIndex > 0 ? this.groupbyItems[currentIndex - 1].groupInterval : null;
+    }
+
+    /**
+     * Return the index of next interval that leads for the interval in argument
+     */
+    getNextGroupInterval(groupInterval) {
+        let currentIndex = this.groupbyItems.map(item => item.groupInterval).indexOf(groupInterval);
+        return this.groupbyItems[currentIndex + 1].groupInterval;
     }
 
     /**
@@ -988,7 +1024,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @returns {boolean}
      */
     isCellContainsCssMarker(cellObj) {
-        return cellObj.cell.text.indexOf(this.cssMarker) !== -1;
+        return cellObj.cell.text ? cellObj.cell.text.indexOf(this.cssMarker) !== -1 : '';
     }
     /**
      * Event that runs before rendering of every cell of the pivot grid
@@ -1092,14 +1128,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
         cellObj.cellElement.addClass(cssClass);
         /** hide projected field for not current months for mdk and projected */
-        if (_.startsWith(cssClass, 'projectedField')) {
-            /** hide the projected fields if the group interval is */
-            if (this.groupInterval === 'day') {
-                cellObj.cellElement.hide();
-            } else {
-                this.hideProjectedFieldForNotCurrentMonths(cellObj);
-            }
-        }
+        // if (_.startsWith(cssClass, 'projectedField')) {
+        //     /** hide the projected fields if the group interval is */
+        //     if (this.groupInterval === 'day') {
+        //         cellObj.cellElement.hide();
+        //     } else {
+        //         this.hideProjectedFieldForNotCurrentMonths(cellObj);
+        //     }
+        // }
     }
 
     /**
@@ -1115,6 +1151,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 let path = cellObj.cell.path ? cellObj.cell.path : cellObj.cell.columnPath;
                 if (path && path[index] === currentPeriodValue) {
                     cellObj.cellElement.addClass(`current${_.capitalize(fieldInterval)}`);
+                    if (fieldInterval === 'month') {
+                        let projected = this.getProjectedValueByPath(path);
+                        if (projected !== undefined) {
+                            let projectedClass = projected === 1 ? 'projectedCell' : 'mtdCell';
+                            cellObj.cellElement.addClass(`${projectedClass}`);
+                        }
+                    }
                 } else if (path && path[index] < currentPeriodValue) {
                     cellObj.cellElement.addClass(`prev${_.capitalize(fieldInterval)}`);
                     return false;
@@ -1127,6 +1170,15 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
             return true;
         });
+    }
+
+    /**
+     * Gets the mtd or projected 0 or 1 from the path
+     * @param projected
+     */
+    getProjectedValueByPath(path) {
+        let projectedFieldIndex = this.getColumnFields().filter(field => field.caption === 'Projected')[0].areaIndex;
+        return path[projectedFieldIndex];
     }
 
     /**
