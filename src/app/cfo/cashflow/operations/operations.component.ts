@@ -13,6 +13,7 @@ export class OperationsComponent extends AppComponentBase {
     @Output() onToggleRows: EventEmitter<any> = new EventEmitter();
     @Output() handleFullscreen: EventEmitter<any> = new EventEmitter();
     @Output() download: EventEmitter<any> = new EventEmitter();
+    @Output() showPreferences: EventEmitter<any> = new EventEmitter();
 
     toolbarConfig = [
         {
@@ -66,7 +67,10 @@ export class OperationsComponent extends AppComponentBase {
                         }]
                     }
                 },
-                { name: 'rules'}
+                {
+                    name: 'rules',
+                    action: this.preferences.bind(this)
+                }
             ]
         },
         {
@@ -194,5 +198,9 @@ export class OperationsComponent extends AppComponentBase {
 
     fullscreen() {
         this.handleFullscreen.emit();
+    }
+
+    preferences() {
+        this.showPreferences.emit();
     }
 }
