@@ -13,6 +13,7 @@ import {
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
+import * as underscore from 'underscore';
 import * as Moment from 'moment';
 import { extendMoment } from 'moment-range';
 
@@ -23,7 +24,7 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { UserGridPreferencesComponent } from './user-grid-preferences/user-grid-preferences.component'
+import { UserGridPreferencesComponent } from './user-grid-preferences/user-grid-preferences.component';
 const moment = extendMoment(Moment);
 
 /** Constants */
@@ -236,6 +237,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         'current',
         'forecast'
     ];
+    fieldPathsToClick = [];
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
@@ -743,13 +745,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * Get lowest opened interval
      */
     getLowestOpenedCurrentInterval() {
-        let allIntervals = this.groupbyItems.map(item => item.groupInterval);
+        let allIntervals = this.groupbyItems.map(item => item.groupInterval).filter(item => item !== 'day');
         let lowestInterval = allIntervals[0];
         allIntervals.every(interval => {
             let currentElement = $('.current' + _.capitalize(interval));
             lowestInterval = interval;
             if (currentElement.length && (!currentElement.attr('colspan') ||
-               (interval === 'month' && currentElement.find('.projectedField') && !currentElement.find('.projectedField').attr('colspan'))) ) {
+               (interval === 'month' && currentElement.hasClass('projectedField') &&
+                !$(`.current${_.capitalize(interval)}.projectedField`).attr('colspan'))) ) {
                 return false;
             }
             return true;
@@ -1135,6 +1138,18 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 });
             }
         }
+
+        /** If there are some cells to click - click it! */
+        if (e.area === 'column') {
+            if (this.fieldPathsToClick.length) {
+                if (underscore.isEqual(e.cell.path.slice(0, e.cell.path.length - 1), this.fieldPathsToClick[0])) {
+                    if (!e.cell.expanded) {
+                        e.cellElement.trigger('click');
+                    }
+                    this.fieldPathsToClick = [];
+                }
+            }
+        }
     }
 
     /**
@@ -1178,7 +1193,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     addCurrentPeriodsClasses(cellObj) {
         this.getColumnFields().every( (field, index) => {
-            if (field.dataType === 'date') {
+            if (field.dataType === 'date' && field.groupInterval !== 'day') {
                 let currentDate = moment(),
                     fieldInterval = field.groupInterval,
                     method = fieldInterval === 'day' ? 'date' : fieldInterval,
@@ -1274,6 +1289,56 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.statsDetailFilter.businessEntityIds = this.requestFilter.businessEntityIds;
             this.getStatsDetails(this.statsDetailFilter);
         }
+
+        /** If month cell has only one child (mtd or projected) - then click on it
+         *  to expand/collapse days */
+        if (cellObj.area === 'column' && cellObj.cell) {
+            if (cellObj.rowIndex === cellObj.columnFields.filter(field => field.groupInterval === 'month')[0].areaIndex && !this.monthHasForecast(cellObj) && !cellObj.cell.expanded) {
+                this.addFieldToClicking(cellObj.cell.path);
+            }
+        }
+    }
+
+    addFieldToClicking(path) {
+        this.fieldPathsToClick = [path];
+    }
+
+    /** Return the amount of the child of the column like the */
+    monthHasForecast(cellObj) {
+        let monthDataWithForecast = this.cashflowData.filter(item => {
+            return item.forecastId && item.date.format('M.Y') === this.getDateByPath(cellObj.cell.path, cellObj.columnFields, 'month').format('M.Y');
+        });
+        return monthDataWithForecast.length ? true : false;
+    }
+
+    /**
+     * Return the moment date for the path using column fields
+     * @param path
+     * @param columnFields
+     * @return {any}
+     */
+    getDateByPath(path, columnFields, lowestInterval) {
+        let date = moment();
+        let dateFields = [];
+        columnFields.every(field => {
+            if (field.dataType === 'date') {
+                dateFields.push(field);
+            }
+            if (field.groupInterval === lowestInterval) {
+                return false;
+            }
+            return true;
+        });
+
+        dateFields.forEach(dateField => {
+            let method = dateField.groupInterval === 'day' ? 'date' : dateField.groupInterval,
+                fieldValue = path[columnFields.filter(field => field.groupInterval === dateField.groupInterval)[0].areaIndex];
+            fieldValue = dateField.groupInterval === 'month' ? fieldValue - 1 : fieldValue;
+            /** set the new interval to the moment */
+            date[method](fieldValue);
+        });
+
+        return date;
     }
 
     customCurrency(value) {
