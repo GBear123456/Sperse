@@ -17,18 +17,19 @@ import {
     BankAccountDto,
     CashflowServiceProxy,
     BankAccountsServiceProxy,
-    GroupBy
+    GroupBy,
+    CashFlowForecastServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
     'selector': 'app-stats',
-    'providers': [ CashflowServiceProxy, BankAccountsServiceProxy ],
+    'providers': [ CashflowServiceProxy, BankAccountsServiceProxy, CashFlowForecastServiceProxy ],
     'templateUrl': './stats.component.html',
     'styleUrls': ['./stats.component.less']
 })
 export class StatsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     statsData: any;
-    toolbarConfig = [
+    toolbarConfig = <any>[
         {
             location: 'before',
             items: [
@@ -47,7 +48,14 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         {
             location: 'before',
             items: [
-                { name: 'scenario' }
+                {
+                    name: 'slider',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Scenario'),
+                        items: []
+                    }
+                }
             ]
         },
         {
@@ -97,7 +105,8 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         injector: Injector,
         private _filtersService: FiltersService,
         private _cashflowService: CashflowServiceProxy,
-        private _bankAccountService: BankAccountsServiceProxy
+        private _bankAccountService: BankAccountsServiceProxy,
+        private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy
     ) {
         super(injector);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
@@ -134,6 +143,18 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                 );
             });
 
+        this._cashFlowForecastServiceProxy.getModels().subscribe(
+            result => {
+                let sliderObj = this.toolbarConfig.filter(toolbarItem => toolbarItem.items[0].name === 'slider')[0];
+                sliderObj.items[0].options.items = result.map(forecastModelItem => {
+                    return {
+                        action: Function(),
+                        text: forecastModelItem.name
+                    };
+                });
+            }
+        );
+
         this.headlineConfig = {
             name: this.l('Daily Cash Balances'),
             icon: '',
@@ -165,12 +186,11 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     /** load stats data from api */
     loadStatsData() {
         let {startDate = undefined, endDate = undefined, accountIds = []} = this.requestFilter;
-        this.statsData = this._bankAccountService.getBankAccountDailyStats(accountIds, startDate, endDate, GroupBy.Monthly)
+        this.statsData = this._bankAccountService.getBankAccountDailyStats('USD', 1, accountIds, startDate, endDate, GroupBy.Monthly)
             .subscribe(result => {
                     if (result) {
                         this.statsData = result;
                         this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
-                        console.log(this.statsData);
                     } else {
                         console.log('No daily stats');
                     }

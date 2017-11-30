@@ -674,8 +674,57 @@ export class BankAccountsServiceProxy {
     /**
      * @return Success
      */
-    getBankAccountDailyStats(accounts: number[], startDate: moment.Moment, endDate: moment.Moment, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
+    recalculateAllBankAccountDailyStats(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/RecalculateAllBankAccountDailyStats";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processRecalculateAllBankAccountDailyStats(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRecalculateAllBankAccountDailyStats(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRecalculateAllBankAccountDailyStats(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getBankAccountDailyStats(currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetBankAccountDailyStats?";
+        if (currency !== undefined)
+            url_ += "Currency=" + encodeURIComponent("" + currency) + "&"; 
+        if (forecastModelId !== undefined)
+            url_ += "ForecastModelId=" + encodeURIComponent("" + forecastModelId) + "&"; 
         if (accounts !== undefined)
             accounts.forEach(item => { url_ += "Accounts=" + encodeURIComponent("" + item) + "&"; });
         if (startDate !== undefined)
@@ -12547,6 +12596,7 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
     adjustments: number;
     endingBalance: number;
     period: BankAccountDailyStatDtoPeriod;
+    isForecast: boolean;
 
     constructor(data?: IBankAccountDailyStatDto) {
         if (data) {
@@ -12567,6 +12617,7 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
             this.adjustments = data["adjustments"];
             this.endingBalance = data["endingBalance"];
             this.period = data["period"];
+            this.isForecast = data["isForecast"];
         }
     }
 
@@ -12586,6 +12637,7 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
         data["adjustments"] = this.adjustments;
         data["endingBalance"] = this.endingBalance;
         data["period"] = this.period;
+        data["isForecast"] = this.isForecast;
         return data; 
     }
 }
@@ -12599,6 +12651,7 @@ export interface IBankAccountDailyStatDto {
     adjustments: number;
     endingBalance: number;
     period: BankAccountDailyStatDtoPeriod;
+    isForecast: boolean;
 }
 
 export class ListResultDtoOfCacheDto implements IListResultDtoOfCacheDto {
