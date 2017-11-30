@@ -80,6 +80,6 @@ export class LeadsStatsComponent extends AppComponentBase {
 
     onCellPrepared(e) {
         if (e.area == 'data')
-            e.cellElement.addClass('filter-link');
+            e.cellElement.addClass('leads-reference-link');
     }
 }
