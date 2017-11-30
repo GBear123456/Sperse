@@ -893,30 +893,44 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     togglePivotGridRows(event) {
-        let action = event.itemIndex;
-        switch (action) {
+        let levelIndex = event.itemIndex;
+        let source;
+        switch (levelIndex) {
             case 0:
-                this.pivotGrid.instance.getDataSource().expandAll(action);
-                break;
             case 1:
-                this.pivotGrid.instance.getDataSource().expandAll(action);
-                break;
             case 2:
-                this.pivotGrid.instance.getDataSource().expandAll(action);
+                source = this.pivotGrid.instance.getDataSource().getData();
+                this.expandRows(source, levelIndex);
                 break;
             case 3:
-                this.pivotGrid.instance.getDataSource().expandAll(0);
-                this.pivotGrid.instance.getDataSource().expandAll(1);
-                this.pivotGrid.instance.getDataSource().expandAll(2);
+                source = this.pivotGrid.instance.getDataSource().getData();
+                this.expandRows(source);
                 break;
             case 4:
-                this.pivotGrid.instance.getDataSource().collapseAll(0);
-                this.pivotGrid.instance.getDataSource().collapseAll(1);
                 this.pivotGrid.instance.getDataSource().collapseAll(2);
+                this.pivotGrid.instance.getDataSource().collapseAll(1);
+                this.pivotGrid.instance.getDataSource().collapseAll(0);
+                this.pivotGrid.instance.getDataSource().expandHeaderItem('row', [Income]);
+                this.pivotGrid.instance.getDataSource().expandHeaderItem('row', [Expense]);
                 break;
             default:
                 // Don't know yet what to do by default.
                 break;
+        }
+    }
+
+    expandRows(source: any, stopDepth: number = 5, path: any = [], currentDepth: number = 0) {
+        if (!source || (!source.children && !source.rows))
+            return;
+        let rows = source.rows ? source.rows : source.children;
+        for (let child of rows ){
+            let childPath = path.slice();
+            childPath.push(child.value);
+            if (this.hasChildsByPath(childPath, this.cashflowDataTree)) {
+                this.pivotGrid.instance.getDataSource().expandHeaderItem('row', childPath);
+                if (currentDepth != stopDepth)
+                    this.expandRows(child, stopDepth, childPath, currentDepth + 1);
+            }
         }
     }
 
