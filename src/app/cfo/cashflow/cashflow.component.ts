@@ -1263,6 +1263,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             let datePeriod = this.formattingDate(cellObj.cell.columnPath);
             $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
             $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
+            this.statsDetailFilter = new StatsDetailFilter();
             this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
             this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
             this.statsDetailFilter.categorization = this.statsDetailFilter.categorization || {};
@@ -1271,16 +1272,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 this.statsDetailFilter.cashFlowTypeId == Reconciliation
             ) {
                 this.statsDetailFilter.categorization[this.categorization[0]] = undefined;
-                if ((!this.requestFilter.accountIds || !this.requestFilter.accountIds.length) &&
-                    cellObj.cell.rowPath[1] &&
-                    Number.isInteger(cellObj.cell.rowPath[1])) {
+                if (cellObj.cell.rowPath[1] && Number.isInteger(cellObj.cell.rowPath[1])) {
                     this.statsDetailFilter.accountIds = [cellObj.cell.rowPath[1]];
                 } else {
-                    this.statsDetailFilter.accountIds = (this.requestFilter.accountIds && this.requestFilter.accountIds) || [];
+                    this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
                     this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
                 }
             } else {
-                this.statsDetailFilter.accountIds = (this.requestFilter.accountIds && this.requestFilter.accountIds) || [];
+                this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
                 this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
                 this.statsDetailFilter.categorization[this.categorization[0]] = cellObj.cell.rowPath[1];
             }
