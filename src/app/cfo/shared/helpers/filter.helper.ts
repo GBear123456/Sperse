@@ -19,7 +19,7 @@ export class FilterHelpers {
                     id: bank.id + ':' + acc.id,
                     parent: bank.name,
                     parentId: bank.id,
-                    name: acc.accountName + ' (' + acc.accountNumber + ')'
+                    name: acc.accountNumber + ': ' + (acc.accountName ? acc.accountName : 'No name')
                 });
             });
         });
