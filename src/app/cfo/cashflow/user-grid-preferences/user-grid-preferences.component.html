@@ -5,12 +5,11 @@
                 <span class="modal-title">{{l("CashFlowGrid_UserPrefs_Header")}}</span>
                 <button class="btn btn-layout pull-right" (click)="save()">{{l("CashFlowGrid_UserPrefs_Save")}}</button>
                 <button class="btn btn-default pull-right" (click)="close()">{{l("CashFlowGrid_UserPrefs_Cancel")}}</button>
-                <dx-check-box class="remember-option pull-right" [value]="true" text="Remember my last view settings"></dx-check-box>
+                <dx-check-box class="remember-option pull-right" [value]="true" [text]="l('CashFlowGrid_UserPrefs_RememberLastSettings')"></dx-check-box>
             </div>
             <div class="modal-body">
                 <div class="section">
-                    <div class="header">
-                        <i class="fa fa-thermometer-quarter" aria-hidden="true"></i>
+                    <div class="header header-general">
                         {{l("CashFlowGrid_UserPrefs_General")}}
                     </div>
                     <div class="section-body container-fluid">
@@ -19,7 +18,7 @@
                             <div *ngFor="let colHeader of getEnumKeys(GeneralScope)" class="col-xs-1">{{l('CashFlowGrid_UserPrefs_General_' + colHeader)}}</div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-4">Show amounts with decimals</div>
+                            <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_ShowAmountsWithDecimals")}}</div>
                             <div *ngFor="let colHeader of getEnumKeys(GeneralScope)" class="col-xs-1">
                                 <dx-check-box [value]="checkFlag(model.general.showAmountsWithDecimals, GeneralScope[colHeader])"
                                               (onValueChanged)="checkBoxValueChanged($event, model.general, 'showAmountsWithDecimals', GeneralScope[colHeader])">
@@ -27,7 +26,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-4">Don’t show zero values in cells</div>
+                            <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_HideZeroValuesInCells")}}</div>
                             <div *ngFor="let colHeader of getEnumKeys(GeneralScope)" class="col-xs-1">
                                 <dx-check-box [value]="checkFlag(model.general.hideZeroValuesInCells, GeneralScope[colHeader])"
                                               (onValueChanged)="checkBoxValueChanged($event, model.general, 'hideZeroValuesInCells', GeneralScope[colHeader])">
@@ -35,7 +34,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-4">Show negative values in red</div>
+                            <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_ShowNegativeValuesInRed")}}</div>
                             <div *ngFor="let colHeader of getEnumKeys(GeneralScope)" class="col-xs-1">
                                 <dx-check-box [value]="checkFlag(model.general.showNegativeValuesInRed, GeneralScope[colHeader])"
                                               (onValueChanged)="checkBoxValueChanged($event, model.general, 'showNegativeValuesInRed', GeneralScope[colHeader])">
@@ -48,7 +47,7 @@
                             <div *ngFor="let colHeader of getEnumKeys(PeriodScope)" class="col-xs-1">{{colHeader}}</div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-4">Hide columns with zero activity</div>
+                            <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_HideColumnsWithZeroActivity")}}</div>
                             <div *ngFor="let colHeader of getEnumKeys(PeriodScope)" class="col-xs-1">
                                 <dx-check-box [value]="checkFlag(model.general.hideColumnsWithZeroActivity, PeriodScope[colHeader])"
                                               (onValueChanged)="checkBoxValueChanged($event, model.general, 'hideColumnsWithZeroActivity', PeriodScope[colHeader])">
@@ -59,44 +58,51 @@
                 </div>
                 <div class="section">
                     <div class="header">
-                        <i class="fa fa-thermometer-quarter" aria-hidden="true"></i>
                         {{l("CashFlowGrid_UserPrefs_Visuals")}}
                     </div>
                     <div class="section-body">
                         <div class="dx-field">
-                            <div class="dx-field-label">Font</div>
+                            <div class="dx-field-label">{{l("CashFlowGrid_UserPrefs_Font")}}</div>
                             <div class="dx-field-value">
-                                <dx-select-box [items]="fonts"
-                                               [(value)]="model.visualPreferences.fontName">
-                                </dx-select-box>
-                                <dx-select-box [items]="fontSizes"
-                                               [(value)]="model.visualPreferences.fontSize">
-                                </dx-select-box>
+                                <div class="left-select">
+                                    <dx-select-box [items]="fonts"
+                                                   [(value)]="model.visualPreferences.fontName">
+                                    </dx-select-box>
+                                </div>
+                                <div class="right-select">
+                                    <dx-select-box style="width: 28%"
+                                                   [items]="fontSizes"
+                                                   [(value)]="model.visualPreferences.fontSize">
+                                    </dx-select-box>
+                                </div>
                             </div>
                         </div>
 
                         <div class="dx-field">
-                            <div class="dx-field-label">CFO theme</div>
+                            <div class="dx-field-label">{{l("CashFlowGrid_UserPrefs_CFOTheme")}}</div>
                             <div class="dx-field-value">
-                                <dx-select-box [items]="themes"
-                                               [(value)]="model.visualPreferences.cfoTheme">
-                                </dx-select-box>
+                                <div class="left-select">
+                                    <dx-select-box [items]="themes"
+                                                   [(value)]="model.visualPreferences.cfoTheme">
+                                    </dx-select-box>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="section">
                     <div class="header">
-                        <i class="fa fa-thermometer-quarter" aria-hidden="true"></i>
                         {{l("CashFlowGrid_UserPrefs_L11nAndCurrency")}}
                     </div>
                     <div class="section-body">
                         <div class="dx-field">
-                            <div class="dx-field-label">Numbers formatting</div>
+                            <div class="dx-field-label">{{l("CashFlowGrid_UserPrefs_NumbersFormatting")}}</div>
                             <div class="dx-field-value">
-                                <dx-select-box [items]="numberFormats"
-                                               [(value)]="model.localizationAndCurrency.numberFormatting">
-                                </dx-select-box>
+                                <div class="left-select">
+                                    <dx-select-box [items]="numberFormats"
+                                                   [(value)]="model.localizationAndCurrency.numberFormatting">
+                                    </dx-select-box>
+                                </div>
                             </div>
                         </div>
                     </div>

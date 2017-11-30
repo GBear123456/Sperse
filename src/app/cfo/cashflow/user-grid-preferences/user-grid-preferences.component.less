@@ -1,4 +1,23 @@
 :host {
+    .modal-dialog {
+        position: fixed;
+        right: 0;
+        margin: 0;
+        height: 100vh;
+    }
+
+    .modal-content {
+        height: 100%;
+    }
+    /*.modal.fade .modal-dialog {
+        -webkit-transform: translate3d(-25%, 0, 0);
+        transform: translate3d(-25%, 0, 0);
+    }*/
+    .modal.fade:not(.in) .modal-dialog {
+        -webkit-transform: translate3d(25%, 0, 0);
+        transform: translate3d(25%, 0, 0);
+    }
+
     .btn {
         width: 132px;
         height: 36px;
@@ -37,6 +56,21 @@
             .header {
                 font-size: 15px;
                 font-weight: 600;
+                position: relative;
+                padding-left: 30px;
+
+                &::before {
+                    content: '';
+                    background: url("../../../../assets/common/icons/edit-icon.svg");
+                    background-size: cover;
+                    width: 18px;
+                    height: 18px;
+                    display: inline-block;
+                    position: absolute;
+                    left: 0px;
+                    top: 2px;
+                    opacity: 0.5;
+                }
             }
 
             .section-body {
@@ -74,6 +108,23 @@
                     color: #677380;
                     font-size: 14px;
                     font-weight: 300;
+                    width: 29%;
+                    padding: 13px 0 11px 0;
+                    border-bottom: 1px solid #dfdfdf;
+                }
+
+                .dx-field-value {
+                    width: 71%;
+
+                    .left-select {
+                        width: 41%;
+                        float: left;
+                    }
+
+                    .right-select {
+                        width: 54%;
+                        float: right;
+                    }
                 }
             }
 
