@@ -18,28 +18,27 @@
     position: absolute;
     width: 100% !important;
     height: 100%;
-    
+
     .page-container {
         padding: 0;
         .page-sidebar-wrapper {
-//            left: -340px;
-//            transition: 1s;
             z-index: 10;
             position: relative;
             display: none;
             &.show-sidebar-wrapper {
-//              left: 0px;        
                 display: block;
-            }   
+            }
         }
     }
-    
-    .page-container,
+
+    .page-container {
+        height: calc(~"100% - 75px");
+    }
     .page-content-wrapper,
     .page-content {
         height: 100%;
     }
-    
+
     .page-content-wrapper .page-content {
         margin-left: 0;
         &.enabled-filters {
