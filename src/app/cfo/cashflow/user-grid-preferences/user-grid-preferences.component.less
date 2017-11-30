@@ -1,0 +1,120 @@
+:host {
+    .btn {
+        width: 132px;
+        height: 36px;
+        margin-top: 10px;
+        font-weight: 500 !important;
+        padding-top: 6px !important;
+        padding-bottom: 9px !important;
+    }
+
+    .modal-dialog {
+        width: 850px;
+    }
+
+    .modal-header {
+        background-color: #F3F7FA;
+
+        .remember-option {
+            padding-top: 18px;
+            padding-right: 5px;
+            font-size: 13px;
+        }
+
+        .modal-title {
+            display: inline-block;
+            padding: 17px 5px 14px 9px;
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 24px;
+        }
+    }
+
+    .modal-body {
+        padding: 28px 37px;
+
+        .section {
+            .header {
+                font-size: 15px;
+                font-weight: 600;
+            }
+
+            .section-body {
+                margin-left: 32px;
+                margin-top: 10px;
+
+                .row, .col-xs-1, .col-xs-4, .container-fluid {
+                    padding-left: 0;
+                    padding-right: 0;
+                }
+
+                .row {
+                    margin-top: 14px;
+                    margin-bottom: 14px;
+
+                    &.row-header {
+                        font-size: 13px;
+                        font-weight: 300;
+                        color: #677380;
+                        padding-bottom: 16px;
+                        border-bottom: 1px solid #E5E9EC;
+                    }
+
+                    + .row-header {
+                        margin-top: 30px;
+                    }
+
+                    .col-xs-1 {
+                        width: 13%;
+                        text-align: center;
+                    }
+                }
+
+                .dx-field-label {
+                    color: #677380;
+                    font-size: 14px;
+                    font-weight: 300;
+                }
+            }
+
+            + .section {
+                margin-top: 45px;
+            }
+        }
+    }
+
+    /deep/ .dx-checkbox {
+        .dx-checkbox-icon {
+            width: 20px;
+            height: 20px;
+            background-color: #FFF;
+            border: 1px solid #DADEE1 !important;
+            border-radius: 4px;
+        }
+
+        &.dx-checkbox-checked {
+            .dx-checkbox-icon {
+                color: #FFF;
+                font-size: 8px;
+                font-weight: bold;
+                background-color: #00AEEF;
+                border-color: #00AEEF !important;
+            }
+        }
+
+        .dx-checkbox-text {
+            white-space: nowrap;
+        }
+    }
+
+    /deep/ .dx-selectbox {
+        .dx-placeholder.dx-state-invisible {
+            display: none !important;
+        }
+
+        .dx-texteditor-input {
+            font-size: 15px;
+            font-weight: 300;
+        }
+    }
+}

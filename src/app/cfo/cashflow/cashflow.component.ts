@@ -23,6 +23,7 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { UserGridPreferencesComponent } from './user-grid-preferences/user-grid-preferences.component'
 const moment = extendMoment(Moment);
 
 /** Constants */
@@ -41,6 +42,7 @@ const StartedBalance = 'B',
 })
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
+    @ViewChild('userGridPreferences') userGridPreferences: UserGridPreferencesComponent;
     headlineConfig: any;
     cashflowData: any;
     cashflowDataTree: any;
@@ -887,7 +889,32 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     togglePivotGridRows(event) {
-        this.pivotGrid.instance.getDataSource().expandAll(1);
+        let action = event.itemIndex;
+        switch (action) {
+            case 0:
+                this.pivotGrid.instance.getDataSource().expandAll(action);
+                break;
+            case 1:
+                this.pivotGrid.instance.getDataSource().expandAll(action);
+                break;
+            case 2:
+                this.pivotGrid.instance.getDataSource().expandAll(action);
+                break;
+            case 3:
+                this.pivotGrid.instance.getDataSource().expandAll(0);
+                this.pivotGrid.instance.getDataSource().expandAll(1);
+                this.pivotGrid.instance.getDataSource().expandAll(2);
+                // @todo need applied OS3 there
+                break;
+            case 4:
+                this.pivotGrid.instance.getDataSource().collapseAll(0);
+                this.pivotGrid.instance.getDataSource().collapseAll(1);
+                this.pivotGrid.instance.getDataSource().collapseAll(2);
+                break;
+            default:
+                // Don't know yet what to do by default.
+                break;
+        }
     }
 
     toggleFilters(event) {
@@ -1314,16 +1341,17 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     calculateSummaryValue() {
         return summaryCell => {
-            let counter = this.groupbyItems.length;
+            let counter = this.getColumnFields().length;
             /** @todo refactor and fix a bug when the second call return wrong result */
             summaryCell.__proto__.prevWithParent = function() {
-                let prev = this.prev(arguments[0], arguments[1]),
+                let prev = this.prev(),
                     currentCell = this;
                 while (counter > 0) {
                     if (prev === null) {
-                        if (currentCell.parent('column')) {
-                            prev = currentCell.parent('column').prev(arguments[0], arguments[1]);
-                            currentCell = currentCell.parent('column');
+                        let parent = currentCell.parent('column');
+                        if (parent) {
+                            prev = parent.prev();
+                            currentCell = parent;
                         }
                         counter--;
                     } else {
@@ -1332,7 +1360,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
                 return prev;
             };
-            let prevWithParent = summaryCell.prevWithParent('column', true);
+            let prevWithParent = summaryCell.prevWithParent();
             /** if cell is starting balance account cell - then add account sum from previous period */
             if (prevWithParent !== null && this.isStartingBalanceAccountSummary(summaryCell)) {
                 return this.modifyStartingBalanceAccountCell(summaryCell, prevWithParent);

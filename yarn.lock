@@ -3894,6 +3894,10 @@ ng2-brpipes@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/ng2-brpipes/-/ng2-brpipes-1.1.2.tgz#79789d4fdbe4b6861e9e2166d6ecf717de83988e"
 
+ng2-cache-service@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/ng2-cache-service/-/ng2-cache-service-1.1.1.tgz#e35e1e8dc60e415023d82df82e2157ad73bee9b6"
+
 ng2-dragula@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/ng2-dragula/-/ng2-dragula-1.5.0.tgz#12a221d7a34fc629cc74dc98efb26448290eb6e5"

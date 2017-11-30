@@ -8,7 +8,10 @@ import { CashflowSetupComponent } from './cashflow-setup/cashflow-setup.componen
 import { SetupStepComponent } from './shared/setup-steps/setup-steps.component';
 import { SynchProgressComponent } from './shared/synch-progress/synch-progress.component';
 
+import { ModalModule } from 'ngx-bootstrap';
+
 import { CashflowComponent } from './cashflow/cashflow.component';
+import { UserGridPreferencesComponent } from './cashflow/user-grid-preferences/user-grid-preferences.component';
 import { StatsComponent } from './stats/stats.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 
@@ -17,6 +20,7 @@ import { MdTabsModule } from '@angular/material';
 
 import {
     DxButtonModule,
+    DxCheckBoxModule,
     DxDataGridModule,
     DxDateBoxModule,
     DxFileUploaderModule,
@@ -39,6 +43,7 @@ import {
         AppCommonModule,
 
         DxButtonModule,
+        DxCheckBoxModule,
         DxDataGridModule,
         DxDateBoxModule,
         DxFileUploaderModule,
@@ -52,6 +57,7 @@ import {
         DxValidationSummaryModule,
         DxValidatorModule,
         DxScrollViewModule,
+        ModalModule.forRoot(),
 
         DxChartModule,
         MdTabsModule
@@ -65,6 +71,7 @@ import {
 
         CashflowComponent,
         OperationsComponent,
+        UserGridPreferencesComponent,
         StatsComponent
     ]
 })
