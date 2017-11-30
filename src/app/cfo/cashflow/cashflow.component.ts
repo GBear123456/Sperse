@@ -23,6 +23,7 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { UserGridPreferencesComponent } from './user-grid-preferences/user-grid-preferences.component'
 const moment = extendMoment(Moment);
 
 /** Constants */
@@ -41,6 +42,7 @@ const StartedBalance = 'B',
 })
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
+    @ViewChild('userGridPreferences') userGridPreferences: UserGridPreferencesComponent;
     headlineConfig: any;
     cashflowData: any;
     cashflowDataTree: any;
@@ -887,7 +889,32 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     togglePivotGridRows(event) {
-        this.pivotGrid.instance.getDataSource().expandAll(1);
+        let action = event.itemIndex;
+        switch (action) {
+            case 0:
+                this.pivotGrid.instance.getDataSource().expandAll(action);
+                break;
+            case 1:
+                this.pivotGrid.instance.getDataSource().expandAll(action);
+                break;
+            case 2:
+                this.pivotGrid.instance.getDataSource().expandAll(action);
+                break;
+            case 3:
+                this.pivotGrid.instance.getDataSource().expandAll(0);
+                this.pivotGrid.instance.getDataSource().expandAll(1);
+                this.pivotGrid.instance.getDataSource().expandAll(2);
+                // @todo need applied OS3 there
+                break;
+            case 4:
+                this.pivotGrid.instance.getDataSource().collapseAll(0);
+                this.pivotGrid.instance.getDataSource().collapseAll(1);
+                this.pivotGrid.instance.getDataSource().collapseAll(2);
+                break;
+            default:
+                // Don't know yet what to do by default.
+                break;
+        }
     }
 
     toggleFilters(event) {
