@@ -308,6 +308,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 else
                     this.requestFilter[filter.field] = undefined;
             }
+            this.closeTransactionsDetail();
             this.loadGridDataSource();
         });
 
@@ -904,7 +905,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 this.pivotGrid.instance.getDataSource().expandAll(0);
                 this.pivotGrid.instance.getDataSource().expandAll(1);
                 this.pivotGrid.instance.getDataSource().expandAll(2);
-                // @todo need applied OS3 there
                 break;
             case 4:
                 this.pivotGrid.instance.getDataSource().collapseAll(0);
