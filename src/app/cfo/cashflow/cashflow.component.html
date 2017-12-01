@@ -23,7 +23,7 @@
           [iconSrc]="'assets/common/icons/sort-icon.svg'"
         ></dx-button>
         <button class="clear-all" (click)="clearAllFilters()">
-            clear all
+            {{ls('Platform', 'ClearAll')}}
         </button>
     </div>
 
@@ -78,7 +78,8 @@
                         [allowFiltering]="false"
                         [alignment]="'right'">
             </dxi-column>
-            <dxi-column dataField="comments"
+            <dxi-column caption="Comments"
+                        dataField="comment"
                         [allowSorting]="false"
                         [allowFiltering]="false">
             </dxi-column>
