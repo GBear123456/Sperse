@@ -14,7 +14,7 @@
           [iconSrc]="'assets/common/icons/sort-icon.svg'"
         ></dx-button>
         <button class="clear-all" (click)="clearAllFilters()">
-            clear all
+            {{ls('Platform', 'ClearAll')}}
         </button>
     </div>
         <ul class="filter-links">
@@ -40,7 +40,10 @@
     <div class="close-details"></div>
     <div class="sidebar-filter-head">
         {{ls('Platform', 'SideBarFilterHeader')}} {{l('FilterBy' + capitalize(activeFilter.caption) + 'Header')}}
-        <button class="button-layout button-primary" (click)="filterApply($event)"><i class="fa fa-check" aria-hidden="true"></i>{{ls('Platform', 'Apply')}}</button>
+        <button class="button-layout button-primary" (click)="filterApply($event)">
+            <i class="fa fa-check" aria-hidden="true"></i>
+            {{ls('Platform', 'Apply')}}
+        </button>
     </div>
 
     <dx-scroll-view showScrollbar="onHover">

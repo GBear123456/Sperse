@@ -3,7 +3,7 @@
     position: absolute;
     &.fullscreen {
         top: -74px;
-        .sidebar-filters, 
+        .sidebar-filters,
         .sidebar-filter-links {
             top: 0px;
             height: 100vh;
@@ -121,12 +121,12 @@
                 position: relative;
                 &:first-child {
                     margin-right: 7px;
-                    border-color: #00aeef; 
+                    border-color: #00aeef;
                     .dx-button-text {
                         color: #00aeef;
                     }
                 }
-                &:nth-child(2) {                
+                &:nth-child(2) {
                     min-width: 60px;
                     &:after {
                         content: '';
@@ -145,11 +145,11 @@
                         padding-right: 28px;
                     }
                 }
-                &.dx-state-hover, 
-                &.dx-state-focused, 
+                &.dx-state-hover,
+                &.dx-state-focused,
                 &.dx-state-active {
                   background-color: #FFF;
-                } 
+                }
                 .dx-button-content {
                     height: 37px;
                     min-width: 50px;
@@ -163,7 +163,7 @@
                         font-weight: 300;
                         line-height: 1.85;
                         letter-spacing: 0.3px;
-                    }            
+                    }
                 }
             }
         }
@@ -183,6 +183,15 @@
                     color: #424c56;
                     position: relative;
                     text-decoration: none;
+                    i {
+                        text-align: right;
+                        line-height: 1.4;
+                        color: #686f76;
+                        background: url('../../../assets/common/icons/right-arrow-icon.svg') right center no-repeat;
+                        &::before {
+                            opacity: 0;
+                        }
+                    }
                 }
             }
         }
@@ -257,10 +266,13 @@
         padding: 20px 0 20px 0;
         line-height: 37px;
         font-weight: bold;
+        color: #212c36;
 
         button {
             float: right;
             color: #ffffff;
+            min-width: 130px;
+            margin-top: 0;
             i {
                 font-size: 11px;
                 position: relative;
