@@ -50,10 +50,13 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
             items: [
                 {
                     name: 'slider',
-                    widget: 'dxDropDownMenu',
+                    widget: 'dxGallery',
                     options: {
                         hint: this.l('Scenario'),
-                        items: []
+                        accessKey: 'statsForecastSwitcher',
+                        items: [],
+                        showNavButtons: true,
+                        scrollByContent: true
                     }
                 }
             ]
@@ -85,6 +88,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
             ]
         }
     ];
+    updatedConfig = [];
     headlineConfig: any;
     interval = 'date';
     axisDateFormat = 'month';
@@ -145,13 +149,21 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
 
         this._cashFlowForecastServiceProxy.getModels().subscribe(
             result => {
-                let sliderObj = this.toolbarConfig.filter(toolbarItem => toolbarItem.items[0].name === 'slider')[0];
+                let newToolbar = this.toolbarConfig.slice();
+                let sliderObj = newToolbar.filter(toolbarItem => toolbarItem.items[0].name === 'slider')[0];
                 sliderObj.items[0].options.items = result.map(forecastModelItem => {
                     return {
                         action: Function(),
                         text: forecastModelItem.name
                     };
                 });
+                /** @todo remove */
+                // sliderObj.items[0].options.items.push({
+                //     action: Function(),
+                //     text: 'Scenario 2'
+                // });
+                this.updatedConfig = newToolbar;
+                this.loadStatsData();
             }
         );
 
@@ -167,18 +179,15 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
             ]
         };
 
-        this.loadStatsData();
-
-        this._filtersService.apply(() => {
-            for (let filter of this.filters) {
+        for (let filter of this.filters) {
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
 
-                if (filterMethod)
-                    filterMethod(filter, this.requestFilter);
-                else
-                    this.requestFilter[filter.field] = undefined;
-            }
-
+            if (filterMethod)
+                filterMethod(filter, this.requestFilter);
+            else
+                this.requestFilter[filter.field] = undefined;
+        }
+        this._filtersService.apply(() => {
             this.loadStatsData();
         });
     }

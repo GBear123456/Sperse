@@ -5,6 +5,7 @@ export class ToolbarGroupModel {
         action: () => void,
         options: object,
         widget?: string,
+        template?: () => string,
         text?: string
     }[];
 }

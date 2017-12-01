@@ -1,15 +1,13 @@
-﻿import { Component, Injector, Input, Output, EventEmitter } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { ToolbarGroupModel } from './toolbar.model';
-import { ChangeDetectionStrategy } from '@angular/core';
+﻿import {Component, Injector, Input, Output, EventEmitter} from '@angular/core';
+import {AppComponentBase} from '@shared/common/app-component-base';
+import {ToolbarGroupModel} from './toolbar.model';
 
 import * as _ from 'underscore';
 
 @Component({
     selector: 'app-toolbar',
     templateUrl: './toolbar.component.html',
-    styleUrls: ['./toolbar.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    styleUrls: ['./toolbar.component.less']
 })
 export class ToolBarComponent extends AppComponentBase {
     public options = {};
@@ -115,7 +113,13 @@ export class ToolBarComponent extends AppComponentBase {
         },
         slider: {
             hint: this.l('Slider'),
-            iconSrc: this.getImgURI('comments-icon')
+            height: 39,
+            width: 200,
+            showNavButtons: true,
+            showIndicator: false,
+            itemTemplate: itemData => {
+                return itemData.text;
+            }
         }
     };
 
@@ -138,16 +142,16 @@ export class ToolBarComponent extends AppComponentBase {
         return 'assets/common/icons/' + name + '.svg';
     }
 
-  getDropDownItemTemplate(link, width) {
-    return {
-      item: '<div class="toolbar-dropdown-item" ' + (width ? 'style="width:' + width + 'px;"': '') + '>' +
-          (link.icon ? '<img src="' + this.getImgURI(link.icon) + '">': '') + link.text + '</div>',
-      downloadOptions: '<div class="toolbar-download-options" onclick="event.stopPropagation()">' +
-          '<div><input type="radio" name="export" value="all" checked><label>' + this.l('Export all data') + '</label></div>' +
-          '<div><input type="radio" name="export" value="selected"><label>' + this.l('Export selected') + '</label></div>' +
-          '</div>'
-    }[link.type || 'item'];
-  }
+    getDropDownItemTemplate(link, width) {
+        return {
+            item: '<div class="toolbar-dropdown-item" ' + (width ? 'style="width:' + width + 'px;"' : '') + '>' +
+            (link.icon ? '<img src="' + this.getImgURI(link.icon) + '">' : '') + link.text + '</div>',
+            downloadOptions: '<div class="toolbar-download-options" onclick="event.stopPropagation()">' +
+            '<div><input type="radio" name="export" value="all" checked><label>' + this.l('Export all data') + '</label></div>' +
+            '<div><input type="radio" name="export" value="selected"><label>' + this.l('Export selected') + '</label></div>' +
+            '</div>'
+        }[link.type || 'item'];
+    }
 
     getOptions() {
         let option = document.querySelector('.toolbar-download-options input:checked');
@@ -175,7 +179,7 @@ export class ToolBarComponent extends AppComponentBase {
                 let isLast = count == index + 1;
                 if (item.widget == 'dxDropDownMenu') {
                     item.options['accessKey'] = item.name;
-                    item.options['items'].forEach((link) => {
+                    item.options['items'].forEach(link => {
                         link.html = this.getDropDownItemTemplate(
                             link, item.options['width']);
                         link.onClick = (event) => {
@@ -189,7 +193,7 @@ export class ToolBarComponent extends AppComponentBase {
 
                 this.items.push({
                     location: group.location,
-                    widget: item.widget || 'dxButton',
+                    widget: item.template ? null : (item.widget || 'dxButton'),
                     options: _.extend({
                         onClick: item.action,
                         elementAttr: _.extend({

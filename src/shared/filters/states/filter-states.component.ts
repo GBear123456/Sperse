@@ -2,7 +2,7 @@ import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CountryServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FilterComponent } from '../models/filter-component';
-import { FilterStatesModel } from './filter-states.model'
+import { FilterStatesModel } from './filter-states.model';
 
 import { CacheService } from 'ng2-cache-service';
 
@@ -71,11 +71,11 @@ export class FilterStatesComponent extends AppComponentBase implements FilterCom
     }
 
     ngOnInit() {
-       if (this._cacheService.exists('countryStates_preloadIndex')) {            
-            this.items.countryStates.list = 
+       if (this._cacheService.exists('countryStates_preloadIndex')) {
+            this.items.countryStates.list =
             this.countryStates = this._cacheService.get('countryStates');
             this.preloadIndex = this._cacheService.get('countryStates_preloadIndex');
-       } else 
+       } else
             this._countryService.getCountries().subscribe((data) => {
                 this.countryStates = data;
                 data.forEach((country, index) => {
