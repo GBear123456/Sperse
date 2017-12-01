@@ -5,14 +5,14 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'confirm-dialog',
-  templateUrl: 'confirm-dialog.html',
-  styleUrls: ['confirm-dialog.less']
+  templateUrl: 'confirm-dialog.component.html',
+  styleUrls: ['confirm-dialog.component.less']
 })
-export class ConfirmDialog extends AppComponentBase {
+export class ConfirmDialogComponent extends AppComponentBase {
   constructor(
     injector: Injector,
     @Inject(MD_DIALOG_DATA) public data: any,
-    public dialogRef: MdDialogRef<ConfirmDialog>,
+    public dialogRef: MdDialogRef<ConfirmDialogComponent>,
   ) { 
     super(injector, data.localization);
   }

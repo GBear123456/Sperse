@@ -1,5 +1,5 @@
 import { AppConsts } from '@shared/AppConsts';
-import { ConfirmDialog } from '@shared/common/dialogs/confirm/confirm-dialog.component';
+import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { Component, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomersServiceProxy, CustomerInfoDto, ContactLinkServiceProxy,
@@ -104,7 +104,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
   }
 
   deleteLink(link, event, index) {
-   this.dialog.open(ConfirmDialog, {
+   this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: this.l('DeleteContactHeader', this.l('Link')),
         message: this.l('DeleteContactMessage', this.l('Link').toLowerCase())

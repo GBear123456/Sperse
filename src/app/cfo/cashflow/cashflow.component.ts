@@ -24,6 +24,10 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { UserGridPreferencesComponent } from './user-grid-preferences/user-grid-preferences.component'
+
+import { MdDialog } from '@angular/material';
+import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
+
 const moment = extendMoment(Moment);
 
 /** Constants */
@@ -243,6 +247,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     private anotherPeriodAccountsValues: Map<object, number> = new Map();
 
     constructor(injector: Injector,
+                public dialog: MdDialog,
                 private _CashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService
     ) {
@@ -328,7 +333,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             buttons: [
                 {
                     enabled: true,
-                    action: Function(),
+                    action: () => {
+                        this.dialog.open(RuleDialogComponent, {
+                          panelClass: 'slider', data: {}
+                        }).afterClosed().subscribe(result => {
+                        });                        
+                    },
                     lable: this.l('+ Add New')
                 }
             ]
