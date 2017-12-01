@@ -1297,11 +1297,19 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
                 this.statsDetailFilter.categorization[this.categorization[0]] = cellObj.cell.rowPath[1];
             }
+            
             this.statsDetailFilter.categorization[this.categorization[1]] = cellObj.cell.rowPath[2];
-            this.statsDetailFilter.startDate = datePeriod.startDate;
-            this.statsDetailFilter.endDate = datePeriod.endDate;
             this.statsDetailFilter.businessEntityIds = this.requestFilter.businessEntityIds;
-            this.getStatsDetails(this.statsDetailFilter);
+            
+            if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
+                this.requestFilter.endDate && datePeriod.startDate > this.requestFilter.endDate) {
+                this.statsDetailResult = [];
+            }
+            else {
+                this.statsDetailFilter.startDate = this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate;
+                this.statsDetailFilter.endDate = this.requestFilter.endDate && this.requestFilter.endDate < datePeriod.endDate ? this.requestFilter.endDate : datePeriod.endDate;
+                this.getStatsDetails(this.statsDetailFilter);
+            }
         }
 
         /** If month cell has only one child (mtd or projected) - then click on it
@@ -1365,7 +1373,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let year = param[1];
         let quarter = param[2];
         let month = param[3];
-        let day = param[4];
+        let day = param[5];
 
         startDate.year(year);
         endDate.year(year).endOf('year');
