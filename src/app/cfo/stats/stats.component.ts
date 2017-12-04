@@ -167,7 +167,6 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                 let sliderObj = newToolbar.filter(toolbarItem => toolbarItem.items[0].name === 'slider')[0];
                 sliderObj.items[0].options.items = result.map(forecastModelItem => {
                     return {
-                        action: Function(),
                         id: forecastModelItem.id,
                         text: forecastModelItem.name
                     };
