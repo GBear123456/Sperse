@@ -9,6 +9,7 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { CacheService } from 'ng2-cache-service';
 
 import { MdButtonModule } from '@angular/material';
 
@@ -23,7 +24,7 @@ import {
 
 @Component({
     'selector': 'app-stats',
-    'providers': [ CashflowServiceProxy, BankAccountsServiceProxy, CashFlowForecastServiceProxy ],
+    'providers': [ CashflowServiceProxy, BankAccountsServiceProxy, CashFlowForecastServiceProxy, CacheService],
     'templateUrl': './stats.component.html',
     'styleUrls': ['./stats.component.less']
 })
@@ -56,7 +57,17 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                         accessKey: 'statsForecastSwitcher',
                         items: [],
                         showNavButtons: true,
-                        scrollByContent: true
+                        showIndicator: false,
+                        scrollByContent: true,
+                        height: 39,
+                        width: 200,
+                        itemTemplate: itemData => {
+                            return itemData.text;
+                        },
+                        onSelectionChanged: (e) => {
+                            this.changeSelectedForecastModel(e);
+                            this.loadStatsData();
+                        }
                     }
                 }
             ]
@@ -102,6 +113,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     forecastExpensesColor = '#f15a25';
     maxLabelCount = 0;
     labelWidth = 45;
+    selectedForecastModel;
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
@@ -110,9 +122,11 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         private _filtersService: FiltersService,
         private _cashflowService: CashflowServiceProxy,
         private _bankAccountService: BankAccountsServiceProxy,
-        private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy
+        private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
+        private _cacheService: CacheService
     ) {
         super(injector);
+        this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
@@ -154,14 +168,22 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                 sliderObj.items[0].options.items = result.map(forecastModelItem => {
                     return {
                         action: Function(),
+                        id: forecastModelItem.id,
                         text: forecastModelItem.name
                     };
                 });
-                /** @todo remove */
-                // sliderObj.items[0].options.items.push({
-                //     action: Function(),
-                //     text: 'Scenario 2'
-                // });
+
+                /** If we have the forecast model in cache - get it there, else - get the first model */
+                let cachedForecastModel = this.getForecastModel();
+                /** If we have cached forecast model and cached forecast exists in items list - then use it **/
+                this.selectedForecastModel = cachedForecastModel && sliderObj.items[0].options.items.findIndex(
+                        item => item.id === cachedForecastModel.id
+                    ) !== -1 ?
+                    cachedForecastModel :
+                    sliderObj.items[0].options.items[0];
+                sliderObj.items[0].options.selectedIndex = sliderObj.items[0].options.items.findIndex(
+                    item => item.id === this.selectedForecastModel.id
+                );
                 this.updatedConfig = newToolbar;
                 this.loadStatsData();
             }
@@ -192,11 +214,30 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
+    /**
+     * Get forecast model from the cache
+     */
+    getForecastModel() {
+        return this._cacheService.exists(`stats_forecastModel_${abp.session.userId}`) ?
+               this._cacheService.get(`stats_forecastModel_${abp.session.userId}`) :
+               null;
+    }
+
+    /**
+     * Change the forecast model to reuse later
+     * @param modelObj - new forecast model
+     */
+    changeSelectedForecastModel(modelObj) {
+        this.selectedForecastModel = modelObj.addedItems[0];
+        this._cacheService.set(`stats_forecastModel_${abp.session.userId}`, this.selectedForecastModel);
+    }
+
     /** load stats data from api */
     loadStatsData() {
         let {startDate = undefined, endDate = undefined, accountIds = []} = this.requestFilter;
-        this.statsData = this._bankAccountService.getBankAccountDailyStats('USD', 1, accountIds, startDate, endDate, GroupBy.Monthly)
-            .subscribe(result => {
+        this.statsData = this._bankAccountService.getBankAccountDailyStats(
+            'USD', this.selectedForecastModel.id, accountIds, startDate, endDate, GroupBy.Monthly
+        ).subscribe(result => {
                     if (result) {
                         this.statsData = result;
                         this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);

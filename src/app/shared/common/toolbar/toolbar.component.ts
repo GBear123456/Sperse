@@ -112,14 +112,7 @@ export class ToolBarComponent extends AppComponentBase {
             iconSrc: this.getImgURI('expand-fullscreen-icon')
         },
         slider: {
-            hint: this.l('Slider'),
-            height: 39,
-            width: 200,
-            showNavButtons: true,
-            showIndicator: false,
-            itemTemplate: itemData => {
-                return itemData.text;
-            }
+            hint: this.l('Slider')
         }
     };
 
@@ -165,11 +158,6 @@ export class ToolBarComponent extends AppComponentBase {
                 'select-value': item.options['items'][0].text
             };
         return {};
-    }
-
-    ngOnChanges() {
-        console.log('change');
-        console.log(this.config);
     }
 
     initToolbarItems() {
