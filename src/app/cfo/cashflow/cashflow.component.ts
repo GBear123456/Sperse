@@ -1415,16 +1415,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     hasChildsByPath(path, dataTree) {
         let result = true;
         path.forEach( pathItem => {
-            let keys = Object.keys(dataTree[pathItem]);
-            let firstKey = Object.keys(dataTree[pathItem])[0];
-            if (dataTree.hasOwnProperty(pathItem) &&
-                keys.length !== 1 ||
-                (keys.length === 1 && firstKey != 'null' && firstKey != 'undefined')
-            ) {
-                dataTree = dataTree[pathItem];
-            } else {
+            if (pathItem && dataTree.hasOwnProperty(pathItem)) {
+                let keys = Object.keys(dataTree[pathItem]);
+                let firstKey = keys && Object.keys(dataTree[pathItem])[0];
+                if (typeof firstKey == 'string') {
+                    dataTree = dataTree[pathItem];
+                } else {
+                    result = false;
+                }
+            } else
                 result = false;
-            }
         });
         return result;
     }
