@@ -63,67 +63,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ]
     };
 
-    toolbarConfig = [
-        {
-            location: 'before', items: [
-            {name: 'back'}
-        ]
-        },
-        {
-            location: 'before', items: [
-            {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
-        ]
-        },
-        {
-            location: 'before', items: [
-            {name: 'assign'}, {name: 'status'}, {name: 'delete'}
-        ]
-        },
-        {
-            location: 'after', items: [
-            {name: 'refresh', action: this.refreshDataGrid.bind(this)},
-            {
-                name: 'download',
-                widget: 'dxDropDownMenu',
-                options: {
-                    hint: this.l('Download'),
-                    items: [{
-                        action: Function(),
-                        text: this.l('Save as PDF'),
-                        icon: 'pdf',
-                    }, {
-                        action: this.exportToXLS.bind(this),
-                        text: this.l('Export to Excel'),
-                        icon: 'xls',
-                    }, {
-                        action: this.exportToCSV.bind(this),
-                        text: this.l('Export to CSV'),
-                        icon: 'sheet'
-                    }, {
-                        action: this.exportToGoogleSheet.bind(this),
-                        text: this.l('Export to Google Sheets'),
-                        icon: 'sheet'
-                    }, {type: 'downloadOptions'}]
-                }
-            },
-            {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
-        ]
-        },
-        {
-            location: 'after', items: [
-            {name: 'box'},
-            {name: 'pipeline', action: this.togglePipeline.bind(this, true)},
-            {name: 'grid', action: this.togglePipeline.bind(this, false)}
-        ]
-        }
-    ];
+    public toolbarConfig;
 
     constructor(injector: Injector,
-                private _filtersService: FiltersService,
-                // private _clientService: ClientServiceProxy,
-                private _activatedRoute: ActivatedRoute,
-                private _commonLookupService: CommonLookupServiceProxy,
-                private _pipelineService: PipelineServiceProxy) {
+        private _filtersService: FiltersService,
+        // private _clientService: ClientServiceProxy,
+        private _activatedRoute: ActivatedRoute,
+        private _commonLookupService: CommonLookupServiceProxy,
+        private _pipelineService: PipelineServiceProxy) {
         super(injector);
 
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
@@ -141,6 +88,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 paginate: true
             }
         };
+
+        this.initToolbarConfig();
     }
 
     onContentReady(event) {
@@ -189,27 +138,27 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'SourceCode',
-                    items: {SourceCode: new FilterItemModel()}
+                    items: { SourceCode: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterCalendarComponent,
-                    operator: {from: 'ge', to: 'le'},
+                    operator: { from: 'ge', to: 'le' },
                     caption: 'creation',
                     field: 'CreationTime',
-                    items: {from: new FilterItemModel(), to: new FilterItemModel()}
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterCalendarComponent,
-                    operator: {from: 'ge', to: 'le'},
+                    operator: { from: 'ge', to: 'le' },
                     caption: 'updating',
                     field: 'UpdatingTime',
-                    items: {from: new FilterItemModel(), to: new FilterItemModel()}
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'product',
-                    items: {product: new FilterItemModel()}
+                    items: { product: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterDropDownComponent,
@@ -289,15 +238,73 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
 
         this._filtersService.apply(() => {
+            this.initToolbarConfig();
             this.processODataFilter(this.dataGrid.instance,
                 this.dataSourceURI, this.filters, (filter) => {
                     let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
+                        this.capitalize(filter.caption)];
                     if (filterMethod)
                         return filterMethod.call(this, filter);
                 }
             );
         });
+    }
+
+    initToolbarConfig() {
+        this.toolbarConfig = [
+            {
+                location: 'before', items: [
+                    { name: 'back' }
+                ]
+            },
+            {
+                location: 'before', items: [
+                    { name: 'filters', action: this._filtersService.toggle.bind(this._filtersService), attr: { 'filter-selected': this._filtersService.hasFilterSelected } }
+                ]
+            },
+            {
+                location: 'before', items: [
+                    { name: 'assign' }, { name: 'status' }, { name: 'delete' }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    { name: 'refresh', action: this.refreshDataGrid.bind(this) },
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [{
+                                action: Function(),
+                                text: this.l('Save as PDF'),
+                                icon: 'pdf',
+                            }, {
+                                action: this.exportToXLS.bind(this),
+                                text: this.l('Export to Excel'),
+                                icon: 'xls',
+                            }, {
+                                action: this.exportToCSV.bind(this),
+                                text: this.l('Export to CSV'),
+                                icon: 'sheet'
+                            }, {
+                                action: this.exportToGoogleSheet.bind(this),
+                                text: this.l('Export to Google Sheets'),
+                                icon: 'sheet'
+                            }, { type: 'downloadOptions' }]
+                        }
+                    },
+                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    { name: 'box' },
+                    { name: 'pipeline', action: this.togglePipeline.bind(this, true) },
+                    { name: 'grid', action: this.togglePipeline.bind(this, false) }
+                ]
+            }
+        ];
     }
 
     filterByStages(filter: FilterModel) {

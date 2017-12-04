@@ -22,7 +22,6 @@ export class FiltersService {
     }
 
     setup(filters: FilterModel[], initialValues?: any) {
-        this.hasFilterSelected = false;
         this.subjectFilters.next(this.filters = filters);
         if (initialValues && initialValues.filters) {
             let initFilters = JSON.parse(decodeURIComponent(initialValues.filters));
@@ -64,6 +63,7 @@ export class FiltersService {
     }
 
     unsubscribe() {
+        this.hasFilterSelected = false;
         this.subscribers.map((sub) => {
             return void (sub.unsubscribe());
         });
