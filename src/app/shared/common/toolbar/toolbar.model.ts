@@ -6,6 +6,7 @@ export class ToolbarGroupModel {
         options: object,
         widget?: string,
         template?: () => string,
-        text?: string
+        text?: string,
+        attr?: object
     }[];
 }

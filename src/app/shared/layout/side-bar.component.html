@@ -5,6 +5,7 @@
 
     <div class="filter-title">
         <dx-button
+          [ngClass]="{'active-filter':_filtersService.hasFilterSelected}"
           [text]="ls('Platform', 'Filters')"
           [iconSrc]="'assets/common/icons/funnel-blue-icon.svg'"
           (onClick)="closeFilters($event)"

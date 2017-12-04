@@ -89,12 +89,28 @@
     }
 }
 
+/deep/ .dx-toolbar {
+    [filter-selected="true"] {
+        &::after {
+            content: '';
+            position: absolute;
+            display: block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: red;
+            top: 7px;
+            right: 7px;
+        }
+    }
+}
+
 :host {
     /deep/ .dx-toolbar {
         padding: 12px 0 13px 0;
         margin: 0;
         
-        [accesskey="select-box"] {            
+        [accesskey="select-box"] {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -159,7 +175,7 @@
                     padding: 6px 11px;
                     &::before {
                         content: 'More';
-                        font-weight: 400;
+                        font-weight: 300;
                         font-size: 13px;
                         line-height: 1.85;
                         letter-spacing: 0.3px;
@@ -178,7 +194,7 @@
                 }
                 &::before {
                     content: attr(title);
-                    font-weight: 400;
+                    font-weight: 300;
                     font-size: 13px;
                     line-height: 1.85;
                     letter-spacing: 0.3px;
