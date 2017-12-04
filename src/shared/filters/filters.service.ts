@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 import { FilterModel } from './models/filter.model';
+import * as _ from 'underscore';
 
 @Injectable()
 export class FiltersService {
@@ -13,6 +14,7 @@ export class FiltersService {
 
     public enabled = false;
     public localizationSourceName: string;
+    public hasFilterSelected = false;
 
     constructor() {
         this.subjectFilters = new Subject<FilterModel[]>();
@@ -20,13 +22,14 @@ export class FiltersService {
     }
 
     setup(filters: FilterModel[], initialValues?: any) {
+        this.hasFilterSelected = false;
         this.subjectFilters.next(this.filters = filters);
         if (initialValues && initialValues.filters) {
             let initFilters = JSON.parse(decodeURIComponent(initialValues.filters));
             filters.forEach((filter, i, arr) => {
                 if (initFilters[filter.caption]) {
                     let props = Object.keys(initFilters[filter.caption]);
-                    props.forEach( val => {
+                    props.forEach(val => {
                         if (filter.items[val].setValue)
                             filter.items[val].setValue(initFilters[filter.caption][val], filter);
                         else
@@ -43,6 +46,7 @@ export class FiltersService {
     }
 
     change(filter: FilterModel) {
+        this.checkIfAnySelected();
         this.subjectFilter.next(filter);
     }
 
@@ -54,7 +58,7 @@ export class FiltersService {
 
     clearAllFilters() {
         this.filters.forEach(
-          (filter: FilterModel) => filter.clearFilterItems()
+            (filter: FilterModel) => filter.clearFilterItems()
         );
         this.change(null);
     }
@@ -68,5 +72,21 @@ export class FiltersService {
 
     toggle() {
         this.enabled = !this.enabled;
+    }
+
+    checkIfAnySelected() {
+        this.hasFilterSelected =
+            _.any(this.filters, (x) => {
+                if (x.items) {
+                    let filterIsSet = false;
+                    _.forEach(x.items, y => {
+                        if ((y.value && !_.isArray(y.value)) || (y.value && y.value.length))
+                            filterIsSet = true;
+                    });
+                    return filterIsSet;
+                }
+
+                return false;
+            });
     }
 }
