@@ -38,12 +38,25 @@
 :host {
     top: 75px;
     position: relative;
+
     &.fullscreen {
-        top:-75px!important;
+        top: -75px !important;
     }
 
     .filter-sort-options {
         padding: 20px 15px 0px 20px;
+        .active-filter::after {
+            content: '';
+            position: absolute;
+            display: block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: red;
+            top: 7px;
+            right: 7px;
+        }
+
         .clear-all {
             height: 37px;
             font-size: 11px;

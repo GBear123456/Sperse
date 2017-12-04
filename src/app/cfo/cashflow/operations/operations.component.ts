@@ -1,4 +1,4 @@
-import {Component, Injector, Output, EventEmitter} from '@angular/core';
+import {Component, Injector, Input, Output, EventEmitter} from '@angular/core';
 import {AppComponentBase} from '@shared/common/app-component-base';
 
 @Component({
@@ -14,7 +14,7 @@ export class OperationsComponent extends AppComponentBase {
     @Output() handleFullscreen: EventEmitter<any> = new EventEmitter();
     @Output() download: EventEmitter<any> = new EventEmitter();
     @Output() showPreferences: EventEmitter<any> = new EventEmitter();
-
+    @Output() changeForecastModel: EventEmitter<any> = new EventEmitter();
     toolbarConfig = [
         {
             location: 'before',
@@ -41,7 +41,8 @@ export class OperationsComponent extends AppComponentBase {
                     }
                 }
             ]
-        }, {
+        },
+        {
             location: 'before',
             items: [
                 {
@@ -70,7 +71,28 @@ export class OperationsComponent extends AppComponentBase {
                 {
                     name: 'rules',
                     action: this.preferences.bind(this)
-                }
+                },
+                {
+                    name: 'slider',
+                    widget: 'dxGallery',
+                    options: {
+                        hint: this.l('Scenario'),
+                        accessKey: 'cashflowForecastSwitcher',
+                        items: [],
+                        showNavButtons: true,
+                        showIndicator: false,
+                        scrollByContent: true,
+                        height: 39,
+                        width: 138,
+                        /** to change the default template for dxGallery with rendering of an image */
+                        itemTemplate: itemData => {
+                            return itemData.text;
+                        },
+                        onSelectionChanged: (e) => {
+                            this.changeSelectedForecastModel(e);
+                        }
+                    }
+                },
             ]
         },
         {
@@ -175,6 +197,7 @@ export class OperationsComponent extends AppComponentBase {
             ]
         }
     ];
+    updatedConfig = [];
 
     constructor(injector: Injector) {
         super(injector);
@@ -198,6 +221,10 @@ export class OperationsComponent extends AppComponentBase {
 
     fullscreen() {
         this.handleFullscreen.emit();
+    }
+
+    changeSelectedForecastModel(event) {
+        this.changeForecastModel.emit(event);
     }
 
     preferences() {

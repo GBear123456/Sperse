@@ -7,7 +7,8 @@ import {
     StatsFilter,
     CashFlowInitialData,
     StatsDetailFilter,
-    TransactionStatsDto
+    TransactionStatsDto,
+    CashFlowForecastServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -24,10 +25,14 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { UserGridPreferencesComponent } from './user-grid-preferences/user-grid-preferences.component'
+import { UserGridPreferencesComponent } from './user-grid-preferences/user-grid-preferences.component';
 
 import { MdDialog } from '@angular/material';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
+import { CacheService } from 'ng2-cache-service';
+import { OperationsComponent } from './operations/operations.component';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
 
 const moment = extendMoment(Moment);
 
@@ -43,10 +48,11 @@ const StartedBalance = 'B',
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashflowServiceProxy ]
+    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService ]
 })
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
+    @ViewChild(OperationsComponent) operationsComponent: OperationsComponent;
     @ViewChild('userGridPreferences') userGridPreferences: UserGridPreferencesComponent;
     headlineConfig: any;
     cashflowData: any;
@@ -242,6 +248,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         'forecast'
     ];
     fieldPathsToClick = [];
+    selectedForecastModel;
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
@@ -251,9 +258,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     constructor(injector: Injector,
                 public dialog: MdDialog,
                 private _CashflowServiceProxy: CashflowServiceProxy,
-                private _filtersService: FiltersService
+                private _filtersService: FiltersService,
+                private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
+                private _cacheService: CacheService
     ) {
         super(injector);
+        this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
@@ -261,51 +271,37 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     ngOnInit() {
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
-        this._CashflowServiceProxy.getCashFlowInitialData()
-            .subscribe(result => {
-                this.initialData = result;
-                this._filtersService.setup(
-                    this.filters = [
-                        new FilterModel({
-                            field: 'accountIds',
-                            component: FilterCheckBoxesComponent,
-                            caption: 'Account',
-                            items: {
-                                element: new FilterCheckBoxesModel(
-                                    {
-                                        dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
-                                        nameField: 'name',
-                                        parentExpr: 'parentId',
-                                        keyExpr: 'id'
-                                    })
-                            }
-                        }),
-                        new FilterModel({
-                            component: FilterCalendarComponent,
-                            caption: 'Date',
-                            items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                            options: {
-                                allowFutureDates: true,
-                                endDate: moment(new Date()).add(10, 'years').toDate()
-                            }
-                        }),
-                        new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            field: 'businessEntityIds',
-                            caption: 'BusinessEntity',
-                            items: {
-                                element: new FilterCheckBoxesModel({
-                                    dataSource: result.businessEntities,
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
-                            }
-                        })
-                    ]
-                );
+        this.headlineConfig = {
+            name: this.l('Cash Flow Statement and Forecast'),
+            icon: 'globe',
+            buttons: [
+                {
+                    enabled: true,
+                    action: () => {
+                        this.dialog.open(RuleDialogComponent, {
+                            panelClass: 'slider', data: {}
+                        }).afterClosed().subscribe(result => {});
+                    },
+                    lable: this.l('+ Add New')
+                }
+            ]
+        };
 
+        /** Create parallel operations */
+        let getCashFlowInitialData = this._CashflowServiceProxy.getCashFlowInitialData();
+        let getForecastModels = this._cashFlowForecastServiceProxy.getModels();
+        Observable.forkJoin(getCashFlowInitialData, getForecastModels)
+            .subscribe(result => {
+                /** Initial data handling */
+                this.handleCashFlowInitialResult(result[0]);
+
+                /** Forecast models handling */
+                this.handleForecastModelResult(result[1]);
+
+                /** load cashflow data grid */
                 this.loadGridDataSource();
             });
+
 
         this._filtersService.apply(() => {
             for (let filter of this.filters) {
@@ -330,22 +326,110 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
             });
         };
-        this.headlineConfig = {
-            name: this.l('Cash Flow Statement and Forecast'),
-            icon: 'globe',
-            buttons: [
-                {
-                    enabled: true,
-                    action: () => {
-                        this.dialog.open(RuleDialogComponent, {
-                          panelClass: 'slider', data: {}
-                        }).afterClosed().subscribe(result => {
-                        });
-                    },
-                    lable: this.l('+ Add New')
-                }
+    }
+
+    /**
+     * Handle the subscription result from getInitialData Observable
+     * @param initialDataResult
+     */
+    handleCashFlowInitialResult(initialDataResult) {
+        this.initialData = initialDataResult;
+        this._filtersService.setup(
+            this.filters = [
+                new FilterModel({
+                    field: 'accountIds',
+                    component: FilterCheckBoxesComponent,
+                    caption: 'Account',
+                    items: {
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource: FilterHelpers.ConvertBanksToTreeSource(initialDataResult.banks),
+                                nameField: 'name',
+                                parentExpr: 'parentId',
+                                keyExpr: 'id'
+                            })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    caption: 'Date',
+                    items: {from: new FilterItemModel(), to: new FilterItemModel()},
+                    options: {
+                        allowFutureDates: true,
+                        endDate: moment(new Date()).add(10, 'years').toDate()
+                    }
+                }),
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    field: 'businessEntityIds',
+                    caption: 'BusinessEntity',
+                    items: {
+                        element: new FilterCheckBoxesModel({
+                            dataSource: initialDataResult.businessEntities,
+                            nameField: 'name',
+                            keyExpr: 'id'
+                        })
+                    }
+                })
             ]
-        };
+        );
+    }
+
+    /**
+     * Handle forecast models result
+     * @param forecastModelsResult
+     */
+    handleForecastModelResult(forecastModelsResult) {
+        let newToolbar = <any>this.operationsComponent.toolbarConfig.slice();
+        let itemIndex;
+        let sliderObj = newToolbar.filter(
+            toolbarItem => toolbarItem.items.some(
+                (item, index) => {
+                    let isSlider = item.name === 'slider';
+                    itemIndex = isSlider ? index : itemIndex;
+                    return isSlider;
+                })
+        )[0].items[itemIndex];
+        /** Update the items of declared slider in toolbar config with the data from the server */
+        if (sliderObj) {
+            sliderObj.options.items = forecastModelsResult.map(forecastModelItem => {
+                return {
+                    id: forecastModelItem.id,
+                    text: forecastModelItem.name
+                };
+            });
+            /** If we have the forecast model in cache - get it there, else - get the first model */
+            let cachedForecastModel = this.getForecastModel();
+            /** If we have cached forecast model and cached forecast exists in items list - then use it **/
+            this.selectedForecastModel = cachedForecastModel && sliderObj.options.items.findIndex(
+                item => item.id === cachedForecastModel.id
+            ) !== -1 ?
+                cachedForecastModel :
+                sliderObj.options.items[0];
+            sliderObj.options.selectedIndex = sliderObj.options.items.findIndex(
+                item => item.id === this.selectedForecastModel.id
+            );
+        }
+        this.operationsComponent.updatedConfig = newToolbar;
+    }
+
+    /**
+     * Get forecast model from the cache
+     */
+    getForecastModel() {
+        return this._cacheService.exists(`cashflow_forecastModel_${abp.session.userId}`) ?
+               this._cacheService.get(`cashflow_forecastModel_${abp.session.userId}`) :
+               null;
+    }
+
+    /**
+     * Change the forecast model to reuse later
+     * @param modelObj - new forecast model
+     */
+    changeSelectedForecastModel(modelObj) {
+        this.selectedForecastModel = modelObj.addedItems[0];
+        this._cacheService.set(`cashflow_forecastModel_${abp.session.userId}`, this.selectedForecastModel);
+        this.loadGridDataSource();
     }
 
     getFullscreenElement() {
@@ -367,6 +451,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     loadGridDataSource() {
         abp.ui.setBusy();
         $('.pivot-grid').addClass('invisible');
+        this.requestFilter.forecastModelId = this.selectedForecastModel.id;
         this._CashflowServiceProxy.getStats(this.requestFilter)
             .subscribe(result => {
                 if (result.transactionStats.length) {
@@ -1309,15 +1394,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
                 this.statsDetailFilter.categorization[this.categorization[0]] = cellObj.cell.rowPath[1];
             }
-            
+
             this.statsDetailFilter.categorization[this.categorization[1]] = cellObj.cell.rowPath[2];
             this.statsDetailFilter.businessEntityIds = this.requestFilter.businessEntityIds;
-            
             if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
                 this.requestFilter.endDate && datePeriod.startDate > this.requestFilter.endDate) {
                 this.statsDetailResult = [];
-            }
-            else {
+            } else {
                 this.statsDetailFilter.startDate = this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate;
                 this.statsDetailFilter.endDate = this.requestFilter.endDate && this.requestFilter.endDate < datePeriod.endDate ? this.requestFilter.endDate : datePeriod.endDate;
                 this.getStatsDetails(this.statsDetailFilter);

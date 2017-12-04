@@ -1,4 +1,4 @@
-﻿import {Component, Injector, Input, Output, EventEmitter} from '@angular/core';
+import {Component, Injector, Input, Output, EventEmitter} from '@angular/core';
 import {AppComponentBase} from '@shared/common/app-component-base';
 import {ToolbarGroupModel} from './toolbar.model';
 
@@ -157,10 +157,11 @@ export class ToolBarComponent extends AppComponentBase {
                 'select-caption': item.text,
                 'select-value': item.options['items'][0].text
             };
-        return {};
+        return item.attr || {};
     }
 
     initToolbarItems() {
+        let newItems = [];
         this._config.forEach((group) => {
             let count = group.items.length;
             group.items.forEach((item, index) => {
@@ -179,7 +180,7 @@ export class ToolBarComponent extends AppComponentBase {
                     });
                 }
 
-                this.items.push({
+                newItems.push({
                     location: group.location,
                     widget: item.template ? null : (item.widget || 'dxButton'),
                     options: _.extend({
@@ -193,5 +194,7 @@ export class ToolBarComponent extends AppComponentBase {
                 });
             });
         });
+
+        this.items = newItems;
     }
 }

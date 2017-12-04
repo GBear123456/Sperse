@@ -9,11 +9,13 @@
     (onToggleRows)="togglePivotGridRows($event)"
     (download)="downloadData($event)"
     (showPreferences)="userGridPreferences.show()"
+    (changeForecastModel)="changeSelectedForecastModel($event)"
 ></cashflow-operations>
 
 <div class="cashflow">
     <div class="filter-sort-options">
         <dx-button
+          [ngClass]="{'active-filter':_filtersService.hasFilterSelected}"
           [text]="ls('Platform', 'Filters')"
           [iconSrc]="'assets/common/icons/funnel-icon.svg'"
           (onClick)="toggleFilters($event)"
