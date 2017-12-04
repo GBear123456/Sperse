@@ -340,7 +340,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                         this.dialog.open(RuleDialogComponent, {
                           panelClass: 'slider', data: {}
                         }).afterClosed().subscribe(result => {
-                        });                        
+                        });
                     },
                     lable: this.l('+ Add New')
                 }
@@ -542,6 +542,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let stubCashflowData = Array<TransactionStatsDto>();
         let allYears: Array<number> = [];
         let existingDates: Array<string> = [];
+        let dates = [];
         let firstAccountId;
         cashflowData.forEach(cashflowItem => {
             /** Move the year to the years array if it is unique */
@@ -549,13 +550,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             let date = cashflowItem.date.format('DD.MM.YYYY');
             if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
             if (existingDates.indexOf(date) === -1) existingDates.push(date);
+            if (dates.indexOf(cashflowItem.date) === -1) dates.push(cashflowItem.date);
             if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
         });
         allYears = allYears.sort();
         /** get started date of the first year */
-        let startedDate = moment().year(allYears[0]).startOf('year');
+        let startedDate = new Date(Math.min.apply(null, dates));
         /** get last date of the last year */
-        let endedDate = moment().year(allYears[allYears.length - 1]).endOf('year');
+        let endedDate = new Date(Math.max.apply(null, dates));
         /** cycle from started date to ended date */
         let datesRange = Array.from(moment.range(startedDate, endedDate).by('day'));
         /** added fake data for each date that is not already exists in cashflow data */
