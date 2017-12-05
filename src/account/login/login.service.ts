@@ -157,7 +157,10 @@ export class LoginService {
                 redirectUrl = authenticateResult.returnUrl;
             }
 
-            this.login(authenticateResult.accessToken, authenticateResult.encryptedAccessToken, authenticateResult.expireInSeconds, this.rememberMe, authenticateResult.twoFactorRememberClientToken, redirectUrl);
+            this.login(authenticateResult.accessToken, authenticateResult.encryptedAccessToken, 
+                authenticateResult.expireInSeconds, this.rememberMe, 
+                authenticateResult.twoFactorRememberClientToken, 
+                redirectUrl);
 
         } else if (authenticateResult.detectedTenancies.length > 1) {
             //Select tenant
@@ -196,7 +199,10 @@ export class LoginService {
             );
         }
 
+        redirectUrl = redirectUrl || 
+            sessionStorage.getItem('redirectUrl');
         if (redirectUrl) {
+            sessionStorage.removeItem('redirectUrl');
             location.href = redirectUrl;
         } else {
             var initialUrl = UrlHelper.initialUrl;
