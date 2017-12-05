@@ -13,7 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterHelpers } from '@shared/filters/filter.helpers';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
@@ -64,60 +64,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         ]
     };
 
-    toolbarConfig = [
-        {
-            location: 'before', items: [
-                {name: 'back'}
-            ]
-        },
-        {
-            location: 'before', items: [
-                {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
-            ]
-        },
-        {
-            location: 'before', items: [
-                {name: 'assign'}, {name: 'status'}, {name: 'delete'}
-            ]
-        },
-        {
-            location: 'after', items: [
-                {name: 'refresh', action: this.refreshDataGrid.bind(this)},
-                {
-                    name: 'download',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: this.l('Download'),
-                        items: [{
-                            action: Function(),
-                            text: this.l('Save as PDF'),
-                            icon: 'pdf',
-                        }, {
-                            action: this.exportToXLS.bind(this),
-                            text: this.l('Export to Excel'),
-                            icon: 'xls',
-                        }, {
-                            action: this.exportToCSV.bind(this),
-                            text: this.l('Export to CSV'),
-                            icon: 'sheet'
-                        }, {
-                            action: this.exportToGoogleSheet.bind(this),
-                            text: this.l('Export to Google Sheets'),
-                            icon: 'sheet'
-                        }, {type: 'downloadOptions'}]
-                    }
-                },
-                {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
-            ]
-        },
-        {
-            location: 'after', items: [
-                {name: 'box'},
-                {name: 'pipeline', action: this.togglePipeline.bind(this, true)},
-                {name: 'grid', action: this.togglePipeline.bind(this, false)}
-            ]
-        }
-    ];
+    public toolbarConfig;
 
     constructor(injector: Injector,
                 private _filtersService: FiltersService,
@@ -142,6 +89,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 paginate: true
             }
         };
+
+        this.initToolbarConfig();
     }
 
     onContentReady(event) {
@@ -308,6 +257,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
 
         this._filtersService.apply(() => {
+            this.initToolbarConfig();
             this.processODataFilter(this.dataGrid.instance,
                 this.dataSourceURI, this.filters, (filter) => {
                     let filterMethod = this['filterBy' +
@@ -317,6 +267,63 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 }
             );
         });
+    }
+
+    initToolbarConfig() {
+        this.toolbarConfig = [
+            {
+                location: 'before', items: [
+                    { name: 'back' }
+                ]
+            },
+            {
+                location: 'before', items: [
+                    { name: 'filters', action: this._filtersService.toggle.bind(this._filtersService), attr: { 'filter-selected': this._filtersService.hasFilterSelected } }
+                ]
+            },
+            {
+                location: 'before', items: [
+                    { name: 'assign' }, { name: 'status' }, { name: 'delete' }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    { name: 'refresh', action: this.refreshDataGrid.bind(this) },
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [{
+                                action: Function(),
+                                text: this.l('Save as PDF'),
+                                icon: 'pdf',
+                            }, {
+                                action: this.exportToXLS.bind(this),
+                                text: this.l('Export to Excel'),
+                                icon: 'xls',
+                            }, {
+                                action: this.exportToCSV.bind(this),
+                                text: this.l('Export to CSV'),
+                                icon: 'sheet'
+                            }, {
+                                action: this.exportToGoogleSheet.bind(this),
+                                text: this.l('Export to Google Sheets'),
+                                icon: 'sheet'
+                            }, { type: 'downloadOptions' }]
+                        }
+                    },
+                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    { name: 'box' },
+                    { name: 'pipeline', action: this.togglePipeline.bind(this, true) },
+                    { name: 'grid', action: this.togglePipeline.bind(this, false) }
+                ]
+            }
+        ];
     }
 
     filterByOrderStages(filter: FilterModel) {

@@ -1,7 +1,7 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, OnInit, Injector } from '@angular/core';
 import { MdDialog } from '@angular/material';
-import { ConfirmDialog } from '@shared/common/dialogs/confirm/confirm-dialog.component';
+import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
@@ -138,7 +138,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
   }
 
   deleteEmailAddress(email, event, index) {
-    this.dialog.open(ConfirmDialog, {
+    this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: this.l('DeleteContactHeader', this.l('Email')),
         message: this.l('DeleteContactMessage', this.l('Email').toLowerCase())
@@ -157,7 +157,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
   }
 
   deletePhoneNumber(phone, event, index) {
-    this.dialog.open(ConfirmDialog, {
+    this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: this.l('DeleteContactHeader', this.l('Phone')),
         message: this.l('DeleteContactMessage', this.l('Phone').toLowerCase())

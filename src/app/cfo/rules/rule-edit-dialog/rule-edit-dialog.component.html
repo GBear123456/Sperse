@@ -1,0 +1,55 @@
+<modal-dialog>
+    <div class="rule-container">
+        <div class="warning-box">
+            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+            <div>
+                <h3>You are about to overwrite an existing rule!</h3>
+                <p>Gksdfjlsdfkfg sdkjfsdk sdfjgskdsg skjgfs sal adfasgfg sadfsdf sdfasdf sdfsafa asdfas</p>
+            </div>
+        </div>
+        <dx-scroll-view [showScrollbar]="onHover">
+            <div class="rule-wrapper">
+                <div class="rule">
+                    <h3>{{l('RuleName')}}</h3>
+                    <div class="field">
+                        <label>{{l('RuleName')}}</label>
+                        <dx-text-box
+                            name="name"
+                            [(value)]="data.name">
+                        </dx-text-box>
+                    </div>
+
+                    <h3>{{l('DescriptorRule')}}</h3>
+                    <div class="field">
+                        <label>{{l('DescriptorRule')}}</label>
+                    </div>
+
+                    <h3>{{l('Amount')}}</h3>
+                    <div>
+                        <div class="field">
+                            <label>{{l('Min')}}</label>
+                            <dx-text-box
+                                name="min"
+                                [(value)]="data.min">
+                            </dx-text-box>
+                            <label>{{l('Max')}}</label>
+                            <dx-text-box
+                                name="max"
+                                [(value)]="data.max">
+                            </dx-text-box>
+                        </div>
+                        <div class="field">
+                            <label>{{l('Format')}}</label>
+                            <dx-text-box
+                                name="format"
+                                [(value)]="data.format">
+                            </dx-text-box>
+                        </div>
+                    </div>
+                </div>  
+                <div class="category">
+                </div>
+            </div>
+        </dx-scroll-view>
+    </div>
+</modal-dialog>

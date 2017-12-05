@@ -9,22 +9,29 @@ import { AppUrlService } from './nav/app-url.service';
 import { ExportService } from './export/export.service';
 import { ExportGoogleSheetService } from './export/export-google-sheets/export-google-sheets';
 
-import { ConfirmDialog } from './dialogs/confirm/confirm-dialog.component';
+import { ModalDialogComponent } from './dialogs/modal/modal-dialog.component';
+import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
+
+import { DxCheckBoxModule } from 'devextreme-angular';
 
 @NgModule({
     declarations: [
       CalendarComponent,
-      ConfirmDialog
+      ConfirmDialogComponent,
+      ModalDialogComponent
     ],
     exports: [
       CalendarComponent,
-      ConfirmDialog
+      ConfirmDialogComponent,
+      ModalDialogComponent
     ],
     entryComponents: [
-      ConfirmDialog
+      ConfirmDialogComponent,
+      ModalDialogComponent
     ],
     imports: [
+      DxCheckBoxModule,
       MdDialogModule,
       ngCommon.CommonModule,
       AbpModule

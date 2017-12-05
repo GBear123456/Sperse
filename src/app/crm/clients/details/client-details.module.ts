@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 
-import { MdSidenavModule, MdProgressBarModule, MdTabsModule, MdDialogModule, 
+import { MdSidenavModule, MdProgressBarModule, MdTabsModule, MdDialogModule,
   MdDialogRef, MdProgressSpinnerModule, MdSelectModule } from '@angular/material';
 
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxButtonModule,
@@ -14,7 +14,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { ClientDetailsComponent } from './client-details.component';
 import { DetailsHeaderComponent } from './details-header.component';
-import { OperationsWidgetComponent } from './operations-widget.component'; 
+import { OperationsWidgetComponent } from './operations-widget.component';
 
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
 import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.component';
@@ -51,7 +51,7 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     CreditLinesComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent,
-    OperationsWidgetComponent, 
+    OperationsWidgetComponent,
     DxValidationGroupComponent
   ],
   imports: [

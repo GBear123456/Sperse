@@ -2,7 +2,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { Component, OnInit, Injector } from '@angular/core';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ConfirmDialog } from '@shared/common/dialogs/confirm/confirm-dialog.component';
+import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { MdDialog, MdDialogRef } from '@angular/material';
 import { CustomersServiceProxy, ContactAddressServiceProxy, CustomerInfoDto, CountryDto, CountryServiceProxy,
   ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput } from '@shared/service-proxies/service-proxies';
@@ -117,7 +117,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
   }
 
   deleteAddress(address, event, index){
-    this.dialog.open(ConfirmDialog, {
+    this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: this.l('DeleteContactHeader', this.l('Address')),
         message: this.l('DeleteContactMessage', this.l('Address').toLowerCase())

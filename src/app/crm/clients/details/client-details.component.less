@@ -11,15 +11,15 @@
     }
 
     &.phone {
-      &.type-P {
+      &.type-H, &.type-P {
         background-image: url("../../../../assets/common/icons/phone.svg");
       }
 
-      &.type-H {
-        background-image: url("../../../../assets/common/icons/phone-home.svg");
+      &.type-W {
+        background-image: url("../../../../assets/common/icons/phone-work.svg");
       }
 
-      &.type-M, &.type-W {
+      &.type-M {
         background-image: url("../../../../assets/common/icons/phone-mobile.svg");
       }
     }
@@ -108,7 +108,8 @@
           height: 16px;
           position: relative;
           display: inline-block;
-          background-size: 16px;
+          background-size: contain;
+          background-position: center;
           top: 3px;
         }
       }

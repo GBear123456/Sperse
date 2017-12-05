@@ -1,4 +1,4 @@
-import {Component, Injector, Output, EventEmitter} from '@angular/core';
+import {Component, Injector, Input, Output, EventEmitter} from '@angular/core';
 import {AppComponentBase} from '@shared/common/app-component-base';
 
 @Component({
@@ -10,8 +10,11 @@ import {AppComponentBase} from '@shared/common/app-component-base';
 export class OperationsComponent extends AppComponentBase {
     @Output() refreshCashflow: EventEmitter<any> = new EventEmitter();
     @Output() onGroupBy: EventEmitter<any> = new EventEmitter();
+    @Output() onToggleRows: EventEmitter<any> = new EventEmitter();
+    @Output() handleFullscreen: EventEmitter<any> = new EventEmitter();
     @Output() download: EventEmitter<any> = new EventEmitter();
-
+    @Output() showPreferences: EventEmitter<any> = new EventEmitter();
+    @Output() changeForecastModel: EventEmitter<any> = new EventEmitter();
     toolbarConfig = [
         {
             location: 'before',
@@ -38,12 +41,58 @@ export class OperationsComponent extends AppComponentBase {
                     }
                 }
             ]
-        }, {
+        },
+        {
             location: 'before',
             items: [
-                { name: 'expandRows'},
-                { name: 'expandCols'},
-                { name: 'rules'}
+                {
+                    name: 'expandRows',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Expand rows'),
+                        items: [{
+                            action: this.toggleRows.bind(this),
+                            text: this.l('Level 1'),
+                        }, {
+                            action: this.toggleRows.bind(this),
+                            text: this.l('Level 2'),
+                        }, {
+                            action: this.toggleRows.bind(this),
+                            text: this.l('Level 3'),
+                        }, {
+                            action: this.toggleRows.bind(this),
+                            text: this.l('All'),
+                        }, {
+                            action: this.toggleRows.bind(this),
+                            text: this.l('None'),
+                        }]
+                    }
+                },
+                {
+                    name: 'rules',
+                    action: this.preferences.bind(this)
+                },
+                {
+                    name: 'slider',
+                    widget: 'dxGallery',
+                    options: {
+                        hint: this.l('Scenario'),
+                        accessKey: 'cashflowForecastSwitcher',
+                        items: [],
+                        showNavButtons: true,
+                        showIndicator: false,
+                        scrollByContent: true,
+                        height: 39,
+                        width: 138,
+                        /** to change the default template for dxGallery with rendering of an image */
+                        itemTemplate: itemData => {
+                            return itemData.text;
+                        },
+                        onSelectionChanged: (e) => {
+                            this.changeSelectedForecastModel(e);
+                        }
+                    }
+                },
             ]
         },
         {
@@ -134,8 +183,8 @@ export class OperationsComponent extends AppComponentBase {
         },
         {
             location: 'after', items: [
-                { name: 'comments'},
-                { name: 'expandView'}
+                {name: 'comments'},
+                {name: 'fullscreen', action: this.fullscreen.bind(this)}
             ]
         },
         {
@@ -146,8 +195,9 @@ export class OperationsComponent extends AppComponentBase {
                     action: this.refresh.bind(this)
                 }
             ]
-        },
+        }
     ];
+    updatedConfig = [];
 
     constructor(injector: Injector) {
         super(injector);
@@ -163,5 +213,21 @@ export class OperationsComponent extends AppComponentBase {
 
     refresh() {
         this.refreshCashflow.emit(null);
+    }
+
+    toggleRows(event) {
+        this.onToggleRows.emit(event);
+    }
+
+    fullscreen() {
+        this.handleFullscreen.emit();
+    }
+
+    changeSelectedForecastModel(event) {
+        this.changeForecastModel.emit(event);
+    }
+
+    preferences() {
+        this.showPreferences.emit();
     }
 }

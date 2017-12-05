@@ -68,7 +68,7 @@ body {
   top: -2px;
 }
 #client-details .banner.row .col-xs-12.col-sm-4 {
-  padding: 10px 15px 10px 100px;
+  padding: 10px 15px 10px 160px;
   border: 1px solid #ccc;
   font-family: 'Montserrat', sans-serif;
   text-align: left;
@@ -82,9 +82,15 @@ body {
   height: 24px;
   display: block;
   position: absolute;
-  left: 65px;
+  left: 120px;
   top: 50%;
   transform: translateY(-50%);
+}
+#client-details .banner.row .col-xs-12.col-sm-4:last-child {
+  padding-left: 128px;
+}
+#client-details .banner.row .col-xs-12.col-sm-4:last-child::before {
+  left: 85px;
 }
 #client-details .banner.row .col-xs-12.col-sm-4 .value {
   color: #212c36;
@@ -95,6 +101,20 @@ body {
   color: #677380;
   font-size: 12px;
   font-weight: 300;
+}
+@media all and (max-width: 1000px) {
+  #client-details .banner.row .col-xs-12.col-sm-4 {
+    padding-left: 120px;
+  }
+  #client-details .banner.row .col-xs-12.col-sm-4::before {
+    left: 80px;
+  }
+  #client-details .banner.row .col-xs-12.col-sm-4:last-child {
+    padding-left: 96px;
+  }
+  #client-details .banner.row .col-xs-12.col-sm-4:last-child::before {
+    left: 58px;
+  }
 }
 #client-details .banner.row .col-xs-12.col-sm-4:nth-child(2)::before {
   background: url('https://dl.dropboxusercontent.com/s/d26l4sxi1bpxe83/total-icon.svg') 50% 50% no-repeat;
@@ -267,21 +287,24 @@ body {
 .view-container *:not(i) {
   font-family: 'Montserrat', sans-serif !important;
 }
+#sync #sync-account .brokerage-header h2 {
+  font-size: 24px !important;
+}
 .search {
   width: 55%;
 }
 .search h2 {
-  font-size: 24px;
+  font-size: 24px !important;
   color: #202b35;
   font-weight: 500;
 }
 .search h4 {
   font-weight: 300;
   color: #677380;
-  font-size: 14px;
+  font-size: 14px !important;
 }
 #sync #sync-account .terms {
-  font-size: 12px !important;
+  font-size: 13px !important;
 }
 #sync #sync-brokerage .top-brokerages {
   display: flex;

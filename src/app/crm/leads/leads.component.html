@@ -28,7 +28,7 @@
                                 [allowUpdating]="true">
                             </dxo-editing>
                             <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                            <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="asc"></dxi-column>
                             <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate" [width]="50" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                             <div *dxTemplate="let data of 'photoTemplate'">
                                 <img [src]="getPhoto(data.data.Photo, data.data.Gender)"

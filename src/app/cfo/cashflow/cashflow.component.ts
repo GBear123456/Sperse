@@ -5,25 +5,35 @@ import { GroupbyItem } from './models/groupbyItem';
 import {
     CashflowServiceProxy,
     StatsFilter,
-    BankAccountDto,
     CashFlowInitialData,
     StatsDetailFilter,
-    TransactionStatsDto
+    TransactionStatsDto,
+    CashFlowForecastServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
+import * as underscore from 'underscore';
 import * as Moment from 'moment';
 import { extendMoment } from 'moment-range';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterHelpers } from '@shared/filters/filter.helpers';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { UserGridPreferencesComponent } from './user-grid-preferences/user-grid-preferences.component';
+
+import { MdDialog } from '@angular/material';
+import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
+import { CacheService } from 'ng2-cache-service';
+import { OperationsComponent } from './operations/operations.component';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+
 const moment = extendMoment(Moment);
 
 /** Constants */
@@ -38,18 +48,19 @@ const StartedBalance = 'B',
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashflowServiceProxy ]
+    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService ]
 })
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
+    @ViewChild(OperationsComponent) operationsComponent: OperationsComponent;
+    @ViewChild('userGridPreferences') userGridPreferences: UserGridPreferencesComponent;
     headlineConfig: any;
     cashflowData: any;
     cashflowDataTree: any;
     cashflowTypes: any;
-    expenseCategories: any;
     bankAccounts: any;
     dataSource: any;
-    groupInterval: any = 'year';
+    groupInterval = 'year';
     statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
     statsDetailResult: any;
     categorization: Array<string> = [
@@ -62,7 +73,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             'groupInterval': 'year',
             'optionText': this.l('Years').toUpperCase(),
             'customizeTextFunction': this.getDateIntervalHeaderCustomizer.bind(this, 'year')(),
-            'historicalSelectionFunction': this.getYearHistoricalSelector
+            'historicalSelectionFunction': this.getYearHistoricalSelectorWithCurrent
         },
         {
             'groupInterval': 'quarter',
@@ -91,11 +102,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         Total,
         Reconciliation
     ];
-    intervals2methods = {
-        'year': 'getFullYear',
-        'month': 'getMonth',
-        'day': 'getDate'
-    };
     apiTableFields: any = [
         {
             caption: 'Type',
@@ -205,6 +211,22 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             visible: true
         },
         {
+            caption: 'Projected',
+            area: 'column',
+            showTotals: false,
+            selector: function(dataItem) {
+                return dataItem.forecastId ? 1 : 0;
+            },
+            customizeText: cellInfo => {
+                let projectedKey = cellInfo.value === 1 ? 'Projected' : 'Mtd';
+                let cellValue = this.l(projectedKey).toUpperCase();
+                let cssMarker = ' @css:{projectedField ' + (cellInfo.value === 1 ? 'projected' : 'mtd') + '}';
+                return cellValue + cssMarker;
+            },
+            expanded: false,
+            allowExpand: false
+        },
+        {
             caption: 'Day',
             dataField: 'date',
             dataType: 'date',
@@ -215,28 +237,33 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
     ];
     cssMarker = ' @css';
-    loading = {
-        'enabled': true
-    };
-    historicalTexts = [
-        this.l('Historical Cashflows - Current Period'),
-        this.l('Current'),
-        this.l('Cashflow - Forecast')
+    historicalTextsKeys = [
+        'Periods_Historical',
+        'Periods_Current',
+        'Periods_Forecast'
     ];
     historicalClasses = [
         'historical',
         'current',
         'forecast'
     ];
+    fieldPathsToClick = [];
+    selectedForecastModel;
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
     private requestFilter: StatsFilter;
     private anotherPeriodAccountsValues: Map<object, number> = new Map();
 
-    constructor(injector: Injector, private _CashflowServiceProxy: CashflowServiceProxy,
-                private _filtersService: FiltersService) {
+    constructor(injector: Injector,
+                public dialog: MdDialog,
+                private _CashflowServiceProxy: CashflowServiceProxy,
+                private _filtersService: FiltersService,
+                private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
+                private _cacheService: CacheService
+    ) {
         super(injector);
+        this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
@@ -244,47 +271,37 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     ngOnInit() {
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
-        this._CashflowServiceProxy.getCashFlowInitialData()
-            .subscribe(result => {
-                this.initialData = result;
-                this._filtersService.setup(
-                    this.filters = [
-                        new FilterModel({
-                            field: 'accountIds',
-                            component: FilterCheckBoxesComponent,
-                            caption: 'Account',
-                            items: {
-                                element: new FilterCheckBoxesModel(
-                                    {
-                                        dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
-                                        nameField: 'name',
-                                        parentExpr: 'parentId',
-                                        keyExpr: 'id'
-                                    })
-                            }
-                        }),
-                        new FilterModel({
-                            component: FilterCalendarComponent,
-                            caption: 'Date',
-                            items: {from: new FilterItemModel(), to: new FilterItemModel()}
-                        }),
-                        new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            field: 'businessEntityIds',
-                            caption: 'BusinessEntity',
-                            items: {
-                                element: new FilterCheckBoxesModel({
-                                    dataSource: result.businessEntities,
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
-                            }
-                        })
-                    ]
-                );
+        this.headlineConfig = {
+            name: this.l('Cash Flow Statement and Forecast'),
+            icon: 'globe',
+            buttons: [
+                {
+                    enabled: true,
+                    action: () => {
+                        this.dialog.open(RuleDialogComponent, {
+                            panelClass: 'slider', data: {}
+                        }).afterClosed().subscribe(result => {});
+                    },
+                    lable: this.l('+ Add New')
+                }
+            ]
+        };
 
+        /** Create parallel operations */
+        let getCashFlowInitialData = this._CashflowServiceProxy.getCashFlowInitialData();
+        let getForecastModels = this._cashFlowForecastServiceProxy.getModels();
+        Observable.forkJoin(getCashFlowInitialData, getForecastModels)
+            .subscribe(result => {
+                /** Initial data handling */
+                this.handleCashFlowInitialResult(result[0]);
+
+                /** Forecast models handling */
+                this.handleForecastModelResult(result[1]);
+
+                /** load cashflow data grid */
                 this.loadGridDataSource();
             });
+
 
         this._filtersService.apply(() => {
             for (let filter of this.filters) {
@@ -294,6 +311,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 else
                     this.requestFilter[filter.field] = undefined;
             }
+            this.closeTransactionsDetail();
             this.loadGridDataSource();
         });
 
@@ -308,17 +326,114 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
             });
         };
-        this.headlineConfig = {
-            name: this.l('Cash Flow Statement and Forecast'),
-            icon: 'globe',
-            buttons: [
-                {
-                    enabled: true,
-                    action: Function(),
-                    lable: this.l('+ Add New')
-                }
+    }
+
+    /**
+     * Handle the subscription result from getInitialData Observable
+     * @param initialDataResult
+     */
+    handleCashFlowInitialResult(initialDataResult) {
+        this.initialData = initialDataResult;
+        this._filtersService.setup(
+            this.filters = [
+                new FilterModel({
+                    field: 'accountIds',
+                    component: FilterCheckBoxesComponent,
+                    caption: 'Account',
+                    items: {
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource: FilterHelpers.ConvertBanksToTreeSource(initialDataResult.banks),
+                                nameField: 'name',
+                                parentExpr: 'parentId',
+                                keyExpr: 'id'
+                            })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    caption: 'Date',
+                    items: {from: new FilterItemModel(), to: new FilterItemModel()},
+                    options: {
+                        allowFutureDates: true,
+                        endDate: moment(new Date()).add(10, 'years').toDate()
+                    }
+                }),
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    field: 'businessEntityIds',
+                    caption: 'BusinessEntity',
+                    items: {
+                        element: new FilterCheckBoxesModel({
+                            dataSource: initialDataResult.businessEntities,
+                            nameField: 'name',
+                            keyExpr: 'id'
+                        })
+                    }
+                })
             ]
-        };
+        );
+    }
+
+    /**
+     * Handle forecast models result
+     * @param forecastModelsResult
+     */
+    handleForecastModelResult(forecastModelsResult) {
+        let newToolbar = <any>this.operationsComponent.toolbarConfig.slice();
+        let itemIndex;
+        let sliderObj = newToolbar.filter(
+            toolbarItem => toolbarItem.items.some(
+                (item, index) => {
+                    let isSlider = item.name === 'slider';
+                    itemIndex = isSlider ? index : itemIndex;
+                    return isSlider;
+                })
+        )[0].items[itemIndex];
+        /** Update the items of declared slider in toolbar config with the data from the server */
+        if (sliderObj) {
+            sliderObj.options.items = forecastModelsResult.map(forecastModelItem => {
+                return {
+                    id: forecastModelItem.id,
+                    text: forecastModelItem.name
+                };
+            });
+            /** If we have the forecast model in cache - get it there, else - get the first model */
+            let cachedForecastModel = this.getForecastModel();
+            /** If we have cached forecast model and cached forecast exists in items list - then use it **/
+            this.selectedForecastModel = cachedForecastModel && sliderObj.options.items.findIndex(
+                item => item.id === cachedForecastModel.id
+            ) !== -1 ?
+                cachedForecastModel :
+                sliderObj.options.items[0];
+            sliderObj.options.selectedIndex = sliderObj.options.items.findIndex(
+                item => item.id === this.selectedForecastModel.id
+            );
+        }
+        this.operationsComponent.updatedConfig = newToolbar;
+    }
+
+    /**
+     * Get forecast model from the cache
+     */
+    getForecastModel() {
+        return this._cacheService.exists(`cashflow_forecastModel_${abp.session.userId}`) ?
+               this._cacheService.get(`cashflow_forecastModel_${abp.session.userId}`) :
+               null;
+    }
+
+    /**
+     * Change the forecast model to reuse later
+     * @param modelObj - new forecast model
+     */
+    changeSelectedForecastModel(modelObj) {
+        this.selectedForecastModel = modelObj.addedItems[0];
+        this._cacheService.set(`cashflow_forecastModel_${abp.session.userId}`, this.selectedForecastModel);
+        this.loadGridDataSource();
+    }
+
+    getFullscreenElement() {
+      return document.body; //!!VP To avoid dropdown elements issue in fullscreen mode
     }
 
     ngAfterViewInit(): void {
@@ -336,6 +451,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     loadGridDataSource() {
         abp.ui.setBusy();
         $('.pivot-grid').addClass('invisible');
+        this.requestFilter.forecastModelId = this.selectedForecastModel.id;
         this._CashflowServiceProxy.getStats(this.requestFilter)
             .subscribe(result => {
                 if (result.transactionStats.length) {
@@ -358,7 +474,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     /** Get cashflow data tree to hide groups without children */
                     this.cashflowDataTree = this.getCashflowDataTree(
                         this.cashflowData,
-                        this.apiTableFields.filter(field => { return field.area === 'row'; })
+                        this.apiTableFields.filter(field => field.area === 'row')
                     );
                 } else {
                     this.cashflowData = null;
@@ -398,7 +514,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         });
         /** for all accounts that are absent add stub empty transactions to show
          *  the empty accounts anyway */
-        allAccountsIds.forEach(accountId => {
+        allAccountsIds.filter(accountId => accountId).forEach(accountId => {
             for (let cashflowType in currentAccountsIds) {
                 if (currentAccountsIds[cashflowType].indexOf(accountId) === -1) {
                     stubCashflowDataForAccounts.push(
@@ -511,6 +627,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let stubCashflowData = Array<TransactionStatsDto>();
         let allYears: Array<number> = [];
         let existingDates: Array<string> = [];
+        let dates = [];
         let firstAccountId;
         cashflowData.forEach(cashflowItem => {
             /** Move the year to the years array if it is unique */
@@ -518,13 +635,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             let date = cashflowItem.date.format('DD.MM.YYYY');
             if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
             if (existingDates.indexOf(date) === -1) existingDates.push(date);
+            if (dates.indexOf(cashflowItem.date) === -1) dates.push(cashflowItem.date);
             if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
         });
         allYears = allYears.sort();
         /** get started date of the first year */
-        let startedDate = moment().year(allYears[0]).startOf('year');
+        let startedDate = new Date(Math.min.apply(null, dates));
         /** get last date of the last year */
-        let endedDate = moment().year(allYears[allYears.length - 1]).endOf('year');
+        let endedDate = new Date(Math.max.apply(null, dates));
         /** cycle from started date to ended date */
         let datesRange = Array.from(moment.range(startedDate, endedDate).by('day'));
         /** added fake data for each date that is not already exists in cashflow data */
@@ -592,40 +710,22 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     /**
-     * return the array of dates intervals that should be hidden
-     * @param startedGroupInterval
-     */
-    getFieldsToBeHide(startedGroupInterval) {
-        let datesIntervalsToBeHide = this.groupbyItems.map(group => group.groupInterval);
-        /** update date fields for table */
-        let startedIntervalAdded = false;
-        for (let group_by_item of this.groupbyItems) {
-            let intervalField = this.getDateFieldByInterval(group_by_item['groupInterval']);
-            if (group_by_item['groupInterval'] === startedGroupInterval || startedIntervalAdded) {
-                datesIntervalsToBeHide.splice(datesIntervalsToBeHide.indexOf(group_by_item['groupInterval']), 1);
-                startedIntervalAdded = true;
-                intervalField.expanded = true;
-            }
-        }
-        return datesIntervalsToBeHide;
-    }
-
-    /**
      * Update the fields array with the date fields with different date intervals like year, quarter and month
      * @param startedGroupInterval - the groupInterval from which we should start show headers
      */
     updateDateFields(startedGroupInterval) {
-        let allDateIntervals = this.groupbyItems.map(group => group.groupInterval);
-        let datesIntervalsToBeHide = allDateIntervals.slice(0, allDateIntervals.indexOf(startedGroupInterval));
-        for (let dateInterval of allDateIntervals) {
-            /** move historical period to the top of started interval by setting area index */
-            let intervalField = this.getDateFieldByInterval(dateInterval);
-            intervalField.expanded = false;
+        let allColumnsFields = this.getColumnFields();
+        for (let field of allColumnsFields) {
+            field.expanded = false;
         }
-        for (let dateInterval of datesIntervalsToBeHide) {
-            let intervalField = this.getDateFieldByInterval(dateInterval);
-            intervalField.expanded = true;
-        }
+        allColumnsFields.every(field => {
+            if (field.groupInterval === startedGroupInterval) {
+                return false;
+            } else {
+                field.expanded = true;
+                return true;
+            }
+        });
     }
 
     /**
@@ -633,17 +733,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param event
      */
     onContentReady(event) {
-        let allDateIntervals = this.groupbyItems.map(group => group.groupInterval);
-        let datesIntervalsToBeHide = allDateIntervals.slice(0, allDateIntervals.indexOf(this.groupInterval));
-        for (let dateInterval of datesIntervalsToBeHide) {
-            /** Hide the fields that are not chosen */
-            let intervalFieldsSelector = `.dateField:not(.dx-total).${dateInterval}`;
-            // $(intervalFieldsSelector).each(function(){
-            //     $(this).text('');
-            //     $(this).addClass('dataFieldHidden');
-            // });
-        }
-
         /** Collapse starting and ending balances rows */
         if (!this.collapsedStartingAndEndingBalance) {
             if (this.pivotGrid.instance) {
@@ -661,7 +750,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** Calculate the amount current cells to cut the current period current cell to change current from
          *  current for year to current for the grouping period */
         if (this.groupInterval !== 'year') {
-            let lowestOpenedInterval = this.getLowestOpenedInterval();
+            let lowestOpenedInterval = this.getLowestOpenedCurrentInterval();
             $(`.current${_.capitalize(lowestOpenedInterval)}`).addClass('lowestOpenedCurrent');
             this.changeHistoricalColspans(lowestOpenedInterval);
         }
@@ -724,20 +813,27 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     createHistoricalCell(period) {
         let positionMethod = period === 'forecast' ? 'after' : 'before',
-            text = period === 'forecast' ? this.historicalTexts[2] : this.historicalTexts[0];
+            textKey = period === 'forecast' ? this.historicalTextsKeys[2] : this.historicalTextsKeys[0],
+            text = this.l(textKey);
         $('.historicalRow .current')
             [positionMethod](function () {
-            return `<td class="dx-pivotgrid-expanded historicalField ${period}">${text.toUpperCase()}</td>`;
+            return `<td class="dx-pivotgrid-expanded historicalField ${period}">
+                    ${text.toUpperCase()}</td>`;
         }).click(function (event) {
             event.stopImmediatePropagation();
         });
     }
 
     getIntervalColspansAmountForCurrent(lowestInterval) {
-        let colspanAmount = 1;
-        let currentElement = $('.current' + _.capitalize(lowestInterval));
-        if (!currentElement.length) {
-            colspanAmount = 0;
+        let colspanAmount = 0;
+        while (lowestInterval) {
+            let currentElement = $(`.dx-pivotgrid-horizontal-headers .lowestOpenedCurrent.current${_.capitalize(lowestInterval)}:not(.projectedField)`);
+            if (currentElement.length) {
+                colspanAmount = +currentElement.attr('colspan');
+                break;
+            } else {
+                lowestInterval = this.getPrevGroupInterval(lowestInterval);
+            }
         }
         return colspanAmount;
     }
@@ -745,13 +841,15 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     /**
      * Get lowest opened interval
      */
-    getLowestOpenedInterval() {
-        let allIntervals = this.groupbyItems.map(item => item.groupInterval);
+    getLowestOpenedCurrentInterval() {
+        let allIntervals = this.groupbyItems.map(item => item.groupInterval).filter(item => item !== 'day');
         let lowestInterval = allIntervals[0];
         allIntervals.every(interval => {
             let currentElement = $('.current' + _.capitalize(interval));
             lowestInterval = interval;
-            if (currentElement.length && !currentElement.attr('colspan')) {
+            if (currentElement.length && (!currentElement.attr('colspan') ||
+               (interval === 'month' && currentElement.hasClass('projectedField') &&
+                !$(`.current${_.capitalize(interval)}.projectedField`).attr('colspan'))) ) {
                 return false;
             }
             return true;
@@ -771,7 +869,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     getPrevGroupInterval(groupInterval) {
         let currentIndex = this.groupbyItems.map(item => item.groupInterval).indexOf(groupInterval);
-        return this.groupbyItems[currentIndex - 1].groupInterval;
+        return currentIndex > 0 ? this.groupbyItems[currentIndex - 1].groupInterval : null;
     }
 
     /**
@@ -794,16 +892,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     getHistoricalCustomizer() {
         return cellInfo => {
-            return this.historicalTexts[cellInfo.value].toUpperCase() +
+            return this.l(this.historicalTextsKeys[cellInfo.value]).toUpperCase() +
                 ' @css:{historicalField ' + this.historicalClasses[cellInfo.value] + '}';
-        };
-    }
-
-    getYearHistoricalSelector(): any {
-        return data => {
-            let currentYear = new Date().getFullYear(),
-                itemYear = new Date(data.date).getFullYear();
-            return currentYear <= itemYear ? 2 : 0;
         };
     }
 
@@ -828,25 +918,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     getQuarter(date: Date = new Date()) {
         return Math.floor(date.getMonth() / 3) + 1;
-    }
-
-    /**
-     * Compares two intervals of two dates with the method
-     * @param date1
-     * @param date2
-     * @param method - method of Date object to compare two dates
-     * @returns {number}
-     */
-    compareDateIntervals(date1, date2, interval: string) {
-        let result = 0,
-            currentPeriod = date1[this.intervals2methods[interval]](),
-            itemPeriod = date2[this.intervals2methods[interval]]();
-        if (currentPeriod < itemPeriod) {
-            result = 2;
-        } else if (currentPeriod === itemPeriod) {
-            result = 1;
-        }
-        return result;
     }
 
     /**
@@ -895,16 +966,19 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     changeGroupBy(event) {
+        abp.ui.setBusy();
+        $('.pivot-grid').addClass('invisible');
         let value = this.groupbyItems[event.itemIndex],
             startedGroupInterval = value.groupInterval;
         this.groupInterval = startedGroupInterval;
         this.updateDateFields(startedGroupInterval);
         /** Change historical field for different date intervals */
         let historicalField = this.getHistoricField();
-        //this.changeHistoricalFieldPosition(historicalField, startedGroupInterval);
         historicalField ['selector'] = value.historicalSelectionFunction();
         this.changeIntervalWidth();
-        this.refreshDataGrid();
+        this.collapsedStartingAndEndingBalance = false;
+        this.closeTransactionsDetail();
+        this.dataSource = this.getApiDataSource();
     }
 
     downloadData(event) {
@@ -912,6 +986,48 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         if (exportTo == 'Export to Excel') {
             this.pivotGrid.export.fileName = this._exportService.getFileName();
             this.pivotGrid.instance.exportToExcel();
+        }
+    }
+
+    togglePivotGridRows(event) {
+        let levelIndex = event.itemIndex;
+        let source;
+        switch (levelIndex) {
+            case 0:
+            case 1:
+            case 2:
+                source = this.pivotGrid.instance.getDataSource().getData();
+                this.expandRows(source, levelIndex);
+                break;
+            case 3:
+                source = this.pivotGrid.instance.getDataSource().getData();
+                this.expandRows(source);
+                break;
+            case 4:
+                this.pivotGrid.instance.getDataSource().collapseAll(2);
+                this.pivotGrid.instance.getDataSource().collapseAll(1);
+                this.pivotGrid.instance.getDataSource().collapseAll(0);
+                this.pivotGrid.instance.getDataSource().expandHeaderItem('row', [Income]);
+                this.pivotGrid.instance.getDataSource().expandHeaderItem('row', [Expense]);
+                break;
+            default:
+                // Don't know yet what to do by default.
+                break;
+        }
+    }
+
+    expandRows(source: any, stopDepth: number = 5, path: any = [], currentDepth: number = 0) {
+        if (!source || (!source.children && !source.rows))
+            return;
+        let rows = source.rows ? source.rows : source.children;
+        for (let child of rows ){
+            let childPath = path.slice();
+            childPath.push(child.value);
+            if (this.hasChildsByPath(childPath, this.cashflowDataTree)) {
+                this.pivotGrid.instance.getDataSource().expandHeaderItem('row', childPath);
+                if (currentDepth != stopDepth)
+                    this.expandRows(child, stopDepth, childPath, currentDepth + 1);
+            }
         }
     }
 
@@ -1057,7 +1173,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @returns {boolean}
      */
     isCellContainsCssMarker(cellObj) {
-        return cellObj.cell.text.indexOf(this.cssMarker) !== -1;
+        return cellObj.cell.text ? cellObj.cell.text.indexOf(this.cssMarker) !== -1 : '';
     }
     /**
      * Event that runs before rendering of every cell of the pivot grid
@@ -1133,15 +1249,20 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 });
             }
         }
+
+        /** If there are some cells to click - click it! */
+        if (e.area === 'column') {
+            if (this.fieldPathsToClick.length) {
+                if (underscore.isEqual(e.cell.path.slice(0, e.cell.path.length - 1), this.fieldPathsToClick[0])) {
+                    if (!e.cell.expanded) {
+                        e.cellElement.trigger('click');
+                    }
+                    this.fieldPathsToClick = [];
+                }
+            }
+        }
     }
 
-    /**
-     * whether it belong to current period
-     * @param cellObj
-     */
-    // isMonthBelongToCurrentPeriod(cellObj) {
-    //     return this.getMonthHistoricalSelector();
-    // }
     /**
      * remove css from the cell text, add css as a class, and add the totals text for the fields
      * if it is year or quarter cells
@@ -1168,14 +1289,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
         cellObj.cellElement.addClass(cssClass);
         /** hide projected field for not current months for mdk and projected */
-        if (_.startsWith(cssClass, 'projectedField')) {
-            /** hide the projected fields if the group interval is */
-            if (this.groupInterval === 'day') {
-                cellObj.cellElement.hide();
-            } else {
-                this.hideProjectedFieldForNotCurrentMonths(cellObj);
-            }
-        }
+        // if (_.startsWith(cssClass, 'projectedField')) {
+        //     /** hide the projected fields if the group interval is */
+        //     if (this.groupInterval === 'day') {
+        //         cellObj.cellElement.hide();
+        //     } else {
+        //         this.hideProjectedFieldForNotCurrentMonths(cellObj);
+        //     }
+        // }
     }
 
     /**
@@ -1183,7 +1304,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     addCurrentPeriodsClasses(cellObj) {
         this.getColumnFields().every( (field, index) => {
-            if (field.dataType === 'date') {
+            if (field.dataType === 'date' && field.groupInterval !== 'day') {
                 let currentDate = moment(),
                     fieldInterval = field.groupInterval,
                     method = fieldInterval === 'day' ? 'date' : fieldInterval,
@@ -1191,6 +1312,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 let path = cellObj.cell.path ? cellObj.cell.path : cellObj.cell.columnPath;
                 if (path && path[index] === currentPeriodValue) {
                     cellObj.cellElement.addClass(`current${_.capitalize(fieldInterval)}`);
+                    if (fieldInterval === 'month') {
+                        let projected = this.getProjectedValueByPath(path);
+                        if (projected !== undefined) {
+                            let projectedClass = projected === 1 ? 'projectedCell' : 'mtdCell';
+                            cellObj.cellElement.addClass(`${projectedClass}`);
+                        }
+                    }
                 } else if (path && path[index] < currentPeriodValue) {
                     cellObj.cellElement.addClass(`prev${_.capitalize(fieldInterval)}`);
                     return false;
@@ -1203,6 +1331,15 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
             return true;
         });
+    }
+
+    /**
+     * Gets the mtd or projected 0 or 1 from the path
+     * @param projected
+     */
+    getProjectedValueByPath(path) {
+        let projectedFieldIndex = this.getColumnFields().filter(field => field.caption === 'Projected')[0].areaIndex;
+        return path[projectedFieldIndex];
     }
 
     /**
@@ -1237,6 +1374,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             let datePeriod = this.formattingDate(cellObj.cell.columnPath);
             $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
             $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
+            this.statsDetailFilter = new StatsDetailFilter();
             this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
             this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
             this.statsDetailFilter.categorization = this.statsDetailFilter.categorization || {};
@@ -1245,25 +1383,79 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 this.statsDetailFilter.cashFlowTypeId == Reconciliation
             ) {
                 this.statsDetailFilter.categorization[this.categorization[0]] = undefined;
-                if ((!this.requestFilter.accountIds || !this.requestFilter.accountIds.length) &&
-                    cellObj.cell.rowPath[1] &&
-                    Number.isInteger(cellObj.cell.rowPath[1])) {
+                if (cellObj.cell.rowPath[1] && Number.isInteger(cellObj.cell.rowPath[1])) {
                     this.statsDetailFilter.accountIds = [cellObj.cell.rowPath[1]];
                 } else {
-                    this.statsDetailFilter.accountIds = (this.requestFilter.accountIds && this.requestFilter.accountIds) || [];
+                    this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
                     this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
                 }
             } else {
-                this.statsDetailFilter.accountIds = (this.requestFilter.accountIds && this.requestFilter.accountIds) || [];
+                this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
                 this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
                 this.statsDetailFilter.categorization[this.categorization[0]] = cellObj.cell.rowPath[1];
             }
+
             this.statsDetailFilter.categorization[this.categorization[1]] = cellObj.cell.rowPath[2];
-            this.statsDetailFilter.startDate = datePeriod.startDate;
-            this.statsDetailFilter.endDate = datePeriod.endDate;
             this.statsDetailFilter.businessEntityIds = this.requestFilter.businessEntityIds;
-            this.getStatsDetails(this.statsDetailFilter);
+            if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
+                this.requestFilter.endDate && datePeriod.startDate > this.requestFilter.endDate) {
+                this.statsDetailResult = [];
+            } else {
+                this.statsDetailFilter.startDate = this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate;
+                this.statsDetailFilter.endDate = this.requestFilter.endDate && this.requestFilter.endDate < datePeriod.endDate ? this.requestFilter.endDate : datePeriod.endDate;
+                this.getStatsDetails(this.statsDetailFilter);
+            }
         }
+
+        /** If month cell has only one child (mtd or projected) - then click on it
+         *  to expand/collapse days */
+        if (cellObj.area === 'column' && cellObj.cell) {
+            if (cellObj.rowIndex === cellObj.columnFields.filter(field => field.groupInterval === 'month')[0].areaIndex && !this.monthHasForecast(cellObj) && !cellObj.cell.expanded) {
+                this.addFieldToClicking(cellObj.cell.path);
+            }
+        }
+    }
+
+    addFieldToClicking(path) {
+        this.fieldPathsToClick = [path];
+    }
+
+    /** Return the amount of the child of the column like the */
+    monthHasForecast(cellObj) {
+        let monthDataWithForecast = this.cashflowData.filter(item => {
+            return item.forecastId && item.date.format('M.Y') === this.getDateByPath(cellObj.cell.path, cellObj.columnFields, 'month').format('M.Y');
+        });
+        return monthDataWithForecast.length ? true : false;
+    }
+
+    /**
+     * Return the moment date for the path using column fields
+     * @param path
+     * @param columnFields
+     * @return {any}
+     */
+    getDateByPath(path, columnFields, lowestInterval) {
+        let date = moment();
+        let dateFields = [];
+        columnFields.every(field => {
+            if (field.dataType === 'date') {
+                dateFields.push(field);
+            }
+            if (field.groupInterval === lowestInterval) {
+                return false;
+            }
+            return true;
+        });
+
+        dateFields.forEach(dateField => {
+            let method = dateField.groupInterval === 'day' ? 'date' : dateField.groupInterval,
+                fieldValue = path[columnFields.filter(field => field.groupInterval === dateField.groupInterval)[0].areaIndex];
+            fieldValue = dateField.groupInterval === 'month' ? fieldValue - 1 : fieldValue;
+            /** set the new interval to the moment */
+            date[method](fieldValue);
+        });
+
+        return date;
     }
 
     customCurrency(value) {
@@ -1276,7 +1468,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let year = param[1];
         let quarter = param[2];
         let month = param[3];
-        let day = param[4];
+        let day = param[5];
 
         startDate.year(year);
         endDate.year(year).endOf('year');
@@ -1308,16 +1500,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     hasChildsByPath(path, dataTree) {
         let result = true;
         path.forEach( pathItem => {
-            let keys = Object.keys(dataTree[pathItem]);
-            let firstKey = Object.keys(dataTree[pathItem])[0];
-            if (dataTree.hasOwnProperty(pathItem) &&
-                keys.length !== 1 ||
-                (keys.length === 1 && firstKey != 'null' && firstKey != 'undefined')
-            ) {
-                dataTree = dataTree[pathItem];
-            } else {
+            if (pathItem && dataTree.hasOwnProperty(pathItem)) {
+                let keys = Object.keys(dataTree[pathItem]);
+                let firstKey = keys && Object.keys(dataTree[pathItem])[0];
+                if (typeof firstKey == 'string') {
+                    dataTree = dataTree[pathItem];
+                } else {
+                    result = false;
+                }
+            } else
                 result = false;
-            }
         });
         return result;
     }
@@ -1330,16 +1522,17 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     calculateSummaryValue() {
         return summaryCell => {
-            let counter = this.groupbyItems.length;
+            let counter = this.getColumnFields().length;
             /** @todo refactor and fix a bug when the second call return wrong result */
             summaryCell.__proto__.prevWithParent = function() {
-                let prev = this.prev(arguments[0], arguments[1]),
+                let prev = this.prev(),
                     currentCell = this;
                 while (counter > 0) {
                     if (prev === null) {
-                        if (currentCell.parent('column')) {
-                            prev = currentCell.parent('column').prev(arguments[0], arguments[1]);
-                            currentCell = currentCell.parent('column');
+                        let parent = currentCell.parent('column');
+                        if (parent) {
+                            prev = parent.prev();
+                            currentCell = parent;
                         }
                         counter--;
                     } else {
@@ -1348,7 +1541,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
                 return prev;
             };
-            let prevWithParent = summaryCell.prevWithParent('column', true);
+            let prevWithParent = summaryCell.prevWithParent();
             /** if cell is starting balance account cell - then add account sum from previous period */
             if (prevWithParent !== null && this.isStartingBalanceAccountSummary(summaryCell)) {
                 return this.modifyStartingBalanceAccountCell(summaryCell, prevWithParent);

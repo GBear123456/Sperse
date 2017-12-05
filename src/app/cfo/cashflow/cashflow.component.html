@@ -1,14 +1,21 @@
-<app-headline [config]="headlineConfig">
+<app-headline [config]="headlineConfig" *ngIf="!isFullscreenMode">
     <synch-progress class="synch-progress" (onComplete)="refreshDataGrid()"></synch-progress>
 </app-headline>
-<cashflow-operations (refreshCashflow)="refreshDataGrid($event)"
-                     (onGroupBy)="changeGroupBy($event)"
-                     (download)="downloadData($event)">
-</cashflow-operations>
+
+<cashflow-operations
+    (refreshCashflow)="refreshDataGrid($event)"
+    (onGroupBy)="changeGroupBy($event)"
+    (handleFullscreen)="toggleFullscreen(getFullscreenElement())"
+    (onToggleRows)="togglePivotGridRows($event)"
+    (download)="downloadData($event)"
+    (showPreferences)="userGridPreferences.show()"
+    (changeForecastModel)="changeSelectedForecastModel($event)"
+></cashflow-operations>
 
 <div class="cashflow">
     <div class="filter-sort-options">
         <dx-button
+          [ngClass]="{'active-filter':_filtersService.hasFilterSelected}"
           [text]="ls('Platform', 'Filters')"
           [iconSrc]="'assets/common/icons/funnel-icon.svg'"
           (onClick)="toggleFilters($event)"
@@ -18,14 +25,14 @@
           [iconSrc]="'assets/common/icons/sort-icon.svg'"
         ></dx-button>
         <button class="clear-all" (click)="clearAllFilters()">
-            clear all
+            {{ls('Platform', 'ClearAll')}}
         </button>
     </div>
 
     <dx-scroll-view>
         <div class="pivot-grid-wrapper">
             <dx-pivot-grid id="operations"
-                           class="pivot-grid transition invisible"
+                           class="pivot-grid invisible"
                            [allowSortingBySummary]="false"
                            [allowSorting]="false"
                            [allowFiltering]="false"
@@ -74,7 +81,8 @@
                         [allowFiltering]="false"
                         [alignment]="'right'">
             </dxi-column>
-            <dxi-column dataField="comments"
+            <dxi-column caption="Comments"
+                        dataField="comment"
                         [allowSorting]="false"
                         [allowFiltering]="false">
             </dxi-column>
@@ -82,4 +90,6 @@
             <dxo-scrolling mode="virtual"></dxo-scrolling>
         </dx-data-grid>
     </div>
+
+    <userGridPreferences #userGridPreferences></userGridPreferences>
 </div>

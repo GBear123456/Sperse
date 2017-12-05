@@ -3,12 +3,13 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterHelpers } from '@shared/filters/filter.helpers';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { CacheService } from 'ng2-cache-service';
 
 import { MdButtonModule } from '@angular/material';
 
@@ -16,18 +17,20 @@ import {
     StatsFilter,
     BankAccountDto,
     CashflowServiceProxy,
-    BankAccountsServiceProxy
+    BankAccountsServiceProxy,
+    GroupBy,
+    CashFlowForecastServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
     'selector': 'app-stats',
-    'providers': [ CashflowServiceProxy, BankAccountsServiceProxy ],
+    'providers': [ CashflowServiceProxy, BankAccountsServiceProxy, CashFlowForecastServiceProxy, CacheService],
     'templateUrl': './stats.component.html',
     'styleUrls': ['./stats.component.less']
 })
 export class StatsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     statsData: any;
-    toolbarConfig = [
+    toolbarConfig = <any>[
         {
             location: 'before',
             items: [
@@ -46,7 +49,27 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         {
             location: 'before',
             items: [
-                { name: 'scenario' }
+                {
+                    name: 'slider',
+                    widget: 'dxGallery',
+                    options: {
+                        hint: this.l('Scenario'),
+                        accessKey: 'statsForecastSwitcher',
+                        items: [],
+                        showNavButtons: true,
+                        showIndicator: false,
+                        scrollByContent: true,
+                        height: 39,
+                        width: 200,
+                        itemTemplate: itemData => {
+                            return itemData.text;
+                        },
+                        onSelectionChanged: (e) => {
+                            this.changeSelectedForecastModel(e);
+                            this.loadStatsData();
+                        }
+                    }
+                }
             ]
         },
         {
@@ -76,9 +99,10 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
             ]
         }
     ];
+    updatedConfig = [];
     headlineConfig: any;
     interval = 'date';
-    verticalAxisDateFormat = 'day';
+    axisDateFormat = 'month';
     currency = 'USD';
     labelPositiveBackgroundColor = '#626b73';
     historicalEndingBalanceColor = '#01b0f0';
@@ -89,6 +113,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     forecastExpensesColor = '#f15a25';
     maxLabelCount = 0;
     labelWidth = 45;
+    selectedForecastModel;
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
@@ -96,9 +121,12 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         injector: Injector,
         private _filtersService: FiltersService,
         private _cashflowService: CashflowServiceProxy,
-        private _bankAccountService: BankAccountsServiceProxy
+        private _bankAccountService: BankAccountsServiceProxy,
+        private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
+        private _cacheService: CacheService
     ) {
         super(injector);
+        this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
@@ -133,6 +161,33 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                 );
             });
 
+        this._cashFlowForecastServiceProxy.getModels().subscribe(
+            result => {
+                let newToolbar = this.toolbarConfig.slice();
+                let sliderObj = newToolbar.filter(toolbarItem => toolbarItem.items[0].name === 'slider')[0];
+                sliderObj.items[0].options.items = result.map(forecastModelItem => {
+                    return {
+                        id: forecastModelItem.id,
+                        text: forecastModelItem.name
+                    };
+                });
+
+                /** If we have the forecast model in cache - get it there, else - get the first model */
+                let cachedForecastModel = this.getForecastModel();
+                /** If we have cached forecast model and cached forecast exists in items list - then use it **/
+                this.selectedForecastModel = cachedForecastModel && sliderObj.items[0].options.items.findIndex(
+                        item => item.id === cachedForecastModel.id
+                    ) !== -1 ?
+                    cachedForecastModel :
+                    sliderObj.items[0].options.items[0];
+                sliderObj.items[0].options.selectedIndex = sliderObj.items[0].options.items.findIndex(
+                    item => item.id === this.selectedForecastModel.id
+                );
+                this.updatedConfig = newToolbar;
+                this.loadStatsData();
+            }
+        );
+
         this.headlineConfig = {
             name: this.l('Daily Cash Balances'),
             icon: '',
@@ -145,31 +200,46 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
             ]
         };
 
-        this.loadStatsData();
-
-        this._filtersService.apply(() => {
-            for (let filter of this.filters) {
+        for (let filter of this.filters) {
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
 
-                if (filterMethod)
-                    filterMethod(filter, this.requestFilter);
-                else
-                    this.requestFilter[filter.field] = undefined;
-            }
-
+            if (filterMethod)
+                filterMethod(filter, this.requestFilter);
+            else
+                this.requestFilter[filter.field] = undefined;
+        }
+        this._filtersService.apply(() => {
             this.loadStatsData();
         });
+    }
+
+    /**
+     * Get forecast model from the cache
+     */
+    getForecastModel() {
+        return this._cacheService.exists(`stats_forecastModel_${abp.session.userId}`) ?
+               this._cacheService.get(`stats_forecastModel_${abp.session.userId}`) :
+               null;
+    }
+
+    /**
+     * Change the forecast model to reuse later
+     * @param modelObj - new forecast model
+     */
+    changeSelectedForecastModel(modelObj) {
+        this.selectedForecastModel = modelObj.addedItems[0];
+        this._cacheService.set(`stats_forecastModel_${abp.session.userId}`, this.selectedForecastModel);
     }
 
     /** load stats data from api */
     loadStatsData() {
         let {startDate = undefined, endDate = undefined, accountIds = []} = this.requestFilter;
-        this.statsData = this._bankAccountService.getBankAccountDailyStats(startDate, endDate, accountIds)
-            .subscribe(result => {
+        this.statsData = this._bankAccountService.getBankAccountDailyStats(
+            'USD', this.selectedForecastModel.id, accountIds, startDate, endDate, GroupBy.Monthly
+        ).subscribe(result => {
                     if (result) {
                         this.statsData = result;
                         this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
-                        console.log(this.statsData);
                     } else {
                         console.log('No daily stats');
                     }
@@ -198,5 +268,9 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
 
     showSourceData() {
         console.log('show source data');
+    }
+
+    customizeBottomAxis(elem) {
+        return elem.valueText.substring(0, 3).toUpperCase();
     }
 }

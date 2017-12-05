@@ -2,7 +2,7 @@
     <synch-progress class="synch-progress"></synch-progress>
 </app-headline>
 
-<app-toolbar [config]="toolbarConfig"></app-toolbar>
+<app-toolbar [(config)]="updatedConfig"></app-toolbar>
 
 <dx-scroll-view showScrollbar="onHover">
     <div class="mainStatsView">
@@ -47,23 +47,17 @@
                                 [currency]="currency">
                             </dxo-format>
                         </dxo-label>
-                        <dxo-tick-interval
-                            [days]="1"
-                        ></dxo-tick-interval>
                     </dxi-value-axis>
 
                     <!-- Bottom axis -->
                     <dxo-argument-axis
                         argumentType="datetime"
                         visible="true">
-                        <dxo-label>
+                        <dxo-label [customizeText]="customizeBottomAxis">
                             <dxo-format
-                                [type]="verticalAxisDateFormat">
+                                [type]="axisDateFormat">
                             </dxo-format>
                         </dxo-label>
-                        <dxo-tick-interval
-                            [days]="1"
-                        ></dxo-tick-interval>
                     </dxo-argument-axis>
 
                     <!-- Common settings for axis -->
@@ -96,14 +90,11 @@
                     <dxo-argument-axis
                         argumentType="datetime"
                         visible="true">
-                        <dxo-label>
+                        <dxo-label [customizeText]="customizeBottomAxis">
                             <dxo-format
-                                [type]="verticalAxisDateFormat">
+                                [type]="axisDateFormat">
                             </dxo-format>
                         </dxo-label>
-                        <dxo-tick-interval
-                            [days]="1"
-                        ></dxo-tick-interval>
                     </dxo-argument-axis>
 
                     <!-- Common settings for axis -->

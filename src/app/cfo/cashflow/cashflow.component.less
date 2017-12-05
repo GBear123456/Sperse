@@ -36,11 +36,27 @@
 @dataCellColorForZeroValues: rgba(104, 111, 118, 0.52);
 
 :host {
-    position: relative;
     top: 75px;
+    position: relative;
+
+    &.fullscreen {
+        top: -75px !important;
+    }
 
     .filter-sort-options {
         padding: 20px 15px 0px 20px;
+        .active-filter::after {
+            content: '';
+            position: absolute;
+            display: block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: red;
+            top: 7px;
+            right: 7px;
+        }
+
         .clear-all {
             height: 37px;
             font-size: 11px;
@@ -95,6 +111,7 @@
                     height: auto!important;
                 }
                 .dx-button-text {
+                    color: #677380;
                     font-size: 13px;
                     font-weight: 300;
                     line-height: 1.85;
@@ -184,7 +201,7 @@
                         font-weight: 600;
                         font-size: 20px;
                     }
-                    &.lowestOpenedCurrent {
+                    &.lowestOpenedCurrent:not(.mtdCell) {
                         background-color: @currentPeriodCellBackgroundColor;
                     }
                     &.month,
@@ -409,7 +426,7 @@
                         &.expenses {
                             background: @expensesDataCellBackgroundColor;
                         }
-                        &.lowestOpenedCurrent {
+                        &.lowestOpenedCurrent:not(.mtdCell) {
                             &.income {
                                 background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
                                             linear-gradient(@incomeDataCellBackgroundColor, @incomeDataCellBackgroundColor);
@@ -420,7 +437,7 @@
                             }
                         }
                     }
-                    &.lowestOpenedCurrent {
+                    &.lowestOpenedCurrent:not(.mtdCell) {
                         background-color: @currentPeriodCellBackgroundColor;
                     }
                 }
@@ -453,7 +470,7 @@
                         &.dx-total {
                             background: @startedBalanceDataCellColor;
                         }
-                        &.lowestOpenedCurrent {
+                        &.lowestOpenedCurrent:not(.mtdCell) {
                             background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
                                         linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                         }
@@ -461,7 +478,7 @@
                     &:first-child {
                         td {
                             background: @startedBalanceDataCellColor;
-                            &.lowestOpenedCurrent {
+                            &.lowestOpenedCurrent:not(.mtdCell) {
                                 background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
                                             linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                             }
@@ -472,7 +489,7 @@
                 &.endingCashPosition {
                     td {
                         background: @grandTotalBackgroundColor;
-                        &.lowestOpenedCurrent {
+                        &.lowestOpenedCurrent:not(.mtdCell) {
                             background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
                                         linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
                         }
@@ -489,7 +506,7 @@
                         & span {
                             font-size: 13.5px;
                         }
-                        &.lowestOpenedCurrent {
+                        &.lowestOpenedCurrent:not(.mtdCell) {
                             background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
                                         linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
                         }
@@ -566,6 +583,7 @@
     }
 
     .cashflow {
+        background-color: #FFF;
         position: relative;
         height: 100%;
     }
@@ -723,9 +741,7 @@
     margin-bottom: 300px;
     border-top: 1px solid #ddd;
 }
-.transition {
-    transition: .2s;
-}
+
 .invisible {
     opacity: 0;
 }

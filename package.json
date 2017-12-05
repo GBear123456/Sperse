@@ -78,6 +78,7 @@
     "morris.js": "^0.5.0",
     "ng-recaptcha": "^2.0.2",
     "ng2-brpipes": "^1.1.2",
+    "ng2-cache-service": "^1.1.1",
     "ng2-dragula": "^1.5.0",
     "ng2-file-upload": "^1.2.1",
     "ng2-google-place-autocomplete": "^1.4.2",

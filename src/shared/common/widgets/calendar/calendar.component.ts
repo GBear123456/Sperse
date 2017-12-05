@@ -12,6 +12,12 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
     UID: String = Math.random().toString(36).substring(2);
     calendar: any;
 
+    private _options: any;
+    @Input()
+    set options(options: any) {
+        this._options = options;
+    }
+
     private _values: any;
     @Input()
     set values(values: any) {
@@ -36,7 +42,8 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
     }
 
     ngAfterViewInit() {
-        this.calendar = JQCalendarInit('.calendar#' + this.UID, true);
+        this.calendar = JQCalendarInit(
+            '.calendar#' + this.UID, true, this._options);
         this.calendar.on('datepicker-first-date-selected',
             (event, obj) => {
                 this._values.from.value = obj.date1;

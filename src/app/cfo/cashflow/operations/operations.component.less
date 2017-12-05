@@ -1,6 +1,7 @@
 @borderColor: #dadee1;
 
 .operations {
+    background-color: #FFF;
     display: flex;
     overflow-x: hidden;
     button,
@@ -44,6 +45,41 @@
         }
         &.dirty:before {
             display: none;
+        }
+    }
+
+    /deep/ .dx-gallery.dx-widget[accesskey='cashflowForecastSwitcher'] {
+        border: 1px solid #ddd;
+        vertical-align: middle;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        color: #677380;
+        font-size: 13px;
+        font-weight: 300;
+        line-height: 2.9;
+        letter-spacing: 0.3px;
+        display: inline-block;
+        font-weight: 400;
+        .dx-widget {
+            &.dx-gallery-nav-button-next {
+                &:before {
+                    content: url(../../../../assets/common/icons/arrow-right.svg);
+                }
+            }
+
+            &.dx-gallery-nav-button-prev {
+                &:before {
+                    content: url(../../../../assets/common/icons/arrow-left.svg);
+                }
+            }
+            &:before {
+                top: 0;
+                margin: 0 auto;
+                font-size: 29px;
+            }
+            &:after {
+                background: none
+            }
         }
     }
 }

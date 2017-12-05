@@ -1,4 +1,4 @@
-﻿import {
+import {
     Component,
     OnInit,
     AfterViewInit,
@@ -80,6 +80,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 }
             }
         };
+
+        this.initToolbarConfig();
     }
 
     showColumnChooser() {
@@ -107,59 +109,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     ngOnInit(): void {
-        this.toolbarConfig = [
-            {
-                location: 'before', items: [
-                {name: 'back'}
-            ]
-            },
-            {
-                location: 'before', items: [
-                {name: 'filters', action: this._filtersService.toggle.bind(this._filtersService)}
-            ]
-            },
-            {
-                location: 'before', items: [
-                {name: 'assign'}, {name: 'status'}, {name: 'delete'}
-            ]
-            },
-            {
-                location: 'after', items: [
-                {name: 'refresh', action: this.refreshDataGrid.bind(this)},
-                {
-                    name: 'download',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: this.l('Download'),
-                        items: [{
-                            action: Function(),
-                            text: this.l('Save as PDF'),
-                            icon: 'pdf',
-                        }, {
-                            action: this.exportToXLS.bind(this),
-                            text: this.l('Export to Excel'),
-                            icon: 'xls',
-                        }, {
-                            action: this.exportToCSV.bind(this),
-                            text: this.l('Export to CSV'),
-                            icon: 'sheet'
-                        }, {
-                            action: this.exportToGoogleSheet.bind(this),
-                            text: this.l('Export to Google Sheets'),
-                            icon: 'sheet'
-                        }, {type: 'downloadOptions'}]
-                    }
-                },
-                {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
-            ]
-            },
-            {
-                location: 'after', items: [
-                {name: 'box'}, {name: 'pipeline'}, {name: 'grid'}
-            ]
-            }
-        ];
-
         this._filtersService.setup(
             this.filters = [
                 new FilterModel({
@@ -222,6 +171,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         );
 
         this._filtersService.apply(() => {
+            this.initToolbarConfig();
             this.processODataFilter(this.dataGrid.instance,
                 this.dataSourceURI, this.filters, (filter) => {
                     let filterMethod = this['filterBy' +
@@ -231,6 +181,61 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 }
             );
         });
+    }
+
+    initToolbarConfig() {
+        this.toolbarConfig = [
+            {
+                location: 'before', items: [
+                    { name: 'back' }
+                ]
+            },
+            {
+                location: 'before', items: [
+                    { name: 'filters', action: this._filtersService.toggle.bind(this._filtersService), attr: { 'filter-selected': this._filtersService.hasFilterSelected } }
+                ]
+            },
+            {
+                location: 'before', items: [
+                    { name: 'assign' }, { name: 'status' }, { name: 'delete' }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    { name: 'refresh', action: this.refreshDataGrid.bind(this) },
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [{
+                                action: Function(),
+                                text: this.l('Save as PDF'),
+                                icon: 'pdf',
+                            }, {
+                                action: this.exportToXLS.bind(this),
+                                text: this.l('Export to Excel'),
+                                icon: 'xls',
+                            }, {
+                                action: this.exportToCSV.bind(this),
+                                text: this.l('Export to CSV'),
+                                icon: 'sheet'
+                            }, {
+                                action: this.exportToGoogleSheet.bind(this),
+                                text: this.l('Export to Google Sheets'),
+                                icon: 'sheet'
+                            }, { type: 'downloadOptions' }]
+                        }
+                    },
+                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    { name: 'box' }, { name: 'pipeline' }, { name: 'grid' }
+                ]
+            }
+        ];
     }
 
     filterByStates(filter: FilterModel) {
