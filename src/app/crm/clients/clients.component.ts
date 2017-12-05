@@ -60,10 +60,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     public toolbarConfig;
 
     constructor(injector: Injector,
-                private _router: Router,
-                private _filtersService: FiltersService,
-                private _activatedRoute: ActivatedRoute,
-                private _commonLookupService: CommonLookupServiceProxy) {
+        private _router: Router,
+        private _filtersService: FiltersService,
+        private _activatedRoute: ActivatedRoute,
+        private _commonLookupService: CommonLookupServiceProxy
+    ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this._filtersService.localizationSourceName = this.localizationSourceName;

@@ -9,6 +9,7 @@ import { MessageService } from '@abp/message/message.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ExportService } from '@shared/common/export/export.service';
+import { httpConfiguration } from '@shared/http/httpConfiguration';
 
 import buildQuery from 'odata-query';
 import * as _ from 'underscore';
@@ -24,12 +25,14 @@ export abstract class AppComponentBase {
     message: MessageService;
     multiTenancy: AbpMultiTenancyService;
     appSession: AppSessionService;
+    httpConfig: httpConfiguration;
 
     private _applicationRef: ApplicationRef;
     public _exportService: ExportService;
 
     constructor(private _injector: Injector,
-        public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName) {
+        public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName
+    ) {
         this.localization = _injector.get(LocalizationService);
         this.permission = _injector.get(PermissionCheckerService);
         this.feature = _injector.get(FeatureCheckerService);
@@ -38,6 +41,7 @@ export abstract class AppComponentBase {
         this.message = _injector.get(MessageService);
         this.multiTenancy = _injector.get(AbpMultiTenancyService);
         this.appSession = _injector.get(AppSessionService);
+        this.httpConfig = _injector.get(httpConfiguration);
         this._applicationRef = _injector.get(ApplicationRef);
         this._exportService = _injector.get(ExportService);
     }

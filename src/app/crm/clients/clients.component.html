@@ -16,7 +16,8 @@
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"                                  
                                   (onContentReady)="onContentReady($event)"
-                                  (onEditingStart)="showClientDetails($event)">
+                                  (onEditingStart)="showClientDetails($event)"
+                                  (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                         <dxo-selection
                             selectAllMode="page"
                             showCheckBoxesMode="always"

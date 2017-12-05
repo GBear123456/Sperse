@@ -53,7 +53,8 @@
         <dx-button icon="close" (onClick)="closeTransactionsDetail()" class="close-btn"></dx-button>
         <dx-data-grid id="cashflowGridContainer"
                       [rowAlternationEnabled]="true"
-                      [dataSource]="statsDetailResult">
+                      [dataSource]="statsDetailResult"
+                      (onDataErrorOccurred)="httpConfig.handleError($event.error)">
             <dxo-header-filter [visible]="true"></dxo-header-filter>
             <dxi-column dataField="date" width="130" dataType="date" format="shortDate" [alignment]="left"></dxi-column>
             <dxi-column dataField="description">

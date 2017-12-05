@@ -24,7 +24,8 @@
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
-                                  (onRowRemoving)="deleteCertificate($event)">
+                                  (onRowRemoving)="deleteCertificate($event)"
+                                  (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                         <dxi-column dataField="id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="hostNames" caption="{{l('HostName')}}"></dxi-column>
                         <dxi-column dataField="expiration" caption="{{l('ExpirationDate')}}" dataType="date" format="shortDateShortTime"></dxi-column>
