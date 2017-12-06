@@ -1553,9 +1553,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 return this.modifyStartingBalanceSummaryCell(summaryCell, prevWithParent);
             }
 
-            /** if cell is ending cash position account cell */
-            if (this.isEndingBalanceAccountSummary(summaryCell)) {
-                return this.modifyEndingBalanceAccountSummary(summaryCell, prevWithParent);
+            /** if cell is ending cash position account summary cell */
+            if (this.isEndingBalanceAccountCell(summaryCell)) {
+                return this.modifyEndingBalanceAccountCell(summaryCell, prevWithParent);
             }
 
             /** calculation for ending cash position value */
@@ -1577,6 +1577,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let prevEndingAccountValue = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, Total),
             currentCellValue = summaryCell.value() || 0,
             prevCellValue = prevWithParent ? prevWithParent.value(true) || 0 : 0;
+            //prevReconciliation = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, Total);
         return currentCellValue + prevEndingAccountValue + prevCellValue;
     }
 
@@ -1600,10 +1601,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param prevWithParent
      * @return {number}
      */
-    modifyEndingBalanceAccountSummary(summaryCell, prevWithParent) {
+    modifyEndingBalanceAccountCell(summaryCell, prevWithParent) {
         let startedBalanceAccountValue = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, StartedBalance),
-            currentCellValue = summaryCell.value() || 0;
-        return currentCellValue + startedBalanceAccountValue;
+            currentCellValue = summaryCell.value() || 0,
+            reconciliationTotal = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, Reconciliation);
+        return currentCellValue + startedBalanceAccountValue + reconciliationTotal;
     }
 
     /**
@@ -1614,8 +1616,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     modifyGrandTotalSummary(summaryCell) {
         let startedBalanceCell = summaryCell.slice(0, StartedBalance),
             startedBalanceCellValue = startedBalanceCell ? (startedBalanceCell.value(true) || 0) : 0,
-            currentCellValue = summaryCell.value() || 0;
-        return currentCellValue + startedBalanceCellValue;
+            currentCellValue = summaryCell.value() || 0,
+            reconciliationTotal = summaryCell.slice(0, Reconciliation),
+            reconciliationTotalValue = reconciliationTotal.value() || 0;
+        return currentCellValue + startedBalanceCellValue + reconciliationTotalValue;
     }
 
     /**
@@ -1629,7 +1633,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, target) {
         /** if we want to get the value of the started balance - then we should get the
          *  slice value from current cell, else - we should get the total value from previous cell */
-        let subject = target === StartedBalance ? summaryCell : prevWithParent;
+        let subject = target === StartedBalance || target === Reconciliation ? summaryCell : prevWithParent;
         if (!subject) {
             return 0;
         }
@@ -1637,7 +1641,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             anotherPeriodCell = subject.parent('row') ? subject.parent('row').slice(0, target) : null,
             anotherPeriodAccount = anotherPeriodCell ? anotherPeriodCell.child('row', accountId) : null,
             anotherPeriodAccountCashedValue,
-            isCalculatedValue = target === StartedBalance ? true : false,
+            isCalculatedValue = true/*target === StartedBalance || target === Reconciliation ? true : false*/,
             groupInterval = subject.field('column').groupInterval,
             columnValue = subject.value(subject.field('column')),
             parent = subject ? subject.parent() : null,
@@ -1695,7 +1699,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** {cashflowTypeId: 'T', accountId: 10, quarter: 3, year: 2015, month: 5} */
         let value = this.cashflowData.reduce((sum, cashflowData) => {
             if (
-                cashflowData.cashflowTypeId === cellData.cashflowTypeId &&
+                ((cellData.cashflowTypeId === Total && cashflowData.cashflowTypeId === Reconciliation) ||
+                cashflowData.cashflowTypeId === cellData.cashflowTypeId) &&
                 cashflowData.accountId === cellData.accountId &&
                 (!cellData.year || (cellData.year === cashflowData.date.year())) &&
                 (!cellData.quarter || (cellData.quarter === cashflowData.date.quarter())) &&
@@ -1721,8 +1726,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     isGrandTotalSummary(summaryCell) {
         return summaryCell.field('row') !== null &&
-            summaryCell.field('row').dataField === 'cashflowTypeId' &&
-            summaryCell.value(summaryCell.field('row')) === Total;
+               summaryCell.field('row').dataField === 'cashflowTypeId' &&
+               summaryCell.value(summaryCell.field('row')) === Total;
     }
 
     isCellIsStartingBalanceSummary(summaryCell) {
@@ -1738,11 +1743,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             Number.isInteger(summaryCell.value(summaryCell.field('row')));
     }
 
-    isEndingBalanceAccountSummary(summaryCell) {
+    isEndingBalanceAccountCell(summaryCell) {
         return summaryCell.field('row') !== null &&
-            summaryCell.field('row').dataField === 'categorization.category' &&
-            summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === Total &&
-            Number.isInteger(summaryCell.value(summaryCell.field('row')));
+               summaryCell.field('row').dataField === 'categorization.category' &&
+               summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === Total &&
+               Number.isInteger(summaryCell.value(summaryCell.field('row')));
     }
 
     getStatsDetails(params): void {
