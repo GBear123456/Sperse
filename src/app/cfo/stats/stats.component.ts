@@ -274,11 +274,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         this.forecastSourceData = [];
         this.historicalSourceData = [];
         this.statsData.forEach(statsDataItem => {
-            //statsDataItem.isForecast ? this.forecastSourceData.push(statsDataItem) : this.historicalSourceData.push(statsDataItem);
-            for (let i = 0; i < 1000; i++ ) {
-                this.historicalSourceData.push(statsDataItem);
-                this.forecastSourceData.push(statsDataItem);
-            }
+            statsDataItem.isForecast ? this.forecastSourceData.push(statsDataItem) : this.historicalSourceData.push(statsDataItem);
         });
         this.showSourceData = true;
     }
