@@ -2,7 +2,10 @@
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, Injector, APP_INITIALIZER } from '@angular/core';
 
+import { HttpModule, JsonpModule, Http, XHRBackend, RequestOptions } from '@angular/http';
+
 import { AbpModule, ABP_HTTP_PROVIDER } from '@abp/abp.module';
+import { httpConfiguration } from '@shared/http/httpConfiguration';
 
 import { AppModule } from './app/app.module';
 import { CommonModule } from '@shared/common/common.module';
@@ -55,6 +58,8 @@ function handleLogoutRequest(authService: AppAuthService) {
     }
 }
 
+ABP_HTTP_PROVIDER.deps = [XHRBackend, RequestOptions, httpConfiguration];
+
 @NgModule({
     imports: [
         BrowserModule,
@@ -63,7 +68,6 @@ function handleLogoutRequest(authService: AppAuthService) {
         CommonModule.forRoot(),
         AbpModule,
         ServiceProxyModule,
-
         RootRoutingModule,
         FiltersModule.forRoot()
     ],
@@ -72,6 +76,7 @@ function handleLogoutRequest(authService: AppAuthService) {
     ],
     providers: [
         ABP_HTTP_PROVIDER,
+        httpConfiguration,
         { provide: API_BASE_URL, useFactory: getRemoteServiceBaseUrl },
         {
             provide: APP_INITIALIZER,
