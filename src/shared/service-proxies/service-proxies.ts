@@ -719,8 +719,8 @@ export class BankAccountsServiceProxy {
     /**
      * @return Success
      */
-    getBankAccountDailyStats(currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
-        let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetBankAccountDailyStats?";
+    getStats(currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
         if (currency !== undefined)
             url_ += "Currency=" + encodeURIComponent("" + currency) + "&"; 
         if (forecastModelId !== undefined)
@@ -747,11 +747,11 @@ export class BankAccountsServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetBankAccountDailyStats(response_);
+            return this.processGetStats(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processGetBankAccountDailyStats(response_);
+                    return this.processGetStats(response_);
                 } catch (e) {
                     return <Observable<BankAccountDailyStatDto[]>><any>Observable.throw(e);
                 }
@@ -760,7 +760,7 @@ export class BankAccountsServiceProxy {
         });
     }
 
-    protected processGetBankAccountDailyStats(response: Response): Observable<BankAccountDailyStatDto[]> {
+    protected processGetStats(response: Response): Observable<BankAccountDailyStatDto[]> {
         const status = response.status; 
 
         if (status === 200) {
@@ -1199,11 +1199,11 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    addCategorizationMapping(categorizationMapping: AddCategorizationMappingInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/AddCategorizationMapping";
+    recategorizeAll(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/RecategorizeAll";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(categorizationMapping ? categorizationMapping.toJSON() : null);
+        const content_ = "";
         
         let options_ = {
             body: content_,
@@ -1215,11 +1215,11 @@ export class CashflowServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processAddCategorizationMapping(response_);
+            return this.processRecategorizeAll(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processAddCategorizationMapping(response_);
+                    return this.processRecategorizeAll(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -1228,56 +1228,7 @@ export class CashflowServiceProxy {
         });
     }
 
-    protected processAddCategorizationMapping(response: Response): Observable<void> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    deleteCategorizationMapping(categorizationId: string, name: string): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/DeleteCategorizationMapping?";
-        if (categorizationId !== undefined)
-            url_ += "CategorizationId=" + encodeURIComponent("" + categorizationId) + "&"; 
-        if (name !== undefined)
-            url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "delete",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processDeleteCategorizationMapping(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processDeleteCategorizationMapping(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processDeleteCategorizationMapping(response: Response): Observable<void> {
+    protected processRecategorizeAll(response: Response): Observable<void> {
         const status = response.status; 
 
         if (status === 200) {
@@ -1589,6 +1540,444 @@ export class CashFlowForecastServiceProxy {
 }
 
 @Injectable()
+export class CategorizationServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getCategories(): Observable<GetCategoriesOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Categorization/GetCategories";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCategories(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCategories(response_);
+                } catch (e) {
+                    return <Observable<GetCategoriesOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetCategoriesOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCategories(response: Response): Observable<GetCategoriesOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: GetCategoriesOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetCategoriesOutput.fromJS(resultData200) : new GetCategoriesOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<GetCategoriesOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getRules(input: any): Observable<RuleDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/Categorization/GetRules?";
+        if (input !== undefined)
+            url_ += "input=" + encodeURIComponent("" + input) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetRules(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetRules(response_);
+                } catch (e) {
+                    return <Observable<RuleDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<RuleDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetRules(response: Response): Observable<RuleDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: RuleDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(RuleDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<RuleDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    createRule(input: CreateRuleDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Categorization/CreateRule";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateRule(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateRule(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateRule(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getRuleForEdit(id: number): Observable<EditRuleDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/Categorization/GetRuleForEdit?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetRuleForEdit(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetRuleForEdit(response_);
+                } catch (e) {
+                    return <Observable<EditRuleDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<EditRuleDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetRuleForEdit(response: Response): Observable<EditRuleDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: EditRuleDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? EditRuleDto.fromJS(resultData200) : new EditRuleDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<EditRuleDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    editRule(input: EditRuleDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Categorization/EditRule";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processEditRule(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processEditRule(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processEditRule(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    moveRule(input: MoveRuleDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Categorization/MoveRule";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processMoveRule(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processMoveRule(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processMoveRule(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteRule(id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Categorization/DeleteRule?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteRule(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteRule(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteRule(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    addMapping(input: AddMappingDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Categorization/AddMapping";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processAddMapping(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAddMapping(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAddMapping(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteMapping(name: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Categorization/DeleteMapping?";
+        if (name !== undefined)
+            url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteMapping(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteMapping(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteMapping(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class ChatServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -1761,6 +2150,60 @@ export class CommentServiceProxy {
     /**
      * @return Success
      */
+    getComments(threadId: number): Observable<CommentDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/GetComments?";
+        if (threadId !== undefined)
+            url_ += "threadId=" + encodeURIComponent("" + threadId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetComments(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetComments(response_);
+                } catch (e) {
+                    return <Observable<CommentDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CommentDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetComments(response: Response): Observable<CommentDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CommentDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CommentDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CommentDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     createComment(input: CreateCommentInput): Observable<CreateCommentOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateComment";
         url_ = url_.replace(/[?&]$/, "");
@@ -1901,8 +2344,8 @@ export class CommentServiceProxy {
     /**
      * @return Success
      */
-    createTransactionComment(input: CreateTransactionCommentInput): Observable<CreateTransactionCommentOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateTransactionComment";
+    createTransactionCommentThread(input: CreateTransactionCommentThreadInput): Observable<CreateTransactionCommentThreadOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateTransactionCommentThread";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -1917,40 +2360,40 @@ export class CommentServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processCreateTransactionComment(response_);
+            return this.processCreateTransactionCommentThread(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processCreateTransactionComment(response_);
+                    return this.processCreateTransactionCommentThread(response_);
                 } catch (e) {
-                    return <Observable<CreateTransactionCommentOutput>><any>Observable.throw(e);
+                    return <Observable<CreateTransactionCommentThreadOutput>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<CreateTransactionCommentOutput>><any>Observable.throw(response_);
+                return <Observable<CreateTransactionCommentThreadOutput>><any>Observable.throw(response_);
         });
     }
 
-    protected processCreateTransactionComment(response: Response): Observable<CreateTransactionCommentOutput> {
+    protected processCreateTransactionCommentThread(response: Response): Observable<CreateTransactionCommentThreadOutput> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: CreateTransactionCommentOutput = null;
+            let result200: CreateTransactionCommentThreadOutput = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateTransactionCommentOutput.fromJS(resultData200) : new CreateTransactionCommentOutput();
+            result200 = resultData200 ? CreateTransactionCommentThreadOutput.fromJS(resultData200) : new CreateTransactionCommentThreadOutput();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<CreateTransactionCommentOutput>(<any>null);
+        return Observable.of<CreateTransactionCommentThreadOutput>(<any>null);
     }
 
     /**
      * @return Success
      */
-    createCashFlowComment(input: CreateCashFlowCommentInput): Observable<CreateCashFlowCommentOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateCashFlowComment";
+    createCashFlowCommentThread(input: CreateCashFlowCommentThreadInput): Observable<CreateCashFlowCommentThreadOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateCashFlowCommentThread";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -1965,33 +2408,33 @@ export class CommentServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processCreateCashFlowComment(response_);
+            return this.processCreateCashFlowCommentThread(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processCreateCashFlowComment(response_);
+                    return this.processCreateCashFlowCommentThread(response_);
                 } catch (e) {
-                    return <Observable<CreateCashFlowCommentOutput>><any>Observable.throw(e);
+                    return <Observable<CreateCashFlowCommentThreadOutput>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<CreateCashFlowCommentOutput>><any>Observable.throw(response_);
+                return <Observable<CreateCashFlowCommentThreadOutput>><any>Observable.throw(response_);
         });
     }
 
-    protected processCreateCashFlowComment(response: Response): Observable<CreateCashFlowCommentOutput> {
+    protected processCreateCashFlowCommentThread(response: Response): Observable<CreateCashFlowCommentThreadOutput> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: CreateCashFlowCommentOutput = null;
+            let result200: CreateCashFlowCommentThreadOutput = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateCashFlowCommentOutput.fromJS(resultData200) : new CreateCashFlowCommentOutput();
+            result200 = resultData200 ? CreateCashFlowCommentThreadOutput.fromJS(resultData200) : new CreateCashFlowCommentThreadOutput();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<CreateCashFlowCommentOutput>(<any>null);
+        return Observable.of<CreateCashFlowCommentThreadOutput>(<any>null);
     }
 }
 
@@ -12768,7 +13211,6 @@ export interface IEntityDtoOfString {
 }
 
 export class StatsFilter implements IStatsFilter {
-    categorizationIds: string[];
     forecastModelId: number;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -12788,11 +13230,6 @@ export class StatsFilter implements IStatsFilter {
 
     init(data?: any) {
         if (data) {
-            if (data["categorizationIds"] && data["categorizationIds"].constructor === Array) {
-                this.categorizationIds = [];
-                for (let item of data["categorizationIds"])
-                    this.categorizationIds.push(item);
-            }
             this.forecastModelId = data["forecastModelId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
@@ -12823,11 +13260,6 @@ export class StatsFilter implements IStatsFilter {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.categorizationIds && this.categorizationIds.constructor === Array) {
-            data["categorizationIds"] = [];
-            for (let item of this.categorizationIds)
-                data["categorizationIds"].push(item);
-        }
         data["forecastModelId"] = this.forecastModelId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -12852,7 +13284,6 @@ export class StatsFilter implements IStatsFilter {
 }
 
 export interface IStatsFilter {
-    categorizationIds: string[];
     forecastModelId: number;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -12864,6 +13295,7 @@ export interface IStatsFilter {
 
 export class CashFlowStatsDto implements ICashFlowStatsDto {
     transactionStats: TransactionStatsDto[];
+    commentThreads: CashFlowCommentThreadDto[];
 
     constructor(data?: ICashFlowStatsDto) {
         if (data) {
@@ -12881,6 +13313,11 @@ export class CashFlowStatsDto implements ICashFlowStatsDto {
                 for (let item of data["transactionStats"])
                     this.transactionStats.push(TransactionStatsDto.fromJS(item));
             }
+            if (data["commentThreads"] && data["commentThreads"].constructor === Array) {
+                this.commentThreads = [];
+                for (let item of data["commentThreads"])
+                    this.commentThreads.push(CashFlowCommentThreadDto.fromJS(item));
+            }
         }
     }
 
@@ -12897,18 +13334,25 @@ export class CashFlowStatsDto implements ICashFlowStatsDto {
             for (let item of this.transactionStats)
                 data["transactionStats"].push(item.toJSON());
         }
+        if (this.commentThreads && this.commentThreads.constructor === Array) {
+            data["commentThreads"] = [];
+            for (let item of this.commentThreads)
+                data["commentThreads"].push(item.toJSON());
+        }
         return data; 
     }
 }
 
 export interface ICashFlowStatsDto {
     transactionStats: TransactionStatsDto[];
+    commentThreads: CashFlowCommentThreadDto[];
 }
 
 export class TransactionStatsDto implements ITransactionStatsDto {
     adjustmentType: TransactionStatsDtoAdjustmentType;
     cashflowTypeId: string;
-    categorization: { [key: string] : string; };
+    categoryId: number;
+    transactionDescriptor: string;
     accountId: number;
     currencyId: string;
     date: moment.Moment;
@@ -12929,13 +13373,8 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         if (data) {
             this.adjustmentType = data["adjustmentType"];
             this.cashflowTypeId = data["cashflowTypeId"];
-            if (data["categorization"]) {
-                this.categorization = {};
-                for (let key in data["categorization"]) {
-                    if (data["categorization"].hasOwnProperty(key))
-                        this.categorization[key] = data["categorization"][key];
-                }
-            }
+            this.categoryId = data["categoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
             this.accountId = data["accountId"];
             this.currencyId = data["currencyId"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
@@ -12955,13 +13394,8 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data = typeof data === 'object' ? data : {};
         data["adjustmentType"] = this.adjustmentType;
         data["cashflowTypeId"] = this.cashflowTypeId;
-        if (this.categorization) {
-            data["categorization"] = {};
-            for (let key in this.categorization) {
-                if (this.categorization.hasOwnProperty(key))
-                    data["categorization"][key] = this.categorization[key];
-            }
-        }
+        data["categoryId"] = this.categoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
         data["accountId"] = this.accountId;
         data["currencyId"] = this.currencyId;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
@@ -12975,13 +13409,93 @@ export class TransactionStatsDto implements ITransactionStatsDto {
 export interface ITransactionStatsDto {
     adjustmentType: TransactionStatsDtoAdjustmentType;
     cashflowTypeId: string;
-    categorization: { [key: string] : string; };
+    categoryId: number;
+    transactionDescriptor: string;
     accountId: number;
     currencyId: string;
     date: moment.Moment;
     amount: number;
     comment: string;
     forecastId: number;
+}
+
+export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
+    threadId: number;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    currencyId: string;
+    cashFlowTypeId: string;
+    categoryId: number;
+    transactionDescriptor: string;
+    accountId: number;
+    categorization: { [key: string] : string; };
+
+    constructor(data?: ICashFlowCommentThreadDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.threadId = data["threadId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.currencyId = data["currencyId"];
+            this.cashFlowTypeId = data["cashFlowTypeId"];
+            this.categoryId = data["categoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
+            this.accountId = data["accountId"];
+            if (data["categorization"]) {
+                this.categorization = {};
+                for (let key in data["categorization"]) {
+                    if (data["categorization"].hasOwnProperty(key))
+                        this.categorization[key] = data["categorization"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): CashFlowCommentThreadDto {
+        let result = new CashFlowCommentThreadDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["threadId"] = this.threadId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["currencyId"] = this.currencyId;
+        data["cashFlowTypeId"] = this.cashFlowTypeId;
+        data["categoryId"] = this.categoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
+        data["accountId"] = this.accountId;
+        if (this.categorization) {
+            data["categorization"] = {};
+            for (let key in this.categorization) {
+                if (this.categorization.hasOwnProperty(key))
+                    data["categorization"][key] = this.categorization[key];
+            }
+        }
+        return data; 
+    }
+}
+
+export interface ICashFlowCommentThreadDto {
+    threadId: number;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    currencyId: string;
+    cashFlowTypeId: string;
+    categoryId: number;
+    transactionDescriptor: string;
+    accountId: number;
+    categorization: { [key: string] : string; };
 }
 
 export class CashFlowInitialData implements ICashFlowInitialData {
@@ -13190,7 +13704,8 @@ export interface IBankAccountDto {
 
 export class StatsDetailFilter implements IStatsDetailFilter {
     cashFlowTypeId: string;
-    categorization: { [key: string] : string; };
+    categoryId: number;
+    transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
@@ -13210,13 +13725,8 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     init(data?: any) {
         if (data) {
             this.cashFlowTypeId = data["cashFlowTypeId"];
-            if (data["categorization"]) {
-                this.categorization = {};
-                for (let key in data["categorization"]) {
-                    if (data["categorization"].hasOwnProperty(key))
-                        this.categorization[key] = data["categorization"][key];
-                }
-            }
+            this.categoryId = data["categoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
@@ -13247,13 +13757,8 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["cashFlowTypeId"] = this.cashFlowTypeId;
-        if (this.categorization) {
-            data["categorization"] = {};
-            for (let key in this.categorization) {
-                if (this.categorization.hasOwnProperty(key))
-                    data["categorization"][key] = this.categorization[key];
-            }
-        }
+        data["categoryId"] = this.categoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
@@ -13278,7 +13783,8 @@ export class StatsDetailFilter implements IStatsDetailFilter {
 
 export interface IStatsDetailFilter {
     cashFlowTypeId: string;
-    categorization: { [key: string] : string; };
+    categoryId: number;
+    transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
@@ -13295,6 +13801,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     debit: number;
     description: string;
     comment: string;
+    commentThreadId: number;
 
     constructor(data?: ICashFlowStatsDetailDto) {
         if (data) {
@@ -13314,6 +13821,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
             this.debit = data["debit"];
             this.description = data["description"];
             this.comment = data["comment"];
+            this.commentThreadId = data["commentThreadId"];
         }
     }
 
@@ -13332,6 +13840,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data["debit"] = this.debit;
         data["description"] = this.description;
         data["comment"] = this.comment;
+        data["commentThreadId"] = this.commentThreadId;
         return data; 
     }
 }
@@ -13344,6 +13853,7 @@ export interface ICashFlowStatsDetailDto {
     debit: number;
     description: string;
     comment: string;
+    commentThreadId: number;
 }
 
 export class RecategorizeInput implements IRecategorizeInput {
@@ -13399,49 +13909,6 @@ export interface IRecategorizeInput {
     bankAccountIds: number[];
     startDate: moment.Moment;
     endDate: moment.Moment;
-}
-
-export class AddCategorizationMappingInput implements IAddCategorizationMappingInput {
-    categorizationId: string;
-    oldName: string;
-    newName: string;
-
-    constructor(data?: IAddCategorizationMappingInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.categorizationId = data["categorizationId"];
-            this.oldName = data["oldName"];
-            this.newName = data["newName"];
-        }
-    }
-
-    static fromJS(data: any): AddCategorizationMappingInput {
-        let result = new AddCategorizationMappingInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["categorizationId"] = this.categorizationId;
-        data["oldName"] = this.oldName;
-        data["newName"] = this.newName;
-        return data; 
-    }
-}
-
-export interface IAddCategorizationMappingInput {
-    categorizationId: string;
-    oldName: string;
-    newName: string;
 }
 
 export class CashFlowGridSettingsDto implements ICashFlowGridSettingsDto {
@@ -13657,7 +14124,6 @@ export class AddForecastInput implements IAddForecastInput {
     date: moment.Moment;
     cashFlowTypeId: string;
     currencyId: string;
-    categorization: { [key: string] : string; };
     amount: number;
 
     constructor(data?: IAddForecastInput) {
@@ -13676,13 +14142,6 @@ export class AddForecastInput implements IAddForecastInput {
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.cashFlowTypeId = data["cashFlowTypeId"];
             this.currencyId = data["currencyId"];
-            if (data["categorization"]) {
-                this.categorization = {};
-                for (let key in data["categorization"]) {
-                    if (data["categorization"].hasOwnProperty(key))
-                        this.categorization[key] = data["categorization"][key];
-                }
-            }
             this.amount = data["amount"];
         }
     }
@@ -13700,13 +14159,6 @@ export class AddForecastInput implements IAddForecastInput {
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
         data["currencyId"] = this.currencyId;
-        if (this.categorization) {
-            data["categorization"] = {};
-            for (let key in this.categorization) {
-                if (this.categorization.hasOwnProperty(key))
-                    data["categorization"][key] = this.categorization[key];
-            }
-        }
         data["amount"] = this.amount;
         return data; 
     }
@@ -13718,7 +14170,6 @@ export interface IAddForecastInput {
     date: moment.Moment;
     cashFlowTypeId: string;
     currencyId: string;
-    categorization: { [key: string] : string; };
     amount: number;
 }
 
@@ -13759,6 +14210,481 @@ export class UpdateForecastInput implements IUpdateForecastInput {
 export interface IUpdateForecastInput {
     id: number;
     amount: number;
+}
+
+export class GetCategoriesOutput implements IGetCategoriesOutput {
+    items: { [key: string] : CategoryDto; };
+
+    constructor(data?: IGetCategoriesOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["items"]) {
+                this.items = {};
+                for (let key in data["items"]) {
+                    if (data["items"].hasOwnProperty(key))
+                        this.items[key] = data["items"][key] ? CategoryDto.fromJS(data["items"][key]) : <any>undefined;
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): GetCategoriesOutput {
+        let result = new GetCategoriesOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.items) {
+            data["items"] = {};
+            for (let key in this.items) {
+                if (this.items.hasOwnProperty(key))
+                    data["items"][key] = this.items[key] ? this.items[key].toJSON() : <any>undefined;
+            }
+        }
+        return data; 
+    }
+}
+
+export interface IGetCategoriesOutput {
+    items: { [key: string] : CategoryDto; };
+}
+
+export class CategoryDto implements ICategoryDto {
+    id: number;
+    name: string;
+    groupId: number;
+    groupName: string;
+    typeId: string;
+
+    constructor(data?: ICategoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.groupId = data["groupId"];
+            this.groupName = data["groupName"];
+            this.typeId = data["typeId"];
+        }
+    }
+
+    static fromJS(data: any): CategoryDto {
+        let result = new CategoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["groupId"] = this.groupId;
+        data["groupName"] = this.groupName;
+        data["typeId"] = this.typeId;
+        return data; 
+    }
+}
+
+export interface ICategoryDto {
+    id: number;
+    name: string;
+    groupId: number;
+    groupName: string;
+    typeId: string;
+}
+
+export class RuleDto implements IRuleDto {
+    parentId: number;
+    name: string;
+    creationDate: moment.Moment;
+    sortOrder: number;
+    isActive: boolean;
+    id: number;
+
+    constructor(data?: IRuleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.parentId = data["parentId"];
+            this.name = data["name"];
+            this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
+            this.sortOrder = data["sortOrder"];
+            this.isActive = data["isActive"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): RuleDto {
+        let result = new RuleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["parentId"] = this.parentId;
+        data["name"] = this.name;
+        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
+        data["sortOrder"] = this.sortOrder;
+        data["isActive"] = this.isActive;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IRuleDto {
+    parentId: number;
+    name: string;
+    creationDate: moment.Moment;
+    sortOrder: number;
+    isActive: boolean;
+    id: number;
+}
+
+export class CreateRuleDto implements ICreateRuleDto {
+    name: string;
+    categoryId: number;
+    transactionDecriptor: string;
+    transactionDecriptorAttributeTypeId: string;
+    conditions: ConditionDto[];
+
+    constructor(data?: ICreateRuleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.categoryId = data["categoryId"];
+            this.transactionDecriptor = data["transactionDecriptor"];
+            this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
+            if (data["conditions"] && data["conditions"].constructor === Array) {
+                this.conditions = [];
+                for (let item of data["conditions"])
+                    this.conditions.push(ConditionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateRuleDto {
+        let result = new CreateRuleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["categoryId"] = this.categoryId;
+        data["transactionDecriptor"] = this.transactionDecriptor;
+        data["transactionDecriptorAttributeTypeId"] = this.transactionDecriptorAttributeTypeId;
+        if (this.conditions && this.conditions.constructor === Array) {
+            data["conditions"] = [];
+            for (let item of this.conditions)
+                data["conditions"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICreateRuleDto {
+    name: string;
+    categoryId: number;
+    transactionDecriptor: string;
+    transactionDecriptorAttributeTypeId: string;
+    conditions: ConditionDto[];
+}
+
+export class ConditionDto implements IConditionDto {
+    id: number;
+    minAmount: number;
+    maxAmount: number;
+    bankId: number;
+    bankAccountId: number;
+    descriptionWords: string;
+    attributes: ConditionAttributeDto[];
+
+    constructor(data?: IConditionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.minAmount = data["minAmount"];
+            this.maxAmount = data["maxAmount"];
+            this.bankId = data["bankId"];
+            this.bankAccountId = data["bankAccountId"];
+            this.descriptionWords = data["descriptionWords"];
+            if (data["attributes"] && data["attributes"].constructor === Array) {
+                this.attributes = [];
+                for (let item of data["attributes"])
+                    this.attributes.push(ConditionAttributeDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ConditionDto {
+        let result = new ConditionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["minAmount"] = this.minAmount;
+        data["maxAmount"] = this.maxAmount;
+        data["bankId"] = this.bankId;
+        data["bankAccountId"] = this.bankAccountId;
+        data["descriptionWords"] = this.descriptionWords;
+        if (this.attributes && this.attributes.constructor === Array) {
+            data["attributes"] = [];
+            for (let item of this.attributes)
+                data["attributes"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IConditionDto {
+    id: number;
+    minAmount: number;
+    maxAmount: number;
+    bankId: number;
+    bankAccountId: number;
+    descriptionWords: string;
+    attributes: ConditionAttributeDto[];
+}
+
+export class ConditionAttributeDto implements IConditionAttributeDto {
+    id: number;
+    attributeTypeId: string;
+    conditionTypeId: string;
+    conditionValue: string;
+
+    constructor(data?: IConditionAttributeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.attributeTypeId = data["attributeTypeId"];
+            this.conditionTypeId = data["conditionTypeId"];
+            this.conditionValue = data["conditionValue"];
+        }
+    }
+
+    static fromJS(data: any): ConditionAttributeDto {
+        let result = new ConditionAttributeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["attributeTypeId"] = this.attributeTypeId;
+        data["conditionTypeId"] = this.conditionTypeId;
+        data["conditionValue"] = this.conditionValue;
+        return data; 
+    }
+}
+
+export interface IConditionAttributeDto {
+    id: number;
+    attributeTypeId: string;
+    conditionTypeId: string;
+    conditionValue: string;
+}
+
+export class EditRuleDto implements IEditRuleDto {
+    id: number;
+    name: string;
+    categoryId: number;
+    transactionDecriptor: string;
+    transactionDecriptorAttributeTypeId: string;
+    conditions: ConditionDto[];
+
+    constructor(data?: IEditRuleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.categoryId = data["categoryId"];
+            this.transactionDecriptor = data["transactionDecriptor"];
+            this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
+            if (data["conditions"] && data["conditions"].constructor === Array) {
+                this.conditions = [];
+                for (let item of data["conditions"])
+                    this.conditions.push(ConditionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): EditRuleDto {
+        let result = new EditRuleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["categoryId"] = this.categoryId;
+        data["transactionDecriptor"] = this.transactionDecriptor;
+        data["transactionDecriptorAttributeTypeId"] = this.transactionDecriptorAttributeTypeId;
+        if (this.conditions && this.conditions.constructor === Array) {
+            data["conditions"] = [];
+            for (let item of this.conditions)
+                data["conditions"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IEditRuleDto {
+    id: number;
+    name: string;
+    categoryId: number;
+    transactionDecriptor: string;
+    transactionDecriptorAttributeTypeId: string;
+    conditions: ConditionDto[];
+}
+
+export class MoveRuleDto implements IMoveRuleDto {
+    parentId: number;
+    sortOrder: number;
+    isRecategorize: boolean;
+    id: number;
+
+    constructor(data?: IMoveRuleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.parentId = data["parentId"];
+            this.sortOrder = data["sortOrder"];
+            this.isRecategorize = data["isRecategorize"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): MoveRuleDto {
+        let result = new MoveRuleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["parentId"] = this.parentId;
+        data["sortOrder"] = this.sortOrder;
+        data["isRecategorize"] = this.isRecategorize;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IMoveRuleDto {
+    parentId: number;
+    sortOrder: number;
+    isRecategorize: boolean;
+    id: number;
+}
+
+export class AddMappingDto implements IAddMappingDto {
+    oldName: string;
+    newName: string;
+
+    constructor(data?: IAddMappingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.oldName = data["oldName"];
+            this.newName = data["newName"];
+        }
+    }
+
+    static fromJS(data: any): AddMappingDto {
+        let result = new AddMappingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["oldName"] = this.oldName;
+        data["newName"] = this.newName;
+        return data; 
+    }
+}
+
+export interface IAddMappingDto {
+    oldName: string;
+    newName: string;
 }
 
 export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
@@ -14020,6 +14946,108 @@ export interface IMarkAllUnreadMessagesOfUserAsReadInput {
     userId: number;
 }
 
+export class CommentDto implements ICommentDto {
+    threadId: number;
+    comment: string;
+    createdByUser: UserKeyInfo;
+    creationTime: moment.Moment;
+    updatedByUser: UserKeyInfo;
+    lastModificationTime: moment.Moment;
+    id: number;
+
+    constructor(data?: ICommentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.threadId = data["threadId"];
+            this.comment = data["comment"];
+            this.createdByUser = data["createdByUser"] ? UserKeyInfo.fromJS(data["createdByUser"]) : <any>undefined;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.updatedByUser = data["updatedByUser"] ? UserKeyInfo.fromJS(data["updatedByUser"]) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CommentDto {
+        let result = new CommentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["threadId"] = this.threadId;
+        data["comment"] = this.comment;
+        data["createdByUser"] = this.createdByUser ? this.createdByUser.toJSON() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["updatedByUser"] = this.updatedByUser ? this.updatedByUser.toJSON() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICommentDto {
+    threadId: number;
+    comment: string;
+    createdByUser: UserKeyInfo;
+    creationTime: moment.Moment;
+    updatedByUser: UserKeyInfo;
+    lastModificationTime: moment.Moment;
+    id: number;
+}
+
+export class UserKeyInfo implements IUserKeyInfo {
+    id: number;
+    userName: string;
+    fullName: string;
+
+    constructor(data?: IUserKeyInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.userName = data["userName"];
+            this.fullName = data["fullName"];
+        }
+    }
+
+    static fromJS(data: any): UserKeyInfo {
+        let result = new UserKeyInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["userName"] = this.userName;
+        data["fullName"] = this.fullName;
+        return data; 
+    }
+}
+
+export interface IUserKeyInfo {
+    id: number;
+    userName: string;
+    fullName: string;
+}
+
 export class CreateCommentInput implements ICreateCommentInput {
     threadId: number;
     comment: string;
@@ -14133,11 +15161,11 @@ export interface IUpdateCommentInput {
     id: number;
 }
 
-export class CreateTransactionCommentInput implements ICreateTransactionCommentInput {
+export class CreateTransactionCommentThreadInput implements ICreateTransactionCommentThreadInput {
     transactionId: number;
     comment: string;
 
-    constructor(data?: ICreateTransactionCommentInput) {
+    constructor(data?: ICreateTransactionCommentThreadInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14153,8 +15181,8 @@ export class CreateTransactionCommentInput implements ICreateTransactionCommentI
         }
     }
 
-    static fromJS(data: any): CreateTransactionCommentInput {
-        let result = new CreateTransactionCommentInput();
+    static fromJS(data: any): CreateTransactionCommentThreadInput {
+        let result = new CreateTransactionCommentThreadInput();
         result.init(data);
         return result;
     }
@@ -14167,16 +15195,16 @@ export class CreateTransactionCommentInput implements ICreateTransactionCommentI
     }
 }
 
-export interface ICreateTransactionCommentInput {
+export interface ICreateTransactionCommentThreadInput {
     transactionId: number;
     comment: string;
 }
 
-export class CreateTransactionCommentOutput implements ICreateTransactionCommentOutput {
+export class CreateTransactionCommentThreadOutput implements ICreateTransactionCommentThreadOutput {
     threadId: number;
     id: number;
 
-    constructor(data?: ICreateTransactionCommentOutput) {
+    constructor(data?: ICreateTransactionCommentThreadOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14192,8 +15220,8 @@ export class CreateTransactionCommentOutput implements ICreateTransactionComment
         }
     }
 
-    static fromJS(data: any): CreateTransactionCommentOutput {
-        let result = new CreateTransactionCommentOutput();
+    static fromJS(data: any): CreateTransactionCommentThreadOutput {
+        let result = new CreateTransactionCommentThreadOutput();
         result.init(data);
         return result;
     }
@@ -14206,15 +15234,17 @@ export class CreateTransactionCommentOutput implements ICreateTransactionComment
     }
 }
 
-export interface ICreateTransactionCommentOutput {
+export interface ICreateTransactionCommentThreadOutput {
     threadId: number;
     id: number;
 }
 
-export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
+export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentThreadInput {
+    accountId: number;
     comment: string;
     cashFlowTypeId: string;
-    categorization: { [key: string] : string; };
+    categoryId: number;
+    transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
@@ -14222,7 +15252,7 @@ export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
     accountIds: number[];
     businessEntityIds: number[];
 
-    constructor(data?: ICreateCashFlowCommentInput) {
+    constructor(data?: ICreateCashFlowCommentThreadInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14233,15 +15263,11 @@ export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
 
     init(data?: any) {
         if (data) {
+            this.accountId = data["accountId"];
             this.comment = data["comment"];
             this.cashFlowTypeId = data["cashFlowTypeId"];
-            if (data["categorization"]) {
-                this.categorization = {};
-                for (let key in data["categorization"]) {
-                    if (data["categorization"].hasOwnProperty(key))
-                        this.categorization[key] = data["categorization"][key];
-                }
-            }
+            this.categoryId = data["categoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
@@ -14263,23 +15289,19 @@ export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
         }
     }
 
-    static fromJS(data: any): CreateCashFlowCommentInput {
-        let result = new CreateCashFlowCommentInput();
+    static fromJS(data: any): CreateCashFlowCommentThreadInput {
+        let result = new CreateCashFlowCommentThreadInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["accountId"] = this.accountId;
         data["comment"] = this.comment;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
-        if (this.categorization) {
-            data["categorization"] = {};
-            for (let key in this.categorization) {
-                if (this.categorization.hasOwnProperty(key))
-                    data["categorization"][key] = this.categorization[key];
-            }
-        }
+        data["categoryId"] = this.categoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
@@ -14302,10 +15324,12 @@ export class CreateCashFlowCommentInput implements ICreateCashFlowCommentInput {
     }
 }
 
-export interface ICreateCashFlowCommentInput {
+export interface ICreateCashFlowCommentThreadInput {
+    accountId: number;
     comment: string;
     cashFlowTypeId: string;
-    categorization: { [key: string] : string; };
+    categoryId: number;
+    transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
@@ -14314,11 +15338,11 @@ export interface ICreateCashFlowCommentInput {
     businessEntityIds: number[];
 }
 
-export class CreateCashFlowCommentOutput implements ICreateCashFlowCommentOutput {
+export class CreateCashFlowCommentThreadOutput implements ICreateCashFlowCommentThreadOutput {
     threadId: number;
     id: number;
 
-    constructor(data?: ICreateCashFlowCommentOutput) {
+    constructor(data?: ICreateCashFlowCommentThreadOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14334,8 +15358,8 @@ export class CreateCashFlowCommentOutput implements ICreateCashFlowCommentOutput
         }
     }
 
-    static fromJS(data: any): CreateCashFlowCommentOutput {
-        let result = new CreateCashFlowCommentOutput();
+    static fromJS(data: any): CreateCashFlowCommentThreadOutput {
+        let result = new CreateCashFlowCommentThreadOutput();
         result.init(data);
         return result;
     }
@@ -14348,7 +15372,7 @@ export class CreateCashFlowCommentOutput implements ICreateCashFlowCommentOutput
     }
 }
 
-export interface ICreateCashFlowCommentOutput {
+export interface ICreateCashFlowCommentThreadOutput {
     threadId: number;
     id: number;
 }
@@ -21796,6 +22820,7 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
     lastName: string;
     email: string;
     phone: string;
+    phoneExt: string;
     website: string;
     comments: string;
     sourceCode: string;
@@ -21816,6 +22841,7 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
             this.lastName = data["lastName"];
             this.email = data["email"];
             this.phone = data["phone"];
+            this.phoneExt = data["phoneExt"];
             this.website = data["website"];
             this.comments = data["comments"];
             this.sourceCode = data["sourceCode"];
@@ -21835,6 +22861,7 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
         data["lastName"] = this.lastName;
         data["email"] = this.email;
         data["phone"] = this.phone;
+        data["phoneExt"] = this.phoneExt;
         data["website"] = this.website;
         data["comments"] = this.comments;
         data["sourceCode"] = this.sourceCode;
@@ -21848,6 +22875,7 @@ export interface ISubmitContactUsRequestInput {
     lastName: string;
     email: string;
     phone: string;
+    phoneExt: string;
     website: string;
     comments: string;
     sourceCode: string;

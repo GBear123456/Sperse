@@ -1,0 +1,95 @@
+:host {
+    height: 100%;
+    z-index: 3;
+    background: #fff;
+    border-left: 2px solid #e5e9ec;
+    position: relative;
+    padding: 12px 24px 0;
+    /deep/ md-tab-group {
+        .mat-tab-header {
+            border-bottom: none;
+            margin-bottom: 20px;
+        }
+        .mat-tab-body {
+            .mat-tab-body-content {
+                //overflow: initial;
+            }
+        }
+        .mat-tab-label {
+            font-size: 20px;
+            font-weight: 300;
+            line-height: 2.2;
+            color: #677380;
+            &.mat-tab-label-active {
+                color: #202b35;
+                font-weight: 500
+            }
+        }
+        md-ink-bar {
+            background-color: #00aeef !important;
+            height: 3px;
+        }
+    }
+
+    /deep/ dx-button[accesskey="sourceDataCloseButton"]{
+        position: absolute;
+        right: 24px;
+        top: 28px;
+        border: none;
+        z-index: 2;
+        &.dx-state-hover {
+            background-color: initial;
+        }
+        .dx-button-content {
+            padding: 0;
+            .dx-icon {
+                width: 14px;
+                height: 14px;
+                background-size: 14px 14px;
+                font-size: 14px;
+                line-height: 14px;
+            }
+        }
+    }
+
+    /deep/ dx-data-grid[ng-reflect-access-key="historicalSourceDataContainer"],
+    /deep/ dx-data-grid[ng-reflect-access-key="forecastSourceDataContainer"] {
+        .dx-datagrid-headers,
+        .dx-datagrid-rowsview,
+        td {
+            border: none !important;
+            background: none !important;
+            font-size: 13px;
+        }
+
+        .dx-datagrid-headers {
+            margin-bottom: 15px;
+            td {
+                font-weight: 500;
+                line-height: 1.85;
+                letter-spacing: 0.5px;
+                text-align: left;
+                color: #686f76;
+                padding: 0 4px;
+            }
+        }
+
+        .dx-datagrid-rowsview {
+            .dx-datagrid-table-content {
+                position: static;
+            }
+            td {
+                font-weight: 300;
+                letter-spacing: 0.3px;
+                text-align: right;
+                color: #424c56;
+                padding: 4px 4px;
+                &:last-child {
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+
+
+}

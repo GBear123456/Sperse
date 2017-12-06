@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -11,13 +11,13 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { CacheService } from 'ng2-cache-service';
 
-import { MdButtonModule } from '@angular/material';
+import { SourceDataComponent } from './source-data/source-data.component';
 
 import {
     StatsFilter,
-    BankAccountDto,
     CashflowServiceProxy,
     BankAccountsServiceProxy,
+    BankAccountDailyStatDto,
     GroupBy,
     CashFlowForecastServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -29,7 +29,10 @@ import {
     'styleUrls': ['./stats.component.less']
 })
 export class StatsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    statsData: any;
+    @ViewChild('SourceDataComponent') sourceDataComponent: SourceDataComponent;
+    statsData: Array<BankAccountDailyStatDto>;
+    historicalSourceData: Array<BankAccountDailyStatDto> = [];
+    forecastSourceData: Array<BankAccountDailyStatDto> = [];
     toolbarConfig = <any>[
         {
             location: 'before',
@@ -114,6 +117,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     maxLabelCount = 0;
     labelWidth = 45;
     selectedForecastModel;
+    showSourceData = false;
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
@@ -234,7 +238,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     /** load stats data from api */
     loadStatsData() {
         let {startDate = undefined, endDate = undefined, accountIds = []} = this.requestFilter;
-        this.statsData = this._bankAccountService.getBankAccountDailyStats(
+        this._bankAccountService.getStats(
             'USD', this.selectedForecastModel.id, accountIds, startDate, endDate, GroupBy.Monthly
         ).subscribe(result => {
                     if (result) {
@@ -262,12 +266,21 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
 
     /** Calculates the max amount of the labels for displaying to not clutter the screen */
     calcMaxLabelCount(labelWidth) {
-        let screnWidth = window.innerWidth;
-        return Math.floor(screnWidth / labelWidth);
+        let screenWidth = window.innerWidth;
+        return Math.floor(screenWidth / labelWidth);
     }
 
-    showSourceData() {
-        console.log('show source data');
+    showSourceDataWidget() {
+        this.forecastSourceData = [];
+        this.historicalSourceData = [];
+        this.statsData.forEach(statsDataItem => {
+            statsDataItem.isForecast ? this.forecastSourceData.push(statsDataItem) : this.historicalSourceData.push(statsDataItem);
+        });
+        this.showSourceData = true;
+    }
+
+    hideSourceDataWidget() {
+        this.showSourceData = false;
     }
 
     customizeBottomAxis(elem) {

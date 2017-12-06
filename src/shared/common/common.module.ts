@@ -47,6 +47,6 @@ export class CommonModule {
                 ExportService,
                 ExportGoogleSheetService
             ]
-        }
+        };
     }
 }
