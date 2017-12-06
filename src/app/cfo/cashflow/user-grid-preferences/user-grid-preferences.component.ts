@@ -12,7 +12,6 @@ import * as ModelEnums from '../models/setting-enums';
     providers: [ CashflowServiceProxy ]
 })
 export class UserGridPreferencesComponent extends AppComponentBase {
-    
     @ViewChild('userGridPreferences') modal: ModalDirective;
 
     @Output() modalSave: EventEmitter<CashFlowGridSettingsDto> = new EventEmitter<CashFlowGridSettingsDto>();
@@ -21,8 +20,8 @@ export class UserGridPreferencesComponent extends AppComponentBase {
     PeriodScope = ModelEnums.PeriodScope;
 
     model: CashFlowGridSettingsDto;
-    active: boolean = false;
-    saving: boolean = false;
+    active = false;
+    saving = false;
 
     fonts = ['Lato'];
     fontSizes = [];
@@ -39,7 +38,7 @@ export class UserGridPreferencesComponent extends AppComponentBase {
     }
 
     getEnumKeys(parameter: any): any {
-        var keys = Object.keys(parameter);
+        let keys = Object.keys(parameter);
         return keys.slice(keys.length / 2);
     }
 
@@ -65,7 +64,7 @@ export class UserGridPreferencesComponent extends AppComponentBase {
         );
     }
 
-    checkFlag(value, flag): boolean{
+    checkFlag(value, flag): boolean {
         return (value & flag) != 0;
     }
 

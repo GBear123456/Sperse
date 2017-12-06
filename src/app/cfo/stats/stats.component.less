@@ -13,6 +13,7 @@
     }
 
     .mainStatsView {
+        border-top: 1px solid #dfdfdf;
         padding: 20px;
         margin-bottom: 200px;
         position: relative;
@@ -45,6 +46,20 @@
             z-index: 2;
             color: #01b0f0;
             cursor: pointer;
+        }
+
+        source-data {
+            width: 410px;
+            position: absolute;
+            top: 0;
+            right: -410px;
+            -webkit-transition-duration: 0.3s;
+            -moz-transition-duration: 0.3s;
+            -o-transition-duration: 0.3s;
+            transition-duration: 0.3s;
+            &.showen {
+                right: 0;
+            }
         }
     }
 

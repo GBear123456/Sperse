@@ -6,7 +6,12 @@
 
 <dx-scroll-view showScrollbar="onHover">
     <div class="mainStatsView">
-        <a *ngIf="statsData" (click)="showSourceData()" class="showSourceButton" md-raised-button>{{l('Show source data')}}</a>
+        <a *ngIf="statsData && statsData.length" (click)="showSourceDataWidget()" class="showSourceButton" md-raised-button>{{l('Show source data')}}</a>
+        <source-data [ngClass]="{'showen': showSourceData}"
+                     (onClose)="hideSourceDataWidget()"
+                     [historicalSourceData]="historicalSourceData"
+                     [forecastSourceData]="forecastSourceData">
+        </source-data>
         <md-tab-group>
             <md-tab label="{{l('Trend Chart')}}">
                 <!-- Top linear chart -->

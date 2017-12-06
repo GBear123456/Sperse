@@ -17,6 +17,7 @@ import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.c
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { UserGridPreferencesComponent } from './cashflow/user-grid-preferences/user-grid-preferences.component';
 import { StatsComponent } from './stats/stats.component';
+import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 
 import { DxChartModule } from 'devextreme-angular';
@@ -78,6 +79,7 @@ import {
         OperationsComponent,
         UserGridPreferencesComponent,
         StatsComponent,
+        SourceDataComponent,
         RuleDialogComponent
     ],
     entryComponents: [
