@@ -595,7 +595,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         return transactions.map(transactionObj => {
             transactionObj.categorization = this.categories[transactionObj.categoryId];
             /** change the second level for started balance and reconciliations for the account id */
-            if (transactionObj.categorization && transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation) {
+            if (transactionObj.categorization && (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation)) {
                 transactionObj.categorization.name = transactionObj.accountId;
             }
             return transactionObj;
