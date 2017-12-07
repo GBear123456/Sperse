@@ -8,7 +8,9 @@ import {
     CashFlowInitialData,
     StatsDetailFilter,
     TransactionStatsDto,
-    CashFlowForecastServiceProxy
+    CashFlowForecastServiceProxy,
+    CategorizationServiceProxy,
+    CategoryDto
 } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -48,13 +50,14 @@ const StartedBalance = 'B',
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService ]
+    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, CategorizationServiceProxy ]
 })
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     @ViewChild(OperationsComponent) operationsComponent: OperationsComponent;
     @ViewChild('userGridPreferences') userGridPreferences: UserGridPreferencesComponent;
     headlineConfig: any;
+    categories: Array<CategoryDto>;
     cashflowData: any;
     cashflowDataTree: any;
     cashflowTypes: any;
@@ -64,8 +67,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
     statsDetailResult: any;
     categorization: Array<string> = [
-        'category',
-        'descriptor'
+        'groupName',
+        'name',
+        'transactionDescriptor'
     ];
     /** posible groupIntervals year, quarter, month, dayofweek, day */
     groupbyItems: GroupbyItem[] = [
@@ -153,10 +157,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             showTotals: false,
             area: 'row',
             areaIndex: 2,
-            dataField: `categorization.${this.categorization[1]}`,
-            customizeText: cellInfo => {
-                return cellInfo.valueText;
-            }
+            dataField: `categorization.${this.categorization[1]}`
+        },
+        {
+            caption: 'Descriptor',
+            showTotals: false,
+            area: 'row',
+            areaIndex: 3,
+            dataField: `categorization.${this.categorization[2]}`
         },
         {
             caption: 'Amount',
@@ -257,10 +265,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     constructor(injector: Injector,
                 public dialog: MdDialog,
-                private _CashflowServiceProxy: CashflowServiceProxy,
+                private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
                 private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
-                private _cacheService: CacheService
+                private _cacheService: CacheService,
+                private _categorizationServiceProxy: CategorizationServiceProxy
     ) {
         super(injector);
         this._cacheService = this._cacheService.useStorage(0);
@@ -288,15 +297,19 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         };
 
         /** Create parallel operations */
-        let getCashFlowInitialData = this._CashflowServiceProxy.getCashFlowInitialData();
-        let getForecastModels = this._cashFlowForecastServiceProxy.getModels();
-        Observable.forkJoin(getCashFlowInitialData, getForecastModels)
+        let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData();
+        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels();
+        let getCategoriesObservalbel = this._categorizationServiceProxy.getCategories();
+        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoriesObservalbel)
             .subscribe(result => {
                 /** Initial data handling */
                 this.handleCashFlowInitialResult(result[0]);
 
                 /** Forecast models handling */
                 this.handleForecastModelResult(result[1]);
+
+                /** Handle the get categories response */
+                this.handleGetCategoriedsResult(result[2]);
 
                 /** load cashflow data grid */
                 this.loadGridDataSource();
@@ -414,6 +427,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     /**
+     * Handle get categories result
+     * @param getCategoriesResult
+     */
+    handleGetCategoriedsResult(getCategoriesResult) {
+        this.categories = getCategoriesResult.items;
+    }
+
+    /**
      * Get forecast model from the cache
      */
     getForecastModel() {
@@ -452,7 +473,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         abp.ui.setBusy();
         $('.pivot-grid').addClass('invisible');
         this.requestFilter.forecastModelId = this.selectedForecastModel.id;
-        this._CashflowServiceProxy.getStats(this.requestFilter)
+        this._cashflowServiceProxy.getStats(this.requestFilter)
             .subscribe(result => {
                 if (result.transactionStats.length) {
                     let transactions = result.transactionStats;
@@ -523,7 +544,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                             'date': firstDate,
                             'accountId': accountId,
                             'categorization': {
-                                'category': accountId
+                                [this.categorization[0]]: accountId
                             }
                         })
                     );
@@ -540,7 +561,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     createStubTransaction(stubObj): TransactionStatsDto {
         let categorizationObject: { [key: string]: string; } = this.createCategorizationObject(this.categorization);
-        let stubTransaction = new TransactionStatsDto({
+        let stubTransaction = {
             'adjustmentType': null,
             'cashflowTypeId': null,
             'accountId': null,
@@ -550,7 +571,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             'date': null,
             'categorization': categorizationObject,
             'forecastId': null
-        });
+        };
         return Object.assign(stubTransaction, stubObj);
     }
 
@@ -570,13 +591,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param {Array<TransactionStatsDto>} cashflowData
      * @return {TransactionStatsDto[]}
      */
-    getCashflowDataFromTransactions(transactions: Array<TransactionStatsDto>) {
+    getCashflowDataFromTransactions(transactions) {
         return transactions.map(transactionObj => {
+            transactionObj.categorization = this.categories[transactionObj.categoryId];
             /** change the second level for started balance and reconciliations for the account id */
-            if (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation) {
-                transactionObj.categorization = {
-                    [this.categorization[0]]: <any>transactionObj.accountId
-                };
+            if (transactionObj.categorization && (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation)) {
+                transactionObj.categorization.name = transactionObj.accountId;
             }
             return transactionObj;
         });
@@ -1371,40 +1391,40 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.bindCollapseActionOnWhiteSpaceColumn(cellObj);
         }
         if (cellObj.area === 'data') {
-            let datePeriod = this.formattingDate(cellObj.cell.columnPath);
-            $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
-            $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
-            this.statsDetailFilter = new StatsDetailFilter();
-            this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
-            this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
-            this.statsDetailFilter.categorization = this.statsDetailFilter.categorization || {};
-            if (this.statsDetailFilter.cashFlowTypeId == StartedBalance ||
-                this.statsDetailFilter.cashFlowTypeId == Total ||
-                this.statsDetailFilter.cashFlowTypeId == Reconciliation
-            ) {
-                this.statsDetailFilter.categorization[this.categorization[0]] = undefined;
-                if (cellObj.cell.rowPath[1] && Number.isInteger(cellObj.cell.rowPath[1])) {
-                    this.statsDetailFilter.accountIds = [cellObj.cell.rowPath[1]];
-                } else {
-                    this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
-                    this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
-                }
-            } else {
-                this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
-                this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
-                this.statsDetailFilter.categorization[this.categorization[0]] = cellObj.cell.rowPath[1];
-            }
-
-            this.statsDetailFilter.categorization[this.categorization[1]] = cellObj.cell.rowPath[2];
-            this.statsDetailFilter.businessEntityIds = this.requestFilter.businessEntityIds;
-            if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
-                this.requestFilter.endDate && datePeriod.startDate > this.requestFilter.endDate) {
-                this.statsDetailResult = [];
-            } else {
-                this.statsDetailFilter.startDate = this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate;
-                this.statsDetailFilter.endDate = this.requestFilter.endDate && this.requestFilter.endDate < datePeriod.endDate ? this.requestFilter.endDate : datePeriod.endDate;
-                this.getStatsDetails(this.statsDetailFilter);
-            }
+            // let datePeriod = this.formattingDate(cellObj.cell.columnPath);
+            // $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
+            // $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
+            // this.statsDetailFilter = new StatsDetailFilter();
+            // this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
+            // this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
+            // this.statsDetailFilter.categorization = this.statsDetailFilter.categorization || {};
+            // if (this.statsDetailFilter.cashFlowTypeId == StartedBalance ||
+            //     this.statsDetailFilter.cashFlowTypeId == Total ||
+            //     this.statsDetailFilter.cashFlowTypeId == Reconciliation
+            // ) {
+            //     this.statsDetailFilter.categorization[this.categorization[0]] = undefined;
+            //     if (cellObj.cell.rowPath[1] && Number.isInteger(cellObj.cell.rowPath[1])) {
+            //         this.statsDetailFilter.accountIds = [cellObj.cell.rowPath[1]];
+            //     } else {
+            //         this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
+            //         this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
+            //     }
+            // } else {
+            //     this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
+            //     this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
+            //     this.statsDetailFilter.categorization[this.categorization[0]] = cellObj.cell.rowPath[1];
+            // }
+            //
+            // this.statsDetailFilter.categorization[this.categorization[1]] = cellObj.cell.rowPath[2];
+            // this.statsDetailFilter.businessEntityIds = this.requestFilter.businessEntityIds;
+            // if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
+            //     this.requestFilter.endDate && datePeriod.startDate > this.requestFilter.endDate) {
+            //     this.statsDetailResult = [];
+            // } else {
+            //     this.statsDetailFilter.startDate = this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate;
+            //     this.statsDetailFilter.endDate = this.requestFilter.endDate && this.requestFilter.endDate < datePeriod.endDate ? this.requestFilter.endDate : datePeriod.endDate;
+            //     this.getStatsDetails(this.statsDetailFilter);
+            // }
         }
 
         /** If month cell has only one child (mtd or projected) - then click on it
@@ -1503,13 +1523,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             if (pathItem && dataTree.hasOwnProperty(pathItem)) {
                 let keys = Object.keys(dataTree[pathItem]);
                 let firstKey = keys && Object.keys(dataTree[pathItem])[0];
-                if (typeof firstKey == 'string') {
+                if (firstKey !== 'undefined' && firstKey != 'null') {
                     dataTree = dataTree[pathItem];
                 } else {
                     result = false;
                 }
-            } else
+            } else {
                 result = false;
+            }
         });
         return result;
     }
@@ -1733,20 +1754,20 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     isStartingBalanceAccountSummary(summaryCell) {
         return summaryCell.field('row') !== null &&
-            summaryCell.field('row').dataField === 'categorization.category' &&
+            summaryCell.field('row').dataField === `categorization.${this.categorization[0]}` &&
             summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === StartedBalance &&
             Number.isInteger(summaryCell.value(summaryCell.field('row')));
     }
 
     isEndingBalanceAccountSummary(summaryCell) {
         return summaryCell.field('row') !== null &&
-            summaryCell.field('row').dataField === 'categorization.category' &&
+            summaryCell.field('row').dataField === `categorization.${this.categorization[0]}` &&
             summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === Total &&
             Number.isInteger(summaryCell.value(summaryCell.field('row')));
     }
 
     getStatsDetails(params): void {
-        this._CashflowServiceProxy
+        this._cashflowServiceProxy
             .getStatsDetails(params)
             .subscribe(result => {
                 this.statsDetailResult = result;
