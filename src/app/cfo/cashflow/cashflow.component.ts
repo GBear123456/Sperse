@@ -1754,14 +1754,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     isStartingBalanceAccountSummary(summaryCell) {
         return summaryCell.field('row') !== null &&
-            summaryCell.field('row').dataField === 'categorization.category' &&
+            summaryCell.field('row').dataField === `categorization.${this.categorization[0]}` &&
             summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === StartedBalance &&
             Number.isInteger(summaryCell.value(summaryCell.field('row')));
     }
 
     isEndingBalanceAccountSummary(summaryCell) {
         return summaryCell.field('row') !== null &&
-            summaryCell.field('row').dataField === 'categorization.category' &&
+            summaryCell.field('row').dataField === `categorization.${this.categorization[0]}` &&
             summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === Total &&
             Number.isInteger(summaryCell.value(summaryCell.field('row')));
     }
