@@ -1,6 +1,10 @@
 <div class="close-dialog" (click)="close(true)"></div>
 <div class="md-dialog-header">
-    <h2 md-dialog-title>{{data.title}}</h2>
+    <dx-text-box
+        name="title"
+        [(value)]="data.title"
+        [readOnly]="!data.editTitle">
+    </dx-text-box>
     <md-dialog-actions>
         <div class="md-dialog-options">
             <ng-template ngFor let-option [ngForOf]="data.options" let-i="index">  

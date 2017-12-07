@@ -1553,7 +1553,7 @@ export class CategorizationServiceProxy {
     /**
      * @return Success
      */
-    getCategories(): Observable<CategoryDto[]> {
+    getCategories(): Observable<GetCategoriesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Categorization/GetCategories";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1575,31 +1575,27 @@ export class CategorizationServiceProxy {
                 try {
                     return this.processGetCategories(response_);
                 } catch (e) {
-                    return <Observable<CategoryDto[]>><any>Observable.throw(e);
+                    return <Observable<GetCategoriesOutput>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<CategoryDto[]>><any>Observable.throw(response_);
+                return <Observable<GetCategoriesOutput>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetCategories(response: Response): Observable<CategoryDto[]> {
+    protected processGetCategories(response: Response): Observable<GetCategoriesOutput> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: CategoryDto[] = null;
+            let result200: GetCategoriesOutput = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(CategoryDto.fromJS(item));
-            }
+            result200 = resultData200 ? GetCategoriesOutput.fromJS(resultData200) : new GetCategoriesOutput();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<CategoryDto[]>(<any>null);
+        return Observable.of<GetCategoriesOutput>(<any>null);
     }
 
     /**
@@ -1936,10 +1932,8 @@ export class CategorizationServiceProxy {
     /**
      * @return Success
      */
-    deleteMapping(categorizationId: string, name: string): Observable<void> {
+    deleteMapping(name: string): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Categorization/DeleteMapping?";
-        if (categorizationId !== undefined)
-            url_ += "CategorizationId=" + encodeURIComponent("" + categorizationId) + "&"; 
         if (name !== undefined)
             url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -13217,7 +13211,6 @@ export interface IEntityDtoOfString {
 }
 
 export class StatsFilter implements IStatsFilter {
-    categorizationIds: string[];
     forecastModelId: number;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -13237,11 +13230,6 @@ export class StatsFilter implements IStatsFilter {
 
     init(data?: any) {
         if (data) {
-            if (data["categorizationIds"] && data["categorizationIds"].constructor === Array) {
-                this.categorizationIds = [];
-                for (let item of data["categorizationIds"])
-                    this.categorizationIds.push(item);
-            }
             this.forecastModelId = data["forecastModelId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
@@ -13272,11 +13260,6 @@ export class StatsFilter implements IStatsFilter {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.categorizationIds && this.categorizationIds.constructor === Array) {
-            data["categorizationIds"] = [];
-            for (let item of this.categorizationIds)
-                data["categorizationIds"].push(item);
-        }
         data["forecastModelId"] = this.forecastModelId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -13301,7 +13284,6 @@ export class StatsFilter implements IStatsFilter {
 }
 
 export interface IStatsFilter {
-    categorizationIds: string[];
     forecastModelId: number;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -13369,7 +13351,8 @@ export interface ICashFlowStatsDto {
 export class TransactionStatsDto implements ITransactionStatsDto {
     adjustmentType: TransactionStatsDtoAdjustmentType;
     cashflowTypeId: string;
-    categorization: { [key: string] : string; };
+    categoryId: number;
+    transactionDescriptor: string;
     accountId: number;
     currencyId: string;
     date: moment.Moment;
@@ -13390,13 +13373,8 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         if (data) {
             this.adjustmentType = data["adjustmentType"];
             this.cashflowTypeId = data["cashflowTypeId"];
-            if (data["categorization"]) {
-                this.categorization = {};
-                for (let key in data["categorization"]) {
-                    if (data["categorization"].hasOwnProperty(key))
-                        this.categorization[key] = data["categorization"][key];
-                }
-            }
+            this.categoryId = data["categoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
             this.accountId = data["accountId"];
             this.currencyId = data["currencyId"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
@@ -13416,13 +13394,8 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data = typeof data === 'object' ? data : {};
         data["adjustmentType"] = this.adjustmentType;
         data["cashflowTypeId"] = this.cashflowTypeId;
-        if (this.categorization) {
-            data["categorization"] = {};
-            for (let key in this.categorization) {
-                if (this.categorization.hasOwnProperty(key))
-                    data["categorization"][key] = this.categorization[key];
-            }
-        }
+        data["categoryId"] = this.categoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
         data["accountId"] = this.accountId;
         data["currencyId"] = this.currencyId;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
@@ -13436,7 +13409,8 @@ export class TransactionStatsDto implements ITransactionStatsDto {
 export interface ITransactionStatsDto {
     adjustmentType: TransactionStatsDtoAdjustmentType;
     cashflowTypeId: string;
-    categorization: { [key: string] : string; };
+    categoryId: number;
+    transactionDescriptor: string;
     accountId: number;
     currencyId: string;
     date: moment.Moment;
@@ -13451,6 +13425,9 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
     endDate: moment.Moment;
     currencyId: string;
     cashFlowTypeId: string;
+    categoryGroupId: number;
+    categoryId: number;
+    transactionDescriptor: string;
     accountId: number;
     categorization: { [key: string] : string; };
 
@@ -13470,6 +13447,9 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
             this.cashFlowTypeId = data["cashFlowTypeId"];
+            this.categoryGroupId = data["categoryGroupId"];
+            this.categoryId = data["categoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
             this.accountId = data["accountId"];
             if (data["categorization"]) {
                 this.categorization = {};
@@ -13494,6 +13474,9 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
+        data["categoryGroupId"] = this.categoryGroupId;
+        data["categoryId"] = this.categoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
         data["accountId"] = this.accountId;
         if (this.categorization) {
             data["categorization"] = {};
@@ -13512,6 +13495,9 @@ export interface ICashFlowCommentThreadDto {
     endDate: moment.Moment;
     currencyId: string;
     cashFlowTypeId: string;
+    categoryGroupId: number;
+    categoryId: number;
+    transactionDescriptor: string;
     accountId: number;
     categorization: { [key: string] : string; };
 }
@@ -13722,7 +13708,9 @@ export interface IBankAccountDto {
 
 export class StatsDetailFilter implements IStatsDetailFilter {
     cashFlowTypeId: string;
-    categorization: { [key: string] : string; };
+    categoryGroupId: number;
+    categoryId: number;
+    transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
@@ -13742,13 +13730,9 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     init(data?: any) {
         if (data) {
             this.cashFlowTypeId = data["cashFlowTypeId"];
-            if (data["categorization"]) {
-                this.categorization = {};
-                for (let key in data["categorization"]) {
-                    if (data["categorization"].hasOwnProperty(key))
-                        this.categorization[key] = data["categorization"][key];
-                }
-            }
+            this.categoryGroupId = data["categoryGroupId"];
+            this.categoryId = data["categoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
@@ -13779,13 +13763,9 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["cashFlowTypeId"] = this.cashFlowTypeId;
-        if (this.categorization) {
-            data["categorization"] = {};
-            for (let key in this.categorization) {
-                if (this.categorization.hasOwnProperty(key))
-                    data["categorization"][key] = this.categorization[key];
-            }
-        }
+        data["categoryGroupId"] = this.categoryGroupId;
+        data["categoryId"] = this.categoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
@@ -13810,7 +13790,9 @@ export class StatsDetailFilter implements IStatsDetailFilter {
 
 export interface IStatsDetailFilter {
     cashFlowTypeId: string;
-    categorization: { [key: string] : string; };
+    categoryGroupId: number;
+    categoryId: number;
+    transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
@@ -14149,8 +14131,8 @@ export class AddForecastInput implements IAddForecastInput {
     bankAccountId: number;
     date: moment.Moment;
     cashFlowTypeId: string;
+    categoryId: string;
     currencyId: string;
-    categorization: { [key: string] : string; };
     amount: number;
 
     constructor(data?: IAddForecastInput) {
@@ -14168,14 +14150,8 @@ export class AddForecastInput implements IAddForecastInput {
             this.bankAccountId = data["bankAccountId"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.cashFlowTypeId = data["cashFlowTypeId"];
+            this.categoryId = data["categoryId"];
             this.currencyId = data["currencyId"];
-            if (data["categorization"]) {
-                this.categorization = {};
-                for (let key in data["categorization"]) {
-                    if (data["categorization"].hasOwnProperty(key))
-                        this.categorization[key] = data["categorization"][key];
-                }
-            }
             this.amount = data["amount"];
         }
     }
@@ -14192,14 +14168,8 @@ export class AddForecastInput implements IAddForecastInput {
         data["bankAccountId"] = this.bankAccountId;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
+        data["categoryId"] = this.categoryId;
         data["currencyId"] = this.currencyId;
-        if (this.categorization) {
-            data["categorization"] = {};
-            for (let key in this.categorization) {
-                if (this.categorization.hasOwnProperty(key))
-                    data["categorization"][key] = this.categorization[key];
-            }
-        }
         data["amount"] = this.amount;
         return data; 
     }
@@ -14210,8 +14180,8 @@ export interface IAddForecastInput {
     bankAccountId: number;
     date: moment.Moment;
     cashFlowTypeId: string;
+    categoryId: string;
     currencyId: string;
-    categorization: { [key: string] : string; };
     amount: number;
 }
 
@@ -14254,13 +14224,88 @@ export interface IUpdateForecastInput {
     amount: number;
 }
 
+export class GetCategoriesOutput implements IGetCategoriesOutput {
+    items: { [key: string] : CategoryDto; };
+    groups: { [key: string] : CategoryGroupDto; };
+    types: { [key: string] : TypeDto; };
+
+    constructor(data?: IGetCategoriesOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["items"]) {
+                this.items = {};
+                for (let key in data["items"]) {
+                    if (data["items"].hasOwnProperty(key))
+                        this.items[key] = data["items"][key] ? CategoryDto.fromJS(data["items"][key]) : <any>undefined;
+                }
+            }
+            if (data["groups"]) {
+                this.groups = {};
+                for (let key in data["groups"]) {
+                    if (data["groups"].hasOwnProperty(key))
+                        this.groups[key] = data["groups"][key] ? CategoryGroupDto.fromJS(data["groups"][key]) : <any>undefined;
+                }
+            }
+            if (data["types"]) {
+                this.types = {};
+                for (let key in data["types"]) {
+                    if (data["types"].hasOwnProperty(key))
+                        this.types[key] = data["types"][key] ? TypeDto.fromJS(data["types"][key]) : <any>undefined;
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): GetCategoriesOutput {
+        let result = new GetCategoriesOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.items) {
+            data["items"] = {};
+            for (let key in this.items) {
+                if (this.items.hasOwnProperty(key))
+                    data["items"][key] = this.items[key] ? this.items[key].toJSON() : <any>undefined;
+            }
+        }
+        if (this.groups) {
+            data["groups"] = {};
+            for (let key in this.groups) {
+                if (this.groups.hasOwnProperty(key))
+                    data["groups"][key] = this.groups[key] ? this.groups[key].toJSON() : <any>undefined;
+            }
+        }
+        if (this.types) {
+            data["types"] = {};
+            for (let key in this.types) {
+                if (this.types.hasOwnProperty(key))
+                    data["types"][key] = this.types[key] ? this.types[key].toJSON() : <any>undefined;
+            }
+        }
+        return data; 
+    }
+}
+
+export interface IGetCategoriesOutput {
+    items: { [key: string] : CategoryDto; };
+    groups: { [key: string] : CategoryGroupDto; };
+    types: { [key: string] : TypeDto; };
+}
+
 export class CategoryDto implements ICategoryDto {
-    typeId: string;
-    typeName: string;
+    name: string;
     groupId: number;
-    groupName: string;
-    categoryId: number;
-    categoryName: string;
 
     constructor(data?: ICategoryDto) {
         if (data) {
@@ -14273,12 +14318,8 @@ export class CategoryDto implements ICategoryDto {
 
     init(data?: any) {
         if (data) {
-            this.typeId = data["typeId"];
-            this.typeName = data["typeName"];
+            this.name = data["name"];
             this.groupId = data["groupId"];
-            this.groupName = data["groupName"];
-            this.categoryId = data["categoryId"];
-            this.categoryName = data["categoryName"];
         }
     }
 
@@ -14290,23 +14331,89 @@ export class CategoryDto implements ICategoryDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["typeId"] = this.typeId;
-        data["typeName"] = this.typeName;
+        data["name"] = this.name;
         data["groupId"] = this.groupId;
-        data["groupName"] = this.groupName;
-        data["categoryId"] = this.categoryId;
-        data["categoryName"] = this.categoryName;
         return data; 
     }
 }
 
 export interface ICategoryDto {
-    typeId: string;
-    typeName: string;
+    name: string;
     groupId: number;
-    groupName: string;
-    categoryId: number;
-    categoryName: string;
+}
+
+export class CategoryGroupDto implements ICategoryGroupDto {
+    name: string;
+    typeId: string;
+
+    constructor(data?: ICategoryGroupDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.typeId = data["typeId"];
+        }
+    }
+
+    static fromJS(data: any): CategoryGroupDto {
+        let result = new CategoryGroupDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["typeId"] = this.typeId;
+        return data; 
+    }
+}
+
+export interface ICategoryGroupDto {
+    name: string;
+    typeId: string;
+}
+
+export class TypeDto implements ITypeDto {
+    name: string;
+
+    constructor(data?: ITypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): TypeDto {
+        let result = new TypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ITypeDto {
+    name: string;
 }
 
 export class RuleDto implements IRuleDto {
@@ -14367,8 +14474,8 @@ export interface IRuleDto {
 export class CreateRuleDto implements ICreateRuleDto {
     name: string;
     categoryId: number;
-    defaultValue: string;
-    attributeTypeId: string;
+    transactionDecriptor: string;
+    transactionDecriptorAttributeTypeId: string;
     conditions: ConditionDto[];
 
     constructor(data?: ICreateRuleDto) {
@@ -14384,8 +14491,8 @@ export class CreateRuleDto implements ICreateRuleDto {
         if (data) {
             this.name = data["name"];
             this.categoryId = data["categoryId"];
-            this.defaultValue = data["defaultValue"];
-            this.attributeTypeId = data["attributeTypeId"];
+            this.transactionDecriptor = data["transactionDecriptor"];
+            this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
             if (data["conditions"] && data["conditions"].constructor === Array) {
                 this.conditions = [];
                 for (let item of data["conditions"])
@@ -14404,8 +14511,8 @@ export class CreateRuleDto implements ICreateRuleDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["categoryId"] = this.categoryId;
-        data["defaultValue"] = this.defaultValue;
-        data["attributeTypeId"] = this.attributeTypeId;
+        data["transactionDecriptor"] = this.transactionDecriptor;
+        data["transactionDecriptorAttributeTypeId"] = this.transactionDecriptorAttributeTypeId;
         if (this.conditions && this.conditions.constructor === Array) {
             data["conditions"] = [];
             for (let item of this.conditions)
@@ -14418,8 +14525,8 @@ export class CreateRuleDto implements ICreateRuleDto {
 export interface ICreateRuleDto {
     name: string;
     categoryId: number;
-    defaultValue: string;
-    attributeTypeId: string;
+    transactionDecriptor: string;
+    transactionDecriptorAttributeTypeId: string;
     conditions: ConditionDto[];
 }
 
@@ -14541,8 +14648,8 @@ export class EditRuleDto implements IEditRuleDto {
     id: number;
     name: string;
     categoryId: number;
-    defaultValue: string;
-    attributeTypeId: string;
+    transactionDecriptor: string;
+    transactionDecriptorAttributeTypeId: string;
     conditions: ConditionDto[];
 
     constructor(data?: IEditRuleDto) {
@@ -14559,8 +14666,8 @@ export class EditRuleDto implements IEditRuleDto {
             this.id = data["id"];
             this.name = data["name"];
             this.categoryId = data["categoryId"];
-            this.defaultValue = data["defaultValue"];
-            this.attributeTypeId = data["attributeTypeId"];
+            this.transactionDecriptor = data["transactionDecriptor"];
+            this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
             if (data["conditions"] && data["conditions"].constructor === Array) {
                 this.conditions = [];
                 for (let item of data["conditions"])
@@ -14580,8 +14687,8 @@ export class EditRuleDto implements IEditRuleDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["categoryId"] = this.categoryId;
-        data["defaultValue"] = this.defaultValue;
-        data["attributeTypeId"] = this.attributeTypeId;
+        data["transactionDecriptor"] = this.transactionDecriptor;
+        data["transactionDecriptorAttributeTypeId"] = this.transactionDecriptorAttributeTypeId;
         if (this.conditions && this.conditions.constructor === Array) {
             data["conditions"] = [];
             for (let item of this.conditions)
@@ -14595,8 +14702,8 @@ export interface IEditRuleDto {
     id: number;
     name: string;
     categoryId: number;
-    defaultValue: string;
-    attributeTypeId: string;
+    transactionDecriptor: string;
+    transactionDecriptorAttributeTypeId: string;
     conditions: ConditionDto[];
 }
 
@@ -14648,7 +14755,6 @@ export interface IMoveRuleDto {
 }
 
 export class AddMappingDto implements IAddMappingDto {
-    categorizationId: string;
     oldName: string;
     newName: string;
 
@@ -14663,7 +14769,6 @@ export class AddMappingDto implements IAddMappingDto {
 
     init(data?: any) {
         if (data) {
-            this.categorizationId = data["categorizationId"];
             this.oldName = data["oldName"];
             this.newName = data["newName"];
         }
@@ -14677,7 +14782,6 @@ export class AddMappingDto implements IAddMappingDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["categorizationId"] = this.categorizationId;
         data["oldName"] = this.oldName;
         data["newName"] = this.newName;
         return data; 
@@ -14685,7 +14789,6 @@ export class AddMappingDto implements IAddMappingDto {
 }
 
 export interface IAddMappingDto {
-    categorizationId: string;
     oldName: string;
     newName: string;
 }
@@ -15246,7 +15349,9 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
     accountId: number;
     comment: string;
     cashFlowTypeId: string;
-    categorization: { [key: string] : string; };
+    categoryGroupId: number;
+    categoryId: number;
+    transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
@@ -15268,13 +15373,9 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
             this.accountId = data["accountId"];
             this.comment = data["comment"];
             this.cashFlowTypeId = data["cashFlowTypeId"];
-            if (data["categorization"]) {
-                this.categorization = {};
-                for (let key in data["categorization"]) {
-                    if (data["categorization"].hasOwnProperty(key))
-                        this.categorization[key] = data["categorization"][key];
-                }
-            }
+            this.categoryGroupId = data["categoryGroupId"];
+            this.categoryId = data["categoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
@@ -15307,13 +15408,9 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
         data["accountId"] = this.accountId;
         data["comment"] = this.comment;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
-        if (this.categorization) {
-            data["categorization"] = {};
-            for (let key in this.categorization) {
-                if (this.categorization.hasOwnProperty(key))
-                    data["categorization"][key] = this.categorization[key];
-            }
-        }
+        data["categoryGroupId"] = this.categoryGroupId;
+        data["categoryId"] = this.categoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
@@ -15340,7 +15437,9 @@ export interface ICreateCashFlowCommentThreadInput {
     accountId: number;
     comment: string;
     cashFlowTypeId: string;
-    categorization: { [key: string] : string; };
+    categoryGroupId: number;
+    categoryId: number;
+    transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
@@ -22831,6 +22930,7 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
     lastName: string;
     email: string;
     phone: string;
+    phoneExt: string;
     website: string;
     comments: string;
     sourceCode: string;
@@ -22851,6 +22951,7 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
             this.lastName = data["lastName"];
             this.email = data["email"];
             this.phone = data["phone"];
+            this.phoneExt = data["phoneExt"];
             this.website = data["website"];
             this.comments = data["comments"];
             this.sourceCode = data["sourceCode"];
@@ -22870,6 +22971,7 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
         data["lastName"] = this.lastName;
         data["email"] = this.email;
         data["phone"] = this.phone;
+        data["phoneExt"] = this.phoneExt;
         data["website"] = this.website;
         data["comments"] = this.comments;
         data["sourceCode"] = this.sourceCode;
@@ -22883,6 +22985,7 @@ export interface ISubmitContactUsRequestInput {
     lastName: string;
     email: string;
     phone: string;
+    phoneExt: string;
     website: string;
     comments: string;
     sourceCode: string;
