@@ -1840,8 +1840,10 @@ export class CategorizationServiceProxy {
     /**
      * @return Success
      */
-    deleteRule(id: number): Observable<void> {
+    deleteRule(applyOption: ApplyOption, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Categorization/DeleteRule?";
+        if (applyOption !== undefined)
+            url_ += "ApplyOption=" + encodeURIComponent("" + applyOption) + "&"; 
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -14477,6 +14479,7 @@ export class CreateRuleDto implements ICreateRuleDto {
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
     conditions: ConditionDto[];
+    applyOption: CreateRuleDtoApplyOption;
 
     constructor(data?: ICreateRuleDto) {
         if (data) {
@@ -14498,6 +14501,7 @@ export class CreateRuleDto implements ICreateRuleDto {
                 for (let item of data["conditions"])
                     this.conditions.push(ConditionDto.fromJS(item));
             }
+            this.applyOption = data["applyOption"];
         }
     }
 
@@ -14518,6 +14522,7 @@ export class CreateRuleDto implements ICreateRuleDto {
             for (let item of this.conditions)
                 data["conditions"].push(item.toJSON());
         }
+        data["applyOption"] = this.applyOption;
         return data; 
     }
 }
@@ -14528,6 +14533,7 @@ export interface ICreateRuleDto {
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
     conditions: ConditionDto[];
+    applyOption: CreateRuleDtoApplyOption;
 }
 
 export class ConditionDto implements IConditionDto {
@@ -14651,6 +14657,7 @@ export class EditRuleDto implements IEditRuleDto {
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
     conditions: ConditionDto[];
+    applyOption: EditRuleDtoApplyOption;
 
     constructor(data?: IEditRuleDto) {
         if (data) {
@@ -14673,6 +14680,7 @@ export class EditRuleDto implements IEditRuleDto {
                 for (let item of data["conditions"])
                     this.conditions.push(ConditionDto.fromJS(item));
             }
+            this.applyOption = data["applyOption"];
         }
     }
 
@@ -14694,6 +14702,7 @@ export class EditRuleDto implements IEditRuleDto {
             for (let item of this.conditions)
                 data["conditions"].push(item.toJSON());
         }
+        data["applyOption"] = this.applyOption;
         return data; 
     }
 }
@@ -14705,12 +14714,14 @@ export interface IEditRuleDto {
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
     conditions: ConditionDto[];
+    applyOption: EditRuleDtoApplyOption;
 }
 
 export class MoveRuleDto implements IMoveRuleDto {
     parentId: number;
     sortOrder: number;
     isRecategorize: boolean;
+    applyOption: MoveRuleDtoApplyOption;
     id: number;
 
     constructor(data?: IMoveRuleDto) {
@@ -14727,6 +14738,7 @@ export class MoveRuleDto implements IMoveRuleDto {
             this.parentId = data["parentId"];
             this.sortOrder = data["sortOrder"];
             this.isRecategorize = data["isRecategorize"];
+            this.applyOption = data["applyOption"];
             this.id = data["id"];
         }
     }
@@ -14742,6 +14754,7 @@ export class MoveRuleDto implements IMoveRuleDto {
         data["parentId"] = this.parentId;
         data["sortOrder"] = this.sortOrder;
         data["isRecategorize"] = this.isRecategorize;
+        data["applyOption"] = this.applyOption;
         data["id"] = this.id;
         return data; 
     }
@@ -14751,6 +14764,7 @@ export interface IMoveRuleDto {
     parentId: number;
     sortOrder: number;
     isRecategorize: boolean;
+    applyOption: MoveRuleDtoApplyOption;
     id: number;
 }
 
@@ -30001,6 +30015,13 @@ export enum GroupBy {
     Yearly = <any>"Yearly", 
 }
 
+export enum ApplyOption {
+    New = <any>"New", 
+    Uncategorized = <any>"Uncategorized", 
+    CategorizedByTheRuleOnly = <any>"CategorizedByTheRuleOnly", 
+    AllExisting = <any>"AllExisting", 
+}
+
 export enum IncomeStatisticsDateInterval {
     _1 = 1, 
     _2 = 2, 
@@ -30066,6 +30087,27 @@ export enum BankAccountDailyStatDtoPeriod {
 export enum TransactionStatsDtoAdjustmentType {
     _0 = 0, 
     _1 = 1, 
+}
+
+export enum CreateRuleDtoApplyOption {
+    New = <any>"New", 
+    Uncategorized = <any>"Uncategorized", 
+    CategorizedByTheRuleOnly = <any>"CategorizedByTheRuleOnly", 
+    AllExisting = <any>"AllExisting", 
+}
+
+export enum EditRuleDtoApplyOption {
+    New = <any>"New", 
+    Uncategorized = <any>"Uncategorized", 
+    CategorizedByTheRuleOnly = <any>"CategorizedByTheRuleOnly", 
+    AllExisting = <any>"AllExisting", 
+}
+
+export enum MoveRuleDtoApplyOption {
+    New = <any>"New", 
+    Uncategorized = <any>"Uncategorized", 
+    CategorizedByTheRuleOnly = <any>"CategorizedByTheRuleOnly", 
+    AllExisting = <any>"AllExisting", 
 }
 
 export enum FriendDtoState {
