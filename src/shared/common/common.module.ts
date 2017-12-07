@@ -13,7 +13,7 @@ import { ModalDialogComponent } from './dialogs/modal/modal-dialog.component';
 import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
 
-import { DxCheckBoxModule } from 'devextreme-angular';
+import { DxCheckBoxModule, DxTextBoxModule } from 'devextreme-angular';
 
 @NgModule({
     declarations: [
@@ -32,6 +32,7 @@ import { DxCheckBoxModule } from 'devextreme-angular';
     ],
     imports: [
       DxCheckBoxModule,
+      DxTextBoxModule,
       MdDialogModule,
       ngCommon.CommonModule,
       AbpModule

@@ -9,15 +9,21 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
   styleUrls: ['modal-dialog.component.less']
 })
 export class ModalDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
+  private elementRef: ElementRef;
   private slider: any;
+  public data: any;
+  public dialogRef: MdDialogRef<ModalDialogComponent>;
 
   constructor(
-    injector: Injector,
-    @Inject(MD_DIALOG_DATA) public data: any,
-    public dialogRef: MdDialogRef<ModalDialogComponent>,
-    private elementRef: ElementRef
-  ) { 
-    super(injector, data.localization);
+    injector: Injector
+  ) {     
+    super(injector);
+
+    this.data = injector.get(MD_DIALOG_DATA);
+    this.elementRef = injector.get(ElementRef);
+    this.dialogRef = injector.get(MdDialogRef);
+
+    this.localizationSourceName = this.data.localization;
   }
 
   private fork(callback, timeout = 0) {

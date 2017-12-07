@@ -20,7 +20,6 @@ import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 
-import { DxChartModule } from 'devextreme-angular';
 import { MdTabsModule } from '@angular/material';
 
 import {
@@ -38,7 +37,9 @@ import {
     DxTooltipModule,
     DxValidationSummaryModule,
     DxValidatorModule,
-    DxScrollViewModule
+    DxScrollViewModule,
+    DxChartModule,
+    DxTreeListModule
 } from 'devextreme-angular';
 
 @NgModule({
@@ -63,6 +64,7 @@ import {
         DxValidationSummaryModule,
         DxValidatorModule,
         DxScrollViewModule,
+        DxTreeListModule,
         ModalModule.forRoot(),
 
         DxChartModule,
