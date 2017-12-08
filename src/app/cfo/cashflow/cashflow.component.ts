@@ -1555,59 +1555,18 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     calculateSummaryValue() {
         return summaryCell => {
-            let counter = this.getColumnFields().length - 1;
 
-            summaryCell.__proto__.cellsAreSequence = function(current, prev) {
-                if (current.field('column') && current.field('column')['groupInterval'] === 'year') {
-                    return true;
-                }
-                let currentCellParent = current.parent('column');
-                let prevCellParent = prev.parent('column');
-
-                while (true) {
-                    if (
-                        currentCellParent.prev() === prevCellParent ||
-                        (currentCellParent.field('column') && currentCellParent.field('column')['groupInterval'] !== 'year' &&
-                        currentCellParent.prev('column', true) === prevCellParent)
-                    ) {
-                        return true;
-                    } else if (currentCellParent.field('column') && currentCellParent.field('column')['groupInterval'] !== 'year') {
-                        currentCellParent = currentCellParent.parent('column');
-                        prevCellParent = prevCellParent.parent('column');
-                        continue;
-                    } else {
-                        return false;
-                    }
-                }
+            /** if cell is ending cash position account summary cell */
+            if (this.isEndingBalanceAccountCell(summaryCell)) {
+                return this.modifyEndingBalanceAccountCell(summaryCell);
             }
-            /** @todo refactor and fix a bug when the second call return wrong result */
-            summaryCell.__proto__.prevWithParent = function() {
-                let prev = this.prev('column', true),
-                    currentCell = this;
-                while (counter > 0) {
-                    if (prev === null || !this.cellsAreSequence(currentCell, prev)) {
-                        let parent = currentCell.parent('column');
-                        if (parent) {
-                            prev = parent.prev('column', true);
-                            currentCell = parent;
-                        }
-                        /**
-                         * if (parent) {
-                                if (parent.field('column')['dataType'] !== 'date') {
-                                    parent = parent.child()
-                                }
-                                prev = parent.prev();
-                                currentCell = parent;
-                            }
-                         */
-                        counter--;
-                    } else {
-                        break;
-                    }
-                }
-                return prev;
-            };
-            let prevWithParent = summaryCell.prevWithParent();
+
+            /** calculation for ending cash position value */
+            if (this.isGrandTotalSummary(summaryCell)) {
+                return this.modifyGrandTotalSummary(summaryCell);
+            }
+
+            let prevWithParent = this.getPrevWithParent(summaryCell);
             /** if cell is starting balance account cell - then add account sum from previous period */
             if (prevWithParent !== null && this.isStartingBalanceAccountCell(summaryCell)) {
                 return this.modifyStartingBalanceAccountCell(summaryCell, prevWithParent);
@@ -1619,19 +1578,62 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 return this.modifyStartingBalanceSummaryCell(summaryCell, prevWithParent);
             }
 
-            /** if cell is ending cash position account summary cell */
-            if (this.isEndingBalanceAccountCell(summaryCell)) {
-                return this.modifyEndingBalanceAccountCell(summaryCell, prevWithParent);
-            }
-
-            /** calculation for ending cash position value */
-            if (this.isGrandTotalSummary(summaryCell)) {
-                return this.modifyGrandTotalSummary(summaryCell);
-            }
-
             return summaryCell.value() || 0;
         };
     }
+
+    /**
+     * Return whether cells are sequence in pivot grid
+     * @param current - current cell
+     * @param prev - prev cell (use summaryCell.prev('column', true))
+     * @return {boolean}
+     */
+    cellsAreSequence(current, prev) {
+        if (current.field('column') && current.field('column')['groupInterval'] === 'year') {
+            return true;
+        }
+        let currentCellParent = current.parent('column');
+        let prevCellParent = prev.parent('column');
+        while (true) {
+            if (
+                underscore.isEqual(currentCellParent, prevCellParent) ||
+                currentCellParent.prev() === prevCellParent ||
+                (
+                    currentCellParent.field('column') &&
+                    currentCellParent.field('column')['groupInterval'] !== 'year' &&
+                    currentCellParent.prev('column', true) === prevCellParent
+                )
+            ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Get real previous cell for the summaryCell (alternative for summaryCell.prev('column', true) and
+     *  summaryCell.prev('column', false) )
+     * @param summaryCell
+     * @return {any}
+     */
+    getPrevWithParent(summaryCell) {
+        let counter = this.getColumnFields().length - 1;
+        let prev = summaryCell.prev('column', true);
+        while (counter > 0) {
+            if (prev === null || !this.cellsAreSequence(summaryCell, prev)) {
+                let parent = summaryCell.parent('column');
+                if (parent) {
+                    prev = parent.prev('column', true);
+                    summaryCell = parent;
+                }
+                counter--;
+            } else {
+                break;
+            }
+        }
+        return prev;
+    };
 
     /**
      * Modify the value of the starting balance account cell to have a proper calculation
@@ -1640,11 +1642,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @return {number}
      */
     modifyStartingBalanceAccountCell(summaryCell, prevWithParent) {
-        let prevEndingAccountValue = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, Total),
+        let prevEndingAccountValue = this.getCellValue(prevWithParent, Total),
             currentCellValue = summaryCell.value() || 0,
             prevCellValue = prevWithParent ? prevWithParent.value(true) || 0 : 0,
             prevReconciliation = this.getCellValue(prevWithParent, Reconciliation);
-        return currentCellValue + prevEndingAccountValue + prevCellValue/* + prevReconciliation*/;
+        return currentCellValue + prevEndingAccountValue + prevCellValue + prevReconciliation;
     }
 
     /**
@@ -1669,10 +1671,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param prevWithParent
      * @return {number}
      */
-    modifyEndingBalanceAccountCell(summaryCell, prevWithParent) {
-        let startedBalanceAccountValue = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, StartedBalance),
+    modifyEndingBalanceAccountCell(summaryCell) {
+        let startedBalanceAccountValue = this.getCellValue(summaryCell, StartedBalance),
             currentCellValue = summaryCell.value() || 0,
-            reconciliationTotal = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, Reconciliation);
+            reconciliationTotal = this.getCellValue(summaryCell, Reconciliation);
         return currentCellValue + startedBalanceAccountValue + reconciliationTotal;
     }
 
@@ -1691,75 +1693,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     /**
-     * Get the value from target period for account. For example if we have the cell of total that belongs to the account -
-     * then we find the appropriate started balance account value for it
-     * @param summaryCell
-     * @param prev
-     * @param target
-     * @return {number}
-     */
-    getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, target) {
-        /** if we want to get the value of the started balance - then we should get the
-         *  slice value from current cell, else - we should get the total value from previous cell */
-        let subject = target === StartedBalance || target === Reconciliation ? summaryCell : prevWithParent;
-        if (!subject) {
-            return 0;
-        }
-        let accountId = summaryCell.value(summaryCell.field('row'), true),
-            anotherPeriodCell = subject.parent('row') ? subject.parent('row').slice(0, target) : null,
-            anotherPeriodAccount = anotherPeriodCell ? anotherPeriodCell.child('row', accountId) : null,
-            anotherPeriodAccountCashedValue,
-            isCalculatedValue = target === StartedBalance ? true : false,
-            groupInterval = subject.field('column').groupInterval,
-            columnValue = subject.value(subject.field('column')),
-            parent = subject ? subject.parent() : null,
-            /** object with cell data as the key for Map object cash */
-            cellData = {
-                'cashflowTypeId': target,
-                'accountId': accountId,
-                [groupInterval]: columnValue,
-                /** method for creating the key for cash from the object props and values */
-                toString() {
-                    let str = '';
-                    for (let prop in this) {
-                        if (typeof this[prop] !== 'function') {
-                            str += prop.charAt(0) + this[prop];
-                        }
-                    }
-                    return str;
-                }
-            };
-
-        /** add to the cell data other date intervals */
-        if (parent) {
-            while (parent.field('column') && parent.field('column').dataType === 'date') {
-                let parentGroupInterval = parent.field('column').groupInterval,
-                    parentColumnValue = parent.value(parent.field('column'));
-                cellData[parentGroupInterval] = parentColumnValue;
-                parent = parent.parent();
-            }
-        }
-
-        /** if we haven't found the value from the another period -
-         *  then it hasn't been expanded and we should find out whether the value is in cash */
-        if (anotherPeriodAccount === null) {
-            anotherPeriodAccountCashedValue = this.getAnotherPeriodAccountCashedValue(cellData);
-            /** if we haven't found the value in cash - then we should calculate the value in the cashflow data by ourselfs */
-            if (!anotherPeriodAccountCashedValue) {
-                /** calculate the cell value using the cell data and cashflowData */
-                anotherPeriodAccountCashedValue = this.calculateCellValue(cellData);
-                this.setAnotherPeriodAccountCashedValue(cellData, anotherPeriodAccountCashedValue);
-            }
-        } else {
-            /** add the prevEndingAccount value to the cash */
-            this.setAnotherPeriodAccountCashedValue(cellData, anotherPeriodAccount.value(isCalculatedValue));
-        }
-        return anotherPeriodAccountCashedValue ?
-               anotherPeriodAccountCashedValue :
-               (anotherPeriodAccount ? anotherPeriodAccount.value(isCalculatedValue) || 0 : 0);
-    }
-
-    /**
      * Gets the cell value from the specific cell
      * cellData - summaryCell object of devextreme
      * target - StartedBalance | Total | Reconciliation
@@ -1770,7 +1703,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         const accountId = summaryCell.value(summaryCell.field('row'), true),
               targetPeriodCell = summaryCell.parent('row') ? summaryCell.parent('row').slice(0, target) : null,
               targetPeriodAccountCell = targetPeriodCell ? targetPeriodCell.child('row', accountId) : null,
-              cellData = this.getCellData(summaryCell, accountId);
+              cellData = this.getCellData(summaryCell, accountId, target),
+              isCalculatedValue = underscore.contains([StartedBalance, Reconciliation], target) ? true : false;
 
             /** if we haven't found the value from the another period -
              *  then it hasn't been expanded and we should find out whether the value is in cash */
@@ -1784,21 +1718,20 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
             } else {
                 /** add the prevEndingAccount value to the cash */
-                this.setAnotherPeriodAccountCashedValue(cellData.toString(), targetPeriodAccountCell.value(true));
+                this.setAnotherPeriodAccountCashedValue(cellData.toString(), targetPeriodAccountCell.value(isCalculatedValue));
             }
 
         return targetPeriodAccountCashedValue ?
                targetPeriodAccountCashedValue :
-               (targetPeriodAccountCell ? targetPeriodAccountCell.value(true) || 0 : 0);
+               (targetPeriodAccountCell ? targetPeriodAccountCell.value(isCalculatedValue) || 0 : 0);
     }
 
-    getCellData(summaryCell, accountId) {
+    getCellData(summaryCell, accountId, cashflowTypeId) {
         const groupInterval = summaryCell.field('column').groupInterval,
               columnValue = summaryCell.value(summaryCell.field('column')),
               /** object with cell data as the key for Map object cash */
               cellData = {
-                  /** @todo check */
-                  'cashflowTypeId': summaryCell.parent('row'),
+                  'cashflowTypeId': cashflowTypeId,
                   'accountId': accountId,
                   [groupInterval]: columnValue,
                   /** method for creating the key for cash from the object props and values */
@@ -1833,7 +1766,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** {cashflowTypeId: 'T', accountId: 10, quarter: 3, year: 2015, month: 5} */
         let value = this.cashflowData.reduce((sum, cashflowData) => {
             if (
-                //((cellData.cashflowTypeId === Total && cashflowData.cashflowTypeId === Reconciliation) ||
                 cashflowData.cashflowTypeId === cellData.cashflowTypeId &&
                 cashflowData.accountId === cellData.accountId &&
                 (!cellData.year || (cellData.year === cashflowData.date.year())) &&
