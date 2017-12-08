@@ -580,7 +580,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     createCategorizationObject(categorization: Array<string>): { [key: string]: string; } {
         let categorizationObject = {};
-        this.categorization.forEach(category => {
+        categorization.forEach(category => {
             categorizationObject[category] = null;
         });
         return categorizationObject;
@@ -595,8 +595,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         return transactions.map(transactionObj => {
             transactionObj.categorization = this.categories[transactionObj.categoryId];
             /** change the second level for started balance and reconciliations for the account id */
-            if (transactionObj.categorization && (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation)) {
-                transactionObj.categorization.name = transactionObj.accountId;
+            if (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation) {
+                transactionObj.categorization = {};
+                transactionObj.categorization[this.categorization[0]] = transactionObj.accountId;
             }
             return transactionObj;
         });
@@ -629,6 +630,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     },
                     'expenseCategoryId': null,
                     'amount': cashflowDataItem.amount,
+                    'accountId': cashflowDataItem.accountId,
                     'date': cashflowDataItem.date
                 });
                 stubCashflowDataForEndingCashPosition.push(clonedTransaction);
@@ -1543,18 +1545,51 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     calculateSummaryValue() {
         return summaryCell => {
-            let counter = this.getColumnFields().length;
+            let counter = this.getColumnFields().length - 1;
+
+            summaryCell.__proto__.cellsAreSequence = function(current, prev) {
+                if (current.field('column') && current.field('column')['groupInterval'] === 'year') {
+                    return true;
+                }
+                let currentCellParent = current.parent('column');
+                let prevCellParent = prev.parent('column');
+
+                while (true) {
+                    if (
+                        currentCellParent.prev() === prevCellParent ||
+                        (currentCellParent.field('column') && currentCellParent.field('column')['groupInterval'] !== 'year' &&
+                        currentCellParent.prev('column', true) === prevCellParent)
+                    ) {
+                        return true;
+                    } else if (currentCellParent.field('column') && currentCellParent.field('column')['groupInterval'] !== 'year') {
+                        currentCellParent = currentCellParent.parent('column');
+                        prevCellParent = prevCellParent.parent('column');
+                        continue;
+                    } else {
+                        return false;
+                    }
+                }
+            }
             /** @todo refactor and fix a bug when the second call return wrong result */
             summaryCell.__proto__.prevWithParent = function() {
-                let prev = this.prev(),
+                let prev = this.prev('column', true),
                     currentCell = this;
                 while (counter > 0) {
-                    if (prev === null) {
+                    if (prev === null || !this.cellsAreSequence(currentCell, prev)) {
                         let parent = currentCell.parent('column');
                         if (parent) {
-                            prev = parent.prev();
+                            prev = parent.prev('column', true);
                             currentCell = parent;
                         }
+                        /**
+                         * if (parent) {
+                                if (parent.field('column')['dataType'] !== 'date') {
+                                    parent = parent.child()
+                                }
+                                prev = parent.prev();
+                                currentCell = parent;
+                            }
+                         */
                         counter--;
                     } else {
                         break;
@@ -1564,7 +1599,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             };
             let prevWithParent = summaryCell.prevWithParent();
             /** if cell is starting balance account cell - then add account sum from previous period */
-            if (prevWithParent !== null && this.isStartingBalanceAccountSummary(summaryCell)) {
+            if (prevWithParent !== null && this.isStartingBalanceAccountCell(summaryCell)) {
                 return this.modifyStartingBalanceAccountCell(summaryCell, prevWithParent);
             }
 
@@ -1612,8 +1647,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let prevTotal = prevWithParent.slice(0, Total),
             currentCellValue = summaryCell.value() || 0,
             prevTotalValue = prevTotal ? prevTotal.value() || 0 : 0,
-            prevCellValue = prevWithParent ? prevWithParent.value(true) || 0 : 0;
-        return currentCellValue + prevTotalValue + prevCellValue;
+            prevCellValue = prevWithParent ? prevWithParent.value(true) || 0 : 0,
+            prevReconciliation = prevWithParent.slice(0, Reconciliation),
+            prevReconciliationValue = prevReconciliation ? prevReconciliation.value() || 0 : 0;
+        return currentCellValue + prevTotalValue + prevCellValue + prevReconciliationValue;
     }
 
     /**
@@ -1626,7 +1663,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let startedBalanceAccountValue = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, StartedBalance),
             currentCellValue = summaryCell.value() || 0,
             reconciliationTotal = this.getAccountValueFromAnotherPeriod(summaryCell, prevWithParent, Reconciliation);
-        return currentCellValue + startedBalanceAccountValue/* + reconciliationTotal*/;
+        return currentCellValue + startedBalanceAccountValue + reconciliationTotal;
     }
 
     /**
@@ -1640,7 +1677,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             currentCellValue = summaryCell.value() || 0,
             reconciliationTotal = summaryCell.slice(0, Reconciliation),
             reconciliationTotalValue = reconciliationTotal.value() || 0;
-        return currentCellValue + startedBalanceCellValue /*+ reconciliationTotalValue*/;
+        return currentCellValue + startedBalanceCellValue + reconciliationTotalValue;
     }
 
     /**
@@ -1817,22 +1854,22 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                summaryCell.value(summaryCell.field('row')) === Total;
     }
 
+    isStartingBalanceAccountCell(summaryCell) {
+        return summaryCell.field('row') !== null &&
+            summaryCell.field('row').dataField === `categorization.${this.categorization[0]}` &&
+            summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === StartedBalance &&
+            Number.isInteger(summaryCell.value(summaryCell.field('row')));
+    }
+
     isCellIsStartingBalanceSummary(summaryCell) {
         return summaryCell.field('row') !== null &&
             summaryCell.field('row').dataField === 'cashflowTypeId' &&
             summaryCell.value(summaryCell.field('row')) === StartedBalance;
     }
 
-    isStartingBalanceAccountSummary(summaryCell) {
-        return summaryCell.field('row') !== null &&
-            summaryCell.field('row').dataField === 'categorization.category' &&
-            summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === StartedBalance &&
-            Number.isInteger(summaryCell.value(summaryCell.field('row')));
-    }
-
     isEndingBalanceAccountCell(summaryCell) {
         return summaryCell.field('row') !== null &&
-               summaryCell.field('row').dataField === 'categorization.category' &&
+               summaryCell.field('row').dataField === `categorization.${this.categorization[0]}` &&
                summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === Total &&
                Number.isInteger(summaryCell.value(summaryCell.field('row')));
     }
