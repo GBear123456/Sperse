@@ -1,4 +1,4 @@
-﻿<div [@routerTransition]>
+<div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
@@ -40,6 +40,7 @@
                             <dxi-column dataField="State" caption="{{l('Contact.State')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="Email" caption="{{l('Contact.Email')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="PhoneExtension" caption="{{l('Contact.PhoneExtension')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
                             <dxi-column dataField="Amount" caption="{{l('Amount')}}"></dxi-column>
                             <dxi-column dataField="LeadType" caption="{{l('Type')}}"></dxi-column>
