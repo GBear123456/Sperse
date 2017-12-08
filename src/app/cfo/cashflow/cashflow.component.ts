@@ -10,7 +10,7 @@ import {
     TransactionStatsDto,
     CashFlowForecastServiceProxy,
     CategorizationServiceProxy,
-    CategoryDto
+    GetCategoriesOutput
 } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -57,7 +57,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     @ViewChild(OperationsComponent) operationsComponent: OperationsComponent;
     @ViewChild('userGridPreferences') userGridPreferences: UserGridPreferencesComponent;
     headlineConfig: any;
-    categories: Array<CategoryDto>;
+    categories: GetCategoriesOutput;
     cashflowData: any;
     cashflowDataTree: any;
     cashflowTypes: any;
@@ -140,13 +140,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             expanded: false,
             showTotals: true,
             customizeText: cellInfo => {
-                let value = cellInfo.value;
+                let value = cellInfo.valueText;
                 /** If the cell is int - then we have bank account as second level */
                 if (Number.isInteger(cellInfo.value) && this.bankAccounts) {
                     value = this.bankAccounts.find(account => {
                         return account.id === cellInfo.value;
                     });
                     value = value ? value.accountName : cellInfo.valueText;
+                } else {
+                    /** find the group name in categories array */
+                    value = this.categories.groups[value] ? this.categories.groups[value]['name'] : value;
                 }
                 return value ? value.toUpperCase() : cellInfo.valueText;
             },
@@ -157,7 +160,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             showTotals: false,
             area: 'row',
             areaIndex: 2,
-            dataField: `categorization.${this.categorization[1]}`
+            dataField: `categorization.${this.categorization[1]}`,
+            customizeText: cellInfo => {
+                return this.categories.items[cellInfo.value] ? this.categories.items[cellInfo.value]['name'] : cellInfo.value;
+            },
         },
         {
             caption: 'Descriptor',
@@ -257,6 +263,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     ];
     fieldPathsToClick = [];
     selectedForecastModel;
+    currencyId = 'USD';
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
@@ -279,7 +286,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     ngOnInit() {
         this.requestFilter = new StatsFilter();
-        this.requestFilter.currencyId = 'USD';
+        this.requestFilter.currencyId = this.currencyId;
         this.headlineConfig = {
             name: this.l('Cash Flow Statement and Forecast'),
             icon: 'globe',
@@ -431,7 +438,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param getCategoriesResult
      */
     handleGetCategoriedsResult(getCategoriesResult) {
-        this.categories = getCategoriesResult.items;
+        this.categories = getCategoriesResult;
     }
 
     /**
@@ -593,11 +600,18 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     getCashflowDataFromTransactions(transactions) {
         return transactions.map(transactionObj => {
-            transactionObj.categorization = this.categories[transactionObj.categoryId];
+            transactionObj.categorization = {};
             /** change the second level for started balance and reconciliations for the account id */
             if (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation) {
-                transactionObj.categorization = {};
                 transactionObj.categorization[this.categorization[0]] = transactionObj.accountId;
+            } else {
+                let groupId = this.categories.items[transactionObj.categoryId] ? this.categories.items[transactionObj.categoryId]['groupId'] : null;
+                /** Add group and categories numbers to the categorization list and show the names in
+                 *  customize functions by finding the names with ids
+                 */
+                transactionObj.categorization[this.categorization[0]] = groupId ? groupId.toString() : null;
+                transactionObj.categorization[this.categorization[1]] = transactionObj.categoryId;
+                transactionObj.categorization[this.categorization[2]] = transactionObj.transactionDescriptor;
             }
             return transactionObj;
         });
@@ -1393,40 +1407,36 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.bindCollapseActionOnWhiteSpaceColumn(cellObj);
         }
         if (cellObj.area === 'data') {
-            // let datePeriod = this.formattingDate(cellObj.cell.columnPath);
-            // $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
-            // $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
-            // this.statsDetailFilter = new StatsDetailFilter();
-            // this.statsDetailFilter.currencyId = this.requestFilter.currencyId;
-            // this.statsDetailFilter.cashFlowTypeId = cellObj.cell.rowPath[0];
-            // this.statsDetailFilter.categorization = this.statsDetailFilter.categorization || {};
-            // if (this.statsDetailFilter.cashFlowTypeId == StartedBalance ||
-            //     this.statsDetailFilter.cashFlowTypeId == Total ||
-            //     this.statsDetailFilter.cashFlowTypeId == Reconciliation
-            // ) {
-            //     this.statsDetailFilter.categorization[this.categorization[0]] = undefined;
-            //     if (cellObj.cell.rowPath[1] && Number.isInteger(cellObj.cell.rowPath[1])) {
-            //         this.statsDetailFilter.accountIds = [cellObj.cell.rowPath[1]];
-            //     } else {
-            //         this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
-            //         this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
-            //     }
-            // } else {
-            //     this.statsDetailFilter.accountIds = this.requestFilter.accountIds || [];
-            //     this.statsDetailFilter.bankIds = this.requestFilter.bankIds || [];
-            //     this.statsDetailFilter.categorization[this.categorization[0]] = cellObj.cell.rowPath[1];
-            // }
-            //
-            // this.statsDetailFilter.categorization[this.categorization[1]] = cellObj.cell.rowPath[2];
-            // this.statsDetailFilter.businessEntityIds = this.requestFilter.businessEntityIds;
-            // if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
-            //     this.requestFilter.endDate && datePeriod.startDate > this.requestFilter.endDate) {
-            //     this.statsDetailResult = [];
-            // } else {
-            //     this.statsDetailFilter.startDate = this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate;
-            //     this.statsDetailFilter.endDate = this.requestFilter.endDate && this.requestFilter.endDate < datePeriod.endDate ? this.requestFilter.endDate : datePeriod.endDate;
-            //     this.getStatsDetails(this.statsDetailFilter);
-            // }
+            const datePeriod = this.formattingDate(cellObj.cell.columnPath);
+
+            /** if somehow user click on the cell that is not in the filter date range - return null */
+            if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
+                this.requestFilter.endDate && datePeriod.startDate > this.requestFilter.endDate) {
+                return;
+            }
+
+            $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
+            $(cellObj.cellElement).addClass('chosenFilterForCashFlow');
+
+            const isAccountCell = [StartedBalance, Reconciliation, Total].indexOf(cellObj.cell.rowPath[0]) !== -1;
+            let accountsIds = isAccountCell && cellObj.cell.rowPath[1] ?
+                              [cellObj.cell.rowPath[1]] :
+                              this.requestFilter.accountIds || [];
+
+            this.statsDetailFilter = new StatsDetailFilter({
+                cashFlowTypeId: cellObj.cell.rowPath[0],
+                categoryGroupId: !isAccountCell ? cellObj.cell.rowPath[1] : null,
+                categoryId: cellObj.cell.rowPath[2] ? cellObj.cell.rowPath[2] : null,
+                transactionDescriptor: cellObj.cell.rowPath[3] ? cellObj.cell.rowPath[3] : null,
+                startDate: this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate,
+                endDate: this.requestFilter.endDate && this.requestFilter.endDate < datePeriod.endDate ? this.requestFilter.endDate : datePeriod.endDate,
+                currencyId: this.currencyId,
+                bankIds: this.requestFilter.bankIds || [],
+                accountIds: accountsIds,
+                businessEntityIds: this.requestFilter.businessEntityIds || []
+            });
+
+            this.getStatsDetails(this.statsDetailFilter);
         }
 
         /** If month cell has only one child (mtd or projected) - then click on it
