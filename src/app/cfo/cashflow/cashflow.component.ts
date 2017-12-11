@@ -9,7 +9,7 @@ import {
     StatsDetailFilter,
     TransactionStatsDto,
     CashFlowForecastServiceProxy,
-    CategorizationServiceProxy,
+    ClassificationServiceProxy,
     GetCategoriesOutput
 } from '@shared/service-proxies/service-proxies';
 
@@ -50,7 +50,7 @@ const StartedBalance = 'B',
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, CategorizationServiceProxy ]
+    providers: [CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy]
 })
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
@@ -276,7 +276,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 private _filtersService: FiltersService,
                 private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
                 private _cacheService: CacheService,
-                private _categorizationServiceProxy: CategorizationServiceProxy
+                private _classificationServiceProxy: ClassificationServiceProxy
     ) {
         super(injector);
         this._cacheService = this._cacheService.useStorage(0);
@@ -306,7 +306,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** Create parallel operations */
         let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData();
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels();
-        let getCategoriesObservalbel = this._categorizationServiceProxy.getCategories();
+        let getCategoriesObservalbel = this._classificationServiceProxy.getCategories();
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoriesObservalbel)
             .subscribe(result => {
                 /** Initial data handling */

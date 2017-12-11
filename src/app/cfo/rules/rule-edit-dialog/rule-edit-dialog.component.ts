@@ -4,7 +4,8 @@ import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { DxTreeListComponent, DxDataGridComponent } from 'devextreme-angular';
 
-import {CashflowServiceProxy, CategorizationServiceProxy, 
+import {
+    CashflowServiceProxy, ClassificationServiceProxy, 
     CreateRuleDto, ConditionAttributeDto, ConditionDto } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
@@ -13,7 +14,7 @@ import * as _ from 'underscore';
   selector: 'rule-dialog',
   templateUrl: 'rule-edit-dialog.component.html',
   styleUrls: ['rule-edit-dialog.component.less'],
-  providers: [CashflowServiceProxy, CategorizationServiceProxy]  
+  providers: [CashflowServiceProxy, ClassificationServiceProxy]  
 })
 export class RuleDialogComponent extends ModalDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
@@ -32,9 +33,9 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     keywords: any = [];
 
     constructor(
-      injector: Injector,
-      private _categorizationService: CategorizationServiceProxy,
-      private _cashflowServiceProxy: CashflowServiceProxy
+        injector: Injector,
+        private _classificationServiceProxy: ClassificationServiceProxy,
+        private _cashflowServiceProxy: CashflowServiceProxy
     ) { 
         super(injector);
 
@@ -42,7 +43,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
             this.banks = data.banks;
         });
 
-        _categorizationService.getCategories().subscribe((data) => {
+        _classificationServiceProxy.getCategories().subscribe((data) => {
             if (data.types)
                  _.mapObject(data.types, (item, key) => {
                     this.categories.push({
@@ -86,7 +87,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
             class: 'primary',
             action: () => {
                 if (this.validate())
-                    this._categorizationService.createRule(CreateRuleDto.fromJS({
+                    this._classificationServiceProxy.createRule(CreateRuleDto.fromJS({
                         name: this.data.title,
                         categoryId: this.getSelectedCategoryId(),
                         transactionDecriptor: this.descriptor,
