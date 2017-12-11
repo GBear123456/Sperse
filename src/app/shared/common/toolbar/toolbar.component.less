@@ -109,7 +109,7 @@
     /deep/ .dx-toolbar {
         padding: 12px 0 13px 0;
         margin: 0;
-        
+
         [accesskey="select-box"] {
             display: flex;
             align-items: center;
@@ -151,7 +151,7 @@
                 }
             }
         }
-        
+
         .dx-dropdownmenu.dx-dropdownmenu-button {
             &[accesskey="flag"] {
                 .dx-button-content {
@@ -181,6 +181,7 @@
                         letter-spacing: 0.3px;
                         color: #677380;
                         display: inline-block;
+                        font-family: Montserrat;
                     }
                     &::after {
                         right: 8px;
@@ -203,34 +204,7 @@
                     background: url('../../../../assets/common/icons/expand-rows-icon.svg') left center no-repeat;
                     padding-left: 28px;
                     padding-right: 10px;
-                }
-                &::after {
-                    content: '';
-                    display: block;
-                    background: url('../../../../assets/common/icons/down-arrow-icon.svg');
-                    position: absolute;
-                    width: 8px;
-                    height: 4px;
-                    right: 8px;
-                    top: 48%;
-                }
-            }
-            &[accesskey="expandCols"] {
-                padding: 6px 11px 7px;
-                .dx-button-content {
-                    display: none;
-                }
-                &::before {
-                    content: attr(title);
-                    font-weight: 400;
-                    font-size: 13px;
-                    line-height: 1.85;
-                    letter-spacing: 0.3px;
-                    color: #677380;
-                    display: inline-block;
-                    background: url('../../../../assets/common/icons/expand-cols-icon.svg') left center no-repeat;
-                    padding-left: 30px;
-                    padding-right: 10px;
+                    font-family: Montserrat;
                 }
                 &::after {
                     content: '';
@@ -251,7 +225,7 @@
                     background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
                 }
             }
-            
+
             .dx-button-content {
                 &::after {
                     content: '';
@@ -267,9 +241,9 @@
                     display: none;
                 }
             }
-            
+
         }
-        
+
         [accesskey="download"] {
             .dx-button-content {
                 background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
@@ -278,7 +252,7 @@
                 }
             }
         }
-        
+
         .dx-button-text {
             color: #677380;
             font-size: 13px;
@@ -286,22 +260,22 @@
             line-height: 1.85;
             letter-spacing: 0.3px;
         }
-        
+
         .dx-toolbar-before,
         .dx-toolbar-center,
         .dx-toolbar-after {
             margin: 0 15px 0 15px;
         }
-        
+
         .dx-toolbar-button {
             padding: 0;
         }
-        
+
         .dx-button {
             position: relative;
             width: stretch;
             background-color: transparent;
-            
+
             &[group-item-position="single"] {
                 margin-left: 0;
                 margin-right: 12px;
@@ -350,7 +324,7 @@
                     border-left: 1px solid #bebebe;
                 }
             }
-            
+
             &[aria-label="More"],
             &[aria-label="pen"],
             &[aria-label="folder"] {
@@ -374,7 +348,7 @@
                     padding-right: 28px;
                 }
             }
-            
+
             &:not(.dx-button-has-text) {
                 .dx-button-content {
                     position: relative;
@@ -396,7 +370,7 @@
                     right: 0;
                 }
             }
-            
+
             .dx-button-content {
                 height: 37px;
                 min-width: 50px;
