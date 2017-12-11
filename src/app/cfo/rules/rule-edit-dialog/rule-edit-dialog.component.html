@@ -6,37 +6,99 @@
                 <p>Gksdfjlsdfkfg sdkjfsdk sdfjgskdsg skjgfs sal adfasgfg sadfsdf sdfasdf sdfsafa asdfas</p>
             </div>
         </div>
-
         <div class="rule-wrapper">                
             <div class="rule">
-                <h2>{{l('IF')}}</h2>
-                <h3>{{l('RuleName')}}</h3>
-                <div class="field">
-                    <label>{{l('RuleName')}}</label>
-                    <dx-text-box
-                        name="name"
-                        [(value)]="data.name">
-                    </dx-text-box>
+                <h2>{{l('IF')}}</h2>            
+                <div class="inline-header">
+                    <h3>{{l('Original transactions Descriptors')}}</h3>
+                    <!-- dx-radio-group
+                        [dataSource]="[{text: l('are like'), value: 'like'}, {text: l('contains'), value: 'contains'}]"
+                        displayExpr="text"
+                        valueExpr="value"
+                        layout="horizontal"
+                        [(value)]="descriptorType">
+                    </dx-radio-group -->
                 </div>
+                <dx-data-grid #keywordsComponent
+                     id="keywords"
+                     [noDataText]="'No Keywords'"
+                     [dataSource]="keywords"
+                     [showColumnHeaders]="false"
+                     [showColumnLines]="false"
+                     [showRowLines]="true"
+                     [showBorders]="true"
+                     (onInitNewRow)="onInitNewKeyword($event)">
+                     <dxo-editing 
+                         mode="row"
+                         [allowUpdating]="true"
+                         [allowDeleting]="true"
+                         [allowAdding]="true">
+                    </dxo-editing>
+                    <dxi-column dataField="caption" [allowEditing]="false"></dxi-column>
+                    <dxi-column dataField="keyword"></dxi-column>
+                </dx-data-grid>
+                <span (click)="addKeywordRow()">{{l('+ Add keyword')}}</span>
 
-                <h3>{{l('DescriptorRule')}}</h3>
+                <h3>{{l('Attributes')}}</h3>
+                <dx-data-grid #attributesComponent
+                     [noDataText]="'No Attributes'"
+                     [dataSource]="attributes"
+                     [showColumnHeaders]="false"
+                     [showColumnLines]="false"
+                     [showRowLines]="true"
+                     [showBorders]="true">
+                     <dxo-editing 
+                         mode="row"
+                         [allowUpdating]="true"
+                         [allowDeleting]="true"
+                         [allowAdding]="true">
+                    </dxo-editing>
+                    <dxi-column dataField="attribute"></dxi-column>
+                    <dxi-column dataField="operation"></dxi-column>
+                    <dxi-column dataField="value"></dxi-column>
+                </dx-data-grid>
+                <span (click)="addAttributeRow()">{{l('+ Add attribute')}}</span>
+
+                <h3>{{l('Account Info')}}</h3>
                 <div class="field">
-                    <label>{{l('DescriptorRule')}}</label>
+                    <label>{{l('Bank')}}</label>
+                   <dx-select-box   
+                       placeholder=""
+                       [dataSource]="banks"
+                       valueExpr="id"
+                       displayExpr="name"
+                       [(value)]="bankId"
+                       (onValueChanged)="onBankChanged($event)">
+                   </dx-select-box>
+                </div>
+                <div class="field">
+                    <label>{{l('Account')}}</label>
+                   <dx-select-box   
+                       placeholder=""
+                       [dataSource]="accounts"
+                       valueExpr="id"
+                       displayExpr="accountName"
+                       [(value)]="accountId">
+                   </dx-select-box>
                 </div>
 
                 <h3>{{l('Amount')}}</h3>
                 <div>
                     <div class="field">
                         <label>{{l('Min')}}</label>
-                        <dx-text-box
+                        <dx-number-box
+                            format="currency"
+                            mode="number"  
                             name="min"
-                            [(value)]="data.min">
-                        </dx-text-box>
+                            [(value)]="minAmount">
+                        </dx-number-box>
                         <label>{{l('Max')}}</label>
-                        <dx-text-box
+                        <dx-number-box
+                            format="currency"
+                            mode="number"  
                             name="max"
-                            [(value)]="data.max">
-                        </dx-text-box>
+                            [(value)]="maxAmount">
+                        </dx-number-box>
                     </div>
                     <div class="field">
                         <label>{{l('Format')}}</label>
@@ -53,17 +115,17 @@
                 <div class="field">
                     <dx-text-box
                         name="descriptor"
-                        [(value)]="data.descriptor">
+                        [(value)]="descriptor">
                     </dx-text-box>
                 </div>
                 <h3>{{l('Assign transaction(s) to the following account')}}</h3>
 
                 <dx-tree-list 
-                    height="85%"
+                    height="570px"
                     [hoverStateEnabled]="true"
                     [dataSource]="categories"
                     [dataStructure]="tree"
-                    [editing]="{allowAdding: true, allowUpdating: true, mode: 'popup'}"
+                    [editing]="{allowAdding: true, allowUpdating: true}"
                     [selection]="{allowSelectAll: false, mode: 'single'}"
                     [autoExpandAll]="true"
                     keyExpr="id"

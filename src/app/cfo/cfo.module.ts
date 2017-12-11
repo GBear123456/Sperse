@@ -33,12 +33,14 @@ import {
     DxSelectBoxModule,
     DxTemplateModule,
     DxTextBoxModule,
+    DxNumberBoxModule,
     DxToolbarModule,
     DxTooltipModule,
     DxValidationSummaryModule,
     DxValidatorModule,
     DxScrollViewModule,
     DxChartModule,
+    DxRadioGroupModule,
     DxTreeListModule
 } from 'devextreme-angular';
 
@@ -59,12 +61,14 @@ import {
         DxSelectBoxModule,
         DxTemplateModule,
         DxTextBoxModule,
+        DxNumberBoxModule,
         DxToolbarModule,
         DxTooltipModule,
         DxValidationSummaryModule,
         DxValidatorModule,
         DxScrollViewModule,
         DxTreeListModule,
+        DxRadioGroupModule,
         ModalModule.forRoot(),
 
         DxChartModule,

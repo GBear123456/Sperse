@@ -57,14 +57,51 @@
             div.field {
                 display: flex;
                 justify-content: space-between;
-                dx-text-box {
+                dx-number-box {
+                    /deep/ input {
+                        text-align: center;
+                    }
+                }
+                dx-text-box, dx-select-box, dx-number-box {
                     width: 100%;
                     height: 37px;
                     /deep/ input {
-                        font-weight: 400;
-                        font-size: 16px;
                         padding: 2px 10px;
                     }
+                }
+            }
+            /deep/ .dx-widget {
+                tr.dx-edit-row .dx-texteditor-input {
+                     font-weight: 400;
+                     border-bottom: none!important;
+                }
+                td.dx-command-edit  {
+                    text-overflow: unset;
+                    a.dx-link {
+                        color: transparent!important;
+                        &.dx-link-add {
+                            background: url('../../../../assets/common/icons/add.svg') no-repeat center;
+                        }
+                        &.dx-link-edit {
+                            background: url('../../../../assets/common/icons/edit.svg') no-repeat center;
+                        }
+                        &.dx-link-delete {
+                            background: url('../../../../assets/common/icons/delete-icon.svg') no-repeat center;
+                        }
+                        &.dx-link-save {
+                            background: url('../../../../assets/common/icons/check.svg') no-repeat center;
+                        }
+                        &.dx-link-cancel {
+                            background: url('../../../../assets/common/icons/cancel.svg') no-repeat center;
+                        }
+                    }
+                }      
+                input {
+                    font-size: 15px;
+                    font-weight: 300;
+                    line-height: 1.67;
+                    letter-spacing: 0.3px;
+                    color: #424c56;
                 }
             }
             .rule {
@@ -72,10 +109,24 @@
                 position: relative;
                 label {
                   width: 130px;
-                  color: #BDC6C7;
+                  font-size: 14px;
+                  font-weight: 300;
+                  letter-spacing: 0.3px;
+                  color: #677380;
                   line-height: 36px;
                   vertical-align: top;
                   border-bottom: 1px solid #dfdfdf;
+                }
+                span {
+                    position: relative;
+                    bottom: 48px;
+                    left: 35px;
+                    font-size: 14px;
+                    font-weight: 300;
+                    line-height: 1.71;
+                    letter-spacing: 0.3px;
+                    color: #00aeef;
+                    cursor: pointer;
                 }
                 &:before { 
                     content: "";
@@ -87,15 +138,76 @@
                     border-bottom: 13px solid transparent;  
                     border-left: 15px solid #FFF;
                 }
+                .inline-header {
+                    display: flex;
+                    justify-content: space-between;
+                    & > * { 
+                        align-self: center;
+                        margin-top: 24px;
+                        margin-bottom: 16px;
+                    }
+                }
+                /deep/ dx-radio-group {
+                    .dx-item-content {
+                        font-size: 15px;
+                        font-weight: 300;
+                        line-height: 1.33;
+                        letter-spacing: 0.3px;
+                        color: #202b35;
+                    }
+                    .dx-radiobutton-checked {
+                        .dx-item-content {
+                            font-weight: 400;                          
+                        }
+                        .dx-radiobutton-icon:before {
+                            border: solid 1px #dadee1;
+                        }
+                        .dx-radiobutton-icon-dot {
+                            background: #00aeef;
+                        }
+                    }
+                }
+                /deep/ dx-data-grid {
+                    &#keywords .dx-data-row td:first-child {
+                        font-size: 15px;
+                        font-weight: 300;
+                        line-height: 1.67;
+                        letter-spacing: 0.3px;
+                        color: #424c56;
+                    }
+                    .dx-datagrid-header-panel {
+                        display: none;
+                    }
+                    .dx-datagrid-rowsview {
+                        height: auto!important;
+                        padding-bottom: 50px;
+                        border: solid 1px #dadee1;
+                        border-radius: 8px;   
+                        .dx-datagrid-nodata {
+                            width: 100%;
+                            left: 0px;
+                            top: 22px;
+                            margin-top: 0px!important;
+                            margin-right: 0px!important;
+                            margin-left: 0px!important;
+                            text-align: center;
+                        }         
+                        .dx-datagrid-content {
+                            padding: 10px 24px;
+                            .dx-datagrid-focus-overlay {
+                                height: 35px!important;
+                                border: 1px solid #00aeef;
+                            }
+                        }
+                    }
+                }
             }
             .category {  
                 width: 510px;
                 position: relative;
-                height: calc(~"100vh - 150px");
                 background-color: #F9FBFC;
-                padding: 0px 24px 0px 31px;
+                padding: 0px 24px 15px 31px;
                 border-left: 1px solid #dfdfdf;
-                transition: 1s;
                 &:before { 
                     content: "";
                     top: 25px;
@@ -107,7 +219,7 @@
                 }
                 div.field {
                     margin-bottom: 40px;  
-                }
+                }                
 
                 dx-text-box {
                     /deep/ input {
@@ -128,23 +240,21 @@
                         background-color: #ffffff;
                         .dx-treelist-content {
                             margin: 15px;
+                            .dx-treelist-focus-overlay {
+                                height: 35px!important;
+                                border: 1px solid #00aeef;
+                            }
                         }
                         table { 
                             border-collapse: separate; 
                             td {
                                 border: solid 1px #fff;
                             }
-                            tr.dx-freespace-row {
-                                padding-bottom: 100px;
-                                td {
-                                    padding-bottom: 100px;
-                                }
-                            }
                             tr.dx-data-row {
-                                td.dx-command-edit  {
+                                td.dx-command-edit a {                                    
                                     visibility: hidden;
                                 }
-                                &.dx-state-hover, &.dx-selection {
+                                &.dx-state-hover, &.dx-selection, &.dx-edit-row {
                                     cursor: pointer;
                                     td:first-child { 
                                         border-right: none!important;
@@ -161,17 +271,8 @@
                                         background-color: #F0FAFE;
                                         color: #424c56;
                                     }    
-                                    td.dx-command-edit  {
+                                    td.dx-command-edit a {
                                         visibility: visible;
-                                        a.dx-link {
-                                            color: transparent;
-                                            &.dx-link-add {
-                                                background: url('../../../../assets/common/icons/add.svg') no-repeat center;
-                                            }
-                                            &.dx-link-edit {
-                                                background: url('../../../../assets/common/icons/edit.svg') no-repeat center;
-                                            }
-                                        }
                                     }
                                 }
                                 .dx-treelist-text-content {
@@ -190,7 +291,9 @@
                     }
                 }
 
-                h2 {                    
+                h3 {                    
+                  margin-top: 34px;
+                  margin-bottom: 16px;
                 }
             }
         }
