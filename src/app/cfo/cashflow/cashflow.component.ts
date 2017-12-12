@@ -1140,6 +1140,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                (cellObj.cell.path[0] === Income || cellObj.cell.path[0] === Expense);
     }
 
+    isStartingBalanceWhiteSpace(cellObj) {
+        return cellObj.cell.isWhiteSpace &&
+            cellObj.cell.path.length === 1 &&
+            cellObj.cell.path[0] === StartedBalance;
+    }
+
     /** Whether the cell is the ending cash position data cell */
     isTotalEndingDataCell(cellObj) {
         return cellObj.cell.rowPath !== undefined &&
@@ -1222,9 +1228,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             e.cellElement.parent().addClass('endingCashPosition');
         }
 
-
         if (this.isIncomeOrExpenseWhiteSpace(e)) {
             e.cellElement.addClass('hiddenWhiteSpace');
+        }
+
+        if (this.isStartingBalanceWhiteSpace(e)) {
+            e.cellElement.addClass('startedBalanceWhiteSpace');
         }
 
         /** added css class to the income and outcomes columns */
