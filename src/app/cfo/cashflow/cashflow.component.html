@@ -3,6 +3,7 @@
 </app-headline>
 
 <cashflow-operations
+    [forecastModelsObj]="forecastModelsObj"
     (refreshCashflow)="refreshDataGrid($event)"
     (onGroupBy)="changeGroupBy($event)"
     (handleFullscreen)="toggleFullscreen(getFullscreenElement())"
@@ -18,12 +19,12 @@
           [ngClass]="{'active-filter':_filtersService.hasFilterSelected}"
           [text]="ls('Platform', 'Filters')"
           [iconSrc]="'assets/common/icons/funnel-icon.svg'"
-          (onClick)="toggleFilters($event)"
-        ></dx-button>
+          (onClick)="toggleFilters($event)">
+        </dx-button>
         <dx-button
           [text]="ls('Platform', 'Sort')"
-          [iconSrc]="'assets/common/icons/sort-icon.svg'"
-        ></dx-button>
+          [iconSrc]="'assets/common/icons/sort-icon.svg'">
+        </dx-button>
         <button class="clear-all" (click)="clearAllFilters()">
             {{ls('Platform', 'ClearAll')}}
         </button>

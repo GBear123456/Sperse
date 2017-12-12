@@ -157,6 +157,9 @@
             border: 1px solid #f9b83a !important;
             background-color: #fbf3e4 !important;
             color: #333 !important;
+            span {
+                color: #333 !important;
+            }
         }
 
         .dx-total,
@@ -248,23 +251,6 @@
         .dx-area-row-cell {
             tr {
                 position: relative;
-                &.startedBalance + tr,
-                &.incomeRow + tr {
-                    .dx-white-space-column {
-                        &:nth-child(1) {
-                            border-right: none;
-                            min-width: 0;
-                            padding-left: 0;
-                            &:after {
-                                display: none;
-                            }
-                            &:before {
-                                content: '';
-                            }
-                        }
-                    }
-                }
-
                 td {
                     text-align: left;
                     color: inherit;
@@ -291,6 +277,20 @@
                             display: block;
                             border-right: 2px solid @expendedLineColor;
                             height: 100%;
+                        }
+                        &.hiddenWhiteSpace {
+                            border-right: none;
+                            min-width: 0;
+                            padding-left: 0;
+                            &:after {
+                                display: none;
+                            }
+                            &:before {
+                                content: '';
+                            }
+                        }
+                        &.startedBalanceWhiteSpace {
+                            border-top: none
                         }
                     }
                     &.dx-total {

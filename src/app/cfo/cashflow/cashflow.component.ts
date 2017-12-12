@@ -9,7 +9,7 @@ import {
     StatsDetailFilter,
     TransactionStatsDto,
     CashFlowForecastServiceProxy,
-    CategorizationServiceProxy,
+    ClassificationServiceProxy,
     GetCategoriesOutput
 } from '@shared/service-proxies/service-proxies';
 
@@ -48,7 +48,7 @@ const StartedBalance = 'B',
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, CategorizationServiceProxy ]
+    providers: [CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy]
 })
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
@@ -260,6 +260,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         'forecast'
     ];
     fieldPathsToClick = [];
+    forecastModelsObj: { items: Array<any>, selectedForecastModel: number };
     selectedForecastModel;
     currencyId = 'USD';
     private initialData: CashFlowInitialData;
@@ -273,7 +274,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 private _filtersService: FiltersService,
                 private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
                 private _cacheService: CacheService,
-                private _categorizationServiceProxy: CategorizationServiceProxy
+                private _classificationServiceProxy: ClassificationServiceProxy
     ) {
         super(injector);
         this._cacheService = this._cacheService.useStorage(0);
@@ -284,16 +285,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     ngOnInit() {
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = this.currencyId;
-        this.headlineConfig = {
-            name: this.l('Cash Flow Statement and Forecast'),
-            icon: 'globe',
-            buttons: []
-        };
 
         /** Create parallel operations */
         let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData();
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels();
-        let getCategoriesObservalbel = this._categorizationServiceProxy.getCategories();
+        let getCategoriesObservalbel = this._classificationServiceProxy.getCategories();
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoriesObservalbel)
             .subscribe(result => {
                 /** Initial data handling */
@@ -309,7 +305,20 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 this.loadGridDataSource();
             });
 
+        this.initHeadlineConfig();
+        this.initFiltering();
+        this.addHeaderExpandClickHandling();
+    }
 
+    initHeadlineConfig() {
+        this.headlineConfig = {
+            name: this.l('Cash Flow Statement and Forecast'),
+            icon: 'globe',
+            buttons: []
+        };
+    }
+
+    initFiltering() {
         this._filtersService.apply(() => {
             for (let filter of this.filters) {
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -321,7 +330,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             this.closeTransactionsDetail();
             this.loadGridDataSource();
         });
+    }
 
+    /**
+     * Add the handling of the click on the date header cells in pivot grid
+     */
+    addHeaderExpandClickHandling() {
         window['onHeaderExpanderClick'] = function ($event) {
             let rect = $event.target.getBoundingClientRect();
             if (Math.abs($event.clientX - rect.x) < 10 &&
@@ -387,37 +401,29 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param forecastModelsResult
      */
     handleForecastModelResult(forecastModelsResult) {
-        let newToolbar = <any>this.operationsComponent.toolbarConfig.slice();
-        let itemIndex;
-        let sliderObj = newToolbar.filter(
-            toolbarItem => toolbarItem.items.some(
-                (item, index) => {
-                    let isSlider = item.name === 'slider';
-                    itemIndex = isSlider ? index : itemIndex;
-                    return isSlider;
-                })
-        )[0].items[itemIndex];
-        /** Update the items of declared slider in toolbar config with the data from the server */
-        if (sliderObj) {
-            sliderObj.options.items = forecastModelsResult.map(forecastModelItem => {
-                return {
-                    id: forecastModelItem.id,
-                    text: forecastModelItem.name
-                };
-            });
-            /** If we have the forecast model in cache - get it there, else - get the first model */
-            let cachedForecastModel = this.getForecastModel();
-            /** If we have cached forecast model and cached forecast exists in items list - then use it **/
-            this.selectedForecastModel = cachedForecastModel && sliderObj.options.items.findIndex(
-                item => item.id === cachedForecastModel.id
-            ) !== -1 ?
-                cachedForecastModel :
-                sliderObj.options.items[0];
-            sliderObj.options.selectedIndex = sliderObj.options.items.findIndex(
-                item => item.id === this.selectedForecastModel.id
-            );
-        }
-        this.operationsComponent.updatedConfig = newToolbar;
+        let items = forecastModelsResult.map(forecastModelItem => {
+            return {
+                id: forecastModelItem.id,
+                text: forecastModelItem.name
+            };
+        });
+        items.push({
+            id: 2,
+            text: 'Scenario 2'
+        });
+        /** If we have the forecast model in cache - get it there, else - get the first model */
+        let cachedForecastModel = this.getForecastModel();
+        /** If we have cached forecast model and cached forecast exists in items list - then use it **/
+        this.selectedForecastModel = cachedForecastModel && items.findIndex(item => item.id === cachedForecastModel.id) !== -1 ?
+            cachedForecastModel :
+            items[0];
+        let selectedForecastModelIndex = items.findIndex(
+            item => item.id === this.selectedForecastModel.id
+        );
+        this.forecastModelsObj = {
+            items: items,
+            selectedForecastModel: selectedForecastModelIndex
+        };
     }
 
     /**
@@ -768,7 +774,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
         $('.filter-sort-options').appendTo(event.element.find('.dx-area-description-cell'));
-        this.changeIntervalWidth();
 
         /** Calculate the amount current cells to cut the current period current cell to change current from
          *  current for year to current for the grouping period */
@@ -783,22 +788,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             $('.pivot-grid').removeClass('invisible');
         }
     }
-
-    /**
-     * Resize the width of the interval inputs
-     */
-    changeIntervalWidth() {
-        function textWidth(element): number {
-            let fakeEl = $('<span>').hide().appendTo(document.body);
-            fakeEl.text(element.val() || element.text()).css('font', element.css('font'));
-            let width = fakeEl.width();
-            fakeEl.remove();
-            return width;
-        };
-        let elemWidth = textWidth($('.groupBy .dx-texteditor-input')) + 23;
-        $('.groupBy .dx-texteditor-input').css('width', elemWidth);
-    }
-
     /**
      * Changes historical colspans depend on current, previous and forecast periods using jquery dates columns colspans
      * and historical classes that added in onCellPrepared to the dates that belongs to the current periods like
@@ -998,7 +987,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** Change historical field for different date intervals */
         let historicalField = this.getHistoricField();
         historicalField ['selector'] = value.historicalSelectionFunction();
-        this.changeIntervalWidth();
         this.collapsedStartingAndEndingBalance = false;
         this.closeTransactionsDetail();
         this.dataSource = this.getApiDataSource();
@@ -1128,9 +1116,21 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     /** Whether the cell is the ending cash position header cell */
     isTotalEndingHeaderCell(cellObj) {
         return cellObj.cell.path !== undefined &&
+               cellObj.cell.path.length === 1 &&
+               cellObj.cell.path[0] === Total &&
+               !cellObj.cell.isWhiteSpace;
+    }
+
+    isIncomeOrExpenseWhiteSpace(cellObj) {
+        return cellObj.cell.isWhiteSpace &&
+               cellObj.cell.path.length === 1 &&
+               (cellObj.cell.path[0] === Income || cellObj.cell.path[0] === Expense);
+    }
+
+    isStartingBalanceWhiteSpace(cellObj) {
+        return cellObj.cell.isWhiteSpace &&
             cellObj.cell.path.length === 1 &&
-            cellObj.cell.path[0] === Total &&
-            !cellObj.cell.isWhiteSpace;
+            cellObj.cell.path[0] === StartedBalance;
     }
 
     /** Whether the cell is the ending cash position data cell */
@@ -1204,6 +1204,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxPivotGrid/Events/#cellPrepared
      */
     onCellPrepared(e) {
+
         /** added css class to start balance row */
         if (this.isStartingBalanceHeaderColumn(e) || this.isStartingBalanceTotalDataColumn(e)) {
             e.cellElement.parent().addClass('startedBalance');
@@ -1214,9 +1215,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             e.cellElement.parent().addClass('endingCashPosition');
         }
 
-        /** added css class to reconsiliation row */
-        if (this.isReconciliationHeaderCell(e) || this.isReconciliationDataCell(e)) {
-            e.cellElement.parent().addClass('reconciliation');
+        if (this.isIncomeOrExpenseWhiteSpace(e)) {
+            e.cellElement.addClass('hiddenWhiteSpace');
+        }
+
+        if (this.isStartingBalanceWhiteSpace(e)) {
+            e.cellElement.addClass('startedBalanceWhiteSpace');
         }
 
         /** added css class to the income and outcomes columns */

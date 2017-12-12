@@ -40,12 +40,12 @@ export class AccountServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -65,7 +65,7 @@ export class AccountServiceProxy {
     }
 
     protected processIsTenantAvailable(response: Response): Observable<IsTenantAvailableOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -88,12 +88,12 @@ export class AccountServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -113,7 +113,7 @@ export class AccountServiceProxy {
     }
 
     protected processRegister(response: Response): Observable<RegisterOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -136,12 +136,12 @@ export class AccountServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -161,7 +161,7 @@ export class AccountServiceProxy {
     }
 
     protected processSendPasswordResetCode(response: Response): Observable<SendPasswordResetCodeOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -184,12 +184,12 @@ export class AccountServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -209,7 +209,7 @@ export class AccountServiceProxy {
     }
 
     protected processResetPassword(response: Response): Observable<ResetPasswordOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -232,12 +232,12 @@ export class AccountServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -257,7 +257,7 @@ export class AccountServiceProxy {
     }
 
     protected processSendEmailActivationLink(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -277,12 +277,12 @@ export class AccountServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -302,7 +302,7 @@ export class AccountServiceProxy {
     }
 
     protected processActivateEmail(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -322,12 +322,12 @@ export class AccountServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -347,7 +347,7 @@ export class AccountServiceProxy {
     }
 
     protected processImpersonate(response: Response): Observable<ImpersonateOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -370,12 +370,12 @@ export class AccountServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -395,7 +395,7 @@ export class AccountServiceProxy {
     }
 
     protected processBackToImpersonator(response: Response): Observable<ImpersonateOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -418,12 +418,12 @@ export class AccountServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -443,7 +443,7 @@ export class AccountServiceProxy {
     }
 
     protected processSwitchToLinkedAccount(response: Response): Observable<SwitchToLinkedAccountOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -466,12 +466,12 @@ export class AccountServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -491,7 +491,7 @@ export class AccountServiceProxy {
     }
 
     protected processCancelUserAccount(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -521,38 +521,38 @@ export class AuditLogServiceProxy {
     getAuditLogs(startDate: moment.Moment, endDate: moment.Moment, userName: string, serviceName: string, methodName: string, browserInfo: string, hasException: boolean, minExecutionDuration: number, maxExecutionDuration: number, sorting: string, maxResultCount: number, skipCount: number): Observable<PagedResultDtoOfAuditLogListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/AuditLog/GetAuditLogs?";
         if (startDate !== undefined)
-            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&";
+            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
         if (endDate !== undefined)
-            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&";
+            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
         if (userName !== undefined)
-            url_ += "UserName=" + encodeURIComponent("" + userName) + "&";
+            url_ += "UserName=" + encodeURIComponent("" + userName) + "&"; 
         if (serviceName !== undefined)
-            url_ += "ServiceName=" + encodeURIComponent("" + serviceName) + "&";
+            url_ += "ServiceName=" + encodeURIComponent("" + serviceName) + "&"; 
         if (methodName !== undefined)
-            url_ += "MethodName=" + encodeURIComponent("" + methodName) + "&";
+            url_ += "MethodName=" + encodeURIComponent("" + methodName) + "&"; 
         if (browserInfo !== undefined)
-            url_ += "BrowserInfo=" + encodeURIComponent("" + browserInfo) + "&";
+            url_ += "BrowserInfo=" + encodeURIComponent("" + browserInfo) + "&"; 
         if (hasException !== undefined)
-            url_ += "HasException=" + encodeURIComponent("" + hasException) + "&";
+            url_ += "HasException=" + encodeURIComponent("" + hasException) + "&"; 
         if (minExecutionDuration !== undefined)
-            url_ += "MinExecutionDuration=" + encodeURIComponent("" + minExecutionDuration) + "&";
+            url_ += "MinExecutionDuration=" + encodeURIComponent("" + minExecutionDuration) + "&"; 
         if (maxExecutionDuration !== undefined)
-            url_ += "MaxExecutionDuration=" + encodeURIComponent("" + maxExecutionDuration) + "&";
+            url_ += "MaxExecutionDuration=" + encodeURIComponent("" + maxExecutionDuration) + "&"; 
         if (sorting !== undefined)
-            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
-            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
         if (skipCount !== undefined)
-            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -572,7 +572,7 @@ export class AuditLogServiceProxy {
     }
 
     protected processGetAuditLogs(response: Response): Observable<PagedResultDtoOfAuditLogListDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -593,38 +593,38 @@ export class AuditLogServiceProxy {
     getAuditLogsToExcel(startDate: moment.Moment, endDate: moment.Moment, userName: string, serviceName: string, methodName: string, browserInfo: string, hasException: boolean, minExecutionDuration: number, maxExecutionDuration: number, sorting: string, maxResultCount: number, skipCount: number): Observable<FileDto> {
         let url_ = this.baseUrl + "/api/services/Platform/AuditLog/GetAuditLogsToExcel?";
         if (startDate !== undefined)
-            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&";
+            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
         if (endDate !== undefined)
-            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&";
+            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
         if (userName !== undefined)
-            url_ += "UserName=" + encodeURIComponent("" + userName) + "&";
+            url_ += "UserName=" + encodeURIComponent("" + userName) + "&"; 
         if (serviceName !== undefined)
-            url_ += "ServiceName=" + encodeURIComponent("" + serviceName) + "&";
+            url_ += "ServiceName=" + encodeURIComponent("" + serviceName) + "&"; 
         if (methodName !== undefined)
-            url_ += "MethodName=" + encodeURIComponent("" + methodName) + "&";
+            url_ += "MethodName=" + encodeURIComponent("" + methodName) + "&"; 
         if (browserInfo !== undefined)
-            url_ += "BrowserInfo=" + encodeURIComponent("" + browserInfo) + "&";
+            url_ += "BrowserInfo=" + encodeURIComponent("" + browserInfo) + "&"; 
         if (hasException !== undefined)
-            url_ += "HasException=" + encodeURIComponent("" + hasException) + "&";
+            url_ += "HasException=" + encodeURIComponent("" + hasException) + "&"; 
         if (minExecutionDuration !== undefined)
-            url_ += "MinExecutionDuration=" + encodeURIComponent("" + minExecutionDuration) + "&";
+            url_ += "MinExecutionDuration=" + encodeURIComponent("" + minExecutionDuration) + "&"; 
         if (maxExecutionDuration !== undefined)
-            url_ += "MaxExecutionDuration=" + encodeURIComponent("" + maxExecutionDuration) + "&";
+            url_ += "MaxExecutionDuration=" + encodeURIComponent("" + maxExecutionDuration) + "&"; 
         if (sorting !== undefined)
-            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
-            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
         if (skipCount !== undefined)
-            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -644,7 +644,7 @@ export class AuditLogServiceProxy {
     }
 
     protected processGetAuditLogsToExcel(response: Response): Observable<FileDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -679,12 +679,12 @@ export class BankAccountsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -704,7 +704,7 @@ export class BankAccountsServiceProxy {
     }
 
     protected processRecalculateAllBankAccountDailyStats(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -722,26 +722,26 @@ export class BankAccountsServiceProxy {
     getStats(currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
         if (currency !== undefined)
-            url_ += "Currency=" + encodeURIComponent("" + currency) + "&";
+            url_ += "Currency=" + encodeURIComponent("" + currency) + "&"; 
         if (forecastModelId !== undefined)
-            url_ += "ForecastModelId=" + encodeURIComponent("" + forecastModelId) + "&";
+            url_ += "ForecastModelId=" + encodeURIComponent("" + forecastModelId) + "&"; 
         if (accounts !== undefined)
             accounts.forEach(item => { url_ += "Accounts=" + encodeURIComponent("" + item) + "&"; });
         if (startDate !== undefined)
-            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&";
+            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
         if (endDate !== undefined)
-            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&";
+            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
         if (groupBy !== undefined)
-            url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&";
+            url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -761,7 +761,7 @@ export class BankAccountsServiceProxy {
     }
 
     protected processGetStats(response: Response): Observable<BankAccountDailyStatDto[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -798,18 +798,18 @@ export class BaseCommercePushNotificationHandlerServiceProxy {
     handle(merchant_username: string, push_notification: string): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/BaseCommercePushNotificationHandler/Handle?";
         if (merchant_username !== undefined)
-            url_ += "merchant_username=" + encodeURIComponent("" + merchant_username) + "&";
+            url_ += "merchant_username=" + encodeURIComponent("" + merchant_username) + "&"; 
         if (push_notification !== undefined)
-            url_ += "push_notification=" + encodeURIComponent("" + push_notification) + "&";
+            url_ += "push_notification=" + encodeURIComponent("" + push_notification) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -829,7 +829,7 @@ export class BaseCommercePushNotificationHandlerServiceProxy {
     }
 
     protected processHandle(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -861,12 +861,12 @@ export class CachingServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -886,7 +886,7 @@ export class CachingServiceProxy {
     }
 
     protected processGetAllCaches(response: Response): Observable<ListResultDtoOfCacheDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -909,12 +909,12 @@ export class CachingServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -934,7 +934,7 @@ export class CachingServiceProxy {
     }
 
     protected processClearCache(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -954,12 +954,12 @@ export class CachingServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -979,7 +979,7 @@ export class CachingServiceProxy {
     }
 
     protected processClearAllCaches(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -1011,12 +1011,12 @@ export class CashflowServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(filter ? filter.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -1036,7 +1036,7 @@ export class CashflowServiceProxy {
     }
 
     protected processGetStats(response: Response): Observable<CashFlowStatsDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -1059,12 +1059,12 @@ export class CashflowServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -1084,7 +1084,7 @@ export class CashflowServiceProxy {
     }
 
     protected processGetCashFlowInitialData(response: Response): Observable<CashFlowInitialData> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -1107,12 +1107,12 @@ export class CashflowServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(filter ? filter.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -1132,7 +1132,7 @@ export class CashflowServiceProxy {
     }
 
     protected processGetStatsDetails(response: Response): Observable<CashFlowStatsDetailDto[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -1154,107 +1154,17 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    recategorize(recategorizeInput: RecategorizeInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/Recategorize";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(recategorizeInput ? recategorizeInput.toJSON() : null);
-
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processRecategorize(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processRecategorize(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processRecategorize(response: Response): Observable<void> {
-        const status = response.status;
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    recategorizeAll(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/RecategorizeAll";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processRecategorizeAll(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processRecategorizeAll(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processRecategorizeAll(response: Response): Observable<void> {
-        const status = response.status;
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
     getCashFlowGridSettings(): Observable<CashFlowGridSettingsDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetCashFlowGridSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -1274,7 +1184,7 @@ export class CashflowServiceProxy {
     }
 
     protected processGetCashFlowGridSettings(response: Response): Observable<CashFlowGridSettingsDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -1297,12 +1207,12 @@ export class CashflowServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(settings ? settings.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -1322,7 +1232,7 @@ export class CashflowServiceProxy {
     }
 
     protected processSaveCashFlowGridSettings(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -1354,12 +1264,12 @@ export class CashFlowForecastServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -1379,7 +1289,7 @@ export class CashFlowForecastServiceProxy {
     }
 
     protected processGetModels(response: Response): Observable<ForecastModelDto[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -1406,12 +1316,12 @@ export class CashFlowForecastServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -1431,7 +1341,7 @@ export class CashFlowForecastServiceProxy {
     }
 
     protected processAddForecast(response: Response): Observable<number> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -1454,12 +1364,12 @@ export class CashFlowForecastServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -1479,7 +1389,7 @@ export class CashFlowForecastServiceProxy {
     }
 
     protected processUpdateForecast(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -1497,16 +1407,16 @@ export class CashFlowForecastServiceProxy {
     deleteForecast(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/DeleteForecast?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -1526,447 +1436,7 @@ export class CashFlowForecastServiceProxy {
     }
 
     protected processDeleteForecast(response: Response): Observable<void> {
-        const status = response.status;
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-}
-
-@Injectable()
-export class CategorizationServiceProxy {
-    private http: Http;
-    private baseUrl: string;
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getCategories(): Observable<GetCategoriesOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Categorization/GetCategories";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetCategories(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetCategories(response_);
-                } catch (e) {
-                    return <Observable<GetCategoriesOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<GetCategoriesOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetCategories(response: Response): Observable<GetCategoriesOutput> {
-        const status = response.status;
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: GetCategoriesOutput = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetCategoriesOutput.fromJS(resultData200) : new GetCategoriesOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<GetCategoriesOutput>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getRules(input: any): Observable<RuleDto[]> {
-        let url_ = this.baseUrl + "/api/services/CFO/Categorization/GetRules?";
-        if (input !== undefined)
-            url_ += "input=" + encodeURIComponent("" + input) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetRules(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetRules(response_);
-                } catch (e) {
-                    return <Observable<RuleDto[]>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<RuleDto[]>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetRules(response: Response): Observable<RuleDto[]> {
-        const status = response.status;
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: RuleDto[] = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(RuleDto.fromJS(item));
-            }
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<RuleDto[]>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    createRule(input: CreateRuleDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Categorization/CreateRule";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input ? input.toJSON() : null);
-
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processCreateRule(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processCreateRule(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processCreateRule(response: Response): Observable<void> {
-        const status = response.status;
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getRuleForEdit(id: number): Observable<EditRuleDto> {
-        let url_ = this.baseUrl + "/api/services/CFO/Categorization/GetRuleForEdit?";
-        if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetRuleForEdit(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetRuleForEdit(response_);
-                } catch (e) {
-                    return <Observable<EditRuleDto>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<EditRuleDto>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetRuleForEdit(response: Response): Observable<EditRuleDto> {
-        const status = response.status;
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: EditRuleDto = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? EditRuleDto.fromJS(resultData200) : new EditRuleDto();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<EditRuleDto>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    editRule(input: EditRuleDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Categorization/EditRule";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input ? input.toJSON() : null);
-
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processEditRule(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processEditRule(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processEditRule(response: Response): Observable<void> {
-        const status = response.status;
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    moveRule(input: MoveRuleDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Categorization/MoveRule";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input ? input.toJSON() : null);
-
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processMoveRule(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processMoveRule(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processMoveRule(response: Response): Observable<void> {
-        const status = response.status;
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    deleteRule(applyOption: ApplyOption, id: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Categorization/DeleteRule?";
-        if (applyOption !== undefined)
-            url_ += "ApplyOption=" + encodeURIComponent("" + applyOption) + "&";
-        if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-
-        let options_ = {
-            body: content_,
-            method: "delete",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processDeleteRule(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processDeleteRule(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processDeleteRule(response: Response): Observable<void> {
-        const status = response.status;
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    addMapping(input: AddMappingDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Categorization/AddMapping";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input ? input.toJSON() : null);
-
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processAddMapping(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processAddMapping(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processAddMapping(response: Response): Observable<void> {
-        const status = response.status;
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    deleteMapping(name: string): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Categorization/DeleteMapping?";
-        if (name !== undefined)
-            url_ += "Name=" + encodeURIComponent("" + name) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-
-        let options_ = {
-            body: content_,
-            method: "delete",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processDeleteMapping(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processDeleteMapping(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processDeleteMapping(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -1998,12 +1468,12 @@ export class ChatServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2023,7 +1493,7 @@ export class ChatServiceProxy {
     }
 
     protected processGetUserChatFriendsWithSettings(response: Response): Observable<GetUserChatFriendsWithSettingsOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2044,20 +1514,20 @@ export class ChatServiceProxy {
     getUserChatMessages(tenantId: number, userId: number, minMessageId: number): Observable<ListResultDtoOfChatMessageDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Chat/GetUserChatMessages?";
         if (tenantId !== undefined)
-            url_ += "TenantId=" + encodeURIComponent("" + tenantId) + "&";
+            url_ += "TenantId=" + encodeURIComponent("" + tenantId) + "&"; 
         if (userId !== undefined)
-            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
         if (minMessageId !== undefined)
-            url_ += "MinMessageId=" + encodeURIComponent("" + minMessageId) + "&";
+            url_ += "MinMessageId=" + encodeURIComponent("" + minMessageId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2077,7 +1547,7 @@ export class ChatServiceProxy {
     }
 
     protected processGetUserChatMessages(response: Response): Observable<ListResultDtoOfChatMessageDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2100,12 +1570,12 @@ export class ChatServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2125,7 +1595,776 @@ export class ChatServiceProxy {
     }
 
     protected processMarkAllUnreadMessagesOfUserAsRead(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class ClassificationServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getCategories(): Observable<GetCategoriesOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/GetCategories";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCategories(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCategories(response_);
+                } catch (e) {
+                    return <Observable<GetCategoriesOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetCategoriesOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCategories(response: Response): Observable<GetCategoriesOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: GetCategoriesOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetCategoriesOutput.fromJS(resultData200) : new GetCategoriesOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<GetCategoriesOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getRules(input: any): Observable<RuleDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/GetRules?";
+        if (input !== undefined)
+            url_ += "input=" + encodeURIComponent("" + input) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetRules(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetRules(response_);
+                } catch (e) {
+                    return <Observable<RuleDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<RuleDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetRules(response: Response): Observable<RuleDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: RuleDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(RuleDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<RuleDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    createRule(input: CreateRuleDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateRule";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateRule(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateRule(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateRule(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getRuleForEdit(id: number): Observable<EditRuleDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/GetRuleForEdit?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetRuleForEdit(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetRuleForEdit(response_);
+                } catch (e) {
+                    return <Observable<EditRuleDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<EditRuleDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetRuleForEdit(response: Response): Observable<EditRuleDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: EditRuleDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? EditRuleDto.fromJS(resultData200) : new EditRuleDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<EditRuleDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    editRule(input: EditRuleDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/EditRule";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processEditRule(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processEditRule(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processEditRule(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    moveRule(input: MoveRuleDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/MoveRule";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processMoveRule(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processMoveRule(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processMoveRule(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteRule(applyOption: ApplyOption, id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteRule?";
+        if (applyOption !== undefined)
+            url_ += "ApplyOption=" + encodeURIComponent("" + applyOption) + "&"; 
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteRule(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteRule(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteRule(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    addMapping(input: AddMappingDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/AddMapping";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processAddMapping(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAddMapping(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAddMapping(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteMapping(name: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteMapping?";
+        if (name !== undefined)
+            url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteMapping(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteMapping(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteMapping(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    createCategoryGroup(input: CreateCategoryGroupInput): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateCategoryGroup";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateCategoryGroup(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateCategoryGroup(response_);
+                } catch (e) {
+                    return <Observable<number>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateCategoryGroup(response: Response): Observable<number> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: number = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<number>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateCategoryGroup(input: UpdateCategoryGroupInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategoryGroup";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateCategoryGroup(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateCategoryGroup(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateCategoryGroup(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteCategoryGroup(id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteCategoryGroup?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteCategoryGroup(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteCategoryGroup(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteCategoryGroup(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    createCategory(input: CreateCategoryInput): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateCategory";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateCategory(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateCategory(response_);
+                } catch (e) {
+                    return <Observable<number>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateCategory(response: Response): Observable<number> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: number = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<number>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateCategory(input: UpdateCategoryInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategory";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateCategory(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateCategory(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateCategory(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteCategory(moveToCategoryId: number, deleteAllReferences: boolean, id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteCategory?";
+        if (moveToCategoryId !== undefined)
+            url_ += "MoveToCategoryId=" + encodeURIComponent("" + moveToCategoryId) + "&"; 
+        if (deleteAllReferences !== undefined)
+            url_ += "DeleteAllReferences=" + encodeURIComponent("" + deleteAllReferences) + "&"; 
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteCategory(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteCategory(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteCategory(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    reclassify(recategorizeInput: RecategorizeInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/Reclassify";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(recategorizeInput ? recategorizeInput.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processReclassify(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processReclassify(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processReclassify(response: Response): Observable<void> {
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2155,16 +2394,16 @@ export class CommentServiceProxy {
     getComments(threadId: number): Observable<CommentDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/GetComments?";
         if (threadId !== undefined)
-            url_ += "threadId=" + encodeURIComponent("" + threadId) + "&";
+            url_ += "threadId=" + encodeURIComponent("" + threadId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2184,7 +2423,7 @@ export class CommentServiceProxy {
     }
 
     protected processGetComments(response: Response): Observable<CommentDto[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2211,12 +2450,12 @@ export class CommentServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2236,7 +2475,7 @@ export class CommentServiceProxy {
     }
 
     protected processCreateComment(response: Response): Observable<CreateCommentOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2259,12 +2498,12 @@ export class CommentServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2284,7 +2523,7 @@ export class CommentServiceProxy {
     }
 
     protected processUpdateComment(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2302,16 +2541,16 @@ export class CommentServiceProxy {
     deleteComment(commentId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/DeleteComment?";
         if (commentId !== undefined)
-            url_ += "commentId=" + encodeURIComponent("" + commentId) + "&";
+            url_ += "commentId=" + encodeURIComponent("" + commentId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2331,7 +2570,7 @@ export class CommentServiceProxy {
     }
 
     protected processDeleteComment(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2351,12 +2590,12 @@ export class CommentServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2376,7 +2615,7 @@ export class CommentServiceProxy {
     }
 
     protected processCreateTransactionCommentThread(response: Response): Observable<CreateTransactionCommentThreadOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2399,12 +2638,12 @@ export class CommentServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2424,7 +2663,7 @@ export class CommentServiceProxy {
     }
 
     protected processCreateCashFlowCommentThread(response: Response): Observable<CreateCashFlowCommentThreadOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2437,6 +2676,51 @@ export class CommentServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<CreateCashFlowCommentThreadOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    setResolved(input: SetResolvedInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/SetResolved";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSetResolved(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSetResolved(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSetResolved(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
     }
 }
 
@@ -2457,16 +2741,16 @@ export class CommonLookupServiceProxy {
     getEditionsForCombobox(onlyFreeItems: boolean): Observable<ListResultDtoOfSubscribableEditionComboboxItemDto> {
         let url_ = this.baseUrl + "/api/services/Platform/CommonLookup/GetEditionsForCombobox?";
         if (onlyFreeItems !== undefined)
-            url_ += "onlyFreeItems=" + encodeURIComponent("" + onlyFreeItems) + "&";
+            url_ += "onlyFreeItems=" + encodeURIComponent("" + onlyFreeItems) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2486,7 +2770,7 @@ export class CommonLookupServiceProxy {
     }
 
     protected processGetEditionsForCombobox(response: Response): Observable<ListResultDtoOfSubscribableEditionComboboxItemDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2509,12 +2793,12 @@ export class CommonLookupServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2534,7 +2818,7 @@ export class CommonLookupServiceProxy {
     }
 
     protected processFindUsers(response: Response): Observable<PagedResultDtoOfNameValueDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2557,12 +2841,12 @@ export class CommonLookupServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2582,7 +2866,7 @@ export class CommonLookupServiceProxy {
     }
 
     protected processGetDefaultEditionName(response: Response): Observable<GetDefaultEditionNameOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2617,12 +2901,12 @@ export class ContactAddressServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2642,7 +2926,7 @@ export class ContactAddressServiceProxy {
     }
 
     protected processCreateContactAddress(response: Response): Observable<CreateContactAddressOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2665,12 +2949,12 @@ export class ContactAddressServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2690,7 +2974,7 @@ export class ContactAddressServiceProxy {
     }
 
     protected processUpdateContactAddress(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2708,18 +2992,18 @@ export class ContactAddressServiceProxy {
     deleteContactAddress(contactId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactAddress/DeleteContactAddress?";
         if (contactId !== undefined)
-            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&";
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2739,7 +3023,7 @@ export class ContactAddressServiceProxy {
     }
 
     protected processDeleteContactAddress(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2759,12 +3043,12 @@ export class ContactAddressServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2784,7 +3068,7 @@ export class ContactAddressServiceProxy {
     }
 
     protected processGetAddressUsageTypes(response: Response): Observable<ListResultDtoOfAddressUsageTypeDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2807,12 +3091,12 @@ export class ContactAddressServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2832,7 +3116,7 @@ export class ContactAddressServiceProxy {
     }
 
     protected processGetAddressOwnershipTypes(response: Response): Observable<ListResultDtoOfAddressOwnershipTypeDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2865,16 +3149,16 @@ export class ContactBusinessServiceProxy {
     getContactBusiness(personId: number): Observable<GetContactBusinessOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactBusiness/GetContactBusiness?";
         if (personId !== undefined)
-            url_ += "PersonId=" + encodeURIComponent("" + personId) + "&";
+            url_ += "PersonId=" + encodeURIComponent("" + personId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2894,7 +3178,7 @@ export class ContactBusinessServiceProxy {
     }
 
     protected processGetContactBusiness(response: Response): Observable<GetContactBusinessOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2917,12 +3201,12 @@ export class ContactBusinessServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2942,7 +3226,7 @@ export class ContactBusinessServiceProxy {
     }
 
     protected processCreateContactBusiness(response: Response): Observable<CreateContactBusinessOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -2965,12 +3249,12 @@ export class ContactBusinessServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -2990,7 +3274,7 @@ export class ContactBusinessServiceProxy {
     }
 
     protected processUpdateContactBusiness(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3008,16 +3292,16 @@ export class ContactBusinessServiceProxy {
     deleteContactBusiness(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactBusiness/DeleteContactBusiness?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3037,7 +3321,7 @@ export class ContactBusinessServiceProxy {
     }
 
     protected processDeleteContactBusiness(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3057,12 +3341,12 @@ export class ContactBusinessServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3082,7 +3366,7 @@ export class ContactBusinessServiceProxy {
     }
 
     protected processGetPersonOrgRelationTypes(response: Response): Observable<PersonOrgRelationTypeDto[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3121,12 +3405,12 @@ export class ContactEmailServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3146,7 +3430,7 @@ export class ContactEmailServiceProxy {
     }
 
     protected processCreateContactEmail(response: Response): Observable<CreateContactEmailOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3169,12 +3453,12 @@ export class ContactEmailServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3194,7 +3478,7 @@ export class ContactEmailServiceProxy {
     }
 
     protected processUpdateContactEmail(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3212,18 +3496,18 @@ export class ContactEmailServiceProxy {
     deleteContactEmail(contactId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactEmail/DeleteContactEmail?";
         if (contactId !== undefined)
-            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&";
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3243,7 +3527,7 @@ export class ContactEmailServiceProxy {
     }
 
     protected processDeleteContactEmail(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3263,12 +3547,12 @@ export class ContactEmailServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3288,7 +3572,7 @@ export class ContactEmailServiceProxy {
     }
 
     protected processGetEmailUsageTypes(response: Response): Observable<ListResultDtoOfEmailUsageTypeDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3321,16 +3605,16 @@ export class ContactEmploymentServiceProxy {
     get(personId: number): Observable<GetContactEmploymentOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactEmployment/Get?";
         if (personId !== undefined)
-            url_ += "PersonId=" + encodeURIComponent("" + personId) + "&";
+            url_ += "PersonId=" + encodeURIComponent("" + personId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3350,7 +3634,7 @@ export class ContactEmploymentServiceProxy {
     }
 
     protected processGet(response: Response): Observable<GetContactEmploymentOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3373,12 +3657,12 @@ export class ContactEmploymentServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3398,7 +3682,7 @@ export class ContactEmploymentServiceProxy {
     }
 
     protected processCreate(response: Response): Observable<CreateContactEmploymentOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3421,12 +3705,12 @@ export class ContactEmploymentServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3446,7 +3730,7 @@ export class ContactEmploymentServiceProxy {
     }
 
     protected processUpdate(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3464,16 +3748,16 @@ export class ContactEmploymentServiceProxy {
     delete(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactEmployment/Delete?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3493,7 +3777,7 @@ export class ContactEmploymentServiceProxy {
     }
 
     protected processDelete(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3525,12 +3809,12 @@ export class ContactLinkServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3550,7 +3834,7 @@ export class ContactLinkServiceProxy {
     }
 
     protected processCreateContactLink(response: Response): Observable<CreateContactLinkOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3573,12 +3857,12 @@ export class ContactLinkServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3598,7 +3882,7 @@ export class ContactLinkServiceProxy {
     }
 
     protected processUpdateContactLink(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3616,18 +3900,18 @@ export class ContactLinkServiceProxy {
     deleteContactLink(contactId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactLink/DeleteContactLink?";
         if (contactId !== undefined)
-            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&";
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3647,7 +3931,7 @@ export class ContactLinkServiceProxy {
     }
 
     protected processDeleteContactLink(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3667,12 +3951,12 @@ export class ContactLinkServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3692,7 +3976,7 @@ export class ContactLinkServiceProxy {
     }
 
     protected processGetContactLinkTypes(response: Response): Observable<ListResultDtoOfContactLinkTypeDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3727,12 +4011,12 @@ export class ContactPhoneServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3752,7 +4036,7 @@ export class ContactPhoneServiceProxy {
     }
 
     protected processCreateContactPhone(response: Response): Observable<CreateContactPhoneOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3775,12 +4059,12 @@ export class ContactPhoneServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3800,7 +4084,7 @@ export class ContactPhoneServiceProxy {
     }
 
     protected processUpdateContactPhone(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3818,18 +4102,18 @@ export class ContactPhoneServiceProxy {
     deleteContactPhone(contactId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactPhone/DeleteContactPhone?";
         if (contactId !== undefined)
-            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&";
+            url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3849,7 +4133,7 @@ export class ContactPhoneServiceProxy {
     }
 
     protected processDeleteContactPhone(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3869,12 +4153,12 @@ export class ContactPhoneServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3894,7 +4178,7 @@ export class ContactPhoneServiceProxy {
     }
 
     protected processGetPhoneUsageTypes(response: Response): Observable<ListResultDtoOfPhoneUsageTypeDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3929,12 +4213,12 @@ export class CountryServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -3954,7 +4238,7 @@ export class CountryServiceProxy {
     }
 
     protected processGetCountries(response: Response): Observable<CountryDto[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -3979,16 +4263,16 @@ export class CountryServiceProxy {
     getCountryStates(code: string): Observable<CountryStateDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Country/GetCountryStates?";
         if (code !== undefined)
-            url_ += "code=" + encodeURIComponent("" + code) + "&";
+            url_ += "code=" + encodeURIComponent("" + code) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4008,7 +4292,7 @@ export class CountryServiceProxy {
     }
 
     protected processGetCountryStates(response: Response): Observable<CountryStateDto[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4045,16 +4329,16 @@ export class CreditReportServiceProxy {
     downloadCreditReport(reportId: number): Observable<string> {
         let url_ = this.baseUrl + "/Reports/CreditReport/DownloadCreditReport?";
         if (reportId !== undefined)
-            url_ += "reportId=" + encodeURIComponent("" + reportId) + "&";
+            url_ += "reportId=" + encodeURIComponent("" + reportId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4074,7 +4358,7 @@ export class CreditReportServiceProxy {
     }
 
     protected processDownloadCreditReport(response: Response): Observable<string> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4095,16 +4379,16 @@ export class CreditReportServiceProxy {
     getLastCreditReport(dateTime: moment.Moment): Observable<CreditReportOutput> {
         let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetLastCreditReport?";
         if (dateTime !== undefined)
-            url_ += "DateTime=" + encodeURIComponent("" + dateTime.toJSON()) + "&";
+            url_ += "DateTime=" + encodeURIComponent("" + dateTime.toJSON()) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4124,7 +4408,7 @@ export class CreditReportServiceProxy {
     }
 
     protected processGetLastCreditReport(response: Response): Observable<CreditReportOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4145,18 +4429,18 @@ export class CreditReportServiceProxy {
     getAccountInfo(creditReport: number, accountIds: number[]): Observable<AccountInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetAccountInfo?";
         if (creditReport !== undefined)
-            url_ += "creditReport=" + encodeURIComponent("" + creditReport) + "&";
+            url_ += "creditReport=" + encodeURIComponent("" + creditReport) + "&"; 
         if (accountIds !== undefined)
             accountIds.forEach(item => { url_ += "accountIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4176,7 +4460,7 @@ export class CreditReportServiceProxy {
     }
 
     protected processGetAccountInfo(response: Response): Observable<AccountInfoDto[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4201,18 +4485,18 @@ export class CreditReportServiceProxy {
     getCreditReportHistory(periodYears: number, reportId: number): Observable<KeyValuePairOfStringAndListOfScoreHistoryDto[]> {
         let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetCreditReportHistory?";
         if (periodYears !== undefined)
-            url_ += "periodYears=" + encodeURIComponent("" + periodYears) + "&";
+            url_ += "periodYears=" + encodeURIComponent("" + periodYears) + "&"; 
         if (reportId !== undefined)
-            url_ += "reportId=" + encodeURIComponent("" + reportId) + "&";
+            url_ += "reportId=" + encodeURIComponent("" + reportId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4232,7 +4516,7 @@ export class CreditReportServiceProxy {
     }
 
     protected processGetCreditReportHistory(response: Response): Observable<KeyValuePairOfStringAndListOfScoreHistoryDto[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4259,12 +4543,12 @@ export class CreditReportServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4284,7 +4568,7 @@ export class CreditReportServiceProxy {
     }
 
     protected processLoadAlerts(response: Response): Observable<AlertDto[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4323,12 +4607,12 @@ export class CreditSimulatorServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4348,7 +4632,7 @@ export class CreditSimulatorServiceProxy {
     }
 
     protected processGetScoreSimulatorInfo(response: Response): Observable<ScoreSimulatorInfoDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4371,12 +4655,12 @@ export class CreditSimulatorServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(simulatorData ? simulatorData.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4396,7 +4680,7 @@ export class CreditSimulatorServiceProxy {
     }
 
     protected processSimulateScore(response: Response): Observable<number> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4429,16 +4713,16 @@ export class CustomersServiceProxy {
     getContactInfo(contactId: number): Observable<ContactInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Customers/GetContactInfo?";
         if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&";
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4458,7 +4742,7 @@ export class CustomersServiceProxy {
     }
 
     protected processGetContactInfo(response: Response): Observable<ContactInfoDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4479,16 +4763,16 @@ export class CustomersServiceProxy {
     getCustomerInfo(customerId: number): Observable<CustomerInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Customers/GetCustomerInfo?";
         if (customerId !== undefined)
-            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&";
+            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4508,7 +4792,7 @@ export class CustomersServiceProxy {
     }
 
     protected processGetCustomerInfo(response: Response): Observable<CustomerInfoDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4531,12 +4815,12 @@ export class CustomersServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4556,7 +4840,7 @@ export class CustomersServiceProxy {
     }
 
     protected processCreateCustomer(response: Response): Observable<CreateCustomerOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4591,12 +4875,12 @@ export class EditionServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4616,7 +4900,7 @@ export class EditionServiceProxy {
     }
 
     protected processGetEditions(response: Response): Observable<ListResultDtoOfEditionListDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4637,16 +4921,16 @@ export class EditionServiceProxy {
     getEditionForEdit(id: number): Observable<GetEditionEditOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Edition/GetEditionForEdit?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4666,7 +4950,7 @@ export class EditionServiceProxy {
     }
 
     protected processGetEditionForEdit(response: Response): Observable<GetEditionEditOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4689,12 +4973,12 @@ export class EditionServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4714,7 +4998,7 @@ export class EditionServiceProxy {
     }
 
     protected processCreateOrUpdateEdition(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4732,16 +5016,16 @@ export class EditionServiceProxy {
     deleteEdition(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/Edition/DeleteEdition?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4761,7 +5045,7 @@ export class EditionServiceProxy {
     }
 
     protected processDeleteEdition(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4779,20 +5063,20 @@ export class EditionServiceProxy {
     getEditionComboboxItems(selectedEditionId: number, addAllItem: boolean, onlyFreeItems: boolean): Observable<SubscribableEditionComboboxItemDto[]> {
         let url_ = this.baseUrl + "/api/services/Platform/Edition/GetEditionComboboxItems?";
         if (selectedEditionId !== undefined)
-            url_ += "selectedEditionId=" + encodeURIComponent("" + selectedEditionId) + "&";
+            url_ += "selectedEditionId=" + encodeURIComponent("" + selectedEditionId) + "&"; 
         if (addAllItem !== undefined)
-            url_ += "addAllItem=" + encodeURIComponent("" + addAllItem) + "&";
+            url_ += "addAllItem=" + encodeURIComponent("" + addAllItem) + "&"; 
         if (onlyFreeItems !== undefined)
-            url_ += "onlyFreeItems=" + encodeURIComponent("" + onlyFreeItems) + "&";
+            url_ += "onlyFreeItems=" + encodeURIComponent("" + onlyFreeItems) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4812,7 +5096,7 @@ export class EditionServiceProxy {
     }
 
     protected processGetEditionComboboxItems(response: Response): Observable<SubscribableEditionComboboxItemDto[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4849,18 +5133,18 @@ export class FinancialInformationServiceProxy {
     getSetupAccountsLink(css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSetupAccountsLink?";
         if (css !== undefined)
-            url_ += "css=" + encodeURIComponent("" + css) + "&";
+            url_ += "css=" + encodeURIComponent("" + css) + "&"; 
         if (errorPage !== undefined)
-            url_ += "errorPage=" + encodeURIComponent("" + errorPage) + "&";
+            url_ += "errorPage=" + encodeURIComponent("" + errorPage) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4880,7 +5164,7 @@ export class FinancialInformationServiceProxy {
     }
 
     protected processGetSetupAccountsLink(response: Response): Observable<GetSetupAccountsLinkOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4901,16 +5185,16 @@ export class FinancialInformationServiceProxy {
     syncAllAccounts(syncHistory: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
         if (syncHistory !== undefined)
-            url_ += "syncHistory=" + encodeURIComponent("" + syncHistory) + "&";
+            url_ += "syncHistory=" + encodeURIComponent("" + syncHistory) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4930,7 +5214,7 @@ export class FinancialInformationServiceProxy {
     }
 
     protected processSyncAllAccounts(response: Response): Observable<SyncAllAccountsOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -4953,12 +5237,12 @@ export class FinancialInformationServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -4978,7 +5262,7 @@ export class FinancialInformationServiceProxy {
     }
 
     protected processGetSyncProgress(response: Response): Observable<SyncProgressOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5013,12 +5297,12 @@ export class FriendshipServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5038,7 +5322,7 @@ export class FriendshipServiceProxy {
     }
 
     protected processCreateFriendshipRequest(response: Response): Observable<FriendDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5061,12 +5345,12 @@ export class FriendshipServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5086,7 +5370,7 @@ export class FriendshipServiceProxy {
     }
 
     protected processCreateFriendshipRequestByUserName(response: Response): Observable<FriendDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5109,12 +5393,12 @@ export class FriendshipServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5134,7 +5418,7 @@ export class FriendshipServiceProxy {
     }
 
     protected processBlockUser(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5154,12 +5438,12 @@ export class FriendshipServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5179,7 +5463,7 @@ export class FriendshipServiceProxy {
     }
 
     protected processUnblockUser(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5199,12 +5483,12 @@ export class FriendshipServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5224,7 +5508,7 @@ export class FriendshipServiceProxy {
     }
 
     protected processAcceptFriendshipRequest(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5254,20 +5538,20 @@ export class HostDashboardServiceProxy {
     getDashboardStatisticsData(incomeStatisticsDateInterval: IncomeStatisticsDateInterval, startDate: moment.Moment, endDate: moment.Moment): Observable<HostDashboardData> {
         let url_ = this.baseUrl + "/api/services/Platform/HostDashboard/GetDashboardStatisticsData?";
         if (incomeStatisticsDateInterval !== undefined)
-            url_ += "IncomeStatisticsDateInterval=" + encodeURIComponent("" + incomeStatisticsDateInterval) + "&";
+            url_ += "IncomeStatisticsDateInterval=" + encodeURIComponent("" + incomeStatisticsDateInterval) + "&"; 
         if (startDate !== undefined)
-            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&";
+            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
         if (endDate !== undefined)
-            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&";
+            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5287,7 +5571,7 @@ export class HostDashboardServiceProxy {
     }
 
     protected processGetDashboardStatisticsData(response: Response): Observable<HostDashboardData> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5308,20 +5592,20 @@ export class HostDashboardServiceProxy {
     getIncomeStatistics(incomeStatisticsDateInterval: IncomeStatisticsDateInterval2, startDate: moment.Moment, endDate: moment.Moment): Observable<GetIncomeStatisticsDataOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/HostDashboard/GetIncomeStatistics?";
         if (incomeStatisticsDateInterval !== undefined)
-            url_ += "IncomeStatisticsDateInterval=" + encodeURIComponent("" + incomeStatisticsDateInterval) + "&";
+            url_ += "IncomeStatisticsDateInterval=" + encodeURIComponent("" + incomeStatisticsDateInterval) + "&"; 
         if (startDate !== undefined)
-            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&";
+            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
         if (endDate !== undefined)
-            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&";
+            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5341,7 +5625,7 @@ export class HostDashboardServiceProxy {
     }
 
     protected processGetIncomeStatistics(response: Response): Observable<GetIncomeStatisticsDataOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5362,18 +5646,18 @@ export class HostDashboardServiceProxy {
     getEditionTenantStatistics(startDate: moment.Moment, endDate: moment.Moment): Observable<GetEditionTenantStatisticsOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/HostDashboard/GetEditionTenantStatistics?";
         if (startDate !== undefined)
-            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&";
+            url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
         if (endDate !== undefined)
-            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&";
+            url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5393,7 +5677,7 @@ export class HostDashboardServiceProxy {
     }
 
     protected processGetEditionTenantStatistics(response: Response): Observable<GetEditionTenantStatisticsOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5428,12 +5712,12 @@ export class HostSettingsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5453,7 +5737,7 @@ export class HostSettingsServiceProxy {
     }
 
     protected processGetAllSettings(response: Response): Observable<HostSettingsEditDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5476,12 +5760,12 @@ export class HostSettingsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5501,7 +5785,7 @@ export class HostSettingsServiceProxy {
     }
 
     protected processUpdateAllSettings(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5521,12 +5805,12 @@ export class HostSettingsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5546,7 +5830,7 @@ export class HostSettingsServiceProxy {
     }
 
     protected processSendTestEmail(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5578,12 +5862,12 @@ export class KBAServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5603,7 +5887,7 @@ export class KBAServiceProxy {
     }
 
     protected processRequestKBA(response: Response): Observable<RequestKBAOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5626,12 +5910,12 @@ export class KBAServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5651,7 +5935,7 @@ export class KBAServiceProxy {
     }
 
     protected processProcessKBAResponse(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5683,12 +5967,12 @@ export class LanguageServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5708,7 +5992,7 @@ export class LanguageServiceProxy {
     }
 
     protected processGetLanguages(response: Response): Observable<GetLanguagesOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5729,16 +6013,16 @@ export class LanguageServiceProxy {
     getLanguageForEdit(id: number): Observable<GetLanguageForEditOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Language/GetLanguageForEdit?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5758,7 +6042,7 @@ export class LanguageServiceProxy {
     }
 
     protected processGetLanguageForEdit(response: Response): Observable<GetLanguageForEditOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5781,12 +6065,12 @@ export class LanguageServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5806,7 +6090,7 @@ export class LanguageServiceProxy {
     }
 
     protected processCreateOrUpdateLanguage(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5824,16 +6108,16 @@ export class LanguageServiceProxy {
     deleteLanguage(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/Language/DeleteLanguage?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5853,7 +6137,7 @@ export class LanguageServiceProxy {
     }
 
     protected processDeleteLanguage(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5873,12 +6157,12 @@ export class LanguageServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5898,7 +6182,7 @@ export class LanguageServiceProxy {
     }
 
     protected processSetDefaultLanguage(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5916,30 +6200,30 @@ export class LanguageServiceProxy {
     getLanguageTexts(maxResultCount: number, skipCount: number, sorting: string, sourceName: string, baseLanguageName: string, targetLanguageName: string, targetValueFilter: string, filterText: string): Observable<PagedResultDtoOfLanguageTextListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Language/GetLanguageTexts?";
         if (maxResultCount !== undefined)
-            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
         if (skipCount !== undefined)
-            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         if (sorting !== undefined)
-            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (sourceName !== undefined)
-            url_ += "SourceName=" + encodeURIComponent("" + sourceName) + "&";
+            url_ += "SourceName=" + encodeURIComponent("" + sourceName) + "&"; 
         if (baseLanguageName !== undefined)
-            url_ += "BaseLanguageName=" + encodeURIComponent("" + baseLanguageName) + "&";
+            url_ += "BaseLanguageName=" + encodeURIComponent("" + baseLanguageName) + "&"; 
         if (targetLanguageName !== undefined)
-            url_ += "TargetLanguageName=" + encodeURIComponent("" + targetLanguageName) + "&";
+            url_ += "TargetLanguageName=" + encodeURIComponent("" + targetLanguageName) + "&"; 
         if (targetValueFilter !== undefined)
-            url_ += "TargetValueFilter=" + encodeURIComponent("" + targetValueFilter) + "&";
+            url_ += "TargetValueFilter=" + encodeURIComponent("" + targetValueFilter) + "&"; 
         if (filterText !== undefined)
-            url_ += "FilterText=" + encodeURIComponent("" + filterText) + "&";
+            url_ += "FilterText=" + encodeURIComponent("" + filterText) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -5959,7 +6243,7 @@ export class LanguageServiceProxy {
     }
 
     protected processGetLanguageTexts(response: Response): Observable<PagedResultDtoOfLanguageTextListDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -5982,12 +6266,12 @@ export class LanguageServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6007,7 +6291,7 @@ export class LanguageServiceProxy {
     }
 
     protected processUpdateLanguageText(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6039,12 +6323,12 @@ export class LeadServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(cancelLeadInfo ? cancelLeadInfo.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6064,7 +6348,7 @@ export class LeadServiceProxy {
     }
 
     protected processCancelLead(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6084,12 +6368,12 @@ export class LeadServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6109,7 +6393,7 @@ export class LeadServiceProxy {
     }
 
     protected processGetCancellationReasons(response: Response): Observable<ListResultDtoOfLeadCancellationReasonDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6132,12 +6416,12 @@ export class LeadServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6157,7 +6441,7 @@ export class LeadServiceProxy {
     }
 
     protected processGetLeadStats(response: Response): Observable<LeadStatsDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6180,12 +6464,12 @@ export class LeadServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(model ? model.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6205,7 +6489,7 @@ export class LeadServiceProxy {
     }
 
     protected processSubmitContactUsRequest(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6235,16 +6519,16 @@ export class MemberServiceProxy {
     selectPackage(packageId: number): Observable<SelectPackageResponseDto> {
         let url_ = this.baseUrl + "/api/services/CreditReport/Member/SelectPackage?";
         if (packageId !== undefined)
-            url_ += "packageId=" + encodeURIComponent("" + packageId) + "&";
+            url_ += "packageId=" + encodeURIComponent("" + packageId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6264,7 +6548,7 @@ export class MemberServiceProxy {
     }
 
     protected processSelectPackage(response: Response): Observable<SelectPackageResponseDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6287,12 +6571,12 @@ export class MemberServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(memberInfo ? memberInfo.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6312,7 +6596,7 @@ export class MemberServiceProxy {
     }
 
     protected processSubmitMemberInfo(response: Response): Observable<SubmitMemberInfoResultDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6335,12 +6619,12 @@ export class MemberServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6360,7 +6644,7 @@ export class MemberServiceProxy {
     }
 
     protected processPaymentAuthorize(response: Response): Observable<PaymentAuthorizeResponseDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6383,12 +6667,12 @@ export class MemberServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6408,7 +6692,7 @@ export class MemberServiceProxy {
     }
 
     protected processRegisterMember(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6428,12 +6712,12 @@ export class MemberServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6453,7 +6737,7 @@ export class MemberServiceProxy {
     }
 
     protected processCancelMembership(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6483,20 +6767,20 @@ export class NotificationServiceProxy {
     getUserNotifications(state: State, maxResultCount: number, skipCount: number): Observable<GetNotificationsOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Notification/GetUserNotifications?";
         if (state !== undefined)
-            url_ += "State=" + encodeURIComponent("" + state) + "&";
+            url_ += "State=" + encodeURIComponent("" + state) + "&"; 
         if (maxResultCount !== undefined)
-            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
         if (skipCount !== undefined)
-            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6516,7 +6800,7 @@ export class NotificationServiceProxy {
     }
 
     protected processGetUserNotifications(response: Response): Observable<GetNotificationsOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6539,12 +6823,12 @@ export class NotificationServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6564,7 +6848,7 @@ export class NotificationServiceProxy {
     }
 
     protected processSetAllNotificationsAsRead(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6584,12 +6868,12 @@ export class NotificationServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6609,7 +6893,7 @@ export class NotificationServiceProxy {
     }
 
     protected processSetNotificationAsRead(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6629,12 +6913,12 @@ export class NotificationServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6654,7 +6938,7 @@ export class NotificationServiceProxy {
     }
 
     protected processGetNotificationSettings(response: Response): Observable<GetNotificationSettingsOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6677,12 +6961,12 @@ export class NotificationServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6702,7 +6986,7 @@ export class NotificationServiceProxy {
     }
 
     protected processUpdateNotificationSettings(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6734,12 +7018,12 @@ export class OrderServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6759,7 +7043,7 @@ export class OrderServiceProxy {
     }
 
     protected processGetFiltersInitialData(response: Response): Observable<OrderFiltersInitialData> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6794,12 +7078,12 @@ export class OrganizationUnitServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6819,7 +7103,7 @@ export class OrganizationUnitServiceProxy {
     }
 
     protected processGetOrganizationUnits(response: Response): Observable<ListResultDtoOfOrganizationUnitDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6840,22 +7124,22 @@ export class OrganizationUnitServiceProxy {
     getOrganizationUnitUsers(id: number, sorting: string, maxResultCount: number, skipCount: number): Observable<PagedResultDtoOfOrganizationUnitUserListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/GetOrganizationUnitUsers?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         if (sorting !== undefined)
-            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
-            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
         if (skipCount !== undefined)
-            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6875,7 +7159,7 @@ export class OrganizationUnitServiceProxy {
     }
 
     protected processGetOrganizationUnitUsers(response: Response): Observable<PagedResultDtoOfOrganizationUnitUserListDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6898,12 +7182,12 @@ export class OrganizationUnitServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6923,7 +7207,7 @@ export class OrganizationUnitServiceProxy {
     }
 
     protected processCreateOrganizationUnit(response: Response): Observable<OrganizationUnitDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6946,12 +7230,12 @@ export class OrganizationUnitServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -6971,7 +7255,7 @@ export class OrganizationUnitServiceProxy {
     }
 
     protected processUpdateOrganizationUnit(response: Response): Observable<OrganizationUnitDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -6994,12 +7278,12 @@ export class OrganizationUnitServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7019,7 +7303,7 @@ export class OrganizationUnitServiceProxy {
     }
 
     protected processMoveOrganizationUnit(response: Response): Observable<OrganizationUnitDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7040,16 +7324,16 @@ export class OrganizationUnitServiceProxy {
     deleteOrganizationUnit(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/DeleteOrganizationUnit?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7069,7 +7353,7 @@ export class OrganizationUnitServiceProxy {
     }
 
     protected processDeleteOrganizationUnit(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7089,12 +7373,12 @@ export class OrganizationUnitServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7114,7 +7398,7 @@ export class OrganizationUnitServiceProxy {
     }
 
     protected processAddUserToOrganizationUnit(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7132,18 +7416,18 @@ export class OrganizationUnitServiceProxy {
     removeUserFromOrganizationUnit(userId: number, organizationUnitId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/RemoveUserFromOrganizationUnit?";
         if (userId !== undefined)
-            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
         if (organizationUnitId !== undefined)
-            url_ += "OrganizationUnitId=" + encodeURIComponent("" + organizationUnitId) + "&";
+            url_ += "OrganizationUnitId=" + encodeURIComponent("" + organizationUnitId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7163,7 +7447,7 @@ export class OrganizationUnitServiceProxy {
     }
 
     protected processRemoveUserFromOrganizationUnit(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7183,12 +7467,12 @@ export class OrganizationUnitServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7208,7 +7492,7 @@ export class OrganizationUnitServiceProxy {
     }
 
     protected processIsInOrganizationUnit(response: Response): Observable<boolean> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7243,12 +7527,12 @@ export class PackageServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7268,7 +7552,7 @@ export class PackageServiceProxy {
     }
 
     protected processGetAll(response: Response): Observable<ListResultDtoOfPackageDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7301,16 +7585,16 @@ export class PaymentServiceProxy {
     getPaymentInfo(upgradeEditionId: number): Observable<PaymentInfoDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Payment/GetPaymentInfo?";
         if (upgradeEditionId !== undefined)
-            url_ += "UpgradeEditionId=" + encodeURIComponent("" + upgradeEditionId) + "&";
+            url_ += "UpgradeEditionId=" + encodeURIComponent("" + upgradeEditionId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7330,7 +7614,7 @@ export class PaymentServiceProxy {
     }
 
     protected processGetPaymentInfo(response: Response): Observable<PaymentInfoDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7353,12 +7637,12 @@ export class PaymentServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7378,7 +7662,7 @@ export class PaymentServiceProxy {
     }
 
     protected processCreatePayment(response: Response): Observable<any> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7407,12 +7691,12 @@ export class PaymentServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7432,7 +7716,7 @@ export class PaymentServiceProxy {
     }
 
     protected processExecutePayment(response: Response): Observable<any> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7473,12 +7757,12 @@ export class PermissionServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7498,7 +7782,7 @@ export class PermissionServiceProxy {
     }
 
     protected processGetAllPermissions(response: Response): Observable<ListResultDtoOfFlatPermissionWithLevelDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7531,16 +7815,16 @@ export class PipelineServiceProxy {
     getPipelinesData(purposeId: string): Observable<PipelineData[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelinesData?";
         if (purposeId !== undefined)
-            url_ += "purposeId=" + encodeURIComponent("" + purposeId) + "&";
+            url_ += "purposeId=" + encodeURIComponent("" + purposeId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7560,7 +7844,7 @@ export class PipelineServiceProxy {
     }
 
     protected processGetPipelinesData(response: Response): Observable<PipelineData[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7585,16 +7869,16 @@ export class PipelineServiceProxy {
     getPipelinesFullData(purposeId: string): Observable<PipelineDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelinesFullData?";
         if (purposeId !== undefined)
-            url_ += "purposeId=" + encodeURIComponent("" + purposeId) + "&";
+            url_ += "purposeId=" + encodeURIComponent("" + purposeId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7614,7 +7898,7 @@ export class PipelineServiceProxy {
     }
 
     protected processGetPipelinesFullData(response: Response): Observable<PipelineDto[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7639,16 +7923,16 @@ export class PipelineServiceProxy {
     getPipelineDefinition(pipelineId: number): Observable<PipelineDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinition?";
         if (pipelineId !== undefined)
-            url_ += "PipelineId=" + encodeURIComponent("" + pipelineId) + "&";
+            url_ += "PipelineId=" + encodeURIComponent("" + pipelineId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7668,7 +7952,7 @@ export class PipelineServiceProxy {
     }
 
     protected processGetPipelineDefinition(response: Response): Observable<PipelineDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7703,12 +7987,12 @@ export class ProfileServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7728,7 +8012,7 @@ export class ProfileServiceProxy {
     }
 
     protected processGetCurrentUserProfileForEdit(response: Response): Observable<CurrentUserProfileEditDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7751,12 +8035,12 @@ export class ProfileServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7776,7 +8060,7 @@ export class ProfileServiceProxy {
     }
 
     protected processUpdateCurrentUserProfile(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7796,12 +8080,12 @@ export class ProfileServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7821,7 +8105,7 @@ export class ProfileServiceProxy {
     }
 
     protected processChangePassword(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7841,12 +8125,12 @@ export class ProfileServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7866,7 +8150,7 @@ export class ProfileServiceProxy {
     }
 
     protected processUpdateProfilePicture(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7886,12 +8170,12 @@ export class ProfileServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7911,7 +8195,7 @@ export class ProfileServiceProxy {
     }
 
     protected processGetPasswordComplexitySetting(response: Response): Observable<GetPasswordComplexitySettingOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7934,12 +8218,12 @@ export class ProfileServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -7959,7 +8243,7 @@ export class ProfileServiceProxy {
     }
 
     protected processGetProfilePicture(response: Response): Observable<GetProfilePictureOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -7980,20 +8264,20 @@ export class ProfileServiceProxy {
     getFriendProfilePictureById(profilePictureId: string, userId: number, tenantId: number): Observable<GetProfilePictureOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Profile/GetFriendProfilePictureById?";
         if (profilePictureId !== undefined)
-            url_ += "ProfilePictureId=" + encodeURIComponent("" + profilePictureId) + "&";
+            url_ += "ProfilePictureId=" + encodeURIComponent("" + profilePictureId) + "&"; 
         if (userId !== undefined)
-            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
         if (tenantId !== undefined)
-            url_ += "TenantId=" + encodeURIComponent("" + tenantId) + "&";
+            url_ += "TenantId=" + encodeURIComponent("" + tenantId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8013,7 +8297,7 @@ export class ProfileServiceProxy {
     }
 
     protected processGetFriendProfilePictureById(response: Response): Observable<GetProfilePictureOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8034,16 +8318,16 @@ export class ProfileServiceProxy {
     getProfilePictureById(profilePictureId: string): Observable<GetProfilePictureOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Profile/GetProfilePictureById?";
         if (profilePictureId !== undefined)
-            url_ += "profilePictureId=" + encodeURIComponent("" + profilePictureId) + "&";
+            url_ += "profilePictureId=" + encodeURIComponent("" + profilePictureId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8063,7 +8347,7 @@ export class ProfileServiceProxy {
     }
 
     protected processGetProfilePictureById(response: Response): Observable<GetProfilePictureOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8086,12 +8370,12 @@ export class ProfileServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8111,7 +8395,7 @@ export class ProfileServiceProxy {
     }
 
     protected processChangeLanguage(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8141,16 +8425,16 @@ export class RoleServiceProxy {
     getRoles(permission: string): Observable<ListResultDtoOfRoleListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Role/GetRoles?";
         if (permission !== undefined)
-            url_ += "Permission=" + encodeURIComponent("" + permission) + "&";
+            url_ += "Permission=" + encodeURIComponent("" + permission) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8170,7 +8454,7 @@ export class RoleServiceProxy {
     }
 
     protected processGetRoles(response: Response): Observable<ListResultDtoOfRoleListDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8191,16 +8475,16 @@ export class RoleServiceProxy {
     getRoleForEdit(id: number): Observable<GetRoleForEditOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Role/GetRoleForEdit?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8220,7 +8504,7 @@ export class RoleServiceProxy {
     }
 
     protected processGetRoleForEdit(response: Response): Observable<GetRoleForEditOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8243,12 +8527,12 @@ export class RoleServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8268,7 +8552,7 @@ export class RoleServiceProxy {
     }
 
     protected processCreateOrUpdateRole(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8286,16 +8570,16 @@ export class RoleServiceProxy {
     deleteRole(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/Role/DeleteRole?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8315,7 +8599,7 @@ export class RoleServiceProxy {
     }
 
     protected processDeleteRole(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8347,12 +8631,12 @@ export class SessionServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8372,7 +8656,7 @@ export class SessionServiceProxy {
     }
 
     protected processGetCurrentLoginInformations(response: Response): Observable<GetCurrentLoginInformationsOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8395,12 +8679,12 @@ export class SessionServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8420,7 +8704,7 @@ export class SessionServiceProxy {
     }
 
     protected processUpdateUserSignInToken(response: Response): Observable<UpdateUserSignInTokenOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8443,12 +8727,12 @@ export class SessionServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8468,7 +8752,7 @@ export class SessionServiceProxy {
     }
 
     protected processGetUserInformation(response: Response): Observable<GetUserInformationOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8501,16 +8785,16 @@ export class TenancyServiceProxy {
     getTenancies(customerId: number): Observable<PagedResultDtoOfTenancyListDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancies?";
         if (customerId !== undefined)
-            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&";
+            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8530,7 +8814,7 @@ export class TenancyServiceProxy {
     }
 
     protected processGetTenancies(response: Response): Observable<PagedResultDtoOfTenancyListDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8553,12 +8837,12 @@ export class TenancyServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8578,7 +8862,7 @@ export class TenancyServiceProxy {
     }
 
     protected processCreateTenancy(response: Response): Observable<number> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8599,18 +8883,18 @@ export class TenancyServiceProxy {
     getTenancyForEdit(id: number, customerId: number): Observable<GetTenancyForEditOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancyForEdit?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         if (customerId !== undefined)
-            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&";
+            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8630,7 +8914,7 @@ export class TenancyServiceProxy {
     }
 
     protected processGetTenancyForEdit(response: Response): Observable<GetTenancyForEditOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8653,12 +8937,12 @@ export class TenancyServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8678,7 +8962,7 @@ export class TenancyServiceProxy {
     }
 
     protected processUpdateTenancy(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8696,18 +8980,18 @@ export class TenancyServiceProxy {
     deleteTenancy(id: number, customerId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Tenancy/DeleteTenancy?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         if (customerId !== undefined)
-            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&";
+            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8727,7 +9011,7 @@ export class TenancyServiceProxy {
     }
 
     protected processDeleteTenancy(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8757,34 +9041,34 @@ export class TenantServiceProxy {
     getTenants(filter: string, subscriptionEndDateStart: moment.Moment, subscriptionEndDateEnd: moment.Moment, creationDateStart: moment.Moment, creationDateEnd: moment.Moment, editionId: number, editionIdSpecified: boolean, sorting: string, maxResultCount: number, skipCount: number): Observable<PagedResultDtoOfTenantListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Tenant/GetTenants?";
         if (filter !== undefined)
-            url_ += "Filter=" + encodeURIComponent("" + filter) + "&";
+            url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
         if (subscriptionEndDateStart !== undefined)
-            url_ += "SubscriptionEndDateStart=" + encodeURIComponent("" + subscriptionEndDateStart.toJSON()) + "&";
+            url_ += "SubscriptionEndDateStart=" + encodeURIComponent("" + subscriptionEndDateStart.toJSON()) + "&"; 
         if (subscriptionEndDateEnd !== undefined)
-            url_ += "SubscriptionEndDateEnd=" + encodeURIComponent("" + subscriptionEndDateEnd.toJSON()) + "&";
+            url_ += "SubscriptionEndDateEnd=" + encodeURIComponent("" + subscriptionEndDateEnd.toJSON()) + "&"; 
         if (creationDateStart !== undefined)
-            url_ += "CreationDateStart=" + encodeURIComponent("" + creationDateStart.toJSON()) + "&";
+            url_ += "CreationDateStart=" + encodeURIComponent("" + creationDateStart.toJSON()) + "&"; 
         if (creationDateEnd !== undefined)
-            url_ += "CreationDateEnd=" + encodeURIComponent("" + creationDateEnd.toJSON()) + "&";
+            url_ += "CreationDateEnd=" + encodeURIComponent("" + creationDateEnd.toJSON()) + "&"; 
         if (editionId !== undefined)
-            url_ += "EditionId=" + encodeURIComponent("" + editionId) + "&";
+            url_ += "EditionId=" + encodeURIComponent("" + editionId) + "&"; 
         if (editionIdSpecified !== undefined)
-            url_ += "EditionIdSpecified=" + encodeURIComponent("" + editionIdSpecified) + "&";
+            url_ += "EditionIdSpecified=" + encodeURIComponent("" + editionIdSpecified) + "&"; 
         if (sorting !== undefined)
-            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
-            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
         if (skipCount !== undefined)
-            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8804,7 +9088,7 @@ export class TenantServiceProxy {
     }
 
     protected processGetTenants(response: Response): Observable<PagedResultDtoOfTenantListDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8827,12 +9111,12 @@ export class TenantServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8852,7 +9136,7 @@ export class TenantServiceProxy {
     }
 
     protected processCreateTenant(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8870,16 +9154,16 @@ export class TenantServiceProxy {
     getTenantForEdit(id: number): Observable<TenantEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Tenant/GetTenantForEdit?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8899,7 +9183,7 @@ export class TenantServiceProxy {
     }
 
     protected processGetTenantForEdit(response: Response): Observable<TenantEditDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8922,12 +9206,12 @@ export class TenantServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8947,7 +9231,7 @@ export class TenantServiceProxy {
     }
 
     protected processUpdateTenant(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -8965,16 +9249,16 @@ export class TenantServiceProxy {
     deleteTenant(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/Tenant/DeleteTenant?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -8994,7 +9278,7 @@ export class TenantServiceProxy {
     }
 
     protected processDeleteTenant(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9012,16 +9296,16 @@ export class TenantServiceProxy {
     getTenantFeaturesForEdit(id: number): Observable<GetTenantFeaturesEditOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Tenant/GetTenantFeaturesForEdit?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9041,7 +9325,7 @@ export class TenantServiceProxy {
     }
 
     protected processGetTenantFeaturesForEdit(response: Response): Observable<GetTenantFeaturesEditOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9064,12 +9348,12 @@ export class TenantServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9089,7 +9373,7 @@ export class TenantServiceProxy {
     }
 
     protected processUpdateTenantFeatures(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9109,12 +9393,12 @@ export class TenantServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9134,7 +9418,7 @@ export class TenantServiceProxy {
     }
 
     protected processResetTenantSpecificFeatures(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9154,12 +9438,12 @@ export class TenantServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9179,7 +9463,7 @@ export class TenantServiceProxy {
     }
 
     protected processUnlockTenantAdmin(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9209,18 +9493,18 @@ export class TenantCustomizationServiceProxy {
     getTenantCustomization(customizationGroupName: string, customizationName: string): Observable<TenantCustomizationDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/GetTenantCustomization?";
         if (customizationGroupName !== undefined)
-            url_ += "CustomizationGroupName=" + encodeURIComponent("" + customizationGroupName) + "&";
+            url_ += "CustomizationGroupName=" + encodeURIComponent("" + customizationGroupName) + "&"; 
         if (customizationName !== undefined)
-            url_ += "CustomizationName=" + encodeURIComponent("" + customizationName) + "&";
+            url_ += "CustomizationName=" + encodeURIComponent("" + customizationName) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9240,7 +9524,7 @@ export class TenantCustomizationServiceProxy {
     }
 
     protected processGetTenantCustomization(response: Response): Observable<TenantCustomizationDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9263,12 +9547,12 @@ export class TenantCustomizationServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9288,7 +9572,7 @@ export class TenantCustomizationServiceProxy {
     }
 
     protected processAddTenantCustomization(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9320,12 +9604,12 @@ export class TenantDashboardServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9345,7 +9629,7 @@ export class TenantDashboardServiceProxy {
     }
 
     protected processGetMemberActivity(response: Response): Observable<GetMemberActivityOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9366,16 +9650,16 @@ export class TenantDashboardServiceProxy {
     getDashboardData(salesSummaryDatePeriod: SalesSummaryDatePeriod): Observable<GetDashboardDataOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantDashboard/GetDashboardData?";
         if (salesSummaryDatePeriod !== undefined)
-            url_ += "SalesSummaryDatePeriod=" + encodeURIComponent("" + salesSummaryDatePeriod) + "&";
+            url_ += "SalesSummaryDatePeriod=" + encodeURIComponent("" + salesSummaryDatePeriod) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9395,7 +9679,7 @@ export class TenantDashboardServiceProxy {
     }
 
     protected processGetDashboardData(response: Response): Observable<GetDashboardDataOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9416,16 +9700,16 @@ export class TenantDashboardServiceProxy {
     getSalesSummary(salesSummaryDatePeriod: SalesSummaryDatePeriod2): Observable<GetSalesSummaryOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantDashboard/GetSalesSummary?";
         if (salesSummaryDatePeriod !== undefined)
-            url_ += "SalesSummaryDatePeriod=" + encodeURIComponent("" + salesSummaryDatePeriod) + "&";
+            url_ += "SalesSummaryDatePeriod=" + encodeURIComponent("" + salesSummaryDatePeriod) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9445,7 +9729,7 @@ export class TenantDashboardServiceProxy {
     }
 
     protected processGetSalesSummary(response: Response): Observable<GetSalesSummaryOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9466,16 +9750,16 @@ export class TenantDashboardServiceProxy {
     getWorldMap(input: any): Observable<GetWorldMapOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantDashboard/GetWorldMap?";
         if (input !== undefined)
-            url_ += "input=" + encodeURIComponent("" + input) + "&";
+            url_ += "input=" + encodeURIComponent("" + input) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9495,7 +9779,7 @@ export class TenantDashboardServiceProxy {
     }
 
     protected processGetWorldMap(response: Response): Observable<GetWorldMapOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9516,16 +9800,16 @@ export class TenantDashboardServiceProxy {
     getServerStats(input: any): Observable<GetServerStatsOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantDashboard/GetServerStats?";
         if (input !== undefined)
-            url_ += "input=" + encodeURIComponent("" + input) + "&";
+            url_ += "input=" + encodeURIComponent("" + input) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9545,7 +9829,7 @@ export class TenantDashboardServiceProxy {
     }
 
     protected processGetServerStats(response: Response): Observable<GetServerStatsOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9566,16 +9850,16 @@ export class TenantDashboardServiceProxy {
     getGeneralStats(input: any): Observable<GetGeneralStatsOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantDashboard/GetGeneralStats?";
         if (input !== undefined)
-            url_ += "input=" + encodeURIComponent("" + input) + "&";
+            url_ += "input=" + encodeURIComponent("" + input) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9595,7 +9879,7 @@ export class TenantDashboardServiceProxy {
     }
 
     protected processGetGeneralStats(response: Response): Observable<GetGeneralStatsOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9628,16 +9912,16 @@ export class TenantHostServiceProxy {
     getTenantApiHost(tenantHostType: TenantHostType): Observable<TenantApiHostOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantHost/GetTenantApiHost?";
         if (tenantHostType !== undefined)
-            url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&";
+            url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9657,7 +9941,7 @@ export class TenantHostServiceProxy {
     }
 
     protected processGetTenantApiHost(response: Response): Observable<TenantApiHostOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9680,12 +9964,12 @@ export class TenantHostServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9705,7 +9989,7 @@ export class TenantHostServiceProxy {
     }
 
     protected processCheckHostNameDnsMapping(response: Response): Observable<CheckHostNameDnsMappingOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9728,12 +10012,12 @@ export class TenantHostServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9753,7 +10037,7 @@ export class TenantHostServiceProxy {
     }
 
     protected processGetSslBindings(response: Response): Observable<TenantSslBindingInfo[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9780,12 +10064,12 @@ export class TenantHostServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9805,7 +10089,7 @@ export class TenantHostServiceProxy {
     }
 
     protected processAddSslBinding(response: Response): Observable<TenantSslBindingInfo> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9828,12 +10112,12 @@ export class TenantHostServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9853,7 +10137,7 @@ export class TenantHostServiceProxy {
     }
 
     protected processUpdateSslBindingCertificate(response: Response): Observable<TenantSslBindingInfo> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9876,12 +10160,12 @@ export class TenantHostServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9901,7 +10185,7 @@ export class TenantHostServiceProxy {
     }
 
     protected processUpdateSslBindingIsActive(response: Response): Observable<TenantSslBindingInfo> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9922,16 +10206,16 @@ export class TenantHostServiceProxy {
     deleteSslBinding(tenantHostType: TenantHostType2): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantHost/DeleteSslBinding?";
         if (tenantHostType !== undefined)
-            url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&";
+            url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -9951,7 +10235,7 @@ export class TenantHostServiceProxy {
     }
 
     protected processDeleteSslBinding(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -9983,12 +10267,12 @@ export class TenantIntegrationsSettingsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10008,7 +10292,7 @@ export class TenantIntegrationsSettingsServiceProxy {
     }
 
     protected processGetIntegrationsSettings(response: Response): Observable<IntegrationsSettings> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10031,12 +10315,12 @@ export class TenantIntegrationsSettingsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10056,7 +10340,7 @@ export class TenantIntegrationsSettingsServiceProxy {
     }
 
     protected processUpdateIntegrationsSettings(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10088,12 +10372,12 @@ export class TenantPaymentSettingsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10113,7 +10397,7 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     protected processGetBaseCommercePaymentSettings(response: Response): Observable<BaseCommercePaymentSettings> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10136,12 +10420,12 @@ export class TenantPaymentSettingsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10161,7 +10445,7 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     protected processUpdateBaseCommercePaymentSettings(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10193,12 +10477,12 @@ export class TenantRegistrationServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10218,7 +10502,7 @@ export class TenantRegistrationServiceProxy {
     }
 
     protected processRegisterTenant(response: Response): Observable<RegisterTenantOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10241,12 +10525,12 @@ export class TenantRegistrationServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10266,7 +10550,7 @@ export class TenantRegistrationServiceProxy {
     }
 
     protected processGetEditionsForSelect(response: Response): Observable<EditionsSelectOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10287,16 +10571,16 @@ export class TenantRegistrationServiceProxy {
     getEdition(editionId: number): Observable<EditionSelectDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantRegistration/GetEdition?";
         if (editionId !== undefined)
-            url_ += "editionId=" + encodeURIComponent("" + editionId) + "&";
+            url_ += "editionId=" + encodeURIComponent("" + editionId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10316,7 +10600,7 @@ export class TenantRegistrationServiceProxy {
     }
 
     protected processGetEdition(response: Response): Observable<EditionSelectDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10351,12 +10635,12 @@ export class TenantSettingsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10376,7 +10660,7 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processGetAllSettings(response: Response): Observable<TenantSettingsEditDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10399,12 +10683,12 @@ export class TenantSettingsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10424,7 +10708,7 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateAllSettings(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10444,12 +10728,12 @@ export class TenantSettingsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10469,7 +10753,7 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processClearLogo(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10489,12 +10773,12 @@ export class TenantSettingsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10514,7 +10798,7 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processClearCustomCss(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10534,12 +10818,12 @@ export class TenantSettingsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10559,7 +10843,7 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processClearFavicons(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10579,12 +10863,12 @@ export class TenantSettingsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10604,7 +10888,7 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processSendTestEmail(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10636,12 +10920,12 @@ export class TenantSettingsCreditReportServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10661,7 +10945,7 @@ export class TenantSettingsCreditReportServiceProxy {
     }
 
     protected processGetIdcsSettings(response: Response): Observable<IdcsSettings> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10684,12 +10968,12 @@ export class TenantSettingsCreditReportServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10709,7 +10993,7 @@ export class TenantSettingsCreditReportServiceProxy {
     }
 
     protected processUpdateIdcsSettings(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10741,12 +11025,12 @@ export class TenantSslCertificateServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10766,7 +11050,7 @@ export class TenantSslCertificateServiceProxy {
     }
 
     protected processGetTenantSslCertificates(response: Response): Observable<TenantSslCertificateInfo[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10793,12 +11077,12 @@ export class TenantSslCertificateServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10818,7 +11102,7 @@ export class TenantSslCertificateServiceProxy {
     }
 
     protected processAddTenantSslCertificate(response: Response): Observable<TenantSslCertificateInfo> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10839,16 +11123,16 @@ export class TenantSslCertificateServiceProxy {
     deleteTenantSslCertificate(sslCertificateId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSslCertificate/DeleteTenantSslCertificate?";
         if (sslCertificateId !== undefined)
-            url_ += "SslCertificateId=" + encodeURIComponent("" + sslCertificateId) + "&";
+            url_ += "SslCertificateId=" + encodeURIComponent("" + sslCertificateId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10868,7 +11152,7 @@ export class TenantSslCertificateServiceProxy {
     }
 
     protected processDeleteTenantSslCertificate(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10898,16 +11182,16 @@ export class TimingServiceProxy {
     getTimezones(defaultTimezoneScope: DefaultTimezoneScope): Observable<ListResultDtoOfNameValueDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Timing/GetTimezones?";
         if (defaultTimezoneScope !== undefined)
-            url_ += "DefaultTimezoneScope=" + encodeURIComponent("" + defaultTimezoneScope) + "&";
+            url_ += "DefaultTimezoneScope=" + encodeURIComponent("" + defaultTimezoneScope) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10927,7 +11211,7 @@ export class TimingServiceProxy {
     }
 
     protected processGetTimezones(response: Response): Observable<ListResultDtoOfNameValueDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -10948,16 +11232,16 @@ export class TimingServiceProxy {
     getTimezoneComboboxItems(selectedTimezoneId: string): Observable<ComboboxItemDto[]> {
         let url_ = this.baseUrl + "/api/services/Platform/Timing/GetTimezoneComboboxItems?";
         if (selectedTimezoneId !== undefined)
-            url_ += "SelectedTimezoneId=" + encodeURIComponent("" + selectedTimezoneId) + "&";
+            url_ += "SelectedTimezoneId=" + encodeURIComponent("" + selectedTimezoneId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -10977,7 +11261,7 @@ export class TimingServiceProxy {
     }
 
     protected processGetTimezoneComboboxItems(response: Response): Observable<ComboboxItemDto[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11016,12 +11300,12 @@ export class TokenAuthServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(model ? model.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11041,7 +11325,7 @@ export class TokenAuthServiceProxy {
     }
 
     protected processAuthenticate(response: Response): Observable<AuthenticateResultModel> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11064,12 +11348,12 @@ export class TokenAuthServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(model ? model.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11089,7 +11373,7 @@ export class TokenAuthServiceProxy {
     }
 
     protected processSendTwoFactorAuthCode(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11107,16 +11391,16 @@ export class TokenAuthServiceProxy {
     impersonatedAuthenticate(impersonationToken: string): Observable<ImpersonatedAuthenticateResultModel> {
         let url_ = this.baseUrl + "/api/TokenAuth/ImpersonatedAuthenticate?";
         if (impersonationToken !== undefined)
-            url_ += "impersonationToken=" + encodeURIComponent("" + impersonationToken) + "&";
+            url_ += "impersonationToken=" + encodeURIComponent("" + impersonationToken) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11136,7 +11420,7 @@ export class TokenAuthServiceProxy {
     }
 
     protected processImpersonatedAuthenticate(response: Response): Observable<ImpersonatedAuthenticateResultModel> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11157,16 +11441,16 @@ export class TokenAuthServiceProxy {
     linkedAccountAuthenticate(switchAccountToken: string): Observable<SwitchedAccountAuthenticateResultModel> {
         let url_ = this.baseUrl + "/api/TokenAuth/LinkedAccountAuthenticate?";
         if (switchAccountToken !== undefined)
-            url_ += "switchAccountToken=" + encodeURIComponent("" + switchAccountToken) + "&";
+            url_ += "switchAccountToken=" + encodeURIComponent("" + switchAccountToken) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11186,7 +11470,7 @@ export class TokenAuthServiceProxy {
     }
 
     protected processLinkedAccountAuthenticate(response: Response): Observable<SwitchedAccountAuthenticateResultModel> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11209,12 +11493,12 @@ export class TokenAuthServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11234,7 +11518,7 @@ export class TokenAuthServiceProxy {
     }
 
     protected processGetExternalAuthenticationProviders(response: Response): Observable<ExternalLoginProviderInfoModel[]> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11261,12 +11545,12 @@ export class TokenAuthServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(model ? model.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11286,7 +11570,7 @@ export class TokenAuthServiceProxy {
     }
 
     protected processExternalAuthenticate(response: Response): Observable<ExternalAuthenticateResultModel> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11307,18 +11591,18 @@ export class TokenAuthServiceProxy {
     testNotification(message: string, severity: string): Observable<void> {
         let url_ = this.baseUrl + "/api/TokenAuth/TestNotification?";
         if (message !== undefined)
-            url_ += "message=" + encodeURIComponent("" + message) + "&";
+            url_ += "message=" + encodeURIComponent("" + message) + "&"; 
         if (severity !== undefined)
-            url_ += "severity=" + encodeURIComponent("" + severity) + "&";
+            url_ += "severity=" + encodeURIComponent("" + severity) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11338,7 +11622,7 @@ export class TokenAuthServiceProxy {
     }
 
     protected processTestNotification(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11370,12 +11654,12 @@ export class TransactionsServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11395,7 +11679,7 @@ export class TransactionsServiceProxy {
     }
 
     protected processGetFiltersInitialData(response: Response): Observable<FiltersInitialData> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11408,6 +11692,54 @@ export class TransactionsServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<FiltersInitialData>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getTransactionAttributeTypes(): Observable<GetTransactionAttributeTypesOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetTransactionAttributeTypes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTransactionAttributeTypes(response_);
+                } catch (e) {
+                    return <Observable<GetTransactionAttributeTypesOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetTransactionAttributeTypesOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTransactionAttributeTypes(response: Response): Observable<GetTransactionAttributeTypesOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: GetTransactionAttributeTypesOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetTransactionAttributeTypesOutput.fromJS(resultData200) : new GetTransactionAttributeTypesOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<GetTransactionAttributeTypesOutput>(<any>null);
     }
 }
 
@@ -11428,26 +11760,26 @@ export class UserServiceProxy {
     getUsers(filter: string, permission: string, role: number, sorting: string, maxResultCount: number, skipCount: number): Observable<PagedResultDtoOfUserListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUsers?";
         if (filter !== undefined)
-            url_ += "Filter=" + encodeURIComponent("" + filter) + "&";
+            url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
         if (permission !== undefined)
-            url_ += "Permission=" + encodeURIComponent("" + permission) + "&";
+            url_ += "Permission=" + encodeURIComponent("" + permission) + "&"; 
         if (role !== undefined)
-            url_ += "Role=" + encodeURIComponent("" + role) + "&";
+            url_ += "Role=" + encodeURIComponent("" + role) + "&"; 
         if (sorting !== undefined)
-            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
-            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
         if (skipCount !== undefined)
-            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11467,7 +11799,7 @@ export class UserServiceProxy {
     }
 
     protected processGetUsers(response: Response): Observable<PagedResultDtoOfUserListDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11490,12 +11822,12 @@ export class UserServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11515,7 +11847,7 @@ export class UserServiceProxy {
     }
 
     protected processGetUsersToExcel(response: Response): Observable<FileDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11536,16 +11868,16 @@ export class UserServiceProxy {
     getUserForEdit(id: number): Observable<GetUserForEditOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUserForEdit?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11565,7 +11897,7 @@ export class UserServiceProxy {
     }
 
     protected processGetUserForEdit(response: Response): Observable<GetUserForEditOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11586,16 +11918,16 @@ export class UserServiceProxy {
     getUserPermissionsForEdit(id: number): Observable<GetUserPermissionsForEditOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUserPermissionsForEdit?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11615,7 +11947,7 @@ export class UserServiceProxy {
     }
 
     protected processGetUserPermissionsForEdit(response: Response): Observable<GetUserPermissionsForEditOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11638,12 +11970,12 @@ export class UserServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11663,7 +11995,7 @@ export class UserServiceProxy {
     }
 
     protected processResetUserSpecificPermissions(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11683,12 +12015,12 @@ export class UserServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "put",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11708,7 +12040,7 @@ export class UserServiceProxy {
     }
 
     protected processUpdateUserPermissions(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11728,12 +12060,12 @@ export class UserServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11753,7 +12085,7 @@ export class UserServiceProxy {
     }
 
     protected processCreateOrUpdateUser(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11771,16 +12103,16 @@ export class UserServiceProxy {
     deleteUser(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/User/DeleteUser?";
         if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "delete",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11800,7 +12132,7 @@ export class UserServiceProxy {
     }
 
     protected processDeleteUser(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11820,12 +12152,12 @@ export class UserServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11845,7 +12177,7 @@ export class UserServiceProxy {
     }
 
     protected processUnlockUser(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11877,12 +12209,12 @@ export class UserLinkServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11902,7 +12234,7 @@ export class UserLinkServiceProxy {
     }
 
     protected processLinkToUser(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11920,20 +12252,20 @@ export class UserLinkServiceProxy {
     getLinkedUsers(maxResultCount: number, skipCount: number, sorting: string): Observable<PagedResultDtoOfLinkedUserDto> {
         let url_ = this.baseUrl + "/api/services/Platform/UserLink/GetLinkedUsers?";
         if (maxResultCount !== undefined)
-            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
         if (skipCount !== undefined)
-            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         if (sorting !== undefined)
-            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -11953,7 +12285,7 @@ export class UserLinkServiceProxy {
     }
 
     protected processGetLinkedUsers(response: Response): Observable<PagedResultDtoOfLinkedUserDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -11976,12 +12308,12 @@ export class UserLinkServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -12001,7 +12333,7 @@ export class UserLinkServiceProxy {
     }
 
     protected processGetRecentlyUsedLinkedUsers(response: Response): Observable<ListResultDtoOfLinkedUserDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -12024,12 +12356,12 @@ export class UserLinkServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -12049,7 +12381,7 @@ export class UserLinkServiceProxy {
     }
 
     protected processUnlinkUser(response: Response): Observable<void> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -12081,12 +12413,12 @@ export class UserLoginServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -12106,7 +12438,7 @@ export class UserLoginServiceProxy {
     }
 
     protected processGetRecentUserLoginAttempts(response: Response): Observable<ListResultDtoOfUserLoginAttemptDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -12141,12 +12473,12 @@ export class WebLogServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -12166,7 +12498,7 @@ export class WebLogServiceProxy {
     }
 
     protected processGetLatestWebLogs(response: Response): Observable<GetLatestWebLogsOutput> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -12189,12 +12521,12 @@ export class WebLogServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
-
+        
         let options_ = {
             body: content_,
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8",
+                "Content-Type": "application/json; charset=UTF-8", 
                 "Accept": "application/json; charset=UTF-8"
             })
         };
@@ -12214,7 +12546,7 @@ export class WebLogServiceProxy {
     }
 
     protected processDownloadWebLogs(response: Response): Observable<FileDto> {
-        const status = response.status;
+        const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
@@ -12257,7 +12589,7 @@ export class IsTenantAvailableInput implements IIsTenantAvailableInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["tenancyName"] = this.tenancyName;
-        return data;
+        return data; 
     }
 }
 
@@ -12295,7 +12627,7 @@ export class IsTenantAvailableOutput implements IIsTenantAvailableOutput {
         data = typeof data === 'object' ? data : {};
         data["state"] = this.state;
         data["tenantId"] = this.tenantId;
-        return data;
+        return data; 
     }
 }
 
@@ -12346,7 +12678,7 @@ export class RegisterInput implements IRegisterInput {
         data["emailAddress"] = this.emailAddress;
         data["password"] = this.password;
         data["captchaResponse"] = this.captchaResponse;
-        return data;
+        return data; 
     }
 }
 
@@ -12386,7 +12718,7 @@ export class RegisterOutput implements IRegisterOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["canLogin"] = this.canLogin;
-        return data;
+        return data; 
     }
 }
 
@@ -12435,7 +12767,7 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
             for (let item of this.features)
                 data["features"].push(item);
         }
-        return data;
+        return data; 
     }
 }
 
@@ -12480,7 +12812,7 @@ export class SendPasswordResetCodeOutput implements ISendPasswordResetCodeOutput
             for (let item of this.detectedTenancies)
                 data["detectedTenancies"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -12521,7 +12853,7 @@ export class TenantModel implements ITenantModel {
         data["id"] = this.id;
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -12570,7 +12902,7 @@ export class ResetPasswordInput implements IResetPasswordInput {
         data["password"] = this.password;
         data["returnUrl"] = this.returnUrl;
         data["singleSignIn"] = this.singleSignIn;
-        return data;
+        return data; 
     }
 }
 
@@ -12612,7 +12944,7 @@ export class ResetPasswordOutput implements IResetPasswordOutput {
         data = typeof data === 'object' ? data : {};
         data["canLogin"] = this.canLogin;
         data["userName"] = this.userName;
-        return data;
+        return data; 
     }
 }
 
@@ -12648,7 +12980,7 @@ export class SendEmailActivationLinkInput implements ISendEmailActivationLinkInp
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["emailAddress"] = this.emailAddress;
-        return data;
+        return data; 
     }
 }
 
@@ -12686,7 +13018,7 @@ export class ActivateEmailInput implements IActivateEmailInput {
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
         data["confirmationCode"] = this.confirmationCode;
-        return data;
+        return data; 
     }
 }
 
@@ -12725,7 +13057,7 @@ export class ImpersonateInput implements IImpersonateInput {
         data = typeof data === 'object' ? data : {};
         data["tenantId"] = this.tenantId;
         data["userId"] = this.userId;
-        return data;
+        return data; 
     }
 }
 
@@ -12764,7 +13096,7 @@ export class ImpersonateOutput implements IImpersonateOutput {
         data = typeof data === 'object' ? data : {};
         data["impersonationToken"] = this.impersonationToken;
         data["tenancyName"] = this.tenancyName;
-        return data;
+        return data; 
     }
 }
 
@@ -12803,7 +13135,7 @@ export class SwitchToLinkedAccountInput implements ISwitchToLinkedAccountInput {
         data = typeof data === 'object' ? data : {};
         data["targetTenantId"] = this.targetTenantId;
         data["targetUserId"] = this.targetUserId;
-        return data;
+        return data; 
     }
 }
 
@@ -12842,7 +13174,7 @@ export class SwitchToLinkedAccountOutput implements ISwitchToLinkedAccountOutput
         data = typeof data === 'object' ? data : {};
         data["switchAccountToken"] = this.switchAccountToken;
         data["tenancyName"] = this.tenancyName;
-        return data;
+        return data; 
     }
 }
 
@@ -12889,7 +13221,7 @@ export class PagedResultDtoOfAuditLogListDto implements IPagedResultDtoOfAuditLo
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -12967,7 +13299,7 @@ export class AuditLogListDto implements IAuditLogListDto {
         data["exception"] = this.exception;
         data["customData"] = this.customData;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -13022,7 +13354,7 @@ export class FileDto implements IFileDto {
         data["fileName"] = this.fileName;
         data["fileType"] = this.fileType;
         data["fileToken"] = this.fileToken;
-        return data;
+        return data; 
     }
 }
 
@@ -13083,7 +13415,7 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
         data["endingBalance"] = this.endingBalance;
         data["period"] = this.period;
         data["isForecast"] = this.isForecast;
-        return data;
+        return data; 
     }
 }
 
@@ -13134,7 +13466,7 @@ export class ListResultDtoOfCacheDto implements IListResultDtoOfCacheDto {
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -13169,7 +13501,7 @@ export class CacheDto implements ICacheDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -13204,7 +13536,7 @@ export class EntityDtoOfString implements IEntityDtoOfString {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -13214,6 +13546,7 @@ export interface IEntityDtoOfString {
 
 export class StatsFilter implements IStatsFilter {
     forecastModelId: number;
+    showResolvedComments: boolean = false;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
@@ -13233,6 +13566,7 @@ export class StatsFilter implements IStatsFilter {
     init(data?: any) {
         if (data) {
             this.forecastModelId = data["forecastModelId"];
+            this.showResolvedComments = data["showResolvedComments"] !== undefined ? data["showResolvedComments"] : false;
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
@@ -13263,6 +13597,7 @@ export class StatsFilter implements IStatsFilter {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["forecastModelId"] = this.forecastModelId;
+        data["showResolvedComments"] = this.showResolvedComments;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
@@ -13281,12 +13616,13 @@ export class StatsFilter implements IStatsFilter {
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
-        return data;
+        return data; 
     }
 }
 
 export interface IStatsFilter {
     forecastModelId: number;
+    showResolvedComments: boolean;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
@@ -13341,7 +13677,7 @@ export class CashFlowStatsDto implements ICashFlowStatsDto {
             for (let item of this.commentThreads)
                 data["commentThreads"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -13404,7 +13740,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data["amount"] = this.amount;
         data["comment"] = this.comment;
         data["forecastId"] = this.forecastId;
-        return data;
+        return data; 
     }
 }
 
@@ -13487,7 +13823,7 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
                     data["categorization"][key] = this.categorization[key];
             }
         }
-        return data;
+        return data; 
     }
 }
 
@@ -13565,7 +13901,7 @@ export class CashFlowInitialData implements ICashFlowInitialData {
                     data["cashflowTypes"][key] = this.cashflowTypes[key];
             }
         }
-        return data;
+        return data; 
     }
 }
 
@@ -13616,7 +13952,7 @@ export class BankDto implements IBankDto {
             for (let item of this.bankAccounts)
                 data["bankAccounts"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -13656,7 +13992,7 @@ export class BusinessEntityDto implements IBusinessEntityDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -13698,7 +14034,7 @@ export class BankAccountDto implements IBankAccountDto {
         data["id"] = this.id;
         data["accountName"] = this.accountName;
         data["accountNumber"] = this.accountNumber;
-        return data;
+        return data; 
     }
 }
 
@@ -13786,7 +14122,7 @@ export class StatsDetailFilter implements IStatsDetailFilter {
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
-        return data;
+        return data; 
     }
 }
 
@@ -13851,7 +14187,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data["description"] = this.description;
         data["comment"] = this.comment;
         data["commentThreadId"] = this.commentThreadId;
-        return data;
+        return data; 
     }
 }
 
@@ -13864,61 +14200,6 @@ export interface ICashFlowStatsDetailDto {
     description: string;
     comment: string;
     commentThreadId: number;
-}
-
-export class RecategorizeInput implements IRecategorizeInput {
-    parseDescription: boolean;
-    bankAccountIds: number[];
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-
-    constructor(data?: IRecategorizeInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.parseDescription = data["parseDescription"];
-            if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
-                this.bankAccountIds = [];
-                for (let item of data["bankAccountIds"])
-                    this.bankAccountIds.push(item);
-            }
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): RecategorizeInput {
-        let result = new RecategorizeInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["parseDescription"] = this.parseDescription;
-        if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
-            data["bankAccountIds"] = [];
-            for (let item of this.bankAccountIds)
-                data["bankAccountIds"].push(item);
-        }
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        return data;
-    }
-}
-
-export interface IRecategorizeInput {
-    parseDescription: boolean;
-    bankAccountIds: number[];
-    startDate: moment.Moment;
-    endDate: moment.Moment;
 }
 
 export class CashFlowGridSettingsDto implements ICashFlowGridSettingsDto {
@@ -13954,7 +14235,7 @@ export class CashFlowGridSettingsDto implements ICashFlowGridSettingsDto {
         data["general"] = this.general ? this.general.toJSON() : <any>undefined;
         data["visualPreferences"] = this.visualPreferences ? this.visualPreferences.toJSON() : <any>undefined;
         data["localizationAndCurrency"] = this.localizationAndCurrency ? this.localizationAndCurrency.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -14000,7 +14281,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
         data["hideZeroValuesInCells"] = this.hideZeroValuesInCells;
         data["showNegativeValuesInRed"] = this.showNegativeValuesInRed;
         data["hideColumnsWithZeroActivity"] = this.hideColumnsWithZeroActivity;
-        return data;
+        return data; 
     }
 }
 
@@ -14044,7 +14325,7 @@ export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSetting
         data["fontName"] = this.fontName;
         data["fontSize"] = this.fontSize;
         data["cfoTheme"] = this.cfoTheme;
-        return data;
+        return data; 
     }
 }
 
@@ -14081,7 +14362,7 @@ export class LocalizationAndCurrencyDto implements ILocalizationAndCurrencyDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["numberFormatting"] = this.numberFormatting;
-        return data;
+        return data; 
     }
 }
 
@@ -14119,7 +14400,7 @@ export class ForecastModelDto implements IForecastModelDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -14173,7 +14454,7 @@ export class AddForecastInput implements IAddForecastInput {
         data["categoryId"] = this.categoryId;
         data["currencyId"] = this.currencyId;
         data["amount"] = this.amount;
-        return data;
+        return data; 
     }
 }
 
@@ -14217,13 +14498,272 @@ export class UpdateForecastInput implements IUpdateForecastInput {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["amount"] = this.amount;
-        return data;
+        return data; 
     }
 }
 
 export interface IUpdateForecastInput {
     id: number;
     amount: number;
+}
+
+export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
+    serverTime: moment.Moment;
+    friends: FriendDto[];
+
+    constructor(data?: IGetUserChatFriendsWithSettingsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.serverTime = data["serverTime"] ? moment(data["serverTime"].toString()) : <any>undefined;
+            if (data["friends"] && data["friends"].constructor === Array) {
+                this.friends = [];
+                for (let item of data["friends"])
+                    this.friends.push(FriendDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetUserChatFriendsWithSettingsOutput {
+        let result = new GetUserChatFriendsWithSettingsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["serverTime"] = this.serverTime ? this.serverTime.toISOString() : <any>undefined;
+        if (this.friends && this.friends.constructor === Array) {
+            data["friends"] = [];
+            for (let item of this.friends)
+                data["friends"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IGetUserChatFriendsWithSettingsOutput {
+    serverTime: moment.Moment;
+    friends: FriendDto[];
+}
+
+export class FriendDto implements IFriendDto {
+    friendUserId: number;
+    friendTenantId: number;
+    friendUserName: string;
+    friendTenancyName: string;
+    friendProfilePictureId: string;
+    unreadMessageCount: number;
+    isOnline: boolean;
+    state: FriendDtoState;
+
+    constructor(data?: IFriendDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.friendUserId = data["friendUserId"];
+            this.friendTenantId = data["friendTenantId"];
+            this.friendUserName = data["friendUserName"];
+            this.friendTenancyName = data["friendTenancyName"];
+            this.friendProfilePictureId = data["friendProfilePictureId"];
+            this.unreadMessageCount = data["unreadMessageCount"];
+            this.isOnline = data["isOnline"];
+            this.state = data["state"];
+        }
+    }
+
+    static fromJS(data: any): FriendDto {
+        let result = new FriendDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["friendUserId"] = this.friendUserId;
+        data["friendTenantId"] = this.friendTenantId;
+        data["friendUserName"] = this.friendUserName;
+        data["friendTenancyName"] = this.friendTenancyName;
+        data["friendProfilePictureId"] = this.friendProfilePictureId;
+        data["unreadMessageCount"] = this.unreadMessageCount;
+        data["isOnline"] = this.isOnline;
+        data["state"] = this.state;
+        return data; 
+    }
+}
+
+export interface IFriendDto {
+    friendUserId: number;
+    friendTenantId: number;
+    friendUserName: string;
+    friendTenancyName: string;
+    friendProfilePictureId: string;
+    unreadMessageCount: number;
+    isOnline: boolean;
+    state: FriendDtoState;
+}
+
+export class ListResultDtoOfChatMessageDto implements IListResultDtoOfChatMessageDto {
+    items: ChatMessageDto[];
+
+    constructor(data?: IListResultDtoOfChatMessageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(ChatMessageDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ListResultDtoOfChatMessageDto {
+        let result = new ListResultDtoOfChatMessageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IListResultDtoOfChatMessageDto {
+    items: ChatMessageDto[];
+}
+
+export class ChatMessageDto implements IChatMessageDto {
+    userId: number;
+    tenantId: number;
+    targetUserId: number;
+    targetTenantId: number;
+    side: ChatMessageDtoSide;
+    readState: ChatMessageDtoReadState;
+    message: string;
+    creationTime: moment.Moment;
+    id: number;
+
+    constructor(data?: IChatMessageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+            this.tenantId = data["tenantId"];
+            this.targetUserId = data["targetUserId"];
+            this.targetTenantId = data["targetTenantId"];
+            this.side = data["side"];
+            this.readState = data["readState"];
+            this.message = data["message"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): ChatMessageDto {
+        let result = new ChatMessageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["tenantId"] = this.tenantId;
+        data["targetUserId"] = this.targetUserId;
+        data["targetTenantId"] = this.targetTenantId;
+        data["side"] = this.side;
+        data["readState"] = this.readState;
+        data["message"] = this.message;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface IChatMessageDto {
+    userId: number;
+    tenantId: number;
+    targetUserId: number;
+    targetTenantId: number;
+    side: ChatMessageDtoSide;
+    readState: ChatMessageDtoReadState;
+    message: string;
+    creationTime: moment.Moment;
+    id: number;
+}
+
+export class MarkAllUnreadMessagesOfUserAsReadInput implements IMarkAllUnreadMessagesOfUserAsReadInput {
+    tenantId: number;
+    userId: number;
+
+    constructor(data?: IMarkAllUnreadMessagesOfUserAsReadInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.userId = data["userId"];
+        }
+    }
+
+    static fromJS(data: any): MarkAllUnreadMessagesOfUserAsReadInput {
+        let result = new MarkAllUnreadMessagesOfUserAsReadInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["userId"] = this.userId;
+        return data; 
+    }
+}
+
+export interface IMarkAllUnreadMessagesOfUserAsReadInput {
+    tenantId: number;
+    userId: number;
 }
 
 export class GetCategoriesOutput implements IGetCategoriesOutput {
@@ -14295,7 +14835,7 @@ export class GetCategoriesOutput implements IGetCategoriesOutput {
                     data["types"][key] = this.types[key] ? this.types[key].toJSON() : <any>undefined;
             }
         }
-        return data;
+        return data; 
     }
 }
 
@@ -14335,7 +14875,7 @@ export class CategoryDto implements ICategoryDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["groupId"] = this.groupId;
-        return data;
+        return data; 
     }
 }
 
@@ -14374,7 +14914,7 @@ export class CategoryGroupDto implements ICategoryGroupDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["typeId"] = this.typeId;
-        return data;
+        return data; 
     }
 }
 
@@ -14410,7 +14950,7 @@ export class TypeDto implements ITypeDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -14421,7 +14961,8 @@ export interface ITypeDto {
 export class RuleDto implements IRuleDto {
     parentId: number;
     name: string;
-    creationDate: moment.Moment;
+    categoryId: number;
+    creationTime: moment.Moment;
     sortOrder: number;
     isActive: boolean;
     id: number;
@@ -14439,7 +14980,8 @@ export class RuleDto implements IRuleDto {
         if (data) {
             this.parentId = data["parentId"];
             this.name = data["name"];
-            this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
+            this.categoryId = data["categoryId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.sortOrder = data["sortOrder"];
             this.isActive = data["isActive"];
             this.id = data["id"];
@@ -14456,29 +14998,32 @@ export class RuleDto implements IRuleDto {
         data = typeof data === 'object' ? data : {};
         data["parentId"] = this.parentId;
         data["name"] = this.name;
-        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
+        data["categoryId"] = this.categoryId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["sortOrder"] = this.sortOrder;
         data["isActive"] = this.isActive;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
 export interface IRuleDto {
     parentId: number;
     name: string;
-    creationDate: moment.Moment;
+    categoryId: number;
+    creationTime: moment.Moment;
     sortOrder: number;
     isActive: boolean;
     id: number;
 }
 
 export class CreateRuleDto implements ICreateRuleDto {
+    parentId: number;
     name: string;
     categoryId: number;
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
-    conditions: ConditionDto[];
+    condition: ConditionDto;
     applyOption: CreateRuleDtoApplyOption;
 
     constructor(data?: ICreateRuleDto) {
@@ -14492,15 +15037,12 @@ export class CreateRuleDto implements ICreateRuleDto {
 
     init(data?: any) {
         if (data) {
+            this.parentId = data["parentId"];
             this.name = data["name"];
             this.categoryId = data["categoryId"];
             this.transactionDecriptor = data["transactionDecriptor"];
             this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
-            if (data["conditions"] && data["conditions"].constructor === Array) {
-                this.conditions = [];
-                for (let item of data["conditions"])
-                    this.conditions.push(ConditionDto.fromJS(item));
-            }
+            this.condition = data["condition"] ? ConditionDto.fromJS(data["condition"]) : <any>undefined;
             this.applyOption = data["applyOption"];
         }
     }
@@ -14513,26 +15055,24 @@ export class CreateRuleDto implements ICreateRuleDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["parentId"] = this.parentId;
         data["name"] = this.name;
         data["categoryId"] = this.categoryId;
         data["transactionDecriptor"] = this.transactionDecriptor;
         data["transactionDecriptorAttributeTypeId"] = this.transactionDecriptorAttributeTypeId;
-        if (this.conditions && this.conditions.constructor === Array) {
-            data["conditions"] = [];
-            for (let item of this.conditions)
-                data["conditions"].push(item.toJSON());
-        }
+        data["condition"] = this.condition ? this.condition.toJSON() : <any>undefined;
         data["applyOption"] = this.applyOption;
-        return data;
+        return data; 
     }
 }
 
 export interface ICreateRuleDto {
+    parentId: number;
     name: string;
     categoryId: number;
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
-    conditions: ConditionDto[];
+    condition: ConditionDto;
     applyOption: CreateRuleDtoApplyOption;
 }
 
@@ -14540,6 +15080,7 @@ export class ConditionDto implements IConditionDto {
     id: number;
     minAmount: number;
     maxAmount: number;
+    cashFlowAmountFormat: ConditionDtoCashFlowAmountFormat;
     bankId: number;
     bankAccountId: number;
     descriptionWords: string;
@@ -14559,6 +15100,7 @@ export class ConditionDto implements IConditionDto {
             this.id = data["id"];
             this.minAmount = data["minAmount"];
             this.maxAmount = data["maxAmount"];
+            this.cashFlowAmountFormat = data["cashFlowAmountFormat"];
             this.bankId = data["bankId"];
             this.bankAccountId = data["bankAccountId"];
             this.descriptionWords = data["descriptionWords"];
@@ -14581,6 +15123,7 @@ export class ConditionDto implements IConditionDto {
         data["id"] = this.id;
         data["minAmount"] = this.minAmount;
         data["maxAmount"] = this.maxAmount;
+        data["cashFlowAmountFormat"] = this.cashFlowAmountFormat;
         data["bankId"] = this.bankId;
         data["bankAccountId"] = this.bankAccountId;
         data["descriptionWords"] = this.descriptionWords;
@@ -14589,7 +15132,7 @@ export class ConditionDto implements IConditionDto {
             for (let item of this.attributes)
                 data["attributes"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -14597,6 +15140,7 @@ export interface IConditionDto {
     id: number;
     minAmount: number;
     maxAmount: number;
+    cashFlowAmountFormat: ConditionDtoCashFlowAmountFormat;
     bankId: number;
     bankAccountId: number;
     descriptionWords: string;
@@ -14639,7 +15183,7 @@ export class ConditionAttributeDto implements IConditionAttributeDto {
         data["attributeTypeId"] = this.attributeTypeId;
         data["conditionTypeId"] = this.conditionTypeId;
         data["conditionValue"] = this.conditionValue;
-        return data;
+        return data; 
     }
 }
 
@@ -14656,7 +15200,7 @@ export class EditRuleDto implements IEditRuleDto {
     categoryId: number;
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
-    conditions: ConditionDto[];
+    condition: ConditionDto;
     applyOption: EditRuleDtoApplyOption;
 
     constructor(data?: IEditRuleDto) {
@@ -14675,11 +15219,7 @@ export class EditRuleDto implements IEditRuleDto {
             this.categoryId = data["categoryId"];
             this.transactionDecriptor = data["transactionDecriptor"];
             this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
-            if (data["conditions"] && data["conditions"].constructor === Array) {
-                this.conditions = [];
-                for (let item of data["conditions"])
-                    this.conditions.push(ConditionDto.fromJS(item));
-            }
+            this.condition = data["condition"] ? ConditionDto.fromJS(data["condition"]) : <any>undefined;
             this.applyOption = data["applyOption"];
         }
     }
@@ -14697,13 +15237,9 @@ export class EditRuleDto implements IEditRuleDto {
         data["categoryId"] = this.categoryId;
         data["transactionDecriptor"] = this.transactionDecriptor;
         data["transactionDecriptorAttributeTypeId"] = this.transactionDecriptorAttributeTypeId;
-        if (this.conditions && this.conditions.constructor === Array) {
-            data["conditions"] = [];
-            for (let item of this.conditions)
-                data["conditions"].push(item.toJSON());
-        }
+        data["condition"] = this.condition ? this.condition.toJSON() : <any>undefined;
         data["applyOption"] = this.applyOption;
-        return data;
+        return data; 
     }
 }
 
@@ -14713,7 +15249,7 @@ export interface IEditRuleDto {
     categoryId: number;
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
-    conditions: ConditionDto[];
+    condition: ConditionDto;
     applyOption: EditRuleDtoApplyOption;
 }
 
@@ -14756,7 +15292,7 @@ export class MoveRuleDto implements IMoveRuleDto {
         data["isRecategorize"] = this.isRecategorize;
         data["applyOption"] = this.applyOption;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -14798,7 +15334,7 @@ export class AddMappingDto implements IAddMappingDto {
         data = typeof data === 'object' ? data : {};
         data["oldName"] = this.oldName;
         data["newName"] = this.newName;
-        return data;
+        return data; 
     }
 }
 
@@ -14807,11 +15343,11 @@ export interface IAddMappingDto {
     newName: string;
 }
 
-export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
-    serverTime: moment.Moment;
-    friends: FriendDto[];
+export class CreateCategoryGroupInput implements ICreateCategoryGroupInput {
+    name: string;
+    typeId: string;
 
-    constructor(data?: IGetUserChatFriendsWithSettingsOutput) {
+    constructor(data?: ICreateCategoryGroupInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14822,156 +15358,36 @@ export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriends
 
     init(data?: any) {
         if (data) {
-            this.serverTime = data["serverTime"] ? moment(data["serverTime"].toString()) : <any>undefined;
-            if (data["friends"] && data["friends"].constructor === Array) {
-                this.friends = [];
-                for (let item of data["friends"])
-                    this.friends.push(FriendDto.fromJS(item));
-            }
+            this.name = data["name"];
+            this.typeId = data["typeId"];
         }
     }
 
-    static fromJS(data: any): GetUserChatFriendsWithSettingsOutput {
-        let result = new GetUserChatFriendsWithSettingsOutput();
+    static fromJS(data: any): CreateCategoryGroupInput {
+        let result = new CreateCategoryGroupInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["serverTime"] = this.serverTime ? this.serverTime.toISOString() : <any>undefined;
-        if (this.friends && this.friends.constructor === Array) {
-            data["friends"] = [];
-            for (let item of this.friends)
-                data["friends"].push(item.toJSON());
-        }
-        return data;
+        data["name"] = this.name;
+        data["typeId"] = this.typeId;
+        return data; 
     }
 }
 
-export interface IGetUserChatFriendsWithSettingsOutput {
-    serverTime: moment.Moment;
-    friends: FriendDto[];
+export interface ICreateCategoryGroupInput {
+    name: string;
+    typeId: string;
 }
 
-export class FriendDto implements IFriendDto {
-    friendUserId: number;
-    friendTenantId: number;
-    friendUserName: string;
-    friendTenancyName: string;
-    friendProfilePictureId: string;
-    unreadMessageCount: number;
-    isOnline: boolean;
-    state: FriendDtoState;
-
-    constructor(data?: IFriendDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.friendUserId = data["friendUserId"];
-            this.friendTenantId = data["friendTenantId"];
-            this.friendUserName = data["friendUserName"];
-            this.friendTenancyName = data["friendTenancyName"];
-            this.friendProfilePictureId = data["friendProfilePictureId"];
-            this.unreadMessageCount = data["unreadMessageCount"];
-            this.isOnline = data["isOnline"];
-            this.state = data["state"];
-        }
-    }
-
-    static fromJS(data: any): FriendDto {
-        let result = new FriendDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["friendUserId"] = this.friendUserId;
-        data["friendTenantId"] = this.friendTenantId;
-        data["friendUserName"] = this.friendUserName;
-        data["friendTenancyName"] = this.friendTenancyName;
-        data["friendProfilePictureId"] = this.friendProfilePictureId;
-        data["unreadMessageCount"] = this.unreadMessageCount;
-        data["isOnline"] = this.isOnline;
-        data["state"] = this.state;
-        return data;
-    }
-}
-
-export interface IFriendDto {
-    friendUserId: number;
-    friendTenantId: number;
-    friendUserName: string;
-    friendTenancyName: string;
-    friendProfilePictureId: string;
-    unreadMessageCount: number;
-    isOnline: boolean;
-    state: FriendDtoState;
-}
-
-export class ListResultDtoOfChatMessageDto implements IListResultDtoOfChatMessageDto {
-    items: ChatMessageDto[];
-
-    constructor(data?: IListResultDtoOfChatMessageDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["items"] && data["items"].constructor === Array) {
-                this.items = [];
-                for (let item of data["items"])
-                    this.items.push(ChatMessageDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): ListResultDtoOfChatMessageDto {
-        let result = new ListResultDtoOfChatMessageDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.items && this.items.constructor === Array) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface IListResultDtoOfChatMessageDto {
-    items: ChatMessageDto[];
-}
-
-export class ChatMessageDto implements IChatMessageDto {
-    userId: number;
-    tenantId: number;
-    targetUserId: number;
-    targetTenantId: number;
-    side: ChatMessageDtoSide;
-    readState: ChatMessageDtoReadState;
-    message: string;
-    creationTime: moment.Moment;
+export class UpdateCategoryGroupInput implements IUpdateCategoryGroupInput {
     id: number;
+    name: string;
+    typeId: string;
 
-    constructor(data?: IChatMessageDto) {
+    constructor(data?: IUpdateCategoryGroupInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -14982,56 +15398,38 @@ export class ChatMessageDto implements IChatMessageDto {
 
     init(data?: any) {
         if (data) {
-            this.userId = data["userId"];
-            this.tenantId = data["tenantId"];
-            this.targetUserId = data["targetUserId"];
-            this.targetTenantId = data["targetTenantId"];
-            this.side = data["side"];
-            this.readState = data["readState"];
-            this.message = data["message"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.id = data["id"];
+            this.name = data["name"];
+            this.typeId = data["typeId"];
         }
     }
 
-    static fromJS(data: any): ChatMessageDto {
-        let result = new ChatMessageDto();
+    static fromJS(data: any): UpdateCategoryGroupInput {
+        let result = new UpdateCategoryGroupInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["tenantId"] = this.tenantId;
-        data["targetUserId"] = this.targetUserId;
-        data["targetTenantId"] = this.targetTenantId;
-        data["side"] = this.side;
-        data["readState"] = this.readState;
-        data["message"] = this.message;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
-        return data;
+        data["name"] = this.name;
+        data["typeId"] = this.typeId;
+        return data; 
     }
 }
 
-export interface IChatMessageDto {
-    userId: number;
-    tenantId: number;
-    targetUserId: number;
-    targetTenantId: number;
-    side: ChatMessageDtoSide;
-    readState: ChatMessageDtoReadState;
-    message: string;
-    creationTime: moment.Moment;
+export interface IUpdateCategoryGroupInput {
     id: number;
+    name: string;
+    typeId: string;
 }
 
-export class MarkAllUnreadMessagesOfUserAsReadInput implements IMarkAllUnreadMessagesOfUserAsReadInput {
-    tenantId: number;
-    userId: number;
+export class CreateCategoryInput implements ICreateCategoryInput {
+    name: string;
+    groupId: number;
 
-    constructor(data?: IMarkAllUnreadMessagesOfUserAsReadInput) {
+    constructor(data?: ICreateCategoryInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -15042,28 +15440,130 @@ export class MarkAllUnreadMessagesOfUserAsReadInput implements IMarkAllUnreadMes
 
     init(data?: any) {
         if (data) {
-            this.tenantId = data["tenantId"];
-            this.userId = data["userId"];
+            this.name = data["name"];
+            this.groupId = data["groupId"];
         }
     }
 
-    static fromJS(data: any): MarkAllUnreadMessagesOfUserAsReadInput {
-        let result = new MarkAllUnreadMessagesOfUserAsReadInput();
+    static fromJS(data: any): CreateCategoryInput {
+        let result = new CreateCategoryInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["userId"] = this.userId;
-        return data;
+        data["name"] = this.name;
+        data["groupId"] = this.groupId;
+        return data; 
     }
 }
 
-export interface IMarkAllUnreadMessagesOfUserAsReadInput {
-    tenantId: number;
-    userId: number;
+export interface ICreateCategoryInput {
+    name: string;
+    groupId: number;
+}
+
+export class UpdateCategoryInput implements IUpdateCategoryInput {
+    id: number;
+    name: string;
+    groupId: number;
+
+    constructor(data?: IUpdateCategoryInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.groupId = data["groupId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCategoryInput {
+        let result = new UpdateCategoryInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["groupId"] = this.groupId;
+        return data; 
+    }
+}
+
+export interface IUpdateCategoryInput {
+    id: number;
+    name: string;
+    groupId: number;
+}
+
+export class RecategorizeInput implements IRecategorizeInput {
+    parseDescription: boolean;
+    bankAccountIds: number[];
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    ruleId: number;
+
+    constructor(data?: IRecategorizeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.parseDescription = data["parseDescription"];
+            if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
+                this.bankAccountIds = [];
+                for (let item of data["bankAccountIds"])
+                    this.bankAccountIds.push(item);
+            }
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.ruleId = data["ruleId"];
+        }
+    }
+
+    static fromJS(data: any): RecategorizeInput {
+        let result = new RecategorizeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["parseDescription"] = this.parseDescription;
+        if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
+            data["bankAccountIds"] = [];
+            for (let item of this.bankAccountIds)
+                data["bankAccountIds"].push(item);
+        }
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["ruleId"] = this.ruleId;
+        return data; 
+    }
+}
+
+export interface IRecategorizeInput {
+    parseDescription: boolean;
+    bankAccountIds: number[];
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    ruleId: number;
 }
 
 export class CommentDto implements ICommentDto {
@@ -15111,7 +15611,7 @@ export class CommentDto implements ICommentDto {
         data["updatedByUser"] = this.updatedByUser ? this.updatedByUser.toJSON() : <any>undefined;
         data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -15158,7 +15658,7 @@ export class UserKeyInfo implements IUserKeyInfo {
         data["id"] = this.id;
         data["userName"] = this.userName;
         data["fullName"] = this.fullName;
-        return data;
+        return data; 
     }
 }
 
@@ -15198,7 +15698,7 @@ export class CreateCommentInput implements ICreateCommentInput {
         data = typeof data === 'object' ? data : {};
         data["threadId"] = this.threadId;
         data["comment"] = this.comment;
-        return data;
+        return data; 
     }
 }
 
@@ -15234,7 +15734,7 @@ export class CreateCommentOutput implements ICreateCommentOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -15272,7 +15772,7 @@ export class UpdateCommentInput implements IUpdateCommentInput {
         data = typeof data === 'object' ? data : {};
         data["comment"] = this.comment;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -15311,7 +15811,7 @@ export class CreateTransactionCommentThreadInput implements ICreateTransactionCo
         data = typeof data === 'object' ? data : {};
         data["transactionId"] = this.transactionId;
         data["comment"] = this.comment;
-        return data;
+        return data; 
     }
 }
 
@@ -15350,7 +15850,7 @@ export class CreateTransactionCommentThreadOutput implements ICreateTransactionC
         data = typeof data === 'object' ? data : {};
         data["threadId"] = this.threadId;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -15443,7 +15943,7 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
-        return data;
+        return data; 
     }
 }
 
@@ -15492,13 +15992,52 @@ export class CreateCashFlowCommentThreadOutput implements ICreateCashFlowComment
         data = typeof data === 'object' ? data : {};
         data["threadId"] = this.threadId;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
 export interface ICreateCashFlowCommentThreadOutput {
     threadId: number;
     id: number;
+}
+
+export class SetResolvedInput implements ISetResolvedInput {
+    threadId: number;
+    isResolved: boolean;
+
+    constructor(data?: ISetResolvedInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.threadId = data["threadId"];
+            this.isResolved = data["isResolved"];
+        }
+    }
+
+    static fromJS(data: any): SetResolvedInput {
+        let result = new SetResolvedInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["threadId"] = this.threadId;
+        data["isResolved"] = this.isResolved;
+        return data; 
+    }
+}
+
+export interface ISetResolvedInput {
+    threadId: number;
+    isResolved: boolean;
 }
 
 export class ListResultDtoOfSubscribableEditionComboboxItemDto implements IListResultDtoOfSubscribableEditionComboboxItemDto {
@@ -15536,7 +16075,7 @@ export class ListResultDtoOfSubscribableEditionComboboxItemDto implements IListR
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -15580,7 +16119,7 @@ export class SubscribableEditionComboboxItemDto implements ISubscribableEditionC
         data["value"] = this.value;
         data["displayText"] = this.displayText;
         data["isSelected"] = this.isSelected;
-        return data;
+        return data; 
     }
 }
 
@@ -15627,7 +16166,7 @@ export class FindUsersInput implements IFindUsersInput {
         data["maxResultCount"] = this.maxResultCount;
         data["skipCount"] = this.skipCount;
         data["filter"] = this.filter;
-        return data;
+        return data; 
     }
 }
 
@@ -15676,7 +16215,7 @@ export class PagedResultDtoOfNameValueDto implements IPagedResultDtoOfNameValueD
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -15715,7 +16254,7 @@ export class NameValueDto implements INameValueDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["value"] = this.value;
-        return data;
+        return data; 
     }
 }
 
@@ -15751,7 +16290,7 @@ export class GetDefaultEditionNameOutput implements IGetDefaultEditionNameOutput
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -15822,7 +16361,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         data["ownershipTypeId"] = this.ownershipTypeId;
-        return data;
+        return data; 
     }
 }
 
@@ -15869,7 +16408,7 @@ export class CreateContactAddressOutput implements ICreateContactAddressOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -15943,7 +16482,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
         data["ownershipTypeId"] = this.ownershipTypeId;
-        return data;
+        return data; 
     }
 }
 
@@ -15999,7 +16538,7 @@ export class ListResultDtoOfAddressUsageTypeDto implements IListResultDtoOfAddre
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -16037,7 +16576,7 @@ export class AddressUsageTypeDto implements IAddressUsageTypeDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -16081,7 +16620,7 @@ export class ListResultDtoOfAddressOwnershipTypeDto implements IListResultDtoOfA
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -16119,7 +16658,7 @@ export class AddressOwnershipTypeDto implements IAddressOwnershipTypeDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -16158,7 +16697,7 @@ export class GetContactBusinessOutput implements IGetContactBusinessOutput {
         data = typeof data === 'object' ? data : {};
         data["contactBusinessInfo"] = this.contactBusinessInfo ? this.contactBusinessInfo.toJSON() : <any>undefined;
         data["organizationBusinessInfo"] = this.organizationBusinessInfo ? this.organizationBusinessInfo.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -16242,7 +16781,7 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["orgId"] = this.orgId;
-        return data;
+        return data; 
     }
 }
 
@@ -16344,7 +16883,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["businessSicCode"] = this.businessSicCode;
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
-        return data;
+        return data; 
     }
 }
 
@@ -16396,7 +16935,7 @@ export class CreateContactBusinessInput implements ICreateContactBusinessInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactBusinessCreateInfo"] = this.contactBusinessCreateInfo ? this.contactBusinessCreateInfo.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -16479,7 +17018,7 @@ export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["orgId"] = this.orgId;
-        return data;
+        return data; 
     }
 }
 
@@ -16530,7 +17069,7 @@ export class CreateContactBusinessOutput implements ICreateContactBusinessOutput
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -16568,7 +17107,7 @@ export class UpdateContactBusinessInput implements IUpdateContactBusinessInput {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["contactBusinessEditInfo"] = this.contactBusinessEditInfo ? this.contactBusinessEditInfo.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -16649,7 +17188,7 @@ export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["orgId"] = this.orgId;
-        return data;
+        return data; 
     }
 }
 
@@ -16705,7 +17244,7 @@ export class PersonOrgRelationTypeDto implements IPersonOrgRelationTypeDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["isDeleted"] = this.isDeleted;
-        return data;
+        return data; 
     }
 }
 
@@ -16757,7 +17296,7 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
-        return data;
+        return data; 
     }
 }
 
@@ -16797,7 +17336,7 @@ export class CreateContactEmailOutput implements ICreateContactEmailOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -16850,7 +17389,7 @@ export class UpdateContactEmailInput implements IUpdateContactEmailInput {
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
-        return data;
+        return data; 
     }
 }
 
@@ -16899,7 +17438,7 @@ export class ListResultDtoOfEmailUsageTypeDto implements IListResultDtoOfEmailUs
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -16937,7 +17476,7 @@ export class EmailUsageTypeDto implements IEmailUsageTypeDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -16976,7 +17515,7 @@ export class GetContactEmploymentOutput implements IGetContactEmploymentOutput {
         data = typeof data === 'object' ? data : {};
         data["contactEmploymentInfo"] = this.contactEmploymentInfo ? this.contactEmploymentInfo.toJSON() : <any>undefined;
         data["organizationBusinessInfo"] = this.organizationBusinessInfo ? this.organizationBusinessInfo.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -17075,7 +17614,7 @@ export class ContactEmploymentInfo implements IContactEmploymentInfo {
         data["isActive"] = this.isActive;
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
-        return data;
+        return data; 
     }
 }
 
@@ -17131,7 +17670,7 @@ export class CreateContactEmploymentInput implements ICreateContactEmploymentInp
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactEmploymentCreateInfo"] = this.contactEmploymentCreateInfo ? this.contactEmploymentCreateInfo.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -17229,7 +17768,7 @@ export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo
         data["isActive"] = this.isActive;
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
-        return data;
+        return data; 
     }
 }
 
@@ -17285,7 +17824,7 @@ export class CreateContactEmploymentOutput implements ICreateContactEmploymentOu
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -17323,7 +17862,7 @@ export class UpdateContactEmploymentInput implements IUpdateContactEmploymentInp
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["contactEmploymentEditInfo"] = this.contactEmploymentEditInfo ? this.contactEmploymentEditInfo.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -17419,7 +17958,7 @@ export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
         data["isActive"] = this.isActive;
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
-        return data;
+        return data; 
     }
 }
 
@@ -17489,7 +18028,7 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["linkTypeId"] = this.linkTypeId;
-        return data;
+        return data; 
     }
 }
 
@@ -17529,7 +18068,7 @@ export class CreateContactLinkOutput implements ICreateContactLinkOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -17582,7 +18121,7 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["linkTypeId"] = this.linkTypeId;
-        return data;
+        return data; 
     }
 }
 
@@ -17631,7 +18170,7 @@ export class ListResultDtoOfContactLinkTypeDto implements IListResultDtoOfContac
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -17672,7 +18211,7 @@ export class ContactLinkTypeDto implements IContactLinkTypeDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["isSocialNetwork"] = this.isSocialNetwork;
-        return data;
+        return data; 
     }
 }
 
@@ -17727,7 +18266,7 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
-        return data;
+        return data; 
     }
 }
 
@@ -17768,7 +18307,7 @@ export class CreateContactPhoneOutput implements ICreateContactPhoneOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -17824,7 +18363,7 @@ export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["usageTypeId"] = this.usageTypeId;
-        return data;
+        return data; 
     }
 }
 
@@ -17874,7 +18413,7 @@ export class ListResultDtoOfPhoneUsageTypeDto implements IListResultDtoOfPhoneUs
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -17912,7 +18451,7 @@ export class PhoneUsageTypeDto implements IPhoneUsageTypeDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -17951,7 +18490,7 @@ export class CountryDto implements ICountryDto {
         data = typeof data === 'object' ? data : {};
         data["code"] = this.code;
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -17990,7 +18529,7 @@ export class CountryStateDto implements ICountryStateDto {
         data = typeof data === 'object' ? data : {};
         data["code"] = this.code;
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -18053,7 +18592,7 @@ export class CreditReportOutput implements ICreditReportOutput {
         data["previousReportExists"] = this.previousReportExists;
         data["memberFullName"] = this.memberFullName;
         data["providerCreatedDate"] = this.providerCreatedDate ? this.providerCreatedDate.toISOString() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -18180,7 +18719,7 @@ export class CreditReportDto implements ICreditReportDto {
             for (let item of this.publicInformation)
                 data["publicInformation"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -18255,7 +18794,7 @@ export class CreditBureauReportDto implements ICreditBureauReportDto {
             for (let item of this.scoreFactors)
                 data["scoreFactors"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -18335,7 +18874,7 @@ export class AccountDto implements IAccountDto {
             for (let item of this.accountDetails)
                 data["accountDetails"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -18387,7 +18926,7 @@ export class AlertDto implements IAlertDto {
         data["bureau"] = this.bureau;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["text"] = this.text;
-        return data;
+        return data; 
     }
 }
 
@@ -18431,7 +18970,7 @@ export class RecommendationDto implements IRecommendationDto {
         data["header"] = this.header;
         data["text"] = this.text;
         data["isPositive"] = this.isPositive;
-        return data;
+        return data; 
     }
 }
 
@@ -18474,7 +19013,7 @@ export class CreditorContactDto implements ICreditorContactDto {
         data["name"] = this.name;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["phoneNumber"] = this.phoneNumber;
-        return data;
+        return data; 
     }
 }
 
@@ -18517,7 +19056,7 @@ export class ConsumerStatementDto implements IConsumerStatementDto {
         data["bureau"] = this.bureau;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["statement"] = this.statement;
-        return data;
+        return data; 
     }
 }
 
@@ -18574,7 +19113,7 @@ export class PublicRecordDto implements IPublicRecordDto {
             for (let item of this.publicRecordDetails)
                 data["publicRecordDetails"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -18628,7 +19167,7 @@ export class CreditScoreDto implements ICreditScoreDto {
         data["qualitativeRank"] = this.qualitativeRank;
         data["scoreDate"] = this.scoreDate ? this.scoreDate.toISOString() : <any>undefined;
         data["nextUpdate"] = this.nextUpdate;
-        return data;
+        return data; 
     }
 }
 
@@ -18692,7 +19231,7 @@ export class CreditSummaryDto implements ICreditSummaryDto {
         data["payments"] = this.payments;
         data["publicRecords"] = this.publicRecords;
         data["inquiries2Years"] = this.inquiries2Years;
-        return data;
+        return data; 
     }
 }
 
@@ -18763,7 +19302,7 @@ export class PersonalInfoDto implements IPersonalInfoDto {
             for (let item of this.employers)
                 data["employers"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -18808,7 +19347,7 @@ export class InquiryDto implements IInquiryDto {
         data["creditorName"] = this.creditorName;
         data["industry"] = this.industry;
         data["dateOfInquiry"] = this.dateOfInquiry ? this.dateOfInquiry.toISOString() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -18848,7 +19387,7 @@ export class ScoreFactorDto implements IScoreFactorDto {
         data = typeof data === 'object' ? data : {};
         data["isPositive"] = this.isPositive;
         data["text"] = this.text;
-        return data;
+        return data; 
     }
 }
 
@@ -18937,7 +19476,7 @@ export class AccountInfoDto implements IAccountInfoDto {
             for (let item of this.twoYearHistory)
                 data["twoYearHistory"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -18996,7 +19535,7 @@ export class AddressDto implements IAddressDto {
         data["line2"] = this.line2;
         data["line3"] = this.line3;
         data["line4"] = this.line4;
-        return data;
+        return data; 
     }
 }
 
@@ -19067,7 +19606,7 @@ export class PublicRecordBureauInfoDto implements IPublicRecordBureauInfoDto {
         data["dateUpdated"] = this.dateUpdated ? this.dateUpdated.toISOString() : <any>undefined;
         data["dateReleased"] = this.dateReleased ? this.dateReleased.toISOString() : <any>undefined;
         data["remarks"] = this.remarks;
-        return data;
+        return data; 
     }
 }
 
@@ -19119,7 +19658,7 @@ export class EmployerDto implements IEmployerDto {
         data["name"] = this.name;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["type"] = this.type;
-        return data;
+        return data; 
     }
 }
 
@@ -19168,7 +19707,7 @@ export class AccountCreditHistoryDto implements IAccountCreditHistoryDto {
         data["status"] = this.status;
         data["isPositiveStatus"] = this.isPositiveStatus;
         data["statusType"] = this.statusType;
-        return data;
+        return data; 
     }
 }
 
@@ -19218,7 +19757,7 @@ export class KeyValuePairOfStringAndListOfScoreHistoryDto implements IKeyValuePa
             for (let item of this.value)
                 data["value"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -19257,7 +19796,7 @@ export class ScoreHistoryDto implements IScoreHistoryDto {
         data = typeof data === 'object' ? data : {};
         data["scoreDate"] = this.scoreDate ? this.scoreDate.toISOString() : <any>undefined;
         data["score"] = this.score;
-        return data;
+        return data; 
     }
 }
 
@@ -19302,7 +19841,7 @@ export class ScoreSimulatorInfoDto implements IScoreSimulatorInfoDto {
         data["totalCreditLimit"] = this.totalCreditLimit;
         data["outstandingBalance"] = this.outstandingBalance;
         data["accessStatus"] = this.accessStatus;
-        return data;
+        return data; 
     }
 }
 
@@ -19397,7 +19936,7 @@ export class ScoreSimulatorDto implements IScoreSimulatorDto {
         data["obtainAutoLoan"] = this.obtainAutoLoan;
         data["obtainPersonalLoan"] = this.obtainPersonalLoan;
         data["transferCreditBalances"] = this.transferCreditBalances;
-        return data;
+        return data; 
     }
 }
 
@@ -19510,7 +20049,7 @@ export class ContactInfoDto implements IContactInfoDto {
                 data["links"].push(item.toJSON());
         }
         data["comment"] = this.comment;
-        return data;
+        return data; 
     }
 }
 
@@ -19605,7 +20144,7 @@ export class PersonInfoDto implements IPersonInfoDto {
         data["contactId"] = this.contactId;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
-        return data;
+        return data; 
     }
 }
 
@@ -19663,7 +20202,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
         data["industry"] = this.industry;
         data["type"] = this.type;
         data["contactPerson"] = this.contactPerson ? this.contactPerson.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -19706,7 +20245,7 @@ export class ContactPhotoDto implements IContactPhotoDto {
         data["thumbnail"] = this.thumbnail;
         data["source"] = this.source;
         data["comment"] = this.comment;
-        return data;
+        return data; 
     }
 }
 
@@ -19770,7 +20309,7 @@ export class ContactEmailDto implements IContactEmailDto {
         data["confirmedByUserId"] = this.confirmedByUserId;
         data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
         data["comment"] = this.comment;
-        return data;
+        return data; 
     }
 }
 
@@ -19844,7 +20383,7 @@ export class ContactPhoneDto implements IContactPhoneDto {
         data["confirmedByUserId"] = this.confirmedByUserId;
         data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
         data["comment"] = this.comment;
-        return data;
+        return data; 
     }
 }
 
@@ -19934,7 +20473,7 @@ export class ContactAddressDto implements IContactAddressDto {
         data["confirmedByUserId"] = this.confirmedByUserId;
         data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
         data["comment"] = this.comment;
-        return data;
+        return data; 
     }
 }
 
@@ -20014,7 +20553,7 @@ export class ContactLinkDto implements IContactLinkDto {
         data["confirmedByUserId"] = this.confirmedByUserId;
         data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
         data["comment"] = this.comment;
-        return data;
+        return data; 
     }
 }
 
@@ -20065,7 +20604,7 @@ export class UserKeyInfoDto implements IUserKeyInfoDto {
         data["id"] = this.id;
         data["userName"] = this.userName;
         data["fullName"] = this.fullName;
-        return data;
+        return data; 
     }
 }
 
@@ -20108,7 +20647,7 @@ export class PersonKeyInfoDto implements IPersonKeyInfoDto {
         data["contactId"] = this.contactId;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
-        return data;
+        return data; 
     }
 }
 
@@ -20174,7 +20713,7 @@ export class CustomerInfoDto implements ICustomerInfoDto {
         data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
         data["userContextOrderId"] = this.userContextOrderId;
         data["userContextOrderType"] = this.userContextOrderType;
-        return data;
+        return data; 
     }
 }
 
@@ -20222,7 +20761,7 @@ export class ContactShortInfoDto implements IContactShortInfoDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["type"] = this.type;
-        return data;
+        return data; 
     }
 }
 
@@ -20280,7 +20819,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
         data["ssn"] = this.ssn;
         data["suppressSimilarContactWarning"] = this.suppressSimilarContactWarning;
         data["organizationUnitId"] = this.organizationUnitId;
-        return data;
+        return data; 
     }
 }
 
@@ -20325,7 +20864,7 @@ export class CreateCustomerOutput implements ICreateCustomerOutput {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["similarCustomerExists"] = this.similarCustomerExists;
-        return data;
+        return data; 
     }
 }
 
@@ -20369,7 +20908,7 @@ export class ListResultDtoOfEditionListDto implements IListResultDtoOfEditionLis
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -20413,7 +20952,7 @@ export class EditionListDto implements IEditionListDto {
         data["displayName"] = this.displayName;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -20473,7 +21012,7 @@ export class GetEditionEditOutput implements IGetEditionEditOutput {
             for (let item of this.features)
                 data["features"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -20528,7 +21067,7 @@ export class EditionEditDto implements IEditionEditDto {
         data["trialDayCount"] = this.trialDayCount;
         data["waitingDayAfterExpire"] = this.waitingDayAfterExpire;
         data["expiringEditionId"] = this.expiringEditionId;
-        return data;
+        return data; 
     }
 }
 
@@ -20584,7 +21123,7 @@ export class FlatFeatureDto implements IFlatFeatureDto {
         data["description"] = this.description;
         data["defaultValue"] = this.defaultValue;
         data["inputType"] = this.inputType ? this.inputType.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -20645,7 +21184,7 @@ export class FeatureInputTypeDto implements IFeatureInputTypeDto {
         }
         data["validator"] = this.validator ? this.validator.toJSON() : <any>undefined;
         data["itemSource"] = this.itemSource ? this.itemSource.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -20698,7 +21237,7 @@ export class IValueValidator implements IIValueValidator {
                     data["attributes"][key] = this.attributes[key];
             }
         }
-        return data;
+        return data; 
     }
 }
 
@@ -20742,7 +21281,7 @@ export class LocalizableComboboxItemSourceDto implements ILocalizableComboboxIte
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -20780,7 +21319,7 @@ export class LocalizableComboboxItemDto implements ILocalizableComboboxItemDto {
         data = typeof data === 'object' ? data : {};
         data["value"] = this.value;
         data["displayText"] = this.displayText;
-        return data;
+        return data; 
     }
 }
 
@@ -20827,7 +21366,7 @@ export class CreateOrUpdateEditionDto implements ICreateOrUpdateEditionDto {
             for (let item of this.featureValues)
                 data["featureValues"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -20863,7 +21402,7 @@ export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["setupAccountsLink"] = this.setupAccountsLink;
-        return data;
+        return data; 
     }
 }
 
@@ -20898,7 +21437,7 @@ export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["syncInProgressAccountsCount"] = this.syncInProgressAccountsCount;
-        return data;
+        return data; 
     }
 }
 
@@ -20944,7 +21483,7 @@ export class SyncProgressOutput implements ISyncProgressOutput {
             for (let item of this.accountProgresses)
                 data["accountProgresses"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -20986,7 +21525,7 @@ export class SyncProgressDto implements ISyncProgressDto {
         data["accountName"] = this.accountName;
         data["progressStatus"] = this.progressStatus;
         data["progressPercent"] = this.progressPercent;
-        return data;
+        return data; 
     }
 }
 
@@ -21026,7 +21565,7 @@ export class CreateFriendshipRequestInput implements ICreateFriendshipRequestInp
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
         data["tenantId"] = this.tenantId;
-        return data;
+        return data; 
     }
 }
 
@@ -21065,7 +21604,7 @@ export class CreateFriendshipRequestByUserNameInput implements ICreateFriendship
         data = typeof data === 'object' ? data : {};
         data["tenancyName"] = this.tenancyName;
         data["userName"] = this.userName;
-        return data;
+        return data; 
     }
 }
 
@@ -21104,7 +21643,7 @@ export class BlockUserInput implements IBlockUserInput {
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
         data["tenantId"] = this.tenantId;
-        return data;
+        return data; 
     }
 }
 
@@ -21143,7 +21682,7 @@ export class UnblockUserInput implements IUnblockUserInput {
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
         data["tenantId"] = this.tenantId;
-        return data;
+        return data; 
     }
 }
 
@@ -21182,7 +21721,7 @@ export class AcceptFriendshipRequestInput implements IAcceptFriendshipRequestInp
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
         data["tenantId"] = this.tenantId;
-        return data;
+        return data; 
     }
 }
 
@@ -21292,7 +21831,7 @@ export class HostDashboardData implements IHostDashboardData {
         data["subscriptionEndDateStart"] = this.subscriptionEndDateStart ? this.subscriptionEndDateStart.toISOString() : <any>undefined;
         data["subscriptionEndDateEnd"] = this.subscriptionEndDateEnd ? this.subscriptionEndDateEnd.toISOString() : <any>undefined;
         data["tenantCreationStartDate"] = this.tenantCreationStartDate ? this.tenantCreationStartDate.toISOString() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -21347,7 +21886,7 @@ export class IncomeStastistic implements IIncomeStastistic {
         data["label"] = this.label;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["amount"] = this.amount;
-        return data;
+        return data; 
     }
 }
 
@@ -21387,7 +21926,7 @@ export class TenantEdition implements ITenantEdition {
         data = typeof data === 'object' ? data : {};
         data["label"] = this.label;
         data["value"] = this.value;
-        return data;
+        return data; 
     }
 }
 
@@ -21426,7 +21965,7 @@ export class ExpiringTenant implements IExpiringTenant {
         data = typeof data === 'object' ? data : {};
         data["tenantName"] = this.tenantName;
         data["remainingDayCount"] = this.remainingDayCount;
-        return data;
+        return data; 
     }
 }
 
@@ -21468,7 +22007,7 @@ export class RecentTenant implements IRecentTenant {
         data["id"] = this.id;
         data["name"] = this.name;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -21513,7 +22052,7 @@ export class GetIncomeStatisticsDataOutput implements IGetIncomeStatisticsDataOu
             for (let item of this.incomeStatistics)
                 data["incomeStatistics"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -21556,7 +22095,7 @@ export class GetEditionTenantStatisticsOutput implements IGetEditionTenantStatis
             for (let item of this.editionStatistics)
                 data["editionStatistics"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -21603,7 +22142,7 @@ export class HostSettingsEditDto implements IHostSettingsEditDto {
         data["email"] = this.email ? this.email.toJSON() : <any>undefined;
         data["tenantManagement"] = this.tenantManagement ? this.tenantManagement.toJSON() : <any>undefined;
         data["security"] = this.security ? this.security.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -21645,7 +22184,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
         data = typeof data === 'object' ? data : {};
         data["timezone"] = this.timezone;
         data["timezoneForComparison"] = this.timezoneForComparison;
-        return data;
+        return data; 
     }
 }
 
@@ -21681,7 +22220,7 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
-        return data;
+        return data; 
     }
 }
 
@@ -21740,7 +22279,7 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
         data["smtpDomain"] = this.smtpDomain;
         data["smtpEnableSsl"] = this.smtpEnableSsl;
         data["smtpUseDefaultCredentials"] = this.smtpUseDefaultCredentials;
-        return data;
+        return data; 
     }
 }
 
@@ -21792,7 +22331,7 @@ export class TenantManagementSettingsEditDto implements ITenantManagementSetting
         data["isNewRegisteredTenantActiveByDefault"] = this.isNewRegisteredTenantActiveByDefault;
         data["useCaptchaOnRegistration"] = this.useCaptchaOnRegistration;
         data["defaultEditionId"] = this.defaultEditionId;
-        return data;
+        return data; 
     }
 }
 
@@ -21842,7 +22381,7 @@ export class SecuritySettingsEditDto implements ISecuritySettingsEditDto {
         data["defaultPasswordComplexity"] = this.defaultPasswordComplexity ? this.defaultPasswordComplexity.toJSON() : <any>undefined;
         data["userLockOut"] = this.userLockOut ? this.userLockOut.toJSON() : <any>undefined;
         data["twoFactorLogin"] = this.twoFactorLogin ? this.twoFactorLogin.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -21893,7 +22432,7 @@ export class PasswordComplexitySetting implements IPasswordComplexitySetting {
         data["requireNonAlphanumeric"] = this.requireNonAlphanumeric;
         data["requireUppercase"] = this.requireUppercase;
         data["requiredLength"] = this.requiredLength;
-        return data;
+        return data; 
     }
 }
 
@@ -21938,7 +22477,7 @@ export class UserLockOutSettingsEditDto implements IUserLockOutSettingsEditDto {
         data["isEnabled"] = this.isEnabled;
         data["maxFailedAccessAttemptsBeforeLockout"] = this.maxFailedAccessAttemptsBeforeLockout;
         data["defaultAccountLockoutSeconds"] = this.defaultAccountLockoutSeconds;
-        return data;
+        return data; 
     }
 }
 
@@ -21987,7 +22526,7 @@ export class TwoFactorLoginSettingsEditDto implements ITwoFactorLoginSettingsEdi
         data["isEmailProviderEnabled"] = this.isEmailProviderEnabled;
         data["isSmsProviderEnabled"] = this.isSmsProviderEnabled;
         data["isRememberBrowserEnabled"] = this.isRememberBrowserEnabled;
-        return data;
+        return data; 
     }
 }
 
@@ -22026,7 +22565,7 @@ export class SendTestEmailInput implements ISendTestEmailInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["emailAddress"] = this.emailAddress;
-        return data;
+        return data; 
     }
 }
 
@@ -22064,7 +22603,7 @@ export class RequestKBAInput implements IRequestKBAInput {
         data = typeof data === 'object' ? data : {};
         data["redirectUrl"] = this.redirectUrl;
         data["cssUrl"] = this.cssUrl;
-        return data;
+        return data; 
     }
 }
 
@@ -22103,7 +22642,7 @@ export class RequestKBAOutput implements IRequestKBAOutput {
         data = typeof data === 'object' ? data : {};
         data["kbaAlreadyPassed"] = this.kbaAlreadyPassed;
         data["kbaUrl"] = this.kbaUrl;
-        return data;
+        return data; 
     }
 }
 
@@ -22145,7 +22684,7 @@ export class KBAResult implements IKBAResult {
         data["memberId"] = this.memberId;
         data["passed"] = this.passed;
         data["error"] = this.error;
-        return data;
+        return data; 
     }
 }
 
@@ -22193,7 +22732,7 @@ export class GetLanguagesOutput implements IGetLanguagesOutput {
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -22265,7 +22804,7 @@ export class ApplicationLanguageListDto implements IApplicationLanguageListDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["creatorUserId"] = this.creatorUserId;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -22334,7 +22873,7 @@ export class GetLanguageForEditOutput implements IGetLanguageForEditOutput {
             for (let item of this.flags)
                 data["flags"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -22380,7 +22919,7 @@ export class ApplicationLanguageEditDto implements IApplicationLanguageEditDto {
         data["name"] = this.name;
         data["icon"] = this.icon;
         data["isEnabled"] = this.isEnabled;
-        return data;
+        return data; 
     }
 }
 
@@ -22424,7 +22963,7 @@ export class ComboboxItemDto implements IComboboxItemDto {
         data["value"] = this.value;
         data["displayText"] = this.displayText;
         data["isSelected"] = this.isSelected;
-        return data;
+        return data; 
     }
 }
 
@@ -22461,7 +23000,7 @@ export class CreateOrUpdateLanguageInput implements ICreateOrUpdateLanguageInput
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["language"] = this.language ? this.language.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -22496,7 +23035,7 @@ export class SetDefaultLanguageInput implements ISetDefaultLanguageInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -22542,7 +23081,7 @@ export class PagedResultDtoOfLanguageTextListDto implements IPagedResultDtoOfLan
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -22584,7 +23123,7 @@ export class LanguageTextListDto implements ILanguageTextListDto {
         data["key"] = this.key;
         data["baseValue"] = this.baseValue;
         data["targetValue"] = this.targetValue;
-        return data;
+        return data; 
     }
 }
 
@@ -22630,7 +23169,7 @@ export class UpdateLanguageTextInput implements IUpdateLanguageTextInput {
         data["sourceName"] = this.sourceName;
         data["key"] = this.key;
         data["value"] = this.value;
-        return data;
+        return data; 
     }
 }
 
@@ -22674,7 +23213,7 @@ export class CancelLeadInfo implements ICancelLeadInfo {
         data["leadId"] = this.leadId;
         data["cancellationReasonId"] = this.cancellationReasonId;
         data["comment"] = this.comment;
-        return data;
+        return data; 
     }
 }
 
@@ -22719,7 +23258,7 @@ export class ListResultDtoOfLeadCancellationReasonDto implements IListResultDtoO
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -22763,7 +23302,7 @@ export class LeadCancellationReasonDto implements ILeadCancellationReasonDto {
         data["name"] = this.name;
         data["isCommentRequired"] = this.isCommentRequired;
         data["sortOrder"] = this.sortOrder;
-        return data;
+        return data; 
     }
 }
 
@@ -22842,7 +23381,7 @@ export class LeadStatsDto implements ILeadStatsDto {
             for (let item of this.types)
                 data["types"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -22889,7 +23428,7 @@ export class LeadStatsData implements ILeadStatsData {
         data["stageId"] = this.stageId;
         data["pipelineId"] = this.pipelineId;
         data["count"] = this.count;
-        return data;
+        return data; 
     }
 }
 
@@ -22930,7 +23469,7 @@ export class KeyValuePairOfInt32AndString implements IKeyValuePairOfInt32AndStri
         data = typeof data === 'object' ? data : {};
         data["key"] = this.key;
         data["value"] = this.value;
-        return data;
+        return data; 
     }
 }
 
@@ -22990,7 +23529,7 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
         data["comments"] = this.comments;
         data["sourceCode"] = this.sourceCode;
         data["tenancyName"] = this.tenancyName;
-        return data;
+        return data; 
     }
 }
 
@@ -23039,7 +23578,7 @@ export class SelectPackageResponseDto implements ISelectPackageResponseDto {
         data["registrationId"] = this.registrationId;
         data["memberInfo"] = this.memberInfo ? this.memberInfo.toJSON() : <any>undefined;
         data["paymentAuthorizationRequired"] = this.paymentAuthorizationRequired;
-        return data;
+        return data; 
     }
 }
 
@@ -23109,7 +23648,7 @@ export class MemberInfoDto implements IMemberInfoDto {
         data["isUSCitizen"] = this.isUSCitizen;
         data["packageId"] = this.packageId;
         data["utmParameter"] = this.utmParameter ? this.utmParameter.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -23173,7 +23712,7 @@ export class MemberAddressDto implements IMemberAddressDto {
         data["state"] = this.state;
         data["countryId"] = this.countryId;
         data["country"] = this.country;
-        return data;
+        return data; 
     }
 }
 
@@ -23226,7 +23765,7 @@ export class UTMParameterInfo implements IUTMParameterInfo {
         data["campaign"] = this.campaign;
         data["term"] = this.term;
         data["content"] = this.content;
-        return data;
+        return data; 
     }
 }
 
@@ -23265,7 +23804,7 @@ export class SubmitMemberInfoResultDto implements ISubmitMemberInfoResultDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["paymentAuthorizationRequired"] = this.paymentAuthorizationRequired;
-        return data;
+        return data; 
     }
 }
 
@@ -23306,7 +23845,7 @@ export class PaymentAuthorizeRequestDto implements IPaymentAuthorizeRequestDto {
         data["registrationId"] = this.registrationId;
         data["packageId"] = this.packageId;
         data["bankCard"] = this.bankCard ? this.bankCard.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -23376,7 +23915,7 @@ export class BankCardDto implements IBankCardDto {
         data["billingState"] = this.billingState;
         data["billingCountryCode"] = this.billingCountryCode;
         data["billingCountry"] = this.billingCountry;
-        return data;
+        return data; 
     }
 }
 
@@ -23433,7 +23972,7 @@ export class PaymentAuthorizeResponseDto implements IPaymentAuthorizeResponseDto
             for (let item of this.errors)
                 data["errors"].push(item);
         }
-        return data;
+        return data; 
     }
 }
 
@@ -23505,7 +24044,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
         data["isUSCitizen"] = this.isUSCitizen;
         data["packageId"] = this.packageId;
         data["utmParameter"] = this.utmParameter ? this.utmParameter.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -23566,7 +24105,7 @@ export class GetNotificationsOutput implements IGetNotificationsOutput {
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -23615,7 +24154,7 @@ export class UserNotification implements IUserNotification {
         data["state"] = this.state;
         data["notification"] = this.notification ? this.notification.toJSON() : <any>undefined;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -23690,7 +24229,7 @@ export class TenantNotification implements ITenantNotification {
         data["severity"] = this.severity;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -23748,7 +24287,7 @@ export class NotificationData implements INotificationData {
                     data["properties"][key] = this.properties[key];
             }
         }
-        return data;
+        return data; 
     }
 }
 
@@ -23784,7 +24323,7 @@ export class EntityDtoOfGuid implements IEntityDtoOfGuid {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -23830,7 +24369,7 @@ export class GetNotificationSettingsOutput implements IGetNotificationSettingsOu
             for (let item of this.notifications)
                 data["notifications"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -23875,7 +24414,7 @@ export class NotificationSubscriptionWithDisplayNameDto implements INotification
         data["description"] = this.description;
         data["name"] = this.name;
         data["isSubscribed"] = this.isSubscribed;
-        return data;
+        return data; 
     }
 }
 
@@ -23924,7 +24463,7 @@ export class UpdateNotificationSettingsInput implements IUpdateNotificationSetti
             for (let item of this.notifications)
                 data["notifications"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -23963,7 +24502,7 @@ export class NotificationSubscriptionDto implements INotificationSubscriptionDto
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["isSubscribed"] = this.isSubscribed;
-        return data;
+        return data; 
     }
 }
 
@@ -24018,7 +24557,7 @@ export class OrderFiltersInitialData implements IOrderFiltersInitialData {
             for (let item of this.subscriptionStatuses)
                 data["subscriptionStatuses"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -24071,7 +24610,7 @@ export class PipelineDto implements IPipelineDto {
             for (let item of this.stages)
                 data["stages"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -24112,7 +24651,7 @@ export class BillingSubscriptionStatusDto implements IBillingSubscriptionStatusD
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -24165,7 +24704,7 @@ export class StageDto implements IStageDto {
             for (let item of this.accessibleActions)
                 data["accessibleActions"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -24212,7 +24751,7 @@ export class ActionDto implements IActionDto {
         data["name"] = this.name;
         data["sysId"] = this.sysId;
         data["targetStageId"] = this.targetStageId;
-        return data;
+        return data; 
     }
 }
 
@@ -24258,7 +24797,7 @@ export class ListResultDtoOfOrganizationUnitDto implements IListResultDtoOfOrgan
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -24317,7 +24856,7 @@ export class OrganizationUnitDto implements IOrganizationUnitDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["creatorUserId"] = this.creatorUserId;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -24371,7 +24910,7 @@ export class PagedResultDtoOfOrganizationUnitUserListDto implements IPagedResult
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -24425,7 +24964,7 @@ export class OrganizationUnitUserListDto implements IOrganizationUnitUserListDto
         data["profilePictureId"] = this.profilePictureId;
         data["addedTime"] = this.addedTime ? this.addedTime.toISOString() : <any>undefined;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -24469,7 +25008,7 @@ export class CreateOrganizationUnitInput implements ICreateOrganizationUnitInput
         data = typeof data === 'object' ? data : {};
         data["parentId"] = this.parentId;
         data["displayName"] = this.displayName;
-        return data;
+        return data; 
     }
 }
 
@@ -24508,7 +25047,7 @@ export class UpdateOrganizationUnitInput implements IUpdateOrganizationUnitInput
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["displayName"] = this.displayName;
-        return data;
+        return data; 
     }
 }
 
@@ -24547,7 +25086,7 @@ export class MoveOrganizationUnitInput implements IMoveOrganizationUnitInput {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["newParentId"] = this.newParentId;
-        return data;
+        return data; 
     }
 }
 
@@ -24586,7 +25125,7 @@ export class UserToOrganizationUnitInput implements IUserToOrganizationUnitInput
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
         data["organizationUnitId"] = this.organizationUnitId;
-        return data;
+        return data; 
     }
 }
 
@@ -24630,7 +25169,7 @@ export class ListResultDtoOfPackageDto implements IListResultDtoOfPackageDto {
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -24713,7 +25252,7 @@ export class PackageDto implements IPackageDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["creatorUserId"] = this.creatorUserId;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -24767,7 +25306,7 @@ export class PaymentInfoDto implements IPaymentInfoDto {
         data = typeof data === 'object' ? data : {};
         data["edition"] = this.edition ? this.edition.toJSON() : <any>undefined;
         data["additionalPrice"] = this.additionalPrice;
-        return data;
+        return data; 
     }
 }
 
@@ -24830,7 +25369,7 @@ export class EditionSelectDto implements IEditionSelectDto {
         data["waitingDayAfterExpire"] = this.waitingDayAfterExpire;
         data["isFree"] = this.isFree;
         data["additionalData"] = this.additionalData ? this.additionalData.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -24883,7 +25422,7 @@ export class CreatePaymentDto implements ICreatePaymentDto {
         data["editionPaymentType"] = this.editionPaymentType;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["subscriptionPaymentGatewayType"] = this.subscriptionPaymentGatewayType;
-        return data;
+        return data; 
     }
 }
 
@@ -24945,7 +25484,7 @@ export class ExecutePaymentDto implements IExecutePaymentDto {
                     data["additionalData"][key] = this.additionalData[key];
             }
         }
-        return data;
+        return data; 
     }
 }
 
@@ -24992,7 +25531,7 @@ export class ListResultDtoOfFlatPermissionWithLevelDto implements IListResultDto
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -25042,7 +25581,7 @@ export class FlatPermissionWithLevelDto implements IFlatPermissionWithLevelDto {
         data["displayName"] = this.displayName;
         data["description"] = this.description;
         data["isGrantedByDefault"] = this.isGrantedByDefault;
-        return data;
+        return data; 
     }
 }
 
@@ -25085,7 +25624,7 @@ export class PipelineData implements IPipelineData {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -25133,7 +25672,7 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
         data["timezone"] = this.timezone;
-        return data;
+        return data; 
     }
 }
 
@@ -25175,7 +25714,7 @@ export class ChangePasswordInput implements IChangePasswordInput {
         data = typeof data === 'object' ? data : {};
         data["currentPassword"] = this.currentPassword;
         data["newPassword"] = this.newPassword;
-        return data;
+        return data; 
     }
 }
 
@@ -25223,7 +25762,7 @@ export class UpdateProfilePictureInput implements IUpdateProfilePictureInput {
         data["y"] = this.y;
         data["width"] = this.width;
         data["height"] = this.height;
-        return data;
+        return data; 
     }
 }
 
@@ -25262,7 +25801,7 @@ export class GetPasswordComplexitySettingOutput implements IGetPasswordComplexit
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["setting"] = this.setting ? this.setting.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -25297,7 +25836,7 @@ export class GetProfilePictureOutput implements IGetProfilePictureOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["profilePicture"] = this.profilePicture;
-        return data;
+        return data; 
     }
 }
 
@@ -25332,7 +25871,7 @@ export class ChangeUserLanguageDto implements IChangeUserLanguageDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["languageName"] = this.languageName;
-        return data;
+        return data; 
     }
 }
 
@@ -25375,7 +25914,7 @@ export class ListResultDtoOfRoleListDto implements IListResultDtoOfRoleListDto {
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -25425,7 +25964,7 @@ export class RoleListDto implements IRoleListDto {
         data["isDefault"] = this.isDefault;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -25487,7 +26026,7 @@ export class GetRoleForEditOutput implements IGetRoleForEditOutput {
             for (let item of this.grantedPermissionNames)
                 data["grantedPermissionNames"].push(item);
         }
-        return data;
+        return data; 
     }
 }
 
@@ -25530,7 +26069,7 @@ export class RoleEditDto implements IRoleEditDto {
         data["id"] = this.id;
         data["displayName"] = this.displayName;
         data["isDefault"] = this.isDefault;
-        return data;
+        return data; 
     }
 }
 
@@ -25579,7 +26118,7 @@ export class FlatPermissionDto implements IFlatPermissionDto {
         data["displayName"] = this.displayName;
         data["description"] = this.description;
         data["isGrantedByDefault"] = this.isGrantedByDefault;
-        return data;
+        return data; 
     }
 }
 
@@ -25629,7 +26168,7 @@ export class CreateOrUpdateRoleInput implements ICreateOrUpdateRoleInput {
             for (let item of this.grantedPermissionNames)
                 data["grantedPermissionNames"].push(item);
         }
-        return data;
+        return data; 
     }
 }
 
@@ -25671,7 +26210,7 @@ export class GetCurrentLoginInformationsOutput implements IGetCurrentLoginInform
         data["user"] = this.user ? this.user.toJSON() : <any>undefined;
         data["tenant"] = this.tenant ? this.tenant.toJSON() : <any>undefined;
         data["application"] = this.application ? this.application.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -25723,7 +26262,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
         data["emailAddress"] = this.emailAddress;
         data["profilePictureId"] = this.profilePictureId;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -25802,7 +26341,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data["creationTimeString"] = this.creationTimeString;
         data["tenantCustomizations"] = this.tenantCustomizations ? this.tenantCustomizations.toJSON() : <any>undefined;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -25868,7 +26407,7 @@ export class ApplicationInfoDto implements IApplicationInfoDto {
                     data["features"][key] = this.features[key];
             }
         }
-        return data;
+        return data; 
     }
 }
 
@@ -25923,7 +26462,7 @@ export class EditionInfoDto implements IEditionInfoDto {
         data["isHighestEdition"] = this.isHighestEdition;
         data["isFree"] = this.isFree;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -25975,7 +26514,7 @@ export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
                 data["favicons"].push(item.toJSON());
         }
         data["siteTitle"] = this.siteTitle;
-        return data;
+        return data; 
     }
 }
 
@@ -26014,7 +26553,7 @@ export class FaviconDto implements IFaviconDto {
         data = typeof data === 'object' ? data : {};
         data["faviconName"] = this.faviconName;
         data["faviconUri"] = this.faviconUri;
-        return data;
+        return data; 
     }
 }
 
@@ -26056,7 +26595,7 @@ export class UpdateUserSignInTokenOutput implements IUpdateUserSignInTokenOutput
         data["signInToken"] = this.signInToken;
         data["encodedUserId"] = this.encodedUserId;
         data["encodedTenantId"] = this.encodedTenantId;
-        return data;
+        return data; 
     }
 }
 
@@ -26096,7 +26635,7 @@ export class GetUserInformationOutput implements IGetUserInformationOutput {
         data = typeof data === 'object' ? data : {};
         data["tenancyName"] = this.tenancyName;
         data["userName"] = this.userName;
-        return data;
+        return data; 
     }
 }
 
@@ -26143,7 +26682,7 @@ export class PagedResultDtoOfTenancyListDto implements IPagedResultDtoOfTenancyL
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -26182,7 +26721,7 @@ export class TenancyListDto implements ITenancyListDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -26257,7 +26796,7 @@ export class CreateTenancyInput implements ICreateTenancyInput {
         data["isActive"] = this.isActive;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
         data["isInTrialPeriod"] = this.isInTrialPeriod;
-        return data;
+        return data; 
     }
 }
 
@@ -26329,7 +26868,7 @@ export class GetTenancyForEditOutput implements IGetTenancyForEditOutput {
         data["isActive"] = this.isActive;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
         data["isInTrialPeriod"] = this.isInTrialPeriod;
-        return data;
+        return data; 
     }
 }
 
@@ -26402,7 +26941,7 @@ export class UpdateTenancyInput implements IUpdateTenancyInput {
         data["isActive"] = this.isActive;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
         data["isInTrialPeriod"] = this.isInTrialPeriod;
-        return data;
+        return data; 
     }
 }
 
@@ -26458,7 +26997,7 @@ export class PagedResultDtoOfTenantListDto implements IPagedResultDtoOfTenantLis
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -26515,7 +27054,7 @@ export class TenantListDto implements ITenantListDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -26596,7 +27135,7 @@ export class CreateTenantInput implements ICreateTenantInput {
         data["isActive"] = this.isActive;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
         data["isInTrialPeriod"] = this.isInTrialPeriod;
-        return data;
+        return data; 
     }
 }
 
@@ -26674,7 +27213,7 @@ export class TenantEditDto implements ITenantEditDto {
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
         data["isInTrialPeriod"] = this.isInTrialPeriod;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -26738,7 +27277,7 @@ export class GetTenantFeaturesEditOutput implements IGetTenantFeaturesEditOutput
             for (let item of this.features)
                 data["features"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -26785,7 +27324,7 @@ export class UpdateTenantFeaturesInput implements IUpdateTenantFeaturesInput {
             for (let item of this.featureValues)
                 data["featureValues"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -26821,7 +27360,7 @@ export class EntityDto implements IEntityDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -26862,7 +27401,7 @@ export class TenantCustomizationDto implements ITenantCustomizationDto {
         data["customizationGroupName"] = this.customizationGroupName;
         data["customizationName"] = this.customizationName;
         data["value"] = this.value;
-        return data;
+        return data; 
     }
 }
 
@@ -26907,7 +27446,7 @@ export class GetMemberActivityOutput implements IGetMemberActivityOutput {
             for (let item of this.memberActivities)
                 data["memberActivities"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -26954,7 +27493,7 @@ export class MemberActivity implements IMemberActivity {
         data["cases"] = this.cases;
         data["closed"] = this.closed;
         data["rate"] = this.rate;
-        return data;
+        return data; 
     }
 }
 
@@ -27078,7 +27617,7 @@ export class GetDashboardDataOutput implements IGetDashboardDataOutput {
             for (let item of this.timeLineItems)
                 data["timeLineItems"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -27134,7 +27673,7 @@ export class SalesSummaryData implements ISalesSummaryData {
         data["period"] = this.period;
         data["sales"] = this.sales;
         data["profit"] = this.profit;
-        return data;
+        return data; 
     }
 }
 
@@ -27189,7 +27728,7 @@ export class TimeLineItem implements ITimeLineItem {
         data["shortDate"] = this.shortDate;
         data["titleDate"] = this.titleDate;
         data["text"] = this.text;
-        return data;
+        return data; 
     }
 }
 
@@ -27238,7 +27777,7 @@ export class GetSalesSummaryOutput implements IGetSalesSummaryOutput {
             for (let item of this.salesSummary)
                 data["salesSummary"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -27281,7 +27820,7 @@ export class GetWorldMapOutput implements IGetWorldMapOutput {
             for (let item of this.countries)
                 data["countries"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -27319,7 +27858,7 @@ export class WorldMapCountry implements IWorldMapCountry {
         data = typeof data === 'object' ? data : {};
         data["countryName"] = this.countryName;
         data["color"] = this.color;
-        return data;
+        return data; 
     }
 }
 
@@ -27385,7 +27924,7 @@ export class GetServerStatsOutput implements IGetServerStatsOutput {
             for (let item of this.loadRate)
                 data["loadRate"].push(item);
         }
-        return data;
+        return data; 
     }
 }
 
@@ -27428,7 +27967,7 @@ export class GetGeneralStatsOutput implements IGetGeneralStatsOutput {
         data["transactionPercent"] = this.transactionPercent;
         data["newVisitPercent"] = this.newVisitPercent;
         data["bouncePercent"] = this.bouncePercent;
-        return data;
+        return data; 
     }
 }
 
@@ -27465,7 +28004,7 @@ export class TenantApiHostOutput implements ITenantApiHostOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["apiHostName"] = this.apiHostName;
-        return data;
+        return data; 
     }
 }
 
@@ -27503,7 +28042,7 @@ export class CheckHostNameDnsMappingInput implements ICheckHostNameDnsMappingInp
         data = typeof data === 'object' ? data : {};
         data["tenantHostType"] = this.tenantHostType;
         data["hostName"] = this.hostName;
-        return data;
+        return data; 
     }
 }
 
@@ -27539,7 +28078,7 @@ export class CheckHostNameDnsMappingOutput implements ICheckHostNameDnsMappingOu
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["hostNameDnsMapped"] = this.hostNameDnsMapped;
-        return data;
+        return data; 
     }
 }
 
@@ -27592,7 +28131,7 @@ export class TenantSslBindingInfo implements ITenantSslBindingInfo {
         data["sslCertificateId"] = this.sslCertificateId;
         data["sslCertificateExpiration"] = this.sslCertificateExpiration ? this.sslCertificateExpiration.toISOString() : <any>undefined;
         data["sslCertificateThumbprint"] = this.sslCertificateThumbprint;
-        return data;
+        return data; 
     }
 }
 
@@ -27639,7 +28178,7 @@ export class AddSslBindingInput implements IAddSslBindingInput {
         data["tenantHostType"] = this.tenantHostType;
         data["domainName"] = this.domainName;
         data["sslCertificateId"] = this.sslCertificateId;
-        return data;
+        return data; 
     }
 }
 
@@ -27679,7 +28218,7 @@ export class UpdateSslBindingCertificateInput implements IUpdateSslBindingCertif
         data = typeof data === 'object' ? data : {};
         data["tenantHostType"] = this.tenantHostType;
         data["sslCertificateId"] = this.sslCertificateId;
-        return data;
+        return data; 
     }
 }
 
@@ -27718,7 +28257,7 @@ export class UpdateSslBindingIsActiveInput implements IUpdateSslBindingIsActiveI
         data = typeof data === 'object' ? data : {};
         data["tenantHostType"] = this.tenantHostType;
         data["isActive"] = this.isActive;
-        return data;
+        return data; 
     }
 }
 
@@ -27754,7 +28293,7 @@ export class IntegrationsSettings implements IIntegrationsSettings {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["googleMapsJavascriptApiKey"] = this.googleMapsJavascriptApiKey;
-        return data;
+        return data; 
     }
 }
 
@@ -27798,7 +28337,7 @@ export class BaseCommercePaymentSettings implements IBaseCommercePaymentSettings
         data["password"] = this.password;
         data["key"] = this.key;
         data["sandBox"] = this.sandBox;
-        return data;
+        return data; 
     }
 }
 
@@ -27860,7 +28399,7 @@ export class RegisterTenantInput implements IRegisterTenantInput {
         data["gateway"] = this.gateway;
         data["editionId"] = this.editionId;
         data["paymentId"] = this.paymentId;
-        return data;
+        return data; 
     }
 }
 
@@ -27924,7 +28463,7 @@ export class RegisterTenantOutput implements IRegisterTenantOutput {
         data["isTenantActive"] = this.isTenantActive;
         data["isActive"] = this.isActive;
         data["isEmailConfirmationRequired"] = this.isEmailConfirmationRequired;
-        return data;
+        return data; 
     }
 }
 
@@ -27988,7 +28527,7 @@ export class EditionsSelectOutput implements IEditionsSelectOutput {
                 data["editionsWithFeatures"].push(item.toJSON());
         }
         data["tenantEditionId"] = this.tenantEditionId;
-        return data;
+        return data; 
     }
 }
 
@@ -28043,7 +28582,7 @@ export class FlatFeatureSelectDto implements IFlatFeatureSelectDto {
         data["defaultValue"] = this.defaultValue;
         data["inputType"] = this.inputType ? this.inputType.toJSON() : <any>undefined;
         data["textHtmlColor"] = this.textHtmlColor;
-        return data;
+        return data; 
     }
 }
 
@@ -28095,7 +28634,7 @@ export class EditionWithFeaturesDto implements IEditionWithFeaturesDto {
             for (let item of this.featureValues)
                 data["featureValues"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -28149,7 +28688,7 @@ export class IInputType implements IIInputType {
             }
         }
         data["validator"] = this.validator ? this.validator.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -28198,7 +28737,7 @@ export class TenantSettingsEditDto implements ITenantSettingsEditDto {
         data["email"] = this.email ? this.email.toJSON() : <any>undefined;
         data["ldap"] = this.ldap ? this.ldap.toJSON() : <any>undefined;
         data["security"] = this.security ? this.security.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -28246,7 +28785,7 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
         data["isNewRegisteredUserActiveByDefault"] = this.isNewRegisteredUserActiveByDefault;
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
         data["useCaptchaOnRegistration"] = this.useCaptchaOnRegistration;
-        return data;
+        return data; 
     }
 }
 
@@ -28296,7 +28835,7 @@ export class LdapSettingsEditDto implements ILdapSettingsEditDto {
         data["domain"] = this.domain;
         data["userName"] = this.userName;
         data["password"] = this.password;
-        return data;
+        return data; 
     }
 }
 
@@ -28347,7 +28886,7 @@ export class IdcsSettings implements IIdcsSettings {
         data["partnerAccount"] = this.partnerAccount;
         data["password"] = this.password;
         data["branding"] = this.branding;
-        return data;
+        return data; 
     }
 }
 
@@ -28395,7 +28934,7 @@ export class TenantSslCertificateInfo implements ITenantSslCertificateInfo {
         data["hostNames"] = this.hostNames;
         data["expiration"] = this.expiration ? this.expiration.toISOString() : <any>undefined;
         data["thumbprint"] = this.thumbprint;
-        return data;
+        return data; 
     }
 }
 
@@ -28436,7 +28975,7 @@ export class AddTenantSslCertificateInput implements IAddTenantSslCertificateInp
         data = typeof data === 'object' ? data : {};
         data["base64EncodedCertificate"] = this.base64EncodedCertificate;
         data["password"] = this.password;
-        return data;
+        return data; 
     }
 }
 
@@ -28480,7 +29019,7 @@ export class ListResultDtoOfNameValueDto implements IListResultDtoOfNameValueDto
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -28547,7 +29086,7 @@ export class AuthenticateModel implements IAuthenticateModel {
             for (let item of this.features)
                 data["features"].push(item);
         }
-        return data;
+        return data; 
     }
 }
 
@@ -28636,7 +29175,7 @@ export class AuthenticateResultModel implements IAuthenticateResultModel {
             for (let item of this.detectedTenancies)
                 data["detectedTenancies"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -28684,7 +29223,7 @@ export class SendTwoFactorAuthCodeModel implements ISendTwoFactorAuthCodeModel {
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
         data["provider"] = this.provider;
-        return data;
+        return data; 
     }
 }
 
@@ -28726,7 +29265,7 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
         data["accessToken"] = this.accessToken;
         data["encryptedAccessToken"] = this.encryptedAccessToken;
         data["expireInSeconds"] = this.expireInSeconds;
-        return data;
+        return data; 
     }
 }
 
@@ -28769,7 +29308,7 @@ export class SwitchedAccountAuthenticateResultModel implements ISwitchedAccountA
         data["accessToken"] = this.accessToken;
         data["encryptedAccessToken"] = this.encryptedAccessToken;
         data["expireInSeconds"] = this.expireInSeconds;
-        return data;
+        return data; 
     }
 }
 
@@ -28809,7 +29348,7 @@ export class ExternalLoginProviderInfoModel implements IExternalLoginProviderInf
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["clientId"] = this.clientId;
-        return data;
+        return data; 
     }
 }
 
@@ -28857,7 +29396,7 @@ export class ExternalAuthenticateModel implements IExternalAuthenticateModel {
         data["providerAccessCode"] = this.providerAccessCode;
         data["returnUrl"] = this.returnUrl;
         data["singleSignIn"] = this.singleSignIn;
-        return data;
+        return data; 
     }
 }
 
@@ -28908,7 +29447,7 @@ export class ExternalAuthenticateResultModel implements IExternalAuthenticateRes
         data["expireInSeconds"] = this.expireInSeconds;
         data["waitingForActivation"] = this.waitingForActivation;
         data["returnUrl"] = this.returnUrl;
-        return data;
+        return data; 
     }
 }
 
@@ -29010,7 +29549,7 @@ export class FiltersInitialData implements IFiltersInitialData {
             for (let item of this.businessEntities)
                 data["businessEntities"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -29053,7 +29592,7 @@ export class FilterElementDtoOfString implements IFilterElementDtoOfString {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
@@ -29092,13 +29631,99 @@ export class FilterElementDtoOfInt32 implements IFilterElementDtoOfInt32 {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        return data;
+        return data; 
     }
 }
 
 export interface IFilterElementDtoOfInt32 {
     id: number;
     name: string;
+}
+
+export class GetTransactionAttributeTypesOutput implements IGetTransactionAttributeTypesOutput {
+    transactionAttributeTypes: { [key: string] : TransactionAttributeTypeDto; };
+
+    constructor(data?: IGetTransactionAttributeTypesOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["transactionAttributeTypes"]) {
+                this.transactionAttributeTypes = {};
+                for (let key in data["transactionAttributeTypes"]) {
+                    if (data["transactionAttributeTypes"].hasOwnProperty(key))
+                        this.transactionAttributeTypes[key] = data["transactionAttributeTypes"][key] ? TransactionAttributeTypeDto.fromJS(data["transactionAttributeTypes"][key]) : <any>undefined;
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): GetTransactionAttributeTypesOutput {
+        let result = new GetTransactionAttributeTypesOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.transactionAttributeTypes) {
+            data["transactionAttributeTypes"] = {};
+            for (let key in this.transactionAttributeTypes) {
+                if (this.transactionAttributeTypes.hasOwnProperty(key))
+                    data["transactionAttributeTypes"][key] = this.transactionAttributeTypes[key] ? this.transactionAttributeTypes[key].toJSON() : <any>undefined;
+            }
+        }
+        return data; 
+    }
+}
+
+export interface IGetTransactionAttributeTypesOutput {
+    transactionAttributeTypes: { [key: string] : TransactionAttributeTypeDto; };
+}
+
+export class TransactionAttributeTypeDto implements ITransactionAttributeTypeDto {
+    name: string;
+    parserCode: string;
+
+    constructor(data?: ITransactionAttributeTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.parserCode = data["parserCode"];
+        }
+    }
+
+    static fromJS(data: any): TransactionAttributeTypeDto {
+        let result = new TransactionAttributeTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["parserCode"] = this.parserCode;
+        return data; 
+    }
+}
+
+export interface ITransactionAttributeTypeDto {
+    name: string;
+    parserCode: string;
 }
 
 export class PagedResultDtoOfUserListDto implements IPagedResultDtoOfUserListDto {
@@ -29139,7 +29764,7 @@ export class PagedResultDtoOfUserListDto implements IPagedResultDtoOfUserListDto
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -29216,7 +29841,7 @@ export class UserListDto implements IUserListDto {
         data["isActive"] = this.isActive;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -29265,7 +29890,7 @@ export class UserListRoleDto implements IUserListRoleDto {
         data = typeof data === 'object' ? data : {};
         data["roleId"] = this.roleId;
         data["roleName"] = this.roleName;
-        return data;
+        return data; 
     }
 }
 
@@ -29315,7 +29940,7 @@ export class GetUserForEditOutput implements IGetUserForEditOutput {
             for (let item of this.roles)
                 data["roles"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -29382,7 +30007,7 @@ export class UserEditDto implements IUserEditDto {
         data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
         data["isTwoFactorEnabled"] = this.isTwoFactorEnabled;
         data["isLockoutEnabled"] = this.isLockoutEnabled;
-        return data;
+        return data; 
     }
 }
 
@@ -29436,7 +30061,7 @@ export class UserRoleDto implements IUserRoleDto {
         data["roleName"] = this.roleName;
         data["roleDisplayName"] = this.roleDisplayName;
         data["isAssigned"] = this.isAssigned;
-        return data;
+        return data; 
     }
 }
 
@@ -29493,7 +30118,7 @@ export class GetUserPermissionsForEditOutput implements IGetUserPermissionsForEd
             for (let item of this.grantedPermissionNames)
                 data["grantedPermissionNames"].push(item);
         }
-        return data;
+        return data; 
     }
 }
 
@@ -29529,7 +30154,7 @@ export class EntityDtoOfInt64 implements IEntityDtoOfInt64 {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -29575,7 +30200,7 @@ export class UpdateUserPermissionsInput implements IUpdateUserPermissionsInput {
             for (let item of this.grantedPermissionNames)
                 data["grantedPermissionNames"].push(item);
         }
-        return data;
+        return data; 
     }
 }
 
@@ -29628,7 +30253,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
         }
         data["sendActivationEmail"] = this.sendActivationEmail;
         data["setRandomPassword"] = this.setRandomPassword;
-        return data;
+        return data; 
     }
 }
 
@@ -29672,7 +30297,7 @@ export class LinkToUserInput implements ILinkToUserInput {
         data["tenancyName"] = this.tenancyName;
         data["usernameOrEmailAddress"] = this.usernameOrEmailAddress;
         data["password"] = this.password;
-        return data;
+        return data; 
     }
 }
 
@@ -29720,7 +30345,7 @@ export class PagedResultDtoOfLinkedUserDto implements IPagedResultDtoOfLinkedUse
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -29768,7 +30393,7 @@ export class LinkedUserDto implements ILinkedUserDto {
         data["username"] = this.username;
         data["lastLoginTime"] = this.lastLoginTime ? this.lastLoginTime.toISOString() : <any>undefined;
         data["id"] = this.id;
-        return data;
+        return data; 
     }
 }
 
@@ -29815,7 +30440,7 @@ export class ListResultDtoOfLinkedUserDto implements IListResultDtoOfLinkedUserD
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -29853,7 +30478,7 @@ export class UnlinkUserInput implements IUnlinkUserInput {
         data = typeof data === 'object' ? data : {};
         data["tenantId"] = this.tenantId;
         data["userId"] = this.userId;
-        return data;
+        return data; 
     }
 }
 
@@ -29897,7 +30522,7 @@ export class ListResultDtoOfUserLoginAttemptDto implements IListResultDtoOfUserL
             for (let item of this.items)
                 data["items"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -29950,7 +30575,7 @@ export class UserLoginAttemptDto implements IUserLoginAttemptDto {
         data["browserInfo"] = this.browserInfo;
         data["result"] = this.result;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -29999,7 +30624,7 @@ export class GetLatestWebLogsOutput implements IGetLatestWebLogsOutput {
             for (let item of this.latestWebLogLines)
                 data["latestWebLogLines"].push(item);
         }
-        return data;
+        return data; 
     }
 }
 
@@ -30008,191 +30633,197 @@ export interface IGetLatestWebLogsOutput {
 }
 
 export enum GroupBy {
-    Daily = <any>"Daily",
-    Weekly = <any>"Weekly",
-    Monthly = <any>"Monthly",
-    Quarterly = <any>"Quarterly",
-    Yearly = <any>"Yearly",
+    Daily = <any>"Daily", 
+    Weekly = <any>"Weekly", 
+    Monthly = <any>"Monthly", 
+    Quarterly = <any>"Quarterly", 
+    Yearly = <any>"Yearly", 
 }
 
 export enum ApplyOption {
-    New = <any>"New",
-    Uncategorized = <any>"Uncategorized",
-    CategorizedByTheRuleOnly = <any>"CategorizedByTheRuleOnly",
-    AllExisting = <any>"AllExisting",
+    New = <any>"New", 
+    Uncategorized = <any>"Uncategorized", 
+    CategorizedByTheRuleOnly = <any>"CategorizedByTheRuleOnly", 
+    AllExisting = <any>"AllExisting", 
 }
 
 export enum IncomeStatisticsDateInterval {
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
 }
 
 export enum IncomeStatisticsDateInterval2 {
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
 }
 
 export enum State {
-    _0 = 0,
-    _1 = 1,
+    _0 = 0, 
+    _1 = 1, 
 }
 
 export enum SalesSummaryDatePeriod {
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
 }
 
 export enum SalesSummaryDatePeriod2 {
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
 }
 
 export enum TenantHostType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export enum TenantHostType2 {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export enum DefaultTimezoneScope {
-    _1 = 1,
-    _2 = 2,
-    _4 = 4,
-    _7 = 7,
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
+    _7 = 7, 
 }
 
 export enum IsTenantAvailableOutputState {
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
 }
 
 export enum BankAccountDailyStatDtoPeriod {
-    Daily = <any>"Daily",
-    Weekly = <any>"Weekly",
-    Monthly = <any>"Monthly",
-    Quarterly = <any>"Quarterly",
-    Yearly = <any>"Yearly",
+    Daily = <any>"Daily", 
+    Weekly = <any>"Weekly", 
+    Monthly = <any>"Monthly", 
+    Quarterly = <any>"Quarterly", 
+    Yearly = <any>"Yearly", 
 }
 
 export enum TransactionStatsDtoAdjustmentType {
-    _0 = 0,
-    _1 = 1,
-}
-
-export enum CreateRuleDtoApplyOption {
-    New = <any>"New",
-    Uncategorized = <any>"Uncategorized",
-    CategorizedByTheRuleOnly = <any>"CategorizedByTheRuleOnly",
-    AllExisting = <any>"AllExisting",
-}
-
-export enum EditRuleDtoApplyOption {
-    New = <any>"New",
-    Uncategorized = <any>"Uncategorized",
-    CategorizedByTheRuleOnly = <any>"CategorizedByTheRuleOnly",
-    AllExisting = <any>"AllExisting",
-}
-
-export enum MoveRuleDtoApplyOption {
-    New = <any>"New",
-    Uncategorized = <any>"Uncategorized",
-    CategorizedByTheRuleOnly = <any>"CategorizedByTheRuleOnly",
-    AllExisting = <any>"AllExisting",
+    _0 = 0, 
+    _1 = 1, 
 }
 
 export enum FriendDtoState {
-    _1 = 1,
-    _2 = 2,
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export enum ChatMessageDtoSide {
-    _1 = 1,
-    _2 = 2,
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export enum ChatMessageDtoReadState {
-    _1 = 1,
-    _2 = 2,
+    _1 = 1, 
+    _2 = 2, 
+}
+
+export enum CreateRuleDtoApplyOption {
+    New = <any>"New", 
+    Uncategorized = <any>"Uncategorized", 
+    CategorizedByTheRuleOnly = <any>"CategorizedByTheRuleOnly", 
+    AllExisting = <any>"AllExisting", 
+}
+
+export enum ConditionDtoCashFlowAmountFormat {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+}
+
+export enum EditRuleDtoApplyOption {
+    New = <any>"New", 
+    Uncategorized = <any>"Uncategorized", 
+    CategorizedByTheRuleOnly = <any>"CategorizedByTheRuleOnly", 
+    AllExisting = <any>"AllExisting", 
+}
+
+export enum MoveRuleDtoApplyOption {
+    New = <any>"New", 
+    Uncategorized = <any>"Uncategorized", 
+    CategorizedByTheRuleOnly = <any>"CategorizedByTheRuleOnly", 
+    AllExisting = <any>"AllExisting", 
 }
 
 export enum AccountDtoState {
-    _0 = 0,
-    _1 = 1,
+    _0 = 0, 
+    _1 = 1, 
 }
 
 export enum AlertDtoType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export enum CreditScoreDtoScoreRank {
-    Poor = <any>"Poor",
-    Fair = <any>"Fair",
-    Good = <any>"Good",
-    Excellent = <any>"Excellent",
+    Poor = <any>"Poor", 
+    Fair = <any>"Fair", 
+    Good = <any>"Good", 
+    Excellent = <any>"Excellent", 
 }
 
 export enum AccountInfoDtoStatus {
-    _0 = 0,
-    _1 = 1,
+    _0 = 0, 
+    _1 = 1, 
 }
 
 export enum AccountCreditHistoryDtoStatusType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
-    _4 = 4,
-    _5 = 5,
-    _6 = 6,
-    _7 = 7,
-    _8 = 8,
-    _9 = 9,
-    _10 = 10,
-    _11 = 11,
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+    _5 = 5, 
+    _6 = 6, 
+    _7 = 7, 
+    _8 = 8, 
+    _9 = 9, 
+    _10 = 10, 
+    _11 = 11, 
 }
 
 export enum ScoreSimulatorInfoDtoAccessStatus {
-    Ok = <any>"Ok",
-    NoMember = <any>"NoMember",
-    MemberIsCancelled = <any>"MemberIsCancelled",
-    KbaIsNotPassed = <any>"KbaIsNotPassed",
-    UnsupportedPackage = <any>"UnsupportedPackage",
-    NoPayment = <any>"NoPayment",
+    Ok = <any>"Ok", 
+    NoMember = <any>"NoMember", 
+    MemberIsCancelled = <any>"MemberIsCancelled", 
+    KbaIsNotPassed = <any>"KbaIsNotPassed", 
+    UnsupportedPackage = <any>"UnsupportedPackage", 
+    NoPayment = <any>"NoPayment", 
 }
 
 export enum MemberInfoDtoGender {
-    _0 = 0,
-    _1 = 1,
+    _0 = 0, 
+    _1 = 1, 
 }
 
 export enum RegisterMemberRequestGender {
-    _0 = 0,
-    _1 = 1,
+    _0 = 0, 
+    _1 = 1, 
 }
 
 export enum UserNotificationState {
-    _0 = 0,
-    _1 = 1,
+    _0 = 0, 
+    _1 = 1, 
 }
 
 export enum TenantNotificationSeverity {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
-    _4 = 4,
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
 }
 
 export class AdditionalData implements IAdditionalData {
@@ -30234,7 +30865,7 @@ export class AdditionalData implements IAdditionalData {
                     data["Paypal"][key] = this.paypal[key];
             }
         }
-        return data;
+        return data; 
     }
 }
 
@@ -30243,87 +30874,87 @@ export interface IAdditionalData {
 }
 
 export enum CreatePaymentDtoEditionPaymentType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
 }
 
 export enum CreatePaymentDtoPaymentPeriodType {
-    _30 = 30,
-    _365 = 365,
+    _30 = 30, 
+    _365 = 365, 
 }
 
 export enum CreatePaymentDtoSubscriptionPaymentGatewayType {
-    _1 = 1,
+    _1 = 1, 
 }
 
 export enum ExecutePaymentDtoGateway {
-    _1 = 1,
+    _1 = 1, 
 }
 
 export enum ExecutePaymentDtoEditionPaymentType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
 }
 
 export enum ExecutePaymentDtoPaymentPeriodType {
-    _30 = 30,
-    _365 = 365,
+    _30 = 30, 
+    _365 = 365, 
 }
 
 export enum TenantLoginInfoDtoPaymentPeriodType {
-    _30 = 30,
-    _365 = 365,
+    _30 = 30, 
+    _365 = 365, 
 }
 
 export enum CheckHostNameDnsMappingInputTenantHostType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export enum TenantSslBindingInfoHostType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export enum AddSslBindingInputTenantHostType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export enum UpdateSslBindingCertificateInputTenantHostType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export enum UpdateSslBindingIsActiveInputTenantHostType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export enum RegisterTenantInputSubscriptionStartType {
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
 }
 
 export enum RegisterTenantInputGateway {
-    _1 = 1,
+    _1 = 1, 
 }
 
 export class SwaggerException extends Error {
     message: string;
-    status: number;
-    response: string;
-    result: any;
+    status: number; 
+    response: string; 
+    result: any; 
 
     constructor(message: string, status: number, response: string, result: any) {
         super();
@@ -30343,12 +30974,12 @@ function throwException(message: string, status: number, response: string, resul
 }
 
 function blobToText(blob: Blob): Observable<string> {
-    return new Observable<string>((observer: any) => {
-        let reader = new FileReader();
-        reader.onload = function() {
+    return new Observable<string>((observer: any) => { 
+        let reader = new FileReader(); 
+        reader.onload = function() { 
             observer.next(this.result);
             observer.complete();
         }
-        reader.readAsText(blob);
+        reader.readAsText(blob); 
     });
 }
