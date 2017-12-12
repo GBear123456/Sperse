@@ -248,23 +248,6 @@
         .dx-area-row-cell {
             tr {
                 position: relative;
-                &.startedBalance + tr,
-                &.incomeRow + tr {
-                    .dx-white-space-column {
-                        &:nth-child(1) {
-                            border-right: none;
-                            min-width: 0;
-                            padding-left: 0;
-                            &:after {
-                                display: none;
-                            }
-                            &:before {
-                                content: '';
-                            }
-                        }
-                    }
-                }
-
                 td {
                     text-align: left;
                     color: inherit;
@@ -291,6 +274,17 @@
                             display: block;
                             border-right: 2px solid @expendedLineColor;
                             height: 100%;
+                        }
+                        &.hiddenWhiteSpace {
+                            border-right: none;
+                            min-width: 0;
+                            padding-left: 0;
+                            &:after {
+                                display: none;
+                            }
+                            &:before {
+                                content: '';
+                            }
                         }
                     }
                     &.dx-total {

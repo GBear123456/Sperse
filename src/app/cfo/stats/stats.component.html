@@ -2,7 +2,7 @@
     <synch-progress class="synch-progress"></synch-progress>
 </app-headline>
 
-<app-toolbar [(config)]="updatedConfig"></app-toolbar>
+<app-toolbar [(config)]="toolbarConfig"></app-toolbar>
 
 <dx-scroll-view showScrollbar="onHover">
     <div class="mainStatsView">
@@ -70,13 +70,14 @@
                     <dxi-pane name="topPane"></dxi-pane>
 
                     <!-- Left axis -->
-                    <dxi-value-axis maxValueMargin="1" [color]="linesColor">
+                    <dxi-value-axis maxValueMargin="1">
                         <dxo-label>
                             <dxo-format
                                 type="currency largeNumber"
                                 [currency]="currency">
                             </dxo-format>
                         </dxo-label>
+                        <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>
                     </dxi-value-axis>
 
                     <!-- Bottom axis -->
@@ -91,14 +92,14 @@
                     </dxo-argument-axis>
 
                     <!-- Common settings for axis -->
-                    <dxo-common-axis-settings allowDecimals="false" [color]="linesColor">
+                    <dxo-common-axis-settings allowDecimals="false">
                         <dxo-label alignment="center"
                                    overlappingBehavior="hide">
                             <dxo-font weight="300" color="#677380" size="12px"></dxo-font>
                         </dxo-label>
                         <dxo-strip-style>
                             <dxo-label horizontal-allignment="center"></dxo-label>
-                        </dxo-strip-style>
+                        </dxo-strip-style>=
                     </dxo-common-axis-settings>
                 </dx-chart>
 
@@ -126,6 +127,7 @@
                                 [currency]="currency">
                             </dxo-format>
                         </dxo-label>
+                        <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>
                     </dxi-value-axis>
 
                     <!-- Bottom axis -->
@@ -140,7 +142,7 @@
                     </dxo-argument-axis>
 
                     <!-- Common settings for axis -->
-                    <dxo-common-axis-settings allowDecimals="false" [color]="linesColor">
+                    <dxo-common-axis-settings allowDecimals="false">
                         <dxo-label alignment="center">
                             <dxo-font weight="300" color="#677380" size="12px"></dxo-font>
                         </dxo-label>

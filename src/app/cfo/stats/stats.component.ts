@@ -12,6 +12,8 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { CacheService } from 'ng2-cache-service';
 
 import { SourceDataComponent } from './source-data/source-data.component';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
 
 import {
     StatsFilter,
@@ -33,78 +35,9 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
-    toolbarConfig = <any>[
-        {
-            location: 'before',
-            items: [
-                {
-                    name: 'filters',
-                    action: this._filtersService.toggle.bind(this._filtersService)
-                }
-            ]
-        },
-        {
-            location: 'before',
-            items: [
-                { name: 'back' }
-            ]
-        },
-        {
-            location: 'before',
-            items: [
-                {
-                    name: 'slider',
-                    widget: 'dxGallery',
-                    options: {
-                        hint: this.l('Scenario'),
-                        accessKey: 'statsForecastSwitcher',
-                        items: [],
-                        showNavButtons: true,
-                        showIndicator: false,
-                        scrollByContent: true,
-                        height: 39,
-                        width: 200,
-                        itemTemplate: itemData => {
-                            return itemData.text;
-                        },
-                        onSelectionChanged: (e) => {
-                            this.changeSelectedForecastModel(e);
-                            this.loadStatsData();
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            location: 'after',
-            items: [
-                { name: 'flag' },
-                {
-                    name: 'pen',
-                    options: {
-                        hint: this.l('Label')
-                    }
-                },
-                { name: 'more' }
-            ]
-        },
-        {
-            location: 'after',
-            items: [
-                { name: 'download' },
-                { name: 'print' }
-            ]
-        },
-        {
-            location: 'after',
-            items: [
-                {name: 'pen'}
-            ]
-        }
-    ];
-    updatedConfig = [];
+    selectedForecastModel;
+    toolbarConfig = [];
     headlineConfig: any;
-    interval = 'date';
     axisDateFormat = 'month';
     currency = 'USD';
     labelPositiveBackgroundColor = '#626b73';
@@ -115,10 +48,8 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     historicalExpensesColor = '#f05b2a';
     forecastIncomeColor = '#a9e3f9';
     forecastExpensesColor = '#fec6b3';
-    linesColor: '#e5e9ec';
     maxLabelCount = 0;
     labelWidth = 45;
-    selectedForecastModel;
     showSourceData = false;
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
@@ -137,63 +68,103 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
+    initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedForecastModel: number } = { items: [], selectedForecastModel: null }) {
+        this.toolbarConfig = <any>[
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'filters',
+                        action: this._filtersService.toggle.bind(this._filtersService)
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    { name: 'back' }
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'slider',
+                        widget: 'dxGallery',
+                        options: {
+                            hint: this.l('Scenario'),
+                            accessKey: 'statsForecastSwitcher',
+                            items: forecastModelsObj.items,
+                            selectedIndex: forecastModelsObj.selectedForecastModel,
+                            showNavButtons: true,
+                            showIndicator: false,
+                            scrollByContent: true,
+                            height: 39,
+                            width: 200,
+                            itemTemplate: itemData => {
+                                return itemData.text;
+                            },
+                            onSelectionChanged: (e) => {
+                                this.changeSelectedForecastModel(e);
+                                this.loadStatsData();
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                items: [
+                    { name: 'flag' },
+                    {
+                        name: 'pen',
+                        options: {
+                            hint: this.l('Label')
+                        }
+                    },
+                    { name: 'more' }
+                ]
+            },
+            {
+                location: 'after',
+                items: [
+                    { name: 'download' },
+                    { name: 'print' }
+                ]
+            },
+            {
+                location: 'after',
+                items: [
+                    {name: 'pen'}
+                ]
+            }
+        ];
+    }
+
     ngOnInit() {
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
-        this._cashflowService.getCashFlowInitialData()
+
+        /** Create parallel operations */
+        let getCashFlowInitialDataObservable = this._cashflowService.getCashFlowInitialData();
+        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels();
+        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable)
             .subscribe(result => {
-                this._filtersService.setup(
-                    this.filters = [
-                        new FilterModel({
-                            component: FilterCalendarComponent,
-                            caption: 'Date',
-                            items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                        }),
-                        new FilterModel({
-                            field: 'accountIds',
-                            component: FilterCheckBoxesComponent,
-                            caption: 'Account',
-                            items: {
-                                element: new FilterCheckBoxesModel(
-                                    {
-                                        dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
-                                        nameField: 'name',
-                                        parentExpr: 'parentId',
-                                        keyExpr: 'id'
-                                    })
-                            }
-                        })
-                    ]
-                );
+                /** Initial data handling */
+                this.handleCashFlowInitialResult(result[0]);
+
+                /** Forecast models handling */
+                this.handleForecastModelResult(result[1]);
+
+                /** load stats */
+                this.loadStatsData();
             });
 
-        this._cashFlowForecastServiceProxy.getModels().subscribe(
-            result => {
-                let newToolbar = this.toolbarConfig.slice();
-                let sliderObj = newToolbar.filter(toolbarItem => toolbarItem.items[0].name === 'slider')[0];
-                sliderObj.items[0].options.items = result.map(forecastModelItem => {
-                    return {
-                        id: forecastModelItem.id,
-                        text: forecastModelItem.name
-                    };
-                });
+        this.initHeadlineConfig();
+        this.initFiltering();
+    }
 
-                /** If we have the forecast model in cache - get it there, else - get the first model */
-                let cachedForecastModel = this.getForecastModel();
-                /** If we have cached forecast model and cached forecast exists in items list - then use it **/
-                this.selectedForecastModel = cachedForecastModel && sliderObj.items[0].options.items.findIndex(
-                        item => item.id === cachedForecastModel.id
-                    ) !== -1 ?
-                    cachedForecastModel :
-                    sliderObj.items[0].options.items[0];
-                sliderObj.items[0].options.selectedIndex = sliderObj.items[0].options.items.findIndex(
-                    item => item.id === this.selectedForecastModel.id
-                );
-                this.updatedConfig = newToolbar;
-                this.loadStatsData();
-            }
-        );
-
+    initHeadlineConfig() {
         this.headlineConfig = {
             name: this.l('Daily Cash Balances'),
             icon: '',
@@ -205,9 +176,11 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                 }
             ]
         };
+    }
 
+    initFiltering() {
         for (let filter of this.filters) {
-                let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
+            let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
             if (filterMethod)
                 filterMethod(filter, this.requestFilter);
             else
@@ -216,6 +189,59 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         this._filtersService.apply(() => {
             this.loadStatsData();
         });
+    }
+
+    handleCashFlowInitialResult(result) {
+        this._filtersService.setup(
+            this.filters = [
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    caption: 'Date',
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    field: 'accountIds',
+                    component: FilterCheckBoxesComponent,
+                    caption: 'Account',
+                    items: {
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
+                                nameField: 'name',
+                                parentExpr: 'parentId',
+                                keyExpr: 'id'
+                            })
+                    }
+                })
+            ]
+        );
+    }
+
+    handleForecastModelResult(result) {
+        let items = result.map(forecastModelItem => {
+            return {
+                id: forecastModelItem.id,
+                text: forecastModelItem.name
+            };
+        });
+        items.push({
+            id: 2,
+            text: 'Scenario 2'
+        });
+        /** If we have the forecast model in cache - get it there, else - get the first model */
+        let cachedForecastModel = this.getForecastModel();
+        /** If we have cached forecast model and cached forecast exists in items list - then use it **/
+        this.selectedForecastModel = cachedForecastModel && items.findIndex(item => item.id === cachedForecastModel.id) !== -1 ?
+            cachedForecastModel :
+            items[0];
+        let selectedForecastModelIndex = items.findIndex(
+            item => item.id === this.selectedForecastModel.id
+        );
+        let forecastModelsObj = {
+            items: items,
+            selectedForecastModel: selectedForecastModelIndex
+        };
+        this.initToolbarConfig(forecastModelsObj);
     }
 
     /**
@@ -365,10 +391,11 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     addTextBlocks(event) {
         ['historical', 'forecast'].forEach(period => {
             /** Add the historical and forecast big texts above the charts */
-            let chartSeries = event.component.getSeriesByName(period);
-            if (chartSeries && event.element.find(`.${period}Label`).length === 0) {
-                let points = event.component.getSeriesByName(period).getVisiblePoints(),
-                    x = points[0].vx / window.outerWidth * 100,
+            let chartSeries = event.component.getSeriesByName(period),
+                points = event.component.getSeriesByName(period).getVisiblePoints();
+            if (chartSeries && points.length && event.element.find(`.${period}Label`).length === 0) {
+                let x = points[0].vx || points[0].x || 0,
+                    left = x / window.outerWidth * 100,
                     y = 25,
                     firstPoint = points[0],
                     lastPoint = points[points.length - 1],
@@ -377,15 +404,15 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                     'text': period === 'historical' ? this.l('Periods_Historical') : this.l('Periods_Forecast'),
                     'class': `${period}Label`,
                     'styles': {
-                        'left': x + '%',
+                        'left': left + '%',
                         'top': y + 'px',
                         'position': 'absolute'
                     }
                 }));
                 let elementTextWidth = $(`.${period}Label`).width(),
                     newLeft = elementTextWidth > seriesWidth ?
-                        points[0].vx - (elementTextWidth - seriesWidth) / 2 :
-                        points[0].vx + (seriesWidth / 2) - (elementTextWidth / 2);
+                        x - (elementTextWidth - seriesWidth) / 2 :
+                        x + (seriesWidth / 2) - (elementTextWidth / 2);
                     newLeft = newLeft / window.outerWidth * 100;
                 $(`.${period}Label`).css('left', newLeft > 0 ? newLeft + '%' : 0);
             }

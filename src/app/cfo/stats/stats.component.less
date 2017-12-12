@@ -60,6 +60,9 @@
                 @media screen and (max-width: 1024px) {
                     font-size: 30px
                 }
+                &:first-of-type {
+                    margin-bottom: 42px;
+                }
             }
         }
 
@@ -103,26 +106,35 @@
         color: #677380;
         font-size: 13px;
         font-weight: 300;
-        line-height: 2.5;
+        line-height: 1.85;
+        padding: 7px;
         letter-spacing: 0.3px;
         display: inline-block;
         font-weight: 400;
         .dx-widget {
             &.dx-gallery-nav-button-next {
                 &:before {
-                    content: url(../../../assets/common/icons/arrow-right.svg);
+                    content: url(../../../assets/common/icons/slider-arrow.svg);
+                    top: 0;
+                    right: 9px;
                 }
             }
 
             &.dx-gallery-nav-button-prev {
                 &:before {
-                    content: url(../../../assets/common/icons/arrow-left.svg);
+                    transform: rotate(180deg);
+                    -webkit-transform: rotate(180deg);
+                    -ms-transform: rotate(180deg);
+                    content: url(../../../assets/common/icons/slider-arrow.svg);
+                    left: 9px;
                 }
             }
             &:before {
-                top: 0;
+                top: 9px;
                 margin: 0 auto;
                 font-size: 29px;
+                width: 8px;
+                height: 15px;
             }
             &:after {
                 background: none
