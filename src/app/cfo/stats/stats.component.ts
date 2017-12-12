@@ -108,12 +108,14 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     axisDateFormat = 'month';
     currency = 'USD';
     labelPositiveBackgroundColor = '#626b73';
-    historicalEndingBalanceColor = '#01b0f0';
-    forecastEndingBalanceColor = '#f9bb4d';
-    historicalIncomeColor = '#01b0f0';
-    historicalExpensesColor = '#e72f6a';
-    forecastIncomeColor = '#f9bb4d';
-    forecastExpensesColor = '#f15a25';
+    labelNegativeBackgroundColor = '#f05b2a';
+    historicalEndingBalanceColor = '#00aeef';
+    forecastEndingBalanceColor = '#f9ba4e';
+    historicalIncomeColor = '#00aeef';
+    historicalExpensesColor = '#f05b2a';
+    forecastIncomeColor = '#a9e3f9';
+    forecastExpensesColor = '#fec6b3';
+    linesColor: '#e5e9ec';
     maxLabelCount = 0;
     labelWidth = 45;
     selectedForecastModel;
@@ -206,7 +208,6 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
 
         for (let filter of this.filters) {
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
-
             if (filterMethod)
                 filterMethod(filter, this.requestFilter);
             else
@@ -242,7 +243,26 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
             'USD', this.selectedForecastModel.id, accountIds, startDate, endDate, GroupBy.Monthly
         ).subscribe(result => {
                     if (result) {
-                        this.statsData = result;
+                        let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
+                        minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
+                        this.statsData = result.map(statsItem => {
+                            /** get the date and convert it to the day, month, quarter or year */
+                            let newStatsItem: any = {
+                                forecastIncome: null,
+                                forecastExpenses: null,
+                                forecastEndingBalance: null,
+                                minEndingBalance: minRange
+                            };
+                            if (statsItem.isForecast) {
+                                newStatsItem.forecastIncome = statsItem.income;
+                                newStatsItem.forecastExpenses = statsItem.expenses;
+                                newStatsItem.forecastEndingBalance = statsItem.endingBalance;
+                                statsItem.income = null;
+                                statsItem.expenses = null;
+                                statsItem.endingBalance = null;
+                            }
+                            return Object.assign(statsItem, newStatsItem);
+                        });
                         this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
                     } else {
                         console.log('No daily stats');
@@ -285,5 +305,90 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
 
     customizeBottomAxis(elem) {
         return elem.valueText.substring(0, 3).toUpperCase();
+    }
+
+    /** Different styles for labels for positive and negative values */
+    customizeLabel = (arg: any) => {
+        if (arg.series.type !== 'rangearea' && arg.value < 0) {
+            return {
+                backgroundColor: this.labelNegativeBackgroundColor,
+                customizeText: (e: any) => {
+                    return this.replaceMinusWithBrackets(e.valueText);
+                }
+            };
+        }
+    }
+
+    customizePoint = (arg: any) => {
+        if (arg.series.type !== 'rangearea' && arg.value < 0) {
+            return {
+                color: this.labelNegativeBackgroundColor,
+                size: 0.01,
+                border: {
+                    width: 8,
+                    color: 'rgba(240, 91, 42, .2)',
+                    visible: true
+                }
+            };
+        }
+    }
+
+    /**
+     * Replace string negative value like '$-1000' for the string '$(1000)' (with brackets)
+     * @param {string} value
+     * @return {string}
+     */
+    replaceMinusWithBrackets(value: string) {
+        return value.replace(/\B(?=(\d{3})+\b)/g, ',').replace(/-(.*)/, '($1)');
+    }
+
+    onDone(event) {
+        /** Added the Historical and forecast text block to the charts */
+        this.addTextBlocks(event);
+    }
+
+    /**
+     * Creates div text block
+     * @param {{[p: string]: any}} options
+     */
+    createDivTextBlock(options: { [key: string ]: any } = { 'text': '', 'class': '', 'styles': {} }) {
+        let stylesStr = Object.keys(options.styles).reduce((styleString, key) => (
+            styleString + key + ':' + options.styles[key] + ';'
+        ), '');
+        return `<div class="${options.class}" style="${stylesStr}">${options.text}</div>`;
+    }
+
+    /**
+     * Added the text blocks to the charts
+     * @param event
+     */
+    addTextBlocks(event) {
+        ['historical', 'forecast'].forEach(period => {
+            /** Add the historical and forecast big texts above the charts */
+            let chartSeries = event.component.getSeriesByName(period);
+            if (chartSeries && event.element.find(`.${period}Label`).length === 0) {
+                let points = event.component.getSeriesByName(period).getVisiblePoints(),
+                    x = points[0].vx / window.outerWidth * 100,
+                    y = 25,
+                    firstPoint = points[0],
+                    lastPoint = points[points.length - 1],
+                    seriesWidth = lastPoint.vx - firstPoint.vx;
+                event.element.append(this.createDivTextBlock({
+                    'text': period === 'historical' ? this.l('Periods_Historical') : this.l('Periods_Forecast'),
+                    'class': `${period}Label`,
+                    'styles': {
+                        'left': x + '%',
+                        'top': y + 'px',
+                        'position': 'absolute'
+                    }
+                }));
+                let elementTextWidth = $(`.${period}Label`).width(),
+                    newLeft = elementTextWidth > seriesWidth ?
+                        points[0].vx - (elementTextWidth - seriesWidth) / 2 :
+                        points[0].vx + (seriesWidth / 2) - (elementTextWidth / 2);
+                    newLeft = newLeft / window.outerWidth * 100;
+                $(`.${period}Label`).css('left', newLeft > 0 ? newLeft + '%' : 0);
+            }
+        });
     }
 }

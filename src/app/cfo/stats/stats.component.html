@@ -18,12 +18,15 @@
                 <dx-chart
                     id="chart"
                     [dataSource]="statsData"
-                    defaultPane="topPane"
-                    animation="{easing: 'easeOutCubic',duration: 2000}">
+                    animation="{easing: 'easeOutCubic',duration: 2000}"
+                    [customizeLabel]="customizeLabel"
+                    [customizePoint]="customizePoint"
+                    (onDone)="onDone($event)">
                     <!-- common settings for charts -->
                     <dxo-common-series-settings argumentField="date"
                                                 [showInLegend]="false"
-                                                [maxLabelCount]="maxLabelCount">
+                                                [maxLabelCount]="maxLabelCount"
+                                                hoverMode="none">
                         <dxo-label
                             [visible]="true"
                             [backgroundColor]="labelPositiveBackgroundColor">
@@ -31,21 +34,43 @@
                                 type="currency largeNumber"
                                 [currency]="currency">
                             </dxo-format>
+                            <dxo-font size="10px" weight="300"></dxo-font>
                         </dxo-label>
+                        <dxo-point size="8"></dxo-point>
                     </dxo-common-series-settings>
 
                     <dxi-series
-                        [color]="historicalEndingBalanceColor"
-                        valueField="endingBalance">
+                        pane="topPane"
+                        color="url(#historical-linear-gradient)"
+                        type="rangeArea"
+                        rangeValue1Field="minEndingBalance"
+                        rangeValue2Field="endingBalance">
+                        <dxo-label [visible]="false"></dxo-label>
                     </dxi-series>
-
                     <dxi-series
+                        name="historical"
+                        [color]="historicalEndingBalanceColor"
+                        valueField="endingBalance"
+                        pane="topPane">
+                    </dxi-series>
+                    <dxi-series
+                        pane="topPane"
+                        color="url(#forecast-linear-gradient)"
+                        type="rangeArea"
+                        rangeValue1Field="minEndingBalance"
+                        rangeValue2Field="forecastEndingBalance">
+                        <dxo-label [visible]="false"></dxo-label>
+                    </dxi-series>
+                    <dxi-series
+                        name="forecast"
+                        pane="topPane"
                         [color]="forecastEndingBalanceColor"
                         valueField="forecastEndingBalance">
                     </dxi-series>
+                    <dxi-pane name="topPane"></dxi-pane>
 
                     <!-- Left axis -->
-                    <dxi-value-axis>
+                    <dxi-value-axis maxValueMargin="1" [color]="linesColor">
                         <dxo-label>
                             <dxo-format
                                 type="currency largeNumber"
@@ -66,14 +91,15 @@
                     </dxo-argument-axis>
 
                     <!-- Common settings for axis -->
-                    <dxo-common-axis-settings allowDecimals="false">
+                    <dxo-common-axis-settings allowDecimals="false" [color]="linesColor">
                         <dxo-label alignment="center"
-                                   overlappingBehavior="hide"></dxo-label>
+                                   overlappingBehavior="hide">
+                            <dxo-font weight="300" color="#677380" size="12px"></dxo-font>
+                        </dxo-label>
                         <dxo-strip-style>
                             <dxo-label horizontal-allignment="center"></dxo-label>
                         </dxo-strip-style>
                     </dxo-common-axis-settings>
-
                 </dx-chart>
 
                 <dx-chart
@@ -81,15 +107,26 @@
                     [dataSource]="statsData"
                     defaultPane="bottomPane"
                     animation="{easing: 'easeOutCubic',duration: 2000}"
-                    [barWidth]="0.5">
+                    [barWidth]="0.5"
+                    (onDone)="onDone($event)">
                     <!-- common settings for charts -->
                     <dxo-common-series-settings argumentField="date" type="stackedBar" [showInLegend]="false"></dxo-common-series-settings>
 
                     <!-- Bottom bar chart -->
-                    <dxi-series [color]="historicalIncomeColor" valueField="income" name="Incomes"></dxi-series>
-                    <dxi-series [color]="historicalExpensesColor" valueField="expenses" name="Expenses"></dxi-series>
-                    <dxi-series [color]="forecastIncomeColor" valueField="forecastIncome" name="Incomes"></dxi-series>
-                    <dxi-series [color]="forecastExpensesColor" valueField="forecastExpenses" name="Expenses"></dxi-series>
+                    <dxi-series [color]="historicalIncomeColor" valueField="income" name="historical"></dxi-series>
+                    <dxi-series [color]="historicalExpensesColor" valueField="expenses" name="historicalExpenses"></dxi-series>
+                    <dxi-series [color]="forecastIncomeColor" valueField="forecastIncome" name="forecast"></dxi-series>
+                    <dxi-series [color]="forecastExpensesColor" valueField="forecastExpenses" name="forecastExpenses"></dxi-series>
+
+                    <!-- Left axis -->
+                    <dxi-value-axis maxValueMargin="1">
+                        <dxo-label>
+                            <dxo-format
+                                type="currency largeNumber"
+                                [currency]="currency">
+                            </dxo-format>
+                        </dxo-label>
+                    </dxi-value-axis>
 
                     <!-- Bottom axis -->
                     <dxo-argument-axis
@@ -103,14 +140,15 @@
                     </dxo-argument-axis>
 
                     <!-- Common settings for axis -->
-                    <dxo-common-axis-settings allowDecimals="false">
-                        <dxo-label alignment="center"></dxo-label>
+                    <dxo-common-axis-settings allowDecimals="false" [color]="linesColor">
+                        <dxo-label alignment="center">
+                            <dxo-font weight="300" color="#677380" size="12px"></dxo-font>
+                        </dxo-label>
                         <dxo-strip-style>
                             <dxo-label horizontal-allignment="center"></dxo-label>
                         </dxo-strip-style>
                     </dxo-common-axis-settings>
 
-                    <dxi-pane name="bottomPane"></dxi-pane>
                 </dx-chart>
             </md-tab>
             <md-tab label="{{l('Details Chart')}}">
@@ -118,3 +156,15 @@
         </md-tab-group>
     </div>
 </dx-scroll-view>
+
+<svg>
+    <linearGradient id="historical-linear-gradient" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="rgba(0, 174, 239, .5)"/>
+        <stop offset="100%" stop-color="#fff"/>
+    </linearGradient>
+
+    <linearGradient id="forecast-linear-gradient" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="rgba(249, 186, 78, .5)"/>
+        <stop offset="100%" stop-color="#fff"/>
+    </linearGradient>
+</svg>

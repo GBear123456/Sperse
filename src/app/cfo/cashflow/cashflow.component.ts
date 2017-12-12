@@ -781,7 +781,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
         $('.filter-sort-options').appendTo(event.element.find('.dx-area-description-cell'));
-        this.changeIntervalWidth();
 
         /** Calculate the amount current cells to cut the current period current cell to change current from
          *  current for year to current for the grouping period */
@@ -796,22 +795,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             $('.pivot-grid').removeClass('invisible');
         }
     }
-
-    /**
-     * Resize the width of the interval inputs
-     */
-    changeIntervalWidth() {
-        function textWidth(element): number {
-            let fakeEl = $('<span>').hide().appendTo(document.body);
-            fakeEl.text(element.val() || element.text()).css('font', element.css('font'));
-            let width = fakeEl.width();
-            fakeEl.remove();
-            return width;
-        };
-        let elemWidth = textWidth($('.groupBy .dx-texteditor-input')) + 23;
-        $('.groupBy .dx-texteditor-input').css('width', elemWidth);
-    }
-
     /**
      * Changes historical colspans depend on current, previous and forecast periods using jquery dates columns colspans
      * and historical classes that added in onCellPrepared to the dates that belongs to the current periods like
@@ -1011,7 +994,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         /** Change historical field for different date intervals */
         let historicalField = this.getHistoricField();
         historicalField ['selector'] = value.historicalSelectionFunction();
-        this.changeIntervalWidth();
         this.collapsedStartingAndEndingBalance = false;
         this.closeTransactionsDetail();
         this.dataSource = this.getApiDataSource();

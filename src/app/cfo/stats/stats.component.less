@@ -14,26 +14,51 @@
 
     .mainStatsView {
         border-top: 1px solid #dfdfdf;
-        padding: 20px;
+        padding: 14px;
         margin-bottom: 200px;
         position: relative;
-        /deep/ .dxc-labels rect {
-            rx: 5
+        /deep/ .dxc-labels {
+            rect {
+                rx: 5
+            }
+            text {
+                letter-spacing: 0.2px;
+            }
         }
-
+        /deep/ .dxc-arg-elements {
+            text {
+                letter-spacing: 0.2px;
+            }
+        }
         md-tab-group {
             /deep/ .mat-tab-header {
                 margin-bottom: 20px;
                 border-bottom: none;
                 .mat-tab-label {
-                    font-size: 30px;
                     font-weight: 300;
                     border-bottom: none;
                     padding: 30px 20px;
+                    font-size: 22px;
+                    color: rgba(33, 44, 54, .4);
+                    background: initial;
                     &.mat-tab-label-active {
                         font-weight: 600;
-                        background-color: inherit;
+                        background-color: initial;
+                        color: #212c36;
                     }
+                }
+                .mat-ink-bar {
+                    display: none;
+                }
+            }
+            dx-chart {
+                position: relative;
+                color: red;
+                font-size: 60px;
+                color: rgba(99, 107, 114, .08);
+                font-weight: 600;
+                @media screen and (max-width: 1024px) {
+                    font-size: 30px
                 }
             }
         }
@@ -42,10 +67,18 @@
             position: absolute;
             right: 36px;
             top: 35px;
-            font-size: 22px;
             z-index: 2;
-            color: #01b0f0;
             cursor: pointer;
+            color: #00aeef;
+            padding-right: 15px;
+            font-weight: 500;
+            &:after {
+                content: url('../../../assets/common/icons/show-source-icon.svg');
+                width: 6px;
+                height: 10px;
+                position: absolute;
+                right: 0;
+            }
         }
 
         source-data {
