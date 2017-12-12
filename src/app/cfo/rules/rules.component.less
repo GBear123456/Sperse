@@ -1,0 +1,92 @@
+:host {
+    position: relative;
+    top: 75px;
+
+    &.fullscreen {
+        top: -75px !important;
+        dx-tree-list {
+            height: calc(~"100vh - 61px")!important;
+        }
+    }
+    .portlet-body {
+        margin: 0px 42px;
+    }
+    /deep/ dx-tree-list {
+        .dx-treelist-headers {
+            border-bottom: none;
+            div.dx-placeholder {
+                display: none!important;
+            }
+            .dx-texteditor-input {
+                font-size: 13px;
+                font-weight: 500;
+                line-height: 1.85;
+                letter-spacing: 0.5px;
+                color: #686f76;                      
+            }
+            .dx-treelist-focus-overlay {
+                height: 34px!important;
+                border: 1px solid #00aeef;
+            }
+            tr.dx-header-row {
+                td {
+                    height: 60px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    line-height: 1.85;
+                    letter-spacing: 0.5px;
+                    color: #686f76;                      
+                    text-transform: uppercase;
+                    vertical-align: middle!important;
+
+                    .dx-treelist-text-content:after {
+                        content: "\f0b0";
+                        color: #677380;
+                        cursor: pointer;
+                        font: normal normal normal 14px/1 FontAwesome;
+                        margin-left: 12px;
+                        opacity: 0.7;
+                    }
+                }
+            }
+        }
+        tr.dx-data-row {
+            &.dx-state-hover td {              
+                cursor: pointer;
+                background-color: #f3f7fa!important;
+                &.dx-command-edit a {                                    
+                    visibility: visible!important;
+                }
+            }
+            td {
+                height: 58px;
+                font-size: 15px;
+                font-weight: 300;
+                line-height: 1.6;
+                letter-spacing: 0.3px;
+                border-bottom: 1px solid #e5e9ec;
+                vertical-align: middle!important;
+                color: #424c56;                
+                &.dx-command-edit  {
+                    text-overflow: unset;
+                    a.dx-link {
+                        visibility: hidden;
+                        color: transparent!important;
+                        &.dx-link-edit {
+                            background: url('../../../assets/common/icons/edit.svg') no-repeat center;
+                        }
+                        &.dx-link-delete {
+                            background: url('../../../assets/common/icons/delete-icon.svg') no-repeat center;
+                        }
+                        &.dx-link-save {
+                            background: url('../../../assets/common/icons/check.svg') no-repeat center;
+                        }
+                        &.dx-link-cancel {
+                            background: url('../../../assets/common/icons/cancel.svg') no-repeat center;
+                        }
+                    }
+                } 
+            }
+        }
+    }
+}

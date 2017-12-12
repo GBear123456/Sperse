@@ -29,8 +29,6 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { UserGridPreferencesComponent } from './user-grid-preferences/user-grid-preferences.component';
 
-import { MdDialog } from '@angular/material';
-import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { CacheService } from 'ng2-cache-service';
 import { OperationsComponent } from './operations/operations.component';
 import { Observable } from 'rxjs/Observable';
@@ -271,7 +269,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     private anotherPeriodAccountsValues: Map<object, number> = new Map();
 
     constructor(injector: Injector,
-                public dialog: MdDialog,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
                 private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
@@ -290,17 +287,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this.headlineConfig = {
             name: this.l('Cash Flow Statement and Forecast'),
             icon: 'globe',
-            buttons: [
-                {
-                    enabled: true,
-                    action: () => {
-                        this.dialog.open(RuleDialogComponent, {
-                            panelClass: 'slider', data: {}
-                        }).afterClosed().subscribe(result => {});
-                    },
-                    lable: this.l('+ Add New')
-                }
-            ]
+            buttons: []
         };
 
         /** Create parallel operations */

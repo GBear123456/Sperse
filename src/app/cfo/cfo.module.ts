@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
-//import { CommonModule } from '@angular/common';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { CfoRoutingModule } from './cfo-routing.module';
@@ -12,6 +11,7 @@ import { SynchProgressComponent } from './shared/synch-progress/synch-progress.c
 
 import { ModalModule } from 'ngx-bootstrap';
 
+import { RulesComponent } from './rules/rules.component';
 import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.component';
 
 import { CashflowComponent } from './cashflow/cashflow.component';
@@ -86,7 +86,8 @@ import {
         UserGridPreferencesComponent,
         StatsComponent,
         SourceDataComponent,
-        RuleDialogComponent
+        RuleDialogComponent,
+        RulesComponent
     ],
     entryComponents: [
         RuleDialogComponent

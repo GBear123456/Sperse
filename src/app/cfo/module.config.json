@@ -6,7 +6,7 @@
     ["Cashflow", "", "icon-home", "/app/cfo/cashflow"],
     ["Accounts", "", "icon-home", "/app/cfo/bank-accounts"],
     ["Transactions", "", "icon-home", "/app/cfo/transactions"],
-    ["Rules", "", "", ""],
+    ["Rules", "", "icon-home", "/app/cfo/rules"],
     ["Stats", "", "icon-home", "/app/cfo/stats"],
     ["Logs", "", "", ""]
   ]

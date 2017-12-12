@@ -1,0 +1,31 @@
+<div [@routerTransition]>
+    <app-headline [config]="headlineConfig"></app-headline>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <div class="portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+
+            <dx-tree-list 
+                height="calc(100vh - 210px)"
+                [hoverStateEnabled]="true"
+                [dataSource]="ruleTreeList"
+                [dataStructure]="tree"
+                [sorting]="{mode: 'none'}"
+                [editing]="{allowDeleting: true, allowUpdating: true, mode: 'popup'}"
+                [selection]="{allowSelectAll: false, mode: 'none'}"
+                [autoExpandAll]="true"
+                [showColumnLines]="false"
+                [showRowLines]="true"
+                (onEditorPrepared)="onEdit($event)"
+                (onCellClick)="onCellClick($event)"
+                (onRowRemoved)="onRowRemoved($event)"
+                keyExpr="id"
+                parentIdExpr="parentId"
+                [rootValue]="null">
+                <dxi-column dataField="isActive" caption="{{l('Status')}}"></dxi-column>
+                <dxi-column dataField="name" caption="{{l('RuleName')}}"></dxi-column>
+                <dxi-column dataField="creationDate" caption="{{l('CreationDate')}}"></dxi-column>
+            </dx-tree-list>
+
+        </div>
+    </div>
+</div>

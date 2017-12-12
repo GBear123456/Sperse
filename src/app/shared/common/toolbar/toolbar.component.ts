@@ -161,7 +161,7 @@ export class ToolBarComponent extends AppComponentBase {
     }
 
     initToolbarItems() {
-        let newItems = [];
+        let items = [];
         this._config.forEach((group) => {
             let count = group.items.length;
             group.items.forEach((item, index) => {
@@ -180,9 +180,9 @@ export class ToolBarComponent extends AppComponentBase {
                     });
                 }
 
-                newItems.push({
+                items.push({
                     location: group.location,
-                    widget: item.template ? null : (item.widget || 'dxButton'),
+                    widget: item.widget || 'dxButton',
                     options: _.extend({
                         onClick: item.action,
                         elementAttr: _.extend({
@@ -194,7 +194,6 @@ export class ToolBarComponent extends AppComponentBase {
                 });
             });
         });
-
-        this.items = newItems;
+        this.items = items;
     }
 }
