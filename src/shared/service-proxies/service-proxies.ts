@@ -1154,96 +1154,6 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    recategorize(recategorizeInput: RecategorizeInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/Recategorize";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(recategorizeInput ? recategorizeInput.toJSON() : null);
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processRecategorize(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processRecategorize(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processRecategorize(response: Response): Observable<void> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    recategorizeAll(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/RecategorizeAll";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processRecategorizeAll(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processRecategorizeAll(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processRecategorizeAll(response: Response): Observable<void> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
     getCashFlowGridSettings(): Observable<CashFlowGridSettingsDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetCashFlowGridSettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -2409,6 +2319,51 @@ export class ClassificationServiceProxy {
     }
 
     protected processDeleteCategory(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    reclassify(recategorizeInput: RecategorizeInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/Reclassify";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(recategorizeInput ? recategorizeInput.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processReclassify(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processReclassify(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processReclassify(response: Response): Observable<void> {
         const status = response.status; 
 
         if (status === 200) {
@@ -14247,61 +14202,6 @@ export interface ICashFlowStatsDetailDto {
     commentThreadId: number;
 }
 
-export class RecategorizeInput implements IRecategorizeInput {
-    parseDescription: boolean;
-    bankAccountIds: number[];
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-
-    constructor(data?: IRecategorizeInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.parseDescription = data["parseDescription"];
-            if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
-                this.bankAccountIds = [];
-                for (let item of data["bankAccountIds"])
-                    this.bankAccountIds.push(item);
-            }
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): RecategorizeInput {
-        let result = new RecategorizeInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["parseDescription"] = this.parseDescription;
-        if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
-            data["bankAccountIds"] = [];
-            for (let item of this.bankAccountIds)
-                data["bankAccountIds"].push(item);
-        }
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IRecategorizeInput {
-    parseDescription: boolean;
-    bankAccountIds: number[];
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-}
-
 export class CashFlowGridSettingsDto implements ICashFlowGridSettingsDto {
     general: CashflowGridGeneralSettingsDto = new CashflowGridGeneralSettingsDto();
     visualPreferences: CashflowGridVisualSettingsDto = new CashflowGridVisualSettingsDto();
@@ -15061,7 +14961,8 @@ export interface ITypeDto {
 export class RuleDto implements IRuleDto {
     parentId: number;
     name: string;
-    creationDate: moment.Moment;
+    categoryId: number;
+    creationTime: moment.Moment;
     sortOrder: number;
     isActive: boolean;
     id: number;
@@ -15079,7 +14980,8 @@ export class RuleDto implements IRuleDto {
         if (data) {
             this.parentId = data["parentId"];
             this.name = data["name"];
-            this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
+            this.categoryId = data["categoryId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.sortOrder = data["sortOrder"];
             this.isActive = data["isActive"];
             this.id = data["id"];
@@ -15096,7 +14998,8 @@ export class RuleDto implements IRuleDto {
         data = typeof data === 'object' ? data : {};
         data["parentId"] = this.parentId;
         data["name"] = this.name;
-        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
+        data["categoryId"] = this.categoryId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["sortOrder"] = this.sortOrder;
         data["isActive"] = this.isActive;
         data["id"] = this.id;
@@ -15107,18 +15010,20 @@ export class RuleDto implements IRuleDto {
 export interface IRuleDto {
     parentId: number;
     name: string;
-    creationDate: moment.Moment;
+    categoryId: number;
+    creationTime: moment.Moment;
     sortOrder: number;
     isActive: boolean;
     id: number;
 }
 
 export class CreateRuleDto implements ICreateRuleDto {
+    parentId: number;
     name: string;
     categoryId: number;
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
-    conditions: ConditionDto[];
+    condition: ConditionDto;
     applyOption: CreateRuleDtoApplyOption;
 
     constructor(data?: ICreateRuleDto) {
@@ -15132,15 +15037,12 @@ export class CreateRuleDto implements ICreateRuleDto {
 
     init(data?: any) {
         if (data) {
+            this.parentId = data["parentId"];
             this.name = data["name"];
             this.categoryId = data["categoryId"];
             this.transactionDecriptor = data["transactionDecriptor"];
             this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
-            if (data["conditions"] && data["conditions"].constructor === Array) {
-                this.conditions = [];
-                for (let item of data["conditions"])
-                    this.conditions.push(ConditionDto.fromJS(item));
-            }
+            this.condition = data["condition"] ? ConditionDto.fromJS(data["condition"]) : <any>undefined;
             this.applyOption = data["applyOption"];
         }
     }
@@ -15153,26 +15055,24 @@ export class CreateRuleDto implements ICreateRuleDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["parentId"] = this.parentId;
         data["name"] = this.name;
         data["categoryId"] = this.categoryId;
         data["transactionDecriptor"] = this.transactionDecriptor;
         data["transactionDecriptorAttributeTypeId"] = this.transactionDecriptorAttributeTypeId;
-        if (this.conditions && this.conditions.constructor === Array) {
-            data["conditions"] = [];
-            for (let item of this.conditions)
-                data["conditions"].push(item.toJSON());
-        }
+        data["condition"] = this.condition ? this.condition.toJSON() : <any>undefined;
         data["applyOption"] = this.applyOption;
         return data; 
     }
 }
 
 export interface ICreateRuleDto {
+    parentId: number;
     name: string;
     categoryId: number;
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
-    conditions: ConditionDto[];
+    condition: ConditionDto;
     applyOption: CreateRuleDtoApplyOption;
 }
 
@@ -15180,6 +15080,7 @@ export class ConditionDto implements IConditionDto {
     id: number;
     minAmount: number;
     maxAmount: number;
+    cashFlowAmountFormat: ConditionDtoCashFlowAmountFormat;
     bankId: number;
     bankAccountId: number;
     descriptionWords: string;
@@ -15199,6 +15100,7 @@ export class ConditionDto implements IConditionDto {
             this.id = data["id"];
             this.minAmount = data["minAmount"];
             this.maxAmount = data["maxAmount"];
+            this.cashFlowAmountFormat = data["cashFlowAmountFormat"];
             this.bankId = data["bankId"];
             this.bankAccountId = data["bankAccountId"];
             this.descriptionWords = data["descriptionWords"];
@@ -15221,6 +15123,7 @@ export class ConditionDto implements IConditionDto {
         data["id"] = this.id;
         data["minAmount"] = this.minAmount;
         data["maxAmount"] = this.maxAmount;
+        data["cashFlowAmountFormat"] = this.cashFlowAmountFormat;
         data["bankId"] = this.bankId;
         data["bankAccountId"] = this.bankAccountId;
         data["descriptionWords"] = this.descriptionWords;
@@ -15237,6 +15140,7 @@ export interface IConditionDto {
     id: number;
     minAmount: number;
     maxAmount: number;
+    cashFlowAmountFormat: ConditionDtoCashFlowAmountFormat;
     bankId: number;
     bankAccountId: number;
     descriptionWords: string;
@@ -15296,7 +15200,7 @@ export class EditRuleDto implements IEditRuleDto {
     categoryId: number;
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
-    conditions: ConditionDto[];
+    condition: ConditionDto;
     applyOption: EditRuleDtoApplyOption;
 
     constructor(data?: IEditRuleDto) {
@@ -15315,11 +15219,7 @@ export class EditRuleDto implements IEditRuleDto {
             this.categoryId = data["categoryId"];
             this.transactionDecriptor = data["transactionDecriptor"];
             this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
-            if (data["conditions"] && data["conditions"].constructor === Array) {
-                this.conditions = [];
-                for (let item of data["conditions"])
-                    this.conditions.push(ConditionDto.fromJS(item));
-            }
+            this.condition = data["condition"] ? ConditionDto.fromJS(data["condition"]) : <any>undefined;
             this.applyOption = data["applyOption"];
         }
     }
@@ -15337,11 +15237,7 @@ export class EditRuleDto implements IEditRuleDto {
         data["categoryId"] = this.categoryId;
         data["transactionDecriptor"] = this.transactionDecriptor;
         data["transactionDecriptorAttributeTypeId"] = this.transactionDecriptorAttributeTypeId;
-        if (this.conditions && this.conditions.constructor === Array) {
-            data["conditions"] = [];
-            for (let item of this.conditions)
-                data["conditions"].push(item.toJSON());
-        }
+        data["condition"] = this.condition ? this.condition.toJSON() : <any>undefined;
         data["applyOption"] = this.applyOption;
         return data; 
     }
@@ -15353,7 +15249,7 @@ export interface IEditRuleDto {
     categoryId: number;
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
-    conditions: ConditionDto[];
+    condition: ConditionDto;
     applyOption: EditRuleDtoApplyOption;
 }
 
@@ -15609,6 +15505,65 @@ export interface IUpdateCategoryInput {
     id: number;
     name: string;
     groupId: number;
+}
+
+export class RecategorizeInput implements IRecategorizeInput {
+    parseDescription: boolean;
+    bankAccountIds: number[];
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    ruleId: number;
+
+    constructor(data?: IRecategorizeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.parseDescription = data["parseDescription"];
+            if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
+                this.bankAccountIds = [];
+                for (let item of data["bankAccountIds"])
+                    this.bankAccountIds.push(item);
+            }
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.ruleId = data["ruleId"];
+        }
+    }
+
+    static fromJS(data: any): RecategorizeInput {
+        let result = new RecategorizeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["parseDescription"] = this.parseDescription;
+        if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
+            data["bankAccountIds"] = [];
+            for (let item of this.bankAccountIds)
+                data["bankAccountIds"].push(item);
+        }
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["ruleId"] = this.ruleId;
+        return data; 
+    }
+}
+
+export interface IRecategorizeInput {
+    parseDescription: boolean;
+    bankAccountIds: number[];
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    ruleId: number;
 }
 
 export class CommentDto implements ICommentDto {
@@ -30779,6 +30734,12 @@ export enum CreateRuleDtoApplyOption {
     Uncategorized = <any>"Uncategorized", 
     CategorizedByTheRuleOnly = <any>"CategorizedByTheRuleOnly", 
     AllExisting = <any>"AllExisting", 
+}
+
+export enum ConditionDtoCashFlowAmountFormat {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export enum EditRuleDtoApplyOption {
