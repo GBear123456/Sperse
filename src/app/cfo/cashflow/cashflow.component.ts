@@ -652,24 +652,27 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let stubCashflowData = Array<TransactionStatsDto>();
         let allYears: Array<number> = [];
         let existingDates: Array<string> = [];
-        let dates = [];
         let firstAccountId;
+
+        let minDate: Moment.Moment;
+        let maxDate: Moment.Moment;
         cashflowData.forEach(cashflowItem => {
             /** Move the year to the years array if it is unique */
             let transactionYear = cashflowItem.date.year();
             let date = cashflowItem.date.format('DD.MM.YYYY');
             if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
             if (existingDates.indexOf(date) === -1) existingDates.push(date);
-            if (dates.indexOf(cashflowItem.date) === -1) dates.push(cashflowItem.date);
+            if (!minDate || cashflowItem.date < minDate) minDate = cashflowItem.date;
+            if (!maxDate || cashflowItem.date > maxDate) maxDate = cashflowItem.date;
             if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
         });
         allYears = allYears.sort();
-        /** get started date of the first year */
-        let startedDate = new Date(Math.min.apply(null, dates));
-        /** get last date of the last year */
-        let endedDate = new Date(Math.max.apply(null, dates));
+
+        if (this.requestFilter.startDate && this.requestFilter.startDate < minDate) minDate = this.requestFilter.startDate;
+        if (this.requestFilter.endDate && this.requestFilter.endDate > maxDate) maxDate = this.requestFilter.endDate;
+
         /** cycle from started date to ended date */
-        let datesRange = Array.from(moment.range(startedDate, endedDate).by('day'));
+        let datesRange = Array.from(moment.range(minDate, maxDate).by('day'));
         /** added fake data for each date that is not already exists in cashflow data */
         datesRange.forEach((date: any) => {
             if (existingDates.indexOf(date.format('DD.MM.YYYY')) === -1) {
