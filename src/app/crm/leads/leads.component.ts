@@ -52,7 +52,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private filters: FilterModel[];
 
     public headlineConfig = {
-        name: this.l('Leads'),
+        names: [this.l('Leads')],
         icon: 'basket',
         buttons: [
             {

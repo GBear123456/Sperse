@@ -21,7 +21,7 @@ export class CashflowSetupComponent extends AppComponentBase implements OnInit {
 
     ngOnInit(): void {
         this.headlineConfig = { 
-            name: this.l('CashflowSetup_Title'), 
+            names: [this.l('CashflowSetup_Title')], 
             icon: 'globe', 
             buttons: []
         }

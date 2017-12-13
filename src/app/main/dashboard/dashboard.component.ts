@@ -1,4 +1,4 @@
-﻿import { Component, AfterViewInit, Injector, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, Injector, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { TenantDashboardServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     public headlineConfig = { 
-      name: this.l('Dashboard'), 
+      names: [this.l('Dashboard')], 
       text: this.l('statistics and reports'),
       icon: 'globe', 
       buttons: []

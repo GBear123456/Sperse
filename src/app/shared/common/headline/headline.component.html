@@ -1,9 +1,14 @@
 <div class="headline-row">
     <div class="headline-title">
-      <i class="icon-{{data.icon}}"></i>
-      <span>{{data.name}}</span>&nbsp;<small>{{data.text}}</small><div class="transclude"><ng-content></ng-content></div>
+        <i class="icon-{{data.icon}}"></i>
+        <div class="header-names">
+            <ng-template ngFor let-item [ngForOf]="data.names" let-i="index">
+                <span class="header-name">{{item}}</span>
+                <span class="right-arrow"></span>
+            </ng-template>
+        </div>
+        &nbsp;<small>{{data.text}}</small><div class="transclude"><ng-content></ng-content></div>
     </div>
-
     <div class="headline-buttons">
         <ng-template ngFor let-item [ngForOf]="data.buttons">
             <button ng-if="item.enabled" class="btn {{item?.class || 'btn-layout'}}" (click)="item.action()">{{item.lable}}</button>
