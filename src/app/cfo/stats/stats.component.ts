@@ -224,10 +224,6 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                 text: forecastModelItem.name
             };
         });
-        items.push({
-            id: 2,
-            text: 'Scenario 2'
-        });
         /** If we have the forecast model in cache - get it there, else - get the first model */
         let cachedForecastModel = this.getForecastModel();
         /** If we have cached forecast model and cached forecast exists in items list - then use it **/
