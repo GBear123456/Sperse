@@ -773,11 +773,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** Calculate the amount current cells to cut the current period current cell to change current from
          *  current for year to current for the grouping period */
-        if (this.groupInterval !== 'year') {
-            let lowestOpenedInterval = this.getLowestOpenedCurrentInterval();
-            $(`.current${_.capitalize(lowestOpenedInterval)}`).addClass('lowestOpenedCurrent');
-            this.changeHistoricalColspans(lowestOpenedInterval);
-        }
+        let lowestOpenedInterval = this.getLowestOpenedCurrentInterval();
+        $(`.current${_.capitalize(lowestOpenedInterval)}`).addClass('lowestOpenedCurrent');
+        this.changeHistoricalColspans(lowestOpenedInterval);
 
         if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
             abp.ui.clearBusy();
