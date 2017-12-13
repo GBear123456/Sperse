@@ -53,7 +53,7 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
 
     constructor(injector: Injector, 
         public dialog: MdDialog,
-        private _CategorizationService: ClassificationServiceProxy
+        private _ClassificationService: ClassificationServiceProxy
     ) {
         super(injector);
     }
@@ -83,11 +83,11 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onRowRemoved($event) {
-        this._CategorizationService.deleteRule(null, $event.key);
+        this._ClassificationService.deleteRule(null, $event.key);
     }
 
     ngOnInit(): void {
-        this._CategorizationService.getRules(null)
+        this._ClassificationService.getRules(null)
             .subscribe(result => {
                   this.ruleTreeList = _.sortBy(result.map((item) => {
                       item['order'] = 
