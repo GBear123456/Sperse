@@ -30835,8 +30835,8 @@ export enum ConditionDtoCashFlowAmountFormat {
 }
 
 export enum ConditionAttributeDtoConditionTypeId {
-    _1 = 1, 
-    _2 = 2, 
+    Exist = <any>"Exist", 
+    Equal = <any>"Equal", 
 }
 
 export enum EditRuleDtoApplyOption {
