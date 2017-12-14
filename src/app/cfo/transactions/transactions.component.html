@@ -1,4 +1,4 @@
-<div [@routerTransition]>
+﻿<div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
@@ -24,27 +24,29 @@
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
 
-                        <dxi-column dataField="Date" caption="{{l('Transactions_Date')}}" dataType="date" format="shortDate"></dxi-column>
-                        <dxi-column dataField="Time" caption="{{l('Transactions_Time')}}" dataType="date" format="shortTime"></dxi-column>
+                        <dxi-column dataField="Id" caption="{{l('Transactions_Id')}}" sortOrder="desc"></dxi-column>
                         <dxi-column dataField="BankAccountNumber" caption="{{l('Transactions_BankAccountNumber')}}"></dxi-column>
                         <dxi-column dataField="Currency" caption="{{l('Transactions_Currency')}}"></dxi-column>
-                        <dxi-column dataField="Amount" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate"></dxi-column>
+                        <dxi-column dataField="Date" caption="{{l('Transactions_Date')}}" dataType="date" format="shortDate"></dxi-column>
+                        <dxi-column dataField="PostDate" caption="{{l('Transactions_PostDate')}}" dataType="date" format="shortDateShortTime" ></dxi-column>
+                        <dxi-column dataField="Time" caption="{{l('Transactions_Time')}}" dataType="date" format="shortTime" [visible]="false"></dxi-column>
                         <dxi-column dataField="Amount" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate"></dxi-column>
+                        <dxi-column dataField="Amount" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate"></dxi-column>
                         <dxi-column dataField="EndingBalance" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate"></dxi-column>
-                
-                        <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}" [width]="600"></dxi-column>
-                        <dxi-column dataField="CategoryName" caption="{{l('Transactions_CategoryName')}}"></dxi-column>
-                        <dxi-column dataField="TypeName" caption="{{l('Transactions_Type')}}"></dxi-column>
 
-                        <dxi-column dataField="Id" caption="{{l('Transactions_Id')}}" [visible]="false" sortOrder="desc"></dxi-column>
+                        <dxi-column dataField="CategoryName" caption="{{l('Transactions_CategoryName')}}"></dxi-column>
+                        <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}" [width]="600"></dxi-column>
+                        <dxi-column dataField="TypeName" caption="{{l('Transactions_Type')}}" [visible]="false"></dxi-column>
+
                         <dxi-column dataField="Amount" name="Amount" caption="{{l('Transactions_Amount')}}" cellTemplate="amountTemplate" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankAccountBankName" caption="{{l('Transactions_BankName')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankAccountTypeName" caption="{{l('Transactions_BankAccountType')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="SyncTypeName" caption="{{l('Transactions_SyncType')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="PostDate" caption="{{l('Transactions_PostDate')}}" dataType="date" format="shortDateShortTime" [visible]="false"></dxi-column>
                         <dxi-column dataField="Fees" caption="{{l('Transactions_Fees')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="ExpenseCategoryName" caption="{{l('Transactions_ExpenseCategory')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="CashFlowTypeName" caption="{{l('Transactions_CashFlowType')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="CashflowCategoryGroupName" caption="{{l('Transactions_CashflowCategoryGroupName')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="CashflowCategoryName" caption="{{l('Transactions_CashflowCategoryName')}}" [visible]="false"></dxi-column>
                         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit'))">
