@@ -153,12 +153,17 @@
             background: @grandTotalBackgroundColor;
             color: @grandTotalTextColor;
         }
-        .dx-pivotgrid-area td.chosenFilterForCashFlow {
-            border: 1px solid #f9b83a !important;
-            background-color: #fbf3e4 !important;
-            color: #333 !important;
-            span {
+        .dx-pivotgrid-area td {
+            &.month, &.quarter, &.year {
+                min-width: 80px;
+            }
+            &.chosenFilterForCashFlow {
+                border: 1px solid #f9b83a !important;
+                background-color: #fbf3e4 !important;
                 color: #333 !important;
+                span {
+                    color: #333 !important;
+                }
             }
         }
 
