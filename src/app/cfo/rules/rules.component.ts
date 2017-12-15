@@ -85,7 +85,7 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onRowRemoved($event) {
-        this._ClassificationService.deleteRule(null, $event.key);
+        this._ClassificationService.deleteRule([], null, $event.key);
     }
 
     showEditDialog(data = {}) {
