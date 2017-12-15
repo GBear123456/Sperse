@@ -27,10 +27,10 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { UserGridPreferencesComponent } from './user-grid-preferences/user-grid-preferences.component';
+import { MdDialog } from '@angular/material';
+import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
 
 import { CacheService } from 'ng2-cache-service';
-import { OperationsComponent } from './operations/operations.component';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 
@@ -52,8 +52,6 @@ const StartedBalance = 'B',
 })
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
-    @ViewChild(OperationsComponent) operationsComponent: OperationsComponent;
-    @ViewChild('userGridPreferences') userGridPreferences: UserGridPreferencesComponent;
     headlineConfig: any;
     categories: GetCategoriesOutput;
     cashflowData: any;
@@ -274,7 +272,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 private _filtersService: FiltersService,
                 private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
                 private _cacheService: CacheService,
-                private _classificationServiceProxy: ClassificationServiceProxy
+                private _classificationServiceProxy: ClassificationServiceProxy,
+                public dialog: MdDialog,
     ) {
         super(injector);
         this._cacheService = this._cacheService.useStorage(0);
@@ -312,7 +311,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     initHeadlineConfig() {
         this.headlineConfig = {
-            name: this.l('Cash Flow Statement and Forecast'),
+            names: [this.l('Cash Flow Statement and Forecast')],
             icon: 'globe',
             buttons: []
         };
@@ -450,7 +449,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     getFullscreenElement() {
-      return document.body; //!!VP To avoid dropdown elements issue in fullscreen mode
+        return document.body; //!!VP To avoid dropdown elements issue in fullscreen mode
     }
 
     ngAfterViewInit(): void {
@@ -652,24 +651,27 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let stubCashflowData = Array<TransactionStatsDto>();
         let allYears: Array<number> = [];
         let existingDates: Array<string> = [];
-        let dates = [];
         let firstAccountId;
+
+        let minDate: Moment.Moment;
+        let maxDate: Moment.Moment;
         cashflowData.forEach(cashflowItem => {
             /** Move the year to the years array if it is unique */
             let transactionYear = cashflowItem.date.year();
             let date = cashflowItem.date.format('DD.MM.YYYY');
             if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
             if (existingDates.indexOf(date) === -1) existingDates.push(date);
-            if (dates.indexOf(cashflowItem.date) === -1) dates.push(cashflowItem.date);
+            if (!minDate || cashflowItem.date < minDate) minDate = cashflowItem.date;
+            if (!maxDate || cashflowItem.date > maxDate) maxDate = cashflowItem.date;
             if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
         });
         allYears = allYears.sort();
-        /** get started date of the first year */
-        let startedDate = new Date(Math.min.apply(null, dates));
-        /** get last date of the last year */
-        let endedDate = new Date(Math.max.apply(null, dates));
+
+        if (this.requestFilter.startDate && this.requestFilter.startDate < minDate) minDate = this.requestFilter.startDate;
+        if (this.requestFilter.endDate && this.requestFilter.endDate > maxDate) maxDate = this.requestFilter.endDate;
+
         /** cycle from started date to ended date */
-        let datesRange = Array.from(moment.range(startedDate, endedDate).by('day'));
+        let datesRange = Array.from(moment.range(minDate, maxDate).by('day'));
         /** added fake data for each date that is not already exists in cashflow data */
         datesRange.forEach((date: any) => {
             if (existingDates.indexOf(date.format('DD.MM.YYYY')) === -1) {
@@ -773,11 +775,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** Calculate the amount current cells to cut the current period current cell to change current from
          *  current for year to current for the grouping period */
-        if (this.groupInterval !== 'year') {
-            let lowestOpenedInterval = this.getLowestOpenedCurrentInterval();
-            $(`.current${_.capitalize(lowestOpenedInterval)}`).addClass('lowestOpenedCurrent');
-            this.changeHistoricalColspans(lowestOpenedInterval);
-        }
+        let lowestOpenedInterval = this.getLowestOpenedCurrentInterval();
+        $(`.current${_.capitalize(lowestOpenedInterval)}`).addClass('lowestOpenedCurrent');
+        this.changeHistoricalColspans(lowestOpenedInterval);
 
         if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
             abp.ui.clearBusy();
@@ -990,7 +990,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     downloadData(event) {
         let exportTo = event.itemData.text;
-        if (exportTo == 'Export to Excel') {
+        if (exportTo === this.l('Export to Excel')) {
             this.pivotGrid.export.fileName = this._exportService.getFileName();
             this.pivotGrid.instance.exportToExcel();
         }
@@ -1809,5 +1809,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             .subscribe(result => {
                 this.statsDetailResult = result;
             });
+    }
+
+    showPreferencesDialog() {
+        this.dialog.open(PreferencesDialogComponent, {
+            panelClass: 'slider',
+            data: { localization: this.localizationSourceName }
+        }).afterClosed().subscribe(result => {});
     }
 }

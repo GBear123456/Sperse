@@ -1,4 +1,4 @@
-﻿import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { OrganizationUnitMembersComponent } from './organization-unit-members.component';
 import { OrganizationTreeComponent } from './organization-tree.component';
@@ -15,7 +15,7 @@ export class OrganizationUnitsComponent extends AppComponentBase {
     @ViewChild('ouTree') ouTree: OrganizationTreeComponent;
 
     public headlineConfig = { 
-      name: this.l('OrganizationUnits'), 
+      names: [this.l('OrganizationUnits')], 
       text: this.l('OrganizationUnitsHeaderInfo'),
       icon: 'rocket', 
       buttons: []

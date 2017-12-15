@@ -2375,6 +2375,51 @@ export class ClassificationServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    updateTransactionsCategory(input: UpdateTransactionsCategoryInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategory";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateTransactionsCategory(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateTransactionsCategory(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateTransactionsCategory(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -15150,7 +15195,7 @@ export interface IConditionDto {
 export class ConditionAttributeDto implements IConditionAttributeDto {
     id: number;
     attributeTypeId: string;
-    conditionTypeId: string;
+    conditionTypeId: ConditionAttributeDtoConditionTypeId;
     conditionValue: string;
 
     constructor(data?: IConditionAttributeDto) {
@@ -15190,7 +15235,7 @@ export class ConditionAttributeDto implements IConditionAttributeDto {
 export interface IConditionAttributeDto {
     id: number;
     attributeTypeId: string;
-    conditionTypeId: string;
+    conditionTypeId: ConditionAttributeDtoConditionTypeId;
     conditionValue: string;
 }
 
@@ -15344,8 +15389,8 @@ export interface IAddMappingDto {
 }
 
 export class CreateCategoryGroupInput implements ICreateCategoryGroupInput {
-    name: string;
     typeId: string;
+    name: string;
 
     constructor(data?: ICreateCategoryGroupInput) {
         if (data) {
@@ -15358,8 +15403,8 @@ export class CreateCategoryGroupInput implements ICreateCategoryGroupInput {
 
     init(data?: any) {
         if (data) {
-            this.name = data["name"];
             this.typeId = data["typeId"];
+            this.name = data["name"];
         }
     }
 
@@ -15371,21 +15416,20 @@ export class CreateCategoryGroupInput implements ICreateCategoryGroupInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
         data["typeId"] = this.typeId;
+        data["name"] = this.name;
         return data; 
     }
 }
 
 export interface ICreateCategoryGroupInput {
-    name: string;
     typeId: string;
+    name: string;
 }
 
 export class UpdateCategoryGroupInput implements IUpdateCategoryGroupInput {
     id: number;
     name: string;
-    typeId: string;
 
     constructor(data?: IUpdateCategoryGroupInput) {
         if (data) {
@@ -15400,7 +15444,6 @@ export class UpdateCategoryGroupInput implements IUpdateCategoryGroupInput {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
-            this.typeId = data["typeId"];
         }
     }
 
@@ -15414,7 +15457,6 @@ export class UpdateCategoryGroupInput implements IUpdateCategoryGroupInput {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        data["typeId"] = this.typeId;
         return data; 
     }
 }
@@ -15422,7 +15464,6 @@ export class UpdateCategoryGroupInput implements IUpdateCategoryGroupInput {
 export interface IUpdateCategoryGroupInput {
     id: number;
     name: string;
-    typeId: string;
 }
 
 export class CreateCategoryInput implements ICreateCategoryInput {
@@ -15564,6 +15605,57 @@ export interface IRecategorizeInput {
     startDate: moment.Moment;
     endDate: moment.Moment;
     ruleId: number;
+}
+
+export class UpdateTransactionsCategoryInput implements IUpdateTransactionsCategoryInput {
+    transactionIds: number[];
+    categoryId: number;
+    standardDescriptor: string;
+
+    constructor(data?: IUpdateTransactionsCategoryInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["transactionIds"] && data["transactionIds"].constructor === Array) {
+                this.transactionIds = [];
+                for (let item of data["transactionIds"])
+                    this.transactionIds.push(item);
+            }
+            this.categoryId = data["categoryId"];
+            this.standardDescriptor = data["standardDescriptor"];
+        }
+    }
+
+    static fromJS(data: any): UpdateTransactionsCategoryInput {
+        let result = new UpdateTransactionsCategoryInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.transactionIds && this.transactionIds.constructor === Array) {
+            data["transactionIds"] = [];
+            for (let item of this.transactionIds)
+                data["transactionIds"].push(item);
+        }
+        data["categoryId"] = this.categoryId;
+        data["standardDescriptor"] = this.standardDescriptor;
+        return data; 
+    }
+}
+
+export interface IUpdateTransactionsCategoryInput {
+    transactionIds: number[];
+    categoryId: number;
+    standardDescriptor: string;
 }
 
 export class CommentDto implements ICommentDto {
@@ -30737,9 +30829,14 @@ export enum CreateRuleDtoApplyOption {
 }
 
 export enum ConditionDtoCashFlowAmountFormat {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    Unspecified = <any>"Unspecified", 
+    Credits = <any>"Credits", 
+    Debits = <any>"Debits", 
+}
+
+export enum ConditionAttributeDtoConditionTypeId {
+    Exist = <any>"Exist", 
+    Equal = <any>"Equal", 
 }
 
 export enum EditRuleDtoApplyOption {

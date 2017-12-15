@@ -27,7 +27,7 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
     private rootComponent: any;
     public ruleTreeList: any = [];
     public headlineConfig = {
-        name: this.l('Manage rules'),
+        names: [this.l('Manage rules')],
         icon: 'globe',
         buttons: [
             {
@@ -47,7 +47,7 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
     ];
 
 
-    constructor(injector: Injector, 
+    constructor(injector: Injector,
         public dialog: MdDialog,
         private _ClassificationService: ClassificationServiceProxy
     ) {
@@ -79,7 +79,7 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
 
     onCellClick($event) {
         if ($event.rowType == 'header')
-            $event.component.option('filterRow', {visible: 
+            $event.component.option('filterRow', {visible:
                 !$event.component.option('filterRow').visible
             });
     }
@@ -98,14 +98,14 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
         this._ClassificationService.getRules(null)
             .subscribe(result => {
                   this.ruleTreeList = _.sortBy(result.map((item) => {
-                      item['order'] = 
-                          this.normalize(Number(item.parentId)) + 
-                          this.normalize(item.sortOrder) + 
+                      item['order'] =
+                          this.normalize(Number(item.parentId)) +
+                          this.normalize(item.sortOrder) +
                           this.normalize(item.id);
                       return item;
                   }), 'order');
             });
-      
+
     }
 
     ngAfterViewInit(): void {

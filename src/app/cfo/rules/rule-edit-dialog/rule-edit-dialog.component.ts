@@ -174,7 +174,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
         this.data.options = [{
             text: this.l('Apply this rule to other 34 occurences'),
             value: true
-        }];      
+        }];
     }
 
     ngAfterViewInit() {
@@ -200,7 +200,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
         });
     }
 
-    addAttributeRow() { 
+    addAttributeRow() {
         this.attributeList.instance.addRow();
     }
 
@@ -222,7 +222,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
 
     onBankChanged($event) {
         if ($event.value)
-            this.accounts = _.findWhere(this.banks, 
+            this.accounts = _.findWhere(this.banks,
                 {id: $event.value})['bankAccounts'];
     }
 
@@ -240,7 +240,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
             return this.notify.error(this.l('RuleAmountError'));
 
         if (!this.descriptor)
-            return this.notify.error(this.l('RuleDescriptorError'));      
+            return this.notify.error(this.l('RuleDescriptorError'));
 
         if (isNaN(this.getSelectedCategoryId()))
             return this.notify.error(this.l('RuleCategoryError'));
@@ -253,7 +253,6 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     }
 
     onInitNewKeyword($event) {
-        $event.data['caption'] = 'Keyword #' 
-            + this.keywords.length;
+        $event.data['caption'] = 'Keyword #' + this.keywords.length;
     }
 }

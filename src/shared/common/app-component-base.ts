@@ -10,6 +10,7 @@ import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.ser
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ExportService } from '@shared/common/export/export.service';
 import { httpConfiguration } from '@shared/http/httpConfiguration';
+import { ScreenHelper } from '@shared/helpers/ScreenHelper';
 
 import buildQuery from 'odata-query';
 import * as _ from 'underscore';
@@ -142,26 +143,11 @@ export abstract class AppComponentBase {
             this.dataGrid, option == 'all');
     }
 
-    openFullscreen(element?: any) {
-        element = element || this.getElementRef().nativeElement;
-        let method = element.requestFullScreen || element.webkitRequestFullScreen
-            || element.mozRequestFullScreen || element.msRequestFullScreen;
-        if (method)
-            method.call(element);
-    }
-
-    exitFullscreen() {
-        let method = (document.exitFullscreen || document.webkitExitFullscreen
-            || document['mozCancelFullScreen'] || document['msExitFullscreen']);
-        if (method)
-            method.call(document);
-    }
-
-    toggleFullscreen(element?: any) {
+    toggleFullscreen(element: any) {
         if (this.isFullscreenMode)
-            this.exitFullscreen();
+            ScreenHelper.exitFullscreen();
         else
-            this.openFullscreen(element);
+            ScreenHelper.openFullscreen(element);
     }
 
     getPhoto(photo, gender): string {

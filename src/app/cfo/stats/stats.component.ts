@@ -11,9 +11,10 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { CacheService } from 'ng2-cache-service';
 
-import { SourceDataComponent } from './source-data/source-data.component';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
+import { DxChartComponent } from 'devextreme-angular';
+import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 
 import {
     StatsFilter,
@@ -31,7 +32,8 @@ import {
     'styleUrls': ['./stats.component.less']
 })
 export class StatsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('SourceDataComponent') sourceDataComponent: SourceDataComponent;
+    @ViewChild('linearChart') private linearChart: DxChartComponent;
+    @ViewChild('barChart') private barChart: DxChartComponent;
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
@@ -48,9 +50,13 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     historicalExpensesColor = '#f05b2a';
     forecastIncomeColor = '#a9e3f9';
     forecastExpensesColor = '#fec6b3';
+    historicalShadowStartedColor = 'rgba(0, 174, 239, .5)';
+    forecastShadowStartedColor = 'rgba(249, 186, 78, .5)';
     maxLabelCount = 0;
     labelWidth = 45;
     showSourceData = false;
+    exporting = false;
+    chartsHeight = 200;
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
@@ -128,14 +134,47 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
             {
                 location: 'after',
                 items: [
-                    { name: 'download' },
-                    { name: 'print' }
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [
+                                {
+                                    action: this.download.bind(this, 'pdf'),
+                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PDF'),
+                                    icon: 'pdf',
+                                },
+                                {
+                                    action: this.download.bind(this, 'png'),
+                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PNG'),
+                                    icon: 'png',
+                                },
+                                {
+                                    action: this.download.bind(this, 'jpeg'),
+                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'JPEG'),
+                                    icon: 'jpeg',
+                                },
+                                {
+                                    action: this.download.bind(this, 'svg'),
+                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'SVG'),
+                                    icon: 'svg',
+                                },
+                                {
+                                    action: this.download.bind(this, 'gif'),
+                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'GIF'),
+                                    icon: 'gif',
+                                }
+                            ]
+                        }
+                    },
+                    { name: 'print', action: this.print.bind(this) }
                 ]
             },
             {
                 location: 'after',
                 items: [
-                    {name: 'pen'}
+                    {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.body)}
                 ]
             }
         ];
@@ -162,11 +201,12 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
 
         this.initHeadlineConfig();
         this.initFiltering();
+        this.calculateChartsHeight();
     }
 
     initHeadlineConfig() {
         this.headlineConfig = {
-            name: this.l('Daily Cash Balances'),
+            names: [this.l('Daily Cash Balances')],
             icon: '',
             buttons: [
                 {
@@ -189,6 +229,11 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         this._filtersService.apply(() => {
             this.loadStatsData();
         });
+    }
+
+    /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
+    calculateChartsHeight() {
+        this.chartsHeight = (window.innerHeight - 410) / 2  > this.chartsHeight ? (window.innerHeight - 410) / 2 : this.chartsHeight;
     }
 
     handleCashFlowInitialResult(result) {
@@ -230,9 +275,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         this.selectedForecastModel = cachedForecastModel && items.findIndex(item => item.id === cachedForecastModel.id) !== -1 ?
             cachedForecastModel :
             items[0];
-        let selectedForecastModelIndex = items.findIndex(
-            item => item.id === this.selectedForecastModel.id
-        );
+        let selectedForecastModelIndex = items.findIndex(item => item.id === this.selectedForecastModel.id);
         let forecastModelsObj = {
             items: items,
             selectedForecastModel: selectedForecastModelIndex
@@ -334,11 +377,17 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         if (arg.series.type !== 'rangearea' && arg.value < 0) {
             return {
                 backgroundColor: this.labelNegativeBackgroundColor,
+                visible: this.maxLabelCount >= this.statsData.length,
                 customizeText: (e: any) => {
                     return this.replaceMinusWithBrackets(e.valueText);
                 }
             };
         }
+    }
+
+    /** Replace minus for the brackets */
+    customizeAxisValues = (arg: any) => {
+        return arg.value < 0 ? this.replaceMinusWithBrackets(arg.valueText) : arg.valueText;
     }
 
     customizePoint = (arg: any) => {
@@ -414,4 +463,47 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         });
     }
+
+    /** Open the print window to print the charts */
+    print() {
+        let vizWindow = window.open(),
+            chartsMarkup = this.getChartsMarkup();
+        vizWindow.document.open();
+        vizWindow.document.write(chartsMarkup);
+        vizWindow.document.close();
+        vizWindow.print();
+        vizWindow.close();
+    }
+
+    /**
+     * Download the charts into file
+     * @param {'png' | 'pdf' | 'jpeg' | 'svg' | 'gif'} format
+     */
+    download(format: 'png' | 'pdf' | 'jpeg' | 'svg' | 'gif') {
+        /** hack to avoid 3 exports */
+        if (this.exporting) return; this.exporting = true;
+        let lineChartSize = this.linearChart.instance.getSize(),
+            barChartSize = this.barChart.instance.getSize(),
+            markup = this.getChartsMarkup();
+        exportFromMarkup(markup, {
+            fileName: 'stats',
+            format: format.toUpperCase(),
+            height: lineChartSize.height + barChartSize.height,
+            width: lineChartSize.width,
+            backgroundColor: '#fff'
+        });
+        /** hack to avoid 3 exporting */
+        setTimeout(() => { this.exporting = false; }, 200);
+    }
+
+    /**
+     * Get the markup using devextreme getMarkup method and replacing linear gradient url with the simple color
+     * @return {string}
+     */
+    getChartsMarkup() {
+        return getMarkup([this.linearChart.instance, this.barChart.instance])
+                    .replace(new RegExp('url\\(#historical-linear-gradient\\)', 'g'), this.historicalShadowStartedColor)
+                    .replace(new RegExp('url\\(#forecast-linear-gradient\\)', 'g'), this.forecastShadowStartedColor);
+    }
+
 }

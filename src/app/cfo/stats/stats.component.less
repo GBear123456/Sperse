@@ -3,6 +3,14 @@
 :host {
     position: relative;
     top: 75px;
+
+    &.fullscreen {
+        top: -75px !important;
+        dx-scroll-view {
+            background: #fff
+        }
+    }
+
     .operations {
         display: flex;
         overflow-x: hidden;
@@ -13,9 +21,10 @@
     }
 
     .mainStatsView {
+        background: #fff;
         border-top: 1px solid #dfdfdf;
         padding: 14px;
-        margin-bottom: 200px;
+        padding-bottom: 150px;
         position: relative;
         /deep/ .dxc-labels {
             rect {
@@ -56,7 +65,7 @@
                 color: red;
                 font-size: 60px;
                 color: rgba(99, 107, 114, .08);
-                font-weight: 600;
+                font-weight: 700;
                 @media screen and (max-width: 1024px) {
                     font-size: 30px
                 }

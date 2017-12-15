@@ -36,7 +36,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     private toolbarConfig: any;
 
     public headlineConfig = {
-        name: this.l('Transactions'),
+        names: [this.l('Transactions')],
         icon: 'credit-card',
         buttons: []
     };

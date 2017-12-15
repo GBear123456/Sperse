@@ -46,7 +46,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     private rootComponent: any;
 
     public headlineConfig = {
-        name: this.l('Customers'),
+        names: [this.l('Customers')],
         icon: 'people',
         buttons: [
             {

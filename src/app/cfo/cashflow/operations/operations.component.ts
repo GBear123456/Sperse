@@ -1,5 +1,5 @@
-import {Component, Injector, Input, Output, EventEmitter} from '@angular/core';
-import {AppComponentBase} from '@shared/common/app-component-base';
+import { Component, Injector, Input, Output, EventEmitter } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
     selector: 'cashflow-operations',
@@ -17,7 +17,7 @@ export class OperationsComponent extends AppComponentBase {
     @Output() onToggleRows: EventEmitter<any> = new EventEmitter();
     @Output() handleFullscreen: EventEmitter<any> = new EventEmitter();
     @Output() download: EventEmitter<any> = new EventEmitter();
-    @Output() showPreferences: EventEmitter<any> = new EventEmitter();
+    @Output() showPreferencesDialog: EventEmitter<any> = new EventEmitter();
     @Output() changeForecastModel: EventEmitter<any> = new EventEmitter();
     toolbarConfig = [];
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number} = { 'items' : [], 'selectedItemIndex': null}) {
@@ -76,7 +76,7 @@ export class OperationsComponent extends AppComponentBase {
                     },
                     {
                         name: 'rules',
-                        action: this.preferences.bind(this)
+                        action: this.preferencesDialog.bind(this)
                     },
                     {
                         name: 'slider',
@@ -163,7 +163,7 @@ export class OperationsComponent extends AppComponentBase {
                             hint: this.l('Download'),
                             items: [{
                                 action: Function(),
-                                text: this.l('Save as PDF'),
+                                text: this.l('SaveAs', 'PDF'),
                                 icon: 'pdf',
                             }, {
                                 action: this.exportTo.bind(this),
@@ -234,7 +234,7 @@ export class OperationsComponent extends AppComponentBase {
         this.changeForecastModel.emit(event);
     }
 
-    preferences() {
-        this.showPreferences.emit();
+    preferencesDialog() {
+        this.showPreferencesDialog.emit();
     }
 }
