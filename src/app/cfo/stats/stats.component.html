@@ -21,7 +21,9 @@
                     animation="{easing: 'easeOutCubic',duration: 2000}"
                     [customizeLabel]="customizeLabel"
                     [customizePoint]="customizePoint"
-                    (onDone)="onDone($event)">
+                    (onDone)="onDone($event)"
+                    #linearChart>
+                    <dxo-size [height]="chartsHeight"></dxo-size>
                     <!-- common settings for charts -->
                     <dxo-common-series-settings argumentField="date"
                                                 [showInLegend]="false"
@@ -70,8 +72,8 @@
                     <dxi-pane name="topPane"></dxi-pane>
 
                     <!-- Left axis -->
-                    <dxi-value-axis maxValueMargin="1">
-                        <dxo-label>
+                    <dxi-value-axis>
+                        <dxo-label [customizeText]="customizeAxisValues">
                             <dxo-format
                                 type="currency largeNumber"
                                 [currency]="currency">
@@ -109,19 +111,32 @@
                     defaultPane="bottomPane"
                     animation="{easing: 'easeOutCubic',duration: 2000}"
                     [barWidth]="0.5"
-                    (onDone)="onDone($event)">
+                    (onDone)="onDone($event)"
+                    #barChart>
+                    <dxo-size [height]="chartsHeight"></dxo-size>
                     <!-- common settings for charts -->
                     <dxo-common-series-settings argumentField="date" type="stackedBar" [showInLegend]="false"></dxo-common-series-settings>
 
-                    <!-- Bottom bar chart -->
-                    <dxi-series [color]="historicalIncomeColor" valueField="income" name="historical"></dxi-series>
+                    <dxi-series pane="bottomPane" [color]="historicalIncomeColor" valueField="income" name="historical"></dxi-series>
                     <dxi-series [color]="historicalExpensesColor" valueField="expenses" name="historicalExpenses"></dxi-series>
                     <dxi-series [color]="forecastIncomeColor" valueField="forecastIncome" name="forecast"></dxi-series>
                     <dxi-series [color]="forecastExpensesColor" valueField="forecastExpenses" name="forecastExpenses"></dxi-series>
 
+                    <dxi-pane name="bottomPane"></dxi-pane>
+                    <!-- Bottom axis -->
+                    <dxo-argument-axis
+                        argumentType="datetime"
+                        visible="true">
+                        <dxo-label [customizeText]="customizeBottomAxis">
+                            <dxo-format
+                                [type]="axisDateFormat">
+                            </dxo-format>
+                        </dxo-label>
+                    </dxo-argument-axis>
+
                     <!-- Left axis -->
-                    <dxi-value-axis maxValueMargin="1">
-                        <dxo-label>
+                    <dxi-value-axis>
+                        <dxo-label [customizeText]="customizeAxisValues">
                             <dxo-format
                                 type="currency largeNumber"
                                 [currency]="currency">
@@ -150,7 +165,6 @@
                             <dxo-label horizontal-allignment="center"></dxo-label>
                         </dxo-strip-style>
                     </dxo-common-axis-settings>
-
                 </dx-chart>
             </md-tab>
             <md-tab label="{{l('Details Chart')}}">

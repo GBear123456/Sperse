@@ -1,5 +1,5 @@
-import {Component, Injector, Input, Output, EventEmitter} from '@angular/core';
-import {AppComponentBase} from '@shared/common/app-component-base';
+import { Component, Injector, Input, Output, EventEmitter } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
     selector: 'cashflow-operations',
@@ -163,7 +163,7 @@ export class OperationsComponent extends AppComponentBase {
                             hint: this.l('Download'),
                             items: [{
                                 action: Function(),
-                                text: this.l('Save as PDF'),
+                                text: this.l('SaveAs', 'PDF'),
                                 icon: 'pdf',
                             }, {
                                 action: this.exportTo.bind(this),

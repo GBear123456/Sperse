@@ -450,7 +450,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     getFullscreenElement() {
-      return document.body; //!!VP To avoid dropdown elements issue in fullscreen mode
+        return document.body; //!!VP To avoid dropdown elements issue in fullscreen mode
     }
 
     ngAfterViewInit(): void {
@@ -988,7 +988,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     downloadData(event) {
         let exportTo = event.itemData.text;
-        if (exportTo == 'Export to Excel') {
+        if (exportTo === this.l('Export to Excel')) {
             this.pivotGrid.export.fileName = this._exportService.getFileName();
             this.pivotGrid.instance.exportToExcel();
         }
