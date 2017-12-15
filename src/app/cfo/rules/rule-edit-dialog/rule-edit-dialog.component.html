@@ -46,16 +46,32 @@
                      [showColumnHeaders]="false"
                      [showColumnLines]="false"
                      [showRowLines]="true"
-                     [showBorders]="true">
+                     [showBorders]="true"
+                     (onContentReady)="onAttributeUpdated($event)">
                      <dxo-editing 
                          mode="row"
                          [allowUpdating]="true"
                          [allowDeleting]="true"
                          [allowAdding]="true">
                     </dxo-editing>
-                    <dxi-column dataField="attribute"></dxi-column>
-                    <dxi-column dataField="operation"></dxi-column>
-                    <dxi-column dataField="value"></dxi-column>
+                    <dxi-column dataField="id" [visible]="false"></dxi-column>
+                    <dxi-column 
+                        width="150" 
+                        dataField="attributeTypeId">         
+                        <dxo-lookup
+                            [dataSource]="attributeTypes"
+                            displayExpr="name"
+                            valueExpr="id">
+                        </dxo-lookup>
+                    </dxi-column>
+                    <dxi-column dataField="conditionTypeId">         
+                        <dxo-lookup
+                            [dataSource]="conditionTypes"
+                            displayExpr="condition"
+                            valueExpr="condition">
+                        </dxo-lookup>
+                    </dxi-column>
+                    <dxi-column dataField="conditionValue"></dxi-column>
                 </dx-data-grid>
                 <span (click)="addAttributeRow()">{{l('+ Add attribute')}}</span>
 
@@ -102,10 +118,13 @@
                     </div>
                     <div class="field">
                         <label>{{l('Format')}}</label>
-                        <dx-text-box
-                            name="format"
-                            [(value)]="data.format">
-                        </dx-text-box>
+                        <dx-select-box   
+                            placeholder=""
+                            [dataSource]="formats"
+                            valueExpr="format"
+                            displayExpr="format"
+                            [(value)]="amountFormat">
+                        </dx-select-box>
                     </div>
                 </div>
             </div>  
@@ -113,10 +132,20 @@
                 <h2>{{l('THEN')}}</h2>
                 <h3>{{l('Use the following Standard Descriptor')}}</h3>
                 <div class="field">
-                    <dx-text-box
+                    <dx-select-box   
+                        placeholder=""
+                        [acceptCustomValue]="true"
+                        [dataSource]="descriptors"
+                        valueExpr="id"
+                        displayExpr="name"
+                        (onCustomItemCreating)="onCustomItemCreating($event)"
+                        [(value)]="descriptor">
+                    </dx-select-box>
+
+                    <!-- dx-text-box
                         name="descriptor"
                         [(value)]="descriptor">
-                    </dx-text-box>
+                    </dx-text-box -->
                 </div>
                 <h3>{{l('Assign transaction(s) to the following account')}}</h3>
 
@@ -124,13 +153,9 @@
                     height="570px"
                     [hoverStateEnabled]="true"
                     [dataSource]="categories"
-                    [dataStructure]="tree"
                     [editing]="{allowAdding: true, allowUpdating: true}"
                     [selection]="{allowSelectAll: false, mode: 'single'}"
-                    [autoExpandAll]="true"
-                    keyExpr="id"
-                    parentIdExpr="parentId"
-                    [rootValue]="0">
+                    [autoExpandAll]="true">
                     <dxi-column dataField="category"></dxi-column>
                 </dx-tree-list>
 

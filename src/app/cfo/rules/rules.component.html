@@ -10,12 +10,12 @@
                 [dataSource]="ruleTreeList"
                 [dataStructure]="tree"
                 [sorting]="{mode: 'none'}"
-                [editing]="{allowDeleting: true, allowUpdating: true, mode: 'popup'}"
+                [editing]="{allowDeleting: true, allowUpdating: true, mode: 'popup', popup: {onShowing: onShowingPopup, height: '0px', width: '0px'}}"
                 [selection]="{allowSelectAll: false, mode: 'none'}"
                 [autoExpandAll]="true"
                 [showColumnLines]="false"
                 [showRowLines]="true"
-                (onEditorPrepared)="onEdit($event)"
+                (onEditingStart)="onEditingStart($event)"
                 (onCellClick)="onCellClick($event)"
                 (onRowRemoved)="onRowRemoved($event)"
                 keyExpr="id"
@@ -23,7 +23,7 @@
                 [rootValue]="null">
                 <dxi-column dataField="isActive" caption="{{l('Status')}}"></dxi-column>
                 <dxi-column dataField="name" caption="{{l('RuleName')}}"></dxi-column>
-                <dxi-column dataField="creationDate" caption="{{l('CreationDate')}}"></dxi-column>
+                <dxi-column dataField="creationTime" caption="{{l('CreationDate')}}"></dxi-column>
             </dx-tree-list>
 
         </div>

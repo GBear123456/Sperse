@@ -32,11 +32,7 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
         buttons: [
             {
                 enabled: true,
-                action: () => {
-                    this.dialog.open(RuleDialogComponent, {
-                        panelClass: 'slider', data: {}
-                    }).afterClosed().subscribe(result => {});
-                },
+                action: this.showEditDialog.bind(this),
                 lable: this.l('+ Add New')
             }
         ]
@@ -71,9 +67,15 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
         return s.substr(s.length - 5);
     }
 
-    onEdit(event) {
-        console.log(event);
+    onEditingStart(e) {
+        this.showEditDialog(e.data);
     }
+
+    onShowingPopup(e) {
+        e.component.option('visible', false);
+        e.component.hide();
+    }
+
 
     onCellClick($event) {
         if ($event.rowType == 'header')
@@ -84,6 +86,12 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
 
     onRowRemoved($event) {
         this._ClassificationService.deleteRule(null, $event.key);
+    }
+
+    showEditDialog(data = {}) {
+        this.dialog.open(RuleDialogComponent, {
+            panelClass: 'slider', data: data
+        }).afterClosed().subscribe(result => {});
     }
 
     ngOnInit(): void {

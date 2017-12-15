@@ -15,7 +15,7 @@
     }
 
     .rule-container {
-        width: 70vw;
+        width: 1110px;
         max-width: 1111px;
         min-width: 720px;
         .warning-box {
@@ -71,6 +71,9 @@
                 }
             }
             /deep/ .dx-widget {
+                .dx-placeholder {
+                    display: none!important;
+                }
                 tr.dx-edit-row .dx-texteditor-input {
                      font-weight: 400;
                      border-bottom: none!important;
@@ -221,7 +224,7 @@
                     margin-bottom: 40px;  
                 }                
 
-                dx-text-box {
+                dx-select-box {
                     /deep/ input {
                         border: solid 1px #e5e9ec;
                         background-color: #ffffff;

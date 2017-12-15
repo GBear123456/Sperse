@@ -17,6 +17,11 @@ import * as _ from 'underscore';
 export abstract class AppComponentBase {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
     @HostListener('document:webkitfullscreenchange', ['$event'])
+    onWebkitFullscreenChange($event) {
+        this.isFullscreenMode = document['fullScreen']
+            || document['mozFullScreen'] || document.webkitIsFullScreen;
+    }
+
     dataGrid: any;
     dataSource: any;
     localization: LocalizationService;
@@ -47,11 +52,6 @@ export abstract class AppComponentBase {
         this.httpConfig = _injector.get(httpConfiguration);
         this._applicationRef = _injector.get(ApplicationRef);
         this._exportService = _injector.get(ExportService);
-    }
-
-    onWebkitFullscreenChange($event) {
-        this.isFullscreenMode = document['fullScreen']
-            || document['mozFullScreen'] || document.webkitIsFullScreen;
     }
 
     getRootComponent() {
