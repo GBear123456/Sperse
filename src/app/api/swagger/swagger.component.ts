@@ -11,7 +11,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class SwaggerComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
   link: SafeResourceUrl;
   public headlineConfig = { 
-    name: this.l("Interactive API Documentation"), 
+    names: [this.l("Interactive API Documentation")], 
     icon: 'magic-wand', 
     buttons: []
   };

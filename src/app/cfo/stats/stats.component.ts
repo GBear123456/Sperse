@@ -206,7 +206,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
 
     initHeadlineConfig() {
         this.headlineConfig = {
-            name: this.l('Daily Cash Balances'),
+            names: [this.l('Daily Cash Balances')],
             icon: '',
             buttons: [
                 {

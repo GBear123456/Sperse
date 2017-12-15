@@ -53,7 +53,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private filters: FilterModel[];
 
     public headlineConfig = {
-        name: this.l('Orders'),
+        names: [this.l('Orders')],
         icon: 'briefcase',
         buttons: [
             {
