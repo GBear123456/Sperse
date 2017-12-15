@@ -15,7 +15,7 @@ import { RulesComponent } from './rules/rules.component';
 import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.component';
 
 import { CashflowComponent } from './cashflow/cashflow.component';
-import { UserGridPreferencesComponent } from './cashflow/user-grid-preferences/user-grid-preferences.component';
+import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
 import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
@@ -83,14 +83,15 @@ import {
 
         CashflowComponent,
         OperationsComponent,
-        UserGridPreferencesComponent,
+        PreferencesDialogComponent,
         StatsComponent,
         SourceDataComponent,
         RuleDialogComponent,
         RulesComponent
     ],
     entryComponents: [
-        RuleDialogComponent
+        RuleDialogComponent,
+        PreferencesDialogComponent
     ]
 })
 

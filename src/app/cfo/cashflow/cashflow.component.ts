@@ -27,10 +27,10 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { UserGridPreferencesComponent } from './user-grid-preferences/user-grid-preferences.component';
+import { MdDialog } from '@angular/material';
+import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
 
 import { CacheService } from 'ng2-cache-service';
-import { OperationsComponent } from './operations/operations.component';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 
@@ -52,8 +52,6 @@ const StartedBalance = 'B',
 })
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
-    @ViewChild(OperationsComponent) operationsComponent: OperationsComponent;
-    @ViewChild('userGridPreferences') userGridPreferences: UserGridPreferencesComponent;
     headlineConfig: any;
     categories: GetCategoriesOutput;
     cashflowData: any;
@@ -274,7 +272,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 private _filtersService: FiltersService,
                 private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
                 private _cacheService: CacheService,
-                private _classificationServiceProxy: ClassificationServiceProxy
+                private _classificationServiceProxy: ClassificationServiceProxy,
+                public dialog: MdDialog,
     ) {
         super(injector);
         this._cacheService = this._cacheService.useStorage(0);
@@ -1810,5 +1809,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             .subscribe(result => {
                 this.statsDetailResult = result;
             });
+    }
+
+    showPreferencesDialog() {
+        this.dialog.open(PreferencesDialogComponent, {
+            panelClass: 'slider',
+            data: { localization: this.localizationSourceName }
+        }).afterClosed().subscribe(result => {});
     }
 }

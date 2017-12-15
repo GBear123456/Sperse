@@ -5,7 +5,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { DxTreeListComponent, DxDataGridComponent } from 'devextreme-angular';
 
 import {
-    CashflowServiceProxy, ClassificationServiceProxy, 
+    CashflowServiceProxy, ClassificationServiceProxy,
     CreateRuleDto, ConditionAttributeDto, ConditionDto } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
@@ -14,7 +14,7 @@ import * as _ from 'underscore';
   selector: 'rule-dialog',
   templateUrl: 'rule-edit-dialog.component.html',
   styleUrls: ['rule-edit-dialog.component.less'],
-  providers: [CashflowServiceProxy, ClassificationServiceProxy]  
+  providers: [CashflowServiceProxy, ClassificationServiceProxy]
 })
 export class RuleDialogComponent extends ModalDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
@@ -36,7 +36,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
         injector: Injector,
         private _classificationServiceProxy: ClassificationServiceProxy,
         private _cashflowServiceProxy: CashflowServiceProxy
-    ) { 
+    ) {
         super(injector);
 
         _cashflowServiceProxy.getCashFlowInitialData().subscribe((data) => {
@@ -111,7 +111,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
         this.data.options = [{
             text: this.l('Apply this rule to other 34 occurences'),
             value: true
-        }];      
+        }];
     }
 
     ngAfterViewInit() {
@@ -139,21 +139,21 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                 attributeTypeId: item['attributeTypeId'],
                 conditionTypeId: item['conditionTypeId'],
                 conditionValue: item['conditionValue']
-            }
+            };
         });
     }
 
-    addAttributeRow() { 
+    addAttributeRow() {
         this.attributeList.instance.addRow();
     }
 
-    addKeywordRow() {                                                    
+    addKeywordRow() {
         this.keywordList.instance.addRow();
     }
 
     onBankChanged($event) {
         if ($event.value)
-            this.accounts = _.findWhere(this.banks, 
+            this.accounts = _.findWhere(this.banks,
                 {id: $event.value})['bankAccounts'];
     }
 
@@ -171,7 +171,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
             return this.notify.error(this.l('RuleAmountError'));
 
         if (!this.descriptor)
-            return this.notify.error(this.l('RuleDescriptorError'));      
+            return this.notify.error(this.l('RuleDescriptorError'));
 
         if (isNaN(this.getSelectedCategoryId()))
             return this.notify.error(this.l('RuleCategoryError'));
@@ -180,7 +180,6 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     }
 
     onInitNewKeyword($event) {
-        $event.data['caption'] = 'Keyword #' 
-            + this.keywords.length;
+        $event.data['caption'] = 'Keyword #' + this.keywords.length;
     }
 }

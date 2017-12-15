@@ -16,7 +16,7 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
 
   constructor(
     injector: Injector
-  ) {     
+  ) {
     super(injector);
 
     this.data = injector.get(MD_DIALOG_DATA);
@@ -30,7 +30,7 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
       setTimeout(callback.bind(this), timeout);
   }
 
-  ngOnInit() {      
+  ngOnInit() {
       this.dialogRef.disableClose = true;
       this.slider = this.elementRef.nativeElement.closest('.slider');
       if (this.slider) {

@@ -9,7 +9,7 @@
     (handleFullscreen)="toggleFullscreen(getFullscreenElement())"
     (onToggleRows)="togglePivotGridRows($event)"
     (download)="downloadData($event)"
-    (showPreferences)="userGridPreferences.show()"
+    (showPreferencesDialog)="showPreferencesDialog()"
     (changeForecastModel)="changeSelectedForecastModel($event)"
 ></cashflow-operations>
 
@@ -91,6 +91,4 @@
             <dxo-scrolling mode="virtual"></dxo-scrolling>
         </dx-data-grid>
     </div>
-
-    <userGridPreferences #userGridPreferences></userGridPreferences>
 </div>

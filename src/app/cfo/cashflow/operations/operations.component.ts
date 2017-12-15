@@ -17,7 +17,7 @@ export class OperationsComponent extends AppComponentBase {
     @Output() onToggleRows: EventEmitter<any> = new EventEmitter();
     @Output() handleFullscreen: EventEmitter<any> = new EventEmitter();
     @Output() download: EventEmitter<any> = new EventEmitter();
-    @Output() showPreferences: EventEmitter<any> = new EventEmitter();
+    @Output() showPreferencesDialog: EventEmitter<any> = new EventEmitter();
     @Output() changeForecastModel: EventEmitter<any> = new EventEmitter();
     toolbarConfig = [];
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number} = { 'items' : [], 'selectedItemIndex': null}) {
@@ -76,7 +76,7 @@ export class OperationsComponent extends AppComponentBase {
                     },
                     {
                         name: 'rules',
-                        action: this.preferences.bind(this)
+                        action: this.preferencesDialog.bind(this)
                     },
                     {
                         name: 'slider',
@@ -234,7 +234,7 @@ export class OperationsComponent extends AppComponentBase {
         this.changeForecastModel.emit(event);
     }
 
-    preferences() {
-        this.showPreferences.emit();
+    preferencesDialog() {
+        this.showPreferencesDialog.emit();
     }
 }
