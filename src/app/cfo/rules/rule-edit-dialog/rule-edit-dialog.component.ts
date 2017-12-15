@@ -151,6 +151,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                         (this.data.id ? EditRuleDto: CreateRuleDto).fromJS({
                             id: this.data.id,
                             name: this.data.title,
+                            parentId: this.data.parentId,
                             categoryId: this.getSelectedCategoryId(),
                             transactionDecriptor: this.transactionAttributeTypes[this.descriptor] ? undefined: this.descriptor,
                             transactionDecriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor: undefined,
@@ -162,12 +163,12 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                                 descriptionWords: this.getDescriptionKeywords(),
                                 attributes: this.getAttributes()
                             })
-                    })).subscribe((responce) => {
-                        if (responce.success) {
+                    })).subscribe((error) => {
+                        if (!error) {
                             this.notify.info(this.l('SavedSuccessfully'));
                             this.close(true);
                         } else
-                            this.notify.error(responce.error);
+                            this.notify.error(error);
                     });
             }
         }];
@@ -182,7 +183,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
 
     getSelectedCategoryId() {
         let selected = this.categoryList.instance.getSelectedRowsData();
-        return selected.length && selected[0].id || null;
+        return selected.length && selected[0].id || undefined;
     }
 
     getDescriptionKeywords() {
