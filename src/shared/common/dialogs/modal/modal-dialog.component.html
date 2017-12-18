@@ -8,7 +8,7 @@
     <md-dialog-actions>
         <div class="md-dialog-options">
             <ng-template ngFor let-option [ngForOf]="data.options" let-i="index">  
-                <dx-check-box class="md-dialog-option pull-right" [value]="option.value" [text]="option.text"></dx-check-box>
+                <dx-check-box class="md-dialog-option pull-right" [(value)]="option.value" [text]="option.text"></dx-check-box>
             </ng-template>
         </div>
         <div class="md-dialog-buttons">

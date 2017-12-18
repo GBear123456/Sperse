@@ -90,7 +90,9 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
 
     showEditDialog(data = {}) {
         this.dialog.open(RuleDialogComponent, {
-            panelClass: 'slider', data: data
+            panelClass: 'slider', data: _.extend(data, {
+                refershParent: this.ngOnInit.bind(this)
+            })
         }).afterClosed().subscribe(result => {});
     }
 
