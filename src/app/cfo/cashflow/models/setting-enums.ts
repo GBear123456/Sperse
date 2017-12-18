@@ -7,9 +7,9 @@ export enum GeneralScope {
 }
 
 export enum PeriodScope {
-    Days = 1,
-    Weeks = 2,
-    Months = 4,
-    Quarters = 8,
-    Years = 16
+    Day = 1,
+    Week = 2,
+    Month = 4,
+    Quarter = 8,
+    Year = 16
 }

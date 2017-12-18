@@ -2,12 +2,13 @@ import { Component, ViewChild, Injector, Output, EventEmitter, OnInit } from '@a
 import { CashflowServiceProxy, CashFlowGridSettingsDto } from '@shared/service-proxies/service-proxies';
 import * as ModelEnums from '../models/setting-enums';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 
 @Component({
     selector: 'preferences-modal',
     templateUrl: 'preferences-dialog.component.html',
     styleUrls: ['preferences-dialog.component.less'],
-    providers: [ CashflowServiceProxy ]
+    providers: [ CashflowServiceProxy, UserPreferencesService ]
 })
 export class PreferencesDialogComponent extends ModalDialogComponent implements OnInit {
     @Output() modalSave: EventEmitter<CashFlowGridSettingsDto> = new EventEmitter<CashFlowGridSettingsDto>();
@@ -23,10 +24,10 @@ export class PreferencesDialogComponent extends ModalDialogComponent implements 
     fontSizes = [];
     themes = ['Default theme'];
     numberFormats = ['-$1,000,000.0'];
-
     constructor(
         injector: Injector,
-        private _cashflowService: CashflowServiceProxy
+        private _cashflowService: CashflowServiceProxy,
+        public userPreferencesService: UserPreferencesService
     ) {
         super(injector);
         for (let i = 10; i < 21; i++)
@@ -88,15 +89,11 @@ export class PreferencesDialogComponent extends ModalDialogComponent implements 
     }
 
     checkFlag(value, flag): boolean {
-        return (value & flag) != 0;
+        return this.userPreferencesService.checkFlag(value, flag);
     }
 
     checkBoxValueChanged(event, obj, prop, flag) {
-        if (event.value) {
-            obj[prop] |= flag;
-        } else {
-            obj[prop] &= ~flag;
-        }
+        this.userPreferencesService.checkBoxValueChanged(event, obj, prop, flag);
     }
 
     closeSuccessfull() {
