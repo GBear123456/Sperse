@@ -6,6 +6,7 @@ import { DxTreeListComponent, DxDataGridComponent } from 'devextreme-angular';
 
 import {
     CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto, 
+    CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
     CreateRuleDto, ConditionAttributeDto, ConditionDto } from '@shared/service-proxies/service-proxies';
 
@@ -22,6 +23,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     @ViewChild('keywordsComponent') keywordList: DxDataGridComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
 
+    conditionId: number;
     minAmount: number;
     maxAmount: number;
     bankId: number;
@@ -75,12 +77,16 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
 
         _cashflowServiceProxy.getCashFlowInitialData().subscribe((data) => {
             this.banks = data.banks;
+            if (this.bankId)
+                this.onBankChanged({value: this.accountId});
         });
 
         if (this.data.id)
             _classificationServiceProxy.getRuleForEdit(this.data.id).subscribe((rule) => {
                 this.descriptor = rule.transactionDecriptorAttributeTypeId || rule.transactionDecriptor;
+                this.data.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
                 if (rule.condition) {      
+                    this.conditionId = rule.condition.id;
                     this.bankId = rule.condition.bankId;
                     this.accountId = rule.condition.bankAccountId;  
                     this.amountFormat = rule.condition.cashFlowAmountFormat;
@@ -137,24 +143,23 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
         this.data.title = this.data.name || 
             this.l('Enter the rule name');
         this.data.buttons = [{
-            title: this.l(this.data.id ? 'Don\'t edit': 'Don\'t add'),
-            class: 'default',
-            action: () => {
-                this.close(true);
-            }
-        }, {
             title: this.l(this.data.id ? 'Edit rule': 'Add rule'),
             class: 'primary',
             action: () => {
-                if (this.validate())                      
+                if (this.validate()) {
+                    let option = this.data.options[0].value ? 'MatchedAndUnclassified': 'SelectedOnly';
                     this._classificationServiceProxy[(this.data.id ? 'edit': 'create') + 'Rule'](
                         (this.data.id ? EditRuleDto: CreateRuleDto).fromJS({
                             id: this.data.id,
                             name: this.data.title,
+                            parentId: this.data.parentId,
                             categoryId: this.getSelectedCategoryId(),
+                            sourceTransactionsList: this.data.transactions,
                             transactionDecriptor: this.transactionAttributeTypes[this.descriptor] ? undefined: this.descriptor,
                             transactionDecriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor: undefined,
+                            applyOption: (this.data.id ? EditRuleDtoApplyOption: CreateRuleDtoApplyOption)[option],
                             condition: ConditionDto.fromJS({
+                                id: this.conditionId,
                                 minAmount: this.minAmount,
                                 maxAmount: this.maxAmount,
                                 bankId: this.bankId,
@@ -162,17 +167,43 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                                 descriptionWords: this.getDescriptionKeywords(),
                                 attributes: this.getAttributes()
                             })
-                    })).subscribe((responce) => {
-                        if (responce.success) {
+                    })).subscribe((error) => {
+                        if (!error) {
                             this.notify.info(this.l('SavedSuccessfully'));
+                            this.data.refershParent();
                             this.close(true);
                         } else
-                            this.notify.error(responce.error);
+                            this.notify.error(error);
                     });
+                }
             }
         }];
+        if (!this.data.id) 
+            this.data.buttons.unshift({
+                title: this.l('Don\'t add'),
+                class: 'default',
+                action: () => {
+                    if (this.data.transactions)
+                        this.validate(true) && this._classificationServiceProxy.updateTransactionsCategory(
+                            UpdateTransactionsCategoryInput.fromJS({ 
+                                transactionIds: this.data.transactions,
+                                categoryId: this.getSelectedCategoryId(),
+                                standardDescriptor: this.transactionAttributeTypes[this.descriptor] || this.descriptor 
+                            })
+                        ).subscribe((error) => {
+                            if (!error) {
+                                this.notify.info(this.l('SavedSuccessfully'));
+                                this.data.refershParent();
+                                this.close(true);
+                            } 
+                        });
+                    else
+                        this.close(true);
+                }
+            });
+
         this.data.options = [{
-            text: this.l('Apply this rule to other 34 occurences'),
+            text: this.l('Apply this rule to other occurences'),
             value: true
         }];
     }
@@ -182,7 +213,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
 
     getSelectedCategoryId() {
         let selected = this.categoryList.instance.getSelectedRowsData();
-        return selected.length && selected[0].id || null;
+        return selected.length && selected[0].id || undefined;
     }
 
     getDescriptionKeywords() {
@@ -221,26 +252,32 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     }
 
     onBankChanged($event) {
-        if ($event.value)
+        if ($event.value && this.banks) 
             this.accounts = _.findWhere(this.banks,
                 {id: $event.value})['bankAccounts'];
     }
 
-    validate() {
-        if (!this.getDescriptionKeywords())
-            return this.notify.error(this.l('RuleTransactionDescriptorError'));
+    validate(ruleCheckOnly: boolean = false) {
+        if (!ruleCheckOnly) {
+/*
+            if (!this.getDescriptionKeywords())
+                return this.notify.error(this.l('RuleTransactionDescriptorError'));
+*/
 
-        if (!this.getAttributes().length)
-            return this.notify.error(this.l('RuleAttributesError'));
+            if (!this.getAttributes().length)
+                return this.notify.error(this.l('RuleAttributesError'));
 
-        if (isNaN(this.bankId) || isNaN(this.accountId))
-            return this.notify.error(this.l('RuleBankAccountError'));
+            if (isNaN(this.bankId) || isNaN(this.accountId))
+                return this.notify.error(this.l('RuleBankAccountError'));
 
-        if (this.minAmount && this.maxAmount && this.minAmount > this.maxAmount)
-            return this.notify.error(this.l('RuleAmountError'));
+            if (this.minAmount && this.maxAmount && this.minAmount > this.maxAmount)
+                return this.notify.error(this.l('RuleAmountError'));
+        }
 
+/*
         if (!this.descriptor)
             return this.notify.error(this.l('RuleDescriptorError'));
+*/
 
         if (isNaN(this.getSelectedCategoryId()))
             return this.notify.error(this.l('RuleCategoryError'));

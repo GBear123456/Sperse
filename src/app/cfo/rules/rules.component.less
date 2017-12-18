@@ -12,6 +12,9 @@
         margin: 0px 42px;
     }
     /deep/ dx-tree-list {
+        .dx-treelist-header-panel {
+            display: none!important;
+        }
         .dx-treelist-headers {
             border-bottom: none;
             div.dx-placeholder {
@@ -72,6 +75,9 @@
                     a.dx-link {
                         visibility: hidden;
                         color: transparent!important;
+                        &.dx-link-add {
+                            background: url('../../../assets/common/icons/add.svg') no-repeat center;
+                        }
                         &.dx-link-edit {
                             background: url('../../../assets/common/icons/edit.svg') no-repeat center;
                         }

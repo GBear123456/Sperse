@@ -85,12 +85,14 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onRowRemoved($event) {
-        this._ClassificationService.deleteRule(null, $event.key);
+        this._ClassificationService.deleteRule([], null, $event.key);
     }
 
     showEditDialog(data = {}) {
         this.dialog.open(RuleDialogComponent, {
-            panelClass: 'slider', data: data
+            panelClass: 'slider', data: _.extend(data, {
+                refershParent: this.ngOnInit.bind(this)
+            })
         }).afterClosed().subscribe(result => {});
     }
 
