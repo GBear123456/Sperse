@@ -1,9 +1,8 @@
 export enum GeneralScope {
     TransactionRows = 1,
-    SubtotalRows = 2,
-    TotalRows = 4,
-    BeginningBalances = 8,
-    EndingBalances = 16
+    TotalRows = 2,
+    BeginningBalances = 4,
+    EndingBalances = 8
 }
 
 export enum PeriodScope {
