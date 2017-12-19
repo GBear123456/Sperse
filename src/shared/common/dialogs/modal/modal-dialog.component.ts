@@ -54,15 +54,15 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
           });
   }
 
-  close(slide: boolean = false) {
+  close(slide: boolean = false, closeData = null) {
       if (slide) {
           this.dialogRef.updatePosition({
               right: '-100vw'
           });
           this.fork(() => {
-              this.dialogRef.close();
+              this.dialogRef.close(closeData);
           }, 300);
       } else
-          this.dialogRef.close();
+          this.dialogRef.close(closeData);
   }
 }

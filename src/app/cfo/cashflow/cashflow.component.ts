@@ -10,8 +10,10 @@ import {
     TransactionStatsDto,
     CashFlowForecastServiceProxy,
     ClassificationServiceProxy,
-    GetCategoriesOutput
+    GetCategoriesOutput,
+    CashFlowGridSettingsDto
 } from '@shared/service-proxies/service-proxies';
+import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
@@ -29,6 +31,7 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { MdDialog } from '@angular/material';
 import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
+import * as ModelEnums from './models/setting-enums';
 
 import { CacheService } from 'ng2-cache-service';
 import { Observable } from 'rxjs/Observable';
@@ -48,7 +51,7 @@ const StartedBalance = 'B',
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy]
+    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService ]
 })
 export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
@@ -60,6 +63,13 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     bankAccounts: any;
     dataSource: any;
     groupInterval = 'year';
+    momentFormats = {
+        'year':     'Y',
+        'quarter':  'Q',
+        'month':    'M',
+        'week':     'w',
+        'day':      'D'
+    };
     statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
     statsDetailResult: any;
     categorization: Array<string> = [
@@ -173,7 +183,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             dataField: 'amount',
             dataType: 'number',
             summaryType: 'sum',
-            format: 'currency',
+            format: {
+                type: 'currency',
+                precision: 2
+            },
             area: 'data',
             showColumnTotals: true,
             calculateSummaryValue: this.calculateSummaryValue(),
@@ -261,11 +274,38 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     forecastModelsObj: { items: Array<any>, selectedForecastModel: number };
     selectedForecastModel;
     currencyId = 'USD';
+    userPreferences = [
+        {
+            areas: ['data'],
+            method: this.showAmountsWithDecimals,
+        },
+        {
+            areas: ['data'],
+            method: this.hideZeroValuesInCells,
+        },
+        {
+            areas: ['data'],
+            method: this.showNegativeValuesInRed,
+        },
+        {
+            areas: ['data', 'column'],
+            method: this.hideColumnsWithZeroActivity
+        }
+    ];
+    cellTypesMethods = {
+        [ModelEnums.GeneralScope.TransactionRows]: this.isTransactionRows,
+        [ModelEnums.GeneralScope.TotalRows]: this.isIncomeOrExpensesDataCell,
+        [ModelEnums.GeneralScope.BeginningBalances]: this.isStartingBalanceDataColumn,
+        [ModelEnums.GeneralScope.EndingBalances]: this.isAllTotalBalanceCell
+    };
+    cashflowGridSettings: CashFlowGridSettingsDto;
+
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
     private requestFilter: StatsFilter;
     private anotherPeriodAccountsValues: Map<object, number> = new Map();
+    private cashedColumnActivity: Map<string, boolean> = new Map();
 
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
@@ -274,6 +314,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 private _cacheService: CacheService,
                 private _classificationServiceProxy: ClassificationServiceProxy,
                 public dialog: MdDialog,
+                public userPreferencesService: UserPreferencesService
     ) {
         super(injector);
         this._cacheService = this._cacheService.useStorage(0);
@@ -289,7 +330,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData();
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels();
         let getCategoriesObservalbel = this._classificationServiceProxy.getCategories();
-        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoriesObservalbel)
+        let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings();
+        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoriesObservalbel, getCashflowGridSettings)
             .subscribe(result => {
                 /** Initial data handling */
                 this.handleCashFlowInitialResult(result[0]);
@@ -299,6 +341,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
                 /** Handle the get categories response */
                 this.handleGetCategoriedsResult(result[2]);
+
+                /** Handle the get cashflow grid settings response*/
+                this.handleGetCashflowGridSettingsResult(result[3]);
 
                 /** load cashflow data grid */
                 this.loadGridDataSource();
@@ -427,6 +472,14 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     handleGetCategoriedsResult(getCategoriesResult) {
         this.categories = getCategoriesResult;
+    }
+
+    /**
+     * Handle getCashflow grid settings result
+     * @param cashflowSettingsResult
+     */
+    handleGetCashflowGridSettingsResult(cashflowSettingsResult) {
+        this.cashflowGridSettings = cashflowSettingsResult;
     }
 
     /**
@@ -729,6 +782,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this.loadGridDataSource();
     }
 
+    refreshDataGridWithPreferences() {
+        this._cashflowServiceProxy.getCashFlowGridSettings().
+            subscribe(result => {
+                this.handleGetCashflowGridSettingsResult(result);
+                this.collapsedStartingAndEndingBalance = false;
+                this.closeTransactionsDetail();
+                this.pivotGrid.instance.repaint();
+        });
+    }
+
     getApiDataSource() {
         return {
             fields: this.apiTableFields,
@@ -783,6 +846,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             abp.ui.clearBusy();
             $('.pivot-grid').removeClass('invisible');
         }
+
+        /** Clear cache with columns activity */
+        this.cashedColumnActivity.clear();
     }
     /**
      * Changes historical colspans depend on current, previous and forecast periods using jquery dates columns colspans
@@ -1071,8 +1137,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     isStartingBalanceDataColumn(cellObj) {
         return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined &&
-            cellObj.cell.rowPath[0] === StartedBalance &&
-            cellObj.cell.rowType === 'D';
+            cellObj.cell.rowPath[0] === StartedBalance;
     }
 
     /**
@@ -1136,6 +1201,28 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             (cellObj.cell.rowPath[0] === Total);
     }
 
+    isAllTotalBalanceCell(cellObj) {
+        return cellObj.cell.rowPath !== undefined &&
+               (cellObj.cell.rowPath[0] === Total);
+    }
+
+    isTotalRows(cellObj) {
+        return cellObj.cell.rowPath !== undefined &&
+               cellObj.cell.type === 'Total';
+    }
+
+    /** @todo check */
+    isSubtotalRows(cellObj) {
+        return cellObj.cell.rowPath !== undefined &&
+            cellObj.cell.type === 'Total';
+    }
+
+    isTransactionRows(cellObj) {
+        return cellObj.cell.rowPath !== undefined &&
+               cellObj.cell.rowPath.length !== 1 &&
+               (cellObj.cell.rowPath[0] === Income || cellObj.cell.rowPath[0] === Expense);
+    }
+
     /** Whether the cell is the reconciliation header cell */
     isReconciliationHeaderCell(cellObj) {
         return cellObj.cell.path !== undefined &&
@@ -1149,23 +1236,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         return cellObj.cell.rowPath !== undefined &&
             cellObj.cell.rowPath.length === 1 &&
             (cellObj.cell.rowPath[0] === Reconciliation);
-    }
-
-    /**
-     * whether or not the cell is grand total label cell
-     * @param cellObj
-     * @returns {boolean}
-     */
-    isGrandTotalLabelCell(cellObj) {
-        return cellObj.cell.type === GrandTotal;
-    }
-    /**
-     * whether or not the cell is grand total data cell
-     * @param cellObj
-     * @returns {boolean}
-     */
-    isGrandTotalDataCell(cellObj) {
-        return cellObj.cell.rowType === GrandTotal;
     }
 
     /**
@@ -1273,6 +1343,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
         }
 
+        /** Apply user preferences to the data showing */
+        this.applyUserPreferences(e);
+
         /** If there are some cells to click - click it! */
         if (e.area === 'column') {
             if (this.fieldPathsToClick.length) {
@@ -1284,6 +1357,122 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
             }
         }
+    }
+
+    /** User preferences */
+    showAmountsWithDecimals(cellObj) {
+        let cellType = this.getCellType(cellObj);
+        if (cellType) {
+            let isCellMarked = this.userPreferencesService.isCellMarked(this.cashflowGridSettings['general']['showAmountsWithDecimals'], cellType);
+            if (!isCellMarked) {
+                let valueWithDecimals = cellObj.cellElement.text();
+                cellObj.cellElement.text(valueWithDecimals.slice(0, valueWithDecimals.length - 3));
+            }
+        }
+    }
+
+    hideZeroValuesInCells(cellObj, applyTo) {
+        let cellType = this.getCellType(cellObj);
+        if (cellType) {
+            let isCellMarked = this.userPreferencesService.isCellMarked(this.cashflowGridSettings['general']['hideZeroValuesInCells'], cellType);
+            if (isCellMarked && cellObj.cell.value === 0) {
+                cellObj.cellElement.text('');
+            }
+        }
+    }
+
+    showNegativeValuesInRed(cellObj) {
+        let cellType = this.getCellType(cellObj);
+        if (cellType) {
+            let isCellMarked = this.userPreferencesService.isCellMarked(this.cashflowGridSettings['general']['showNegativeValuesInRed'], cellType);
+            if (isCellMarked && cellObj.cell.value < 0) {
+                cellObj.cellElement.addClass('red');
+            }
+        }
+    }
+
+    hideColumnsWithZeroActivity(cellObj) {
+        let path = cellObj.cell.columnPath || cellObj.cell.path;
+        if (path) {
+            let cellPeriod = this.getLowestIntervalFromPath(path, this.getColumnFields());
+            let isCellMarked = this.userPreferencesService.isCellMarked(this.cashflowGridSettings['general']['hideColumnsWithZeroActivity'], ModelEnums.PeriodScope[this.capitalize(cellPeriod)]);
+            if (isCellMarked) {
+                let activity = this.columnHasActivity(cellObj, cellPeriod);
+                if (!activity) {
+                    cellObj.cellElement.addClass('hideZeroActivity');
+                    cellObj.cellElement.text('');
+                }
+            }
+        }
+    }
+
+    /** Get column activity */
+    columnHasActivity(cellObj, lowestPeriod) {
+        let columnHasActivity = false;
+        let path = cellObj.cell.columnPath || cellObj.cell.path
+        let cellDate = this.getDateByPath(path, this.getColumnFields(), lowestPeriod);
+        if (cellDate) {
+            let dateKey = this.formatToLowest(cellDate, lowestPeriod);
+            /** if we have the activity value in cache - get it from there */
+            if (this.cashedColumnActivity.get(dateKey)) {
+                columnHasActivity = this.cashedColumnActivity.get(dateKey);
+            /** else calculate the activity using cashflow data and save it in cache to avoid
+             *  a lot of calculations */
+            } else {
+                columnHasActivity = this.cashflowData.some((cashflowItem) => {
+                    return (dateKey === this.formatToLowest(cashflowItem.date, lowestPeriod) &&
+                            cashflowItem.amount);
+                });
+                this.cashedColumnActivity.set(dateKey, columnHasActivity);
+            }
+        }
+        return columnHasActivity;
+    }
+
+    /** Format moment js object to the lowest interval */
+    formatToLowest(date, lowestPeriod): string {
+        let formatAbbr = '';
+        for (let format in this.momentFormats) {
+            formatAbbr += `${this.momentFormats[format]}.`;
+            if (format === lowestPeriod) {
+                break;
+            }
+        }
+        return date.format(formatAbbr);
+    }
+
+    /** @todo refactor */
+    getCellType(cellObj) {
+        let cellType;
+        for (let type in this.cellTypesMethods) {
+            let method = <any>this.cellTypesMethods[type];
+            if (method(cellObj)) {
+                cellType = type;
+                break;
+            }
+        };
+        return cellType;
+    }
+
+    getCellPeriod(cellObj) {
+        let lastOpenedColumnIndex = cellObj.cell.columnPath.length - 1;
+        let columnFields = cellObj.component.getDataSource().getAreaFields('column');
+        let lastOpenedField = columnFields[lastOpenedColumnIndex];
+        while (lastOpenedField && lastOpenedField.dataField !== 'date') {
+            lastOpenedField = columnFields[--lastOpenedColumnIndex];
+        }
+        return lastOpenedField ? lastOpenedField.groupInterval : null;
+    }
+
+    /** Apply user preferences to the cell object */
+    applyUserPreferences(cellObj) {
+        this.userPreferences.forEach(preferencesObject => {
+            if (preferencesObject.areas.length &&
+                preferencesObject.areas.indexOf(cellObj.area) === -1) {
+                return;
+            }
+            preferencesObject.method.bind(this)(cellObj);
+        });
     }
 
     /**
@@ -1442,19 +1631,21 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     /** Return the amount of the child of the column like the */
     monthHasForecast(cellObj) {
         let monthDataWithForecast = this.cashflowData.filter(item => {
-            return item.forecastId && item.date.format('M.Y') === this.getDateByPath(cellObj.cell.path, cellObj.columnFields, 'month').format('M.Y');
+            let cellDate = this.getDateByPath(cellObj.cell.path, cellObj.columnFields, 'month');
+            return item.forecastId && item.date.format('M.Y') === cellDate.format('M.Y');
         });
         return monthDataWithForecast.length ? true : false;
     }
 
     /**
-     * Return the moment date for the path using column fields
+     * Return the date object of type {year: 2015, month: 12, day: 24} for the path using column fields
      * @param path
      * @param columnFields
      * @return {any}
      */
     getDateByPath(path, columnFields, lowestInterval) {
-        let date = moment();
+        lowestInterval = lowestInterval || this.getLowestIntervalFromPath(path, columnFields);
+        let date = moment.unix(0);
         let dateFields = [];
         columnFields.every(field => {
             if (field.dataType === 'date') {
@@ -1473,8 +1664,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             /** set the new interval to the moment */
             date[method](fieldValue);
         });
-
         return date;
+    }
+
+    getLowestIntervalFromPath(path, columnFields) {
+        let lastOpenedColumnIndex = path.length - 1;
+        let lastOpenedField = columnFields[lastOpenedColumnIndex];
+        while (lastOpenedField && lastOpenedField.dataField !== 'date') {
+            lastOpenedField = columnFields[--lastOpenedColumnIndex];
+        }
+        return lastOpenedField ? lastOpenedField.groupInterval : null;
     }
 
     customCurrency(value) {
@@ -1815,6 +2014,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this.dialog.open(PreferencesDialogComponent, {
             panelClass: 'slider',
             data: { localization: this.localizationSourceName }
-        }).afterClosed().subscribe(result => {});
+        }).afterClosed().subscribe(result => {
+            if (result && result.update) {
+                this.refreshDataGridWithPreferences();
+            }
+        });
     }
 }
