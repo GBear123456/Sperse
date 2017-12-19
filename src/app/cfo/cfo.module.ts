@@ -13,6 +13,7 @@ import { ModalModule } from 'ngx-bootstrap';
 
 import { RulesComponent } from './rules/rules.component';
 import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.component';
+import { CategoryDeleteDialogComponent } from './rules/rule-edit-dialog/category-delete-dialog/category-delete-dialog.component';
 
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
@@ -21,6 +22,7 @@ import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 
 import { MdTabsModule } from '@angular/material';
+import { MdDialogModule } from '@angular/material';
 
 import {
     DxButtonModule,
@@ -72,7 +74,8 @@ import {
         ModalModule.forRoot(),
 
         DxChartModule,
-        MdTabsModule
+        MdTabsModule,
+        MdDialogModule
     ],
     declarations: [
         BankAccountsComponent,
@@ -87,10 +90,12 @@ import {
         StatsComponent,
         SourceDataComponent,
         RuleDialogComponent,
+        CategoryDeleteDialogComponent,
         RulesComponent
     ],
     entryComponents: [
         RuleDialogComponent,
+        CategoryDeleteDialogComponent,
         PreferencesDialogComponent
     ]
 })

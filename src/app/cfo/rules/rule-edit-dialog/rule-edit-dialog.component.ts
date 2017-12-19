@@ -4,8 +4,12 @@ import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { DxTreeListComponent, DxDataGridComponent } from 'devextreme-angular';
 
+import { MdDialog } from '@angular/material';
+import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
+
 import {
     CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto, 
+    CreateCategoryGroupInput, CreateCategoryInput, UpdateCategoryGroupInput, UpdateCategoryInput,
     CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
     CreateRuleDto, ConditionAttributeDto, ConditionDto } from '@shared/service-proxies/service-proxies';
@@ -40,11 +44,14 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     formats: any = [];
     attributeTypes: any;
     conditionTypes: any;
+    categorization: any;
+    addedCategoryItems: any = {};
 
     private transactionAttributeTypes: any;
 
     constructor(
         injector: Injector,
+        public dialog: MdDialog,
         private _classificationServiceProxy: ClassificationServiceProxy,
         private _cashflowServiceProxy: CashflowServiceProxy,
         private _transactionsServiceProxy: TransactionsServiceProxy
@@ -103,32 +110,39 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                 } 
             });
 
-        _classificationServiceProxy.getCategories().subscribe((data) => {
+        this.refreshCategories();
+    }
+
+    refreshCategories() {
+        this._classificationServiceProxy.getCategories().subscribe((data) => {
+            let categories = [];
+            this.categorization = data;      
             if (data.types)
                  _.mapObject(data.types, (item, key) => {
-                    this.categories.push({
-                        id: key,
-                        parentId: 0,
-                        category: item.name
+                    categories.push({
+                        key: key,
+                        parent: 0,
+                        name: item.name
                     });
                 });
             if (data.groups)
                  _.mapObject(data.groups, (item, key) => {
-                    this.categories.push({
-                        id: key,
-                        parentId: item.typeId,
-                        category: item.name
+                    categories.push({
+                        key: key,
+                        parent: item.typeId,
+                        name: item.name
                     });
                 });
             if (data.items)
                  _.mapObject(data.items, (item, key) => {
-                    this.categories.push({
-                        id: key,
-                        parentId: item.groupId,
-                        category: item.name
+                    categories.push({
+                        key: key,
+                        parent: item.groupId.toString(),
+                        name: item.name
                     });
                 });
 
+            this.categories = categories;
             if (this.data.categoryId) {
                 let category = data.items[this.data.categoryId];
                 this.categoryList.instance.expandRow(data.groups[category.groupId].typeId);
@@ -212,8 +226,9 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     }
 
     getSelectedCategoryId() {
-        let selected = this.categoryList.instance.getSelectedRowsData();
-        return selected.length && selected[0].id || undefined;
+        let selected = this.categoryList.instance.getSelectedRowsData(),
+            key = selected.length && selected[0].key;
+        return this.categorization.items[key] && key || undefined;
     }
 
     getDescriptionKeywords() {
@@ -291,5 +306,74 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
 
     onInitNewKeyword($event) {
         $event.data['caption'] = 'Keyword #' + this.keywords.length;
+    }
+
+    getCategoryItemId(key) {
+        return this.addedCategoryItems[key] || key;
+    }
+
+    onCategoryUpdated($event) {
+        let groupUpdate = this.categorization.groups[$event.key];
+        this._classificationServiceProxy['updateCategory' + (groupUpdate ? 'Group': '')](
+            (groupUpdate ? UpdateCategoryGroupInput: UpdateCategoryInput).fromJS({
+                id: $event.key,
+                groupId: this.categorization.items[$event.key].groupId,
+                name: $event.data.name
+            })
+        ).subscribe((error) => {
+            if (error)
+                this.notify.error(this.l('SomeErrorOccurred'));
+        });
+
+    }
+
+    onCategoryInserted($event) {
+        let groupCreate = this.categorization.types[$event.data.parent];
+        this._classificationServiceProxy['createCategory' + (groupCreate ? 'Group': '')](
+            (groupCreate ? CreateCategoryGroupInput: CreateCategoryInput).fromJS({
+                typeId: $event.data.parent,
+                groupId: this.getCategoryItemId($event.data.parent),
+                name: $event.data.name
+            })
+        ).subscribe((id) => {
+            if (isNaN(id))
+                this.notify.error(this.l('SomeErrorOccurred'));
+            this.refreshCategories();
+        });
+    }
+
+    onCategoryRemoving($event) {
+        $event.cancel = true;
+        let itemId = this.getCategoryItemId($event.key),
+            parentId = this.getCategoryItemId($event.data.parent);
+        if (this.categorization.types[parentId]) {
+            if (_.findWhere(this.categories, {parent: itemId}))
+                this.notify.error(this.l('Category group should be empty to perform delete action'));
+            else
+                this._classificationServiceProxy.deleteCategoryGroup(itemId)
+                  .subscribe(() => {
+                      this.refreshCategories();
+                  });
+        } else {
+            let dialogData = {
+                deleteAllReferences: true,
+                categorizations: this.categorization.items,
+                categories: _.filter(this.categories, (obj) => {
+                    return (obj['parent'] && obj['key'] != itemId)
+                        || (obj['key'] == this.categorization.groups[parentId].typeId);
+                }),
+                categoryId: undefined                
+            };
+            this.dialog.open(CategoryDeleteDialogComponent, {
+                data: dialogData
+            }).afterClosed().subscribe((result) => {
+                if (result)
+                    this._classificationServiceProxy.deleteCategory(
+                        dialogData.categoryId, dialogData.deleteAllReferences, itemId)
+                            .subscribe(() => {
+                                this.refreshCategories();
+                            });
+            });
+        }
     }
 }

@@ -80,7 +80,10 @@
                 }
                 td.dx-command-edit  {
                     text-overflow: unset;
+                    text-align: right!important;
                     a.dx-link {
+                        width: 25px;
+                        display: inline-block;
                         color: transparent!important;
                         &.dx-link-add {
                             background: url('../../../../assets/common/icons/add.svg') no-repeat center;
@@ -135,7 +138,7 @@
                     content: "";
                     top: 25px;
                     z-index: 1;
-                    right: -45px;
+                    right: -44px;
                     position: absolute;
                     border-top: 13px solid transparent;
                     border-bottom: 13px solid transparent;  
@@ -254,6 +257,20 @@
                                 border: solid 1px #fff;
                             }
                             tr.dx-data-row {
+                                &[aria-level="0"] {
+                                    .dx-command-edit {
+                                        .dx-link-delete, .dx-link-edit {
+                                            display: none;
+                                        }
+                                    }
+                                }
+                                &[aria-level="2"] {
+                                    .dx-command-edit {
+                                        .dx-link-add {
+                                            display: none;
+                                        }
+                                    }
+                                }
                                 td.dx-command-edit a {                                    
                                     visibility: hidden;
                                 }
