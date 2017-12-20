@@ -2,9 +2,9 @@
   "name": "API",
   "search": false,
   "navigation": [
-    ["Introduction", "", "", ""],
-    ["Documentation", "", "icon-home", "/app/api/swagger"],
-    ["Downloads", "", "", ""],
-    ["Demos", "", "", ""]
+    [ "Introduction", "", "", "/app/api/introduction" ],
+    [ "Documentation", "", "icon-home", "/app/api/swagger" ],
+    [ "Downloads", "", "", "" ],
+    [ "Demos", "", "", "" ]
   ]
 }

@@ -151,12 +151,17 @@
 
                 <dx-tree-list 
                     height="570px"
+                    keyExpr="key"
+                    parentIdExpr="parent"
                     [hoverStateEnabled]="true"
-                    [dataSource]="categories"
-                    [editing]="{allowAdding: true, allowUpdating: true}"
+                    [(dataSource)]="categories"
+                    [editing]="{allowAdding: true, allowUpdating: true, allowDeleting: true}"
                     [selection]="{allowSelectAll: false, mode: 'single'}"
-                    [autoExpandAll]="true">
-                    <dxi-column dataField="category"></dxi-column>
+                    [rootValue]="0"
+                    (onRowUpdated)="onCategoryUpdated($event)"
+                    (onRowInserted)="onCategoryInserted($event)"
+                    (onRowRemoving)="onCategoryRemoving($event)">
+                    <dxi-column dataField="name"></dxi-column>
                 </dx-tree-list>
 
             </div>
