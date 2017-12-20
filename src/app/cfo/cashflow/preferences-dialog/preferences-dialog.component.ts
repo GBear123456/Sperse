@@ -13,8 +13,6 @@ import { Observable } from 'rxjs/Observable';
     providers: [ CashflowServiceProxy, UserPreferencesService, CacheService ]
 })
 export class PreferencesDialogComponent extends ModalDialogComponent implements OnInit {
-    @Output() modalSave: EventEmitter<CashFlowGridSettingsDto> = new EventEmitter<CashFlowGridSettingsDto>();
-
     GeneralScope = ModelEnums.GeneralScope;
     PeriodScope = ModelEnums.PeriodScope;
 
@@ -23,11 +21,21 @@ export class PreferencesDialogComponent extends ModalDialogComponent implements 
     saving = false;
     rememberLastSettings = true;
     cacheKey = `UserPreferences_${abp.session.userId}`;
-
-    fonts = ['Lato'];
+    fonts = [
+        'Lato',
+        'Open Sans',
+        'Kameron',
+        'Work Sans'
+    ];
     fontSizes = [];
-    themes = ['Default theme'];
-    numberFormats = ['-$1,000,000.0'];
+    themes = [
+        'Default Theme',
+        'Light Dark Theme'
+    ];
+    numberFormats = [
+        '-$1,000,000.0',
+        '-$1.000.000.0'
+    ];
     constructor(
         injector: Injector,
         private _cashflowService: CashflowServiceProxy,
@@ -40,6 +48,33 @@ export class PreferencesDialogComponent extends ModalDialogComponent implements 
     }
 
     ngOnInit() {
+        this.initHeader();
+
+        let cashflowGridObservable;
+        if (this._cacheService.exists(this.cacheKey)) {
+            let data = this._cacheService.get(this.cacheKey);
+            let model = new CashFlowGridSettingsDto(this._cacheService.get(data));
+            model.init(data);
+            cashflowGridObservable = Observable.from([model]);
+        } else {
+            cashflowGridObservable = this._cashflowService.getCashFlowGridSettings();
+        }
+
+        cashflowGridObservable.subscribe(result => {
+            this.model = result;
+            this.active = true;
+        });
+
+        this.dialogRef.afterClosed().subscribe(closeData => {
+            if ((closeData && closeData.saveLocally) || !closeData) {
+                this.saveLocally(this.model);
+            } else {
+                this.removeLocalModel();
+            }
+        });
+    }
+
+    initHeader() {
         this.data = Object.assign(this.data, {
             title: this.l('CashFlowGrid_UserPrefs_Header'),
             editTitle: false,
@@ -48,12 +83,12 @@ export class PreferencesDialogComponent extends ModalDialogComponent implements 
                     title: this.l('CashFlowGrid_UserPrefs_Cancel'),
                     class: 'default',
                     action: () => {
-                        this.close(true, false);
+                        this.close(true, {'saveLocally': false});
                     }
                 }, {
                     title: this.rememberLastSettings ?
-                           this.l('CashFlowGrid_UserPrefs_Save') :
-                           this.l('CashFlowGrid_UserPrefs_Apply'),
+                        this.l('CashFlowGrid_UserPrefs_Save') :
+                        this.l('CashFlowGrid_UserPrefs_Apply'),
                     class: 'primary',
                     action: () => {
                         if (this.rememberLastSettings) {
@@ -65,7 +100,7 @@ export class PreferencesDialogComponent extends ModalDialogComponent implements 
                                 });
                         } else {
                             /** Save the model in cache */
-                            //this.applyChanges();
+                            this.applyChanges();
                         }
                     }
                 }
@@ -73,20 +108,13 @@ export class PreferencesDialogComponent extends ModalDialogComponent implements 
             options: [
                 {
                     text: this.l('CashFlowGrid_UserPrefs_RememberLastSettings'),
-                    value: this.rememberLastSettings
+                    value: this.rememberLastSettings,
+                    onValueChanged: () => {
+                        this.rememberLastSettings = !this.rememberLastSettings;
+                        this.initHeader();
+                    }
                 }
             ]
-        });
-        let cashflowGridObservable;
-        if (this._cacheService.exists(this.cacheKey)) {
-            cashflowGridObservable = Observable.from([this._cacheService.get(this.cacheKey)]);
-        } else {
-            cashflowGridObservable = this._cashflowService.getCashFlowGridSettings();
-        }
-
-        cashflowGridObservable.subscribe(result => {
-            this.model = new CashFlowGridSettingsDto(result);
-            this.active = true;
         });
     }
 
@@ -114,27 +142,20 @@ export class PreferencesDialogComponent extends ModalDialogComponent implements 
     }
 
     closeSuccessful() {
-        this.notify.info(this.l('SavedSuccessfully'));
-        this.close(true, false, {'update': true});
-        this.modalSave.emit(this.model);
+        this.close(true,  {'update': true, 'saveLocally': false});
     }
 
-    /**
-     * Close the popup
-     * @param {boolean} slide
-     * @param {boolean} saveLocally Save into local cache
-     */
-    close(slide: boolean = false, saveLocally: boolean = true, closeData = null) {
-        if (saveLocally) {
-            this.saveLocally(this.model);
-        } else {
-            this.removeLocalModel();
-        }
-        super.close(true, closeData);
+    applyChanges() {
+        this.close(true,  {
+            'update': true,
+            'saveLocally': false,
+            'apply': true,
+            'model': this.model
+        });
     }
 
     saveLocally(model: CashFlowGridSettingsDto) {
-        this._cacheService.set(this.cacheKey, new CashFlowGridSettingsDto(model));
+        this._cacheService.set(this.cacheKey, model);
     }
 
     removeLocalModel() {

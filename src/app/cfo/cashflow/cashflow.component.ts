@@ -44,8 +44,7 @@ const StartedBalance = 'B',
       Income         = 'I',
       Expense        = 'E',
       Reconciliation = 'D',
-      Total          = 'T',
-      GrandTotal     = 'GT';
+      Total          = 'T';
 
 @Component({
     selector: 'app-cashflow',
@@ -274,7 +273,58 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     forecastModelsObj: { items: Array<any>, selectedForecastModel: number };
     selectedForecastModel;
     currencyId = 'USD';
-    userPreferences = [
+
+    userPreferencesHandlers = {
+        general: {
+            applyTo: 'cells',
+            preferences: {
+                showAmountsWithDecimals : {
+                    areas: ['data'],
+                    handleMethod: this.showAmountsWithDecimals,
+                },
+                hideZeroValuesInCells: {
+                    areas: ['data'],
+                    handleMethod: this.hideZeroValuesInCells,
+                },
+                showNegativeValuesInRed: {
+                    areas: ['data'],
+                    handleMethod: this.showNegativeValuesInRed,
+                },
+                hideColumnsWithZeroActivity: {
+                    areas: ['data', 'column'],
+                    handleMethod: this.hideColumnsWithZeroActivity
+                }
+            }
+        },
+        visualPreferences: {
+            applyTo: 'areas',
+            preferences: {
+                fontName: {
+                    areas: ['data'],
+                    handleMethod: this.addPreferenceClass
+                },
+                fontSize: {
+                    areas: ['data'],
+                    handleMethod: this.addPreferenceStyle
+                },
+                cfoTheme: {
+                    areas: ['data', 'row', 'column'],
+                    handleMethod: this.addPreferenceClass
+                }
+            }
+        },
+        localizationAndCurrency: {
+            applyTo: 'cells',
+            preferences: {
+                numberFormatting: {
+                    areas: ['data'],
+                    method: this.reformatCell
+                }
+            }
+        }
+    };
+
+    generalUserPreferencesHandlers = [
         {
             areas: ['data'],
             method: this.showAmountsWithDecimals,
@@ -292,7 +342,24 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             method: this.hideColumnsWithZeroActivity
         }
     ];
-    cellTypesMethods = {
+    /** if type is class - then add the propertyName + preferenceValue to the classes areas,
+     *  if type is style - add just the css style, where property is propertyName converted to
+     *  property-name and the value - preferenceValue */
+    visualUserPreferencesHandlers = {
+        'fontName': {
+            'type': 'class',
+            'areas': ['data']
+        },
+        'fontSize': {
+            'type': 'style',
+            'areas': ['data']
+        },
+        'cfoTheme': {
+            'type': 'class',
+            'areas': ['data', 'row', 'column']
+        }
+    };
+    cellTypesCheckMethods = {
         [ModelEnums.GeneralScope.TransactionRows]: this.isTransactionRows,
         [ModelEnums.GeneralScope.TotalRows]: this.isIncomeOrExpensesDataCell,
         [ModelEnums.GeneralScope.BeginningBalances]: this.isStartingBalanceDataColumn,
@@ -744,6 +811,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     /**
+     * @todo move to some helper
      * Build the nested object from array as the properties
      * @param base - the object to create
      * @param names - the array with nested keys
@@ -754,6 +822,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
     }
 
+    /** @todo move to some helper */
+    getDescendantPropValue(obj, path) {
+        return path.split('.').reduce((acc, part) => acc && acc[part], obj)
+    };
+
     /**
      * Build the tree from cashflow data
      * @param data
@@ -762,13 +835,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     getCashflowDataTree(data, fields) {
         let cashflowDataTree = {};
-        const getDescendantPropValue = (obj, path) => (
-            path.split('.').reduce((acc, part) => acc && acc[part], obj)
-        );
         data.forEach( cashflowItem => {
             let chainingArr = [];
             fields.forEach( field => {
-                let value = getDescendantPropValue(cashflowItem, field['dataField']);
+                let value = this.getDescendantPropValue(cashflowItem, field['dataField']);
                 chainingArr.push(value);
             });
             this.createNestedObject(cashflowDataTree, chainingArr);
@@ -782,13 +852,25 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this.loadGridDataSource();
     }
 
-    refreshDataGridWithPreferences() {
-        this._cashflowServiceProxy.getCashFlowGridSettings().
-            subscribe(result => {
-                this.handleGetCashflowGridSettingsResult(result);
-                this.collapsedStartingAndEndingBalance = false;
-                this.closeTransactionsDetail();
-                this.pivotGrid.instance.repaint();
+    refreshDataGridWithPreferences(options) {
+        let preferencesObservable, notificationMessage;
+        /** If just apply - then get from the options */
+        if (options && options.apply && options.model) {
+            let model = new CashFlowGridSettingsDto(options.model);
+            model.init(options.model);
+            preferencesObservable = Observable.from([options.model]);
+            notificationMessage = this.l('AppliedSuccessfully');
+        /** If settings were saved - get them from the api */
+        } else {
+            preferencesObservable = this._cashflowServiceProxy.getCashFlowGridSettings();
+            notificationMessage = this.l('SavedSuccessfully');
+        }
+        preferencesObservable.subscribe(result => {
+            this.handleGetCashflowGridSettingsResult(result);
+            this.collapsedStartingAndEndingBalance = false;
+            this.closeTransactionsDetail();
+            this.pivotGrid.instance.repaint();
+            this.notify.info(notificationMessage);
         });
     }
 
@@ -849,7 +931,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
         /** Clear cache with columns activity */
         this.cashedColumnActivity.clear();
+
+        this.applyUserPreferencesForAreas();
     }
+
     /**
      * Changes historical colspans depend on current, previous and forecast periods using jquery dates columns colspans
      * and historical classes that added in onCellPrepared to the dates that belongs to the current periods like
@@ -1344,7 +1429,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
 
         /** Apply user preferences to the data showing */
-        this.applyUserPreferences(e);
+        this.applyUserPreferencesForCells(e);
 
         /** If there are some cells to click - click it! */
         if (e.area === 'column') {
@@ -1357,6 +1442,47 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
             }
         }
+    }
+
+    applyUserPreferencesForCells(e) {
+        let userPreferences = this.getUserPreferencesAppliedTo('cells');
+        for (let preferenceName in userPreferences) {
+            if (userPreferences[preferenceName].areas.length &&
+                userPreferences[preferenceName].areas.indexOf(e.area) === -1) {
+                return;
+            }
+            userPreferences[preferenceName]['handleMethod'].apply(this, [e, preferenceName]);
+        };
+    }
+
+    /**
+     * Get user preferences by applyTo type
+     * @param {"cells" | "areas"} applyTo
+     */
+    getUserPreferencesAppliedTo(applyTo: 'cells' | 'areas') {
+        let userPreferences = {};
+        for (let preferencesType in this.userPreferencesHandlers) {
+            let preferences = this.userPreferencesHandlers[preferencesType]['preferences'];
+            for (let preferenceName in preferences) {
+                let preferenceApplyTo;
+                if (preferences[preferenceName].applyTo) {
+                    preferenceApplyTo = preferences[preferenceName].applyTo;
+                } else {
+                    preferenceApplyTo = this.userPreferencesHandlers[preferencesType]['applyTo'];
+                }
+                if (applyTo === preferenceApplyTo) {
+                    Object.assign(userPreferences, { [`${preferencesType}.${preferenceName}`] : preferences[preferenceName]});
+                }
+            }
+        }
+        return userPreferences;
+    }
+
+    applyUserPreferencesForAreas() {
+        let userPreferences = this.getUserPreferencesAppliedTo('areas');
+        for (let preferenceName in userPreferences) {
+            userPreferences[preferenceName]['handleMethod'].apply(this, [userPreferences[preferenceName].areas, preferenceName]);
+        };
     }
 
     /** User preferences */
@@ -1406,6 +1532,30 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
     }
 
+    addPreferenceClass(areas, sourceName) {
+        let setting = sourceName.slice(sourceName.indexOf('.') + 1, sourceName.length + 1);
+        const className = setting + this.getDescendantPropValue(this.cashflowGridSettings, sourceName).replace(/ /g, '');
+        for (let area of areas) {
+            $(`.dx-area-${area}-cell`).removeClass((index, classes) => {
+                /** remove old setting class */
+                const start = classes.indexOf(setting),
+                    end = classes.indexOf(' ', start) === -1 ? classes.length + 1 : classes.indexOf(' ', start);
+                return classes.slice(start, end);
+            });
+            $(`.dx-area-${area}-cell`).addClass(className);
+        }
+    }
+
+    addPreferenceStyle(areas, sourceName) {
+        let setting = sourceName.slice(sourceName.indexOf('.') + 1, sourceName.length + 1);
+        const cssProperty = _.dasherize(setting);
+        for (let area of areas) {
+            $(`.dx-area-${area}-cell`).css(cssProperty, this.getDescendantPropValue(this.cashflowGridSettings, sourceName));
+        }
+    }
+
+    reformatCell() {}
+
     /** Get column activity */
     columnHasActivity(cellObj, lowestPeriod) {
         let columnHasActivity = false;
@@ -1444,8 +1594,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     /** @todo refactor */
     getCellType(cellObj) {
         let cellType;
-        for (let type in this.cellTypesMethods) {
-            let method = <any>this.cellTypesMethods[type];
+        for (let type in this.cellTypesCheckMethods) {
+            let method = <any>this.cellTypesCheckMethods[type];
             if (method(cellObj)) {
                 cellType = type;
                 break;
@@ -1462,17 +1612,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             lastOpenedField = columnFields[--lastOpenedColumnIndex];
         }
         return lastOpenedField ? lastOpenedField.groupInterval : null;
-    }
-
-    /** Apply user preferences to the cell object */
-    applyUserPreferences(cellObj) {
-        this.userPreferences.forEach(preferencesObject => {
-            if (preferencesObject.areas.length &&
-                preferencesObject.areas.indexOf(cellObj.area) === -1) {
-                return;
-            }
-            preferencesObject.method.bind(this)(cellObj);
-        });
     }
 
     /**
@@ -2014,9 +2153,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this.dialog.open(PreferencesDialogComponent, {
             panelClass: 'slider',
             data: { localization: this.localizationSourceName }
-        }).afterClosed().subscribe(result => {
-            if (result && result.update) {
-                this.refreshDataGridWithPreferences();
+        }).afterClosed().subscribe(options => {
+            if (options && options.update) {
+                this.refreshDataGridWithPreferences(options);
             }
         });
     }

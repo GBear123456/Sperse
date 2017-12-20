@@ -7,12 +7,12 @@
     </dx-text-box>
     <md-dialog-actions>
         <div class="md-dialog-options">
-            <ng-template ngFor let-option [ngForOf]="data.options" let-i="index">  
-                <dx-check-box class="md-dialog-option pull-right" [(value)]="option.value" [text]="option.text"></dx-check-box>
+            <ng-template ngFor let-option [ngForOf]="data.options" let-i="index">
+                <dx-check-box class="md-dialog-option pull-right" (onValueChanged)="option.onValueChanged($event)" [(value)]="option.value" [text]="option.text"></dx-check-box>
             </ng-template>
         </div>
         <div class="md-dialog-buttons">
-            <ng-template ngFor let-button [ngForOf]="data.buttons" let-i="index">  
+            <ng-template ngFor let-button [ngForOf]="data.buttons" let-i="index">
                 <button md-button (click)="button.action($event)" class="button-layout button-{{button.class}}">{{l(button.title)}}</button>
             </ng-template>
         </div>
