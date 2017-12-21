@@ -17,6 +17,8 @@ export class AppService {
 
     private readonly MODULE_DEFAULT = 'CRM';
 
+    public toolbarConfig: any;
+
     constructor() {
         this._config = new Subject<Object>();
     }

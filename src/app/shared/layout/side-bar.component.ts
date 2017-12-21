@@ -17,7 +17,9 @@ import * as moment from 'moment';
     styleUrls: ['./side-bar.component.less'],
     selector: 'side-bar',
     host: {
-        '(document:click)': 'hideFilterDialog($event)'
+        '(document:click)': 'hideFilterDialog($event)',
+        '(mouseover)': 'preventFilterDisable($event)',
+        '(mouseout)': 'checkFilterDisable($event)'
     }
 })
 export class SideBarComponent extends AppComponentBase {
@@ -92,5 +94,16 @@ export class SideBarComponent extends AppComponentBase {
             )
                 this.activeFilter = undefined;
         }
+    }
+
+    preventFilterDisable($event) {
+        this._filtersService.preventDisable();
+    }
+
+    checkFilterDisable($event) {
+        if (!this._filtersService.fixed)
+            this._filtersService.disable(() => {
+                this.activeFilter = undefined;
+            });            
     }
 }

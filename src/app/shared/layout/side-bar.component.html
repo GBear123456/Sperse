@@ -1,15 +1,6 @@
 <div class="sidebar-filter-links" *ngIf="filters.length">
-    <div class="search-field">
-        <input type="text" placeholder="Search" value="">
-    </div>
 
     <div class="filter-title">
-        <dx-button
-          [ngClass]="{'active-filter':_filtersService.hasFilterSelected}"
-          [text]="ls('Platform', 'Filters')"
-          [iconSrc]="'assets/common/icons/funnel-blue-icon.svg'"
-          (onClick)="closeFilters($event)"
-        ></dx-button>
         <dx-button
           [text]="ls('Platform', 'Sort')"
           [iconSrc]="'assets/common/icons/sort-icon.svg'"

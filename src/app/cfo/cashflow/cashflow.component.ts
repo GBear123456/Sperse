@@ -511,9 +511,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     ngOnDestroy() {
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+        this._filtersService.localizationSourceName 
+            = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
-        this._filtersService.enabled = false;
         this.rootComponent.overflowHidden();
     }
 
@@ -780,6 +780,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this.collapsedStartingAndEndingBalance = false;
         this.closeTransactionsDetail();
         this.loadGridDataSource();
+    }
+
+    repaintDataGrid() {
+        this.pivotGrid.instance.repaint();
     }
 
     refreshDataGridWithPreferences() {

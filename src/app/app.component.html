@@ -8,7 +8,11 @@
   </div>
 
   <div class="page-content-wrapper">
-    <div class="page-content">
+    <app-toolbar *ngIf="appService.toolbarConfig"
+        [config]="appService.toolbarConfig">
+    </app-toolbar>
+    <div class="page-content" 
+        [ngClass]="{'fixed-filters': appService.toolbarConfig && filtersService.fixed}">
       <router-outlet></router-outlet>
     </div>
   </div>
