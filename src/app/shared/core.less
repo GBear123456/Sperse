@@ -663,4 +663,178 @@ button {
 		}
 	}
 }
+.modal {
+    button.close {
+        -webkit-appearance: none;
+        padding: 0;
+        cursor: pointer;
+        background: transparent;
+        border: 0;
+        font-size: 46px !important;
+        font-weight: normal !important;
+        text-indent: unset !important;
+        background-image: none !important;
+    }
+    .modal-header {
+        padding: 15px 25px;
+        background: #f3f7fa;
+        border-bottom: 1px solid #eaeef0;
+        button.close {
+            margin-top: -7px !important;
+        }
+        .control-buttons {
+            float: right;
+            margin-top: 0;
+            margin-right: 20px;
+            a,
+            button {
+                background: #fff;
+                border: 1px solid #eaeef0;
+                padding: 4px 5px 6px;
+                min-width: 55px;
+                text-align: center;
+                display: block;
+                float: left;
+                line-height: 1.5;
+                outline: none;
+            }
+            a {
+                border-radius: 3px 0 0 3px;
+            }
+            button {
+                border-radius: 0 3px 3px 0;
+                margin-left: -1px;
+            }
+        }
+        .modal-title {
+            margin: 0;
+            line-height: 1.85;
+            font-family: Montserrat;
+            // font-weight: normal;
+            color: #424c56;
+        }
+    }
+    
+    
+    .modal-body {
+        position: relative;
+        padding: 15px 25px;
+        h3 {
+            font-family: Montserrat;
+            font-weight: normal;
+            font-size: 16px;
+            color: #424c56;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            &.margin-bottom {
+                margin-bottom: 16px;
+            }
+        }
+        p {
+            margin-bottom: 16px;
+        }
+        strong {
+            color: #424c56;
+        }
+        hr {
+            margin: 25px 0;
+        }
+    }
+}
 
+.modal.left .modal-dialog,
+.modal.right .modal-dialog {
+    position: fixed;
+    margin: auto;
+    width: 80%;
+    height: 100%;
+    -webkit-transform: translate3d(0%, 0, 0);
+    -ms-transform: translate3d(0%, 0, 0);
+    -o-transform: translate3d(0%, 0, 0);
+    transform: translate3d(0%, 0, 0);
+}
+
+.modal.left .modal-content,
+.modal.right .modal-content {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.modal.left .modal-body,
+.modal.right .modal-body {
+    padding: 15px 25px 35px;
+}
+
+/*Left*/
+.modal.left.fade .modal-dialog{
+    left: -80%;
+    -webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+    -moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+    -o-transition: opacity 0.3s linear, left 0.3s ease-out;
+    transition: opacity 0.3s linear, left 0.3s ease-out;
+}
+
+.modal.left.fade.in .modal-dialog{
+    left: 0;
+}
+
+/*Right*/
+.modal.right.fade .modal-dialog {
+    right: -80%;
+    -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+    -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+    -o-transition: opacity 0.3s linear, right 0.3s ease-out;
+    transition: opacity 0.3s linear, right 0.3s ease-out;
+}
+
+.modal.right.fade.in .modal-dialog {
+    right: 0;
+}
+
+@media (max-width: 767px) {
+    .modal.left .modal-dialog,
+    .modal.right .modal-dialog {
+        width: 100%;
+    }
+    .modal.left.fade .modal-dialog{
+        left: -100%;
+    }
+    .modal.right.fade .modal-dialog {
+        right: -100%;
+    }
+    .modal-title {
+        clear: both;
+        padding-top: 15px;
+        text-align: center;
+    }
+}
+
+@media screen {
+    #printSection {
+        display: none;
+    }
+}
+.visible-on-print {
+    display: none;
+}
+@media print {
+    body * {
+        visibility:hidden;
+    }
+    #printSection, #printSection * {
+        visibility: visible;
+        font-size: 14px;
+    }
+    #printSection {
+        position:absolute;
+        left:0;
+        top:0;
+    }
+    .visible-on-print {
+        display: block;
+        text-align: center;
+    }
+    .visible-on-print p + p {
+        font-size: 28px;
+    }
+}
