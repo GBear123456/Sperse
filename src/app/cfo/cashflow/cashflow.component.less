@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Kameron|Lato|Open+Sans|Work+Sans');
+
 @left-column-width: 339px;
 
 /** general */
@@ -126,25 +128,25 @@
             .dx-pivotgrid-expanded.dateField {
                 padding: 5px 10px!important;
                 .head-cell-expand {
-                  position: relative;
-                  &:after {
-                    content: '';
-                    position: absolute;
-                    visibility: visible;
-                    left: -10px;
-                    top: -5px;
-                    width: 0;
-                    height: 0;
-                    border: 0 solid transparent;
-                    border-bottom-width: 10px;
-                    border-top-width: 0px;
-                    border-left: 10px solid #686f76;
-                  }
+                    position: relative;
+                    &:after {
+                        content: '';
+                        position: absolute;
+                        visibility: visible;
+                        left: -10px;
+                        top: -5px;
+                        width: 0;
+                        height: 0;
+                        border: 0 solid transparent;
+                        border-bottom-width: 10px;
+                        border-top-width: 0px;
+                        border-left: 10px solid #686f76;
+                    }
 
-                  &.closed {
-                    visibility: hidden;
-                    position: absolute;
-                  }
+                    &.closed {
+                        visibility: hidden;
+                        position: absolute;
+                    }
                 }
             }
         }
@@ -186,6 +188,30 @@
             border: none;
         }
 
+        .cfoThemeLightDarkTheme {
+            &.dx-area-row-cell,
+            &.dx-area-data-cell {
+                tr {
+                    &.startedBalance,
+                    &.incomeRow,
+                    &.expensesRow,
+                    &.endingCashPosition,
+                    &.reconciliation {
+                        td {
+                            background: rgba(221, 221, 221, .32) !important;
+                        }
+                    }
+                    &.endingCashPosition {
+                        td {
+                            &, & span {
+                                color: inherit;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         /** upper left column */
         .dx-area-description-cell {
             vertical-align: top;
@@ -196,7 +222,6 @@
         /** upper right column (historical row and dates rows) */
         .dx-area-column-cell {
             tr {
-
                 /** @todo move general classes like dateField and historicalField  from td to tr */
                 td {
                     font-size: 10px;
@@ -332,7 +357,6 @@
                         width: 100%;
                         padding-left: 22px;
                     }
-
                     &.emptyChildren {
                         padding-left: 40px;
                         cursor: default;
@@ -340,7 +364,6 @@
                             display: none;
                         }
                     }
-
                     .dx-expand-icon-container {
                         font: inherit;
                         margin-right: 10px;
@@ -360,7 +383,6 @@
                             content: url('../../../assets/common/icons/expand-icon.svg');
                         }
                     }
-
                     &.dx-pivotgrid-expanded {
                         position: relative;
                         .dx-expand:before {
@@ -416,12 +438,36 @@
 
         /** bottom right column (data cells) */
         .dx-area-data-cell {
+
+            &.fontNameLato tr td {
+                &, & span {
+                    font-family: Lato!important;
+                }
+            }
+
+            &.fontNameOpenSans tr td {
+                &, & span {
+                    font-family: "Open Sans"!important;
+                }
+            }
+
+            &.fontNameKameron tr td {
+                &, & span {
+                    font-family: Kameron !important;
+                }
+            }
+
+            &.fontNameWorkSans tr td {
+                &, & span {
+                    font-family: Work Sans !important;
+                }
+            }
+
             tr {
                 td {
                     background: @dataCellBackgroundColor;
                     color: @middleGrayColor;
                     font-family: Lato!important;
-                    font-size: 13.5px;
                     letter-spacing: 0.2px;
                     &.red {
                         &,
@@ -474,7 +520,6 @@
                         & span {
                             color: @totalsTextColor;
                             font-weight: 600;
-                            font-size: 14px;
                         }
 
                         &.zeroValue {
@@ -524,10 +569,6 @@
                     td {
                         background: @reconciliationDataCellBackgroundColor;
                         color: @reconciliationDataCellTextColor;
-                        &,
-                        & span {
-                            font-size: 13.5px;
-                        }
                         &.lowestOpenedCurrent:not(.mtdCell) {
                             background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
                                         linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
