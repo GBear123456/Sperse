@@ -13,7 +13,7 @@ import {
     GetCategoriesOutput,
     CashFlowGridSettingsDto
 } from '@shared/service-proxies/service-proxies';
-import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
+import { UserPreferencesService } from './preferences-dialog/preferences.service';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
@@ -258,6 +258,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             visible: true
         }
     ];
+    /** @todo move to some constant general file */
     cssMarker = ' @css';
     historicalTextsKeys = [
         'Periods_Historical',
@@ -273,7 +274,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     forecastModelsObj: { items: Array<any>, selectedForecastModel: number };
     selectedForecastModel;
     currencyId = 'USD';
-
     userPreferencesHandlers = {
         general: {
             applyTo: 'cells',
@@ -318,45 +318,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             preferences: {
                 numberFormatting: {
                     areas: ['data'],
-                    method: this.reformatCell
+                    handleMethod: this.reformatCell
                 }
             }
-        }
-    };
-
-    generalUserPreferencesHandlers = [
-        {
-            areas: ['data'],
-            method: this.showAmountsWithDecimals,
-        },
-        {
-            areas: ['data'],
-            method: this.hideZeroValuesInCells,
-        },
-        {
-            areas: ['data'],
-            method: this.showNegativeValuesInRed,
-        },
-        {
-            areas: ['data', 'column'],
-            method: this.hideColumnsWithZeroActivity
-        }
-    ];
-    /** if type is class - then add the propertyName + preferenceValue to the classes areas,
-     *  if type is style - add just the css style, where property is propertyName converted to
-     *  property-name and the value - preferenceValue */
-    visualUserPreferencesHandlers = {
-        'fontName': {
-            'type': 'class',
-            'areas': ['data']
-        },
-        'fontSize': {
-            'type': 'style',
-            'areas': ['data']
-        },
-        'cfoTheme': {
-            'type': 'class',
-            'areas': ['data', 'row', 'column']
         }
     };
     cellTypesCheckMethods = {
@@ -365,8 +329,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         [ModelEnums.GeneralScope.BeginningBalances]: this.isStartingBalanceDataColumn,
         [ModelEnums.GeneralScope.EndingBalances]: this.isAllTotalBalanceCell
     };
-    cashflowGridSettings: CashFlowGridSettingsDto;
 
+    cashflowGridSettings: CashFlowGridSettingsDto;
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
@@ -1100,16 +1064,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     /**
-     * Gets the field in apiTableFields by dateInterval (year, quarter, month or day)
-     * @returns {Object}
-     */
-    getDateFieldByInterval(dateInterval) {
-        return this.apiTableFields.find(
-            field => field['groupInterval'] === dateInterval
-        );
-    }
-
-    /**
      * Gets the historical field object in tableFields
      * @returns {Object}
      */
@@ -1349,6 +1303,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     isCellContainsCssMarker(cellObj) {
         return cellObj.cell.text ? cellObj.cell.text.indexOf(this.cssMarker) !== -1 : '';
     }
+
     /**
      * Event that runs before rendering of every cell of the pivot grid
      * @param e - the object with the cell info
@@ -1428,9 +1383,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
         }
 
-        /** Apply user preferences to the data showing */
-        this.applyUserPreferencesForCells(e);
-
         /** If there are some cells to click - click it! */
         if (e.area === 'column') {
             if (this.fieldPathsToClick.length) {
@@ -1442,17 +1394,18 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 }
             }
         }
+
+        /** Apply user preferences to the data showing */
+        this.applyUserPreferencesForCells(e);
     }
 
     applyUserPreferencesForCells(e) {
         let userPreferences = this.getUserPreferencesAppliedTo('cells');
-        for (let preferenceName in userPreferences) {
-            if (userPreferences[preferenceName].areas.length &&
-                userPreferences[preferenceName].areas.indexOf(e.area) === -1) {
-                return;
+        userPreferences.forEach(preference => {
+            if (preference['sourceValue'] !== null && (!preference.areas.length || preference.areas.indexOf(e.area) !== -1)) {
+                preference['handleMethod'].call(this, e, preference);
             }
-            userPreferences[preferenceName]['handleMethod'].apply(this, [e, preferenceName]);
-        };
+        });
     }
 
     /**
@@ -1460,7 +1413,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param {"cells" | "areas"} applyTo
      */
     getUserPreferencesAppliedTo(applyTo: 'cells' | 'areas') {
-        let userPreferences = {};
+        let userPreferences = [];
         for (let preferencesType in this.userPreferencesHandlers) {
             let preferences = this.userPreferencesHandlers[preferencesType]['preferences'];
             for (let preferenceName in preferences) {
@@ -1471,7 +1424,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     preferenceApplyTo = this.userPreferencesHandlers[preferencesType]['applyTo'];
                 }
                 if (applyTo === preferenceApplyTo) {
-                    Object.assign(userPreferences, { [`${preferencesType}.${preferenceName}`] : preferences[preferenceName]});
+                    preferences[preferenceName]['sourceName'] = preferenceName;
+                    preferences[preferenceName]['sourceValue'] = this.cashflowGridSettings ? this.cashflowGridSettings[preferencesType][preferenceName] : null;
+                    userPreferences.push(preferences[preferenceName]);
                 }
             }
         }
@@ -1480,16 +1435,18 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     applyUserPreferencesForAreas() {
         let userPreferences = this.getUserPreferencesAppliedTo('areas');
-        for (let preferenceName in userPreferences) {
-            userPreferences[preferenceName]['handleMethod'].apply(this, [userPreferences[preferenceName].areas, preferenceName]);
-        };
+        userPreferences.forEach(preference => {
+            if (preference['sourceValue'] !== null) {
+                preference['handleMethod'].call(this, preference);
+            }
+        });
     }
 
     /** User preferences */
-    showAmountsWithDecimals(cellObj) {
+    showAmountsWithDecimals(cellObj, preference) {
         let cellType = this.getCellType(cellObj);
         if (cellType) {
-            let isCellMarked = this.userPreferencesService.isCellMarked(this.cashflowGridSettings['general']['showAmountsWithDecimals'], cellType);
+            let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
             if (!isCellMarked) {
                 let valueWithDecimals = cellObj.cellElement.text();
                 cellObj.cellElement.text(valueWithDecimals.slice(0, valueWithDecimals.length - 3));
@@ -1497,31 +1454,34 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
     }
 
-    hideZeroValuesInCells(cellObj, applyTo) {
+    hideZeroValuesInCells(cellObj, preference) {
         let cellType = this.getCellType(cellObj);
         if (cellType) {
-            let isCellMarked = this.userPreferencesService.isCellMarked(this.cashflowGridSettings['general']['hideZeroValuesInCells'], cellType);
+            let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
             if (isCellMarked && cellObj.cell.value === 0) {
                 cellObj.cellElement.text('');
             }
         }
     }
 
-    showNegativeValuesInRed(cellObj) {
+    showNegativeValuesInRed(cellObj, preference) {
         let cellType = this.getCellType(cellObj);
         if (cellType) {
-            let isCellMarked = this.userPreferencesService.isCellMarked(this.cashflowGridSettings['general']['showNegativeValuesInRed'], cellType);
+            let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
             if (isCellMarked && cellObj.cell.value < 0) {
                 cellObj.cellElement.addClass('red');
             }
         }
     }
 
-    hideColumnsWithZeroActivity(cellObj) {
+    hideColumnsWithZeroActivity(cellObj, preference) {
         let path = cellObj.cell.columnPath || cellObj.cell.path;
         if (path) {
             let cellPeriod = this.getLowestIntervalFromPath(path, this.getColumnFields());
-            let isCellMarked = this.userPreferencesService.isCellMarked(this.cashflowGridSettings['general']['hideColumnsWithZeroActivity'], ModelEnums.PeriodScope[this.capitalize(cellPeriod)]);
+            let isCellMarked = this.userPreferencesService.isCellMarked(
+                preference['sourceValue'],
+                ModelEnums.PeriodScope[this.capitalize(cellPeriod)]
+            );
             if (isCellMarked) {
                 let activity = this.columnHasActivity(cellObj, cellPeriod);
                 if (!activity) {
@@ -1532,29 +1492,36 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
     }
 
-    addPreferenceClass(areas, sourceName) {
-        let setting = sourceName.slice(sourceName.indexOf('.') + 1, sourceName.length + 1);
-        const className = setting + this.getDescendantPropValue(this.cashflowGridSettings, sourceName).replace(/ /g, '');
-        for (let area of areas) {
+    addPreferenceClass(preference) {
+        let setting = preference['sourceName'];
+        const className = setting + preference['sourceValue'].replace(/ /g, '');
+        for (let area of preference.areas) {
             $(`.dx-area-${area}-cell`).removeClass((index, classes) => {
                 /** remove old setting class */
                 const start = classes.indexOf(setting),
-                    end = classes.indexOf(' ', start) === -1 ? classes.length + 1 : classes.indexOf(' ', start);
+                      end = classes.indexOf(' ', start) === -1 ? classes.length + 1 : classes.indexOf(' ', start);
                 return classes.slice(start, end);
             });
             $(`.dx-area-${area}-cell`).addClass(className);
         }
     }
 
-    addPreferenceStyle(areas, sourceName) {
-        let setting = sourceName.slice(sourceName.indexOf('.') + 1, sourceName.length + 1);
-        const cssProperty = _.dasherize(setting);
-        for (let area of areas) {
-            $(`.dx-area-${area}-cell`).css(cssProperty, this.getDescendantPropValue(this.cashflowGridSettings, sourceName));
+    addPreferenceStyle(preference) {
+        const cssProperty = _.dasherize(preference['sourceName']);
+        for (let area of preference.areas) {
+            $(`.dx-area-${area}-cell`).css(cssProperty, preference['sourceValue']);
         }
     }
 
-    reformatCell() {}
+    reformatCell(cellObj, preference) {
+        const locale = preference.sourceValue.indexOf('.') <= 3 ? 'es-VE' : 'en-EN';
+        if (!cellObj.cellElement.hasClass('hideZeroActivity')) {
+            cellObj.cellElement.text(cellObj.cell.value.toLocaleString(locale, {
+                style: 'currency',
+                currency: this.currencyId
+            }).replace(/ /g, ''));
+        }
+    }
 
     /** Get column activity */
     columnHasActivity(cellObj, lowestPeriod) {
@@ -1602,16 +1569,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
         };
         return cellType;
-    }
-
-    getCellPeriod(cellObj) {
-        let lastOpenedColumnIndex = cellObj.cell.columnPath.length - 1;
-        let columnFields = cellObj.component.getDataSource().getAreaFields('column');
-        let lastOpenedField = columnFields[lastOpenedColumnIndex];
-        while (lastOpenedField && lastOpenedField.dataField !== 'date') {
-            lastOpenedField = columnFields[--lastOpenedColumnIndex];
-        }
-        return lastOpenedField ? lastOpenedField.groupInterval : null;
     }
 
     /**
