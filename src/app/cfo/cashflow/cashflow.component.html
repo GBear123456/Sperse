@@ -5,6 +5,7 @@
 <cashflow-operations
     [forecastModelsObj]="forecastModelsObj"
     (refreshCashflow)="refreshDataGrid($event)"
+    (repaintCashflow)="repaintDataGrid($event)"
     (onGroupBy)="changeGroupBy($event)"
     (handleFullscreen)="toggleFullscreen(getFullscreenElement())"
     (onToggleRows)="togglePivotGridRows($event)"
@@ -15,12 +16,6 @@
 
 <div class="cashflow">
     <div class="filter-sort-options">
-        <dx-button
-          [ngClass]="{'active-filter':_filtersService.hasFilterSelected}"
-          [text]="ls('Platform', 'Filters')"
-          [iconSrc]="'assets/common/icons/funnel-icon.svg'"
-          (onClick)="toggleFilters($event)">
-        </dx-button>
         <dx-button
           [text]="ls('Platform', 'Sort')"
           [iconSrc]="'assets/common/icons/sort-icon.svg'">

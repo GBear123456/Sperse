@@ -2,6 +2,8 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChil
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
+import { AppService } from '@app/app.service';
+
 import { TransactionsServiceProxy, BankAccountDto } from '@shared/service-proxies/service-proxies';
 
 import { FiltersService } from '@shared/filters/filters.service';
@@ -33,7 +35,6 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     private readonly dataSourceURI = 'Transaction';
     private filters: FilterModel[];
     private rootComponent: any;
-    private toolbarConfig: any;
 
     public headlineConfig = {
         names: [this.l('Transactions')],
@@ -42,10 +43,48 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     };
 
     initToolbarConfig() {
-        this.toolbarConfig = [
+        this._appService.toolbarConfig = [
             {
                 location: 'before', items: [
-                    { name: 'filters', action: this._filtersService.toggle.bind(this._filtersService), attr: { 'filter-selected': this._filtersService.hasFilterSelected } }
+                    { 
+                        name: 'filters', 
+                        action: (event) => {                            
+                            setTimeout(() => {
+                                this.dataGrid.instance.repaint();
+                            }, 1000);
+                            event.element.attr('filter-pressed', 
+                                this._filtersService.fixed = 
+                                    !this._filtersService.fixed);  
+                        },
+                        options: {
+                            mouseover: (event) => {
+                                this._filtersService.enable();
+                            },
+                            mouseout: (event) => {
+                                if (!this._filtersService.fixed)
+                                    this._filtersService.disable();
+                            } 
+                        },
+                        attr: { 
+                            'filter-selected': this._filtersService.hasFilterSelected,
+                            'filter-pressed': this._filtersService.fixed
+                        } 
+                    } 
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',   
+                        widget: 'dxTextBox',
+                        options: {
+                            width: '300',
+                            mode: 'search',
+                            placeholder: this.l('Search') + ' ' 
+                                + this.l('Customers').toLowerCase()
+                        }
+                    }
                 ]
             },
             {
@@ -81,7 +120,9 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         ];
     }
 
-    constructor(injector: Injector, private _TransactionsServiceProxy: TransactionsServiceProxy,
+    constructor(injector: Injector, 
+        private _appService: AppService,
+        private _TransactionsServiceProxy: TransactionsServiceProxy,
         private _filtersService: FiltersService) {
         super(injector);
 
@@ -329,9 +370,10 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
 
     ngOnDestroy() {
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+        this._appService.toolbarConfig = null;
+        this._filtersService.localizationSourceName 
+            = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
-        this._filtersService.enabled = false;
         this.rootComponent.overflowHidden();
     }
 }

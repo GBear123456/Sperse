@@ -12,9 +12,12 @@ import * as _ from 'underscore';
 export class ToolBarComponent extends AppComponentBase {
     public options = {};
     private supportedButtons = {
+        search: {
+            accessKey: 'search'
+        },
         filters: {
-            text: this.l('Filters'),
-            iconSrc: this.getImgURI('funnel-icon')
+            hint: this.l('Filters'),
+            accessKey: 'filters'
         },
         back: {
             hint: this.l('Back'),
@@ -158,6 +161,15 @@ export class ToolBarComponent extends AppComponentBase {
                 'select-value': item.options['items'][0].text
             };
         return item.attr || {};
+    }
+
+    onItemRendered($event) {
+        if ($event.itemData.options.mouseover)
+            $event.itemElement.on('mouseover', 
+                $event.itemData.options.mouseover);
+        if ($event.itemData.options.mouseout)
+            $event.itemElement.on('mouseout', 
+                $event.itemData.options.mouseout);
     }
 
     initToolbarItems() {

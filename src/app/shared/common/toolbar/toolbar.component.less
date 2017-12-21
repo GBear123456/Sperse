@@ -89,26 +89,25 @@
     }
 }
 
-/deep/ .dx-toolbar {
-    [filter-selected="true"] {
-        &::after {
-            content: '';
-            position: absolute;
-            display: block;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: red;
-            top: 7px;
-            right: 7px;
-        }
-    }
-}
-
 :host {
     /deep/ .dx-toolbar {
         padding: 12px 0 13px 0;
         margin: 0;
+
+        .dx-state-focused {
+            .dx-placeholder {
+                top: -25px!important;
+            }
+        }
+        .dx-placeholder {
+            font-size: 13px!important;
+            font-weight: 300!important;
+            letter-spacing: 0.3!pximportant;
+
+            &:before {
+                padding-top: 8px!important;
+            }
+        }
 
         [accesskey="select-box"] {
             display: flex;
@@ -225,7 +224,6 @@
                     background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
                 }
             }
-
             .dx-button-content {
                 &::after {
                     content: '';
@@ -251,6 +249,50 @@
                     display: none;
                 }
             }
+        }
+
+        [accesskey="filters"] {
+            img {
+                display: none
+            }  
+            .dx-button-content {
+                background: url('../../../../assets/common/icons/funnel-icon.svg') no-repeat center;
+            }
+            &[filter-selected="true"] {
+                &::after {
+                    content: '';
+                    position: absolute;
+                    display: block;
+                    width: 5px;
+                    height: 5px;
+                    border-radius: 50%;
+                    background: red;
+                    top: 7px;
+                    right: 7px;
+                }
+            }
+
+            &[filter-pressed="true"] {
+                border-color: #00aeef!important;
+                .dx-button-content {
+                    background: url('../../../../assets/common/icons/funnel-blue-icon.svg') no-repeat center;
+                }
+            }
+        }
+
+        [accesskey="search"] {
+            width: 285px;
+            color: #677380;
+            font-weight: 300;
+            line-height: 1.71;
+            letter-spacing: 0.3px;
+            text-align: left;
+            padding-left: 36px;
+            border: 1px solid #dadee1;
+            border-radius: 3px;
+            font-size: 14px;
+            height: 39px;
+            outline: none;
         }
 
         .dx-button-text {

@@ -1,5 +1,7 @@
-import { Component, Injector, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { FiltersService } from '@shared/filters/filters.service';
+import { AppService } from '@app/app.service';
 
 @Component({
     selector: 'cashflow-operations',
@@ -7,21 +9,67 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     styleUrls: ['./operations.component.less']
 })
 
-export class OperationsComponent extends AppComponentBase {
+export class OperationsComponent extends AppComponentBase implements OnDestroy {
+    private initTimeout: any;
     @Input('forecastModelsObj')
     set forecastModelsObj(forecastModelsObj) {
-        this.initToolbarConfig(forecastModelsObj);
+        clearTimeout(this.initTimeout);
+        this.initTimeout = setTimeout(() => {
+            this.initToolbarConfig(forecastModelsObj);
+        }, 300);
     }
     @Output() refreshCashflow: EventEmitter<any> = new EventEmitter();
+    @Output() repaintCashflow: EventEmitter<any> = new EventEmitter();
     @Output() onGroupBy: EventEmitter<any> = new EventEmitter();
     @Output() onToggleRows: EventEmitter<any> = new EventEmitter();
     @Output() handleFullscreen: EventEmitter<any> = new EventEmitter();
     @Output() download: EventEmitter<any> = new EventEmitter();
     @Output() showPreferencesDialog: EventEmitter<any> = new EventEmitter();
     @Output() changeForecastModel: EventEmitter<any> = new EventEmitter();
-    toolbarConfig = [];
+
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number} = { 'items' : [], 'selectedItemIndex': null}) {
-        this.toolbarConfig = [
+        this._appService.toolbarConfig = [
+            {
+                location: 'before', items: [
+                    { 
+                        name: 'filters', 
+                        action: (event) => {                            
+                            setTimeout(this.repaint.bind(this), 1000);
+                            event.element.attr('filter-pressed', 
+                                this._filtersService.fixed = 
+                                    !this._filtersService.fixed);  
+                        },
+                        options: {
+                            mouseover: (event) => {
+                                this._filtersService.enable();
+                            },
+                            mouseout: (event) => {
+                                if (!this._filtersService.fixed)
+                                    this._filtersService.disable();
+                            } 
+                        },
+                        attr: { 
+                            'filter-selected': this._filtersService.hasFilterSelected,
+                            'filter-pressed': this._filtersService.fixed
+                        } 
+                    } 
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',   
+                        widget: 'dxTextBox',
+                        options: {
+                            width: '300',
+                            mode: 'search',
+                            placeholder: this.l('Search') + ' ' 
+                                + this.l('Transaction').toLowerCase()
+                        }
+                    }
+                ]
+            },
             {
                 location: 'before',
                 items: [
@@ -206,7 +254,10 @@ export class OperationsComponent extends AppComponentBase {
         ];
     }
 
-    constructor(injector: Injector) {
+    constructor(injector: Injector,
+        private _filtersService: FiltersService,
+        private _appService: AppService
+    ) {
         super(injector);
     }
 
@@ -220,6 +271,10 @@ export class OperationsComponent extends AppComponentBase {
 
     refresh() {
         this.refreshCashflow.emit(null);
+    }
+
+    repaint() {
+        this.repaintCashflow.emit(null);
     }
 
     toggleRows(event) {
@@ -236,5 +291,9 @@ export class OperationsComponent extends AppComponentBase {
 
     preferencesDialog() {
         this.showPreferencesDialog.emit();
+    }
+
+    ngOnDestroy() {
+        this._appService.toolbarConfig = null;
     }
 }
