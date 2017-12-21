@@ -15,7 +15,7 @@ import { UrlHelper } from 'shared/helpers/UrlHelper';
     animations: [accountModuleAnimation()]
 })
 export class LoginComponent extends AppComponentBase implements OnInit {
-    submitting: boolean = false;
+    submitting = false;
 
     constructor(
         injector: Injector,
@@ -47,7 +47,7 @@ export class LoginComponent extends AppComponentBase implements OnInit {
         if (this._sessionService.userId > 0 && UrlHelper.getReturnUrl() && UrlHelper.getSingleSignIn()) {
             this._sessionAppService.updateUserSignInToken()
                 .subscribe((result: UpdateUserSignInTokenOutput) => {
-                    var initialReturnUrl = UrlHelper.getReturnUrl();
+                    let initialReturnUrl = UrlHelper.getReturnUrl();
                     let returnUrl = initialReturnUrl + (initialReturnUrl.indexOf('?') >= 0 ? '&' : '?') +
                         'accessToken=' + result.signInToken +
                         '&userId=' + result.encodedUserId +
@@ -55,6 +55,36 @@ export class LoginComponent extends AppComponentBase implements OnInit {
 
                     location.href = returnUrl;
                 });
+        }
+        let $modal = $('.modal');
+        $modal.on('show.bs.modal', function(e) {
+            $(this)
+                .addClass('modal-scrollfix')
+                .find('.modal-body')
+                .html('loading...')
+                .load('https://testapi.sperse.com/docs/privacy.html', function() {
+                    // Use Bootstrap's built-in function to fix scrolling (to no avail)
+                    $modal
+                        .removeClass('modal-scrollfix')
+                        .modal('handleUpdate');
+                });
+        });
+        $('.print-this').on('click', function() {
+            window.print();
+            // printElement($('.print-this-section'));
+        });
+
+        function printElement(elem) {
+            let domClone = elem.cloneNode(true);
+            let $printSection = document.getElementById('printSection');
+            if (!$printSection) {
+                let $printSection = document.createElement('div');
+                $printSection.id = 'printSection';
+                document.body.appendChild($printSection);
+            }
+            $printSection.innerHTML = '';
+            $printSection.appendChild(domClone);
+            window.print();
         }
     }
 
