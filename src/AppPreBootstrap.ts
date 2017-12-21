@@ -133,21 +133,20 @@ export class AppPreBootstrap {
 
     private static getUserConfiguration(callback: () => void): JQueryPromise<any> {
         const cookieLangValue = abp.utils.getCookieValue("Abp.Localization.CultureName");
-        var headers = 
-        {   
+        const token = abp.auth.getToken();
+        var requestHeaders = {
             '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),
             'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
         };
-
-        if (abp.auth.getToken())
-        {
-            headers["Authorization"] = 'Bearer ' + abp.auth.getToken();
+        
+        if (token) {
+            requestHeaders['Authorization'] = 'Bearer ' + token;
         }
         
         return abp.ajax({
             url: AppConsts.remoteServiceBaseUrl + '/AbpUserConfiguration/GetAll',
             method: 'GET',
-            headers: headers
+            headers: requestHeaders
         }).done(result => {
             $.extend(true, abp, result);
 
