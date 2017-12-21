@@ -56,6 +56,7 @@ export class LoginComponent extends AppComponentBase implements OnInit {
                     location.href = returnUrl;
                 });
         }
+
         let $modal = $('.modal');
         $modal.on('show.bs.modal', function(e) {
             $(this)
@@ -63,27 +64,26 @@ export class LoginComponent extends AppComponentBase implements OnInit {
                 .find('.modal-body')
                 .html('loading...')
                 .load('https://testapi.sperse.com/docs/privacy.html', function() {
-                    // Use Bootstrap's built-in function to fix scrolling (to no avail)
                     $modal
                         .removeClass('modal-scrollfix')
                         .modal('handleUpdate');
                 });
         });
+
         $('.print-this').on('click', function() {
-            window.print();
-            // printElement($('.print-this-section'));
+            printElement($('.print-this-section')[0]);
         });
 
         function printElement(elem) {
             let domClone = elem.cloneNode(true);
-            let $printSection = document.getElementById('printSection');
-            if (!$printSection) {
-                let $printSection = document.createElement('div');
-                $printSection.id = 'printSection';
-                document.body.appendChild($printSection);
+            let printSection = document.getElementById('printSection');
+            if (!printSection) {
+                printSection = document.createElement('div');
+                printSection.id = 'printSection';
+                document.body.appendChild(printSection);
             }
-            $printSection.innerHTML = '';
-            $printSection.appendChild(domClone);
+            printSection.innerHTML = '';
+            printSection.appendChild(domClone);
             window.print();
         }
     }
