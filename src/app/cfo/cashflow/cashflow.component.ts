@@ -1467,6 +1467,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             if (isCellMarked && cellObj.cell.value === 0) {
                 cellObj.cellElement.text('');
                 cellObj.cellElement.addClass('hideZeroValues');
+                cellObj.cellElement.click(function(event) {
+                    event.stopImmediatePropagation();
+                });
             }
         }
     }
