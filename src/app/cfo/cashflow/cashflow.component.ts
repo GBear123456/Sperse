@@ -154,7 +154,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     value = value ? (value.accountName || value.accountNumber) : cellInfo.valueText;
                 } else {
                     /** find the group name in categories array */
-                    value = this.categories.groups[value] ? this.categories.groups[value]['name'] : value;
+                    value = this.categories.groups[value]
+                            ? this.categories.groups[value]['name']
+                            : this.l('Cashflow_Unclassified');
                 }
                 return value ? value.toUpperCase() : cellInfo.valueText;
             },
@@ -1709,7 +1711,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
             this.statsDetailFilter = new StatsDetailFilter({
                 cashFlowTypeId: cellObj.cell.rowPath[0],
-                categoryGroupId: !isAccountCell ? cellObj.cell.rowPath[1] : null,
+                categoryGroupId: !isAccountCell ? cellObj.cell.rowPath[1] || -1 : null,
                 categoryId: cellObj.cell.rowPath[2] ? cellObj.cell.rowPath[2] : null,
                 transactionDescriptor: cellObj.cell.rowPath[3] ? cellObj.cell.rowPath[3] : null,
                 startDate: this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate,
