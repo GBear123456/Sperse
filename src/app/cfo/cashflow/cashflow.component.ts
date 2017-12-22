@@ -542,7 +542,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     ngOnDestroy() {
-        this._filtersService.localizationSourceName 
+        this._filtersService.localizationSourceName
             = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
@@ -1592,8 +1592,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         if (fieldName === 'year' || fieldName === 'quarter') {
             let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
                 (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length >= 6);
-            cellObj.cellElement.html(
-                `<div onclick="onHeaderExpanderClick(event)" class="head-cell-expand ${hideHead ? 'closed' : ''}">
+            cellObj.cellElement.html(this.getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName));
+        }
+        if (_.startsWith(cssClass, 'historicalField') && !cellObj.cellElement.parent().hasClass('historicalRow')) {
+            cellObj.cellElement.parent().addClass('historicalRow');
+        }
+        cellObj.cellElement.addClass(cssClass);
+    }
+
+    getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName) {
+        return `<div onclick="onHeaderExpanderClick(event)" class="head-cell-expand ${hideHead ? 'closed' : ''}">
                     <div class="main-head-cell">
                         ${cellObj.cellElement.html()}
                         <div class="totals">${this.l('Totals').toUpperCase()}</div>
@@ -1601,22 +1609,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     <div class="closed-head-cell">
                         ${this.l('Cashflow_click_to_groupBy', this.ls('', this.capitalize(fieldName)), cellObj.cell.path[cellObj.cell.path.length - 1]).toUpperCase()}
                     </div>
-                </div>`
-            );
-        }
-        if (_.startsWith(cssClass, 'historicalField') && !cellObj.cellElement.parent().hasClass('historicalRow')) {
-            cellObj.cellElement.parent().addClass('historicalRow');
-        }
-        cellObj.cellElement.addClass(cssClass);
-        /** hide projected field for not current months for mdk and projected */
-        // if (_.startsWith(cssClass, 'projectedField')) {
-        //     /** hide the projected fields if the group interval is */
-        //     if (this.groupInterval === 'day') {
-        //         cellObj.cellElement.hide();
-        //     } else {
-        //         this.hideProjectedFieldForNotCurrentMonths(cellObj);
-        //     }
-        // }
+                </div>`;
     }
 
     /**
