@@ -8,7 +8,7 @@ import { MdDialog } from '@angular/material';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 
 import {
-    CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto, 
+    CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto,
     CreateCategoryGroupInput, CreateCategoryInput, UpdateCategoryGroupInput, UpdateCategoryInput,
     CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
@@ -20,7 +20,7 @@ import * as _ from 'underscore';
   selector: 'rule-dialog',
   templateUrl: 'rule-edit-dialog.component.html',
   styleUrls: ['rule-edit-dialog.component.less'],
-  providers: [CashflowServiceProxy, ClassificationServiceProxy, TransactionsServiceProxy]  
+  providers: [CashflowServiceProxy, ClassificationServiceProxy, TransactionsServiceProxy]
 })
 export class RuleDialogComponent extends ModalDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
@@ -32,7 +32,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     maxAmount: number;
     bankId: number;
     accountId: number;
-    amountFormat: ConditionDtoCashFlowAmountFormat 
+    amountFormat: ConditionDtoCashFlowAmountFormat
         = ConditionDtoCashFlowAmountFormat.Unspecified;
     banks: any;
     accounts: any;
@@ -55,28 +55,28 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
         private _classificationServiceProxy: ClassificationServiceProxy,
         private _cashflowServiceProxy: CashflowServiceProxy,
         private _transactionsServiceProxy: TransactionsServiceProxy
-    ) { 
+    ) {
         super(injector);
 
         this.formats = _.values(ConditionDtoCashFlowAmountFormat).map((value) => {
-            return {                
+            return {
                 format: value
             };
         });
 
         this.conditionTypes = _.values(ConditionAttributeDtoConditionTypeId).map((value) => {
-            return {                
+            return {
                 condition: value
             };
         });
-       
+
         _transactionsServiceProxy.getTransactionAttributeTypes().subscribe((data) => {
             let types = [];
             this.transactionAttributeTypes = data.transactionAttributeTypes;
             _.mapObject(data.transactionAttributeTypes, (val, key) => {
                 types.push({
                     id: key,
-                    name: val.name          
+                    name: val.name
                 });
             });
             this.attributeTypes = types;
@@ -92,10 +92,10 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
             _classificationServiceProxy.getRuleForEdit(this.data.id).subscribe((rule) => {
                 this.descriptor = rule.transactionDecriptorAttributeTypeId || rule.transactionDecriptor;
                 this.data.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
-                if (rule.condition) {      
+                if (rule.condition) {
                     this.conditionId = rule.condition.id;
                     this.bankId = rule.condition.bankId;
-                    this.accountId = rule.condition.bankAccountId;  
+                    this.accountId = rule.condition.bankAccountId;
                     this.amountFormat = rule.condition.cashFlowAmountFormat;
                     this.minAmount = rule.condition.minAmount;
                     this.maxAmount = rule.condition.maxAmount;
@@ -107,7 +107,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                             };
                         }) || [];
                     this.attributes = rule.condition.attributes;
-                } 
+                }
             });
 
         this.refreshCategories();
@@ -116,7 +116,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     refreshCategories() {
         this._classificationServiceProxy.getCategories().subscribe((data) => {
             let categories = [];
-            this.categorization = data;      
+            this.categorization = data;
             if (data.types)
                  _.mapObject(data.types, (item, key) => {
                     categories.push({
@@ -154,7 +154,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
 
     ngOnInit() {
         this.data.editTitle = true;
-        this.data.title = this.data.name || 
+        this.data.title = this.data.name ||
             this.l('Enter the rule name');
         this.data.buttons = [{
             title: this.l(this.data.id ? 'Edit rule': 'Add rule'),
@@ -192,24 +192,24 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                 }
             }
         }];
-        if (!this.data.id) 
+        if (!this.data.id)
             this.data.buttons.unshift({
                 title: this.l('Don\'t add'),
                 class: 'default',
                 action: () => {
                     if (this.data.transactions)
                         this.validate(true) && this._classificationServiceProxy.updateTransactionsCategory(
-                            UpdateTransactionsCategoryInput.fromJS({ 
+                            UpdateTransactionsCategoryInput.fromJS({
                                 transactionIds: this.data.transactions,
                                 categoryId: this.getSelectedCategoryId(),
-                                standardDescriptor: this.transactionAttributeTypes[this.descriptor] || this.descriptor 
+                                standardDescriptor: this.transactionAttributeTypes[this.descriptor] || this.descriptor
                             })
                         ).subscribe((error) => {
                             if (!error) {
                                 this.notify.info(this.l('SavedSuccessfully'));
                                 this.data.refershParent();
                                 this.close(true);
-                            } 
+                            }
                         });
                     else
                         this.close(true);
@@ -262,12 +262,12 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
         this.descriptors = descriptors;
     }
 
-    addKeywordRow() {                                                    
+    addKeywordRow() {
         this.keywordList.instance.addRow();
     }
 
     onBankChanged($event) {
-        if ($event.value && this.banks) 
+        if ($event.value && this.banks)
             this.accounts = _.findWhere(this.banks,
                 {id: $event.value})['bankAccounts'];
     }
@@ -362,7 +362,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                     return (obj['parent'] && obj['key'] != itemId)
                         || (obj['key'] == this.categorization.groups[parentId].typeId);
                 }),
-                categoryId: undefined                
+                categoryId: undefined
             };
             this.dialog.open(CategoryDeleteDialogComponent, {
                 data: dialogData
