@@ -1,14 +1,14 @@
 <div class="sidebar-filter-links" *ngIf="filters.length">
-
-    <div class="filter-title">
-        <dx-button
-          [text]="ls('Platform', 'Sort')"
-          [iconSrc]="'assets/common/icons/sort-icon.svg'"
-        ></dx-button>
-        <button class="clear-all" (click)="clearAllFilters()">
-            {{ls('Platform', 'ClearAll')}}
-        </button>
-    </div>
+    <dx-scroll-view [showScrollbar]="onHover">
+        <div class="filter-title">
+            <dx-button
+              [text]="ls('Platform', 'Sort')"
+              [iconSrc]="'assets/common/icons/sort-icon.svg'"
+            ></dx-button>
+            <button class="clear-all" (click)="clearAllFilters()">
+                {{ls('Platform', 'ClearAll')}}
+            </button>
+        </div>
         <ul class="filter-links">
             <ng-template ngFor let-filter [ngForOf]="filters" let-i="index">
                 <li class="filter-link">
@@ -26,6 +26,7 @@
                 </li>
             </ng-template>
         </ul>
+    </dx-scroll-view>
 </div>
 
 <div class="sidebar-filters" *ngIf="activeFilter">
