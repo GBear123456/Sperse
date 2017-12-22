@@ -1469,9 +1469,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             if (isCellMarked && cellObj.cell.value === 0) {
                 cellObj.cellElement.text('');
                 cellObj.cellElement.addClass('hideZeroValues');
-                cellObj.cellElement.click(function(event) {
-                    event.stopImmediatePropagation();
-                });
             }
         }
     }
@@ -1498,6 +1495,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 let activity = this.columnHasActivity(cellObj, cellPeriod);
                 if (!activity) {
                     cellObj.cellElement.addClass('hideZeroActivity');
+                    cellObj.cellElement.click(function(event) {
+                        event.stopImmediatePropagation();
+                    });
                     cellObj.cellElement.text('');
                 }
             }
@@ -2116,8 +2116,20 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this._cashflowServiceProxy
             .getStatsDetails(params)
             .subscribe(result => {
-                this.statsDetailResult = result;
+                this.statsDetailResult = result.map(detail => {
+                    detail.date = this.removeLocalTimezoneOffset(detail.date);
+                    return detail;
+                });
             });
+    }
+
+    /**
+     * Change moment date to the offset of local timezone
+     * @param date
+     */
+    removeLocalTimezoneOffset(date) {
+        let offset = new Date(date.format('YYYY-MM-DD')).getTimezoneOffset();
+        return date.add(offset, 'minutes');
     }
 
     showPreferencesDialog() {
