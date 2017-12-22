@@ -216,6 +216,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             caption: 'Quarter',
             dataField: 'date',
             dataType: 'date',
+            width: 0.01,
             area: 'column',
             groupInterval: 'quarter',
             showTotals: false,
@@ -227,6 +228,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             dataField: 'date',
             dataType: 'date',
             area: 'column',
+            width: 0.01,
             showTotals: false,
             groupInterval: 'month',
             customizeText: this.getMonthHeaderCustomizer(),
@@ -788,7 +790,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     /** @todo move to some helper */
     getDescendantPropValue(obj, path) {
-        return path.split('.').reduce((acc, part) => acc && acc[part], obj)
+        return path.split('.').reduce((acc, part) => acc && acc[part], obj);
     };
 
     /**
@@ -1464,6 +1466,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
             if (isCellMarked && cellObj.cell.value === 0) {
                 cellObj.cellElement.text('');
+                cellObj.cellElement.addClass('hideZeroValues');
             }
         }
     }
@@ -1519,7 +1522,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     reformatCell(cellObj, preference) {
         const locale = preference.sourceValue.indexOf('.') <= 3 ? 'es-VE' : 'en-EN';
-        if (!cellObj.cellElement.hasClass('hideZeroActivity')) {
+        if (!cellObj.cellElement.hasClass('hideZeroActivity') &&
+            !cellObj.cellElement.hasClass('hideZeroValues')) {
             cellObj.cellElement.text(cellObj.cell.value.toLocaleString(locale, {
                 style: 'currency',
                 currency: this.currencyId
