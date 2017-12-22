@@ -31,13 +31,13 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
         this._appService.toolbarConfig = [
             {
                 location: 'before', items: [
-                    { 
-                        name: 'filters', 
-                        action: (event) => {                            
+                    {
+                        name: 'filters',
+                        action: (event) => {
                             setTimeout(this.repaint.bind(this), 1000);
-                            event.element.attr('filter-pressed', 
-                                this._filtersService.fixed = 
-                                    !this._filtersService.fixed);  
+                            event.element.attr('filter-pressed',
+                                this._filtersService.fixed =
+                                    !this._filtersService.fixed);
                         },
                         options: {
                             mouseover: (event) => {
@@ -46,25 +46,25 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                             mouseout: (event) => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
-                            } 
+                            }
                         },
-                        attr: { 
+                        attr: {
                             'filter-selected': this._filtersService.hasFilterSelected,
                             'filter-pressed': this._filtersService.fixed
-                        } 
-                    } 
+                        }
+                    }
                 ]
             },
             {
                 location: 'before',
                 items: [
                     {
-                        name: 'search',   
+                        name: 'search',
                         widget: 'dxTextBox',
                         options: {
                             width: '300',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' 
+                            placeholder: this.l('Search') + ' '
                                 + this.l('Transaction').toLowerCase()
                         }
                     }

@@ -151,10 +151,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     value = this.bankAccounts.find(account => {
                         return account.id === cellInfo.value;
                     });
-                    value = value ? value.accountName : cellInfo.valueText;
+                    value = value ? (value.accountName || value.accountNumber) : cellInfo.valueText;
                 } else {
                     /** find the group name in categories array */
-                    value = this.categories.groups[value] ? this.categories.groups[value]['name'] : value;
+                    value = this.categories.groups[value]
+                            ? this.categories.groups[value]['name']
+                            : this.l('Cashflow_Unclassified');
                 }
                 return value ? value.toUpperCase() : cellInfo.valueText;
             },
@@ -216,6 +218,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             caption: 'Quarter',
             dataField: 'date',
             dataType: 'date',
+            width: 0.01,
             area: 'column',
             groupInterval: 'quarter',
             showTotals: false,
@@ -227,6 +230,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             dataField: 'date',
             dataType: 'date',
             area: 'column',
+            width: 0.01,
             showTotals: false,
             groupInterval: 'month',
             customizeText: this.getMonthHeaderCustomizer(),
@@ -788,7 +792,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     /** @todo move to some helper */
     getDescendantPropValue(obj, path) {
-        return path.split('.').reduce((acc, part) => acc && acc[part], obj)
+        return path.split('.').reduce((acc, part) => acc && acc[part], obj);
     };
 
     /**
@@ -1464,6 +1468,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
             if (isCellMarked && cellObj.cell.value === 0) {
                 cellObj.cellElement.text('');
+                cellObj.cellElement.addClass('hideZeroValues');
+                cellObj.cellElement.click(function(event) {
+                    event.stopImmediatePropagation();
+                });
             }
         }
     }
@@ -1519,7 +1527,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     reformatCell(cellObj, preference) {
         const locale = preference.sourceValue.indexOf('.') <= 3 ? 'es-VE' : 'en-EN';
-        if (!cellObj.cellElement.hasClass('hideZeroActivity')) {
+        if (!cellObj.cellElement.hasClass('hideZeroActivity') &&
+            !cellObj.cellElement.hasClass('hideZeroValues')) {
             cellObj.cellElement.text(cellObj.cell.value.toLocaleString(locale, {
                 style: 'currency',
                 currency: this.currencyId
@@ -1702,7 +1711,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
             this.statsDetailFilter = new StatsDetailFilter({
                 cashFlowTypeId: cellObj.cell.rowPath[0],
-                categoryGroupId: !isAccountCell ? cellObj.cell.rowPath[1] : null,
+                categoryGroupId: !isAccountCell ? cellObj.cell.rowPath[1] || -1 : null,
                 categoryId: cellObj.cell.rowPath[2] ? cellObj.cell.rowPath[2] : null,
                 transactionDescriptor: cellObj.cell.rowPath[3] ? cellObj.cell.rowPath[3] : null,
                 startDate: this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate,
