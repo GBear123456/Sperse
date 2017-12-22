@@ -56,13 +56,10 @@ export class FilterHelpers {
         for (let key of keys) {
             let item = filter.items[key];
             if (item && item.value) {
-                let date = moment.utc(item.value, 'YYYY-MM-DDT');
-                if (key.toString() === 'to') {
-                    date.add(1, 'd').add(-1, 's');
-                    requestFilter.endDate = <any>date.toDate();
-                } else {
-                    requestFilter.startDate = <any>date.toDate();
-                }
+                let date = moment.utc(item.value, 'YYYY-MM-DDT'),
+                    type = (key.toString() === 'to' ? 'end': 'start');
+                requestFilter[type + 'Date'] = 
+                    <any>date[type + 'Of']('day').toDate();
             }
         }
     }
