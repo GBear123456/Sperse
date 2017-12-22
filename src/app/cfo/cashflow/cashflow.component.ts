@@ -151,7 +151,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     value = this.bankAccounts.find(account => {
                         return account.id === cellInfo.value;
                     });
-                    value = value ? value.accountName : cellInfo.valueText;
+                    value = value ? (value.accountName || value.accountNumber) : cellInfo.valueText;
                 } else {
                     /** find the group name in categories array */
                     value = this.categories.groups[value] ? this.categories.groups[value]['name'] : value;
