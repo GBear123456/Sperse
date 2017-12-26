@@ -156,7 +156,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     /** find the group name in categories array */
                     value = this.categories.groups[value]
                             ? this.categories.groups[value]['name']
-                            : this.l('Cashflow_Unclassified');
+                            : this.l('Cashflow_Unclasified');
                 }
                 return value ? value.toUpperCase() : cellInfo.valueText;
             },
