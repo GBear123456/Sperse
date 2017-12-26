@@ -677,6 +677,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     getCashflowDataFromTransactions(transactions) {
         return transactions.map(transactionObj => {
             transactionObj.categorization = {};
+            transactionObj.date.add(new Date().getTimezoneOffset(), 'minutes');
             /** change the second level for started balance and reconciliations for the account id */
             if (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation) {
                 transactionObj.categorization[this.categorization[0]] = transactionObj.accountId;
@@ -749,14 +750,16 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             let date = cashflowItem.date.format('DD.MM.YYYY');
             if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
             if (existingDates.indexOf(date) === -1) existingDates.push(date);
-            if (!minDate || cashflowItem.date < minDate) minDate = cashflowItem.date;
-            if (!maxDate || cashflowItem.date > maxDate) maxDate = cashflowItem.date;
+            if (!minDate || cashflowItem.date < minDate) 
+                minDate = moment(cashflowItem.date).subtract(new Date().getTimezoneOffset(), 'minutes');
+            if (!maxDate || cashflowItem.date > maxDate) 
+                maxDate = moment(cashflowItem.date).subtract(new Date().getTimezoneOffset(), 'minutes');
             if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
         });
         allYears = allYears.sort();
 
-        if (this.requestFilter.startDate && this.requestFilter.startDate < minDate) minDate = this.requestFilter.startDate;
-        if (this.requestFilter.endDate && this.requestFilter.endDate > maxDate) maxDate = this.requestFilter.endDate;
+        if (this.requestFilter.startDate && this.requestFilter.startDate < minDate) minDate = moment(this.requestFilter.startDate);
+        if (this.requestFilter.endDate && this.requestFilter.endDate > maxDate) maxDate = moment(this.requestFilter.endDate);
 
         /** cycle from started date to ended date */
         let datesRange = Array.from(moment.range(minDate, maxDate).by('day'));
