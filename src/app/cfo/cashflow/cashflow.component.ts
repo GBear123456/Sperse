@@ -2044,10 +2044,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let parent = summaryCell ? summaryCell.parent() : null;
         /** add to the cell data other date intervals */
         if (parent) {
-            while (parent.field('column') && parent.field('column').dataType === 'date') {
-                let parentGroupInterval = parent.field('column').groupInterval,
-                    parentColumnValue = parent.value(parent.field('column'));
-                cellData[parentGroupInterval] = parentColumnValue;
+            while (parent.field('column')) {
+                if (parent.field('column').dataType === 'date') {
+                    let parentGroupInterval = parent.field('column').groupInterval,
+                        parentColumnValue = parent.value(parent.field('column'));
+                    cellData[parentGroupInterval] = parentColumnValue;
+                }
                 parent = parent.parent();
             }
         }
