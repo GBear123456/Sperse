@@ -28,6 +28,7 @@
                     <dxo-common-series-settings argumentField="date"
                                                 [showInLegend]="false"
                                                 [maxLabelCount]="maxLabelCount"
+                                                ignoreEmptyPoints="true"
                                                 hoverMode="none">
                         <dxo-label
                             [visible]="true"
@@ -115,7 +116,12 @@
                     #barChart>
                     <dxo-size [height]="chartsHeight"></dxo-size>
                     <!-- common settings for charts -->
-                    <dxo-common-series-settings argumentField="date" type="stackedBar" [showInLegend]="false"></dxo-common-series-settings>
+                    <dxo-common-series-settings
+                        argumentField="date"
+                        type="stackedBar"
+                        [showInLegend]="false"
+                        ignoreEmptyPoints="true"
+                    ></dxo-common-series-settings>
 
                     <dxi-series pane="bottomPane" [color]="historicalIncomeColor" valueField="income" name="historical"></dxi-series>
                     <dxi-series [color]="historicalExpensesColor" valueField="expenses" name="historicalExpenses"></dxi-series>
