@@ -56,7 +56,8 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     labelWidth = 45;
     showSourceData = false;
     exporting = false;
-    chartsHeight = 200;
+    chartsHeight = 400;
+    lastDate;
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
@@ -233,7 +234,14 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
 
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
     calculateChartsHeight() {
-        this.chartsHeight = (window.innerHeight - 410) / 2  > this.chartsHeight ? (window.innerHeight - 410) / 2 : this.chartsHeight;
+        let chartsHeight = window.innerHeight - 410;
+        this.chartsHeight =  chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
+        return this.chartsHeight;
+    }
+
+    /** Calculates the height of the charts scrollable height after resizing */
+    calculateChartsScrolableHeight() {
+        return window.innerHeight - 360;
     }
 
     handleCashFlowInitialResult(result) {
