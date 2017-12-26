@@ -1616,7 +1616,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                         <div class="totals">${this.l('Totals').toUpperCase()}</div>
                     </div>
                     <div class="closed-head-cell">
-                        ${this.l('Cashflow_click_to_groupBy', this.ls('', this.capitalize(fieldName)), cellObj.cell.path[cellObj.cell.path.length - 1]).toUpperCase()}
+                        ${this.l('Cashflow_ClickToGroupBy', this.ls('', this.capitalize(fieldName)), cellObj.cell.path[cellObj.cell.path.length - 1]).toUpperCase()}
                     </div>
                 </div>`;
     }
