@@ -156,7 +156,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     /** find the group name in categories array */
                     value = this.categories.groups[value]
                             ? this.categories.groups[value]['name']
-                            : this.l('Cashflow_Unclassified');
+                            : this.l('Cashflow_Unclasified');
                 }
                 return value ? value.toUpperCase() : cellInfo.valueText;
             },
@@ -1619,7 +1619,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                         <div class="totals">${this.l('Totals').toUpperCase()}</div>
                     </div>
                     <div class="closed-head-cell">
-                        ${this.l('Cashflow_click_to_groupBy', this.ls('', this.capitalize(fieldName)), cellObj.cell.path[cellObj.cell.path.length - 1]).toUpperCase()}
+                        ${this.l('Cashflow_ClickToGroupBy', this.ls('', this.capitalize(fieldName)), cellObj.cell.path[cellObj.cell.path.length - 1]).toUpperCase()}
                     </div>
                 </div>`;
     }
@@ -2047,10 +2047,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         let parent = summaryCell ? summaryCell.parent() : null;
         /** add to the cell data other date intervals */
         if (parent) {
-            while (parent.field('column') && parent.field('column').dataType === 'date') {
-                let parentGroupInterval = parent.field('column').groupInterval,
-                    parentColumnValue = parent.value(parent.field('column'));
-                cellData[parentGroupInterval] = parentColumnValue;
+            while (parent.field('column')) {
+                if (parent.field('column').dataType === 'date') {
+                    let parentGroupInterval = parent.field('column').groupInterval,
+                        parentColumnValue = parent.value(parent.field('column'));
+                    cellData[parentGroupInterval] = parentColumnValue;
+                }
                 parent = parent.parent();
             }
         }
