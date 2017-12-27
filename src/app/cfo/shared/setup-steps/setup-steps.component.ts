@@ -11,9 +11,9 @@ export class SetupStepComponent extends AppComponentBase implements OnInit {
 
     @Input() SelectedStepIndex: number;
     public readonly SetupSteps = [
-        'BusinessEntity',
-        'Chart',
         'FinancialAccounts',
+        'BusinessEntity',
+        'Chart',        
         'Rules'
     ];
 
