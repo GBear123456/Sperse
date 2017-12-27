@@ -52,12 +52,23 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     forecastExpensesColor = '#fec6b3';
     historicalShadowStartedColor = 'rgba(0, 174, 239, .5)';
     forecastShadowStartedColor = 'rgba(249, 186, 78, .5)';
+    historicalNetChangeColor = '#fab800';
+    forecastNetChangeColor = '#a82aba';
     maxLabelCount = 0;
     labelWidth = 45;
     showSourceData = false;
     exporting = false;
     chartsHeight = 400;
-    lastDate;
+    barChartTooltipFieldsNames = [
+        'startingBalance',
+        'income',
+        'expenses',
+        'endingBalance',
+        'forecastStartingBalance',
+        'forecastIncome',
+        'forecastExpenses',
+        'forecastEndingBalance'
+    ];
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
@@ -319,22 +330,22 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                         let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
                         minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
                         this.statsData = result.map(statsItem => {
-                            /** get the date and convert it to the day, month, quarter or year */
-                            let newStatsItem: any = {
-                                forecastIncome: null,
-                                forecastExpenses: null,
-                                forecastEndingBalance: null,
-                                minEndingBalance: minRange
-                            };
+                            Object.defineProperties(statsItem, {
+                                'netChange': {
+                                    value: statsItem.income || statsItem.expenses ? (statsItem.income + statsItem.expenses) / 2 : null,
+                                    enumerable: true
+                                },
+                                'minRange': { value: minRange, enumerable: true }
+                            });
                             if (statsItem.isForecast) {
-                                newStatsItem.forecastIncome = statsItem.income;
-                                newStatsItem.forecastExpenses = statsItem.expenses;
-                                newStatsItem.forecastEndingBalance = statsItem.endingBalance;
-                                statsItem.income = null;
-                                statsItem.expenses = null;
-                                statsItem.endingBalance = null;
+                                for (let prop in statsItem) {
+                                    if (statsItem.hasOwnProperty(prop) && prop !== 'date' && prop !== 'isForecast') {
+                                        statsItem['forecast' + this.capitalize(prop)] = statsItem[prop];
+                                        delete statsItem[prop];
+                                    }
+                                }
                             }
-                            return Object.assign(statsItem, newStatsItem);
+                            return statsItem;
                         });
                         this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
                     } else {
@@ -512,6 +523,23 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         return getMarkup([this.linearChart.instance, this.barChart.instance])
                     .replace(new RegExp('url\\(#historical-linear-gradient\\)', 'g'), this.historicalShadowStartedColor)
                     .replace(new RegExp('url\\(#forecast-linear-gradient\\)', 'g'), this.forecastShadowStartedColor);
+    }
+
+    customizeBarTooltip = (pointInfo) => {
+        return {
+            html: this.getTooltipInfoHtml(pointInfo)
+        };
+    }
+
+    getTooltipInfoHtml(pointInfo) {
+        let html = '';
+        let pointDataObject = this.statsData.find(item => item.date = pointInfo.argument);
+        this.barChartTooltipFieldsNames.forEach(fieldName => {
+            if (pointDataObject[fieldName] !== null && pointDataObject[fieldName] !== undefined) {
+                html += `${this.l('Stats_' + fieldName)} : ${pointDataObject[fieldName]}<br>`;
+            }
+        });
+        return html;
     }
 
 }
