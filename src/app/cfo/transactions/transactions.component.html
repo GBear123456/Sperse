@@ -17,37 +17,36 @@
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
                                   (onDataErrorOccurred)="httpConfig.handleError($event.error)">
-                        <dxo-selection
-                            selectAllMode="page"
-                            showCheckBoxesMode="always"
-                            mode="multiple">
+                        <dxo-selection selectAllMode="page"
+                                       showCheckBoxesMode="always"
+                                       mode="multiple">
                         </dxo-selection>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
 
                         <dxi-column dataField="Id" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="1"></dxi-column>
-                        <dxi-column dataField="BankAccountNumber" caption="{{l('Transactions_BankAccountNumber')}}"></dxi-column>
-                        <dxi-column dataField="Currency" caption="{{l('Transactions_Currency')}}"></dxi-column>
                         <dxi-column dataField="Date" caption="{{l('Transactions_Date')}}" dataType="date" format="shortDate" sortOrder="desc" sortIndex="0"></dxi-column>
-                        <dxi-column dataField="PostDate" caption="{{l('Transactions_PostDate')}}" dataType="date" format="shortDateShortTime" ></dxi-column>
-                        <dxi-column dataField="Time" caption="{{l('Transactions_Time')}}" dataType="date" format="shortTime" [visible]="false"></dxi-column>
-                        <dxi-column dataField="Amount" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate"></dxi-column>
+                        <dxi-column dataField="BankAccountNumber" caption="{{l('Transactions_BankAccountNumber')}}"></dxi-column>
+                        <dxi-column dataField="BankAccountTypeName" caption="{{l('Transactions_BankAccountType')}}"></dxi-column>
+                        <dxi-column dataField="CashFlowTypeName" caption="{{l('Transactions_CashFlowType')}}"></dxi-column>
+                        <dxi-column dataField="TypeName" caption="{{l('Transactions_Type')}}"></dxi-column>
+                        <dxi-column dataField="ExpenseCategoryName" caption="{{l('Transactions_ExpenseCategory')}}"></dxi-column>
+                        <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}" [width]="550"></dxi-column>
                         <dxi-column dataField="Amount" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate"></dxi-column>
+                        <dxi-column dataField="Amount" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate"></dxi-column>
                         <dxi-column dataField="EndingBalance" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate"></dxi-column>
-
-                        <dxi-column dataField="CategoryName" caption="{{l('Transactions_CategoryName')}}"></dxi-column>
-                        <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}" [width]="600"></dxi-column>
-                        <dxi-column dataField="TypeName" caption="{{l('Transactions_Type')}}" [visible]="false"></dxi-column>
 
                         <dxi-column dataField="Amount" name="Amount" caption="{{l('Transactions_Amount')}}" cellTemplate="amountTemplate" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankAccountBankName" caption="{{l('Transactions_BankName')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="BankAccountTypeName" caption="{{l('Transactions_BankAccountType')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="Fees" caption="{{l('Transactions_Fees')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="ExpenseCategoryName" caption="{{l('Transactions_ExpenseCategory')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="CashFlowTypeName" caption="{{l('Transactions_CashFlowType')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="CashflowCategoryGroupName" caption="{{l('Transactions_CashflowCategoryGroupName')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Currency" caption="{{l('Transactions_Currency')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="CashflowCategoryName" caption="{{l('Transactions_CashflowCategoryName')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="CashflowCategoryGroupName" caption="{{l('Transactions_CashflowCategoryGroupName')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="CategoryName" caption="{{l('Transactions_CategoryName')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Fees" caption="{{l('Transactions_Fees')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="PostDate" caption="{{l('Transactions_PostDate')}}" dataType="date" format="shortDateShortTime" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Time" caption="{{l('Transactions_Time')}}" dataType="date" format="shortTime" [visible]="false"></dxi-column>
                         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
+
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value >= 0 && cell.column.name == 'Debit') || (cell.value < 0 && cell.column.name == 'Credit'))">
                                 <span [ngClass]="{'red': cell.value < 0}"> {{ cell.text | number:'1.2-2' }} </span>
@@ -56,13 +55,12 @@
                         <div *dxTemplate="let cell of 'endBalanceTemplate'">
                             <ng-container *ngIf="cell.text">
                                 <span class="end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ cell.text | number:'1.2-2' }} </span>
-                            </ng-container>                            
+                            </ng-container>
                         </div>
                         <dxo-paging [pageSize]="20"></dxo-paging>
-                        <dxo-pager
-                            [showPageSizeSelector]="true"
-                            [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
-                            [showInfo]="true">
+                        <dxo-pager [showPageSizeSelector]="true"
+                                   [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
+                                   [showInfo]="true">
                         </dxo-pager>
                     </dx-data-grid>
 
