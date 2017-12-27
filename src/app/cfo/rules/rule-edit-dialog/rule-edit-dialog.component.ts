@@ -128,7 +128,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
             if (data.groups)
                  _.mapObject(data.groups, (item, key) => {
                     categories.push({
-                        key: key,
+                        key: key + item.typeId,
                         parent: item.typeId,
                         name: item.name
                     });
@@ -137,7 +137,8 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                  _.mapObject(data.items, (item, key) => {
                     categories.push({
                         key: key,
-                        parent: item.groupId.toString(),
+                        parent: item.groupId + 
+                            data.groups[item.groupId].typeId,
                         name: item.name
                     });
                 });
@@ -268,8 +269,13 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
 
     onBankChanged($event) {
         if ($event.value && this.banks)
-            this.accounts = _.findWhere(this.banks,
-                {id: $event.value})['bankAccounts'];
+            this.accounts = (_.findWhere(this.banks,
+                {id: $event.value})['bankAccounts'] || []).map((item) => {
+                    return {
+                        id: item.id,
+                        name: item.accountName || item.accountNumber
+                    };
+                });
     }
 
     validate(ruleCheckOnly: boolean = false) {
@@ -309,15 +315,15 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     }
 
     getCategoryItemId(key) {
-        return this.addedCategoryItems[key] || key;
+        return parseInt(this.addedCategoryItems[key] || key);
     }
 
     onCategoryUpdated($event) {
         let groupUpdate = this.categorization.groups[$event.key];
         this._classificationServiceProxy['updateCategory' + (groupUpdate ? 'Group': '')](
             (groupUpdate ? UpdateCategoryGroupInput: UpdateCategoryInput).fromJS({
-                id: $event.key,
-                groupId: this.categorization.items[$event.key].groupId,
+                id: parseInt($event.key),
+                groupId: groupUpdate ? undefined: this.categorization.items[$event.key].groupId,
                 name: $event.data.name
             })
         ).subscribe((error) => {

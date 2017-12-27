@@ -2,8 +2,14 @@
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <div>
-                <div id="ClientsTable">
+            <div class="main-wrapper" [ngClass]="{'expanded': ctegoriesShowed}">
+                <div class="categories" (mouseover)="ctegoriesShowed = true">
+                    <categorization 
+                        (close)="ctegoriesShowed = false"
+                        (onSelectionChanged)="filterByCashflowCategory($event)">
+                    </categorization>
+                </div>
+                <div class="transactions">
                     <dx-data-grid id="gridContainer"
                                   [dataSource]="dataSource"
                                   [allowColumnReordering]="true"

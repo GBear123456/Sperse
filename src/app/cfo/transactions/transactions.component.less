@@ -2,6 +2,29 @@
     position: relative;
     top: 74px;
 
+    .main-wrapper {
+        max-width: 100vw;
+        display: flex;
+        &.expanded {
+            .categories {
+                width: 340px;
+            }
+            .transactions {
+                width: calc(~"100% - 340px");
+            }
+        }
+        .categories {
+            width: 10px;
+            transition: 1s;
+            overflow: hidden;
+            border-right: 1px solid #dfdfdf;
+        }
+        .transactions { 
+            transition: 1s;
+            width: calc(~"100% - 10px");
+        }
+    }
+
     .red {
         color: red;
     }

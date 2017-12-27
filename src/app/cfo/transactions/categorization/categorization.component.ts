@@ -1,0 +1,64 @@
+import { AppConsts } from '@shared/AppConsts';
+import { Component, Output, EventEmitter, Injector, OnInit,  ViewChild, HostBinding } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { DxTreeListComponent } from 'devextreme-angular';
+import { FiltersService } from '@shared/filters/filters.service';
+import { ClassificationServiceProxy } from '@shared/service-proxies/service-proxies';
+
+import * as _ from 'underscore';
+
+@Component({
+  selector: 'categorization',
+  templateUrl: 'categorization.component.html',
+  styleUrls: ['categorization.component.less'],
+  providers: [ClassificationServiceProxy]
+})
+export class CategorizationComponent extends AppComponentBase implements OnInit {
+    @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
+    @Output() close: EventEmitter<any> = new EventEmitter();
+    @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
+
+    categories: any;
+
+    constructor(
+        injector: Injector,
+        private _filtersService: FiltersService,
+        private _classificationServiceProxy: ClassificationServiceProxy
+    ) {
+        super(injector);
+        
+    }
+
+    ngOnInit() { 
+        this._classificationServiceProxy.getCategories().subscribe((data) => {
+            let categories = [];
+            if (data.types)
+                 _.mapObject(data.types, (item, key) => {
+                    categories.push({
+                        key: key,
+                        parent: 0,
+                        name: item.name
+                    });
+                });
+            if (data.groups)
+                 _.mapObject(data.groups, (item, key) => {
+                    categories.push({
+                        key: key + item.typeId,
+                        parent: item.typeId,
+                        name: item.name
+                    });
+                });
+            if (data.items)
+                 _.mapObject(data.items, (item, key) => {
+                    categories.push({
+                        key: key,
+                        parent: item.groupId + 
+                            data.groups[item.groupId].typeId,
+                        name: item.name
+                    });
+                });
+
+            this.categories = categories;
+        });
+    }        
+}
