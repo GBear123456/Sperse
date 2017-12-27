@@ -392,7 +392,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Cash Flow Statement and Forecast')],
-            icon: 'globe',
+            iconSrc: 'assets/common/icons/chart-icon.svg',
             buttons: []
         };
     }

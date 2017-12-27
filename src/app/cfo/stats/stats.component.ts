@@ -219,7 +219,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Daily Cash Balances')],
-            icon: '',
+            iconSrc: 'assets/common/icons/pulse-icon.svg',
             buttons: [
                 {
                     enabled: true,

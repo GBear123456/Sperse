@@ -28,7 +28,7 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
     public ruleTreeList: any = [];
     public headlineConfig = {
         names: [this.l('Manage rules')],
-        icon: 'globe',
+        iconSrc: 'assets/common/icons/manage-icon.svg',
         buttons: [
             {
                 enabled: true,

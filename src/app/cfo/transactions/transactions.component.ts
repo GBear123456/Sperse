@@ -41,7 +41,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     public ctegoriesShowed = false;
     public headlineConfig = {
         names: [this.l('Transactions')],
-        icon: 'credit-card',
+        iconSrc: 'assets/common/icons/credit-card-icon.svg',
         buttons: []
     };
 
