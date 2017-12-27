@@ -117,13 +117,15 @@
                         type="stackedBar"
                         [showInLegend]="false"
                         ignoreEmptyPoints="true"
-                    ></dxo-common-series-settings>
+                    >
+                        <dxo-point size="6"></dxo-point>
+                    </dxo-common-series-settings>
 
                     <dxo-tooltip
                         enabled="true"
                         zIndex="1"
-                        [customizeTooltip]="customizeBarTooltip"
-                    ></dxo-tooltip>
+                        [customizeTooltip]="customizeBarTooltip">
+                    </dxo-tooltip>
 
                     <dxi-series [color]="historicalIncomeColor" valueField="income" name="historical"></dxi-series>
                     <dxi-series [color]="historicalExpensesColor" valueField="expenses" name="historicalExpenses"></dxi-series>
