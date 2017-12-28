@@ -1790,7 +1790,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     customCurrency(value) {
-        return (value).toLocaleString('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 0});
+        return (value).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
     formattingDate(param = []) {
