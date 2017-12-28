@@ -22,6 +22,21 @@
         .transactions { 
             transition: 1s;
             width: calc(~"100% - 10px");
+
+            /deep/ dx-data-grid {
+                tr.dx-selection {
+                    cursor: grab;
+                }
+                td[role="gridcell"].uncategorized {
+                    &:before {
+                        content: "\2022"; 
+                        color: red;
+                        font-weight: 600;
+                        display: inline-block; 
+                        font-size: 28px;
+                    }
+                }
+            }
         }
     }
 

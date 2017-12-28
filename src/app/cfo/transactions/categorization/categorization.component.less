@@ -32,6 +32,19 @@
     }
 
     /deep/ dx-tree-list {
+        &[dropallowed="true"] { 
+            tr[aria-level="2"] .dx-treelist-text-content {
+                border: 1px dashed #dfdfdf;
+                &.drag-hover {
+                    background-color: #FFFBF3;
+                    border: 1px solid #FFE8BF;
+                }
+            }             
+        }
+        tr[aria-level="2"] .dx-treelist-text-content {
+            border: 1px dashed transparent;
+        }             
+  
         .dx-treelist-header-panel, 
         .dx-treelist-headers {
             display: none;
@@ -48,7 +61,11 @@
             table { 
                 border-collapse: separate; 
                 td {
-                    border: solid 1px #fff;
+                    padding: 2px!important;
+                    border: 1px solid #fff;
+                    .dx-treelist-empty-space {
+                        padding: 5px;
+                    }
                 }
                 tr.dx-data-row {
                     &.dx-state-hover, 
@@ -78,6 +95,7 @@
                         letter-spacing: 0.3px;
                         font-weight: 300;
                         color: #424c56;
+                        padding: 5px;
                     }
                 }
             }

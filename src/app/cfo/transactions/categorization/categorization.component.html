@@ -8,7 +8,9 @@
         [hoverStateEnabled]="true"
         [(dataSource)]="categories"
         (onSelectionChanged)="onSelectionChanged.emit($event)"
+        (onContentReady)="initDragAndDropEvents($event)"
         [selection]="{allowSelectAll: false, mode: 'single'}"
+        [autoExpandAll]="true"
         [rootValue]="0">
         <dxi-column dataField="name"></dxi-column>
     </dx-tree-list>
