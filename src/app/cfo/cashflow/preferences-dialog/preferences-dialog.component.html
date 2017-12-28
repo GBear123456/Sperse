@@ -39,12 +39,12 @@
                     <div *ngFor="let colHeader of getEnumKeys(PeriodScope)" class="col-xs-1">{{colHeader}}</div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_HideColumnsWithZeroActivity")}}</div>
-                    <div *ngFor="let colHeader of getEnumKeys(PeriodScope)" class="col-xs-1">
-                        <dx-check-box [value]="checkFlag(model.general.hideColumnsWithZeroActivity, PeriodScope[colHeader])"
+                    <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_ShowColumnsWithZeroActivity")}}</div>
+                    <!--<div *ngFor="let colHeader of getEnumKeys(PeriodScope)" class="col-xs-1">
+                        <dx-check-box [value]="checkFlag(model.general.showColumnsWithZeroActivity, PeriodScope[colHeader])"
                                       (onValueChanged)="checkBoxValueChanged($event, model.general, 'hideColumnsWithZeroActivity', PeriodScope[colHeader])">
                         </dx-check-box>
-                    </div>
+                    </div>-->
                 </div>
             </div>
         </div>

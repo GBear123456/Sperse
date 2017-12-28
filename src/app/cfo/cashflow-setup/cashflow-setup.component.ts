@@ -22,7 +22,7 @@ export class CashflowSetupComponent extends AppComponentBase implements OnInit {
     ngOnInit(): void {
         this.headlineConfig = { 
             names: [this.l('CashflowSetup_Title')], 
-            icon: 'globe', 
+            iconSrc: 'assets/common/icons/magic-stick-icon.svg',
             buttons: []
         }
     }

@@ -26,8 +26,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @ViewChild('keywordsComponent') keywordList: DxDataGridComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
-
-    conditionId: number;
+    
     minAmount: number;
     maxAmount: number;
     bankId: number;
@@ -93,7 +92,6 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                 this.descriptor = rule.transactionDecriptorAttributeTypeId || rule.transactionDecriptor;
                 this.data.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
                 if (rule.condition) {
-                    this.conditionId = rule.condition.id;
                     this.bankId = rule.condition.bankId;
                     this.accountId = rule.condition.bankAccountId;
                     this.amountFormat = rule.condition.cashFlowAmountFormat;
@@ -177,7 +175,6 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                             transactionDecriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor: undefined,
                             applyOption: (this.data.id ? EditRuleDtoApplyOption: CreateRuleDtoApplyOption)[option],
                             condition: ConditionDto.fromJS({
-                                id: this.conditionId,
                                 minAmount: this.minAmount,
                                 maxAmount: this.maxAmount,
                                 bankId: this.bankId,

@@ -1,8 +1,8 @@
-﻿import { Component, Injector, ViewChild, OnInit, ElementRef, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, ViewChild, OnInit, ElementRef, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { IBasicOrganizationUnitInfo } from './basic-organization-unit-info';
 import { JTableHelper } from '@shared/helpers/JTableHelper';
-import { OrganizationUnitServiceProxy, OrganizationUnitUserListDto, CommonLookupServiceProxy, FindUsersInput, NameValueDto, UserToOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
+import { OrganizationUnitServiceProxy, OrganizationUnitUserListDto, CommonLookupServiceProxy, FindUsersInput, NameValueDto } from '@shared/service-proxies/service-proxies';
 import * as moment from 'moment';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { IUserWithOrganizationUnit } from './user-with-organization-unit';
@@ -56,20 +56,21 @@ export class OrganizationUnitMembersComponent extends AppComponentBase implement
                 return this._commonLookupService.findUsers(input);
             },
             canSelect: (item: NameValueDto) => {
-                let input = new UserToOrganizationUnitInput();
+                //let input = new UserToOrganizationUnitInput();
 
-                input.userId = parseInt(item.value);
-                input.organizationUnitId = this.organizationUnit.id;
+                //input.userId = parseInt(item.value);
+                //input.organizationUnitId = this.organizationUnit.id;
 
-                return this._organizationUnitService
-                    .isInOrganizationUnit(input)
-                    .map((value, index) => {
-                        if (value) {
-                            this.message.warn(this.l('UserIsAlreadyInTheOrganizationUnit'));
-                        }
+                //return this._organizationUnitService
+                //    .isInOrganizationUnit(input)
+                //    .map((value, index) => {
+                //        if (value) {
+                //            this.message.warn(this.l('UserIsAlreadyInTheOrganizationUnit'));
+                //        }
 
-                        return !value;
-                    });
+                //        return !value;
+                //    });
+                throw new Error("Not implemented");
             }
         });
     }
@@ -144,19 +145,20 @@ export class OrganizationUnitMembersComponent extends AppComponentBase implement
     }
 
     addModalMemberSelected(item: NameValueDto): void {
-        let input = new UserToOrganizationUnitInput();
-        input.organizationUnitId = this.organizationUnit.id;
-        input.userId = parseInt(item.value);
-        this._organizationUnitService
-            .addUserToOrganizationUnit(input)
-            .subscribe(() => {
-                this.notify.success(this.l('SuccessfullyAdded'));
-                this.memberAdded.emit({
-                    userId: input.userId,
-                    ouId: input.organizationUnitId
-                });
-                this.refreshMembers();
-            });
+        //let input = new UserToOrganizationUnitInput();
+        //input.organizationUnitId = this.organizationUnit.id;
+        //input.userId = parseInt(item.value);
+        //this._organizationUnitService
+        //    .addUserToOrganizationUnit(input)
+        //    .subscribe(() => {
+        //        this.notify.success(this.l('SuccessfullyAdded'));
+        //        this.memberAdded.emit({
+        //            userId: input.userId,
+        //            ouId: input.organizationUnitId
+        //        });
+        //        this.refreshMembers();
+        //    });
+        throw new Error("Not implemented");
     }
 
     removeMember(user: OrganizationUnitUserListDto): void {

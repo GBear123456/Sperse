@@ -219,7 +219,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Daily Cash Balances')],
-            icon: '',
+            iconSrc: 'assets/common/icons/pulse-icon.svg',
             buttons: [
                 {
                     enabled: true,
@@ -230,15 +230,17 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         };
     }
 
-    initFiltering() {
-        for (let filter of this.filters) {
-            let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
-            if (filterMethod)
-                filterMethod(filter, this.requestFilter);
-            else
-                this.requestFilter[filter.field] = undefined;
-        }
+    initFiltering() {        
         this._filtersService.apply(() => {
+
+            for (let filter of this.filters) {
+                let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
+                if (filterMethod)
+                    filterMethod(filter, this.requestFilter);
+                else
+                    this.requestFilter[filter.field] = undefined;
+            }
+
             this.loadStatsData();
         });
     }
@@ -280,7 +282,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
             ]
         );
     }
-
+    
     handleForecastModelResult(result) {
         let items = result.map(forecastModelItem => {
             return {

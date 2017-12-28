@@ -520,9 +520,13 @@ export class AuditLogServiceProxy {
      */
     getAuditLogs(startDate: moment.Moment, endDate: moment.Moment, userName: string, serviceName: string, methodName: string, browserInfo: string, hasException: boolean, minExecutionDuration: number, maxExecutionDuration: number, sorting: string, maxResultCount: number, skipCount: number): Observable<PagedResultDtoOfAuditLogListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/AuditLog/GetAuditLogs?";
-        if (startDate !== undefined)
+        if (startDate === undefined || startDate === null)
+            throw new Error("The parameter 'startDate' must be defined and cannot be null.");
+        else
             url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
-        if (endDate !== undefined)
+        if (endDate === undefined || endDate === null)
+            throw new Error("The parameter 'endDate' must be defined and cannot be null.");
+        else
             url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
         if (userName !== undefined)
             url_ += "UserName=" + encodeURIComponent("" + userName) + "&"; 
@@ -540,9 +544,13 @@ export class AuditLogServiceProxy {
             url_ += "MaxExecutionDuration=" + encodeURIComponent("" + maxExecutionDuration) + "&"; 
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
-        if (maxResultCount !== undefined)
+        if (maxResultCount === undefined || maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' must be defined and cannot be null.");
+        else
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
-        if (skipCount !== undefined)
+        if (skipCount === undefined || skipCount === null)
+            throw new Error("The parameter 'skipCount' must be defined and cannot be null.");
+        else
             url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -592,9 +600,13 @@ export class AuditLogServiceProxy {
      */
     getAuditLogsToExcel(startDate: moment.Moment, endDate: moment.Moment, userName: string, serviceName: string, methodName: string, browserInfo: string, hasException: boolean, minExecutionDuration: number, maxExecutionDuration: number, sorting: string, maxResultCount: number, skipCount: number): Observable<FileDto> {
         let url_ = this.baseUrl + "/api/services/Platform/AuditLog/GetAuditLogsToExcel?";
-        if (startDate !== undefined)
+        if (startDate === undefined || startDate === null)
+            throw new Error("The parameter 'startDate' must be defined and cannot be null.");
+        else
             url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
-        if (endDate !== undefined)
+        if (endDate === undefined || endDate === null)
+            throw new Error("The parameter 'endDate' must be defined and cannot be null.");
+        else
             url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
         if (userName !== undefined)
             url_ += "UserName=" + encodeURIComponent("" + userName) + "&"; 
@@ -612,9 +624,13 @@ export class AuditLogServiceProxy {
             url_ += "MaxExecutionDuration=" + encodeURIComponent("" + maxExecutionDuration) + "&"; 
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
-        if (maxResultCount !== undefined)
+        if (maxResultCount === undefined || maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' must be defined and cannot be null.");
+        else
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
-        if (skipCount !== undefined)
+        if (skipCount === undefined || skipCount === null)
+            throw new Error("The parameter 'skipCount' must be defined and cannot be null.");
+        else
             url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -721,7 +737,9 @@ export class BankAccountsServiceProxy {
      */
     getStats(currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
-        if (currency !== undefined)
+        if (currency === undefined || currency === null)
+            throw new Error("The parameter 'currency' must be defined and cannot be null.");
+        else
             url_ += "Currency=" + encodeURIComponent("" + currency) + "&"; 
         if (forecastModelId !== undefined)
             url_ += "ForecastModelId=" + encodeURIComponent("" + forecastModelId) + "&"; 
@@ -731,7 +749,9 @@ export class BankAccountsServiceProxy {
             url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
         if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
-        if (groupBy !== undefined)
+        if (groupBy === undefined || groupBy === null)
+            throw new Error("The parameter 'groupBy' must be defined and cannot be null.");
+        else
             url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1406,7 +1426,9 @@ export class CashFlowForecastServiceProxy {
      */
     deleteForecast(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/DeleteForecast?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1446,6 +1468,252 @@ export class CashFlowForecastServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    createForecastSchedule(input: CreateForecastScheduleDto): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/CreateForecastSchedule";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateForecastSchedule(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateForecastSchedule(response_);
+                } catch (e) {
+                    return <Observable<number>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateForecastSchedule(response: Response): Observable<number> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: number = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<number>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateForecastSchedule(input: UpdateForecastScheduleInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/UpdateForecastSchedule";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateForecastSchedule(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateForecastSchedule(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateForecastSchedule(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteForecastSchedule(id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/DeleteForecastSchedule?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processDeleteForecastSchedule(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteForecastSchedule(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteForecastSchedule(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getForecastSchedule(id: number): Observable<ForecastScheduleDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetForecastSchedule?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetForecastSchedule(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetForecastSchedule(response_);
+                } catch (e) {
+                    return <Observable<ForecastScheduleDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ForecastScheduleDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetForecastSchedule(response: Response): Observable<ForecastScheduleDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ForecastScheduleDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ForecastScheduleDto.fromJS(resultData200) : new ForecastScheduleDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ForecastScheduleDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getForecastSchedules(): Observable<ForecastScheduleDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetForecastSchedules";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetForecastSchedules(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetForecastSchedules(response_);
+                } catch (e) {
+                    return <Observable<ForecastScheduleDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ForecastScheduleDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetForecastSchedules(response: Response): Observable<ForecastScheduleDto[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: ForecastScheduleDto[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ForecastScheduleDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<ForecastScheduleDto[]>(<any>null);
     }
 }
 
@@ -1515,7 +1783,9 @@ export class ChatServiceProxy {
         let url_ = this.baseUrl + "/api/services/Platform/Chat/GetUserChatMessages?";
         if (tenantId !== undefined)
             url_ += "TenantId=" + encodeURIComponent("" + tenantId) + "&"; 
-        if (userId !== undefined)
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
             url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
         if (minMessageId !== undefined)
             url_ += "MinMessageId=" + encodeURIComponent("" + minMessageId) + "&"; 
@@ -1771,7 +2041,9 @@ export class ClassificationServiceProxy {
      */
     getRuleForEdit(id: number): Observable<EditRuleDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetRuleForEdit?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1913,9 +2185,13 @@ export class ClassificationServiceProxy {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteRule?";
         if (sourceTransactionsList !== undefined)
             sourceTransactionsList.forEach(item => { url_ += "SourceTransactionsList=" + encodeURIComponent("" + item) + "&"; });
-        if (applyOption !== undefined)
+        if (applyOption === undefined || applyOption === null)
+            throw new Error("The parameter 'applyOption' must be defined and cannot be null.");
+        else
             url_ += "ApplyOption=" + encodeURIComponent("" + applyOption) + "&"; 
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2007,7 +2283,9 @@ export class ClassificationServiceProxy {
      */
     deleteMapping(name: string): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteMapping?";
-        if (name !== undefined)
+        if (name === undefined || name === null)
+            throw new Error("The parameter 'name' must be defined and cannot be null.");
+        else
             url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2147,7 +2425,9 @@ export class ClassificationServiceProxy {
      */
     deleteCategoryGroup(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteCategoryGroup?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2289,9 +2569,13 @@ export class ClassificationServiceProxy {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteCategory?";
         if (moveToCategoryId !== undefined)
             url_ += "MoveToCategoryId=" + encodeURIComponent("" + moveToCategoryId) + "&"; 
-        if (deleteAllReferences !== undefined)
+        if (deleteAllReferences === undefined || deleteAllReferences === null)
+            throw new Error("The parameter 'deleteAllReferences' must be defined and cannot be null.");
+        else
             url_ += "DeleteAllReferences=" + encodeURIComponent("" + deleteAllReferences) + "&"; 
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2422,6 +2706,99 @@ export class ClassificationServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    updateTransactionsCategoryWithFilter(input: UpdateTransactionsCategoryWithFilterInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategoryWithFilter";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateTransactionsCategoryWithFilter(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateTransactionsCategoryWithFilter(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateTransactionsCategoryWithFilter(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getTransactionCommonDetails(input: GetTransactionCommonDetailsInput): Observable<TransactionCommonDetailsDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/GetTransactionCommonDetails";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetTransactionCommonDetails(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTransactionCommonDetails(response_);
+                } catch (e) {
+                    return <Observable<TransactionCommonDetailsDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<TransactionCommonDetailsDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTransactionCommonDetails(response: Response): Observable<TransactionCommonDetailsDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: TransactionCommonDetailsDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? TransactionCommonDetailsDto.fromJS(resultData200) : new TransactionCommonDetailsDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<TransactionCommonDetailsDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -2440,7 +2817,9 @@ export class CommentServiceProxy {
      */
     getComments(threadId: number): Observable<CommentDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/GetComments?";
-        if (threadId !== undefined)
+        if (threadId === undefined || threadId === null)
+            throw new Error("The parameter 'threadId' must be defined and cannot be null.");
+        else
             url_ += "threadId=" + encodeURIComponent("" + threadId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2587,7 +2966,9 @@ export class CommentServiceProxy {
      */
     deleteComment(commentId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/DeleteComment?";
-        if (commentId !== undefined)
+        if (commentId === undefined || commentId === null)
+            throw new Error("The parameter 'commentId' must be defined and cannot be null.");
+        else
             url_ += "commentId=" + encodeURIComponent("" + commentId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2787,7 +3168,9 @@ export class CommonLookupServiceProxy {
      */
     getEditionsForCombobox(onlyFreeItems: boolean): Observable<ListResultDtoOfSubscribableEditionComboboxItemDto> {
         let url_ = this.baseUrl + "/api/services/Platform/CommonLookup/GetEditionsForCombobox?";
-        if (onlyFreeItems !== undefined)
+        if (onlyFreeItems === undefined || onlyFreeItems === null)
+            throw new Error("The parameter 'onlyFreeItems' must be defined and cannot be null.");
+        else
             url_ += "onlyFreeItems=" + encodeURIComponent("" + onlyFreeItems) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -3038,9 +3421,13 @@ export class ContactAddressServiceProxy {
      */
     deleteContactAddress(contactId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactAddress/DeleteContactAddress?";
-        if (contactId !== undefined)
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
             url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -3195,7 +3582,9 @@ export class ContactBusinessServiceProxy {
      */
     getContactBusiness(personId: number): Observable<GetContactBusinessOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactBusiness/GetContactBusiness?";
-        if (personId !== undefined)
+        if (personId === undefined || personId === null)
+            throw new Error("The parameter 'personId' must be defined and cannot be null.");
+        else
             url_ += "PersonId=" + encodeURIComponent("" + personId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -3338,7 +3727,9 @@ export class ContactBusinessServiceProxy {
      */
     deleteContactBusiness(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactBusiness/DeleteContactBusiness?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -3542,9 +3933,13 @@ export class ContactEmailServiceProxy {
      */
     deleteContactEmail(contactId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactEmail/DeleteContactEmail?";
-        if (contactId !== undefined)
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
             url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -3651,7 +4046,9 @@ export class ContactEmploymentServiceProxy {
      */
     get(personId: number): Observable<GetContactEmploymentOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactEmployment/Get?";
-        if (personId !== undefined)
+        if (personId === undefined || personId === null)
+            throw new Error("The parameter 'personId' must be defined and cannot be null.");
+        else
             url_ += "PersonId=" + encodeURIComponent("" + personId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -3794,7 +4191,9 @@ export class ContactEmploymentServiceProxy {
      */
     delete(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactEmployment/Delete?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -3946,9 +4345,13 @@ export class ContactLinkServiceProxy {
      */
     deleteContactLink(contactId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactLink/DeleteContactLink?";
-        if (contactId !== undefined)
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
             url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -4148,9 +4551,13 @@ export class ContactPhoneServiceProxy {
      */
     deleteContactPhone(contactId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactPhone/DeleteContactPhone?";
-        if (contactId !== undefined)
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
             url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -4375,7 +4782,9 @@ export class CreditReportServiceProxy {
      */
     downloadCreditReport(reportId: number): Observable<string> {
         let url_ = this.baseUrl + "/Reports/CreditReport/DownloadCreditReport?";
-        if (reportId !== undefined)
+        if (reportId === undefined || reportId === null)
+            throw new Error("The parameter 'reportId' must be defined and cannot be null.");
+        else
             url_ += "reportId=" + encodeURIComponent("" + reportId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -4475,7 +4884,9 @@ export class CreditReportServiceProxy {
      */
     getAccountInfo(creditReport: number, accountIds: number[]): Observable<AccountInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetAccountInfo?";
-        if (creditReport !== undefined)
+        if (creditReport === undefined || creditReport === null)
+            throw new Error("The parameter 'creditReport' must be defined and cannot be null.");
+        else
             url_ += "creditReport=" + encodeURIComponent("" + creditReport) + "&"; 
         if (accountIds !== undefined)
             accountIds.forEach(item => { url_ += "accountIds=" + encodeURIComponent("" + item) + "&"; });
@@ -4531,7 +4942,9 @@ export class CreditReportServiceProxy {
      */
     getCreditReportHistory(periodYears: number, reportId: number): Observable<KeyValuePairOfStringAndListOfScoreHistoryDto[]> {
         let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetCreditReportHistory?";
-        if (periodYears !== undefined)
+        if (periodYears === undefined || periodYears === null)
+            throw new Error("The parameter 'periodYears' must be defined and cannot be null.");
+        else
             url_ += "periodYears=" + encodeURIComponent("" + periodYears) + "&"; 
         if (reportId !== undefined)
             url_ += "reportId=" + encodeURIComponent("" + reportId) + "&"; 
@@ -4759,7 +5172,9 @@ export class CustomersServiceProxy {
      */
     getContactInfo(contactId: number): Observable<ContactInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Customers/GetContactInfo?";
-        if (contactId !== undefined)
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
             url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -4809,7 +5224,9 @@ export class CustomersServiceProxy {
      */
     getCustomerInfo(customerId: number): Observable<CustomerInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Customers/GetCustomerInfo?";
-        if (customerId !== undefined)
+        if (customerId === undefined || customerId === null)
+            throw new Error("The parameter 'customerId' must be defined and cannot be null.");
+        else
             url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -4900,6 +5317,331 @@ export class CustomersServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<CreateCustomerOutput>(<any>null);
+    }
+}
+
+@Injectable()
+export class DemoUiComponentsServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    sendAndGetDate(date: moment.Moment): Observable<DateToStringOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/DemoUiComponents/SendAndGetDate?";
+        if (date !== undefined)
+            url_ += "date=" + encodeURIComponent("" + date.toJSON()) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSendAndGetDate(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSendAndGetDate(response_);
+                } catch (e) {
+                    return <Observable<DateToStringOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<DateToStringOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSendAndGetDate(response: Response): Observable<DateToStringOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: DateToStringOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? DateToStringOutput.fromJS(resultData200) : new DateToStringOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<DateToStringOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    sendAndGetDateTime(date: moment.Moment): Observable<DateToStringOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/DemoUiComponents/SendAndGetDateTime?";
+        if (date !== undefined)
+            url_ += "date=" + encodeURIComponent("" + date.toJSON()) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSendAndGetDateTime(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSendAndGetDateTime(response_);
+                } catch (e) {
+                    return <Observable<DateToStringOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<DateToStringOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSendAndGetDateTime(response: Response): Observable<DateToStringOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: DateToStringOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? DateToStringOutput.fromJS(resultData200) : new DateToStringOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<DateToStringOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    sendAndGetDateRange(startDate: moment.Moment, endDate: moment.Moment): Observable<DateToStringOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/DemoUiComponents/SendAndGetDateRange?";
+        if (startDate !== undefined)
+            url_ += "startDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
+        if (endDate !== undefined)
+            url_ += "endDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSendAndGetDateRange(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSendAndGetDateRange(response_);
+                } catch (e) {
+                    return <Observable<DateToStringOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<DateToStringOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSendAndGetDateRange(response: Response): Observable<DateToStringOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: DateToStringOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? DateToStringOutput.fromJS(resultData200) : new DateToStringOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<DateToStringOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getCountries(searchTerm: string): Observable<NameValueOfString[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/DemoUiComponents/GetCountries?";
+        if (searchTerm !== undefined)
+            url_ += "searchTerm=" + encodeURIComponent("" + searchTerm) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCountries(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCountries(response_);
+                } catch (e) {
+                    return <Observable<NameValueOfString[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<NameValueOfString[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCountries(response: Response): Observable<NameValueOfString[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: NameValueOfString[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(NameValueOfString.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<NameValueOfString[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    sendAndGetSelectedCountries(selectedCountries: NameValueOfString[]): Observable<NameValueOfString[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/DemoUiComponents/SendAndGetSelectedCountries";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let contentData_: any = [];
+        if (selectedCountries) {
+            for (let item of selectedCountries)
+                contentData_.push(item.toJSON());
+        }
+        const content_ = JSON.stringify(selectedCountries ? contentData_ : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSendAndGetSelectedCountries(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSendAndGetSelectedCountries(response_);
+                } catch (e) {
+                    return <Observable<NameValueOfString[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<NameValueOfString[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSendAndGetSelectedCountries(response: Response): Observable<NameValueOfString[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: NameValueOfString[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(NameValueOfString.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<NameValueOfString[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    sendAndGetValue(input: string): Observable<StringOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/DemoUiComponents/SendAndGetValue?";
+        if (input !== undefined)
+            url_ += "input=" + encodeURIComponent("" + input) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSendAndGetValue(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSendAndGetValue(response_);
+                } catch (e) {
+                    return <Observable<StringOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<StringOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSendAndGetValue(response: Response): Observable<StringOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: StringOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? StringOutput.fromJS(resultData200) : new StringOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<StringOutput>(<any>null);
     }
 }
 
@@ -5062,7 +5804,9 @@ export class EditionServiceProxy {
      */
     deleteEdition(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/Edition/DeleteEdition?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -5111,9 +5855,13 @@ export class EditionServiceProxy {
         let url_ = this.baseUrl + "/api/services/Platform/Edition/GetEditionComboboxItems?";
         if (selectedEditionId !== undefined)
             url_ += "selectedEditionId=" + encodeURIComponent("" + selectedEditionId) + "&"; 
-        if (addAllItem !== undefined)
+        if (addAllItem === undefined || addAllItem === null)
+            throw new Error("The parameter 'addAllItem' must be defined and cannot be null.");
+        else
             url_ += "addAllItem=" + encodeURIComponent("" + addAllItem) + "&"; 
-        if (onlyFreeItems !== undefined)
+        if (onlyFreeItems === undefined || onlyFreeItems === null)
+            throw new Error("The parameter 'onlyFreeItems' must be defined and cannot be null.");
+        else
             url_ += "onlyFreeItems=" + encodeURIComponent("" + onlyFreeItems) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -5231,7 +5979,9 @@ export class FinancialInformationServiceProxy {
      */
     syncAllAccounts(syncHistory: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
-        if (syncHistory !== undefined)
+        if (syncHistory === undefined || syncHistory === null)
+            throw new Error("The parameter 'syncHistory' must be defined and cannot be null.");
+        else
             url_ += "syncHistory=" + encodeURIComponent("" + syncHistory) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -5584,11 +6334,17 @@ export class HostDashboardServiceProxy {
      */
     getDashboardStatisticsData(incomeStatisticsDateInterval: IncomeStatisticsDateInterval, startDate: moment.Moment, endDate: moment.Moment): Observable<HostDashboardData> {
         let url_ = this.baseUrl + "/api/services/Platform/HostDashboard/GetDashboardStatisticsData?";
-        if (incomeStatisticsDateInterval !== undefined)
+        if (incomeStatisticsDateInterval === undefined || incomeStatisticsDateInterval === null)
+            throw new Error("The parameter 'incomeStatisticsDateInterval' must be defined and cannot be null.");
+        else
             url_ += "IncomeStatisticsDateInterval=" + encodeURIComponent("" + incomeStatisticsDateInterval) + "&"; 
-        if (startDate !== undefined)
+        if (startDate === undefined || startDate === null)
+            throw new Error("The parameter 'startDate' must be defined and cannot be null.");
+        else
             url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
-        if (endDate !== undefined)
+        if (endDate === undefined || endDate === null)
+            throw new Error("The parameter 'endDate' must be defined and cannot be null.");
+        else
             url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -5638,11 +6394,17 @@ export class HostDashboardServiceProxy {
      */
     getIncomeStatistics(incomeStatisticsDateInterval: IncomeStatisticsDateInterval2, startDate: moment.Moment, endDate: moment.Moment): Observable<GetIncomeStatisticsDataOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/HostDashboard/GetIncomeStatistics?";
-        if (incomeStatisticsDateInterval !== undefined)
+        if (incomeStatisticsDateInterval === undefined || incomeStatisticsDateInterval === null)
+            throw new Error("The parameter 'incomeStatisticsDateInterval' must be defined and cannot be null.");
+        else
             url_ += "IncomeStatisticsDateInterval=" + encodeURIComponent("" + incomeStatisticsDateInterval) + "&"; 
-        if (startDate !== undefined)
+        if (startDate === undefined || startDate === null)
+            throw new Error("The parameter 'startDate' must be defined and cannot be null.");
+        else
             url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
-        if (endDate !== undefined)
+        if (endDate === undefined || endDate === null)
+            throw new Error("The parameter 'endDate' must be defined and cannot be null.");
+        else
             url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -5692,9 +6454,13 @@ export class HostDashboardServiceProxy {
      */
     getEditionTenantStatistics(startDate: moment.Moment, endDate: moment.Moment): Observable<GetEditionTenantStatisticsOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/HostDashboard/GetEditionTenantStatistics?";
-        if (startDate !== undefined)
+        if (startDate === undefined || startDate === null)
+            throw new Error("The parameter 'startDate' must be defined and cannot be null.");
+        else
             url_ += "StartDate=" + encodeURIComponent("" + startDate.toJSON()) + "&"; 
-        if (endDate !== undefined)
+        if (endDate === undefined || endDate === null)
+            throw new Error("The parameter 'endDate' must be defined and cannot be null.");
+        else
             url_ += "EndDate=" + encodeURIComponent("" + endDate.toJSON()) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -5877,6 +6643,268 @@ export class HostSettingsServiceProxy {
     }
 
     protected processSendTestEmail(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class InstallServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    setup(input: InstallDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Install/Setup";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSetup(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSetup(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSetup(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getAppSettingsJson(): Observable<AppSettingsJsonDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/Install/GetAppSettingsJson";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetAppSettingsJson(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetAppSettingsJson(response_);
+                } catch (e) {
+                    return <Observable<AppSettingsJsonDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<AppSettingsJsonDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetAppSettingsJson(response: Response): Observable<AppSettingsJsonDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: AppSettingsJsonDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? AppSettingsJsonDto.fromJS(resultData200) : new AppSettingsJsonDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<AppSettingsJsonDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    checkDatabase(): Observable<CheckDatabaseOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Install/CheckDatabase";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCheckDatabase(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCheckDatabase(response_);
+                } catch (e) {
+                    return <Observable<CheckDatabaseOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CheckDatabaseOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCheckDatabase(response: Response): Observable<CheckDatabaseOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: CheckDatabaseOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CheckDatabaseOutput.fromJS(resultData200) : new CheckDatabaseOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<CheckDatabaseOutput>(<any>null);
+    }
+}
+
+@Injectable()
+export class InvoiceServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getInvoiceInfo(id: number): Observable<InvoiceDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/Invoice/GetInvoiceInfo?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetInvoiceInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetInvoiceInfo(response_);
+                } catch (e) {
+                    return <Observable<InvoiceDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<InvoiceDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetInvoiceInfo(response: Response): Observable<InvoiceDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: InvoiceDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? InvoiceDto.fromJS(resultData200) : new InvoiceDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<InvoiceDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    createInvoice(input: CreateInvoiceDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Invoice/CreateInvoice";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processCreateInvoice(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateInvoice(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateInvoice(response: Response): Observable<void> {
         const status = response.status; 
 
         if (status === 200) {
@@ -6154,7 +7182,9 @@ export class LanguageServiceProxy {
      */
     deleteLanguage(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/Language/DeleteLanguage?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -6246,17 +7276,25 @@ export class LanguageServiceProxy {
      */
     getLanguageTexts(maxResultCount: number, skipCount: number, sorting: string, sourceName: string, baseLanguageName: string, targetLanguageName: string, targetValueFilter: string, filterText: string): Observable<PagedResultDtoOfLanguageTextListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Language/GetLanguageTexts?";
-        if (maxResultCount !== undefined)
+        if (maxResultCount === undefined || maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' must be defined and cannot be null.");
+        else
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
-        if (skipCount !== undefined)
+        if (skipCount === undefined || skipCount === null)
+            throw new Error("The parameter 'skipCount' must be defined and cannot be null.");
+        else
             url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
-        if (sourceName !== undefined)
+        if (sourceName === undefined || sourceName === null)
+            throw new Error("The parameter 'sourceName' must be defined and cannot be null.");
+        else
             url_ += "SourceName=" + encodeURIComponent("" + sourceName) + "&"; 
         if (baseLanguageName !== undefined)
             url_ += "BaseLanguageName=" + encodeURIComponent("" + baseLanguageName) + "&"; 
-        if (targetLanguageName !== undefined)
+        if (targetLanguageName === undefined || targetLanguageName === null)
+            throw new Error("The parameter 'targetLanguageName' must be defined and cannot be null.");
+        else
             url_ += "TargetLanguageName=" + encodeURIComponent("" + targetLanguageName) + "&"; 
         if (targetValueFilter !== undefined)
             url_ += "TargetValueFilter=" + encodeURIComponent("" + targetValueFilter) + "&"; 
@@ -6547,6 +7585,54 @@ export class LeadServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    submitTenantCreationRequest(input: SubmitTenantCreationRequestInput): Observable<SubmitTenantCreationRequestOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitTenantCreationRequest";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSubmitTenantCreationRequest(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSubmitTenantCreationRequest(response_);
+                } catch (e) {
+                    return <Observable<SubmitTenantCreationRequestOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<SubmitTenantCreationRequestOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSubmitTenantCreationRequest(response: Response): Observable<SubmitTenantCreationRequestOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: SubmitTenantCreationRequestOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SubmitTenantCreationRequestOutput.fromJS(resultData200) : new SubmitTenantCreationRequestOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<SubmitTenantCreationRequestOutput>(<any>null);
+    }
 }
 
 @Injectable()
@@ -6565,7 +7651,9 @@ export class MemberServiceProxy {
      */
     selectPackage(packageId: number): Observable<SelectPackageResponseDto> {
         let url_ = this.baseUrl + "/api/services/CreditReport/Member/SelectPackage?";
-        if (packageId !== undefined)
+        if (packageId === undefined || packageId === null)
+            throw new Error("The parameter 'packageId' must be defined and cannot be null.");
+        else
             url_ += "packageId=" + encodeURIComponent("" + packageId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -6815,9 +7903,13 @@ export class NotificationServiceProxy {
         let url_ = this.baseUrl + "/api/services/Platform/Notification/GetUserNotifications?";
         if (state !== undefined)
             url_ += "State=" + encodeURIComponent("" + state) + "&"; 
-        if (maxResultCount !== undefined)
+        if (maxResultCount === undefined || maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' must be defined and cannot be null.");
+        else
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
-        if (skipCount !== undefined)
+        if (skipCount === undefined || skipCount === null)
+            throw new Error("The parameter 'skipCount' must be defined and cannot be null.");
+        else
             url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -7170,13 +8262,19 @@ export class OrganizationUnitServiceProxy {
      */
     getOrganizationUnitUsers(id: number, sorting: string, maxResultCount: number, skipCount: number): Observable<PagedResultDtoOfOrganizationUnitUserListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/GetOrganizationUnitUsers?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
-        if (maxResultCount !== undefined)
+        if (maxResultCount === undefined || maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' must be defined and cannot be null.");
+        else
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
-        if (skipCount !== undefined)
+        if (skipCount === undefined || skipCount === null)
+            throw new Error("The parameter 'skipCount' must be defined and cannot be null.");
+        else
             url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -7370,7 +8468,9 @@ export class OrganizationUnitServiceProxy {
      */
     deleteOrganizationUnit(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/DeleteOrganizationUnit?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -7415,56 +8515,15 @@ export class OrganizationUnitServiceProxy {
     /**
      * @return Success
      */
-    addUserToOrganizationUnit(input: UserToOrganizationUnitInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/AddUserToOrganizationUnit";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input ? input.toJSON() : null);
-        
-        let options_ = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processAddUserToOrganizationUnit(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processAddUserToOrganizationUnit(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processAddUserToOrganizationUnit(response: Response): Observable<void> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
     removeUserFromOrganizationUnit(userId: number, organizationUnitId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/RemoveUserFromOrganizationUnit?";
-        if (userId !== undefined)
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
             url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
-        if (organizationUnitId !== undefined)
+        if (organizationUnitId === undefined || organizationUnitId === null)
+            throw new Error("The parameter 'organizationUnitId' must be defined and cannot be null.");
+        else
             url_ += "OrganizationUnitId=" + encodeURIComponent("" + organizationUnitId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -7509,8 +8568,8 @@ export class OrganizationUnitServiceProxy {
     /**
      * @return Success
      */
-    isInOrganizationUnit(input: UserToOrganizationUnitInput): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/IsInOrganizationUnit";
+    addUsersToOrganizationUnit(input: UsersToOrganizationUnitInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/AddUsersToOrganizationUnit";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -7525,33 +8584,78 @@ export class OrganizationUnitServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processIsInOrganizationUnit(response_);
+            return this.processAddUsersToOrganizationUnit(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processIsInOrganizationUnit(response_);
+                    return this.processAddUsersToOrganizationUnit(response_);
                 } catch (e) {
-                    return <Observable<boolean>><any>Observable.throw(e);
+                    return <Observable<void>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<boolean>><any>Observable.throw(response_);
+                return <Observable<void>><any>Observable.throw(response_);
         });
     }
 
-    protected processIsInOrganizationUnit(response: Response): Observable<boolean> {
+    protected processAddUsersToOrganizationUnit(response: Response): Observable<void> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: boolean = null;
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    findUsers(input: FindOrganizationUnitUsersInput): Observable<PagedResultDtoOfNameValueDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/OrganizationUnit/FindUsers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processFindUsers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processFindUsers(response_);
+                } catch (e) {
+                    return <Observable<PagedResultDtoOfNameValueDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<PagedResultDtoOfNameValueDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processFindUsers(response: Response): Observable<PagedResultDtoOfNameValueDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: PagedResultDtoOfNameValueDto = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? PagedResultDtoOfNameValueDto.fromJS(resultData200) : new PagedResultDtoOfNameValueDto();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<boolean>(<any>null);
+        return Observable.of<PagedResultDtoOfNameValueDto>(<any>null);
     }
 }
 
@@ -7783,6 +8887,64 @@ export class PaymentServiceProxy {
         }
         return Observable.of<any>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getPaymentHistory(sorting: string, maxResultCount: number, skipCount: number): Observable<PagedResultDtoOfSubscriptionPaymentListDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/Payment/GetPaymentHistory?";
+        if (sorting !== undefined)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
+        if (maxResultCount === undefined || maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' must be defined and cannot be null.");
+        else
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
+        if (skipCount === undefined || skipCount === null)
+            throw new Error("The parameter 'skipCount' must be defined and cannot be null.");
+        else
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetPaymentHistory(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetPaymentHistory(response_);
+                } catch (e) {
+                    return <Observable<PagedResultDtoOfSubscriptionPaymentListDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<PagedResultDtoOfSubscriptionPaymentListDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetPaymentHistory(response: Response): Observable<PagedResultDtoOfSubscriptionPaymentListDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: PagedResultDtoOfSubscriptionPaymentListDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PagedResultDtoOfSubscriptionPaymentListDto.fromJS(resultData200) : new PagedResultDtoOfSubscriptionPaymentListDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<PagedResultDtoOfSubscriptionPaymentListDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -7969,7 +9131,9 @@ export class PipelineServiceProxy {
      */
     getPipelineDefinition(pipelineId: number): Observable<PipelineDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinition?";
-        if (pipelineId !== undefined)
+        if (pipelineId === undefined || pipelineId === null)
+            throw new Error("The parameter 'pipelineId' must be defined and cannot be null.");
+        else
             url_ += "PipelineId=" + encodeURIComponent("" + pipelineId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -8072,6 +9236,144 @@ export class ProfileServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<CurrentUserProfileEditDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateGoogleAuthenticatorKey(): Observable<UpdateGoogleAuthenticatorKeyOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/UpdateGoogleAuthenticatorKey";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateGoogleAuthenticatorKey(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateGoogleAuthenticatorKey(response_);
+                } catch (e) {
+                    return <Observable<UpdateGoogleAuthenticatorKeyOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<UpdateGoogleAuthenticatorKeyOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateGoogleAuthenticatorKey(response: Response): Observable<UpdateGoogleAuthenticatorKeyOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: UpdateGoogleAuthenticatorKeyOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? UpdateGoogleAuthenticatorKeyOutput.fromJS(resultData200) : new UpdateGoogleAuthenticatorKeyOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<UpdateGoogleAuthenticatorKeyOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    sendVerificationSms(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/SendVerificationSms";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSendVerificationSms(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSendVerificationSms(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSendVerificationSms(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    verifySmsCode(input: VerifySmsCodeInputDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/VerifySmsCode";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input ? input.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processVerifySmsCode(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processVerifySmsCode(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processVerifySmsCode(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
     }
 
     /**
@@ -8312,7 +9614,9 @@ export class ProfileServiceProxy {
         let url_ = this.baseUrl + "/api/services/Platform/Profile/GetFriendProfilePictureById?";
         if (profilePictureId !== undefined)
             url_ += "ProfilePictureId=" + encodeURIComponent("" + profilePictureId) + "&"; 
-        if (userId !== undefined)
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
             url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
         if (tenantId !== undefined)
             url_ += "TenantId=" + encodeURIComponent("" + tenantId) + "&"; 
@@ -8364,7 +9668,9 @@ export class ProfileServiceProxy {
      */
     getProfilePictureById(profilePictureId: string): Observable<GetProfilePictureOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Profile/GetProfilePictureById?";
-        if (profilePictureId !== undefined)
+        if (profilePictureId === undefined || profilePictureId === null)
+            throw new Error("The parameter 'profilePictureId' must be defined and cannot be null.");
+        else
             url_ += "profilePictureId=" + encodeURIComponent("" + profilePictureId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -8616,7 +9922,9 @@ export class RoleServiceProxy {
      */
     deleteRole(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/Role/DeleteRole?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -8816,6 +10124,67 @@ export class SessionServiceProxy {
 }
 
 @Injectable()
+export class SubscriptionServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    upgradeTenantToEquivalentEdition(upgradeEditionId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Subscription/UpgradeTenantToEquivalentEdition?";
+        if (upgradeEditionId === undefined || upgradeEditionId === null)
+            throw new Error("The parameter 'upgradeEditionId' must be defined and cannot be null.");
+        else
+            url_ += "upgradeEditionId=" + encodeURIComponent("" + upgradeEditionId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpgradeTenantToEquivalentEdition(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpgradeTenantToEquivalentEdition(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpgradeTenantToEquivalentEdition(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class TenancyServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -8831,7 +10200,9 @@ export class TenancyServiceProxy {
      */
     getTenancies(customerId: number): Observable<PagedResultDtoOfTenancyListDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancies?";
-        if (customerId !== undefined)
+        if (customerId === undefined || customerId === null)
+            throw new Error("The parameter 'customerId' must be defined and cannot be null.");
+        else
             url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -8929,9 +10300,13 @@ export class TenancyServiceProxy {
      */
     getTenancyForEdit(id: number, customerId: number): Observable<GetTenancyForEditOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancyForEdit?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        if (customerId !== undefined)
+        if (customerId === undefined || customerId === null)
+            throw new Error("The parameter 'customerId' must be defined and cannot be null.");
+        else
             url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -9026,9 +10401,13 @@ export class TenancyServiceProxy {
      */
     deleteTenancy(id: number, customerId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Tenancy/DeleteTenancy?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        if (customerId !== undefined)
+        if (customerId === undefined || customerId === null)
+            throw new Error("The parameter 'customerId' must be defined and cannot be null.");
+        else
             url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -9099,13 +10478,19 @@ export class TenantServiceProxy {
             url_ += "CreationDateEnd=" + encodeURIComponent("" + creationDateEnd.toJSON()) + "&"; 
         if (editionId !== undefined)
             url_ += "EditionId=" + encodeURIComponent("" + editionId) + "&"; 
-        if (editionIdSpecified !== undefined)
+        if (editionIdSpecified === undefined || editionIdSpecified === null)
+            throw new Error("The parameter 'editionIdSpecified' must be defined and cannot be null.");
+        else
             url_ += "EditionIdSpecified=" + encodeURIComponent("" + editionIdSpecified) + "&"; 
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
-        if (maxResultCount !== undefined)
+        if (maxResultCount === undefined || maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' must be defined and cannot be null.");
+        else
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
-        if (skipCount !== undefined)
+        if (skipCount === undefined || skipCount === null)
+            throw new Error("The parameter 'skipCount' must be defined and cannot be null.");
+        else
             url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -9200,7 +10585,9 @@ export class TenantServiceProxy {
      */
     getTenantForEdit(id: number): Observable<TenantEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Tenant/GetTenantForEdit?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -9295,7 +10682,9 @@ export class TenantServiceProxy {
      */
     deleteTenant(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/Tenant/DeleteTenant?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -9342,7 +10731,9 @@ export class TenantServiceProxy {
      */
     getTenantFeaturesForEdit(id: number): Observable<GetTenantFeaturesEditOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Tenant/GetTenantFeaturesForEdit?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -9539,9 +10930,13 @@ export class TenantCustomizationServiceProxy {
      */
     getTenantCustomization(customizationGroupName: string, customizationName: string): Observable<TenantCustomizationDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/GetTenantCustomization?";
-        if (customizationGroupName !== undefined)
+        if (customizationGroupName === undefined || customizationGroupName === null)
+            throw new Error("The parameter 'customizationGroupName' must be defined and cannot be null.");
+        else
             url_ += "CustomizationGroupName=" + encodeURIComponent("" + customizationGroupName) + "&"; 
-        if (customizationName !== undefined)
+        if (customizationName === undefined || customizationName === null)
+            throw new Error("The parameter 'customizationName' must be defined and cannot be null.");
+        else
             url_ += "CustomizationName=" + encodeURIComponent("" + customizationName) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -9696,7 +11091,9 @@ export class TenantDashboardServiceProxy {
      */
     getDashboardData(salesSummaryDatePeriod: SalesSummaryDatePeriod): Observable<GetDashboardDataOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantDashboard/GetDashboardData?";
-        if (salesSummaryDatePeriod !== undefined)
+        if (salesSummaryDatePeriod === undefined || salesSummaryDatePeriod === null)
+            throw new Error("The parameter 'salesSummaryDatePeriod' must be defined and cannot be null.");
+        else
             url_ += "SalesSummaryDatePeriod=" + encodeURIComponent("" + salesSummaryDatePeriod) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -9746,7 +11143,9 @@ export class TenantDashboardServiceProxy {
      */
     getSalesSummary(salesSummaryDatePeriod: SalesSummaryDatePeriod2): Observable<GetSalesSummaryOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantDashboard/GetSalesSummary?";
-        if (salesSummaryDatePeriod !== undefined)
+        if (salesSummaryDatePeriod === undefined || salesSummaryDatePeriod === null)
+            throw new Error("The parameter 'salesSummaryDatePeriod' must be defined and cannot be null.");
+        else
             url_ += "SalesSummaryDatePeriod=" + encodeURIComponent("" + salesSummaryDatePeriod) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -9844,56 +11243,6 @@ export class TenantDashboardServiceProxy {
     /**
      * @return Success
      */
-    getServerStats(input: any): Observable<GetServerStatsOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantDashboard/GetServerStats?";
-        if (input !== undefined)
-            url_ += "input=" + encodeURIComponent("" + input) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_) => {
-            return this.processGetServerStats(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetServerStats(response_);
-                } catch (e) {
-                    return <Observable<GetServerStatsOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<GetServerStatsOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetServerStats(response: Response): Observable<GetServerStatsOutput> {
-        const status = response.status; 
-
-        if (status === 200) {
-            const responseText = response.text();
-            let result200: GetServerStatsOutput = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetServerStatsOutput.fromJS(resultData200) : new GetServerStatsOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
-        }
-        return Observable.of<GetServerStatsOutput>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
     getGeneralStats(input: any): Observable<GetGeneralStatsOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantDashboard/GetGeneralStats?";
         if (input !== undefined)
@@ -9958,7 +11307,9 @@ export class TenantHostServiceProxy {
      */
     getTenantApiHost(tenantHostType: TenantHostType): Observable<TenantApiHostOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantHost/GetTenantApiHost?";
-        if (tenantHostType !== undefined)
+        if (tenantHostType === undefined || tenantHostType === null)
+            throw new Error("The parameter 'tenantHostType' must be defined and cannot be null.");
+        else
             url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -10252,7 +11603,9 @@ export class TenantHostServiceProxy {
      */
     deleteSslBinding(tenantHostType: TenantHostType2): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantHost/DeleteSslBinding?";
-        if (tenantHostType !== undefined)
+        if (tenantHostType === undefined || tenantHostType === null)
+            throw new Error("The parameter 'tenantHostType' must be defined and cannot be null.");
+        else
             url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -10617,7 +11970,9 @@ export class TenantRegistrationServiceProxy {
      */
     getEdition(editionId: number): Observable<EditionSelectDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantRegistration/GetEdition?";
-        if (editionId !== undefined)
+        if (editionId === undefined || editionId === null)
+            throw new Error("The parameter 'editionId' must be defined and cannot be null.");
+        else
             url_ += "editionId=" + encodeURIComponent("" + editionId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -11169,7 +12524,9 @@ export class TenantSslCertificateServiceProxy {
      */
     deleteTenantSslCertificate(sslCertificateId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSslCertificate/DeleteTenantSslCertificate?";
-        if (sslCertificateId !== undefined)
+        if (sslCertificateId === undefined || sslCertificateId === null)
+            throw new Error("The parameter 'sslCertificateId' must be defined and cannot be null.");
+        else
             url_ += "SslCertificateId=" + encodeURIComponent("" + sslCertificateId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -11213,6 +12570,72 @@ export class TenantSslCertificateServiceProxy {
 }
 
 @Injectable()
+export class TestServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getCommonPhrases(strings: string[]): Observable<string[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/Test/GetCommonPhrases?";
+        if (strings !== undefined)
+            strings.forEach(item => { url_ += "strings=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetCommonPhrases(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCommonPhrases(response_);
+                } catch (e) {
+                    return <Observable<string[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<string[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCommonPhrases(response: Response): Observable<string[]> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: string[] = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<string[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class TimingServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -11228,7 +12651,9 @@ export class TimingServiceProxy {
      */
     getTimezones(defaultTimezoneScope: DefaultTimezoneScope): Observable<ListResultDtoOfNameValueDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Timing/GetTimezones?";
-        if (defaultTimezoneScope !== undefined)
+        if (defaultTimezoneScope === undefined || defaultTimezoneScope === null)
+            throw new Error("The parameter 'defaultTimezoneScope' must be defined and cannot be null.");
+        else
             url_ += "DefaultTimezoneScope=" + encodeURIComponent("" + defaultTimezoneScope) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -11788,6 +13213,253 @@ export class TransactionsServiceProxy {
         }
         return Observable.of<GetTransactionAttributeTypesOutput>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getTransactionDetails(transactionId: number): Observable<GetTransactionDetailsOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
+        if (transactionId === undefined || transactionId === null)
+            throw new Error("The parameter 'transactionId' must be defined and cannot be null.");
+        else
+            url_ += "TransactionId=" + encodeURIComponent("" + transactionId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetTransactionDetails(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTransactionDetails(response_);
+                } catch (e) {
+                    return <Observable<GetTransactionDetailsOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetTransactionDetailsOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTransactionDetails(response: Response): Observable<GetTransactionDetailsOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: GetTransactionDetailsOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetTransactionDetailsOutput.fromJS(resultData200) : new GetTransactionDetailsOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<GetTransactionDetailsOutput>(<any>null);
+    }
+}
+
+@Injectable()
+export class UiCustomizationSettingsServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getUiManagementSettings(): Observable<UiCustomizationSettingsEditDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/UiCustomizationSettings/GetUiManagementSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetUiManagementSettings(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetUiManagementSettings(response_);
+                } catch (e) {
+                    return <Observable<UiCustomizationSettingsEditDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<UiCustomizationSettingsEditDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetUiManagementSettings(response: Response): Observable<UiCustomizationSettingsEditDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: UiCustomizationSettingsEditDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? UiCustomizationSettingsEditDto.fromJS(resultData200) : new UiCustomizationSettingsEditDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<UiCustomizationSettingsEditDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateUiManagementSettings(settings: UiCustomizationSettingsEditDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/UiCustomizationSettings/UpdateUiManagementSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(settings ? settings.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateUiManagementSettings(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateUiManagementSettings(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateUiManagementSettings(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    updateDefaultUiManagementSettings(settings: UiCustomizationSettingsEditDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/UiCustomizationSettings/UpdateDefaultUiManagementSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(settings ? settings.toJSON() : null);
+        
+        let options_ = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUpdateDefaultUiManagementSettings(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateDefaultUiManagementSettings(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateDefaultUiManagementSettings(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    useSystemDefaultSettings(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/UiCustomizationSettings/UseSystemDefaultSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processUseSystemDefaultSettings(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUseSystemDefaultSettings(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUseSystemDefaultSettings(response: Response): Observable<void> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -11814,9 +13486,13 @@ export class UserServiceProxy {
             url_ += "Role=" + encodeURIComponent("" + role) + "&"; 
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
-        if (maxResultCount !== undefined)
+        if (maxResultCount === undefined || maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' must be defined and cannot be null.");
+        else
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
-        if (skipCount !== undefined)
+        if (skipCount === undefined || skipCount === null)
+            throw new Error("The parameter 'skipCount' must be defined and cannot be null.");
+        else
             url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -11964,7 +13640,9 @@ export class UserServiceProxy {
      */
     getUserPermissionsForEdit(id: number): Observable<GetUserPermissionsForEditOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUserPermissionsForEdit?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -12149,7 +13827,9 @@ export class UserServiceProxy {
      */
     deleteUser(id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/User/DeleteUser?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -12298,9 +13978,13 @@ export class UserLinkServiceProxy {
      */
     getLinkedUsers(maxResultCount: number, skipCount: number, sorting: string): Observable<PagedResultDtoOfLinkedUserDto> {
         let url_ = this.baseUrl + "/api/services/Platform/UserLink/GetLinkedUsers?";
-        if (maxResultCount !== undefined)
+        if (maxResultCount === undefined || maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' must be defined and cannot be null.");
+        else
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
-        if (skipCount !== undefined)
+        if (skipCount === undefined || skipCount === null)
+            throw new Error("The parameter 'skipCount' must be defined and cannot be null.");
+        else
             url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
@@ -12647,6 +14331,7 @@ export interface IIsTenantAvailableInput {
 export class IsTenantAvailableOutput implements IIsTenantAvailableOutput {
     state: IsTenantAvailableOutputState;
     tenantId: number;
+    serverRootAddress: string;
 
     constructor(data?: IIsTenantAvailableOutput) {
         if (data) {
@@ -12661,6 +14346,7 @@ export class IsTenantAvailableOutput implements IIsTenantAvailableOutput {
         if (data) {
             this.state = data["state"];
             this.tenantId = data["tenantId"];
+            this.serverRootAddress = data["serverRootAddress"];
         }
     }
 
@@ -12674,6 +14360,7 @@ export class IsTenantAvailableOutput implements IIsTenantAvailableOutput {
         data = typeof data === 'object' ? data : {};
         data["state"] = this.state;
         data["tenantId"] = this.tenantId;
+        data["serverRootAddress"] = this.serverRootAddress;
         return data; 
     }
 }
@@ -12681,6 +14368,7 @@ export class IsTenantAvailableOutput implements IIsTenantAvailableOutput {
 export interface IIsTenantAvailableOutput {
     state: IsTenantAvailableOutputState;
     tenantId: number;
+    serverRootAddress: string;
 }
 
 export class RegisterInput implements IRegisterInput {
@@ -14296,7 +15984,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
     showAmountsWithDecimals: number;
     hideZeroValuesInCells: number;
     showNegativeValuesInRed: number;
-    hideColumnsWithZeroActivity: number;
+    showColumnsWithZeroActivity: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
 
     constructor(data?: ICashflowGridGeneralSettingsDto) {
         if (data) {
@@ -14312,7 +16000,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
             this.showAmountsWithDecimals = data["showAmountsWithDecimals"];
             this.hideZeroValuesInCells = data["hideZeroValuesInCells"];
             this.showNegativeValuesInRed = data["showNegativeValuesInRed"];
-            this.hideColumnsWithZeroActivity = data["hideColumnsWithZeroActivity"];
+            this.showColumnsWithZeroActivity = data["showColumnsWithZeroActivity"];
         }
     }
 
@@ -14327,7 +16015,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
         data["showAmountsWithDecimals"] = this.showAmountsWithDecimals;
         data["hideZeroValuesInCells"] = this.hideZeroValuesInCells;
         data["showNegativeValuesInRed"] = this.showNegativeValuesInRed;
-        data["hideColumnsWithZeroActivity"] = this.hideColumnsWithZeroActivity;
+        data["showColumnsWithZeroActivity"] = this.showColumnsWithZeroActivity;
         return data; 
     }
 }
@@ -14336,7 +16024,7 @@ export interface ICashflowGridGeneralSettingsDto {
     showAmountsWithDecimals: number;
     hideZeroValuesInCells: number;
     showNegativeValuesInRed: number;
-    hideColumnsWithZeroActivity: number;
+    showColumnsWithZeroActivity: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
 }
 
 export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSettingsDto {
@@ -14460,8 +16148,10 @@ export class AddForecastInput implements IAddForecastInput {
     forecastModelId: number;
     bankAccountId: number;
     date: moment.Moment;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
     cashFlowTypeId: string;
-    categoryId: string;
+    categoryId: number;
     currencyId: string;
     amount: number;
 
@@ -14479,6 +16169,8 @@ export class AddForecastInput implements IAddForecastInput {
             this.forecastModelId = data["forecastModelId"];
             this.bankAccountId = data["bankAccountId"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.cashFlowTypeId = data["cashFlowTypeId"];
             this.categoryId = data["categoryId"];
             this.currencyId = data["currencyId"];
@@ -14497,6 +16189,8 @@ export class AddForecastInput implements IAddForecastInput {
         data["forecastModelId"] = this.forecastModelId;
         data["bankAccountId"] = this.bankAccountId;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
         data["categoryId"] = this.categoryId;
         data["currencyId"] = this.currencyId;
@@ -14509,8 +16203,10 @@ export interface IAddForecastInput {
     forecastModelId: number;
     bankAccountId: number;
     date: moment.Moment;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
     cashFlowTypeId: string;
-    categoryId: string;
+    categoryId: number;
     currencyId: string;
     amount: number;
 }
@@ -14552,6 +16248,275 @@ export class UpdateForecastInput implements IUpdateForecastInput {
 export interface IUpdateForecastInput {
     id: number;
     amount: number;
+}
+
+export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {
+    bankAccountId: number;
+    categoryId: number;
+    forecastModelIds: number[] = [];
+    startDate: moment.Moment;
+    frequencyId: string;
+    endDate: moment.Moment;
+    calculationTypeId: string;
+    amount: number;
+    monthNumber: number;
+    weekNumber: number;
+    dayNumber: number;
+    weekDayNumber: CreateForecastScheduleDtoWeekDayNumber;
+
+    constructor(data?: ICreateForecastScheduleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.bankAccountId = data["bankAccountId"];
+            this.categoryId = data["categoryId"];
+            if (data["forecastModelIds"] && data["forecastModelIds"].constructor === Array) {
+                this.forecastModelIds = [];
+                for (let item of data["forecastModelIds"])
+                    this.forecastModelIds.push(item);
+            }
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.frequencyId = data["frequencyId"];
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.calculationTypeId = data["calculationTypeId"];
+            this.amount = data["amount"];
+            this.monthNumber = data["monthNumber"];
+            this.weekNumber = data["weekNumber"];
+            this.dayNumber = data["dayNumber"];
+            this.weekDayNumber = data["weekDayNumber"];
+        }
+    }
+
+    static fromJS(data: any): CreateForecastScheduleDto {
+        let result = new CreateForecastScheduleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["bankAccountId"] = this.bankAccountId;
+        data["categoryId"] = this.categoryId;
+        if (this.forecastModelIds && this.forecastModelIds.constructor === Array) {
+            data["forecastModelIds"] = [];
+            for (let item of this.forecastModelIds)
+                data["forecastModelIds"].push(item);
+        }
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["frequencyId"] = this.frequencyId;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["calculationTypeId"] = this.calculationTypeId;
+        data["amount"] = this.amount;
+        data["monthNumber"] = this.monthNumber;
+        data["weekNumber"] = this.weekNumber;
+        data["dayNumber"] = this.dayNumber;
+        data["weekDayNumber"] = this.weekDayNumber;
+        return data; 
+    }
+}
+
+export interface ICreateForecastScheduleDto {
+    bankAccountId: number;
+    categoryId: number;
+    forecastModelIds: number[];
+    startDate: moment.Moment;
+    frequencyId: string;
+    endDate: moment.Moment;
+    calculationTypeId: string;
+    amount: number;
+    monthNumber: number;
+    weekNumber: number;
+    dayNumber: number;
+    weekDayNumber: CreateForecastScheduleDtoWeekDayNumber;
+}
+
+export class UpdateForecastScheduleInput implements IUpdateForecastScheduleInput {
+    id: number;
+    bankAccountId: number;
+    categoryId: number;
+    forecastModelIds: number[] = [];
+    startDate: moment.Moment;
+    frequencyId: string;
+    endDate: moment.Moment;
+    calculationTypeId: string;
+    amount: number;
+    monthNumber: number;
+    weekNumber: number;
+    dayNumber: number;
+    weekDayNumber: UpdateForecastScheduleInputWeekDayNumber;
+
+    constructor(data?: IUpdateForecastScheduleInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.bankAccountId = data["bankAccountId"];
+            this.categoryId = data["categoryId"];
+            if (data["forecastModelIds"] && data["forecastModelIds"].constructor === Array) {
+                this.forecastModelIds = [];
+                for (let item of data["forecastModelIds"])
+                    this.forecastModelIds.push(item);
+            }
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.frequencyId = data["frequencyId"];
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.calculationTypeId = data["calculationTypeId"];
+            this.amount = data["amount"];
+            this.monthNumber = data["monthNumber"];
+            this.weekNumber = data["weekNumber"];
+            this.dayNumber = data["dayNumber"];
+            this.weekDayNumber = data["weekDayNumber"];
+        }
+    }
+
+    static fromJS(data: any): UpdateForecastScheduleInput {
+        let result = new UpdateForecastScheduleInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["bankAccountId"] = this.bankAccountId;
+        data["categoryId"] = this.categoryId;
+        if (this.forecastModelIds && this.forecastModelIds.constructor === Array) {
+            data["forecastModelIds"] = [];
+            for (let item of this.forecastModelIds)
+                data["forecastModelIds"].push(item);
+        }
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["frequencyId"] = this.frequencyId;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["calculationTypeId"] = this.calculationTypeId;
+        data["amount"] = this.amount;
+        data["monthNumber"] = this.monthNumber;
+        data["weekNumber"] = this.weekNumber;
+        data["dayNumber"] = this.dayNumber;
+        data["weekDayNumber"] = this.weekDayNumber;
+        return data; 
+    }
+}
+
+export interface IUpdateForecastScheduleInput {
+    id: number;
+    bankAccountId: number;
+    categoryId: number;
+    forecastModelIds: number[];
+    startDate: moment.Moment;
+    frequencyId: string;
+    endDate: moment.Moment;
+    calculationTypeId: string;
+    amount: number;
+    monthNumber: number;
+    weekNumber: number;
+    dayNumber: number;
+    weekDayNumber: UpdateForecastScheduleInputWeekDayNumber;
+}
+
+export class ForecastScheduleDto implements IForecastScheduleDto {
+    id: number;
+    bankAccountId: number;
+    categoryId: number;
+    forecastModelIds: number[];
+    startDate: moment.Moment;
+    frequencyId: string;
+    endDate: moment.Moment;
+    calculationTypeId: string;
+    amount: number;
+    monthNumber: number;
+    weekNumber: number;
+    dayNumber: number;
+    weekDayNumber: ForecastScheduleDtoWeekDayNumber;
+
+    constructor(data?: IForecastScheduleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.bankAccountId = data["bankAccountId"];
+            this.categoryId = data["categoryId"];
+            if (data["forecastModelIds"] && data["forecastModelIds"].constructor === Array) {
+                this.forecastModelIds = [];
+                for (let item of data["forecastModelIds"])
+                    this.forecastModelIds.push(item);
+            }
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.frequencyId = data["frequencyId"];
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.calculationTypeId = data["calculationTypeId"];
+            this.amount = data["amount"];
+            this.monthNumber = data["monthNumber"];
+            this.weekNumber = data["weekNumber"];
+            this.dayNumber = data["dayNumber"];
+            this.weekDayNumber = data["weekDayNumber"];
+        }
+    }
+
+    static fromJS(data: any): ForecastScheduleDto {
+        let result = new ForecastScheduleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["bankAccountId"] = this.bankAccountId;
+        data["categoryId"] = this.categoryId;
+        if (this.forecastModelIds && this.forecastModelIds.constructor === Array) {
+            data["forecastModelIds"] = [];
+            for (let item of this.forecastModelIds)
+                data["forecastModelIds"].push(item);
+        }
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["frequencyId"] = this.frequencyId;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["calculationTypeId"] = this.calculationTypeId;
+        data["amount"] = this.amount;
+        data["monthNumber"] = this.monthNumber;
+        data["weekNumber"] = this.weekNumber;
+        data["dayNumber"] = this.dayNumber;
+        data["weekDayNumber"] = this.weekDayNumber;
+        return data; 
+    }
+}
+
+export interface IForecastScheduleDto {
+    id: number;
+    bankAccountId: number;
+    categoryId: number;
+    forecastModelIds: number[];
+    startDate: moment.Moment;
+    frequencyId: string;
+    endDate: moment.Moment;
+    calculationTypeId: string;
+    amount: number;
+    monthNumber: number;
+    weekNumber: number;
+    dayNumber: number;
+    weekDayNumber: ForecastScheduleDtoWeekDayNumber;
 }
 
 export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
@@ -14714,8 +16679,10 @@ export class ChatMessageDto implements IChatMessageDto {
     targetTenantId: number;
     side: ChatMessageDtoSide;
     readState: ChatMessageDtoReadState;
+    receiverReadState: ChatMessageDtoReceiverReadState;
     message: string;
     creationTime: moment.Moment;
+    sharedMessageId: string;
     id: number;
 
     constructor(data?: IChatMessageDto) {
@@ -14735,8 +16702,10 @@ export class ChatMessageDto implements IChatMessageDto {
             this.targetTenantId = data["targetTenantId"];
             this.side = data["side"];
             this.readState = data["readState"];
+            this.receiverReadState = data["receiverReadState"];
             this.message = data["message"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.sharedMessageId = data["sharedMessageId"];
             this.id = data["id"];
         }
     }
@@ -14755,8 +16724,10 @@ export class ChatMessageDto implements IChatMessageDto {
         data["targetTenantId"] = this.targetTenantId;
         data["side"] = this.side;
         data["readState"] = this.readState;
+        data["receiverReadState"] = this.receiverReadState;
         data["message"] = this.message;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["sharedMessageId"] = this.sharedMessageId;
         data["id"] = this.id;
         return data; 
     }
@@ -14769,8 +16740,10 @@ export interface IChatMessageDto {
     targetTenantId: number;
     side: ChatMessageDtoSide;
     readState: ChatMessageDtoReadState;
+    receiverReadState: ChatMessageDtoReceiverReadState;
     message: string;
     creationTime: moment.Moment;
+    sharedMessageId: string;
     id: number;
 }
 
@@ -15070,7 +17043,7 @@ export class CreateRuleDto implements ICreateRuleDto {
     categoryId: number;
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
-    condition: ConditionDto;
+    condition: ConditionDto = new ConditionDto();
     sourceTransactionsList: number[];
     applyOption: CreateRuleDtoApplyOption;
 
@@ -15090,7 +17063,7 @@ export class CreateRuleDto implements ICreateRuleDto {
             this.categoryId = data["categoryId"];
             this.transactionDecriptor = data["transactionDecriptor"];
             this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
-            this.condition = data["condition"] ? ConditionDto.fromJS(data["condition"]) : <any>undefined;
+            this.condition = data["condition"] ? ConditionDto.fromJS(data["condition"]) : new ConditionDto();
             if (data["sourceTransactionsList"] && data["sourceTransactionsList"].constructor === Array) {
                 this.sourceTransactionsList = [];
                 for (let item of data["sourceTransactionsList"])
@@ -15136,14 +17109,13 @@ export interface ICreateRuleDto {
 }
 
 export class ConditionDto implements IConditionDto {
-    id: number;
     minAmount: number;
     maxAmount: number;
     cashFlowAmountFormat: ConditionDtoCashFlowAmountFormat;
     bankId: number;
     bankAccountId: number;
     descriptionWords: string;
-    attributes: ConditionAttributeDto[];
+    attributes: { [key: string] : ConditionAttributeDto; };
 
     constructor(data?: IConditionDto) {
         if (data) {
@@ -15156,17 +17128,18 @@ export class ConditionDto implements IConditionDto {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
             this.minAmount = data["minAmount"];
             this.maxAmount = data["maxAmount"];
             this.cashFlowAmountFormat = data["cashFlowAmountFormat"];
             this.bankId = data["bankId"];
             this.bankAccountId = data["bankAccountId"];
             this.descriptionWords = data["descriptionWords"];
-            if (data["attributes"] && data["attributes"].constructor === Array) {
-                this.attributes = [];
-                for (let item of data["attributes"])
-                    this.attributes.push(ConditionAttributeDto.fromJS(item));
+            if (data["attributes"]) {
+                this.attributes = {};
+                for (let key in data["attributes"]) {
+                    if (data["attributes"].hasOwnProperty(key))
+                        this.attributes[key] = data["attributes"][key] ? ConditionAttributeDto.fromJS(data["attributes"][key]) : <any>undefined;
+                }
             }
         }
     }
@@ -15179,35 +17152,34 @@ export class ConditionDto implements IConditionDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["minAmount"] = this.minAmount;
         data["maxAmount"] = this.maxAmount;
         data["cashFlowAmountFormat"] = this.cashFlowAmountFormat;
         data["bankId"] = this.bankId;
         data["bankAccountId"] = this.bankAccountId;
         data["descriptionWords"] = this.descriptionWords;
-        if (this.attributes && this.attributes.constructor === Array) {
-            data["attributes"] = [];
-            for (let item of this.attributes)
-                data["attributes"].push(item.toJSON());
+        if (this.attributes) {
+            data["attributes"] = {};
+            for (let key in this.attributes) {
+                if (this.attributes.hasOwnProperty(key))
+                    data["attributes"][key] = this.attributes[key] ? this.attributes[key].toJSON() : <any>undefined;
+            }
         }
         return data; 
     }
 }
 
 export interface IConditionDto {
-    id: number;
     minAmount: number;
     maxAmount: number;
     cashFlowAmountFormat: ConditionDtoCashFlowAmountFormat;
     bankId: number;
     bankAccountId: number;
     descriptionWords: string;
-    attributes: ConditionAttributeDto[];
+    attributes: { [key: string] : ConditionAttributeDto; };
 }
 
 export class ConditionAttributeDto implements IConditionAttributeDto {
-    id: number;
     attributeTypeId: string;
     conditionTypeId: ConditionAttributeDtoConditionTypeId;
     conditionValue: string;
@@ -15223,7 +17195,6 @@ export class ConditionAttributeDto implements IConditionAttributeDto {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
             this.attributeTypeId = data["attributeTypeId"];
             this.conditionTypeId = data["conditionTypeId"];
             this.conditionValue = data["conditionValue"];
@@ -15238,7 +17209,6 @@ export class ConditionAttributeDto implements IConditionAttributeDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["attributeTypeId"] = this.attributeTypeId;
         data["conditionTypeId"] = this.conditionTypeId;
         data["conditionValue"] = this.conditionValue;
@@ -15247,7 +17217,6 @@ export class ConditionAttributeDto implements IConditionAttributeDto {
 }
 
 export interface IConditionAttributeDto {
-    id: number;
     attributeTypeId: string;
     conditionTypeId: ConditionAttributeDtoConditionTypeId;
     conditionValue: string;
@@ -15259,7 +17228,7 @@ export class EditRuleDto implements IEditRuleDto {
     categoryId: number;
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
-    condition: ConditionDto;
+    condition: ConditionDto = new ConditionDto();
     sourceTransactionsList: number[];
     applyOption: EditRuleDtoApplyOption;
 
@@ -15279,7 +17248,7 @@ export class EditRuleDto implements IEditRuleDto {
             this.categoryId = data["categoryId"];
             this.transactionDecriptor = data["transactionDecriptor"];
             this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
-            this.condition = data["condition"] ? ConditionDto.fromJS(data["condition"]) : <any>undefined;
+            this.condition = data["condition"] ? ConditionDto.fromJS(data["condition"]) : new ConditionDto();
             if (data["sourceTransactionsList"] && data["sourceTransactionsList"].constructor === Array) {
                 this.sourceTransactionsList = [];
                 for (let item of data["sourceTransactionsList"])
@@ -15427,7 +17396,7 @@ export interface IAddMappingDto {
 }
 
 export class CreateCategoryGroupInput implements ICreateCategoryGroupInput {
-    typeId: string;
+    cashFlowTypeId: string;
     name: string;
 
     constructor(data?: ICreateCategoryGroupInput) {
@@ -15441,7 +17410,7 @@ export class CreateCategoryGroupInput implements ICreateCategoryGroupInput {
 
     init(data?: any) {
         if (data) {
-            this.typeId = data["typeId"];
+            this.cashFlowTypeId = data["cashFlowTypeId"];
             this.name = data["name"];
         }
     }
@@ -15454,14 +17423,14 @@ export class CreateCategoryGroupInput implements ICreateCategoryGroupInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["typeId"] = this.typeId;
+        data["cashFlowTypeId"] = this.cashFlowTypeId;
         data["name"] = this.name;
         return data; 
     }
 }
 
 export interface ICreateCategoryGroupInput {
-    typeId: string;
+    cashFlowTypeId: string;
     name: string;
 }
 
@@ -15694,6 +17663,262 @@ export interface IUpdateTransactionsCategoryInput {
     transactionIds: number[];
     categoryId: number;
     standardDescriptor: string;
+}
+
+export class UpdateTransactionsCategoryWithFilterInput implements IUpdateTransactionsCategoryWithFilterInput {
+    destinationCategoryId: number;
+    standardDescriptor: string;
+    cashFlowTypeId: string;
+    categoryGroupId: number;
+    categoryId: number;
+    transactionDescriptor: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    currencyId: string;
+    bankIds: number[];
+    accountIds: number[];
+    businessEntityIds: number[];
+
+    constructor(data?: IUpdateTransactionsCategoryWithFilterInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.destinationCategoryId = data["destinationCategoryId"];
+            this.standardDescriptor = data["standardDescriptor"];
+            this.cashFlowTypeId = data["cashFlowTypeId"];
+            this.categoryGroupId = data["categoryGroupId"];
+            this.categoryId = data["categoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.currencyId = data["currencyId"];
+            if (data["bankIds"] && data["bankIds"].constructor === Array) {
+                this.bankIds = [];
+                for (let item of data["bankIds"])
+                    this.bankIds.push(item);
+            }
+            if (data["accountIds"] && data["accountIds"].constructor === Array) {
+                this.accountIds = [];
+                for (let item of data["accountIds"])
+                    this.accountIds.push(item);
+            }
+            if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
+                this.businessEntityIds = [];
+                for (let item of data["businessEntityIds"])
+                    this.businessEntityIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateTransactionsCategoryWithFilterInput {
+        let result = new UpdateTransactionsCategoryWithFilterInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["destinationCategoryId"] = this.destinationCategoryId;
+        data["standardDescriptor"] = this.standardDescriptor;
+        data["cashFlowTypeId"] = this.cashFlowTypeId;
+        data["categoryGroupId"] = this.categoryGroupId;
+        data["categoryId"] = this.categoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["currencyId"] = this.currencyId;
+        if (this.bankIds && this.bankIds.constructor === Array) {
+            data["bankIds"] = [];
+            for (let item of this.bankIds)
+                data["bankIds"].push(item);
+        }
+        if (this.accountIds && this.accountIds.constructor === Array) {
+            data["accountIds"] = [];
+            for (let item of this.accountIds)
+                data["accountIds"].push(item);
+        }
+        if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
+            data["businessEntityIds"] = [];
+            for (let item of this.businessEntityIds)
+                data["businessEntityIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IUpdateTransactionsCategoryWithFilterInput {
+    destinationCategoryId: number;
+    standardDescriptor: string;
+    cashFlowTypeId: string;
+    categoryGroupId: number;
+    categoryId: number;
+    transactionDescriptor: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    currencyId: string;
+    bankIds: number[];
+    accountIds: number[];
+    businessEntityIds: number[];
+}
+
+export class GetTransactionCommonDetailsInput implements IGetTransactionCommonDetailsInput {
+    transactionIds: number[];
+
+    constructor(data?: IGetTransactionCommonDetailsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["transactionIds"] && data["transactionIds"].constructor === Array) {
+                this.transactionIds = [];
+                for (let item of data["transactionIds"])
+                    this.transactionIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): GetTransactionCommonDetailsInput {
+        let result = new GetTransactionCommonDetailsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.transactionIds && this.transactionIds.constructor === Array) {
+            data["transactionIds"] = [];
+            for (let item of this.transactionIds)
+                data["transactionIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IGetTransactionCommonDetailsInput {
+    transactionIds: number[];
+}
+
+export class TransactionCommonDetailsDto implements ITransactionCommonDetailsDto {
+    amountFormat: TransactionCommonDetailsDtoAmountFormat;
+    bankId: number;
+    bankAccountId: number;
+    standardDescriptor: string;
+    descriptionPhrases: string[];
+    attributes: TransactionAttributeDto[];
+
+    constructor(data?: ITransactionCommonDetailsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.amountFormat = data["amountFormat"];
+            this.bankId = data["bankId"];
+            this.bankAccountId = data["bankAccountId"];
+            this.standardDescriptor = data["standardDescriptor"];
+            if (data["descriptionPhrases"] && data["descriptionPhrases"].constructor === Array) {
+                this.descriptionPhrases = [];
+                for (let item of data["descriptionPhrases"])
+                    this.descriptionPhrases.push(item);
+            }
+            if (data["attributes"] && data["attributes"].constructor === Array) {
+                this.attributes = [];
+                for (let item of data["attributes"])
+                    this.attributes.push(TransactionAttributeDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TransactionCommonDetailsDto {
+        let result = new TransactionCommonDetailsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["amountFormat"] = this.amountFormat;
+        data["bankId"] = this.bankId;
+        data["bankAccountId"] = this.bankAccountId;
+        data["standardDescriptor"] = this.standardDescriptor;
+        if (this.descriptionPhrases && this.descriptionPhrases.constructor === Array) {
+            data["descriptionPhrases"] = [];
+            for (let item of this.descriptionPhrases)
+                data["descriptionPhrases"].push(item);
+        }
+        if (this.attributes && this.attributes.constructor === Array) {
+            data["attributes"] = [];
+            for (let item of this.attributes)
+                data["attributes"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ITransactionCommonDetailsDto {
+    amountFormat: TransactionCommonDetailsDtoAmountFormat;
+    bankId: number;
+    bankAccountId: number;
+    standardDescriptor: string;
+    descriptionPhrases: string[];
+    attributes: TransactionAttributeDto[];
+}
+
+export class TransactionAttributeDto implements ITransactionAttributeDto {
+    typeId: string;
+    value: string;
+
+    constructor(data?: ITransactionAttributeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.typeId = data["typeId"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): TransactionAttributeDto {
+        let result = new TransactionAttributeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["typeId"] = this.typeId;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface ITransactionAttributeDto {
+    typeId: string;
+    value: string;
 }
 
 export class CommentDto implements ICommentDto {
@@ -21003,6 +23228,115 @@ export interface ICreateCustomerOutput {
     similarCustomerExists: boolean;
 }
 
+export class DateToStringOutput implements IDateToStringOutput {
+    dateString: string;
+
+    constructor(data?: IDateToStringOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.dateString = data["dateString"];
+        }
+    }
+
+    static fromJS(data: any): DateToStringOutput {
+        let result = new DateToStringOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["dateString"] = this.dateString;
+        return data; 
+    }
+}
+
+export interface IDateToStringOutput {
+    dateString: string;
+}
+
+export class NameValueOfString implements INameValueOfString {
+    name: string;
+    value: string;
+
+    constructor(data?: INameValueOfString) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): NameValueOfString {
+        let result = new NameValueOfString();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface INameValueOfString {
+    name: string;
+    value: string;
+}
+
+export class StringOutput implements IStringOutput {
+    output: string;
+
+    constructor(data?: IStringOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.output = data["output"];
+        }
+    }
+
+    static fromJS(data: any): StringOutput {
+        let result = new StringOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["output"] = this.output;
+        return data; 
+    }
+}
+
+export interface IStringOutput {
+    output: string;
+}
+
 export class ListResultDtoOfEditionListDto implements IListResultDtoOfEditionListDto {
     items: EditionListDto[];
 
@@ -22239,6 +24573,7 @@ export class HostSettingsEditDto implements IHostSettingsEditDto {
     email: EmailSettingsEditDto = new EmailSettingsEditDto();
     tenantManagement: TenantManagementSettingsEditDto = new TenantManagementSettingsEditDto();
     security: SecuritySettingsEditDto = new SecuritySettingsEditDto();
+    billing: HostBillingSettingsEditDto;
 
     constructor(data?: IHostSettingsEditDto) {
         if (data) {
@@ -22256,6 +24591,7 @@ export class HostSettingsEditDto implements IHostSettingsEditDto {
             this.email = data["email"] ? EmailSettingsEditDto.fromJS(data["email"]) : new EmailSettingsEditDto();
             this.tenantManagement = data["tenantManagement"] ? TenantManagementSettingsEditDto.fromJS(data["tenantManagement"]) : new TenantManagementSettingsEditDto();
             this.security = data["security"] ? SecuritySettingsEditDto.fromJS(data["security"]) : new SecuritySettingsEditDto();
+            this.billing = data["billing"] ? HostBillingSettingsEditDto.fromJS(data["billing"]) : <any>undefined;
         }
     }
 
@@ -22272,6 +24608,7 @@ export class HostSettingsEditDto implements IHostSettingsEditDto {
         data["email"] = this.email ? this.email.toJSON() : <any>undefined;
         data["tenantManagement"] = this.tenantManagement ? this.tenantManagement.toJSON() : <any>undefined;
         data["security"] = this.security ? this.security.toJSON() : <any>undefined;
+        data["billing"] = this.billing ? this.billing.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -22282,6 +24619,7 @@ export interface IHostSettingsEditDto {
     email: EmailSettingsEditDto;
     tenantManagement: TenantManagementSettingsEditDto;
     security: SecuritySettingsEditDto;
+    billing: HostBillingSettingsEditDto;
 }
 
 export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
@@ -22325,6 +24663,7 @@ export interface IGeneralSettingsEditDto {
 
 export class HostUserManagementSettingsEditDto implements IHostUserManagementSettingsEditDto {
     isEmailConfirmationRequiredForLogin: boolean;
+    smsVerificationEnabled: boolean;
 
     constructor(data?: IHostUserManagementSettingsEditDto) {
         if (data) {
@@ -22338,6 +24677,7 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
     init(data?: any) {
         if (data) {
             this.isEmailConfirmationRequiredForLogin = data["isEmailConfirmationRequiredForLogin"];
+            this.smsVerificationEnabled = data["smsVerificationEnabled"];
         }
     }
 
@@ -22350,12 +24690,14 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
+        data["smsVerificationEnabled"] = this.smsVerificationEnabled;
         return data; 
     }
 }
 
 export interface IHostUserManagementSettingsEditDto {
     isEmailConfirmationRequiredForLogin: boolean;
+    smsVerificationEnabled: boolean;
 }
 
 export class EmailSettingsEditDto implements IEmailSettingsEditDto {
@@ -22523,6 +24865,45 @@ export interface ISecuritySettingsEditDto {
     twoFactorLogin: TwoFactorLoginSettingsEditDto;
 }
 
+export class HostBillingSettingsEditDto implements IHostBillingSettingsEditDto {
+    legalName: string;
+    address: string;
+
+    constructor(data?: IHostBillingSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.legalName = data["legalName"];
+            this.address = data["address"];
+        }
+    }
+
+    static fromJS(data: any): HostBillingSettingsEditDto {
+        let result = new HostBillingSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["legalName"] = this.legalName;
+        data["address"] = this.address;
+        return data; 
+    }
+}
+
+export interface IHostBillingSettingsEditDto {
+    legalName: string;
+    address: string;
+}
+
 export class PasswordComplexitySetting implements IPasswordComplexitySetting {
     requireDigit: boolean;
     requireLowercase: boolean;
@@ -22623,6 +25004,7 @@ export class TwoFactorLoginSettingsEditDto implements ITwoFactorLoginSettingsEdi
     isEmailProviderEnabled: boolean;
     isSmsProviderEnabled: boolean;
     isRememberBrowserEnabled: boolean;
+    isGoogleAuthenticatorEnabled: boolean;
 
     constructor(data?: ITwoFactorLoginSettingsEditDto) {
         if (data) {
@@ -22640,6 +25022,7 @@ export class TwoFactorLoginSettingsEditDto implements ITwoFactorLoginSettingsEdi
             this.isEmailProviderEnabled = data["isEmailProviderEnabled"];
             this.isSmsProviderEnabled = data["isSmsProviderEnabled"];
             this.isRememberBrowserEnabled = data["isRememberBrowserEnabled"];
+            this.isGoogleAuthenticatorEnabled = data["isGoogleAuthenticatorEnabled"];
         }
     }
 
@@ -22656,6 +25039,7 @@ export class TwoFactorLoginSettingsEditDto implements ITwoFactorLoginSettingsEdi
         data["isEmailProviderEnabled"] = this.isEmailProviderEnabled;
         data["isSmsProviderEnabled"] = this.isSmsProviderEnabled;
         data["isRememberBrowserEnabled"] = this.isRememberBrowserEnabled;
+        data["isGoogleAuthenticatorEnabled"] = this.isGoogleAuthenticatorEnabled;
         return data; 
     }
 }
@@ -22666,6 +25050,7 @@ export interface ITwoFactorLoginSettingsEditDto {
     isEmailProviderEnabled: boolean;
     isSmsProviderEnabled: boolean;
     isRememberBrowserEnabled: boolean;
+    isGoogleAuthenticatorEnabled: boolean;
 }
 
 export class SendTestEmailInput implements ISendTestEmailInput {
@@ -22701,6 +25086,312 @@ export class SendTestEmailInput implements ISendTestEmailInput {
 
 export interface ISendTestEmailInput {
     emailAddress: string;
+}
+
+export class InstallDto implements IInstallDto {
+    connectionString: string;
+    adminPassword: string;
+    webSiteUrl: string;
+    serverUrl: string;
+    defaultLanguage: string;
+    smtpSettings: EmailSettingsEditDto;
+    billInfo: HostBillingSettingsEditDto;
+
+    constructor(data?: IInstallDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.connectionString = data["connectionString"];
+            this.adminPassword = data["adminPassword"];
+            this.webSiteUrl = data["webSiteUrl"];
+            this.serverUrl = data["serverUrl"];
+            this.defaultLanguage = data["defaultLanguage"];
+            this.smtpSettings = data["smtpSettings"] ? EmailSettingsEditDto.fromJS(data["smtpSettings"]) : <any>undefined;
+            this.billInfo = data["billInfo"] ? HostBillingSettingsEditDto.fromJS(data["billInfo"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): InstallDto {
+        let result = new InstallDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["connectionString"] = this.connectionString;
+        data["adminPassword"] = this.adminPassword;
+        data["webSiteUrl"] = this.webSiteUrl;
+        data["serverUrl"] = this.serverUrl;
+        data["defaultLanguage"] = this.defaultLanguage;
+        data["smtpSettings"] = this.smtpSettings ? this.smtpSettings.toJSON() : <any>undefined;
+        data["billInfo"] = this.billInfo ? this.billInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IInstallDto {
+    connectionString: string;
+    adminPassword: string;
+    webSiteUrl: string;
+    serverUrl: string;
+    defaultLanguage: string;
+    smtpSettings: EmailSettingsEditDto;
+    billInfo: HostBillingSettingsEditDto;
+}
+
+export class AppSettingsJsonDto implements IAppSettingsJsonDto {
+    connectionString: string;
+    webSiteUrl: string;
+    serverSiteUrl: string;
+    languages: NameValue[];
+
+    constructor(data?: IAppSettingsJsonDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.connectionString = data["connectionString"];
+            this.webSiteUrl = data["webSiteUrl"];
+            this.serverSiteUrl = data["serverSiteUrl"];
+            if (data["languages"] && data["languages"].constructor === Array) {
+                this.languages = [];
+                for (let item of data["languages"])
+                    this.languages.push(NameValue.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AppSettingsJsonDto {
+        let result = new AppSettingsJsonDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["connectionString"] = this.connectionString;
+        data["webSiteUrl"] = this.webSiteUrl;
+        data["serverSiteUrl"] = this.serverSiteUrl;
+        if (this.languages && this.languages.constructor === Array) {
+            data["languages"] = [];
+            for (let item of this.languages)
+                data["languages"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IAppSettingsJsonDto {
+    connectionString: string;
+    webSiteUrl: string;
+    serverSiteUrl: string;
+    languages: NameValue[];
+}
+
+export class NameValue implements INameValue {
+    name: string;
+    value: string;
+
+    constructor(data?: INameValue) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): NameValue {
+        let result = new NameValue();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface INameValue {
+    name: string;
+    value: string;
+}
+
+export class CheckDatabaseOutput implements ICheckDatabaseOutput {
+    isDatabaseExist: boolean;
+
+    constructor(data?: ICheckDatabaseOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.isDatabaseExist = data["isDatabaseExist"];
+        }
+    }
+
+    static fromJS(data: any): CheckDatabaseOutput {
+        let result = new CheckDatabaseOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isDatabaseExist"] = this.isDatabaseExist;
+        return data; 
+    }
+}
+
+export interface ICheckDatabaseOutput {
+    isDatabaseExist: boolean;
+}
+
+export class InvoiceDto implements IInvoiceDto {
+    amount: number;
+    editionDisplayName: string;
+    invoiceNo: string;
+    invoiceDate: moment.Moment;
+    tenantLegalName: string;
+    tenantAddress: string[];
+    tenantTaxNo: string;
+    hostLegalName: string;
+    hostAddress: string[];
+
+    constructor(data?: IInvoiceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.amount = data["amount"];
+            this.editionDisplayName = data["editionDisplayName"];
+            this.invoiceNo = data["invoiceNo"];
+            this.invoiceDate = data["invoiceDate"] ? moment(data["invoiceDate"].toString()) : <any>undefined;
+            this.tenantLegalName = data["tenantLegalName"];
+            if (data["tenantAddress"] && data["tenantAddress"].constructor === Array) {
+                this.tenantAddress = [];
+                for (let item of data["tenantAddress"])
+                    this.tenantAddress.push(item);
+            }
+            this.tenantTaxNo = data["tenantTaxNo"];
+            this.hostLegalName = data["hostLegalName"];
+            if (data["hostAddress"] && data["hostAddress"].constructor === Array) {
+                this.hostAddress = [];
+                for (let item of data["hostAddress"])
+                    this.hostAddress.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): InvoiceDto {
+        let result = new InvoiceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["amount"] = this.amount;
+        data["editionDisplayName"] = this.editionDisplayName;
+        data["invoiceNo"] = this.invoiceNo;
+        data["invoiceDate"] = this.invoiceDate ? this.invoiceDate.toISOString() : <any>undefined;
+        data["tenantLegalName"] = this.tenantLegalName;
+        if (this.tenantAddress && this.tenantAddress.constructor === Array) {
+            data["tenantAddress"] = [];
+            for (let item of this.tenantAddress)
+                data["tenantAddress"].push(item);
+        }
+        data["tenantTaxNo"] = this.tenantTaxNo;
+        data["hostLegalName"] = this.hostLegalName;
+        if (this.hostAddress && this.hostAddress.constructor === Array) {
+            data["hostAddress"] = [];
+            for (let item of this.hostAddress)
+                data["hostAddress"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IInvoiceDto {
+    amount: number;
+    editionDisplayName: string;
+    invoiceNo: string;
+    invoiceDate: moment.Moment;
+    tenantLegalName: string;
+    tenantAddress: string[];
+    tenantTaxNo: string;
+    hostLegalName: string;
+    hostAddress: string[];
+}
+
+export class CreateInvoiceDto implements ICreateInvoiceDto {
+    subscriptionPaymentId: number;
+
+    constructor(data?: ICreateInvoiceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.subscriptionPaymentId = data["subscriptionPaymentId"];
+        }
+    }
+
+    static fromJS(data: any): CreateInvoiceDto {
+        let result = new CreateInvoiceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["subscriptionPaymentId"] = this.subscriptionPaymentId;
+        return data; 
+    }
+}
+
+export interface ICreateInvoiceDto {
+    subscriptionPaymentId: number;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
@@ -23609,6 +26300,7 @@ export interface IKeyValuePairOfInt32AndString {
 }
 
 export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput {
+    tenancyName: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -23617,7 +26309,6 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
     website: string;
     comments: string;
     sourceCode: string;
-    tenancyName: string;
 
     constructor(data?: ISubmitContactUsRequestInput) {
         if (data) {
@@ -23630,6 +26321,7 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
 
     init(data?: any) {
         if (data) {
+            this.tenancyName = data["tenancyName"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
             this.email = data["email"];
@@ -23638,7 +26330,6 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
             this.website = data["website"];
             this.comments = data["comments"];
             this.sourceCode = data["sourceCode"];
-            this.tenancyName = data["tenancyName"];
         }
     }
 
@@ -23650,6 +26341,7 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["tenancyName"] = this.tenancyName;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
@@ -23658,12 +26350,12 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
         data["website"] = this.website;
         data["comments"] = this.comments;
         data["sourceCode"] = this.sourceCode;
-        data["tenancyName"] = this.tenancyName;
         return data; 
     }
 }
 
 export interface ISubmitContactUsRequestInput {
+    tenancyName: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -23672,7 +26364,108 @@ export interface ISubmitContactUsRequestInput {
     website: string;
     comments: string;
     sourceCode: string;
-    tenancyName: string;
+}
+
+export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRequestInput {
+    editionId: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    phoneExt: string;
+    website: string;
+    comments: string;
+    sourceCode: string;
+
+    constructor(data?: ISubmitTenantCreationRequestInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.editionId = data["editionId"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.email = data["email"];
+            this.phone = data["phone"];
+            this.phoneExt = data["phoneExt"];
+            this.website = data["website"];
+            this.comments = data["comments"];
+            this.sourceCode = data["sourceCode"];
+        }
+    }
+
+    static fromJS(data: any): SubmitTenantCreationRequestInput {
+        let result = new SubmitTenantCreationRequestInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["editionId"] = this.editionId;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["phoneExt"] = this.phoneExt;
+        data["website"] = this.website;
+        data["comments"] = this.comments;
+        data["sourceCode"] = this.sourceCode;
+        return data; 
+    }
+}
+
+export interface ISubmitTenantCreationRequestInput {
+    editionId: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    phoneExt: string;
+    website: string;
+    comments: string;
+    sourceCode: string;
+}
+
+export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationRequestOutput {
+    leadRequestXref: string;
+
+    constructor(data?: ISubmitTenantCreationRequestOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadRequestXref = data["leadRequestXref"];
+        }
+    }
+
+    static fromJS(data: any): SubmitTenantCreationRequestOutput {
+        let result = new SubmitTenantCreationRequestOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadRequestXref"] = this.leadRequestXref;
+        return data; 
+    }
+}
+
+export interface ISubmitTenantCreationRequestOutput {
+    leadRequestXref: string;
 }
 
 export class SelectPackageResponseDto implements ISelectPackageResponseDto {
@@ -25225,11 +28018,11 @@ export interface IMoveOrganizationUnitInput {
     newParentId: number;
 }
 
-export class UserToOrganizationUnitInput implements IUserToOrganizationUnitInput {
-    userId: number;
+export class UsersToOrganizationUnitInput implements IUsersToOrganizationUnitInput {
+    userIds: number[];
     organizationUnitId: number;
 
-    constructor(data?: IUserToOrganizationUnitInput) {
+    constructor(data?: IUsersToOrganizationUnitInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -25240,28 +28033,83 @@ export class UserToOrganizationUnitInput implements IUserToOrganizationUnitInput
 
     init(data?: any) {
         if (data) {
-            this.userId = data["userId"];
+            if (data["userIds"] && data["userIds"].constructor === Array) {
+                this.userIds = [];
+                for (let item of data["userIds"])
+                    this.userIds.push(item);
+            }
             this.organizationUnitId = data["organizationUnitId"];
         }
     }
 
-    static fromJS(data: any): UserToOrganizationUnitInput {
-        let result = new UserToOrganizationUnitInput();
+    static fromJS(data: any): UsersToOrganizationUnitInput {
+        let result = new UsersToOrganizationUnitInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
+        if (this.userIds && this.userIds.constructor === Array) {
+            data["userIds"] = [];
+            for (let item of this.userIds)
+                data["userIds"].push(item);
+        }
         data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
 
-export interface IUserToOrganizationUnitInput {
-    userId: number;
+export interface IUsersToOrganizationUnitInput {
+    userIds: number[];
     organizationUnitId: number;
+}
+
+export class FindOrganizationUnitUsersInput implements IFindOrganizationUnitUsersInput {
+    organizationUnitId: number;
+    maxResultCount: number;
+    skipCount: number;
+    filter: string;
+
+    constructor(data?: IFindOrganizationUnitUsersInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.organizationUnitId = data["organizationUnitId"];
+            this.maxResultCount = data["maxResultCount"];
+            this.skipCount = data["skipCount"];
+            this.filter = data["filter"];
+        }
+    }
+
+    static fromJS(data: any): FindOrganizationUnitUsersInput {
+        let result = new FindOrganizationUnitUsersInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["organizationUnitId"] = this.organizationUnitId;
+        data["maxResultCount"] = this.maxResultCount;
+        data["skipCount"] = this.skipCount;
+        data["filter"] = this.filter;
+        return data; 
+    }
+}
+
+export interface IFindOrganizationUnitUsersInput {
+    organizationUnitId: number;
+    maxResultCount: number;
+    skipCount: number;
+    filter: string;
 }
 
 export class ListResultDtoOfPackageDto implements IListResultDtoOfPackageDto {
@@ -25626,6 +28474,148 @@ export interface IExecutePaymentDto {
     additionalData: { [key: string] : string; };
 }
 
+export class PagedResultDtoOfSubscriptionPaymentListDto implements IPagedResultDtoOfSubscriptionPaymentListDto {
+    totalCount: number;
+    items: SubscriptionPaymentListDto[];
+
+    constructor(data?: IPagedResultDtoOfSubscriptionPaymentListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalCount = data["totalCount"];
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(SubscriptionPaymentListDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PagedResultDtoOfSubscriptionPaymentListDto {
+        let result = new PagedResultDtoOfSubscriptionPaymentListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPagedResultDtoOfSubscriptionPaymentListDto {
+    totalCount: number;
+    items: SubscriptionPaymentListDto[];
+}
+
+export class SubscriptionPaymentListDto implements ISubscriptionPaymentListDto {
+    gateway: string;
+    amount: number;
+    editionId: number;
+    dayCount: number;
+    paymentPeriodType: string;
+    paymentId: string;
+    payerId: string;
+    status: string;
+    editionDisplayName: string;
+    tenantId: number;
+    invoiceNo: string;
+    lastModificationTime: moment.Moment;
+    lastModifierUserId: number;
+    creationTime: moment.Moment;
+    creatorUserId: number;
+    id: number;
+
+    constructor(data?: ISubscriptionPaymentListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.gateway = data["gateway"];
+            this.amount = data["amount"];
+            this.editionId = data["editionId"];
+            this.dayCount = data["dayCount"];
+            this.paymentPeriodType = data["paymentPeriodType"];
+            this.paymentId = data["paymentId"];
+            this.payerId = data["payerId"];
+            this.status = data["status"];
+            this.editionDisplayName = data["editionDisplayName"];
+            this.tenantId = data["tenantId"];
+            this.invoiceNo = data["invoiceNo"];
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): SubscriptionPaymentListDto {
+        let result = new SubscriptionPaymentListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["gateway"] = this.gateway;
+        data["amount"] = this.amount;
+        data["editionId"] = this.editionId;
+        data["dayCount"] = this.dayCount;
+        data["paymentPeriodType"] = this.paymentPeriodType;
+        data["paymentId"] = this.paymentId;
+        data["payerId"] = this.payerId;
+        data["status"] = this.status;
+        data["editionDisplayName"] = this.editionDisplayName;
+        data["tenantId"] = this.tenantId;
+        data["invoiceNo"] = this.invoiceNo;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ISubscriptionPaymentListDto {
+    gateway: string;
+    amount: number;
+    editionId: number;
+    dayCount: number;
+    paymentPeriodType: string;
+    paymentId: string;
+    payerId: string;
+    status: string;
+    editionDisplayName: string;
+    tenantId: number;
+    invoiceNo: string;
+    lastModificationTime: moment.Moment;
+    lastModifierUserId: number;
+    creationTime: moment.Moment;
+    creatorUserId: number;
+    id: number;
+}
+
 export class ListResultDtoOfFlatPermissionWithLevelDto implements IListResultDtoOfFlatPermissionWithLevelDto {
     items: FlatPermissionWithLevelDto[];
 
@@ -25768,7 +28758,10 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
     surname: string;
     emailAddress: string;
     phoneNumber: string;
+    isPhoneNumberConfirmed: boolean;
     timezone: string;
+    qrCodeSetupImageUrl: string;
+    isGoogleAuthenticatorEnabled: boolean;
 
     constructor(data?: ICurrentUserProfileEditDto) {
         if (data) {
@@ -25785,7 +28778,10 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
             this.surname = data["surname"];
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
+            this.isPhoneNumberConfirmed = data["isPhoneNumberConfirmed"];
             this.timezone = data["timezone"];
+            this.qrCodeSetupImageUrl = data["qrCodeSetupImageUrl"];
+            this.isGoogleAuthenticatorEnabled = data["isGoogleAuthenticatorEnabled"];
         }
     }
 
@@ -25801,7 +28797,10 @@ export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
         data["surname"] = this.surname;
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
+        data["isPhoneNumberConfirmed"] = this.isPhoneNumberConfirmed;
         data["timezone"] = this.timezone;
+        data["qrCodeSetupImageUrl"] = this.qrCodeSetupImageUrl;
+        data["isGoogleAuthenticatorEnabled"] = this.isGoogleAuthenticatorEnabled;
         return data; 
     }
 }
@@ -25811,7 +28810,80 @@ export interface ICurrentUserProfileEditDto {
     surname: string;
     emailAddress: string;
     phoneNumber: string;
+    isPhoneNumberConfirmed: boolean;
     timezone: string;
+    qrCodeSetupImageUrl: string;
+    isGoogleAuthenticatorEnabled: boolean;
+}
+
+export class UpdateGoogleAuthenticatorKeyOutput implements IUpdateGoogleAuthenticatorKeyOutput {
+    qrCodeSetupImageUrl: string;
+
+    constructor(data?: IUpdateGoogleAuthenticatorKeyOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.qrCodeSetupImageUrl = data["qrCodeSetupImageUrl"];
+        }
+    }
+
+    static fromJS(data: any): UpdateGoogleAuthenticatorKeyOutput {
+        let result = new UpdateGoogleAuthenticatorKeyOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["qrCodeSetupImageUrl"] = this.qrCodeSetupImageUrl;
+        return data; 
+    }
+}
+
+export interface IUpdateGoogleAuthenticatorKeyOutput {
+    qrCodeSetupImageUrl: string;
+}
+
+export class VerifySmsCodeInputDto implements IVerifySmsCodeInputDto {
+    code: string;
+
+    constructor(data?: IVerifySmsCodeInputDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.code = data["code"];
+        }
+    }
+
+    static fromJS(data: any): VerifySmsCodeInputDto {
+        let result = new VerifySmsCodeInputDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        return data; 
+    }
+}
+
+export interface IVerifySmsCodeInputDto {
+    code: string;
 }
 
 export class ChangePasswordInput implements IChangePasswordInput {
@@ -27144,6 +30216,8 @@ export class TenantListDto implements ITenantListDto {
     isActive: boolean;
     creationTime: moment.Moment;
     subscriptionEndDateUtc: moment.Moment;
+    editionId: number;
+    isInTrialPeriod: boolean;
     id: number;
 
     constructor(data?: ITenantListDto) {
@@ -27164,6 +30238,8 @@ export class TenantListDto implements ITenantListDto {
             this.isActive = data["isActive"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
+            this.editionId = data["editionId"];
+            this.isInTrialPeriod = data["isInTrialPeriod"];
             this.id = data["id"];
         }
     }
@@ -27183,6 +30259,8 @@ export class TenantListDto implements ITenantListDto {
         data["isActive"] = this.isActive;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
+        data["editionId"] = this.editionId;
+        data["isInTrialPeriod"] = this.isInTrialPeriod;
         data["id"] = this.id;
         return data; 
     }
@@ -27196,6 +30274,8 @@ export interface ITenantListDto {
     isActive: boolean;
     creationTime: moment.Moment;
     subscriptionEndDateUtc: moment.Moment;
+    editionId: number;
+    isInTrialPeriod: boolean;
     id: number;
 }
 
@@ -27648,10 +30728,8 @@ export class GetDashboardDataOutput implements IGetDashboardDataOutput {
     transactionPercent: number;
     newVisitPercent: number;
     bouncePercent: number;
-    networkLoad: number[];
-    cpuLoad: number[];
-    loadRate: number[];
-    timeLineItems: TimeLineItem[];
+    dailySales: number[];
+    profitShares: number[];
 
     constructor(data?: IGetDashboardDataOutput) {
         if (data) {
@@ -27680,25 +30758,15 @@ export class GetDashboardDataOutput implements IGetDashboardDataOutput {
             this.transactionPercent = data["transactionPercent"];
             this.newVisitPercent = data["newVisitPercent"];
             this.bouncePercent = data["bouncePercent"];
-            if (data["networkLoad"] && data["networkLoad"].constructor === Array) {
-                this.networkLoad = [];
-                for (let item of data["networkLoad"])
-                    this.networkLoad.push(item);
+            if (data["dailySales"] && data["dailySales"].constructor === Array) {
+                this.dailySales = [];
+                for (let item of data["dailySales"])
+                    this.dailySales.push(item);
             }
-            if (data["cpuLoad"] && data["cpuLoad"].constructor === Array) {
-                this.cpuLoad = [];
-                for (let item of data["cpuLoad"])
-                    this.cpuLoad.push(item);
-            }
-            if (data["loadRate"] && data["loadRate"].constructor === Array) {
-                this.loadRate = [];
-                for (let item of data["loadRate"])
-                    this.loadRate.push(item);
-            }
-            if (data["timeLineItems"] && data["timeLineItems"].constructor === Array) {
-                this.timeLineItems = [];
-                for (let item of data["timeLineItems"])
-                    this.timeLineItems.push(TimeLineItem.fromJS(item));
+            if (data["profitShares"] && data["profitShares"].constructor === Array) {
+                this.profitShares = [];
+                for (let item of data["profitShares"])
+                    this.profitShares.push(item);
             }
         }
     }
@@ -27727,25 +30795,15 @@ export class GetDashboardDataOutput implements IGetDashboardDataOutput {
         data["transactionPercent"] = this.transactionPercent;
         data["newVisitPercent"] = this.newVisitPercent;
         data["bouncePercent"] = this.bouncePercent;
-        if (this.networkLoad && this.networkLoad.constructor === Array) {
-            data["networkLoad"] = [];
-            for (let item of this.networkLoad)
-                data["networkLoad"].push(item);
+        if (this.dailySales && this.dailySales.constructor === Array) {
+            data["dailySales"] = [];
+            for (let item of this.dailySales)
+                data["dailySales"].push(item);
         }
-        if (this.cpuLoad && this.cpuLoad.constructor === Array) {
-            data["cpuLoad"] = [];
-            for (let item of this.cpuLoad)
-                data["cpuLoad"].push(item);
-        }
-        if (this.loadRate && this.loadRate.constructor === Array) {
-            data["loadRate"] = [];
-            for (let item of this.loadRate)
-                data["loadRate"].push(item);
-        }
-        if (this.timeLineItems && this.timeLineItems.constructor === Array) {
-            data["timeLineItems"] = [];
-            for (let item of this.timeLineItems)
-                data["timeLineItems"].push(item.toJSON());
+        if (this.profitShares && this.profitShares.constructor === Array) {
+            data["profitShares"] = [];
+            for (let item of this.profitShares)
+                data["profitShares"].push(item);
         }
         return data; 
     }
@@ -27764,10 +30822,8 @@ export interface IGetDashboardDataOutput {
     transactionPercent: number;
     newVisitPercent: number;
     bouncePercent: number;
-    networkLoad: number[];
-    cpuLoad: number[];
-    loadRate: number[];
-    timeLineItems: TimeLineItem[];
+    dailySales: number[];
+    profitShares: number[];
 }
 
 export class SalesSummaryData implements ISalesSummaryData {
@@ -27811,65 +30867,6 @@ export interface ISalesSummaryData {
     period: string;
     sales: number;
     profit: number;
-}
-
-export class TimeLineItem implements ITimeLineItem {
-    title: string;
-    image: string;
-    autherName: string;
-    longDate: string;
-    shortDate: string;
-    titleDate: string;
-    text: string;
-
-    constructor(data?: ITimeLineItem) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.title = data["title"];
-            this.image = data["image"];
-            this.autherName = data["autherName"];
-            this.longDate = data["longDate"];
-            this.shortDate = data["shortDate"];
-            this.titleDate = data["titleDate"];
-            this.text = data["text"];
-        }
-    }
-
-    static fromJS(data: any): TimeLineItem {
-        let result = new TimeLineItem();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["title"] = this.title;
-        data["image"] = this.image;
-        data["autherName"] = this.autherName;
-        data["longDate"] = this.longDate;
-        data["shortDate"] = this.shortDate;
-        data["titleDate"] = this.titleDate;
-        data["text"] = this.text;
-        return data; 
-    }
-}
-
-export interface ITimeLineItem {
-    title: string;
-    image: string;
-    autherName: string;
-    longDate: string;
-    shortDate: string;
-    titleDate: string;
-    text: string;
 }
 
 export class GetSalesSummaryOutput implements IGetSalesSummaryOutput {
@@ -27995,73 +30992,6 @@ export class WorldMapCountry implements IWorldMapCountry {
 export interface IWorldMapCountry {
     countryName: string;
     color: number;
-}
-
-export class GetServerStatsOutput implements IGetServerStatsOutput {
-    networkLoad: number[];
-    cpuLoad: number[];
-    loadRate: number[];
-
-    constructor(data?: IGetServerStatsOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["networkLoad"] && data["networkLoad"].constructor === Array) {
-                this.networkLoad = [];
-                for (let item of data["networkLoad"])
-                    this.networkLoad.push(item);
-            }
-            if (data["cpuLoad"] && data["cpuLoad"].constructor === Array) {
-                this.cpuLoad = [];
-                for (let item of data["cpuLoad"])
-                    this.cpuLoad.push(item);
-            }
-            if (data["loadRate"] && data["loadRate"].constructor === Array) {
-                this.loadRate = [];
-                for (let item of data["loadRate"])
-                    this.loadRate.push(item);
-            }
-        }
-    }
-
-    static fromJS(data: any): GetServerStatsOutput {
-        let result = new GetServerStatsOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.networkLoad && this.networkLoad.constructor === Array) {
-            data["networkLoad"] = [];
-            for (let item of this.networkLoad)
-                data["networkLoad"].push(item);
-        }
-        if (this.cpuLoad && this.cpuLoad.constructor === Array) {
-            data["cpuLoad"] = [];
-            for (let item of this.cpuLoad)
-                data["cpuLoad"].push(item);
-        }
-        if (this.loadRate && this.loadRate.constructor === Array) {
-            data["loadRate"] = [];
-            for (let item of this.loadRate)
-                data["loadRate"].push(item);
-        }
-        return data; 
-    }
-}
-
-export interface IGetServerStatsOutput {
-    networkLoad: number[];
-    cpuLoad: number[];
-    loadRate: number[];
 }
 
 export class GetGeneralStatsOutput implements IGetGeneralStatsOutput {
@@ -28834,6 +31764,7 @@ export class TenantSettingsEditDto implements ITenantSettingsEditDto {
     email: EmailSettingsEditDto;
     ldap: LdapSettingsEditDto;
     security: SecuritySettingsEditDto = new SecuritySettingsEditDto();
+    billing: TenantBillingSettingsEditDto;
 
     constructor(data?: ITenantSettingsEditDto) {
         if (data) {
@@ -28851,6 +31782,7 @@ export class TenantSettingsEditDto implements ITenantSettingsEditDto {
             this.email = data["email"] ? EmailSettingsEditDto.fromJS(data["email"]) : <any>undefined;
             this.ldap = data["ldap"] ? LdapSettingsEditDto.fromJS(data["ldap"]) : <any>undefined;
             this.security = data["security"] ? SecuritySettingsEditDto.fromJS(data["security"]) : new SecuritySettingsEditDto();
+            this.billing = data["billing"] ? TenantBillingSettingsEditDto.fromJS(data["billing"]) : <any>undefined;
         }
     }
 
@@ -28867,6 +31799,7 @@ export class TenantSettingsEditDto implements ITenantSettingsEditDto {
         data["email"] = this.email ? this.email.toJSON() : <any>undefined;
         data["ldap"] = this.ldap ? this.ldap.toJSON() : <any>undefined;
         data["security"] = this.security ? this.security.toJSON() : <any>undefined;
+        data["billing"] = this.billing ? this.billing.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -28877,6 +31810,7 @@ export interface ITenantSettingsEditDto {
     email: EmailSettingsEditDto;
     ldap: LdapSettingsEditDto;
     security: SecuritySettingsEditDto;
+    billing: TenantBillingSettingsEditDto;
 }
 
 export class TenantUserManagementSettingsEditDto implements ITenantUserManagementSettingsEditDto {
@@ -28975,6 +31909,49 @@ export interface ILdapSettingsEditDto {
     domain: string;
     userName: string;
     password: string;
+}
+
+export class TenantBillingSettingsEditDto implements ITenantBillingSettingsEditDto {
+    legalName: string;
+    address: string;
+    taxVatNo: string;
+
+    constructor(data?: ITenantBillingSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.legalName = data["legalName"];
+            this.address = data["address"];
+            this.taxVatNo = data["taxVatNo"];
+        }
+    }
+
+    static fromJS(data: any): TenantBillingSettingsEditDto {
+        let result = new TenantBillingSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["legalName"] = this.legalName;
+        data["address"] = this.address;
+        data["taxVatNo"] = this.taxVatNo;
+        return data; 
+    }
+}
+
+export interface ITenantBillingSettingsEditDto {
+    legalName: string;
+    address: string;
+    taxVatNo: string;
 }
 
 export class IdcsSettings implements IIdcsSettings {
@@ -29856,6 +32833,387 @@ export interface ITransactionAttributeTypeDto {
     parserCode: string;
 }
 
+export class GetTransactionDetailsOutput implements IGetTransactionDetailsOutput {
+    transactionDetails: TransactionDetailsDto;
+
+    constructor(data?: IGetTransactionDetailsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.transactionDetails = data["transactionDetails"] ? TransactionDetailsDto.fromJS(data["transactionDetails"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetTransactionDetailsOutput {
+        let result = new GetTransactionDetailsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["transactionDetails"] = this.transactionDetails ? this.transactionDetails.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetTransactionDetailsOutput {
+    transactionDetails: TransactionDetailsDto;
+}
+
+export class TransactionDetailsDto implements ITransactionDetailsDto {
+    bankAccountName: string;
+    attributes: TransactionAttributeDto[];
+    id: number;
+    bankAccountBankName: string;
+    bankAccountNumber: string;
+    date: moment.Moment;
+    currency: string;
+    amount: number;
+    description: string;
+    cashFlowTypeId: string;
+    endingBalance: number;
+    isBalanceConfirmed: boolean;
+    cashflowCategoryGroupName: string;
+    cashflowCategoryName: string;
+
+    constructor(data?: ITransactionDetailsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.bankAccountName = data["bankAccountName"];
+            if (data["attributes"] && data["attributes"].constructor === Array) {
+                this.attributes = [];
+                for (let item of data["attributes"])
+                    this.attributes.push(TransactionAttributeDto.fromJS(item));
+            }
+            this.id = data["id"];
+            this.bankAccountBankName = data["bankAccountBankName"];
+            this.bankAccountNumber = data["bankAccountNumber"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.currency = data["currency"];
+            this.amount = data["amount"];
+            this.description = data["description"];
+            this.cashFlowTypeId = data["cashFlowTypeId"];
+            this.endingBalance = data["endingBalance"];
+            this.isBalanceConfirmed = data["isBalanceConfirmed"];
+            this.cashflowCategoryGroupName = data["cashflowCategoryGroupName"];
+            this.cashflowCategoryName = data["cashflowCategoryName"];
+        }
+    }
+
+    static fromJS(data: any): TransactionDetailsDto {
+        let result = new TransactionDetailsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["bankAccountName"] = this.bankAccountName;
+        if (this.attributes && this.attributes.constructor === Array) {
+            data["attributes"] = [];
+            for (let item of this.attributes)
+                data["attributes"].push(item.toJSON());
+        }
+        data["id"] = this.id;
+        data["bankAccountBankName"] = this.bankAccountBankName;
+        data["bankAccountNumber"] = this.bankAccountNumber;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["currency"] = this.currency;
+        data["amount"] = this.amount;
+        data["description"] = this.description;
+        data["cashFlowTypeId"] = this.cashFlowTypeId;
+        data["endingBalance"] = this.endingBalance;
+        data["isBalanceConfirmed"] = this.isBalanceConfirmed;
+        data["cashflowCategoryGroupName"] = this.cashflowCategoryGroupName;
+        data["cashflowCategoryName"] = this.cashflowCategoryName;
+        return data; 
+    }
+}
+
+export interface ITransactionDetailsDto {
+    bankAccountName: string;
+    attributes: TransactionAttributeDto[];
+    id: number;
+    bankAccountBankName: string;
+    bankAccountNumber: string;
+    date: moment.Moment;
+    currency: string;
+    amount: number;
+    description: string;
+    cashFlowTypeId: string;
+    endingBalance: number;
+    isBalanceConfirmed: boolean;
+    cashflowCategoryGroupName: string;
+    cashflowCategoryName: string;
+}
+
+export class UiCustomizationSettingsEditDto implements IUiCustomizationSettingsEditDto {
+    layout: UiCustomizationLayoutSettingsEditDto;
+    header: UiCustomizationHeaderSettingsEditDto;
+    menu: UiCustomizationMenuSettingsEditDto;
+    footer: UiCustomizationFooterSettingsEditDto;
+
+    constructor(data?: IUiCustomizationSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.layout = data["layout"] ? UiCustomizationLayoutSettingsEditDto.fromJS(data["layout"]) : <any>undefined;
+            this.header = data["header"] ? UiCustomizationHeaderSettingsEditDto.fromJS(data["header"]) : <any>undefined;
+            this.menu = data["menu"] ? UiCustomizationMenuSettingsEditDto.fromJS(data["menu"]) : <any>undefined;
+            this.footer = data["footer"] ? UiCustomizationFooterSettingsEditDto.fromJS(data["footer"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UiCustomizationSettingsEditDto {
+        let result = new UiCustomizationSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["layout"] = this.layout ? this.layout.toJSON() : <any>undefined;
+        data["header"] = this.header ? this.header.toJSON() : <any>undefined;
+        data["menu"] = this.menu ? this.menu.toJSON() : <any>undefined;
+        data["footer"] = this.footer ? this.footer.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IUiCustomizationSettingsEditDto {
+    layout: UiCustomizationLayoutSettingsEditDto;
+    header: UiCustomizationHeaderSettingsEditDto;
+    menu: UiCustomizationMenuSettingsEditDto;
+    footer: UiCustomizationFooterSettingsEditDto;
+}
+
+export class UiCustomizationLayoutSettingsEditDto implements IUiCustomizationLayoutSettingsEditDto {
+    layoutType: string;
+    pageLoader: string;
+    contentSkin: string;
+
+    constructor(data?: IUiCustomizationLayoutSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.layoutType = data["layoutType"];
+            this.pageLoader = data["pageLoader"];
+            this.contentSkin = data["contentSkin"];
+        }
+    }
+
+    static fromJS(data: any): UiCustomizationLayoutSettingsEditDto {
+        let result = new UiCustomizationLayoutSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["layoutType"] = this.layoutType;
+        data["pageLoader"] = this.pageLoader;
+        data["contentSkin"] = this.contentSkin;
+        return data; 
+    }
+}
+
+export interface IUiCustomizationLayoutSettingsEditDto {
+    layoutType: string;
+    pageLoader: string;
+    contentSkin: string;
+}
+
+export class UiCustomizationHeaderSettingsEditDto implements IUiCustomizationHeaderSettingsEditDto {
+    desktopFixedHeader: boolean;
+    desktopMinimizeMode: string;
+    mobileFixedHeader: boolean;
+    dropdownSkinDesktop: string;
+    displaySubmenuArrowDesktop: boolean;
+    dropdownSkin: string;
+
+    constructor(data?: IUiCustomizationHeaderSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.desktopFixedHeader = data["desktopFixedHeader"];
+            this.desktopMinimizeMode = data["desktopMinimizeMode"];
+            this.mobileFixedHeader = data["mobileFixedHeader"];
+            this.dropdownSkinDesktop = data["dropdownSkinDesktop"];
+            this.displaySubmenuArrowDesktop = data["displaySubmenuArrowDesktop"];
+            this.dropdownSkin = data["dropdownSkin"];
+        }
+    }
+
+    static fromJS(data: any): UiCustomizationHeaderSettingsEditDto {
+        let result = new UiCustomizationHeaderSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["desktopFixedHeader"] = this.desktopFixedHeader;
+        data["desktopMinimizeMode"] = this.desktopMinimizeMode;
+        data["mobileFixedHeader"] = this.mobileFixedHeader;
+        data["dropdownSkinDesktop"] = this.dropdownSkinDesktop;
+        data["displaySubmenuArrowDesktop"] = this.displaySubmenuArrowDesktop;
+        data["dropdownSkin"] = this.dropdownSkin;
+        return data; 
+    }
+}
+
+export interface IUiCustomizationHeaderSettingsEditDto {
+    desktopFixedHeader: boolean;
+    desktopMinimizeMode: string;
+    mobileFixedHeader: boolean;
+    dropdownSkinDesktop: string;
+    displaySubmenuArrowDesktop: boolean;
+    dropdownSkin: string;
+}
+
+export class UiCustomizationMenuSettingsEditDto implements IUiCustomizationMenuSettingsEditDto {
+    position: string;
+    asideSkin: string;
+    fixedAside: boolean;
+    allowAsideMinimizing: boolean;
+    defaultMinimizedAside: boolean;
+    allowAsideHiding: boolean;
+    defaultHiddenAside: boolean;
+    submenuToggle: string;
+    dropdownSubmenuSkin: string;
+    dropdownSubmenuArrow: boolean;
+
+    constructor(data?: IUiCustomizationMenuSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.position = data["position"];
+            this.asideSkin = data["asideSkin"];
+            this.fixedAside = data["fixedAside"];
+            this.allowAsideMinimizing = data["allowAsideMinimizing"];
+            this.defaultMinimizedAside = data["defaultMinimizedAside"];
+            this.allowAsideHiding = data["allowAsideHiding"];
+            this.defaultHiddenAside = data["defaultHiddenAside"];
+            this.submenuToggle = data["submenuToggle"];
+            this.dropdownSubmenuSkin = data["dropdownSubmenuSkin"];
+            this.dropdownSubmenuArrow = data["dropdownSubmenuArrow"];
+        }
+    }
+
+    static fromJS(data: any): UiCustomizationMenuSettingsEditDto {
+        let result = new UiCustomizationMenuSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["position"] = this.position;
+        data["asideSkin"] = this.asideSkin;
+        data["fixedAside"] = this.fixedAside;
+        data["allowAsideMinimizing"] = this.allowAsideMinimizing;
+        data["defaultMinimizedAside"] = this.defaultMinimizedAside;
+        data["allowAsideHiding"] = this.allowAsideHiding;
+        data["defaultHiddenAside"] = this.defaultHiddenAside;
+        data["submenuToggle"] = this.submenuToggle;
+        data["dropdownSubmenuSkin"] = this.dropdownSubmenuSkin;
+        data["dropdownSubmenuArrow"] = this.dropdownSubmenuArrow;
+        return data; 
+    }
+}
+
+export interface IUiCustomizationMenuSettingsEditDto {
+    position: string;
+    asideSkin: string;
+    fixedAside: boolean;
+    allowAsideMinimizing: boolean;
+    defaultMinimizedAside: boolean;
+    allowAsideHiding: boolean;
+    defaultHiddenAside: boolean;
+    submenuToggle: string;
+    dropdownSubmenuSkin: string;
+    dropdownSubmenuArrow: boolean;
+}
+
+export class UiCustomizationFooterSettingsEditDto implements IUiCustomizationFooterSettingsEditDto {
+    fixedFooter: boolean;
+
+    constructor(data?: IUiCustomizationFooterSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.fixedFooter = data["fixedFooter"];
+        }
+    }
+
+    static fromJS(data: any): UiCustomizationFooterSettingsEditDto {
+        let result = new UiCustomizationFooterSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fixedFooter"] = this.fixedFooter;
+        return data; 
+    }
+}
+
+export interface IUiCustomizationFooterSettingsEditDto {
+    fixedFooter: boolean;
+}
+
 export class PagedResultDtoOfUserListDto implements IPagedResultDtoOfUserListDto {
     totalCount: number;
     items: UserListDto[];
@@ -30033,6 +33391,8 @@ export class GetUserForEditOutput implements IGetUserForEditOutput {
     profilePictureId: string;
     user: UserEditDto;
     roles: UserRoleDto[];
+    allOrganizationUnits: OrganizationUnitDto[];
+    memberedOrganizationUnits: string[];
 
     constructor(data?: IGetUserForEditOutput) {
         if (data) {
@@ -30052,6 +33412,16 @@ export class GetUserForEditOutput implements IGetUserForEditOutput {
                 for (let item of data["roles"])
                     this.roles.push(UserRoleDto.fromJS(item));
             }
+            if (data["allOrganizationUnits"] && data["allOrganizationUnits"].constructor === Array) {
+                this.allOrganizationUnits = [];
+                for (let item of data["allOrganizationUnits"])
+                    this.allOrganizationUnits.push(OrganizationUnitDto.fromJS(item));
+            }
+            if (data["memberedOrganizationUnits"] && data["memberedOrganizationUnits"].constructor === Array) {
+                this.memberedOrganizationUnits = [];
+                for (let item of data["memberedOrganizationUnits"])
+                    this.memberedOrganizationUnits.push(item);
+            }
         }
     }
 
@@ -30070,6 +33440,16 @@ export class GetUserForEditOutput implements IGetUserForEditOutput {
             for (let item of this.roles)
                 data["roles"].push(item.toJSON());
         }
+        if (this.allOrganizationUnits && this.allOrganizationUnits.constructor === Array) {
+            data["allOrganizationUnits"] = [];
+            for (let item of this.allOrganizationUnits)
+                data["allOrganizationUnits"].push(item.toJSON());
+        }
+        if (this.memberedOrganizationUnits && this.memberedOrganizationUnits.constructor === Array) {
+            data["memberedOrganizationUnits"] = [];
+            for (let item of this.memberedOrganizationUnits)
+                data["memberedOrganizationUnits"].push(item);
+        }
         return data; 
     }
 }
@@ -30078,6 +33458,8 @@ export interface IGetUserForEditOutput {
     profilePictureId: string;
     user: UserEditDto;
     roles: UserRoleDto[];
+    allOrganizationUnits: OrganizationUnitDto[];
+    memberedOrganizationUnits: string[];
 }
 
 export class UserEditDto implements IUserEditDto {
@@ -30344,6 +33726,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
     assignedRoleNames: string[] = [];
     sendActivationEmail: boolean;
     setRandomPassword: boolean;
+    organizationUnits: number[];
 
     constructor(data?: ICreateOrUpdateUserInput) {
         if (data) {
@@ -30364,6 +33747,11 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
             }
             this.sendActivationEmail = data["sendActivationEmail"];
             this.setRandomPassword = data["setRandomPassword"];
+            if (data["organizationUnits"] && data["organizationUnits"].constructor === Array) {
+                this.organizationUnits = [];
+                for (let item of data["organizationUnits"])
+                    this.organizationUnits.push(item);
+            }
         }
     }
 
@@ -30383,6 +33771,11 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
         }
         data["sendActivationEmail"] = this.sendActivationEmail;
         data["setRandomPassword"] = this.setRandomPassword;
+        if (this.organizationUnits && this.organizationUnits.constructor === Array) {
+            data["organizationUnits"] = [];
+            for (let item of this.organizationUnits)
+                data["organizationUnits"].push(item);
+        }
         return data; 
     }
 }
@@ -30392,6 +33785,7 @@ export interface ICreateOrUpdateUserInput {
     assignedRoleNames: string[];
     sendActivationEmail: boolean;
     setRandomPassword: boolean;
+    organizationUnits: number[];
 }
 
 export class LinkToUserInput implements ILinkToUserInput {
@@ -30844,6 +34238,45 @@ export enum TransactionStatsDtoAdjustmentType {
     _1 = 1, 
 }
 
+export enum CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity {
+    Days = <any>"Days", 
+    Weeks = <any>"Weeks", 
+    Months = <any>"Months", 
+    Quarters = <any>"Quarters", 
+    Years = <any>"Years", 
+    None = <any>"None", 
+}
+
+export enum CreateForecastScheduleDtoWeekDayNumber {
+    Sunday = <any>"Sunday", 
+    Monday = <any>"Monday", 
+    Tuesday = <any>"Tuesday", 
+    Wednesday = <any>"Wednesday", 
+    Thursday = <any>"Thursday", 
+    Friday = <any>"Friday", 
+    Saturday = <any>"Saturday", 
+}
+
+export enum UpdateForecastScheduleInputWeekDayNumber {
+    Sunday = <any>"Sunday", 
+    Monday = <any>"Monday", 
+    Tuesday = <any>"Tuesday", 
+    Wednesday = <any>"Wednesday", 
+    Thursday = <any>"Thursday", 
+    Friday = <any>"Friday", 
+    Saturday = <any>"Saturday", 
+}
+
+export enum ForecastScheduleDtoWeekDayNumber {
+    Sunday = <any>"Sunday", 
+    Monday = <any>"Monday", 
+    Tuesday = <any>"Tuesday", 
+    Wednesday = <any>"Wednesday", 
+    Thursday = <any>"Thursday", 
+    Friday = <any>"Friday", 
+    Saturday = <any>"Saturday", 
+}
+
 export enum FriendDtoState {
     _1 = 1, 
     _2 = 2, 
@@ -30855,6 +34288,11 @@ export enum ChatMessageDtoSide {
 }
 
 export enum ChatMessageDtoReadState {
+    _1 = 1, 
+    _2 = 2, 
+}
+
+export enum ChatMessageDtoReceiverReadState {
     _1 = 1, 
     _2 = 2, 
 }
@@ -30889,6 +34327,11 @@ export enum MoveRuleDtoApplyOption {
     MatchedAndUnclassified = <any>"MatchedAndUnclassified", 
     SelectedOnly = <any>"SelectedOnly", 
     AllExisting = <any>"AllExisting", 
+}
+
+export enum TransactionCommonDetailsDtoAmountFormat {
+    Credits = <any>"Credits", 
+    Debits = <any>"Debits", 
 }
 
 export enum AccountDtoState {
