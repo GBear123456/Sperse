@@ -1,5 +1,5 @@
 import { Component, ViewChild, Injector, Output, EventEmitter, OnInit } from '@angular/core';
-import { CashflowServiceProxy, CashFlowGridSettingsDto } from '@shared/service-proxies/service-proxies';
+import { CashflowServiceProxy, CashFlowGridSettingsDto, CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity } from '@shared/service-proxies/service-proxies';
 import * as ModelEnums from '../models/setting-enums';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
@@ -14,7 +14,7 @@ import { Observable } from 'rxjs/Observable';
 })
 export class PreferencesDialogComponent extends ModalDialogComponent implements OnInit {
     GeneralScope = ModelEnums.GeneralScope;
-    PeriodScope = ModelEnums.PeriodScope;
+    PeriodScope = CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
 
     model: CashFlowGridSettingsDto;
     active = false;

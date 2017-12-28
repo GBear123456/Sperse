@@ -1487,24 +1487,24 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     hideColumnsWithZeroActivity(cellObj, preference) {
-        let path = cellObj.cell.columnPath || cellObj.cell.path;
-        if (path) {
-            let cellPeriod = this.getLowestIntervalFromPath(path, this.getColumnFields());
-            let isCellMarked = this.userPreferencesService.isCellMarked(
-                preference['sourceValue'],
-                ModelEnums.PeriodScope[this.capitalize(cellPeriod)]
-            );
-            if (isCellMarked) {
-                let activity = this.columnHasActivity(cellObj, cellPeriod);
-                if (!activity) {
-                    cellObj.cellElement.addClass('hideZeroActivity');
-                    cellObj.cellElement.click(function(event) {
-                        event.stopImmediatePropagation();
-                    });
-                    cellObj.cellElement.text('');
-                }
-            }
-        }
+        //let path = cellObj.cell.columnPath || cellObj.cell.path;
+        //if (path) {
+        //    let cellPeriod = this.getLowestIntervalFromPath(path, this.getColumnFields());
+        //    let isCellMarked = this.userPreferencesService.isCellMarked(
+        //        preference['sourceValue'],
+        //        ModelEnums.PeriodScope[this.capitalize(cellPeriod)]
+        //    );
+        //    if (isCellMarked) {
+        //        let activity = this.columnHasActivity(cellObj, cellPeriod);
+        //        if (!activity) {
+        //            cellObj.cellElement.addClass('hideZeroActivity');
+        //            cellObj.cellElement.click(function(event) {
+        //                event.stopImmediatePropagation();
+        //            });
+        //            cellObj.cellElement.text('');
+        //        }
+        //    }
+        //}
     }
 
     addPreferenceClass(preference) {

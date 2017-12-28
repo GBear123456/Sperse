@@ -15984,7 +15984,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
     showAmountsWithDecimals: number;
     hideZeroValuesInCells: number;
     showNegativeValuesInRed: number;
-    hideColumnsWithZeroActivity: number;
+    showColumnsWithZeroActivity: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
 
     constructor(data?: ICashflowGridGeneralSettingsDto) {
         if (data) {
@@ -16000,7 +16000,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
             this.showAmountsWithDecimals = data["showAmountsWithDecimals"];
             this.hideZeroValuesInCells = data["hideZeroValuesInCells"];
             this.showNegativeValuesInRed = data["showNegativeValuesInRed"];
-            this.hideColumnsWithZeroActivity = data["hideColumnsWithZeroActivity"];
+            this.showColumnsWithZeroActivity = data["showColumnsWithZeroActivity"];
         }
     }
 
@@ -16015,7 +16015,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
         data["showAmountsWithDecimals"] = this.showAmountsWithDecimals;
         data["hideZeroValuesInCells"] = this.hideZeroValuesInCells;
         data["showNegativeValuesInRed"] = this.showNegativeValuesInRed;
-        data["hideColumnsWithZeroActivity"] = this.hideColumnsWithZeroActivity;
+        data["showColumnsWithZeroActivity"] = this.showColumnsWithZeroActivity;
         return data; 
     }
 }
@@ -16024,7 +16024,7 @@ export interface ICashflowGridGeneralSettingsDto {
     showAmountsWithDecimals: number;
     hideZeroValuesInCells: number;
     showNegativeValuesInRed: number;
-    hideColumnsWithZeroActivity: number;
+    showColumnsWithZeroActivity: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
 }
 
 export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSettingsDto {
@@ -34236,6 +34236,15 @@ export enum BankAccountDailyStatDtoPeriod {
 export enum TransactionStatsDtoAdjustmentType {
     _0 = 0, 
     _1 = 1, 
+}
+
+export enum CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity {
+    Days = <any>"Days", 
+    Weeks = <any>"Weeks", 
+    Months = <any>"Months", 
+    Quarters = <any>"Quarters", 
+    Years = <any>"Years", 
+    None = <any>"None", 
 }
 
 export enum CreateForecastScheduleDtoWeekDayNumber {
