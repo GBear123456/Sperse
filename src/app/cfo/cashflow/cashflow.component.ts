@@ -2194,7 +2194,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      */
     resortPivotGrid(event: {sortBy: string, sortByDirection: SortState}) {
         let sortOptions = this.sortings.find(sorting => sorting.name.toLowerCase() === event.sortBy.toLowerCase())['sortOptions'];
-        sortOptions.sortOrder = event.sortByDirection === SortState.DOWN ? 'desc' : 'asc';
+        sortOptions.sortOrder = event.sortByDirection === SortState.DOWN ? 'asc' : 'desc';
         this.apiTableFields.filter(field => field.resortable).forEach(field => {
             this.resetFieldSortOptions(field.caption);
             this.pivotGrid.instance.getDataSource().field(field.caption, sortOptions);
