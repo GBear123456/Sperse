@@ -15,9 +15,11 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { MdDialog } from '@angular/material';
 
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
@@ -31,14 +33,18 @@ import * as moment from 'moment';
 })
 export class TransactionsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+
     items: any;
     private readonly dataSourceURI = 'Transaction';
     private filters: FilterModel[];
     private rootComponent: any;
+    private cashFlowCategoryFilter = [];
 
+    public dragInProgress = false;
+    public ctegoriesShowed = false;
     public headlineConfig = {
         names: [this.l('Transactions')],
-        icon: 'credit-card',
+        iconSrc: 'assets/common/icons/credit-card-icon.svg',
         buttons: []
     };
 
@@ -53,21 +59,21 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                                 this.dataGrid.instance.repaint();
                             }, 1000);
                             event.element.attr('filter-pressed', 
-                                this._filtersService.fixed = 
-                                    !this._filtersService.fixed);  
+                                this.filtersService.fixed = 
+                                    !this.filtersService.fixed);  
                         },
                         options: {
                             mouseover: (event) => {
-                                this._filtersService.enable();
+                                this.filtersService.enable();
                             },
                             mouseout: (event) => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
                             } 
                         },
                         attr: { 
-                            'filter-selected': this._filtersService.hasFilterSelected,
-                            'filter-pressed': this._filtersService.fixed
+                            'filter-selected': this.filtersService.hasFilterSelected,
+                            'filter-pressed': this.filtersService.fixed
                         } 
                     } 
                 ]
@@ -121,12 +127,14 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
 
     constructor(injector: Injector, 
+        public dialog: MdDialog,
         private _appService: AppService,
         private _TransactionsServiceProxy: TransactionsServiceProxy,
-        private _filtersService: FiltersService) {
+        public filtersService: FiltersService
+    ) {
         super(injector);
 
-        this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
+        this.filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
 
         this.dataSource = {
@@ -155,7 +163,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     ngOnInit(): void {
         this._TransactionsServiceProxy.getFiltersInitialData()
             .subscribe(result => {
-                this._filtersService.setup(
+                this.filtersService.setup(
                     this.filters = [
                         new FilterModel({
                             component: FilterCalendarComponent,
@@ -189,18 +197,6 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             caption: 'Amount',
                             field: 'Amount',
                             items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                        }),
-                        new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            field: 'CashFlowTypeId',
-                            caption: 'CashflowType',
-                            items: {
-                                element: new FilterCheckBoxesModel({
-                                    dataSource: result.cashflowTypes,
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
-                            }
                         }),
                         new FilterModel({
                             component: FilterCheckBoxesComponent,
@@ -266,17 +262,22 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                 );
             });
 
-        this._filtersService.apply(() => {
+        this.filtersService.apply(() => {
             this.initToolbarConfig();
-            this.processODataFilter(this.dataGrid.instance,
-                this.dataSourceURI, this.filters, (filter) => {
+            this.processFilterInternal();
+        });
+    }
+  
+    processFilterInternal() {
+        this.processODataFilter(this.dataGrid.instance,
+            this.dataSourceURI, this.cashFlowCategoryFilter.concat(this.filters), 
+                (filter) => {
                     let filterMethod = this['filterBy' +
                         this.capitalize(filter.caption)];
                     if (filterMethod)
                         return filterMethod.call(this, filter);
                 }
-            );
-        });
+        );
     }
 
     filterByDate(filter) {
@@ -327,10 +328,6 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         return data;
     }
 
-    filterByCashflowType(filter) {
-        return this.filterByFilterElement(filter);
-    }
-
     filterByTransactionCategory(filter) {
         return this.filterByFilterElement(filter);
     }
@@ -364,6 +361,59 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         return data;
     }
 
+    filterByCashflowCategory($event) {
+        let key = $event.selectedRowKeys.pop();
+        if (key) {
+            let field = {};
+            if (!parseInt(key))
+                field['CashFlowTypeId'] = new FilterItemModel(key);
+            else if (!parseInt(key.split('').reverse().join('')))
+                field['CashflowCategoryGroupId'] = new FilterItemModel(parseInt(key));
+            else
+                field['CashflowCategoryId'] = new FilterItemModel(parseInt(key));
+
+            this.cashFlowCategoryFilter = [
+                new FilterModel({
+                    items: field
+                })
+            ];
+
+            this.processFilterInternal();          
+        }
+    }
+
+    checkUncategozired(rowData) {
+        this['cssClass'] = (rowData.CashflowCategoryId ? '': 'un') + 'categorized';
+        return '';
+    }
+
+    onSelectionChanged($event) {
+        let img = new Image();
+        img.src = 'assets/common/images/transactions.png';
+        this.ctegoriesShowed = Boolean($event.selectedRowKeys.length);
+        $event.element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend') 
+            .filter('.dx-selection').attr('draggable', true).on('dragstart', (e) => {
+                this.dragInProgress = true;
+                e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
+            }).on('dragend', (e) => {
+                this.dragInProgress = false;
+            });      
+    }
+
+    openCategorizationWindow($event) {
+        this.dialog.open(RuleDialogComponent, {
+            panelClass: 'slider', 
+            data: {
+                categoryId: $event.categoryId,
+                transactions: this.dataGrid
+                    .instance.getSelectedRowKeys().map((obj) => {
+                        return obj.Id;
+                    }),
+                refershParent: Function()
+            }
+        }).afterClosed().subscribe(result => {});
+    }
+
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
@@ -371,9 +421,9 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
 
     ngOnDestroy() {
         this._appService.toolbarConfig = null;
-        this._filtersService.localizationSourceName 
+        this.filtersService.localizationSourceName 
             = AppConsts.localization.defaultLocalizationSourceName;
-        this._filtersService.unsubscribe();
+        this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }
 }

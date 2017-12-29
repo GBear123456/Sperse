@@ -112,7 +112,7 @@ export abstract class AppComponentBase {
                         let val = pair.pop().value, key = pair.pop(), operator = {};
                         if (filter.operator)
                             operator[filter.operator] = val;
-                        if (val && (typeof (val) == 'string')) {
+                        if (val && (['string', 'number'].indexOf(typeof (val)) >= 0)) {
                             obj[this.capitalize(key)] = filter.operator ? operator : val;
                         }
                         return obj;

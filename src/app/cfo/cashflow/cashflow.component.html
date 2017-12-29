@@ -53,7 +53,7 @@
                       [dataSource]="statsDetailResult"
                       (onDataErrorOccurred)="httpConfig.handleError($event.error)">
             <dxo-header-filter [visible]="true"></dxo-header-filter>
-            <dxi-column dataField="date" width="130" dataType="date" format="shortDate" [alignment]="left"></dxi-column>
+            <dxi-column dataField="date" width="130" cellTemplate="dateCell" [alignment]="left"></dxi-column>
             <dxi-column dataField="description">
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
             </dxi-column>
@@ -78,6 +78,9 @@
             </dxi-column>
             <dxo-load-panel [enabled]="true"></dxo-load-panel>
             <dxo-scrolling mode="virtual"></dxo-scrolling>
+            <div *dxTemplate="let cellData of 'dateCell'">
+                {{cellData.value | date: 'MM/dd/yyyy'}}
+            </div>
         </dx-data-grid>
     </div>
 </div>

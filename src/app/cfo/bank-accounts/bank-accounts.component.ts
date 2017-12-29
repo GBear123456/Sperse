@@ -34,7 +34,7 @@ export class BankAccountsComponent extends AppComponentBase implements OnInit {
 
         this.headlineConfig = {
             names: [this.l('CashflowSetup_Title'), this.l('SetupStep_FinancialAccounts')],
-            icon: 'globe',
+            iconSrc: 'assets/common/icons/magic-stick-icon.svg',
             buttons: [
                 {
                     enabled: true,

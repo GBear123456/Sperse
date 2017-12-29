@@ -93,7 +93,7 @@
                        placeholder=""
                        [dataSource]="accounts"
                        valueExpr="id"
-                       displayExpr="accountName"
+                       displayExpr="name"
                        [(value)]="accountId">
                    </dx-select-box>
                 </div>
@@ -155,6 +155,7 @@
                     parentIdExpr="parent"
                     [hoverStateEnabled]="true"
                     [(dataSource)]="categories"
+                    [selectedRowKeys]="[data.categoryId]"
                     [editing]="{allowAdding: true, allowUpdating: true, allowDeleting: true}"
                     [selection]="{allowSelectAll: false, mode: 'single'}"
                     [rootValue]="0"

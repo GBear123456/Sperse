@@ -5,6 +5,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { CfoRoutingModule } from './cfo-routing.module';
 import { BankAccountsComponent } from './bank-accounts/bank-accounts.component';
 import { TransactionsComponent } from './transactions/transactions.component';
+import { CategorizationComponent } from './transactions/categorization/categorization.component';
 import { CashflowSetupComponent } from './cashflow-setup/cashflow-setup.component';
 import { SetupStepComponent } from './shared/setup-steps/setup-steps.component';
 import { SynchProgressComponent } from './shared/synch-progress/synch-progress.component';
@@ -82,6 +83,7 @@ import {
     declarations: [
         BankAccountsComponent,
         TransactionsComponent,
+        CategorizationComponent,
         CashflowSetupComponent,
         SetupStepComponent,
         SynchProgressComponent,

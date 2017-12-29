@@ -419,7 +419,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Cash Flow Statement and Forecast')],
-            icon: 'globe',
+            iconSrc: 'assets/common/icons/chart-icon.svg',
             buttons: []
         };
     }
@@ -1514,24 +1514,24 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     hideColumnsWithZeroActivity(cellObj, preference) {
-        let path = cellObj.cell.columnPath || cellObj.cell.path;
-        if (path) {
-            let cellPeriod = this.getLowestIntervalFromPath(path, this.getColumnFields());
-            let isCellMarked = this.userPreferencesService.isCellMarked(
-                preference['sourceValue'],
-                ModelEnums.PeriodScope[this.capitalize(cellPeriod)]
-            );
-            if (isCellMarked) {
-                let activity = this.columnHasActivity(cellObj, cellPeriod);
-                if (!activity) {
-                    cellObj.cellElement.addClass('hideZeroActivity');
-                    cellObj.cellElement.click(function(event) {
-                        event.stopImmediatePropagation();
-                    });
-                    cellObj.cellElement.text('');
-                }
-            }
-        }
+        //let path = cellObj.cell.columnPath || cellObj.cell.path;
+        //if (path) {
+        //    let cellPeriod = this.getLowestIntervalFromPath(path, this.getColumnFields());
+        //    let isCellMarked = this.userPreferencesService.isCellMarked(
+        //        preference['sourceValue'],
+        //        ModelEnums.PeriodScope[this.capitalize(cellPeriod)]
+        //    );
+        //    if (isCellMarked) {
+        //        let activity = this.columnHasActivity(cellObj, cellPeriod);
+        //        if (!activity) {
+        //            cellObj.cellElement.addClass('hideZeroActivity');
+        //            cellObj.cellElement.click(function(event) {
+        //                event.stopImmediatePropagation();
+        //            });
+        //            cellObj.cellElement.text('');
+        //        }
+        //    }
+        //}
     }
 
     addPreferenceClass(preference) {
@@ -1817,7 +1817,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     customCurrency(value) {
-        return (value).toLocaleString('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 0});
+        return (value).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
     formattingDate(param = []) {

@@ -26,8 +26,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @ViewChild('keywordsComponent') keywordList: DxDataGridComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
-
-    conditionId: number;
+    
     minAmount: number;
     maxAmount: number;
     bankId: number;
@@ -93,7 +92,6 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                 this.descriptor = rule.transactionDecriptorAttributeTypeId || rule.transactionDecriptor;
                 this.data.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
                 if (rule.condition) {
-                    this.conditionId = rule.condition.id;
                     this.bankId = rule.condition.bankId;
                     this.accountId = rule.condition.bankAccountId;
                     this.amountFormat = rule.condition.cashFlowAmountFormat;
@@ -128,7 +126,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
             if (data.groups)
                  _.mapObject(data.groups, (item, key) => {
                     categories.push({
-                        key: key,
+                        key: key + item.typeId,
                         parent: item.typeId,
                         name: item.name
                     });
@@ -137,17 +135,21 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                  _.mapObject(data.items, (item, key) => {
                     categories.push({
                         key: key,
-                        parent: item.groupId.toString(),
+                        parent: item.groupId + 
+                            data.groups[item.groupId].typeId,
                         name: item.name
                     });
                 });
 
             this.categories = categories;
             if (this.data.categoryId) {
+                this.categoryList.instance.focus();
                 let category = data.items[this.data.categoryId];
                 this.categoryList.instance.expandRow(data.groups[category.groupId].typeId);
-                this.categoryList.instance.expandRow(category.groupId.toString());
-                this.categoryList.instance.option('selectedRowKeys', [this.data.categoryId]);
+                this.categoryList.instance.expandRow(category.groupId + data.groups[category.groupId].typeId);
+                setTimeout(() => {
+                    this.categoryList.instance.selectRows([this.data.categoryId], true);
+                }, 0);
             }
         });
     }
@@ -173,7 +175,6 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                             transactionDecriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor: undefined,
                             applyOption: (this.data.id ? EditRuleDtoApplyOption: CreateRuleDtoApplyOption)[option],
                             condition: ConditionDto.fromJS({
-                                id: this.conditionId,
                                 minAmount: this.minAmount,
                                 maxAmount: this.maxAmount,
                                 bankId: this.bankId,
@@ -268,8 +269,13 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
 
     onBankChanged($event) {
         if ($event.value && this.banks)
-            this.accounts = _.findWhere(this.banks,
-                {id: $event.value})['bankAccounts'];
+            this.accounts = (_.findWhere(this.banks,
+                {id: $event.value})['bankAccounts'] || []).map((item) => {
+                    return {
+                        id: item.id,
+                        name: item.accountName || item.accountNumber
+                    };
+                });
     }
 
     validate(ruleCheckOnly: boolean = false) {
@@ -309,15 +315,15 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     }
 
     getCategoryItemId(key) {
-        return this.addedCategoryItems[key] || key;
+        return parseInt(this.addedCategoryItems[key] || key);
     }
 
     onCategoryUpdated($event) {
         let groupUpdate = this.categorization.groups[$event.key];
         this._classificationServiceProxy['updateCategory' + (groupUpdate ? 'Group': '')](
             (groupUpdate ? UpdateCategoryGroupInput: UpdateCategoryInput).fromJS({
-                id: $event.key,
-                groupId: this.categorization.items[$event.key].groupId,
+                id: parseInt($event.key),
+                groupId: groupUpdate ? undefined: this.categorization.items[$event.key].groupId,
                 name: $event.data.name
             })
         ).subscribe((error) => {
