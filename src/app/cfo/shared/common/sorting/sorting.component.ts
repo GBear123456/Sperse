@@ -32,11 +32,7 @@ export class SortingComponent {
         widget: 'dxButton',
         options: {
             icon: this.sortingIcons[SortState.NONE].icon,
-            activeStateEnabled: false,
-            sortBy: SortState.NONE,
-            text: null,
-            name: null,
-            onClick: null
+            activeStateEnabled: false
         }
     };
 
@@ -45,6 +41,8 @@ export class SortingComponent {
             let item = JSON.parse(JSON.stringify(this._defaultSortingOptions));
             item.options.text = sorting.text;
             item.options.name = sorting.name;
+            item.options.sortBy = sorting.activeByDefault ? SortState.DOWN : SortState.NONE;
+            item.options.elementAttr = { 'class': sorting.activeByDefault ? 'active' : '' };
             item.options.onClick = (e) => {
                 const newSortBy = this.getNewSortByFromOld(e.component.option('sortBy'));
                 /** Change sorting icon */

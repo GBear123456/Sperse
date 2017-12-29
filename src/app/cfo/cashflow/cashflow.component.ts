@@ -38,6 +38,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 
 import { SortState } from '@app/cfo/shared/common/sorting/sort-state';
+import { SortingItemModel } from '@app/cfo/shared/common/sorting/sorting-item.model';
 
 const moment = extendMoment(Moment);
 
@@ -144,6 +145,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             area: 'row',
             areaIndex: 1,
             dataField: `categorization.${this.categorization[0]}`,
+            sortBy: 'displayText',
+            sortOrder: 'asc',
             expanded: false,
             showTotals: true,
             resortable: true,
@@ -170,6 +173,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             showTotals: false,
             area: 'row',
             areaIndex: 2,
+            sortBy: 'displayText',
+            sortOrder: 'asc',
             resortable: true,
             dataField: `categorization.${this.categorization[1]}`,
             customizeText: cellInfo => {
@@ -180,6 +185,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             caption: 'Descriptor',
             showTotals: false,
             area: 'row',
+            sortBy: 'displayText',
+            sortOrder: 'asc',
             resortable: true,
             areaIndex: 3,
             dataField: `categorization.${this.categorization[2]}`
@@ -338,14 +345,12 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         [ModelEnums.GeneralScope.BeginningBalances]: this.isStartingBalanceDataColumn,
         [ModelEnums.GeneralScope.EndingBalances]: this.isAllTotalBalanceCell
     };
-    sortBy = 'Category';
-    sortOrder = 'asc';
     cashflowGridSettings: CashFlowGridSettingsDto;
-    sortings = [
+    sortings: SortingItemModel[] = [
         {
             name: 'Category',
             text: this.ls('Platform', 'SortBy', this.l('Transactions_CategoryName')),
-            /** Used for the cashflow sorting logic, not for the sorting component */
+            activeByDefault: true,
             sortOptions: {
                 sortBy: 'displayText',
                 sortOrder: 'asc'
@@ -354,7 +359,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         {
             name: 'Account',
             text: this.ls('Platform', 'SortBy', this.l('Transactions_Amount')),
-            /** Used for the cashflow sorting logic, not for the sorting component */
             sortOptions: {
                 sortBySummaryField: 'amount',
                 sortBySummaryPath: [],
@@ -2193,7 +2197,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param {string} name
      */
     resortPivotGrid(event: {sortBy: string, sortByDirection: SortState}) {
-        let sortOptions = this.sortings.find(sorting => sorting.name.toLowerCase() === event.sortBy.toLowerCase())['sortOptions'];
+        let sortOptions = underscore.extend(this.sortings.find(sorting => sorting.name.toLowerCase() === event.sortBy.toLowerCase())['sortOptions']);
         sortOptions.sortOrder = event.sortByDirection === SortState.DOWN ? 'asc' : 'desc';
         this.apiTableFields.filter(field => field.resortable).forEach(field => {
             this.resetFieldSortOptions(field.caption);
