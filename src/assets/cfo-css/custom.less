@@ -80,7 +80,7 @@ body {
             text-align: left;
             position: relative;
             border-radius: 4px;
-
+            
             &::before {
                 content: '';
                 background: url('https://testadmin.sperse.com/assets/cfo-css/copy-icon.svg') 50% 50% no-repeat;
@@ -92,14 +92,14 @@ body {
                 top: 50%;
                 transform: translateY(-50%);
             }
-
+            
             &:last-child {
                 padding-left: 128px;
                 &::before {
                     left: 85px;
                 }
             }
-
+            
             .value {
                 color: #212c36;
                 font-size: 28px;
@@ -110,21 +110,21 @@ body {
                 font-size: 12px;
                 font-weight: 300;
             }
-
+            
             @media all and (max-width: 1000px) {
-				padding-left: 120px;
-				&::before {
-					left: 80px;
-				}
-				&:last-child {
-					padding-left: 96px;
-					&::before {
-						left: 58px;
-					}
-				}
-			}
+                padding-left: 120px;
+                &::before {
+                    left: 80px;
+                }
+                &:last-child {
+                    padding-left: 96px;
+                    &::before {
+                        left: 58px;
+                    }
+                }
+            }
         }
-
+        
         .col-xs-12.col-sm-4:nth-child(2) {
             &::before {
                 background: url('https://testadmin.sperse.com/assets/cfo-css/total-icon.svg') 50% 50% no-repeat;
@@ -150,7 +150,7 @@ body {
                 color: #c6c8cb;
             }
         }
-
+        
         ul {
             li {
                 i {
@@ -207,10 +207,10 @@ body {
                 }
             }
         }
-
+        
         .status {
             font-size: 11px;
-
+            
             .account-status {
                 background: #f3f7fa;
                 color: #424c56;
@@ -313,7 +313,7 @@ body {
             &:not(:last-child) {
                 border-right-color: #f9fbfc;
             }
-
+            
             .tri {
                 right: -32px;
                 top: -1px;
@@ -321,12 +321,12 @@ body {
                 border-top: 30px solid transparent;
                 border-bottom: 30px solid transparent;
                 background-color: #00aeef;
-
+                
                 &::after {
                     border-left-color: #f9fbfc;
                 }
             }
-
+            
             .icon-checkmark-circle {
                 color: #00aeef;
             }
@@ -370,7 +370,7 @@ body {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
-
+    
     .hover-swap {
         max-width: 20%;
         width: 150px;
@@ -381,7 +381,7 @@ body {
         position: relative;
         cursor: pointer;
     }
-
+    
     .brokerage-card {
         border: 0 !important;
         padding: 10px !important;
@@ -389,7 +389,7 @@ body {
             max-width: 100%;
         }
     }
-
+    
     .brokerage-card.hover {
         border: 0 !important;
         background-color: transparent;
@@ -486,7 +486,7 @@ body {
                 background-color: transparent;
                 color: #A4A9B3;
             }
-
+            
             + form {
                 width: 50%;
                 float: left;
@@ -499,7 +499,7 @@ body {
             }
         }
     }
-
+    
     .results {
         .success-summary {
             .special-info {
@@ -520,6 +520,38 @@ body {
             .positive {
                 .sum-msg {
                     color: #202b35;
+                }
+            }
+        }
+    }
+    
+    .mfa {
+        display: flex;
+        justify-content: space-around;
+        
+        .special-info {
+            margin: 0;
+            width: 42%;
+        }
+        
+        form {
+            width: 42%;
+        }
+        
+        .challenge {
+            label {
+                width: 100%;
+            }
+            input[type="text"],
+            textarea {
+                width: 100% !important;
+            }
+            
+            .choices {
+                div {
+                    h3 {
+                        width: 100%;
+                    }
                 }
             }
         }
