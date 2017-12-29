@@ -45,82 +45,8 @@
         top: -75px !important;
     }
 
-    .filter-sort-options {
+    .sort-options {
         padding: 20px 15px 0px 20px;
-        .active-filter::after {
-            content: '';
-            position: absolute;
-            display: block;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: red;
-            top: 7px;
-            right: 7px;
-        }
-
-        .clear-all {
-            height: 37px;
-            font-size: 11px;
-            line-height: 2.18;
-            letter-spacing: 0.4px;
-            color: #677380;
-            text-transform: uppercase;
-            background-color: transparent;
-            border: 0;
-            box-shadow: none;
-            float: right;
-            font-weight: 400;
-            outline: none;
-        }
-
-        /deep/ .dx-button {
-            width: 104px;
-            position: relative;
-            &:first-child {
-              margin-right: 7px;
-            }
-            &:nth-child(2) {
-                min-width: 60px;
-                &:after {
-                    content: '';
-                    display: block;
-                    background: url('../../../assets/common/icons/down-arrow-icon.svg');
-                    position: absolute;
-                    width: 8px;
-                    height: 4px;
-                    right: 12px;
-                    top: 48%;
-                }
-                .dx-icon {
-                  right: 10px!important;
-                }
-                .dx-button-content {
-                    padding-right: 28px;
-                }
-            }
-            &.dx-state-hover,
-            &.dx-state-focused,
-            &.dx-state-active {
-              background-color: #FFF;
-            }
-            .dx-button-content {
-                height: 37px;
-                min-width: 50px;
-                padding: 6px 15px;
-                img.dx-icon {
-                    width: auto!important;
-                    height: auto!important;
-                }
-                .dx-button-text {
-                    color: #677380;
-                    font-size: 13px;
-                    font-weight: 300;
-                    line-height: 1.85;
-                    letter-spacing: 0.3px;
-                }
-            }
-        }
     }
 
     /deep/ .cashflow .dx-pivotgrid {
