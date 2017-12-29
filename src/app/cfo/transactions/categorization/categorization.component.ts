@@ -34,10 +34,10 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         private _filtersService: FiltersService,
         private _classificationServiceProxy: ClassificationServiceProxy
     ) {
-        super(injector);       
+        super(injector);
     }
 
-    ngOnInit() { 
+    ngOnInit() {
         this._classificationServiceProxy.getCategories().subscribe((data) => {
             let categories = [];
             if (data.types)
@@ -60,7 +60,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                  _.mapObject(data.items, (item, key) => {
                     categories.push({
                         key: key,
-                        parent: item.groupId + 
+                        parent: item.groupId +
                             data.groups[item.groupId].typeId,
                         name: item.name
                     });
@@ -68,7 +68,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
             this.categories = categories;
         });
-    }        
+    }
 
     initDragAndDropEvents($event) {
         $event.element.find('tr[aria-level="2"] .dx-treelist-text-content')
@@ -76,7 +76,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             .on('dragenter', (e) => {
                 e.target.classList.add('drag-hover');
             }).on('dragover', (e) => {
-                e.originalEvent.preventDefault(); 
+                e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
             }).on('dragleave', (e) => {
                 e.target.classList.remove('drag-hover');
