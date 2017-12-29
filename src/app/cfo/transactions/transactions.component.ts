@@ -15,9 +15,11 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { MdDialog } from '@angular/material';
 
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
@@ -38,6 +40,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     private rootComponent: any;
     private cashFlowCategoryFilter = [];
 
+    public dragInProgress = false;
     public ctegoriesShowed = false;
     public headlineConfig = {
         names: [this.l('Transactions')],
@@ -124,6 +127,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
 
     constructor(injector: Injector, 
+        public dialog: MdDialog,
         private _appService: AppService,
         private _TransactionsServiceProxy: TransactionsServiceProxy,
         public filtersService: FiltersService
@@ -376,6 +380,38 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
 
             this.processFilterInternal();          
         }
+    }
+
+    checkUncategozired(rowData) {
+        this['cssClass'] = (rowData.CashflowCategoryId ? '': 'un') + 'categorized';
+        return '';
+    }
+
+    onSelectionChanged($event) {
+        let img = new Image();
+        img.src = 'assets/common/images/transactions.png';
+        this.ctegoriesShowed = Boolean($event.selectedRowKeys.length);
+        $event.element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend') 
+            .filter('.dx-selection').attr('draggable', true).on('dragstart', (e) => {
+                this.dragInProgress = true;
+                e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
+            }).on('dragend', (e) => {
+                this.dragInProgress = false;
+            });      
+    }
+
+    openCategorizationWindow($event) {
+        this.dialog.open(RuleDialogComponent, {
+            panelClass: 'slider', 
+            data: {
+                categoryId: $event.categoryId,
+                transactions: this.dataGrid
+                    .instance.getSelectedRowKeys().map((obj) => {
+                        return obj.Id;
+                    }),
+                refershParent: Function()
+            }
+        }).afterClosed().subscribe(result => {});
     }
 
     ngAfterViewInit(): void {

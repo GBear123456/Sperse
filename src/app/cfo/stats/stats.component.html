@@ -21,6 +21,7 @@
                     [customizeLabel]="customizeLabel"
                     [customizePoint]="customizePoint"
                     (onDone)="onDone($event)"
+                    resolveLabelOverlapping="stack"
                     #linearChart>
                     <dxo-size [height]="chartsHeight / 2"></dxo-size>
                     <!-- common settings for charts -->
@@ -44,7 +45,7 @@
                         pane="topPane"
                         color="url(#forecast-linear-gradient)"
                         type="rangeArea"
-                        rangeValue1Field="minEndingBalance"
+                        rangeValue1Field="minRange"
                         rangeValue2Field="forecastEndingBalance">
                         <dxo-label [visible]="false"></dxo-label>
                     </dxi-series>
@@ -58,7 +59,7 @@
                         pane="topPane"
                         color="url(#historical-linear-gradient)"
                         type="rangeArea"
-                        rangeValue1Field="minEndingBalance"
+                        rangeValue1Field="minRange"
                         rangeValue2Field="endingBalance">
                         <dxo-label [visible]="false"></dxo-label>
                     </dxi-series>
@@ -116,8 +117,7 @@
                         argumentField="date"
                         type="stackedBar"
                         [showInLegend]="false"
-                        ignoreEmptyPoints="true"
-                    >
+                        ignoreEmptyPoints="true">
                         <dxo-point size="6"></dxo-point>
                     </dxo-common-series-settings>
 

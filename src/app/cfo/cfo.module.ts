@@ -25,6 +25,8 @@ import { OperationsComponent } from './cashflow/operations/operations.component'
 import { MdTabsModule } from '@angular/material';
 import { MdDialogModule } from '@angular/material';
 
+import { SortingComponent } from '@app/cfo/shared/common/sorting/sorting.component';
+
 import {
     DxButtonModule,
     DxCheckBoxModule,
@@ -93,7 +95,8 @@ import {
         SourceDataComponent,
         RuleDialogComponent,
         CategoryDeleteDialogComponent,
-        RulesComponent
+        RulesComponent,
+        SortingComponent
     ],
     entryComponents: [
         RuleDialogComponent,

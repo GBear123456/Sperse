@@ -143,10 +143,13 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
 
             this.categories = categories;
             if (this.data.categoryId) {
+                this.categoryList.instance.focus();
                 let category = data.items[this.data.categoryId];
                 this.categoryList.instance.expandRow(data.groups[category.groupId].typeId);
-                this.categoryList.instance.expandRow(category.groupId.toString());
-                this.categoryList.instance.option('selectedRowKeys', [this.data.categoryId]);
+                this.categoryList.instance.expandRow(category.groupId + data.groups[category.groupId].typeId);
+                setTimeout(() => {
+                    this.categoryList.instance.selectRows([this.data.categoryId], true);
+                }, 0);
             }
         });
     }

@@ -165,10 +165,10 @@ export class ToolBarComponent extends AppComponentBase {
 
     onItemRendered($event) {
         if ($event.itemData.options.mouseover)
-            $event.itemElement.on('mouseover', 
+            $event.itemElement.on('mouseover',
                 $event.itemData.options.mouseover);
         if ($event.itemData.options.mouseout)
-            $event.itemElement.on('mouseout', 
+            $event.itemElement.on('mouseout',
                 $event.itemData.options.mouseout);
     }
 
