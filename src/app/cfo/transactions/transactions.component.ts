@@ -404,7 +404,6 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         let transactions = this.dataGrid
             .instance.getSelectedRowKeys();
 
-        console.log(transactions);
         this.dialog.open(RuleDialogComponent, {
             panelClass: 'slider', 
             data: {
