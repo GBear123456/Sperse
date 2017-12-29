@@ -179,7 +179,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             dataField: `categorization.${this.categorization[1]}`,
             customizeText: cellInfo => {
                 return this.categories.items[cellInfo.value] ? this.categories.items[cellInfo.value]['name'] : cellInfo.value;
-            },
+            }
         },
         {
             caption: 'Descriptor',
@@ -189,7 +189,10 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             sortOrder: 'asc',
             resortable: true,
             areaIndex: 3,
-            dataField: `categorization.${this.categorization[2]}`
+            dataField: `categorization.${this.categorization[2]}`,
+            customizeText: cellInfo => {
+                return cellInfo.valueText ? cellInfo.valueText : this.l('Cashflow_emptyDescriptor');
+            }
         },
         {
             caption: 'Amount',
