@@ -56,7 +56,7 @@
                 </dx-data-grid>
                 <span (click)="addKeywordRow()">{{l('+ Add keyword')}}</span>
 
-                <div class="transactions-link" *ngIf="data.transactions.length">
+                <div class="transactions-link" *ngIf="data.transactions && data.transactions.length">
                     <a (click)="showSelectedTransactions = true">{{l('Show selected transactions')}}</a>
                 </div>
 
