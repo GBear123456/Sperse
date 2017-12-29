@@ -26,6 +26,8 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @ViewChild('keywordsComponent') keywordList: DxDataGridComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
+
+    showSelectedTransactions = false;
     
     minAmount: number;
     maxAmount: number;
@@ -57,6 +59,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     ) {
         super(injector);
 
+        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.formats = _.values(ConditionDtoCashFlowAmountFormat).map((value) => {
             return {
                 format: value
@@ -170,7 +173,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                             name: this.data.title,
                             parentId: this.data.parentId,
                             categoryId: this.getSelectedCategoryId(),
-                            sourceTransactionsList: this.data.transactions,
+                            sourceTransactionsList: this.data.transactionIds,
                             transactionDecriptor: this.transactionAttributeTypes[this.descriptor] ? undefined: this.descriptor,
                             transactionDecriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor: undefined,
                             applyOption: (this.data.id ? EditRuleDtoApplyOption: CreateRuleDtoApplyOption)[option],
@@ -198,10 +201,10 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                 title: this.l('Don\'t add'),
                 class: 'default',
                 action: () => {
-                    if (this.data.transactions)
+                    if (this.data.transactionIds)
                         this.validate(true) && this._classificationServiceProxy.updateTransactionsCategory(
                             UpdateTransactionsCategoryInput.fromJS({
-                                transactionIds: this.data.transactions,
+                                transactionIds: this.data.transactionIds,
                                 categoryId: this.getSelectedCategoryId(),
                                 standardDescriptor: this.transactionAttributeTypes[this.descriptor] || this.descriptor
                             })

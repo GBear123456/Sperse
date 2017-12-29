@@ -401,12 +401,16 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
 
     openCategorizationWindow($event) {
+        let transactions = this.dataGrid
+            .instance.getSelectedRowKeys();
+
         this.dialog.open(RuleDialogComponent, {
             panelClass: 'slider', 
             data: {
                 categoryId: $event.categoryId,
-                transactions: this.dataGrid
-                    .instance.getSelectedRowKeys().map((obj) => {
+                transactions: transactions,
+                transactionIds: transactions
+                    .map((obj) => {
                         return obj.Id;
                     }),
                 refershParent: Function()
