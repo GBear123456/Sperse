@@ -12,6 +12,80 @@
       line-height: 1.38;
       letter-spacing: 0.3px;
       font-weight: 500;
+    }    
+
+    .transactions-container {        
+        div.close-transactions {
+            position: absolute;
+            right: 10px;
+            width: 55px;
+            height: 45px;
+            z-index: 1;
+            cursor: pointer;
+            top: 10px;            
+
+            &:before, &:after {
+                position: absolute;
+                top: 10px;
+                left: 20px;
+                content: ' ';
+                height: 20px;
+                width: 2px;
+                background-color: #1b1b1b;
+            }
+            &:before {
+                transform: rotate(45deg);
+            }
+            &:after {
+                transform: rotate(-45deg);
+            }
+        }
+
+        /deep/ dx-data-grid {
+          	.dx-datagrid-headers {
+            		/deep/ * {
+            				font-size: 13px;
+            				color: #686f76;
+            				font-weight: 500;
+            		}
+
+            		td {
+            				height: 45px;
+            				border: 0px;
+            				vertical-align: middle;
+            				text-align: left;
+            				line-height: 1.85;
+            				letter-spacing: 0.5px;
+            				text-transform: uppercase;
+
+              			.dx-sort-indicator {
+            	  				color: #212c36;
+            				}
+            		}
+            }
+            .dx-datagrid-rowsview {
+                tr {
+                    &:nth-child(even) {
+                        background-color: #F3F7FA;
+                    }
+
+                		td {
+                				height: 45px;
+                   			border-left: 0px;
+                				border-right: 0px;
+                				vertical-align: middle;
+                				font-size: 15px;
+                				line-height: 1.6;
+                				color: #424c56;
+                				font-weight: 400;
+                		}
+                }
+
+            		&.dx-freespace-row td {
+            				border-bottom: 0px;
+            		}
+            }
+        }
     }
 
     .rule-container {

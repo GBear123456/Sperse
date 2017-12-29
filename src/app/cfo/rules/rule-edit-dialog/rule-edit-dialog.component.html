@@ -1,5 +1,29 @@
 <modal-dialog>
-    <div class="rule-container">
+    <div class="transactions-container" *ngIf="showSelectedTransactions">
+        <div class="close-transactions" (click)="showSelectedTransactions=false"></div>
+        <dx-data-grid 
+             class="grid-layout"
+             [noDataText]="'No Transactions'"
+             [dataSource]="data.transactions"
+             [showColumnHeaders]="true"
+             [showColumnLines]="false"
+             [showRowLines]="false"
+             [showBorders]="false">
+            <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" dataType="date" format="shortDate" sortOrder="desc" sortIndex="0" [width]="100"></dxi-column>
+            <dxi-column dataField="TypeName" caption="{{l('Transactions_Type')}}" [width]="200"></dxi-column>
+            <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}"></dxi-column>
+            <dxi-column dataField="Amount" cssClass="tabular" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate" [width]="100"></dxi-column>
+            <dxi-column dataField="Amount" cssClass="tabular" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate" [width]="100"></dxi-column> 
+            <dxi-column dataField="close" caption="" [width]="100"></dxi-column>
+
+            <div *dxTemplate="let cell of 'amountTemplate'">
+                <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value >= 0 && cell.column.name == 'Debit') || (cell.value < 0 && cell.column.name == 'Credit'))">
+                    <span [style.color]="cell.value < 0 ? 'red': '#000'"> {{ cell.text | number:'1.2-2' }} </span>
+                </ng-container>
+            </div>
+        </dx-data-grid>
+    </div>
+    <div class="rule-container" *ngIf="!showSelectedTransactions">
         <div class="warning-box">
             <div>
                 <h3>You are about to overwrite an existing rule!</h3>
@@ -11,13 +35,6 @@
                 <h2>{{l('IF')}}</h2>            
                 <div class="inline-header">
                     <h3>{{l('Original transactions Descriptors')}}</h3>
-                    <!-- dx-radio-group
-                        [dataSource]="[{text: l('are like'), value: 'like'}, {text: l('contains'), value: 'contains'}]"
-                        displayExpr="text"
-                        valueExpr="value"
-                        layout="horizontal"
-                        [(value)]="descriptorType">
-                    </dx-radio-group -->
                 </div>
                 <dx-data-grid #keywordsComponent
                      id="keywords"
@@ -38,6 +55,10 @@
                     <dxi-column dataField="keyword"></dxi-column>
                 </dx-data-grid>
                 <span (click)="addKeywordRow()">{{l('+ Add keyword')}}</span>
+
+                <div class="transactions-link" *ngIf="data.transactions.length">
+                    <a (click)="showSelectedTransactions = true">{{l('Show selected transactions')}}</a>
+                </div>
 
                 <h3>{{l('Attributes')}}</h3>
                 <dx-data-grid #attributesComponent
@@ -141,11 +162,6 @@
                         (onCustomItemCreating)="onCustomItemCreating($event)"
                         [(value)]="descriptor">
                     </dx-select-box>
-
-                    <!-- dx-text-box
-                        name="descriptor"
-                        [(value)]="descriptor">
-                    </dx-text-box -->
                 </div>
                 <h3>{{l('Assign transaction(s) to the following account')}}</h3>
 
@@ -159,12 +175,12 @@
                     [editing]="{allowAdding: true, allowUpdating: true, allowDeleting: true}"
                     [selection]="{allowSelectAll: false, mode: 'single'}"
                     [rootValue]="0"
+                    [autoExpandAll]="true"
                     (onRowUpdated)="onCategoryUpdated($event)"
                     (onRowInserted)="onCategoryInserted($event)"
                     (onRowRemoving)="onCategoryRemoving($event)">
                     <dxi-column dataField="name"></dxi-column>
                 </dx-tree-list>
-
             </div>
         </div>
     </div>
