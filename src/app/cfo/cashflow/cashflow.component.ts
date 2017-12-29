@@ -37,6 +37,8 @@ import { CacheService } from 'ng2-cache-service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 
+import { SortState } from '@app/cfo/shared/common/sorting/sort-state';
+
 const moment = extendMoment(Moment);
 
 /** Constants */
@@ -144,6 +146,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             dataField: `categorization.${this.categorization[0]}`,
             expanded: false,
             showTotals: true,
+            resortable: true,
             customizeText: cellInfo => {
                 let value = cellInfo.valueText;
                 /** If the cell is int - then we have bank account as second level */
@@ -167,6 +170,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             showTotals: false,
             area: 'row',
             areaIndex: 2,
+            resortable: true,
             dataField: `categorization.${this.categorization[1]}`,
             customizeText: cellInfo => {
                 return this.categories.items[cellInfo.value] ? this.categories.items[cellInfo.value]['name'] : cellInfo.value;
@@ -176,6 +180,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             caption: 'Descriptor',
             showTotals: false,
             area: 'row',
+            resortable: true,
             areaIndex: 3,
             dataField: `categorization.${this.categorization[2]}`
         },
@@ -279,6 +284,15 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     selectedForecastModel;
     currencyId = 'USD';
     userPreferencesHandlers = {
+        localizationAndCurrency: {
+            applyTo: 'cells',
+            preferences: {
+                numberFormatting: {
+                    areas: ['data'],
+                    handleMethod: this.reformatCell
+                }
+            }
+        },
         general: {
             applyTo: 'cells',
             preferences: {
@@ -316,15 +330,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                     handleMethod: this.addPreferenceClass
                 }
             }
-        },
-        localizationAndCurrency: {
-            applyTo: 'cells',
-            preferences: {
-                numberFormatting: {
-                    areas: ['data'],
-                    handleMethod: this.reformatCell
-                }
-            }
         }
     };
     cellTypesCheckMethods = {
@@ -333,8 +338,30 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         [ModelEnums.GeneralScope.BeginningBalances]: this.isStartingBalanceDataColumn,
         [ModelEnums.GeneralScope.EndingBalances]: this.isAllTotalBalanceCell
     };
-
+    sortBy = 'Category';
+    sortOrder = 'asc';
     cashflowGridSettings: CashFlowGridSettingsDto;
+    sortings = [
+        {
+            name: 'Category',
+            text: this.ls('Platform', 'SortBy', this.l('Transactions_CategoryName')),
+            /** Used for the cashflow sorting logic, not for the sorting component */
+            sortOptions: {
+                sortBy: 'displayText',
+                sortOrder: 'asc'
+            }
+        },
+        {
+            name: 'Account',
+            text: this.ls('Platform', 'SortBy', this.l('Transactions_Amount')),
+            /** Used for the cashflow sorting logic, not for the sorting component */
+            sortOptions: {
+                sortBySummaryField: 'amount',
+                sortBySummaryPath: [],
+                sortOrder: 'asc'
+            }
+        }
+    ];
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
@@ -750,9 +777,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             let date = cashflowItem.date.format('DD.MM.YYYY');
             if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
             if (existingDates.indexOf(date) === -1) existingDates.push(date);
-            if (!minDate || cashflowItem.date < minDate) 
+            if (!minDate || cashflowItem.date < minDate)
                 minDate = moment(cashflowItem.date).subtract(new Date().getTimezoneOffset(), 'minutes');
-            if (!maxDate || cashflowItem.date > maxDate) 
+            if (!maxDate || cashflowItem.date > maxDate)
                 maxDate = moment(cashflowItem.date).subtract(new Date().getTimezoneOffset(), 'minutes');
             if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
         });
@@ -891,7 +918,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
-        $('.filter-sort-options').appendTo(event.element.find('.dx-area-description-cell'));
+        $('.sort-options').appendTo(event.element.find('.dx-area-description-cell'));
 
         /** Calculate the amount current cells to cut the current period current cell to change current from
          *  current for year to current for the grouping period */
@@ -1861,14 +1888,23 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             }
 
             /** calculation for ending cash position value */
-            if (this.isGrandTotalSummary(summaryCell)) {
+            if (this.isColumnGrandTotal(summaryCell)) {
                 return this.modifyGrandTotalSummary(summaryCell);
             }
 
             let prevWithParent = this.getPrevWithParent(summaryCell);
             /** if cell is starting balance account cell - then add account sum from previous period */
-            if (prevWithParent !== null && this.isStartingBalanceAccountCell(summaryCell)) {
+            if (prevWithParent !== null && (this.isStartingBalanceAccountCell(summaryCell))) {
                 return this.modifyStartingBalanceAccountCell(summaryCell, prevWithParent);
+            }
+
+            /** For proper grand total calculation and proper sorting
+             *  If the grand total is balance or ending cash position cell -
+             *  get the previous value - not the total of every cell
+             */
+            if (this.isRowGrandTotal(summaryCell) && this.isStartingBalanceAccountCell(summaryCell)) {
+                //console.log(summaryCell.slice(0, 'T').children()[1].value(true));
+                //return summaryCell.slice(0, 'T') ? summaryCell.slice(0, 'T').children()[1].value(true) : 0;
             }
 
             /** if the value is a balance value -
@@ -2091,16 +2127,20 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this.anotherPeriodAccountsValues.set(key, value);
     }
 
-    isGrandTotalSummary(summaryCell) {
+    isColumnGrandTotal(summaryCell) {
         return summaryCell.field('row') !== null &&
                summaryCell.field('row').dataField === 'cashflowTypeId' &&
                summaryCell.value(summaryCell.field('row')) === Total;
     }
 
+    isRowGrandTotal(summaryCell) {
+        return summaryCell.field('column') === null;
+    }
+
     isStartingBalanceAccountCell(summaryCell) {
         return summaryCell.field('row') !== null &&
             summaryCell.field('row').dataField === `categorization.${this.categorization[0]}` &&
-            summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === StartedBalance &&
+            summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === StartedBalance &&
             Number.isInteger(summaryCell.value(summaryCell.field('row')));
     }
 
@@ -2145,6 +2185,28 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             if (options && options.update) {
                 this.refreshDataGridWithPreferences(options);
             }
+        });
+    }
+
+    /**
+     * Method for sorting pivot grid
+     * @param {string} name
+     */
+    resortPivotGrid(event: {sortBy: string, sortByDirection: SortState}) {
+        let sortOptions = this.sortings.find(sorting => sorting.name.toLowerCase() === event.sortBy.toLowerCase())['sortOptions'];
+        sortOptions.sortOrder = event.sortByDirection === SortState.DOWN ? 'desc' : 'asc';
+        this.apiTableFields.filter(field => field.resortable).forEach(field => {
+            this.resetFieldSortOptions(field.caption);
+            this.pivotGrid.instance.getDataSource().field(field.caption, sortOptions);
+        });
+        this.pivotGrid.instance.getDataSource().load();
+    }
+
+    resetFieldSortOptions(filterName) {
+        this.pivotGrid.instance.getDataSource().field(filterName, {
+            'sortBy': null,
+            'sortBySummaryField': null,
+            'sortBySummaryPath': null
         });
     }
 }

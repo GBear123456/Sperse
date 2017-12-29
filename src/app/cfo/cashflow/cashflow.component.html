@@ -15,14 +15,8 @@
 ></cashflow-operations>
 
 <div class="cashflow">
-    <div class="filter-sort-options">
-        <dx-button
-          [text]="ls('Platform', 'Sort')"
-          [iconSrc]="'assets/common/icons/sort-icon.svg'">
-        </dx-button>
-        <button class="clear-all" (click)="clearAllFilters()">
-            {{ls('Platform', 'ClearAll')}}
-        </button>
+    <div class="sort-options">
+        <app-sorting [sortings]="sortings" (sortingChange)="resortPivotGrid($event)"></app-sorting>
     </div>
 
     <dx-scroll-view>
