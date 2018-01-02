@@ -9,7 +9,7 @@ import { AccountsComponent } from './accounts/accounts.component';
             {
                 path: '',
                 children: [
-                    { path: 'accounts', component: AccountsComponent, data: { permission: '' } }
+                    { path: 'linkaccounts', component: AccountsComponent, data: { permission: '' } }
                 ]
             }
         ])
