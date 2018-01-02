@@ -1,0 +1,8 @@
+{
+  "name": "CFO",
+  "search": false,
+  "navigation": [
+    ["Accounts", "", "icon-home", "/setup/cfo/accounts"],
+    ["Logs", "", "", ""]
+  ]
+}
