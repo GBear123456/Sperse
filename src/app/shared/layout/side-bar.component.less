@@ -203,9 +203,9 @@
                     left: -17px;
                 }
 
-                a {
+                .filter-link-header {
                     font-size: 15px;
-                    font-weight: 400; // 300 is too thin
+                    font-weight: 400;
                     line-height: 1.4;
                     letter-spacing: 0.3px;
                     padding: 10px 0;
@@ -233,7 +233,7 @@
             padding-left: 14px;
             border-left: 1px solid #e5e9ec;
 
-            .sub-filter-item {
+            .sub-filter-item, .toggle-more {
                 font-size: 14px;
                 font-weight: 300;
                 line-height: 1.43;
@@ -246,6 +246,20 @@
                 &.nested {
                     padding-left: 15px;
                 }
+            }
+
+            .hide-all-elements {
+                height: 0;
+                overflow: hidden;
+            }
+
+            .show-all-elements {
+                height: auto;
+            }
+
+            .toggle-more {
+                color: #01b0f0;
+                font-weight: 500;
             }
         }
     }
