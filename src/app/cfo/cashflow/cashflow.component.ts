@@ -1625,7 +1625,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 cellObj.cellElement.append(`<span class="dayEnding">${dayEnding}</span>`);
             }
         } else if (fieldGroup === 'historicalField') {
-            fieldName = this.historicalClasses[fieldObj.areaIndex];
+            fieldName = this.historicalClasses[cellObj.cell.path.pop()];
             if (!cellObj.cellElement.parent().hasClass('historicalRow')) {
                 cellObj.cellElement.parent().addClass('historicalRow');
             }
