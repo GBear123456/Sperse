@@ -352,7 +352,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     sortings: SortingItemModel[] = [
         {
             name: 'Category',
-            text: this.ls('Platform', 'SortBy', this.l('Transactions_CategoryName')),
+            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_CategoryName')),
             activeByDefault: true,
             sortOptions: {
                 sortBy: 'displayText',
@@ -361,7 +361,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         },
         {
             name: 'Account',
-            text: this.ls('Platform', 'SortBy', this.l('Transactions_Amount')),
+            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_Amount')),
             sortOptions: {
                 sortBySummaryField: 'amount',
                 sortBySummaryPath: [],
@@ -388,7 +388,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 public userPreferencesService: UserPreferencesService
     ) {
         super(injector, route);
-        
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
@@ -396,7 +395,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     ngOnInit() {
         super.ngOnInit();
-        
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = this.currencyId;
 
@@ -1416,10 +1414,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** hide long text for row headers and show '...' instead with the hover and long text*/
-        if (e.area === 'row' && e.cell.path && e.cell.path.length !== 1 && e.cell.text.length > this.maxCategoriesWidth) {
-            e.cellElement.attr('title', e.cell.text);
-            e.cellElement.text(_.prune(e.cell.text, this.maxCategoriesWidth));
-        }
+        // if (e.area === 'row' && e.cell.path && e.cell.path.length !== 1 && e.cell.text.length > this.maxCategoriesWidth) {
+        //     e.cellElement.attr('title', e.cell.text);
+        //     e.cellElement.text(_.prune(e.cell.text, this.maxCategoriesWidth));
+        // }
 
         /** Apply user preferences to the data showing */
         this.applyUserPreferencesForCells(e);
