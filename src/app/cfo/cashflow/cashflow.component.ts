@@ -11,11 +11,17 @@ import {
     CashFlowForecastServiceProxy,
     ClassificationServiceProxy,
     GetCategoriesOutput,
-    CashFlowGridSettingsDto
+    CashFlowGridSettingsDto,
+    InstanceType,
+    InstanceType3,
+    InstanceType4,
+    InstanceType6,
+    InstanceType8,
+    InstanceType17,
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
 import * as underscore from 'underscore';
@@ -39,6 +45,7 @@ import 'rxjs/add/observable/forkJoin';
 
 import { SortState } from '@app/cfo/shared/common/sorting/sort-state';
 import { SortingItemModel } from '@app/cfo/shared/common/sorting/sorting-item.model';
+import { ActivatedRoute } from '@angular/router';
 
 const moment = extendMoment(Moment);
 
@@ -56,7 +63,7 @@ const StartedBalance = 'B',
     styleUrls: ['./cashflow.component.less'],
     providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService ]
 })
-export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     headlineConfig: any;
     categories: GetCategoriesOutput;
@@ -371,6 +378,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     private cashedColumnActivity: Map<string, boolean> = new Map();
 
     constructor(injector: Injector,
+                route: ActivatedRoute,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
                 private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
@@ -379,21 +387,24 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 public dialog: MdDialog,
                 public userPreferencesService: UserPreferencesService
     ) {
-        super(injector);
+        super(injector, route);
+        
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit() {
+        super.ngOnInit();
+        
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = this.currencyId;
 
         /** Create parallel operations */
-        let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData();
-        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels();
-        let getCategoriesObservalbel = this._classificationServiceProxy.getCategories();
-        let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings();
+        let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType4[this.instanceType], this.instanceId);
+        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType8[this.instanceType], this.instanceId);
+        let getCategoriesObservalbel = this._classificationServiceProxy.getCategories(InstanceType17[this.instanceType], this.instanceId);
+        let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType6[this.instanceType], this.instanceId);
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoriesObservalbel, getCashflowGridSettings)
             .subscribe(result => {
                 /** Initial data handling */
@@ -578,13 +589,15 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
+
+        super.ngOnDestroy();
     }
 
     loadGridDataSource() {
         abp.ui.setBusy();
         $('.pivot-grid').addClass('invisible');
         this.requestFilter.forecastModelId = this.selectedForecastModel.id;
-        this._cashflowServiceProxy.getStats(this.requestFilter)
+        this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.requestFilter)
             .subscribe(result => {
                 if (result.transactionStats.length) {
                     let transactions = result.transactionStats;
@@ -865,7 +878,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             notificationMessage = this.l('AppliedSuccessfully');
         /** If settings were saved - get them from the api */
         } else {
-            preferencesObservable = this._cashflowServiceProxy.getCashFlowGridSettings();
+            preferencesObservable = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType6[this.instanceType], this.instanceId);
             notificationMessage = this.l('SavedSuccessfully');
         }
         preferencesObservable.subscribe(result => {
@@ -2145,7 +2158,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     getStatsDetails(params): void {
         this._cashflowServiceProxy
-            .getStatsDetails(params)
+            .getStatsDetails(InstanceType3[this.instanceType], this.instanceId, params)
             .subscribe(result => {
                 this.statsDetailResult = result.map(detail => {
                     detail.date = this.removeLocalTimezoneOffset(detail.date);
@@ -2166,7 +2179,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     showPreferencesDialog() {
         this.dialog.open(PreferencesDialogComponent, {
             panelClass: 'slider',
-            data: { localization: this.localizationSourceName }
+            data: {
+                instanceId: this.instanceId,
+                instanceType: this.instanceType,
+                localization: this.localizationSourceName
+            }
         }).afterClosed().subscribe(options => {
             if (options && options.update) {
                 this.refreshDataGridWithPreferences(options);

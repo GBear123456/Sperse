@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
+import { DefaultUrlSerializer, UrlTree } from '@angular/router';
+import * as _ from 'underscore';
 
 @Injectable()
 export class AppService {
@@ -33,21 +35,33 @@ export class AppService {
         return this.isModuleActive(module) ? module : this.MODULE_DEFAULT;
     }
 
+    getModuleParams() {
+        return {
+            instance: (/\/app\/\w+\/(\w+)\//.exec(location.pathname) || ['']).pop().toLowerCase()
+        }
+    }
+
     getModuleConfig(name: string) {
         return this._configs[name.toLowerCase()];
     }
 
     isModuleActive(name: string) {
         let config = this._configs[name.toLowerCase()];
-        return (config && typeof(config.navigation) == 'object');
+        return (config && typeof (config.navigation) == 'object');
     }
 
     initModule() {
-        this.switchModule(this.getModule());
+        this.switchModule(this.getModule(), this.getModuleParams());
     }
 
-    switchModule(name: string) {
-        this._config.next(this._configs[name.toLowerCase()]);
+    switchModule(name: string, params: {}) {
+        let config = _.clone(this._configs[name.toLowerCase()]);
+        config.navigation = config.navigation.map((record) => {
+            let clone = record.slice(0);
+            clone[3] = this.replaceParams(record[3], params);
+            return clone;
+        });
+        this._config.next(config);
     }
 
     subscribeModuleChange(callback: (config: Object) => any) {
@@ -58,8 +72,27 @@ export class AppService {
 
     unsubscribe() {
         this._subscribers.map((sub) => {
-            return void(sub.unsubscribe());
+            return void (sub.unsubscribe());
         });
         this._subscribers.length = 0;
+    }
+
+    replaceParams(url: string, params: {}) {
+        var urlObj: UrlTree = new DefaultUrlSerializer().parse(url);
+        if (urlObj.root.children.primary) {
+            return '/' + urlObj.root.children.primary.segments
+                .map(segment => {
+                    let segmentPath = segment.path;
+                    if (segmentPath.startsWith(':')) {
+                        let replaceParamName = segmentPath.substr(1);
+                        let replaceParamValue = params[replaceParamName];
+                        if (replaceParamValue) {
+                            return replaceParamValue;
+                        }
+                    }
+                    return segmentPath;
+                }).join('/');
+        }
+        return url;
     }
 }

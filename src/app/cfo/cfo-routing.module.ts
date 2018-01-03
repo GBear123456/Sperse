@@ -11,13 +11,13 @@ import { RulesComponent } from './rules/rules.component';
 @NgModule({
     imports: [
         RouterModule.forChild([
-            { path: '', redirectTo: '/app/cfo/cashflow-setup', pathMatch: 'full' },
+            { path: '', redirectTo: 'setup', pathMatch: 'full' },
             {
                 path: '',
                 children: [
                     { path: 'cashflow', component: CashflowComponent, data: { permission: '' } },
                     { path: 'stats', component: StatsComponent, data: { permission: '' } },
-                    { path: 'cashflow-setup', component: CashflowSetupComponent, data: { permission: '' } },
+                    { path: 'setup', component: CashflowSetupComponent, data: { permission: '' } },
                     { path: 'transactions', component: TransactionsComponent, data: { permission: '' } },
                     { path: 'rules', component: RulesComponent, data: { permission: '' } },
                     { path: 'bank-accounts', component: BankAccountsComponent, data: { permission: '' } }

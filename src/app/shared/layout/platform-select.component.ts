@@ -13,6 +13,7 @@ export class PlatformSelectComponent extends AppComponentBase {
   	@HostBinding('class') public cssClass = '';
     hoverModule = '';
     module = '';
+    uri = '';
     modules = [];
 
     private _dropDown: any;
@@ -21,8 +22,27 @@ export class PlatformSelectComponent extends AppComponentBase {
                 private _appService: AppService,
                 private _router: Router) {
         super(injector);
+        
+        _appService.getModules().forEach((module) => {
+            if (module !== 'CFO') {
+                this.modules.push({
+                    code: module,
+                    name: module
+                });
+            } else {
+                this.modules.push({
+                    code: module,
+                    name: 'CFO Personal',
+                    uri: 'personal',
+                });
+                this.modules.push({
+                    code: module,
+                    name: 'CFO Business',
+                    uri: 'business',
+                });
+            }
 
-        this.modules = _appService.getModules();
+        });
         _appService.subscribeModuleChange((config) => {
             this.cssClass = (this.module = config['name']).toLowerCase();
             this.hoverModule = this.module;
@@ -31,13 +51,14 @@ export class PlatformSelectComponent extends AppComponentBase {
 
     changeModule(event) {
         let switchModule = this.modules[event.itemIndex];
-        if (this.module !== switchModule &&
-            this._appService.isModuleActive(switchModule)
+        if ((this.module !== switchModule.code || this.uri !== switchModule.uri) &&
+            this._appService.isModuleActive(switchModule.code)
         ) {
-            this.module = switchModule;
-            this._appService.switchModule(this.module);
-            this._router.navigate(['app/' +
-            this.module.toLowerCase() + '/']);
+            this.module = switchModule.code;
+            this.uri = switchModule.uri;
+
+            this._appService.switchModule(this.module, { instance: this.uri });
+            this._router.navigate(['app/' + this.module.toLowerCase() + (this.uri ? '/' + this.uri.toLowerCase() : '')]);
             this._dropDown.close();
         }
     }

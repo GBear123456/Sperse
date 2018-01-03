@@ -2,12 +2,12 @@
   "name": "CFO",
   "search": false,
   "navigation": [
-    ["Setup", "", "icon-home", "/app/cfo/cashflow-setup"],
-    ["Cashflow", "", "icon-home", "/app/cfo/cashflow"],
-    ["Accounts", "", "icon-home", "/app/cfo/bank-accounts"],
-    ["Transactions", "", "icon-home", "/app/cfo/transactions"],
-    ["Rules", "", "icon-home", "/app/cfo/rules"],
-    ["Stats", "", "icon-home", "/app/cfo/stats"],
-    ["Logs", "", "", ""]
+    [ "Setup", "", "icon-home", "/app/cfo/:instance/setup" ],
+    [ "Cashflow", "", "icon-home", "/app/cfo/:instance/cashflow" ],
+    [ "Accounts", "", "icon-home", "/app/cfo/:instance/bank-accounts" ],
+    [ "Transactions", "", "icon-home", "/app/cfo/:instance/transactions" ],
+    [ "Rules", "", "icon-home", "/app/cfo/:instance/rules" ],
+    [ "Stats", "", "icon-home", "/app/cfo/:instance/stats" ],
+    [ "Logs", "", "", ""]
   ]
 }

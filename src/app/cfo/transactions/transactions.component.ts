@@ -1,10 +1,10 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 
 import { AppService } from '@app/app.service';
 
-import { TransactionsServiceProxy, BankAccountDto } from '@shared/service-proxies/service-proxies';
+import { TransactionsServiceProxy, BankAccountDto, InstanceType48 } from '@shared/service-proxies/service-proxies';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
@@ -24,6 +24,7 @@ import { MdDialog } from '@angular/material';
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 import * as moment from 'moment';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -31,7 +32,7 @@ import * as moment from 'moment';
     animations: [appModuleAnimation()],
     providers: [TransactionsServiceProxy]
 })
-export class TransactionsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     items: any;
@@ -126,28 +127,17 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         ];
     }
 
-    constructor(injector: Injector, 
+    constructor(injector: Injector,
+        route: ActivatedRoute,
         public dialog: MdDialog,
         private _appService: AppService,
         private _TransactionsServiceProxy: TransactionsServiceProxy,
         public filtersService: FiltersService
     ) {
-        super(injector);
+        super(injector, route);
 
         this.filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-
-        this.dataSource = {
-            store: {
-                type: 'odata',
-                url: this.getODataURL(this.dataSourceURI),
-                version: this.getODataVersion(),
-                beforeSend: function (request) {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
-                }
-            }
-        };
 
         this.initToolbarConfig();
     }
@@ -161,7 +151,21 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
 
     ngOnInit(): void {
-        this._TransactionsServiceProxy.getFiltersInitialData()
+        super.ngOnInit();
+
+        this.dataSource = {
+            store: {
+                type: 'odata',
+                url: this.getODataURL(this.dataSourceURI),
+                version: this.getODataVersion(),
+                beforeSend: function (request) {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
+                }
+            }
+        };
+
+        this._TransactionsServiceProxy.getFiltersInitialData(InstanceType48[this.instanceType], this.instanceId)
             .subscribe(result => {
                 this.filtersService.setup(
                     this.filters = [
@@ -407,6 +411,8 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         this.dialog.open(RuleDialogComponent, {
             panelClass: 'slider', 
             data: {
+                instanceId: this.instanceId,
+                instanceType: this.instanceType,
                 categoryId: $event.categoryId,
                 transactions: transactions,
                 transactionIds: transactions
@@ -429,5 +435,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
             = AppConsts.localization.defaultLocalizationSourceName;
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
+
+        super.ngOnDestroy();
     }
 }
