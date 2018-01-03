@@ -86,13 +86,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private _cacheService: CacheService
     ) {
         super(injector, route);
-        
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
-    initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedForecastModel: number } = { items: [], selectedForecastModel: null }) {
+    initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null }) {
         this.toolbarConfig = <any>[
             {
                 location: 'before',
@@ -119,7 +118,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             hint: this.l('Scenario'),
                             accessKey: 'statsForecastSwitcher',
                             items: forecastModelsObj.items,
-                            selectedIndex: forecastModelsObj.selectedForecastModel,
+                            selectedIndex: forecastModelsObj.selectedItemIndex,
                             showNavButtons: true,
                             showIndicator: false,
                             scrollByContent: true,
@@ -307,7 +306,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         let selectedForecastModelIndex = items.findIndex(item => item.id === this.selectedForecastModel.id);
         let forecastModelsObj = {
             items: items,
-            selectedForecastModel: selectedForecastModelIndex
+            selectedItemIndex: selectedForecastModelIndex
         };
         this.initToolbarConfig(forecastModelsObj);
     }

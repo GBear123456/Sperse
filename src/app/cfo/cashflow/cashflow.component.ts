@@ -290,7 +290,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         'forecast'
     ];
     fieldPathsToClick = [];
-    forecastModelsObj: { items: Array<any>, selectedForecastModel: number };
+    forecastModelsObj: { items: Array<any>, selectedItemIndex: number };
     selectedForecastModel;
     currencyId = 'USD';
     userPreferencesHandlers = {
@@ -529,12 +529,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.selectedForecastModel = cachedForecastModel && items.findIndex(item => item.id === cachedForecastModel.id) !== -1 ?
             cachedForecastModel :
             items[0];
-        let selectedForecastModelIndex = items.findIndex(
-            item => item.id === this.selectedForecastModel.id
-        );
+        let selectedForecastModelIndex = items.findIndex(item => item.id === this.selectedForecastModel.id);
         this.forecastModelsObj = {
             items: items,
-            selectedForecastModel: selectedForecastModelIndex
+            selectedItemIndex: selectedForecastModelIndex
         };
     }
 
