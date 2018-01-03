@@ -690,8 +690,12 @@ export class BankAccountsServiceProxy {
     /**
      * @return Success
      */
-    recalculateAllBankAccountDailyStats(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/RecalculateAllBankAccountDailyStats";
+    recalculateAllBankAccountDailyStats(instanceType: InstanceType, instanceId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/RecalculateAllBankAccountDailyStats?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -735,8 +739,12 @@ export class BankAccountsServiceProxy {
     /**
      * @return Success
      */
-    getStats(currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
+    getStats(instanceType: InstanceType2, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (currency === undefined || currency === null)
             throw new Error("The parameter 'currency' must be defined and cannot be null.");
         else
@@ -1026,8 +1034,12 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    getStats(filter: StatsFilter): Observable<CashFlowStatsDto> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStats";
+    getStats(instanceType: InstanceType3, instanceId: number, filter: StatsFilter): Observable<CashFlowStatsDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStats?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(filter ? filter.toJSON() : null);
@@ -1074,8 +1086,12 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    getCashFlowInitialData(): Observable<CashFlowInitialData> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetCashFlowInitialData";
+    getCashFlowInitialData(instanceType: InstanceType4, instanceId: number): Observable<CashFlowInitialData> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetCashFlowInitialData?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -1122,8 +1138,12 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    getStatsDetails(filter: StatsDetailFilter): Observable<CashFlowStatsDetailDto[]> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStatsDetails";
+    getStatsDetails(instanceType: InstanceType5, instanceId: number, filter: StatsDetailFilter): Observable<CashFlowStatsDetailDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStatsDetails?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(filter ? filter.toJSON() : null);
@@ -1174,8 +1194,12 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    getCashFlowGridSettings(): Observable<CashFlowGridSettingsDto> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetCashFlowGridSettings";
+    getCashFlowGridSettings(instanceType: InstanceType6, instanceId: number): Observable<CashFlowGridSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetCashFlowGridSettings?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -1222,8 +1246,12 @@ export class CashflowServiceProxy {
     /**
      * @return Success
      */
-    saveCashFlowGridSettings(settings: CashFlowGridSettingsDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/SaveCashFlowGridSettings";
+    saveCashFlowGridSettings(instanceType: InstanceType7, instanceId: number, settings: CashFlowGridSettingsDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Cashflow/SaveCashFlowGridSettings?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(settings ? settings.toJSON() : null);
@@ -1279,8 +1307,12 @@ export class CashFlowForecastServiceProxy {
     /**
      * @return Success
      */
-    getModels(): Observable<ForecastModelDto[]> {
-        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetModels";
+    getModels(instanceType: InstanceType8, instanceId: number): Observable<ForecastModelDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetModels?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -1331,8 +1363,12 @@ export class CashFlowForecastServiceProxy {
     /**
      * @return Success
      */
-    addForecast(input: AddForecastInput): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/AddForecast";
+    addForecast(instanceType: InstanceType9, instanceId: number, input: AddForecastInput): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/AddForecast?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -1379,8 +1415,12 @@ export class CashFlowForecastServiceProxy {
     /**
      * @return Success
      */
-    updateForecast(input: UpdateForecastInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/UpdateForecast";
+    updateForecast(instanceType: InstanceType10, instanceId: number, input: UpdateForecastInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/UpdateForecast?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -1424,8 +1464,12 @@ export class CashFlowForecastServiceProxy {
     /**
      * @return Success
      */
-    deleteForecast(id: number): Observable<void> {
+    deleteForecast(instanceType: InstanceType11, instanceId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/DeleteForecast?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined and cannot be null.");
         else
@@ -1473,8 +1517,12 @@ export class CashFlowForecastServiceProxy {
     /**
      * @return Success
      */
-    createForecastSchedule(input: CreateForecastScheduleDto): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/CreateForecastSchedule";
+    createForecastSchedule(instanceType: InstanceType12, instanceId: number, input: CreateForecastScheduleDto): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/CreateForecastSchedule?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -1521,8 +1569,12 @@ export class CashFlowForecastServiceProxy {
     /**
      * @return Success
      */
-    updateForecastSchedule(input: UpdateForecastScheduleInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/UpdateForecastSchedule";
+    updateForecastSchedule(instanceType: InstanceType13, instanceId: number, input: UpdateForecastScheduleInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/UpdateForecastSchedule?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -1566,8 +1618,12 @@ export class CashFlowForecastServiceProxy {
     /**
      * @return Success
      */
-    deleteForecastSchedule(id: number): Observable<void> {
+    deleteForecastSchedule(instanceType: InstanceType14, instanceId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/DeleteForecastSchedule?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined and cannot be null.");
         else
@@ -1615,8 +1671,12 @@ export class CashFlowForecastServiceProxy {
     /**
      * @return Success
      */
-    getForecastSchedule(id: number): Observable<ForecastScheduleDto> {
+    getForecastSchedule(instanceType: InstanceType15, instanceId: number, id: number): Observable<ForecastScheduleDto> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetForecastSchedule?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined and cannot be null.");
         else
@@ -1667,8 +1727,12 @@ export class CashFlowForecastServiceProxy {
     /**
      * @return Success
      */
-    getForecastSchedules(): Observable<ForecastScheduleDto[]> {
-        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetForecastSchedules";
+    getForecastSchedules(instanceType: InstanceType16, instanceId: number): Observable<ForecastScheduleDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetForecastSchedules?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -1892,8 +1956,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    getCategories(): Observable<GetCategoriesOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/GetCategories";
+    getCategories(instanceType: InstanceType17, instanceId: number): Observable<GetCategoriesOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/GetCategories?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -1940,8 +2008,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    getRules(input: any): Observable<RuleDto[]> {
+    getRules(instanceType: InstanceType18, instanceId: number, input: any): Observable<RuleDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetRules?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (input !== undefined)
             url_ += "input=" + encodeURIComponent("" + input) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -1994,8 +2066,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    createRule(input: CreateRuleDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateRule";
+    createRule(instanceType: InstanceType19, instanceId: number, input: CreateRuleDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateRule?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -2039,8 +2115,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    getRuleForEdit(id: number): Observable<EditRuleDto> {
+    getRuleForEdit(instanceType: InstanceType20, instanceId: number, id: number): Observable<EditRuleDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetRuleForEdit?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined and cannot be null.");
         else
@@ -2091,8 +2171,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    editRule(input: EditRuleDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/EditRule";
+    editRule(instanceType: InstanceType21, instanceId: number, input: EditRuleDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/EditRule?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -2136,8 +2220,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    moveRule(input: MoveRuleDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/MoveRule";
+    moveRule(instanceType: InstanceType22, instanceId: number, input: MoveRuleDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/MoveRule?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -2181,8 +2269,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    deleteRule(sourceTransactionsList: number[], applyOption: ApplyOption, id: number): Observable<void> {
+    deleteRule(instanceType: InstanceType23, instanceId: number, sourceTransactionsList: number[], applyOption: ApplyOption, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteRule?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (sourceTransactionsList !== undefined)
             sourceTransactionsList.forEach(item => { url_ += "SourceTransactionsList=" + encodeURIComponent("" + item) + "&"; });
         if (applyOption === undefined || applyOption === null)
@@ -2236,8 +2328,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    addMapping(input: AddMappingDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/AddMapping";
+    addMapping(instanceType: InstanceType24, instanceId: number, input: AddMappingDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/AddMapping?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -2281,8 +2377,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    deleteMapping(name: string): Observable<void> {
+    deleteMapping(instanceType: InstanceType25, instanceId: number, name: string): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteMapping?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (name === undefined || name === null)
             throw new Error("The parameter 'name' must be defined and cannot be null.");
         else
@@ -2330,8 +2430,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    createCategoryGroup(input: CreateCategoryGroupInput): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateCategoryGroup";
+    createCategoryGroup(instanceType: InstanceType26, instanceId: number, input: CreateCategoryGroupInput): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateCategoryGroup?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -2378,8 +2482,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    updateCategoryGroup(input: UpdateCategoryGroupInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategoryGroup";
+    updateCategoryGroup(instanceType: InstanceType27, instanceId: number, input: UpdateCategoryGroupInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategoryGroup?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -2423,8 +2531,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    deleteCategoryGroup(id: number): Observable<void> {
+    deleteCategoryGroup(instanceType: InstanceType28, instanceId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteCategoryGroup?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined and cannot be null.");
         else
@@ -2472,8 +2584,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    createCategory(input: CreateCategoryInput): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateCategory";
+    createCategory(instanceType: InstanceType29, instanceId: number, input: CreateCategoryInput): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateCategory?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -2520,8 +2636,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    updateCategory(input: UpdateCategoryInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategory";
+    updateCategory(instanceType: InstanceType30, instanceId: number, input: UpdateCategoryInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategory?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -2565,8 +2685,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    deleteCategory(moveToCategoryId: number, deleteAllReferences: boolean, id: number): Observable<void> {
+    deleteCategory(instanceType: InstanceType31, instanceId: number, moveToCategoryId: number, deleteAllReferences: boolean, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteCategory?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (moveToCategoryId !== undefined)
             url_ += "MoveToCategoryId=" + encodeURIComponent("" + moveToCategoryId) + "&"; 
         if (deleteAllReferences === undefined || deleteAllReferences === null)
@@ -2620,8 +2744,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    reclassify(recategorizeInput: RecategorizeInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/Reclassify";
+    reclassify(instanceType: InstanceType32, instanceId: number, recategorizeInput: RecategorizeInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/Reclassify?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(recategorizeInput ? recategorizeInput.toJSON() : null);
@@ -2665,8 +2793,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    updateTransactionsCategory(input: UpdateTransactionsCategoryInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategory";
+    updateTransactionsCategory(instanceType: InstanceType33, instanceId: number, input: UpdateTransactionsCategoryInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategory?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -2710,8 +2842,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    updateTransactionsCategoryWithFilter(input: UpdateTransactionsCategoryWithFilterInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategoryWithFilter";
+    updateTransactionsCategoryWithFilter(instanceType: InstanceType34, instanceId: number, input: UpdateTransactionsCategoryWithFilterInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategoryWithFilter?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -2755,8 +2891,12 @@ export class ClassificationServiceProxy {
     /**
      * @return Success
      */
-    getTransactionCommonDetails(input: GetTransactionCommonDetailsInput): Observable<TransactionCommonDetailsDto> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/GetTransactionCommonDetails";
+    getTransactionCommonDetails(instanceType: InstanceType35, instanceId: number, input: GetTransactionCommonDetailsInput): Observable<TransactionCommonDetailsDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/GetTransactionCommonDetails?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -2815,8 +2955,12 @@ export class CommentServiceProxy {
     /**
      * @return Success
      */
-    getComments(threadId: number): Observable<CommentDto[]> {
+    getComments(instanceType: InstanceType36, instanceId: number, threadId: number): Observable<CommentDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/GetComments?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (threadId === undefined || threadId === null)
             throw new Error("The parameter 'threadId' must be defined and cannot be null.");
         else
@@ -2871,8 +3015,12 @@ export class CommentServiceProxy {
     /**
      * @return Success
      */
-    createComment(input: CreateCommentInput): Observable<CreateCommentOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateComment";
+    createComment(instanceType: InstanceType37, instanceId: number, input: CreateCommentInput): Observable<CreateCommentOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateComment?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -2919,8 +3067,12 @@ export class CommentServiceProxy {
     /**
      * @return Success
      */
-    updateComment(input: UpdateCommentInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Comment/UpdateComment";
+    updateComment(instanceType: InstanceType38, instanceId: number, input: UpdateCommentInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/UpdateComment?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -2964,8 +3116,12 @@ export class CommentServiceProxy {
     /**
      * @return Success
      */
-    deleteComment(commentId: number): Observable<void> {
+    deleteComment(instanceType: InstanceType39, instanceId: number, commentId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/DeleteComment?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (commentId === undefined || commentId === null)
             throw new Error("The parameter 'commentId' must be defined and cannot be null.");
         else
@@ -3013,8 +3169,12 @@ export class CommentServiceProxy {
     /**
      * @return Success
      */
-    createTransactionCommentThread(input: CreateTransactionCommentThreadInput): Observable<CreateTransactionCommentThreadOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateTransactionCommentThread";
+    createTransactionCommentThread(instanceType: InstanceType40, instanceId: number, input: CreateTransactionCommentThreadInput): Observable<CreateTransactionCommentThreadOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateTransactionCommentThread?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -3061,8 +3221,12 @@ export class CommentServiceProxy {
     /**
      * @return Success
      */
-    createCashFlowCommentThread(input: CreateCashFlowCommentThreadInput): Observable<CreateCashFlowCommentThreadOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateCashFlowCommentThread";
+    createCashFlowCommentThread(instanceType: InstanceType41, instanceId: number, input: CreateCashFlowCommentThreadInput): Observable<CreateCashFlowCommentThreadOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateCashFlowCommentThread?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -3109,8 +3273,12 @@ export class CommentServiceProxy {
     /**
      * @return Success
      */
-    setResolved(input: SetResolvedInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Comment/SetResolved";
+    setResolved(instanceType: InstanceType42, instanceId: number, input: SetResolvedInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Comment/SetResolved?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input ? input.toJSON() : null);
@@ -5925,8 +6093,12 @@ export class FinancialInformationServiceProxy {
     /**
      * @return Success
      */
-    getSetupAccountsLink(css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
+    getSetupAccountsLink(instanceType: InstanceType43, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSetupAccountsLink?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (css !== undefined)
             url_ += "css=" + encodeURIComponent("" + css) + "&"; 
         if (errorPage !== undefined)
@@ -5977,8 +6149,12 @@ export class FinancialInformationServiceProxy {
     /**
      * @return Success
      */
-    syncAllAccounts(syncHistory: boolean): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType44, instanceId: number, syncHistory: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (syncHistory === undefined || syncHistory === null)
             throw new Error("The parameter 'syncHistory' must be defined and cannot be null.");
         else
@@ -6029,8 +6205,12 @@ export class FinancialInformationServiceProxy {
     /**
      * @return Success
      */
-    getSyncProgress(): Observable<SyncProgressOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress";
+    getSyncProgress(instanceType: InstanceType45, instanceId: number): Observable<SyncProgressOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -6806,6 +6986,122 @@ export class InstallServiceProxy {
             return throwException("An unexpected server error occurred.", status, responseText);
         }
         return Observable.of<CheckDatabaseOutput>(<any>null);
+    }
+}
+
+@Injectable()
+export class InstanceServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getStatus(instanceType: InstanceType46): Observable<Anonymous> {
+        let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
+        if (instanceType === undefined || instanceType === null)
+            throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
+        else
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetStatus(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetStatus(response_);
+                } catch (e) {
+                    return <Observable<Anonymous>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<Anonymous>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetStatus(response: Response): Observable<Anonymous> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: Anonymous = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<Anonymous>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    setup(instanceType: InstanceType47): Observable<InstanceSetupOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
+        if (instanceType === undefined || instanceType === null)
+            throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
+        else
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processSetup(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSetup(response_);
+                } catch (e) {
+                    return <Observable<InstanceSetupOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<InstanceSetupOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSetup(response: Response): Observable<InstanceSetupOutput> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: InstanceSetupOutput = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? InstanceSetupOutput.fromJS(resultData200) : new InstanceSetupOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<InstanceSetupOutput>(<any>null);
     }
 }
 
@@ -13121,8 +13417,12 @@ export class TransactionsServiceProxy {
     /**
      * @return Success
      */
-    getFiltersInitialData(): Observable<FiltersInitialData> {
-        let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData";
+    getFiltersInitialData(instanceType: InstanceType48, instanceId: number): Observable<FiltersInitialData> {
+        let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -13169,8 +13469,12 @@ export class TransactionsServiceProxy {
     /**
      * @return Success
      */
-    getTransactionAttributeTypes(): Observable<GetTransactionAttributeTypesOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes";
+    getTransactionAttributeTypes(instanceType: InstanceType49, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = "";
@@ -13217,8 +13521,12 @@ export class TransactionsServiceProxy {
     /**
      * @return Success
      */
-    getTransactionDetails(transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType50, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (transactionId === undefined || transactionId === null)
             throw new Error("The parameter 'transactionId' must be defined and cannot be null.");
         else
@@ -15430,6 +15738,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
     currencyId: string;
     date: moment.Moment;
     amount: number;
+    transactionCount: number;
     comment: string;
     forecastId: number;
 
@@ -15452,6 +15761,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
             this.currencyId = data["currencyId"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.amount = data["amount"];
+            this.transactionCount = data["transactionCount"];
             this.comment = data["comment"];
             this.forecastId = data["forecastId"];
         }
@@ -15473,6 +15783,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data["currencyId"] = this.currencyId;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["amount"] = this.amount;
+        data["transactionCount"] = this.transactionCount;
         data["comment"] = this.comment;
         data["forecastId"] = this.forecastId;
         return data; 
@@ -15488,6 +15799,7 @@ export interface ITransactionStatsDto {
     currencyId: string;
     date: moment.Moment;
     amount: number;
+    transactionCount: number;
     comment: string;
     forecastId: number;
 }
@@ -25276,6 +25588,41 @@ export interface ICheckDatabaseOutput {
     isDatabaseExist: boolean;
 }
 
+export class InstanceSetupOutput implements IInstanceSetupOutput {
+    alreadyInitialized: boolean;
+
+    constructor(data?: IInstanceSetupOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.alreadyInitialized = data["alreadyInitialized"];
+        }
+    }
+
+    static fromJS(data: any): InstanceSetupOutput {
+        let result = new InstanceSetupOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["alreadyInitialized"] = this.alreadyInitialized;
+        return data; 
+    }
+}
+
+export interface IInstanceSetupOutput {
+    alreadyInitialized: boolean;
+}
+
 export class InvoiceDto implements IInvoiceDto {
     amount: number;
     editionDisplayName: string;
@@ -34156,6 +34503,16 @@ export interface IGetLatestWebLogsOutput {
     latestWebLogLines: string[];
 }
 
+export enum InstanceType {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType2 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
 export enum GroupBy {
     Daily = <any>"Daily", 
     Weekly = <any>"Weekly", 
@@ -34164,11 +34521,226 @@ export enum GroupBy {
     Yearly = <any>"Yearly", 
 }
 
+export enum InstanceType3 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType4 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType5 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType6 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType7 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType8 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType9 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType10 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType11 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType12 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType13 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType14 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType15 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType16 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType17 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType18 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType19 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType20 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType21 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType22 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType23 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
 export enum ApplyOption {
     None = <any>"None", 
     MatchedAndUnclassified = <any>"MatchedAndUnclassified", 
     SelectedOnly = <any>"SelectedOnly", 
     AllExisting = <any>"AllExisting", 
+}
+
+export enum InstanceType24 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType25 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType26 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType27 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType28 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType29 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType30 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType31 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType32 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType33 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType34 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType35 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType36 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType37 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType38 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType39 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType40 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType41 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType42 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType43 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType44 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType45 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
 }
 
 export enum IncomeStatisticsDateInterval {
@@ -34181,6 +34753,16 @@ export enum IncomeStatisticsDateInterval2 {
     _1 = 1, 
     _2 = 2, 
     _3 = 3, 
+}
+
+export enum InstanceType46 {
+    _0 = 0, 
+    _1 = 1, 
+}
+
+export enum InstanceType47 {
+    _0 = 0, 
+    _1 = 1, 
 }
 
 export enum State {
@@ -34217,6 +34799,27 @@ export enum DefaultTimezoneScope {
     _2 = 2, 
     _4 = 4, 
     _7 = 7, 
+}
+
+export enum InstanceType48 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType49 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType50 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum Anonymous {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
 }
 
 export enum IsTenantAvailableOutputState {

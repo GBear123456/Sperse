@@ -1,7 +1,7 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/modal-dialog.component';
 import { DxTreeListComponent, DxDataGridComponent } from 'devextreme-angular';
 
 import { MdDialog } from '@angular/material';
@@ -12,9 +12,10 @@ import {
     CreateCategoryGroupInput, CreateCategoryInput, UpdateCategoryGroupInput, UpdateCategoryInput,
     CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
-    CreateRuleDto, ConditionAttributeDto, ConditionDto } from '@shared/service-proxies/service-proxies';
+    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType49, InstanceType4, InstanceType20, InstanceType17, InstanceType33, InstanceType28, InstanceType31 } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'rule-dialog',
@@ -22,7 +23,7 @@ import * as _ from 'underscore';
   styleUrls: ['rule-edit-dialog.component.less'],
   providers: [CashflowServiceProxy, ClassificationServiceProxy, TransactionsServiceProxy]
 })
-export class RuleDialogComponent extends ModalDialogComponent implements OnInit, AfterViewInit {
+export class RuleDialogComponent extends CFOModalDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @ViewChild('keywordsComponent') keywordList: DxDataGridComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
@@ -50,12 +51,13 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
 
     constructor(
         injector: Injector,
+        route: ActivatedRoute,
         public dialog: MdDialog,
         private _classificationServiceProxy: ClassificationServiceProxy,
         private _cashflowServiceProxy: CashflowServiceProxy,
         private _transactionsServiceProxy: TransactionsServiceProxy
     ) {
-        super(injector);
+        super(injector, route);
 
         this.formats = _.values(ConditionDtoCashFlowAmountFormat).map((value) => {
             return {
@@ -69,7 +71,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
             };
         });
 
-        _transactionsServiceProxy.getTransactionAttributeTypes().subscribe((data) => {
+        _transactionsServiceProxy.getTransactionAttributeTypes(InstanceType49[this.instanceType], this.instanceId).subscribe((data) => {
             let types = [];
             this.transactionAttributeTypes = data.transactionAttributeTypes;
             _.mapObject(data.transactionAttributeTypes, (val, key) => {
@@ -81,14 +83,14 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
             this.attributeTypes = types;
         });
 
-        _cashflowServiceProxy.getCashFlowInitialData().subscribe((data) => {
+        _cashflowServiceProxy.getCashFlowInitialData(InstanceType4[this.instanceType], this.instanceId).subscribe((data) => {
             this.banks = data.banks;
             if (this.bankId)
                 this.onBankChanged({value: this.accountId});
         });
 
         if (this.data.id)
-            _classificationServiceProxy.getRuleForEdit(this.data.id).subscribe((rule) => {
+            _classificationServiceProxy.getRuleForEdit(InstanceType20[this.instanceType], this.instanceId, this.data.id).subscribe((rule) => {
                 this.descriptor = rule.transactionDecriptorAttributeTypeId || rule.transactionDecriptor;
                 this.data.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
                 if (rule.condition) {
@@ -112,7 +114,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     }
 
     refreshCategories() {
-        this._classificationServiceProxy.getCategories().subscribe((data) => {
+        this._classificationServiceProxy.getCategories(InstanceType17[this.instanceType], this.instanceId).subscribe((data) => {
             let categories = [];
             this.categorization = data;
             if (data.types)
@@ -155,6 +157,8 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
     }
 
     ngOnInit() {
+        super.ngOnInit();
+
         this.data.editTitle = true;
         this.data.title = this.data.name ||
             this.l('Enter the rule name');
@@ -200,6 +204,8 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
                 action: () => {
                     if (this.data.transactions)
                         this.validate(true) && this._classificationServiceProxy.updateTransactionsCategory(
+                            InstanceType33[this.instanceType],
+                            this.instanceId,
                             UpdateTransactionsCategoryInput.fromJS({
                                 transactionIds: this.data.transactions,
                                 categoryId: this.getSelectedCategoryId(),
@@ -356,7 +362,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
             if (_.findWhere(this.categories, {parent: itemId}))
                 this.notify.error(this.l('Category group should be empty to perform delete action'));
             else
-                this._classificationServiceProxy.deleteCategoryGroup(itemId)
+                this._classificationServiceProxy.deleteCategoryGroup(InstanceType28[this.instanceType], this.instanceId, itemId)
                   .subscribe(() => {
                       this.refreshCategories();
                   });
@@ -375,6 +381,8 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
             }).afterClosed().subscribe((result) => {
                 if (result)
                     this._classificationServiceProxy.deleteCategory(
+                        InstanceType31[this.instanceType],
+                        this.instanceId,
                         dialogData.categoryId, dialogData.deleteAllReferences, itemId)
                             .subscribe(() => {
                                 this.refreshCategories();

@@ -1,8 +1,8 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 
-import { ClassificationServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ClassificationServiceProxy, InstanceType18, InstanceType23 } from '@shared/service-proxies/service-proxies';
 
 import { MdDialog } from '@angular/material';
 import { RuleDialogComponent } from './rule-edit-dialog/rule-edit-dialog.component';
@@ -14,6 +14,7 @@ import 'devextreme/data/odata/store';
 
 import * as _ from 'underscore';
 import * as moment from 'moment';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     templateUrl: './rules.component.html',
@@ -21,7 +22,7 @@ import * as moment from 'moment';
     animations: [appModuleAnimation()],
     providers: [ClassificationServiceProxy]
 })
-export class RulesComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class RulesComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxTreeListComponent) theeList: DxTreeListComponent;
 
     private rootComponent: any;
@@ -48,10 +49,11 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
 
 
     constructor(injector: Injector,
+        route: ActivatedRoute,
         public dialog: MdDialog,
         private _ClassificationService: ClassificationServiceProxy
     ) {
-        super(injector);
+        super(injector, route);
     }
 
     refreshList() {
@@ -85,7 +87,7 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onRowRemoved($event) {
-        this._ClassificationService.deleteRule([], null, $event.key);
+        this._ClassificationService.deleteRule(InstanceType23[this.instanceType], this.instanceId, [], null, $event.key);
     }
 
     showEditDialog(data = {}) {
@@ -97,7 +99,9 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     ngOnInit(): void {
-        this._ClassificationService.getRules(null)
+        super.ngOnInit();
+
+        this._ClassificationService.getRules(InstanceType18[this.instanceType], this.instanceId, null)
             .subscribe(result => {
                   this.ruleTreeList = _.sortBy(result.map((item) => {
                       item['order'] =
@@ -117,5 +121,7 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
+
+        super.ngOnDestroy();
     }
 }

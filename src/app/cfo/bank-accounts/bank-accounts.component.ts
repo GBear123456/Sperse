@@ -1,9 +1,9 @@
 import { Component, OnInit, Injector, ViewChild } from '@angular/core';
-import { FinancialInformationServiceProxy } from '@shared/service-proxies/service-proxies';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { FinancialInformationServiceProxy, InstanceType43 } from '@shared/service-proxies/service-proxies';
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AppConsts } from '@shared/AppConsts';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { SynchProgressComponent } from '@app/cfo/shared/synch-progress/synch-progress.component';
 
 @Component({
@@ -12,7 +12,7 @@ import { SynchProgressComponent } from '@app/cfo/shared/synch-progress/synch-pro
     styleUrls: ['./bank-accounts.component.less'],
     providers: [ FinancialInformationServiceProxy ]
 })
-export class BankAccountsComponent extends AppComponentBase implements OnInit {
+export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
 
     sourceUrl: any;
@@ -20,16 +20,20 @@ export class BankAccountsComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-                private sanitizer: DomSanitizer,
-                private _financialInformationServiceProxy: FinancialInformationServiceProxy,
+        route: ActivatedRoute,
+        private sanitizer: DomSanitizer,
+        private _financialInformationServiceProxy: FinancialInformationServiceProxy,
         private _router: Router
     ) {
-        super(injector);
+        super(injector, route);
+
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.syncComponent = this.getElementRef().nativeElement.querySelector('synch-progress');
     }
 
     ngOnInit() {
+        super.ngOnInit();
+
         this.initIFrame();
 
         this.headlineConfig = {
@@ -53,6 +57,8 @@ export class BankAccountsComponent extends AppComponentBase implements OnInit {
     }
     initIFrame() {
         this._financialInformationServiceProxy.getSetupAccountsLink(
+            InstanceType43[this.instanceType],
+            this.instanceId,
             'https://testadmin.sperse.com/assets/cfo-css/custom.css',
             ''
         ).subscribe((data) => {
