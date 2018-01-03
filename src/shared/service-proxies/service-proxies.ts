@@ -15738,7 +15738,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
     currencyId: string;
     date: moment.Moment;
     amount: number;
-    transactionCount: number;
+    count: number;
     comment: string;
     forecastId: number;
 
@@ -15761,7 +15761,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
             this.currencyId = data["currencyId"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.amount = data["amount"];
-            this.transactionCount = data["transactionCount"];
+            this.count = data["count"];
             this.comment = data["comment"];
             this.forecastId = data["forecastId"];
         }
@@ -15783,7 +15783,7 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data["currencyId"] = this.currencyId;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["amount"] = this.amount;
-        data["transactionCount"] = this.transactionCount;
+        data["count"] = this.count;
         data["comment"] = this.comment;
         data["forecastId"] = this.forecastId;
         return data; 
@@ -15799,7 +15799,7 @@ export interface ITransactionStatsDto {
     currencyId: string;
     date: moment.Moment;
     amount: number;
-    transactionCount: number;
+    count: number;
     comment: string;
     forecastId: number;
 }
@@ -16568,6 +16568,7 @@ export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {
     forecastModelIds: number[] = [];
     startDate: moment.Moment;
     frequencyId: string;
+    currencyId: string;
     endDate: moment.Moment;
     calculationTypeId: string;
     amount: number;
@@ -16596,6 +16597,7 @@ export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {
             }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.frequencyId = data["frequencyId"];
+            this.currencyId = data["currencyId"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.calculationTypeId = data["calculationTypeId"];
             this.amount = data["amount"];
@@ -16623,6 +16625,7 @@ export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {
         }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["frequencyId"] = this.frequencyId;
+        data["currencyId"] = this.currencyId;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["calculationTypeId"] = this.calculationTypeId;
         data["amount"] = this.amount;
@@ -16640,6 +16643,7 @@ export interface ICreateForecastScheduleDto {
     forecastModelIds: number[];
     startDate: moment.Moment;
     frequencyId: string;
+    currencyId: string;
     endDate: moment.Moment;
     calculationTypeId: string;
     amount: number;
@@ -16656,6 +16660,7 @@ export class UpdateForecastScheduleInput implements IUpdateForecastScheduleInput
     forecastModelIds: number[] = [];
     startDate: moment.Moment;
     frequencyId: string;
+    currencyId: string;
     endDate: moment.Moment;
     calculationTypeId: string;
     amount: number;
@@ -16685,6 +16690,7 @@ export class UpdateForecastScheduleInput implements IUpdateForecastScheduleInput
             }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.frequencyId = data["frequencyId"];
+            this.currencyId = data["currencyId"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.calculationTypeId = data["calculationTypeId"];
             this.amount = data["amount"];
@@ -16713,6 +16719,7 @@ export class UpdateForecastScheduleInput implements IUpdateForecastScheduleInput
         }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["frequencyId"] = this.frequencyId;
+        data["currencyId"] = this.currencyId;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["calculationTypeId"] = this.calculationTypeId;
         data["amount"] = this.amount;
@@ -16731,6 +16738,7 @@ export interface IUpdateForecastScheduleInput {
     forecastModelIds: number[];
     startDate: moment.Moment;
     frequencyId: string;
+    currencyId: string;
     endDate: moment.Moment;
     calculationTypeId: string;
     amount: number;

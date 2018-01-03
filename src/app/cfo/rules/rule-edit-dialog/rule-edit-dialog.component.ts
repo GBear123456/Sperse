@@ -12,7 +12,7 @@ import {
     CreateCategoryGroupInput, CreateCategoryInput, UpdateCategoryGroupInput, UpdateCategoryInput,
     CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
-    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType49, InstanceType4, InstanceType20, InstanceType17, InstanceType33, InstanceType28, InstanceType31 } from '@shared/service-proxies/service-proxies';
+    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType49, InstanceType4, InstanceType20, InstanceType17, InstanceType33, InstanceType28, InstanceType31, InstanceType35 } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -105,7 +105,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 }
             });
         else if (this.data.transactionIds && this.data.transactionIds.length)
-            _classificationServiceProxy.getTransactionCommonDetails(GetTransactionCommonDetailsInput.fromJS(this.data))
+            _classificationServiceProxy.getTransactionCommonDetails(InstanceType35[this.instanceType], this.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data))
                 .subscribe((data) => {
                     this.bankId = data.bankId;          
                     this.accountId = data.bankAccountId;
