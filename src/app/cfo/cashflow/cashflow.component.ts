@@ -370,6 +370,56 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     ];
     maxCategoriesWidth = 25;
+    footerToolbarConfig = [
+        {
+            location: 'before',
+            items: [
+                {
+                    name: 'refresh',
+                    action: this.refreshDataGrid.bind(this)
+                },
+                {
+                    name: 'amount',
+                    text: '3 of 9'
+                },
+                {
+                    name: 'forecastModels',
+                    widget: 'dxTabs',
+                    options: {
+                        items: [
+                            {
+                                text: 'Model A'
+                            },
+                            {
+                                text: 'Model B'
+                            }
+                        ]
+                    }
+                },
+                {
+                    name: 'forecastModelAdd',
+                    action: function(){ console.log( 'add forecast model' ); },
+                }
+            ]
+        },
+        {
+            location: 'after',
+            items: [
+                {
+                    name: 'total',
+                    text: this.ls('Platform', 'Total') + ': 372291,20'
+                },
+                {
+                    name: 'count',
+                    text: this.l('Cashflow_BottomToolbarCount') + ': 17'
+                },
+                {
+                    name: 'average',
+                    text: this.l('Avg') + ': 1454, 24'
+                }
+            ]
+        }
+    ];
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;

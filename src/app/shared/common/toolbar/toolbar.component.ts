@@ -116,6 +116,10 @@ export class ToolBarComponent extends AppComponentBase {
         },
         slider: {
             hint: this.l('Slider')
+        },
+        forecastModelAdd: {
+            hint: this.l('CreateForecastModel'),
+            iconSrc: this.getImgURI('add-button')
         }
     };
 
@@ -191,10 +195,10 @@ export class ToolBarComponent extends AppComponentBase {
                         };
                     });
                 }
-
                 items.push({
                     location: group.location,
-                    widget: item.widget || 'dxButton',
+                    widget: item.text && !item.widget ? null : item.widget || 'dxButton',
+                    text: item.text && !item.widget || null,
                     options: _.extend({
                         onClick: item.action,
                         elementAttr: _.extend({
@@ -206,6 +210,7 @@ export class ToolBarComponent extends AppComponentBase {
                 });
             });
         });
+        console.log(items);
         this.items = items;
     }
 }

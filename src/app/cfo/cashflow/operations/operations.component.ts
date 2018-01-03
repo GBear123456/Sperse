@@ -18,7 +18,6 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
             this.initToolbarConfig(forecastModelsObj);
         }, 300);
     }
-    @Output() refreshCashflow: EventEmitter<any> = new EventEmitter();
     @Output() repaintCashflow: EventEmitter<any> = new EventEmitter();
     @Output() onGroupBy: EventEmitter<any> = new EventEmitter();
     @Output() onToggleRows: EventEmitter<any> = new EventEmitter();
@@ -242,15 +241,6 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 {name: 'fullscreen', action: this.fullscreen.bind(this)}
             ]
             },
-            {
-                location: 'after',
-                items: [
-                    {
-                        name: 'refresh',
-                        action: this.refresh.bind(this)
-                    }
-                ]
-            }
         ];
     }
 
@@ -267,10 +257,6 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
 
     groupBy(event) {
         this.onGroupBy.emit(event);
-    }
-
-    refresh() {
-        this.refreshCashflow.emit(null);
     }
 
     repaint() {

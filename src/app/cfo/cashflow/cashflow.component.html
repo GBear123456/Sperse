@@ -4,7 +4,6 @@
 
 <cashflow-operations
     [forecastModelsObj]="forecastModelsObj"
-    (refreshCashflow)="refreshDataGrid($event)"
     (repaintCashflow)="repaintDataGrid($event)"
     (onGroupBy)="changeGroupBy($event)"
     (handleFullscreen)="toggleFullscreen(getFullscreenElement())"
@@ -45,6 +44,7 @@
                 <dxo-scrolling mode="standard"></dxo-scrolling>
             </dx-pivot-grid>
         </div>
+
     </dx-scroll-view>
 
     <div *ngIf="statsDetailResult !== undefined" class="cashflow-wrap">
@@ -84,4 +84,9 @@
             </div>
         </dx-data-grid>
     </div>
+
+    <div id="cashflowFooterToolbar">
+        <app-toolbar [(config)]="footerToolbarConfig"></app-toolbar>
+    </div>
+
 </div>
