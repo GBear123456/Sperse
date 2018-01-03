@@ -1414,10 +1414,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** hide long text for row headers and show '...' instead with the hover and long text*/
-        // if (e.area === 'row' && e.cell.path && e.cell.path.length !== 1 && e.cell.text.length > this.maxCategoriesWidth) {
-        //     e.cellElement.attr('title', e.cell.text);
-        //     e.cellElement.text(_.prune(e.cell.text, this.maxCategoriesWidth));
-        // }
+        if (e.area === 'row' && e.cell.path && e.cell.path.length !== 1 && e.cell.text.length > this.maxCategoriesWidth) {
+            e.cellElement.attr('title', e.cell.text);
+            e.cellElement.text(_.prune(e.cell.text, this.maxCategoriesWidth));
+        }
 
         /** Apply user preferences to the data showing */
         this.applyUserPreferencesForCells(e);
