@@ -1,7 +1,7 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
-import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/modal-dialog.component';
+import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
 import { DxTreeListComponent, DxDataGridComponent } from 'devextreme-angular';
 
 import { MdDialog } from '@angular/material';
@@ -15,7 +15,6 @@ import {
     CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType49, InstanceType4, InstanceType20, InstanceType17, InstanceType33, InstanceType28, InstanceType31 } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'rule-dialog',
@@ -51,13 +50,12 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     constructor(
         injector: Injector,
-        route: ActivatedRoute,
         public dialog: MdDialog,
         private _classificationServiceProxy: ClassificationServiceProxy,
         private _cashflowServiceProxy: CashflowServiceProxy,
         private _transactionsServiceProxy: TransactionsServiceProxy
     ) {
-        super(injector, route);
+        super(injector);
 
         this.formats = _.values(ConditionDtoCashFlowAmountFormat).map((value) => {
             return {

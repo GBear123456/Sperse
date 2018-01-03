@@ -408,6 +408,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.dialog.open(RuleDialogComponent, {
             panelClass: 'slider', 
             data: {
+                instanceId: this.instanceId,
+                instanceType: this.instanceType,
                 categoryId: $event.categoryId,
                 transactions: this.dataGrid
                     .instance.getSelectedRowKeys().map((obj) => {

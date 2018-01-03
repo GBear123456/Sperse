@@ -93,6 +93,8 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     showEditDialog(data = {}) {
         this.dialog.open(RuleDialogComponent, {
             panelClass: 'slider', data: _.extend(data, {
+                instanceId: this.instanceId,
+                instanceType: this.instanceType,
                 refershParent: this.ngOnInit.bind(this)
             })
         }).afterClosed().subscribe(result => {});

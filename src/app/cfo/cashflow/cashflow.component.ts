@@ -2197,7 +2197,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     showPreferencesDialog() {
         this.dialog.open(PreferencesDialogComponent, {
             panelClass: 'slider',
-            data: { localization: this.localizationSourceName }
+            data: {
+                instanceId: this.instanceId,
+                instanceType: this.instanceType,
+                localization: this.localizationSourceName
+            }
         }).afterClosed().subscribe(options => {
             if (options && options.update) {
                 this.refreshDataGridWithPreferences(options);
