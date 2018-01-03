@@ -54,7 +54,8 @@ const StartedBalance = 'B',
       Income         = 'I',
       Expense        = 'E',
       Reconciliation = 'D',
-      Total          = 'T';
+      Total          = 'T',
+      GrandTotal     = 'GT';
 
 @Component({
     selector: 'app-cashflow',
@@ -91,7 +92,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         {
             'groupInterval': 'year',
             'optionText': this.l('Years').toUpperCase(),
-            'customizeTextFunction': this.getDateIntervalHeaderCustomizer.bind(this, 'year')(),
             'historicalSelectionFunction': this.getYearHistoricalSelectorWithCurrent
         },
         {
@@ -109,7 +109,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         {
             'groupInterval': 'day',
             'optionText': this.l('Days').toUpperCase(),
-            'customizeTextFunction': this.getDateIntervalHeaderCustomizer.bind(this, 'day'),
             'historicalSelectionFunction': this.getYearHistoricalSelectorWithCurrent
         }
     ];
@@ -232,7 +231,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             area: 'column',
             groupInterval: 'year',
             showTotals: false,
-            customizeText: this.getDateIntervalHeaderCustomizer.bind(this)('year'),
             visible: true,
             summaryDisplayMode: 'percentVariation'
         },
@@ -267,9 +265,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             },
             customizeText: cellInfo => {
                 let projectedKey = cellInfo.value === 1 ? 'Projected' : 'Mtd';
-                let cellValue = this.l(projectedKey).toUpperCase();
-                let cssMarker = ' @css:{projectedField ' + (cellInfo.value === 1 ? 'projected' : 'mtd') + '}';
-                return cellValue + cssMarker;
+                return this.l(projectedKey).toUpperCase();
             },
             expanded: false,
             allowExpand: false
@@ -280,12 +276,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             dataType: 'date',
             area: 'column',
             groupInterval: 'day',
-            customizeText: this.getDateIntervalHeaderCustomizer.bind(this)('day'),
             visible: true
         }
     ];
-    /** @todo move to some constant general file */
-    cssMarker = ' @css';
     historicalTextsKeys = [
         'Periods_Historical',
         'Periods_Current',
@@ -1062,21 +1055,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return this.groupbyItems[currentIndex + 1].groupInterval;
     }
 
-    /**
-     * @returns {function(any): string}
-     */
-    getDateIntervalHeaderCustomizer(dateInterval: string) {
-        return cellInfo => {
-            /** @todo find out how to inject the this.cssMarker instead of hardcoded ' @css' */
-            return cellInfo.value + ' @css:{dateField ' + dateInterval + '}';
-        };
-    }
-
     getHistoricalCustomizer() {
-        return cellInfo => {
-            return this.l(this.historicalTextsKeys[cellInfo.value]).toUpperCase() +
-                ' @css:{historicalField ' + this.historicalClasses[cellInfo.value] + '}';
-        };
+        return cellInfo => this.l(this.historicalTextsKeys[cellInfo.value]).toUpperCase();
     }
 
     getYearHistoricalSelectorWithCurrent(): any {
@@ -1107,9 +1087,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @returns {string}
      */
     getQuarterHeaderCustomizer(): any {
-        return cellInfo => {
-            return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField quarter}';
-        };
+        return cellInfo => cellInfo.valueText.slice(0, 3).toUpperCase();
     }
 
     /**
@@ -1117,9 +1095,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @returns {string}
      */
     getMonthHeaderCustomizer(): any {
-        return function(cellInfo) {
-            return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField month}';
-        };
+        return cellInfo => cellInfo.valueText.slice(0, 3).toUpperCase();
     }
 
     /**
@@ -1208,10 +1184,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     clearAllFilters(event) {
         this._filtersService.clearAllFilters();
-    }
-
-    cutCssFromValue(text) {
-        return text.slice(text.indexOf(this.cssMarker) + this.cssMarker.length + 2, text.length - 1);
     }
 
     /**
@@ -1355,15 +1327,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     /**
-     * whether the cell contains the css marker for adding css to it
-     * @param cellObj
-     * @returns {boolean}
-     */
-    isCellContainsCssMarker(cellObj) {
-        return cellObj.cell.text ? cellObj.cell.text.indexOf(this.cssMarker) !== -1 : '';
-    }
-
-    /**
      * Event that runs before rendering of every cell of the pivot grid
      * @param e - the object with the cell info
      * https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxPivotGrid/Events/#cellPrepared
@@ -1406,10 +1369,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** headers manipulation (adding css classes and appending 'Totals text') */
-        if (e.area === 'column') {
-            if (this.isCellContainsCssMarker(e)) {
-                this.prepareColumnCell(e);
-            }
+        if (e.area === 'column' && e.cell.type !== GrandTotal) {
+            this.prepareColumnCell(e);
 
             /** Historical horizontal header columns */
             /** @todo exclude disabling for current month (in future) */
@@ -1596,7 +1557,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Get column activity */
     columnHasActivity(cellObj, lowestPeriod) {
         let columnHasActivity = false;
-        let path = cellObj.cell.columnPath || cellObj.cell.path
+        let path = cellObj.cell.columnPath || cellObj.cell.path;
         let cellDate = this.getDateByPath(path, this.getColumnFields(), lowestPeriod);
         if (cellDate) {
             let dateKey = this.formatToLowest(cellDate, lowestPeriod);
@@ -1647,23 +1608,34 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param cellObj
      */
     prepareColumnCell(cellObj) {
-        /** get the css class from name */
-        let valueWithoutCss = cellObj.cell.text.slice(0, (cellObj.cell.text.indexOf(this.cssMarker)));
-        /** cut off the css from the cell text */
-        let cssClass = this.cutCssFromValue(cellObj.cell.text);
-        /** update the columns with the text without the marker */
-        cellObj.cellElement.text(valueWithoutCss);
-        /** Added 'Total' text to the year and quarter headers */
-        let fieldName = cssClass.slice(cssClass.indexOf(' ') + 1, cssClass.length).trim();
-        if (fieldName === 'year' || fieldName === 'quarter') {
-            let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
-                (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length >= 6);
-            cellObj.cellElement.html(this.getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName));
+
+        let fieldName, columnFields = this.pivotGrid.instance.getDataSource().getAreaFields('column', false),
+            fieldObj = columnFields.find(field => field.areaIndex === cellObj.cell.path.length - 1),
+            fieldGroup = fieldObj.groupInterval ? 'dateField' : fieldObj.caption.toLowerCase() + 'Field';
+
+        if (fieldGroup === 'dateField') {
+            fieldName = fieldObj.groupInterval;
+            /** Added 'Total' text to the year and quarter headers */
+            if (fieldName === 'year' || fieldName === 'quarter') {
+                let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
+                    (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length >= 6);
+                cellObj.cellElement.html(this.getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName));
+            }
+            if (fieldName === 'day') {
+                let dayNumber = cellObj.cell.path.pop(),
+                    dayEnding = [, 'st', 'nd', 'rd'][ dayNumber % 100 >> 3 ^ 1 && dayNumber % 10] || 'th';
+                cellObj.cellElement.append(`<span class="dayEnding">${dayEnding}</span>`);
+            }
+        } else if (fieldGroup === 'historicalField') {
+            fieldName = this.historicalClasses[fieldObj.areaIndex];
+            if (!cellObj.cellElement.parent().hasClass('historicalRow')) {
+                cellObj.cellElement.parent().addClass('historicalRow');
+            }
+        } else if (fieldGroup === 'projected') {
+            fieldName = cellObj.cell.value === 1 ? 'projected' : 'mtd';
         }
-        if (_.startsWith(cssClass, 'historicalField') && !cellObj.cellElement.parent().hasClass('historicalRow')) {
-            cellObj.cellElement.parent().addClass('historicalRow');
-        }
-        cellObj.cellElement.addClass(cssClass);
+
+        cellObj.cellElement.addClass(`${fieldGroup} ${fieldName}`);
     }
 
     getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName) {
