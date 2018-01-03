@@ -238,7 +238,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         };
     }
 
-    initFiltering() {        
+    initFiltering() {
         this._filtersService.apply(() => {
 
             for (let filter of this.filters) {
@@ -290,7 +290,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             ]
         );
     }
-    
+
     handleForecastModelResult(result) {
         let items = result.map(forecastModelItem => {
             return {

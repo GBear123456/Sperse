@@ -6,6 +6,7 @@ import { LoginService, ExternalLoginProvider } from './login.service';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { UrlHelper } from 'shared/helpers/UrlHelper';
+import {AppConsts} from "@shared/AppConsts";
 
 @Component({
     templateUrl: './login.component.html',
@@ -63,7 +64,7 @@ export class LoginComponent extends AppComponentBase implements OnInit {
                 .addClass('modal-scrollfix')
                 .find('.modal-body')
                 .html('loading...')
-                .load('https://testapi.sperse.com/docs/privacy.html', function() {
+                .load(AppConsts.remoteServiceBaseUrl + '/docs/privacy.html', function() {
                     $modal
                         .removeClass('modal-scrollfix')
                         .modal('handleUpdate');

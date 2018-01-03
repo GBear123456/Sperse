@@ -8,7 +8,7 @@ import { MdDialog } from '@angular/material';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 
 import {
-    CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto,
+    CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto, GetTransactionCommonDetailsInput,
     CreateCategoryGroupInput, CreateCategoryInput, UpdateCategoryGroupInput, UpdateCategoryInput,
     CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
@@ -26,6 +26,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @ViewChild('keywordsComponent') keywordList: DxDataGridComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
+    
+    showSelectedTransactions = false;
     
     minAmount: number;
     maxAmount: number;
@@ -57,6 +59,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     ) {
         super(injector);
 
+        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.formats = _.values(ConditionDtoCashFlowAmountFormat).map((value) => {
             return {
                 format: value
@@ -97,19 +100,34 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.amountFormat = rule.condition.cashFlowAmountFormat;
                     this.minAmount = rule.condition.minAmount;
                     this.maxAmount = rule.condition.maxAmount;
-                    this.keywords = rule.condition.descriptionWords &&
-                        rule.condition.descriptionWords.split(',').map((keyword, index) => {
+                    this.keywords = this.getKeywordsFromString(rule.condition.descriptionWords);
+                    this.attributes = rule.condition.attributes;
+                }
+            });
+        else if (this.data.transactionIds && this.data.transactionIds.length)
+            _classificationServiceProxy.getTransactionCommonDetails(GetTransactionCommonDetailsInput.fromJS(this.data))
+                .subscribe((data) => {
+                    this.bankId = data.bankId;          
+                    this.accountId = data.bankAccountId;
+                    if (data.amountFormat)
+                        this.amountFormat = ConditionDtoCashFlowAmountFormat[data.amountFormat.toString()];
+                    this.descriptor = data.standardDescriptor;
+                    this.keywords = this.getKeywordsFromString(data.descriptionPhrases.join(','));
+                    this.attributes = data.attributes;
+                });
+
+        this.refreshCategories();
+    }
+
+    getKeywordsFromString(value: string) {
+        return value &&
+            value.split(',').map((keyword, index) => {
                             return {
                                 caption: 'Keyword #' + index,
                                 keyword: keyword
                             };
                         }) || [];
-                    this.attributes = rule.condition.attributes;
                 }
-            });
-
-        this.refreshCategories();
-    }
 
     refreshCategories() {
         this._classificationServiceProxy.getCategories(InstanceType17[this.instanceType], this.instanceId).subscribe((data) => {
@@ -172,7 +190,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                             name: this.data.title,
                             parentId: this.data.parentId,
                             categoryId: this.getSelectedCategoryId(),
-                            sourceTransactionsList: this.data.transactions,
+                            sourceTransactionsList: this.data.transactionIds,
                             transactionDecriptor: this.transactionAttributeTypes[this.descriptor] ? undefined: this.descriptor,
                             transactionDecriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor: undefined,
                             applyOption: (this.data.id ? EditRuleDtoApplyOption: CreateRuleDtoApplyOption)[option],
@@ -200,12 +218,12 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 title: this.l('Don\'t add'),
                 class: 'default',
                 action: () => {
-                    if (this.data.transactions)
+                    if (this.data.transactionIds)
                         this.validate(true) && this._classificationServiceProxy.updateTransactionsCategory(
                             InstanceType33[this.instanceType],
                             this.instanceId,
                             UpdateTransactionsCategoryInput.fromJS({
-                                transactionIds: this.data.transactions,
+                                transactionIds: this.data.transactionIds,
                                 categoryId: this.getSelectedCategoryId(),
                                 standardDescriptor: this.transactionAttributeTypes[this.descriptor] || this.descriptor
                             })

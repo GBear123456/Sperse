@@ -186,7 +186,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             dataField: `categorization.${this.categorization[1]}`,
             customizeText: cellInfo => {
                 return this.categories.items[cellInfo.value] ? this.categories.items[cellInfo.value]['name'] : cellInfo.value;
-            },
+            }
         },
         {
             caption: 'Descriptor',
@@ -196,7 +196,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortOrder: 'asc',
             resortable: true,
             areaIndex: 3,
-            dataField: `categorization.${this.categorization[2]}`
+            dataField: `categorization.${this.categorization[2]}`,
+            customizeText: cellInfo => {
+                return cellInfo.valueText ? cellInfo.valueText : this.l('Cashflow_emptyDescriptor');
+            }
         },
         {
             caption: 'Amount',
@@ -373,6 +376,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
     ];
+    maxCategoriesWidth = 25;
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
@@ -1448,6 +1452,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.fieldPathsToClick = [];
                 }
             }
+        }
+
+        /** hide long text for row headers and show '...' instead with the hover and long text*/
+        if (e.area === 'row' && e.cell.path && e.cell.path.length !== 1 && e.cell.text.length > this.maxCategoriesWidth) {
+            e.cellElement.attr('title', e.cell.text);
+            e.cellElement.text(_.prune(e.cell.text, this.maxCategoriesWidth));
         }
 
         /** Apply user preferences to the data showing */

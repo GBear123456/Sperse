@@ -40,7 +40,8 @@
                            [loadPanel]="{enabled: false}"
                            (onCellPrepared)="onCellPrepared($event)"
                            (onContentReady)="onContentReady($event)"
-                           (onCellClick)="onCellClick($event)">
+                           (onCellClick)="onCellClick($event)"
+                           [wordWrapEnabled]="false">
                 <dxo-scrolling mode="standard"></dxo-scrolling>
             </dx-pivot-grid>
         </div>

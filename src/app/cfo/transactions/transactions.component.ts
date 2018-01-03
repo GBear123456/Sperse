@@ -405,14 +405,18 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     openCategorizationWindow($event) {
+        let transactions = this.dataGrid
+            .instance.getSelectedRowKeys();
+
         this.dialog.open(RuleDialogComponent, {
             panelClass: 'slider', 
             data: {
                 instanceId: this.instanceId,
                 instanceType: this.instanceType,
                 categoryId: $event.categoryId,
-                transactions: this.dataGrid
-                    .instance.getSelectedRowKeys().map((obj) => {
+                transactions: transactions,
+                transactionIds: transactions
+                    .map((obj) => {
                         return obj.Id;
                     }),
                 refershParent: Function()
