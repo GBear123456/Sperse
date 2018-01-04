@@ -290,7 +290,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         'forecast'
     ];
     fieldPathsToClick = [];
-    forecastModelsObj: { items: Array<any>, selectedForecastModel: number };
+    forecastModelsObj: { items: Array<any>, selectedItemIndex: number };
     selectedForecastModel;
     currencyId = 'USD';
     userPreferencesHandlers = {
@@ -352,7 +352,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     sortings: SortingItemModel[] = [
         {
             name: 'Category',
-            text: this.ls('Platform', 'SortBy', this.l('Transactions_CategoryName')),
+            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_CategoryName')),
             activeByDefault: true,
             sortOptions: {
                 sortBy: 'displayText',
@@ -361,7 +361,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         },
         {
             name: 'Account',
-            text: this.ls('Platform', 'SortBy', this.l('Transactions_Amount')),
+            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_Amount')),
             sortOptions: {
                 sortBySummaryField: 'amount',
                 sortBySummaryPath: [],
@@ -388,7 +388,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 public userPreferencesService: UserPreferencesService
     ) {
         super(injector, route);
-        
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
@@ -396,7 +395,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     ngOnInit() {
         super.ngOnInit();
-        
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = this.currencyId;
 
@@ -531,12 +529,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.selectedForecastModel = cachedForecastModel && items.findIndex(item => item.id === cachedForecastModel.id) !== -1 ?
             cachedForecastModel :
             items[0];
-        let selectedForecastModelIndex = items.findIndex(
-            item => item.id === this.selectedForecastModel.id
-        );
+        let selectedForecastModelIndex = items.findIndex(item => item.id === this.selectedForecastModel.id);
         this.forecastModelsObj = {
             items: items,
-            selectedForecastModel: selectedForecastModelIndex
+            selectedItemIndex: selectedForecastModelIndex
         };
     }
 
@@ -1627,7 +1623,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 cellObj.cellElement.append(`<span class="dayEnding">${dayEnding}</span>`);
             }
         } else if (fieldGroup === 'historicalField') {
-            fieldName = this.historicalClasses[fieldObj.areaIndex];
+            fieldName = this.historicalClasses[cellObj.cell.path.pop()];
             if (!cellObj.cellElement.parent().hasClass('historicalRow')) {
                 cellObj.cellElement.parent().addClass('historicalRow');
             }
