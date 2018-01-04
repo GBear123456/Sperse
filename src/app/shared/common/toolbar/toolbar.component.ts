@@ -212,7 +212,6 @@ export class ToolBarComponent extends AppComponentBase {
                 });
             });
         });
-        console.log(items);
         this.items = items;
     }
 }

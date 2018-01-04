@@ -370,56 +370,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     ];
     maxCategoriesWidth = 25;
-    footerToolbarConfig = [
-        {
-            location: 'before',
-            items: [
-                {
-                    name: 'refresh',
-                    action: this.refreshDataGrid.bind(this)
-                },
-                {
-                    name: 'amount',
-                    text: '3 of 9'
-                },
-                {
-                    name: 'forecastModels',
-                    widget: 'dxTabs',
-                    options: {
-                        items: [
-                            {
-                                text: 'Model A'
-                            },
-                            {
-                                text: 'Model B'
-                            }
-                        ]
-                    }
-                },
-                {
-                    name: 'forecastModelAdd',
-                    action: function(){ console.log( 'add forecast model' ); },
-                }
-            ]
-        },
-        {
-            location: 'after',
-            items: [
-                {
-                    name: 'total',
-                    html: this.ls('Platform', 'Total') + ': <span class="value">372291,20</span>'
-                },
-                {
-                    name: 'count',
-                    html: this.l('Cashflow_BottomToolbarCount') + ': <span class="value">17</span>'
-                },
-                {
-                    name: 'average',
-                    html: this.l('Cashflow_BottomToolbarAverage') + ': <span class="value">1454, 24</span>'
-                }
-            ]
-        }
-    ];
+    footerToolbarConfig = [];
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
@@ -584,6 +535,58 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             items: items,
             selectedItemIndex: selectedForecastModelIndex
         };
+        this.initFooterToolbar(this.forecastModelsObj);
+    }
+
+    initFooterToolbar(forecastModelsObj: { items: Array<any>, selectedItemIndex: number }) {
+        this.footerToolbarConfig = [
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'refresh',
+                        action: this.refreshDataGrid.bind(this)
+                    },
+                    {
+                        name: 'amount',
+                        text: '3 of 9'
+                    },
+                    {
+                        name: 'forecastModels',
+                        widget: 'dxTabs',
+                        options: {
+                            items: forecastModelsObj.items,
+                            selectedIndex: forecastModelsObj.selectedItemIndex,
+                            accessKey: 'cashflowForecastSwitcher',
+                            onSelectionChanged: (e) => {
+                                this.changeSelectedForecastModel(e);
+                            }
+                        }
+                    },
+                    {
+                        name: 'forecastModelAdd',
+                        action: function(){ console.log( 'add forecast model' ); },
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                items: [
+                    {
+                        name: 'total',
+                        html: this.ls('Platform', 'Total') + ': <span class="value">372291,20</span>'
+                    },
+                    {
+                        name: 'count',
+                        html: this.l('Cashflow_BottomToolbarCount') + ': <span class="value">17</span>'
+                    },
+                    {
+                        name: 'average',
+                        html: this.l('Cashflow_BottomToolbarAverage') + ': <span class="value">1454, 24</span>'
+                    }
+                ]
+            }
+        ];
     }
 
     /**
