@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import * as _ from 'underscore';
+import { PanelMenu } from 'app/shared/layout/panel-menu';
 
 @Injectable()
 export class AppService {
@@ -18,6 +19,8 @@ export class AppService {
     };
 
     private readonly MODULE_DEFAULT = 'CRM';
+
+    public topMenu: PanelMenu;
 
     public toolbarConfig: any;
 

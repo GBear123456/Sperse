@@ -7003,7 +7003,7 @@ export class InstanceServiceProxy {
     /**
      * @return Success
      */
-    getStatus(instanceType: InstanceType46): Observable<Anonymous> {
+    getStatus(instanceType: InstanceType46): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
         if (instanceType === undefined || instanceType === null)
             throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
@@ -7029,33 +7029,33 @@ export class InstanceServiceProxy {
                 try {
                     return this.processGetStatus(response_);
                 } catch (e) {
-                    return <Observable<Anonymous>><any>Observable.throw(e);
+                    return <Observable<GetStatusOutput>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<Anonymous>><any>Observable.throw(response_);
+                return <Observable<GetStatusOutput>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetStatus(response: Response): Observable<Anonymous> {
+    protected processGetStatus(response: Response): Observable<GetStatusOutput> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: Anonymous = null;
+            let result200: GetStatusOutput = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? GetStatusOutput.fromJS(resultData200) : new GetStatusOutput();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<Anonymous>(<any>null);
+        return Observable.of<GetStatusOutput>(<any>null);
     }
 
     /**
      * @return Success
      */
-    setup(instanceType: InstanceType47): Observable<InstanceSetupOutput> {
+    setup(instanceType: InstanceType47): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType === undefined || instanceType === null)
             throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
@@ -7081,27 +7081,27 @@ export class InstanceServiceProxy {
                 try {
                     return this.processSetup(response_);
                 } catch (e) {
-                    return <Observable<InstanceSetupOutput>><any>Observable.throw(e);
+                    return <Observable<SetupOutput>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<InstanceSetupOutput>><any>Observable.throw(response_);
+                return <Observable<SetupOutput>><any>Observable.throw(response_);
         });
     }
 
-    protected processSetup(response: Response): Observable<InstanceSetupOutput> {
+    protected processSetup(response: Response): Observable<SetupOutput> {
         const status = response.status; 
 
         if (status === 200) {
             const responseText = response.text();
-            let result200: InstanceSetupOutput = null;
+            let result200: SetupOutput = null;
             let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
-            result200 = resultData200 ? InstanceSetupOutput.fromJS(resultData200) : new InstanceSetupOutput();
+            result200 = resultData200 ? SetupOutput.fromJS(resultData200) : new SetupOutput();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const responseText = response.text();
             return throwException("An unexpected server error occurred.", status, responseText);
         }
-        return Observable.of<InstanceSetupOutput>(<any>null);
+        return Observable.of<SetupOutput>(<any>null);
     }
 }
 
@@ -25596,10 +25596,45 @@ export interface ICheckDatabaseOutput {
     isDatabaseExist: boolean;
 }
 
-export class InstanceSetupOutput implements IInstanceSetupOutput {
+export class GetStatusOutput implements IGetStatusOutput {
+    status: GetStatusOutputStatus;
+
+    constructor(data?: IGetStatusOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.status = data["status"];
+        }
+    }
+
+    static fromJS(data: any): GetStatusOutput {
+        let result = new GetStatusOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["status"] = this.status;
+        return data; 
+    }
+}
+
+export interface IGetStatusOutput {
+    status: GetStatusOutputStatus;
+}
+
+export class SetupOutput implements ISetupOutput {
     alreadyInitialized: boolean;
 
-    constructor(data?: IInstanceSetupOutput) {
+    constructor(data?: ISetupOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -25614,8 +25649,8 @@ export class InstanceSetupOutput implements IInstanceSetupOutput {
         }
     }
 
-    static fromJS(data: any): InstanceSetupOutput {
-        let result = new InstanceSetupOutput();
+    static fromJS(data: any): SetupOutput {
+        let result = new SetupOutput();
         result.init(data);
         return result;
     }
@@ -25627,7 +25662,7 @@ export class InstanceSetupOutput implements IInstanceSetupOutput {
     }
 }
 
-export interface IInstanceSetupOutput {
+export interface ISetupOutput {
     alreadyInitialized: boolean;
 }
 
@@ -34764,13 +34799,13 @@ export enum IncomeStatisticsDateInterval2 {
 }
 
 export enum InstanceType46 {
-    _0 = 0, 
-    _1 = 1, 
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
 }
 
 export enum InstanceType47 {
-    _0 = 0, 
-    _1 = 1, 
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
 }
 
 export enum State {
@@ -34822,12 +34857,6 @@ export enum InstanceType49 {
 export enum InstanceType50 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
-}
-
-export enum Anonymous {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
 }
 
 export enum IsTenantAvailableOutputState {
@@ -34990,6 +35019,12 @@ export enum ScoreSimulatorInfoDtoAccessStatus {
     KbaIsNotPassed = <any>"KbaIsNotPassed", 
     UnsupportedPackage = <any>"UnsupportedPackage", 
     NoPayment = <any>"NoPayment", 
+}
+
+export enum GetStatusOutputStatus {
+    NotInitialized = <any>"NotInitialized", 
+    Active = <any>"Active", 
+    Inactive = <any>"Inactive", 
 }
 
 export enum MemberInfoDtoGender {
