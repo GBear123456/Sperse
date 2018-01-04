@@ -13469,6 +13469,54 @@ export class TransactionsServiceProxy {
         }
         return Observable.of<GetTransactionDetailsOutput>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getTransactionTypesAndCategories(): Observable<TransactionTypesAndCategoriesDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionTypesAndCategories";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = "";
+        
+        let options_ = {
+            body: content_,
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json; charset=UTF-8", 
+                "Accept": "application/json; charset=UTF-8"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_) => {
+            return this.processGetTransactionTypesAndCategories(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTransactionTypesAndCategories(response_);
+                } catch (e) {
+                    return <Observable<TransactionTypesAndCategoriesDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<TransactionTypesAndCategoriesDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTransactionTypesAndCategories(response: Response): Observable<TransactionTypesAndCategoriesDto> {
+        const status = response.status; 
+
+        if (status === 200) {
+            const responseText = response.text();
+            let result200: TransactionTypesAndCategoriesDto = null;
+            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            result200 = resultData200 ? TransactionTypesAndCategoriesDto.fromJS(resultData200) : new TransactionTypesAndCategoriesDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, responseText);
+        }
+        return Observable.of<TransactionTypesAndCategoriesDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -17318,8 +17366,10 @@ export class ConditionDto implements IConditionDto {
     cashFlowAmountFormat: ConditionDtoCashFlowAmountFormat;
     bankId: number;
     bankAccountId: number;
+    transactionCategoryId: string;
     descriptionWords: string;
     attributes: { [key: string] : ConditionAttributeDto; };
+    transactionTypes: string[];
 
     constructor(data?: IConditionDto) {
         if (data) {
@@ -17337,6 +17387,7 @@ export class ConditionDto implements IConditionDto {
             this.cashFlowAmountFormat = data["cashFlowAmountFormat"];
             this.bankId = data["bankId"];
             this.bankAccountId = data["bankAccountId"];
+            this.transactionCategoryId = data["transactionCategoryId"];
             this.descriptionWords = data["descriptionWords"];
             if (data["attributes"]) {
                 this.attributes = {};
@@ -17344,6 +17395,11 @@ export class ConditionDto implements IConditionDto {
                     if (data["attributes"].hasOwnProperty(key))
                         this.attributes[key] = data["attributes"][key] ? ConditionAttributeDto.fromJS(data["attributes"][key]) : new ConditionAttributeDto();
                 }
+            }
+            if (data["transactionTypes"] && data["transactionTypes"].constructor === Array) {
+                this.transactionTypes = [];
+                for (let item of data["transactionTypes"])
+                    this.transactionTypes.push(item);
             }
         }
     }
@@ -17361,6 +17417,7 @@ export class ConditionDto implements IConditionDto {
         data["cashFlowAmountFormat"] = this.cashFlowAmountFormat;
         data["bankId"] = this.bankId;
         data["bankAccountId"] = this.bankAccountId;
+        data["transactionCategoryId"] = this.transactionCategoryId;
         data["descriptionWords"] = this.descriptionWords;
         if (this.attributes) {
             data["attributes"] = {};
@@ -17368,6 +17425,11 @@ export class ConditionDto implements IConditionDto {
                 if (this.attributes.hasOwnProperty(key))
                     data["attributes"][key] = this.attributes[key];
             }
+        }
+        if (this.transactionTypes && this.transactionTypes.constructor === Array) {
+            data["transactionTypes"] = [];
+            for (let item of this.transactionTypes)
+                data["transactionTypes"].push(item);
         }
         return data; 
     }
@@ -17379,8 +17441,10 @@ export interface IConditionDto {
     cashFlowAmountFormat: ConditionDtoCashFlowAmountFormat;
     bankId: number;
     bankAccountId: number;
+    transactionCategoryId: string;
     descriptionWords: string;
     attributes: { [key: string] : ConditionAttributeDto; };
+    transactionTypes: string[];
 }
 
 export class ConditionAttributeDto implements IConditionAttributeDto {
@@ -33235,6 +33299,112 @@ export interface ITransactionDetailsDto {
     isBalanceConfirmed: boolean;
     cashflowCategoryGroupName: string;
     cashflowCategoryName: string;
+}
+
+export class TransactionTypesAndCategoriesDto implements ITransactionTypesAndCategoriesDto {
+    types: TransactionTypeDto[];
+    categories: FilterElementDtoOfString[];
+
+    constructor(data?: ITransactionTypesAndCategoriesDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["types"] && data["types"].constructor === Array) {
+                this.types = [];
+                for (let item of data["types"])
+                    this.types.push(TransactionTypeDto.fromJS(item));
+            }
+            if (data["categories"] && data["categories"].constructor === Array) {
+                this.categories = [];
+                for (let item of data["categories"])
+                    this.categories.push(FilterElementDtoOfString.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TransactionTypesAndCategoriesDto {
+        let result = new TransactionTypesAndCategoriesDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.types && this.types.constructor === Array) {
+            data["types"] = [];
+            for (let item of this.types)
+                data["types"].push(item.toJSON());
+        }
+        if (this.categories && this.categories.constructor === Array) {
+            data["categories"] = [];
+            for (let item of this.categories)
+                data["categories"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ITransactionTypesAndCategoriesDto {
+    types: TransactionTypeDto[];
+    categories: FilterElementDtoOfString[];
+}
+
+export class TransactionTypeDto implements ITransactionTypeDto {
+    id: string;
+    name: string;
+    categories: string[];
+
+    constructor(data?: ITransactionTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            if (data["categories"] && data["categories"].constructor === Array) {
+                this.categories = [];
+                for (let item of data["categories"])
+                    this.categories.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): TransactionTypeDto {
+        let result = new TransactionTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        if (this.categories && this.categories.constructor === Array) {
+            data["categories"] = [];
+            for (let item of this.categories)
+                data["categories"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface ITransactionTypeDto {
+    id: string;
+    name: string;
+    categories: string[];
 }
 
 export class UiCustomizationSettingsEditDto implements IUiCustomizationSettingsEditDto {
