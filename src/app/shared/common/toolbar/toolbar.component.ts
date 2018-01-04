@@ -197,8 +197,10 @@ export class ToolBarComponent extends AppComponentBase {
                 }
                 items.push({
                     location: group.location,
-                    widget: item.text && !item.widget ? null : item.widget || 'dxButton',
-                    text: item.text && !item.widget || null,
+                    widget: (item.text !== undefined || item.html !== undefined) && !item.widget ? null : item.widget || 'dxButton',
+                    text: !item.widget && item.text,
+                    html: !item.widget && item.html,
+                    itemTemplate: item.itemTemplate || group.itemTemplate,
                     options: _.extend({
                         onClick: item.action,
                         elementAttr: _.extend({

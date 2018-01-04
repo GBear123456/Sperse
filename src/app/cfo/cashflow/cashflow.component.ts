@@ -407,15 +407,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             items: [
                 {
                     name: 'total',
-                    text: this.ls('Platform', 'Total') + ': 372291,20'
+                    html: this.ls('Platform', 'Total') + ': <span class="value">372291,20</span>'
                 },
                 {
                     name: 'count',
-                    text: this.l('Cashflow_BottomToolbarCount') + ': 17'
+                    html: this.l('Cashflow_BottomToolbarCount') + ': <span class="value">17</span>'
                 },
                 {
                     name: 'average',
-                    text: this.l('Avg') + ': 1454, 24'
+                    html: this.l('Cashflow_BottomToolbarAverage') + ': <span class="value">1454, 24</span>'
                 }
             ]
         }
