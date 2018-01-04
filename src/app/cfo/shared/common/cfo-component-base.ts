@@ -24,11 +24,16 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
             }
 
             this.instanceType = this.capitalize(instance);
+
+            this.loadData();
         });
     }
 
     ngOnDestroy() {
         this._sub.unsubscribe();
+    }
+
+    loadData(): void {
     }
 
     getODataURL(uri: String, filter?: Object) {

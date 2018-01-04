@@ -37,7 +37,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
         this.initIFrame();
 
         this.headlineConfig = {
-            names: [this.l('CashflowSetup_Title'), this.l('SetupStep_FinancialAccounts')],
+            names: [this.l('Setup_Title'), this.l('SetupStep_FinancialAccounts')],
             iconSrc: 'assets/common/icons/magic-stick-icon.svg',
             buttons: [
                 {

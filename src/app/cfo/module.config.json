@@ -2,7 +2,7 @@
   "name": "CFO",
   "search": false,
   "navigation": [
-    [ "Setup", "", "icon-home", "/app/cfo/:instance/setup" ],
+    [ "Start", "", "icon-home", "/app/cfo/:instance/start" ],
     [ "Accounts", "", "icon-home", "/app/cfo/:instance/bank-accounts" ],
     [ "Cashflow", "", "icon-home", "/app/cfo/:instance/cashflow" ],
     [ "Stats", "", "icon-home", "/app/cfo/:instance/stats" ],
