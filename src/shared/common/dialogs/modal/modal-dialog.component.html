@@ -5,7 +5,7 @@
         [(value)]="data.title"
         [readOnly]="!data.editTitle">
     </dx-text-box>
-    <md-dialog-actions>
+    <mat-dialog-actions>
         <div class="md-dialog-options">
             <ng-template ngFor let-option [ngForOf]="data.options" let-i="index">
                 <dx-check-box class="md-dialog-option pull-right" (onValueChanged)="option.onValueChanged($event)" [(value)]="option.value" [text]="option.text"></dx-check-box>
@@ -16,10 +16,10 @@
                 <button md-button (click)="button.action($event)" class="button-layout button-{{button.class}}">{{l(button.title)}}</button>
             </ng-template>
         </div>
-    </md-dialog-actions>
+    </mat-dialog-actions>
 </div>
-<md-dialog-content>
+<mat-dialog-content>
     <dx-scroll-view showScrollbar="onHover">
         <ng-content></ng-content>
     </dx-scroll-view>
-</md-dialog-content>
+</mat-dialog-content>

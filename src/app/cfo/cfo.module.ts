@@ -22,8 +22,7 @@ import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 
-import { MdTabsModule } from '@angular/material';
-import { MdDialogModule } from '@angular/material';
+import { MatTabsModule, MatDialogModule } from '@angular/material';
 
 import { SortingComponent } from '@app/cfo/shared/common/sorting/sorting.component';
 
@@ -77,8 +76,8 @@ import {
         ModalModule.forRoot(),
 
         DxChartModule,
-        MdTabsModule,
-        MdDialogModule
+        MatTabsModule,
+        MatDialogModule
     ],
     declarations: [
         BankAccountsComponent,

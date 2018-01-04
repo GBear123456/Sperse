@@ -1,12 +1,12 @@
-﻿import { Component, OnInit, AfterViewInit, AfterViewChecked, ElementRef, ViewChild, Injector, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit, AfterViewChecked, ElementRef, ViewChild, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { NameValueDto, FlatFeatureDto } from '@shared/service-proxies/service-proxies';
-import { FeatureTreeEditModel } from '@app/crm/shared/feature-tree-edit.model';
+import { FeatureTreeEditModel } from './feature-tree-edit.model';
 import * as _ from 'lodash';
 
 @Component({
     selector: 'feature-tree',
-    template: `<div class='feature-tree'></div>`,
+    template: `<div class="feature-tree"></div>`,
     styleUrls: ['./feature-tree.component.less']
 })
 export class FeatureTreeComponent extends AppComponentBase implements OnInit, AfterViewInit, AfterViewChecked {
@@ -45,14 +45,14 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
             return [];
         }
 
-        let selectedFeatures = this._$tree.jstree('get_selected', true);
+        const selectedFeatures = this._$tree.jstree('get_selected', true);
 
         return _.map(this._editData.features, item => {
-            let feature = new NameValueDto();
+            const feature = new NameValueDto();
 
             feature.name = item.name;
 
-            if (!item.inputType || item.inputType.name == 'CHECKBOX') {
+            if (!item.inputType || item.inputType.name === 'CHECKBOX') {
                 feature.value = _.some(selectedFeatures, { original: { id: item.name } }) ? 'true' : 'false';
             } else {
                 feature.value = this.getFeatureValueByName(item.name);
@@ -63,7 +63,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     refreshTree(): void {
-        let self = this;
+        const self = this;
 
         if (this._createdTreeBefore) {
             this._$tree.jstree('destroy');
@@ -75,39 +75,35 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
             return;
         }
 
-        let treeData = _.map(this._editData.features, function (item) {
-            return {
-                id: item.name,
-                parent: item.parentName ? item.parentName : '#',
-                text: item.displayName,
-                state: {
-                    opened: true,
-                    selected: _.some(self._editData.featureValues, { name: item.name, value: 'true' })
-                }
-            };
-        });
-
-        let inTreeChangeEvent = false;
+        const treeData = _.map(this._editData.features, item => ({
+            id: item.name,
+            parent: item.parentName ? item.parentName : '#',
+            text: item.displayName,
+            state: {
+                opened: true,
+                selected: _.some(this._editData.featureValues, { name: item.name, value: 'true' })
+            }
+        }));
 
         this._$tree
-            .on('ready.jstree', function () {
-                self.customizeTreeNodes();
+            .on('ready.jstree', () => {
+                this.customizeTreeNodes();
             })
-            .on('redraw.jstree', function () {
-                self.customizeTreeNodes();
+            .on('redraw.jstree', () => {
+                this.customizeTreeNodes();
             })
-            .on('after_open.jstree', function () {
-                self.customizeTreeNodes();
+            .on('after_open.jstree', () => {
+                this.customizeTreeNodes();
             })
-            .on('create_node.jstree', function () {
-                self.customizeTreeNodes();
+            .on('create_node.jstree', () => {
+                this.customizeTreeNodes();
             })
-            .on('changed.jstree', function (e, data) {
+            .on('changed.jstree', (e, data) => {
                 if (!data.node) {
                     return;
                 }
 
-                let wasInTreeChangeEvent = inTreeChangeEvent;
+                const wasInTreeChangeEvent = inTreeChangeEvent;
                 if (!wasInTreeChangeEvent) {
                     inTreeChangeEvent = true;
                 }
@@ -115,22 +111,22 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
                 let childrenNodes;
 
                 if (data.node.state.selected) {
-                    selectNodeAndAllParents(self._$tree.jstree('get_parent', data.node));
+                    selectNodeAndAllParents(this._$tree.jstree('get_parent', data.node));
 
-                    childrenNodes = $.makeArray(self._$tree.jstree('get_children_dom', data.node));
-                    self._$tree.jstree('select_node', childrenNodes);
+                    childrenNodes = $.makeArray(this._$tree.jstree('get_children_dom', data.node));
+                    this._$tree.jstree('select_node', childrenNodes);
 
                 } else {
-                    childrenNodes = $.makeArray(self._$tree.jstree('get_children_dom', data.node));
-                    self._$tree.jstree('deselect_node', childrenNodes);
+                    childrenNodes = $.makeArray(this._$tree.jstree('get_children_dom', data.node));
+                    this._$tree.jstree('deselect_node', childrenNodes);
                 }
 
                 if (!wasInTreeChangeEvent) {
-                    let $nodeLi = self.getNodeLiByFeatureName(data.node.id);
-                    let feature = self.findFeatureByName(data.node.id);
-                    if (feature && (!feature.inputType || feature.inputType.name == 'CHECKBOX')) {
-                        let value = self._$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
-                        self.setFeatureValueByName(data.node.id, value);
+                    const $nodeLi = this.getNodeLiByFeatureName(data.node.id);
+                    const feature = this.findFeatureByName(data.node.id);
+                    if (feature && (!feature.inputType || feature.inputType.name === 'CHECKBOX')) {
+                        const value = this._$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
+                        this.setFeatureValueByName(data.node.id, value);
                     }
 
                     inTreeChangeEvent = false;
@@ -142,10 +138,10 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
                 },
                 'types': {
                     'default': {
-                        'icon': 'fa fa-folder tree-item-icon-color icon-lg'
+                        'icon': 'fa fa-folder m--font-warning'
                     },
                     'file': {
-                        'icon': 'fa fa-file tree-item-icon-color icon-lg'
+                        'icon': 'fa fa-file m--font-warning'
                     }
                 },
                 'checkbox': {
@@ -158,20 +154,22 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
 
         this._createdTreeBefore = true;
 
+        let inTreeChangeEvent = false;
+
         function selectNodeAndAllParents(node) {
             self._$tree.jstree('select_node', node, true);
-            let parent = self._$tree.jstree('get_parent', node);
+            const parent = self._$tree.jstree('get_parent', node);
             if (parent) {
                 selectNodeAndAllParents(parent);
             }
-        };
+        }
 
-        this._$tree.on('changed.jstree', function (e, data) {
+        this._$tree.on('changed.jstree', (e, data) => {
             if (!data.node) {
                 return;
             }
 
-            let wasInTreeChangeEvent = inTreeChangeEvent;
+            const wasInTreeChangeEvent = inTreeChangeEvent;
             if (!wasInTreeChangeEvent) {
                 inTreeChangeEvent = true;
             }
@@ -179,14 +177,14 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
             let childrenNodes;
 
             if (data.node.state.selected) {
-                selectNodeAndAllParents(self._$tree.jstree('get_parent', data.node));
+                selectNodeAndAllParents(this._$tree.jstree('get_parent', data.node));
 
-                childrenNodes = $.makeArray(self._$tree.jstree('get_children_dom', data.node));
-                self._$tree.jstree('select_node', childrenNodes);
+                childrenNodes = $.makeArray(this._$tree.jstree('get_children_dom', data.node));
+                this._$tree.jstree('select_node', childrenNodes);
 
             } else {
-                childrenNodes = $.makeArray(self._$tree.jstree('get_children_dom', data.node));
-                self._$tree.jstree('deselect_node', childrenNodes);
+                childrenNodes = $.makeArray(this._$tree.jstree('get_children_dom', data.node));
+                this._$tree.jstree('deselect_node', childrenNodes);
             }
 
             if (!wasInTreeChangeEvent) {
@@ -196,41 +194,41 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     customizeTreeNodes(): void {
-        let self = this;
+        const self = this;
         self._$tree.find('.jstree-node').each(function () {
-            let $nodeLi = $(this);
-            let $nodeA = $nodeLi.find('.jstree-anchor');
+            const $nodeLi = $(this);
+            const $nodeA = $nodeLi.find('.jstree-anchor');
 
-            let featureName = $nodeLi.attr('id');
-            let feature = self.findFeatureByName(featureName);
-            let featureValue = self.findFeatureValueByName(featureName) || '';
+            const featureName = $nodeLi.attr('id');
+            const feature = self.findFeatureByName(featureName);
+            const featureValue = self.findFeatureValueByName(featureName) || '';
 
             if (!feature || !feature.inputType) {
                 return;
             }
 
-            if (feature.inputType.name == 'CHECKBOX') {
+            if (feature.inputType.name === 'CHECKBOX') {
                 //no change for checkbox
-            } else if (feature.inputType.name == 'SINGLE_LINE_STRING') {
+            } else if (feature.inputType.name === 'SINGLE_LINE_STRING') {
                 if (!$nodeLi.find('.feature-tree-textbox').length) {
                     $nodeA.find('.jstree-checkbox').hide();
 
                     let inputType = 'text';
-                    let validator = (feature.inputType.validator as any);
+                    const validator = (feature.inputType.validator as any);
                     if (feature.inputType.validator) {
-                        if (feature.inputType.validator.name == 'NUMERIC') {
+                        if (feature.inputType.validator.name === 'NUMERIC') {
                             inputType = 'number';
                         }
                     }
 
-                    var $textbox = $('<input class="feature-tree-textbox" type="' + inputType + '" />')
+                    const $textbox = $('<input class="feature-tree-textbox" type="' + inputType + '" />')
                         .val(featureValue);
 
-                    if (inputType == 'number') {
+                    if (inputType === 'number') {
                         $textbox.attr('min', validator.minValue);
                         $textbox.attr('max', validator.maxValue);
                     } else {
-                        if (feature.inputType.validator && feature.inputType.validator.name == 'STRING') {
+                        if (feature.inputType.validator && feature.inputType.validator.name === 'STRING') {
                             if (validator.maxLength > 0) {
                                 $textbox.attr('maxlength', validator.maxLength);
                             }
@@ -243,9 +241,10 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
                         }
                     }
 
-                    $textbox.on('input propertychange paste', function () {
-                        if (self.isFeatureValueValid(featureName, $textbox.val())) {
-                            self.setFeatureValueByName(featureName, $textbox.val());
+                    $textbox.on('input propertychange paste', () => {
+                        const value = $textbox.val() as string;
+                        if (self.isFeatureValueValid(featureName, value)) {
+                            self.setFeatureValueByName(featureName, value);
                             $textbox.removeClass('feature-tree-textbox-invalid');
                         } else {
                             $textbox.addClass('feature-tree-textbox-invalid');
@@ -254,13 +253,13 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
 
                     $textbox.appendTo($nodeLi);
                 }
-            } else if (feature.inputType.name == 'COMBOBOX') {
+            } else if (feature.inputType.name === 'COMBOBOX') {
                 if (!$nodeLi.find('.feature-tree-combobox').length) {
                     $nodeA.find('.jstree-checkbox').hide();
 
-                    var $combobox = $('<select class="feature-tree-combobox" />');
-                    let inputType = (feature.inputType as any);
-                    _.each(inputType.itemSource.items, function (opt) {
+                    const $combobox = $('<select class="feature-tree-combobox" />');
+                    const inputType = (feature.inputType as any);
+                    _.each(inputType.itemSource.items, (opt: any) => {
                         $('<option></option>')
                             .attr('value', opt.value)
                             .text(opt.displayText)
@@ -269,8 +268,9 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
 
                     $combobox
                         .val(featureValue)
-                        .on('change', function () {
-                            self.setFeatureValueByName(featureName, $combobox.val());
+                        .on('change', () => {
+                            const value = $combobox.val() as string;
+                            self.setFeatureValueByName(featureName, value);
                         })
                         .appendTo($nodeLi);
                 }
@@ -283,18 +283,18 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     selectNodeAndAllParents(node: any): void {
-        let self = this;
+        const self = this;
         self._$tree.jstree('select_node', node, true);
-        let parent = self._$tree.jstree('get_parent', node);
+        const parent = self._$tree.jstree('get_parent', node);
         if (parent) {
             self.selectNodeAndAllParents(parent);
         }
-    };
+    }
 
     findFeatureByName(featureName: string): FlatFeatureDto {
-        let self = this;
+        const self = this;
 
-        let feature = _.find(self._editData.features, function (f) { return f.name == featureName });
+        const feature = _.find(self._editData.features, f => f.name === featureName);
 
         if (!feature) {
             abp.log.warn('Could not find a feature by name: ' + featureName);
@@ -304,13 +304,13 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     findFeatureValueByName(featureName: string) {
-        let self = this;
-        let feature = self.findFeatureByName(featureName);
+        const self = this;
+        const feature = self.findFeatureByName(featureName);
         if (!feature) {
             return '';
         }
 
-        let featureValue = _.find(self._editData.featureValues, function (f) { return f.name == featureName });
+        const featureValue = _.find(self._editData.featureValues, f => f.name === featureName);
         if (!featureValue) {
             return feature.defaultValue;
         }
@@ -319,19 +319,19 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     isFeatureValueValid(featureName: string, value: string): boolean {
-        let self = this;
-        let feature = self.findFeatureByName(featureName);
+        const self = this;
+        const feature = self.findFeatureByName(featureName);
         if (!feature || !feature.inputType || !feature.inputType.validator) {
             return true;
         }
 
-        let validator = (feature.inputType.validator as any);
-        if (validator.name == 'STRING') {
-            if (value == undefined || value == null) {
+        const validator = (feature.inputType.validator as any);
+        if (validator.name === 'STRING') {
+            if (value === undefined || value === null) {
                 return validator.allowNull;
             }
 
-            if (typeof value != 'string') {
+            if (typeof value !== 'string') {
                 return false;
             }
 
@@ -346,19 +346,19 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
             if (validator.regularExpression) {
                 return (new RegExp(validator.regularExpression)).test(value);
             }
-        } else if (validator.name == 'NUMERIC') {
-            let numValue = parseInt(value);
+        } else if (validator.name === 'NUMERIC') {
+            const numValue = parseInt(value);
 
             if (isNaN(numValue)) {
                 return false;
             }
 
-            let minValue = validator.minValue;
+            const minValue = validator.minValue;
             if (minValue > numValue) {
                 return false;
             }
 
-            let maxValue = validator.maxValue;
+            const maxValue = validator.maxValue;
             if (maxValue > 0 && numValue > maxValue) {
                 return false;
             }
@@ -368,14 +368,14 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     areAllValuesValid(): boolean {
-        let self = this;
+        const self = this;
         self._$tree.find('.jstree-node').each(function () {
-            let $nodeLi = $(this);
-            let featureName = $nodeLi.attr('id');
-            let feature = self.findFeatureByName(featureName);
+            const $nodeLi = $(this);
+            const featureName = $nodeLi.attr('id');
+            const feature = self.findFeatureByName(featureName);
 
-            if (feature && (!feature.inputType || feature.inputType.name == 'CHECKBOX')) {
-                let value = self._$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
+            if (feature && (!feature.inputType || feature.inputType.name === 'CHECKBOX')) {
+                const value = self._$tree.jstree('is_checked', $nodeLi) ? 'true' : 'false';
                 self.setFeatureValueByName(featureName, value);
             }
         });
@@ -384,7 +384,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     setFeatureValueByName(featureName: string, value: string): void {
-        let featureValue = _.find(this._editData.featureValues, f => f.name === featureName);
+        const featureValue = _.find(this._editData.featureValues, f => f.name === featureName);
         if (!featureValue) {
             return;
         }
@@ -393,7 +393,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     getFeatureValueByName(featureName: string): string {
-        let featureValue = _.find(this._editData.featureValues, f => f.name === featureName);
+        const featureValue = _.find(this._editData.featureValues, f => f.name === featureName);
         if (!featureValue) {
             return null;
         }
@@ -402,8 +402,8 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     isFeatureEnabled(featureName: string): boolean {
-        let self = this;
-        let value = self.findFeatureValueByName(featureName);
+        const self = this;
+        const value = self.findFeatureValueByName(featureName);
         return value.toLowerCase() === 'true';
     }
 }

@@ -24,6 +24,8 @@ import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
 
 import { FiltersModule } from '@shared/filters/filters.module';
 
+import { AbpHttpConfiguration } from '@abp/abpHttp';
+
 export function appInitializerFactory(injector: Injector) {
     let process = (method) => {
         return (result) => {
@@ -62,6 +64,7 @@ ABP_HTTP_PROVIDER.deps = [XHRBackend, RequestOptions, httpConfiguration];
 
 @NgModule({
     imports: [
+        HttpModule,
         BrowserModule,
         BrowserAnimationsModule,
         AppModule,

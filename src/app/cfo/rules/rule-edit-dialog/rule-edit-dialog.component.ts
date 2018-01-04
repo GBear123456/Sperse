@@ -4,7 +4,7 @@ import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { DxTreeListComponent, DxDataGridComponent } from 'devextreme-angular';
 
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 
 import {
@@ -52,7 +52,7 @@ export class RuleDialogComponent extends ModalDialogComponent implements OnInit,
 
     constructor(
         injector: Injector,
-        public dialog: MdDialog,
+        public dialog: MatDialog,
         private _classificationServiceProxy: ClassificationServiceProxy,
         private _cashflowServiceProxy: CashflowServiceProxy,
         private _transactionsServiceProxy: TransactionsServiceProxy

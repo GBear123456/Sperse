@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, Injector, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { NotificationServiceProxy, GetNotificationsOutput, UserNotification } from '@shared/service-proxies/service-proxies';
 import { UserNotificationHelper, IFormattedUserNotification } from './UserNotificationHelper';
@@ -11,7 +11,7 @@ import { UserNotificationHelper, IFormattedUserNotification } from './UserNotifi
 export class HeaderNotificationsComponent extends AppComponentBase implements OnInit {
 
     notifications: IFormattedUserNotification[] = [];
-    unreadNotificationCount: number = 0;
+    unreadNotificationCount = 0;
 
     constructor(
         injector: Injector,
@@ -27,7 +27,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
     }
 
     loadNotifications(): void {
-        this._notificationService.getUserNotifications(undefined, 3, undefined).subscribe(result => {
+        this._notificationService.getUserNotifications(undefined, 3, 0).subscribe(result => {
             this.unreadNotificationCount = result.unreadCount;
             this.notifications = [];
             $.each(result.items, (index, item: UserNotification) => {

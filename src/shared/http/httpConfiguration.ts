@@ -13,9 +13,12 @@ export class httpConfiguration extends AbpHttpConfiguration {
         super.handleUnAuthorizedRequest(messagePromise, targetUrl);
     }
 
-    handleError(error: Response): Observable<any> {
+    handleError(error: any): Observable<any> {
         if (error['httpStatus'])
-          error.status = error['httpStatus'];
+          error = <Response>{ 
+              status: error['httpStatus']
+          };
+
         return super.handleError(error);
     }
 

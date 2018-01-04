@@ -2,7 +2,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { AbpModule } from '@abp/abp.module';
 
-import { MdDialogModule } from '@angular/material';
+import { MatDialogModule } from '@angular/material';
 
 import { AppSessionService } from './session/app-session.service';
 import { AppUrlService } from './nav/app-url.service';
@@ -34,7 +34,7 @@ import { DxCheckBoxModule, DxTextBoxModule, DxScrollViewModule } from 'devextrem
       DxCheckBoxModule,
       DxTextBoxModule,
       DxScrollViewModule,
-      MdDialogModule,
+      MatDialogModule,
       ngCommon.CommonModule,
       AbpModule
     ]

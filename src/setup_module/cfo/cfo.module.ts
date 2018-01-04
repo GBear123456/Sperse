@@ -7,8 +7,7 @@ import { AccountsComponent } from './accounts/accounts.component';
 
 import { ModalModule } from 'ngx-bootstrap';
 
-import { MdTabsModule } from '@angular/material';
-import { MdDialogModule } from '@angular/material';
+import { MatTabsModule, MatDialogModule } from '@angular/material';
 
 @NgModule({
     imports: [
@@ -18,8 +17,8 @@ import { MdDialogModule } from '@angular/material';
         AppCommonModule,
         ModalModule.forRoot(),
 
-        MdTabsModule,
-        MdDialogModule
+        MatTabsModule,
+        MatDialogModule
     ],
     declarations: [
         AccountsComponent

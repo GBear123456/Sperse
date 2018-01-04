@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as localForage from 'localforage';
 
 @Injectable()
@@ -18,6 +18,10 @@ export class LocalStorageService {
             return;
         }
 
+        if (value === null) {
+            value = undefined;
+        }
+
         localForage.setItem(key, value);
-    };
+    }
 }

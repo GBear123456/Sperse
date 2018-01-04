@@ -3,7 +3,7 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { CustomersServiceProxy, ContactAddressServiceProxy, CustomerInfoDto, CountryDto, CountryServiceProxy,
   ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput } from '@shared/service-proxies/service-proxies';
 
@@ -32,7 +32,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
 
   constructor(
     injector: Injector,
-    public dialog: MdDialog,
+    public dialog: MatDialog,
     private _customerService: CustomersServiceProxy,
     private _addressService: ContactAddressServiceProxy,
     private _countryService: CountryServiceProxy

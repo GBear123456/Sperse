@@ -1,4 +1,4 @@
-﻿import {
+import {
     Component,
     OnInit,
     AfterViewInit,
@@ -17,11 +17,11 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     selector: 'edition-combo',
     template:
     `<select #EditionCombobox
-        class='form-control'
-        [(ngModel)]='selectedEdition'
-        (ngModelChange)='selectedEditionChange.emit($event)'
-        [attr.data-live-search]='true'>        
-            <option *ngFor='let edition of editions' [value]='edition.value'>{{edition.displayText}}</option>
+        class="form-control"
+        [(ngModel)]="selectedEdition"
+        (ngModelChange)="selectedEditionChange.emit($event)"
+        [attr.data-live-search]="true">
+            <option *ngFor="let edition of editions" [value]="edition.value">{{edition.displayText}}</option>
     </select>`
 })
 export class EditionComboComponent extends AppComponentBase implements OnInit, AfterViewInit {

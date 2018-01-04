@@ -19,7 +19,7 @@ import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
@@ -127,7 +127,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
 
     constructor(injector: Injector, 
-        public dialog: MdDialog,
+        public dialog: MatDialog,
         private _appService: AppService,
         private _TransactionsServiceProxy: TransactionsServiceProxy,
         public filtersService: FiltersService

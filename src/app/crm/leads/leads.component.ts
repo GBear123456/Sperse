@@ -39,6 +39,7 @@ import * as moment from 'moment';
 @Component({
     templateUrl: './leads.component.html',
     styleUrls: ['./leads.component.less'],
+    providers: [PipelineServiceProxy],
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {

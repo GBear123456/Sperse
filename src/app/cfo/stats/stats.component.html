@@ -4,14 +4,14 @@
 
 <app-toolbar [(config)]="toolbarConfig"></app-toolbar>
 <div class="mainStatsView">
-    <a *ngIf="statsData && statsData.length" (click)="showSourceDataWidget()" class="showSourceButton" md-raised-button>{{l('Show source data')}}</a>
+    <a *ngIf="statsData && statsData.length" (click)="showSourceDataWidget()" class="showSourceButton" mat-raised-button>{{l('Show source data')}}</a>
     <source-data [ngClass]="{'showen': showSourceData}"
                  (onClose)="hideSourceDataWidget()"
                  [historicalSourceData]="historicalSourceData"
                  [forecastSourceData]="forecastSourceData">
     </source-data>
-    <md-tab-group>
-        <md-tab label="{{l('Trend Chart')}}">
+    <mat-tab-group>
+        <mat-tab label="{{l('Trend Chart')}}">
             <dx-scroll-view showScrollbar="onHover" [height]="calculateChartsScrolableHeight()">
                 <!-- Top linear chart -->
                 <dx-chart
@@ -189,10 +189,10 @@
                     </dxo-common-axis-settings>
                 </dx-chart>
             </dx-scroll-view>
-        </md-tab>
-        <md-tab label="{{l('Details Chart')}}">
-        </md-tab>
-    </md-tab-group>
+        </mat-tab>
+        <mat-tab label="{{l('Details Chart')}}">
+        </mat-tab>
+    </mat-tab-group>
 </div>
 
 <svg>

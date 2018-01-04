@@ -1,7 +1,7 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector, OnInit, AfterViewInit, ElementRef } from '@angular/core';
 import { AppComponentBase } from '../../app-component-base';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'modal-dialog',
@@ -12,16 +12,16 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
   private elementRef: ElementRef;
   private slider: any;
   public data: any;
-  public dialogRef: MdDialogRef<ModalDialogComponent>;
+  public dialogRef: MatDialogRef<ModalDialogComponent>;
 
   constructor(
     injector: Injector
   ) {
     super(injector);
 
-    this.data = injector.get(MD_DIALOG_DATA);
+    this.data = injector.get(MAT_DIALOG_DATA);
     this.elementRef = injector.get(ElementRef);
-    this.dialogRef = injector.get(MdDialogRef);
+    this.dialogRef = injector.get(MatDialogRef);
 
     this.localizationSourceName = this.data.localization;
   }

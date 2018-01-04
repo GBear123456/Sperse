@@ -6,7 +6,7 @@ import { CustomersServiceProxy, CustomerInfoDto, ContactLinkServiceProxy,
   ContactLinkDto, CreateContactLinkInput, UpdateContactLinkInput } from '@shared/service-proxies/service-proxies';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'socials',
@@ -30,7 +30,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
 
   constructor(
     injector: Injector,
-    public dialog: MdDialog,
+    public dialog: MatDialog,
     private _customerService: CustomersServiceProxy,
     private _contactLinkService: ContactLinkServiceProxy
   ) {

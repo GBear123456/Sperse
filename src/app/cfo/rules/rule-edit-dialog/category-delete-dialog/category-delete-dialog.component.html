@@ -1,5 +1,5 @@
-<h2 md-dialog-title>{{l('Category remove confirmation')}}</h2>
-<md-dialog-content>
+<h2 mat-dialog-title>{{l('Category remove confirmation')}}</h2>
+<mat-dialog-content>
     <dx-check-box [(value)]="data.deleteAllReferences" [text]="l('Delete all references')"></dx-check-box>
 
     <div *ngIf="!data.deleteAllReferences">
@@ -16,8 +16,8 @@
             <dxi-column dataField="name"></dxi-column>
         </dx-tree-list>
     </div>
-</md-dialog-content>
-<md-dialog-actions>
-  <button md-button md-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button md-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
   <button md-button (click)="confirm($event)" class="button-layout button-primary">{{l('Confirm')}}</button>
-</md-dialog-actions>
+</mat-dialog-actions>

@@ -1,7 +1,7 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector } from '@angular/core';
 import { AppComponentBase } from '../../app-component-base';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'confirm-dialog',
@@ -10,15 +10,15 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 })
 export class ConfirmDialogComponent extends AppComponentBase {
     public data: any;
-    public dialogRef: MdDialogRef<ConfirmDialogComponent>;
+    public dialogRef: MatDialogRef<ConfirmDialogComponent>;
 
     constructor(
       injector: Injector
     ) { 
       super(injector);
 
-      this.data = injector.get(MD_DIALOG_DATA);
-      this.dialogRef = injector.get(MdDialogRef);
+      this.data = injector.get(MAT_DIALOG_DATA);
+      this.dialogRef = injector.get(MatDialogRef);
 
       this.localizationSourceName = this.data.localization;
     }

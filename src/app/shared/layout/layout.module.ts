@@ -38,7 +38,7 @@ import {
     DxDropDownBoxModule, DxListModule, DxNavBarModule
 } from 'devextreme-angular';
 
-import { MdTabsModule } from '@angular/material';
+import { MatTabsModule } from '@angular/material';
 
 let COMPONENTS = [
     PlatformSelectComponent,
@@ -82,7 +82,7 @@ let COMPONENTS = [
         DxNavBarModule,
         DxDropDownBoxModule,
 
-        MdTabsModule
+        MatTabsModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,

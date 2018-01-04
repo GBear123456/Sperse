@@ -29,7 +29,7 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
 import * as ModelEnums from './models/setting-enums';
 
@@ -383,7 +383,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
                 private _cacheService: CacheService,
                 private _classificationServiceProxy: ClassificationServiceProxy,
-                public dialog: MdDialog,
+                public dialog: MatDialog,
                 public userPreferencesService: UserPreferencesService
     ) {
         super(injector);

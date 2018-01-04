@@ -1,7 +1,7 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import {
   ContactAddressServiceProxy,
@@ -35,8 +35,8 @@ export class EditAddressDialog extends AppComponentBase {
   constructor(
     injector: Injector,
     private elementRef: ElementRef,
-    @Inject(MD_DIALOG_DATA) public data: any,
-    public dialogRef: MdDialogRef<EditAddressDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<EditAddressDialog>,
     private _contactAddressService: ContactAddressServiceProxy,
     private _countryService: CountryServiceProxy
   ) {

@@ -4,7 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { ClassificationServiceProxy } from '@shared/service-proxies/service-proxies';
 
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { RuleDialogComponent } from './rule-edit-dialog/rule-edit-dialog.component';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -48,7 +48,7 @@ export class RulesComponent extends AppComponentBase implements OnInit, AfterVie
 
 
     constructor(injector: Injector,
-        public dialog: MdDialog,
+        public dialog: MatDialog,
         private _ClassificationService: ClassificationServiceProxy
     ) {
         super(injector);

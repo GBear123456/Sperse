@@ -1,4 +1,4 @@
-﻿export class UrlHelper {
+export class UrlHelper {
     /**
      * The URL requested, before initial routing.
      */
@@ -9,11 +9,11 @@
     }
 
     static getQueryParametersUsingParameters(search: string): any {
-        return search.replace(/(^\?)/, '').split("&").map(function (n) { return n = n.split("="), this[n[0]] = n[1], this }.bind({}))[0];
+        return search.replace(/(^\?)/, '').split('&').map(function (n) { return n = n.split('='), this[n[0]] = n[1], this; }.bind({}))[0];
     }
 
     static getInitialUrlParameters(): any {
-        var questionMarkIndex = UrlHelper.initialUrl.indexOf('?');
+        let questionMarkIndex = UrlHelper.initialUrl.indexOf('?');
         if (questionMarkIndex >= 0) {
             return UrlHelper.initialUrl.substr(questionMarkIndex, UrlHelper.initialUrl.length - questionMarkIndex);
         }
@@ -37,5 +37,9 @@
         }
 
         return false;
+    }
+
+    static isInstallUrl(url):boolean {
+        return url && url.indexOf("app/admin/install") >= 0;
     }
 }

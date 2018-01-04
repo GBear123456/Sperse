@@ -14,14 +14,18 @@ export class FilterCheckBoxesModel extends FilterItemModel {
     }
 
     getDisplayElements(): DisplayElement[] {
-        var result: DisplayElement[] = this.value && this.value.map(x => {
+        let result: DisplayElement[] = [];
+        this.value && this.value.sort().forEach(x => {
             let data = _.find(this.dataSource, (val: any, i, arr) => val.id == x);
-            if (data) {
-                return <DisplayElement>{ item: this, displayValue: data.name, args: x, parentCode: data[this.parentExpr], sortField: x }
-            }
-        }).filter(Boolean);
+            data && result.push(<DisplayElement>{ 
+                item: this, 
+                displayValue: data.name, 
+                args: x, 
+                parentCode: data[this.parentExpr], 
+                sortField: x 
+            });
+        });
 
-        result = _.sortBy(result, x => x.sortField);
         result = this.generateParents(result);
         return result;
     }

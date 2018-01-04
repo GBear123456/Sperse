@@ -1,4 +1,5 @@
 ﻿{
+  "runtime": "Default",
   "swaggerGenerator": {
     "fromSwagger": {
       "url": "http://localhost:7000/swagger/v1/swagger.json",
@@ -13,12 +14,17 @@
       "typeScriptVersion": 1.8,
       "template": "Angular",
       "promiseType": "Promise",
+      "httpClass": "Http",
+      "injectionTokenType": "InjectionToken",
       "dateTimeType": "MomentJS",
       "nullValue": "Undefined",
       "generateClientClasses": true,
       "generateClientInterfaces": false,
       "generateOptionalParameters": false,
       "wrapDtoExceptions": false,
+      "wrapResponses": false,
+      "generateResponseClasses": true,
+      "responseClass": "SwaggerResponse",
       "useTransformOptionsMethod": false,
       "useTransformResultMethod": false,
       "generateDtoTypes": true,
@@ -31,8 +37,11 @@
       "excludedTypeNames": [],
       "handleReferences": false,
       "generateConstructorInterface": true,
+      "convertConstructorInterfaceData": false,
       "importRequiredTypes": true,
+      "useGetBaseUrlMethod": false,
       "baseUrlTokenName": "API_BASE_URL",
+      "queryNullValue": "",
       "output": "../src/shared/service-proxies/service-proxies.ts"
     },
     "swaggerToCSharpClient": {
@@ -48,9 +57,15 @@
       "httpClientType": "System.Net.Http.HttpClient",
       "useHttpRequestMessageCreationMethod": false,
       "useBaseUrl": true,
+      "generateBaseUrlProperty": true,
       "generateSyncMethods": false,
       "clientClassAccessModifier": "public",
+      "typeAccessModifier": "public",
       "generateContractsOutput": false,
+      "parameterDateTimeFormat": "s",
+      "generateUpdateJsonSerializerSettingsMethod": true,
+      "serializeTypeInformation": false,
+      "queryNullValue": "",
       "className": "{controller}Client",
       "namespace": "MyNamespace",
       "generateOptionalParameters": false,
@@ -75,6 +90,9 @@
       "output": null
     },
     "swaggerToCSharpController": {
+      "controllerStyle": "Partial",
+      "useCancellationToken": false,
+      "aspNetNamespace": "System.Web.Http",
       "className": "{controller}",
       "namespace": "MyNamespace",
       "additionalNamespaceUsages": [

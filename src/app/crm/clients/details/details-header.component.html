@@ -7,11 +7,11 @@
       <div class="full_name">
           <h1 *ngIf="data && data?.name; else loading">{{ data?.name }}</h1>
           <ng-template #loading>
-            <md-progress-spinner mode="indeterminate" strokeWidth="10"></md-progress-spinner>
+            <mat-progress-spinner mode="indeterminate" strokeWidth="10"></mat-progress-spinner>
           </ng-template>
       </div>
       <div class="rating">
-        <md-progress-bar color="#2fb8f0" value="{{ person.rating * 10}}"></md-progress-bar>
+        <mat-progress-bar color="#2fb8f0" value="{{ person.rating * 10}}"></mat-progress-bar>
         <span class="rating_int">{{person.rating}}/10</span>
       </div>
   </div>
