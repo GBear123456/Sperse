@@ -3,10 +3,12 @@ import * as ngCommon from '@angular/common';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { CfoRoutingModule } from './cfo-routing.module';
+import { StartComponent } from './start/start.component';
+import { SetupComponent } from './start/setup/setup.component';
+import { DashboardComponent } from './start/dashboard/dashboard.component';
 import { BankAccountsComponent } from './bank-accounts/bank-accounts.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { CategorizationComponent } from './transactions/categorization/categorization.component';
-import { CashflowSetupComponent } from './cashflow-setup/cashflow-setup.component';
 import { SetupStepComponent } from './shared/setup-steps/setup-steps.component';
 import { SynchProgressComponent } from './shared/synch-progress/synch-progress.component';
 
@@ -76,17 +78,18 @@ import {
         ModalModule.forRoot(),
 
         DxChartModule,
-        MatTabsModule,
+        MatTabsModule, 
         MatDialogModule
     ],
     declarations: [
+        StartComponent,
+        SetupComponent,
+        DashboardComponent,
         BankAccountsComponent,
         TransactionsComponent,
         CategorizationComponent,
-        CashflowSetupComponent,
         SetupStepComponent,
         SynchProgressComponent,
-
         CashflowComponent,
         OperationsComponent,
         PreferencesDialogComponent,

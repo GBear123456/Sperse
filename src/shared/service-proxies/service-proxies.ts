@@ -710,6 +710,8 @@ export class BankAccountsServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     recalculateAllBankAccountDailyStats(instanceType: InstanceType, instanceId: number): Observable<void> {
@@ -756,6 +758,8 @@ export class BankAccountsServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @forecastModelId (optional) 
      * @accounts (optional) 
      * @startDate (optional) 
@@ -1048,6 +1052,8 @@ export class CashflowServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @filter (optional) 
      * @return Success
      */
@@ -1102,6 +1108,8 @@ export class CashflowServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     getCashFlowInitialData(instanceType: InstanceType4, instanceId: number): Observable<CashFlowInitialData> {
@@ -1152,6 +1160,8 @@ export class CashflowServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @filter (optional) 
      * @return Success
      */
@@ -1210,6 +1220,8 @@ export class CashflowServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     getCashFlowGridSettings(instanceType: InstanceType6, instanceId: number): Observable<CashFlowGridSettingsDto> {
@@ -1260,6 +1272,8 @@ export class CashflowServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @settings (optional) 
      * @return Success
      */
@@ -1322,6 +1336,8 @@ export class CashFlowForecastServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     getModels(instanceType: InstanceType8, instanceId: number): Observable<ForecastModelDto[]> {
@@ -1376,6 +1392,8 @@ export class CashFlowForecastServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -1430,6 +1448,8 @@ export class CashFlowForecastServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -1480,6 +1500,8 @@ export class CashFlowForecastServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     deleteForecast(instanceType: InstanceType11, instanceId: number, id: number): Observable<void> {
@@ -1530,6 +1552,8 @@ export class CashFlowForecastServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -1584,6 +1608,8 @@ export class CashFlowForecastServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -1634,6 +1660,8 @@ export class CashFlowForecastServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     deleteForecastSchedule(instanceType: InstanceType14, instanceId: number, id: number): Observable<void> {
@@ -1684,6 +1712,8 @@ export class CashFlowForecastServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     getForecastSchedule(instanceType: InstanceType15, instanceId: number, id: number): Observable<ForecastScheduleDto> {
@@ -1738,6 +1768,8 @@ export class CashFlowForecastServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     getForecastSchedules(instanceType: InstanceType16, instanceId: number): Observable<ForecastScheduleDto[]> {
@@ -1964,6 +1996,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     getCategories(instanceType: InstanceType17, instanceId: number): Observable<GetCategoriesOutput> {
@@ -2014,6 +2048,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -2071,6 +2107,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -2121,6 +2159,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     getRuleForEdit(instanceType: InstanceType20, instanceId: number, id: number): Observable<EditRuleDto> {
@@ -2175,6 +2215,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -2225,6 +2267,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -2275,6 +2319,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @sourceTransactionsList (optional) 
      * @return Success
      */
@@ -2332,6 +2378,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -2382,6 +2430,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     deleteMapping(instanceType: InstanceType25, instanceId: number, name: string): Observable<void> {
@@ -2432,6 +2482,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -2486,6 +2538,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -2536,6 +2590,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     deleteCategoryGroup(instanceType: InstanceType28, instanceId: number, id: number): Observable<void> {
@@ -2586,6 +2642,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -2640,6 +2698,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -2690,6 +2750,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @moveToCategoryId (optional) 
      * @return Success
      */
@@ -2747,6 +2809,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @recategorizeInput (optional) 
      * @return Success
      */
@@ -2797,6 +2861,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -2847,6 +2913,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -2897,6 +2965,8 @@ export class ClassificationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -2963,6 +3033,8 @@ export class CommentServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     getComments(instanceType: InstanceType36, instanceId: number, threadId: number): Observable<CommentDto[]> {
@@ -3021,6 +3093,8 @@ export class CommentServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -3075,6 +3149,8 @@ export class CommentServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -3125,6 +3201,8 @@ export class CommentServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     deleteComment(instanceType: InstanceType39, instanceId: number, commentId: number): Observable<void> {
@@ -3175,6 +3253,8 @@ export class CommentServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -3229,6 +3309,8 @@ export class CommentServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -3283,6 +3365,8 @@ export class CommentServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
@@ -6061,6 +6145,8 @@ export class FinancialInformationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @css (optional) 
      * @errorPage (optional) 
      * @return Success
@@ -6117,6 +6203,8 @@ export class FinancialInformationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     syncAllAccounts(instanceType: InstanceType44, instanceId: number, syncHistory: boolean): Observable<SyncAllAccountsOutput> {
@@ -6171,6 +6259,8 @@ export class FinancialInformationServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     getSyncProgress(instanceType: InstanceType45, instanceId: number): Observable<SyncProgressOutput> {
@@ -6975,18 +7065,15 @@ export class InstanceServiceProxy {
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
+        let options_ : any = {
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
-        return this.http.request(url_, options_).flatMap((response_) => {
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
             return this.processGetStatus(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
@@ -7003,15 +7090,16 @@ export class InstanceServiceProxy {
     protected processGetStatus(response: Response): Observable<GetStatusOutput> {
         const status = response.status; 
 
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
         if (status === 200) {
-            const responseText = response.text();
-            let result200: GetStatusOutput = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = resultData200 ? GetStatusOutput.fromJS(resultData200) : new GetStatusOutput();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<GetStatusOutput>(<any>null);
     }
@@ -7027,18 +7115,15 @@ export class InstanceServiceProxy {
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
+        let options_ : any = {
             method: "post",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
-        return this.http.request(url_, options_).flatMap((response_) => {
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
             return this.processSetup(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
@@ -7055,15 +7140,16 @@ export class InstanceServiceProxy {
     protected processSetup(response: Response): Observable<SetupOutput> {
         const status = response.status; 
 
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
         if (status === 200) {
-            const responseText = response.text();
-            let result200: SetupOutput = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = resultData200 ? SetupOutput.fromJS(resultData200) : new SetupOutput();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<SetupOutput>(<any>null);
     }
@@ -13317,6 +13403,8 @@ export class TransactionsServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     getFiltersInitialData(instanceType: InstanceType48, instanceId: number): Observable<FiltersInitialData> {
@@ -13367,6 +13455,8 @@ export class TransactionsServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     getTransactionAttributeTypes(instanceType: InstanceType49, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
@@ -13417,6 +13507,8 @@ export class TransactionsServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
     getTransactionDetails(instanceType: InstanceType50, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
@@ -13477,18 +13569,15 @@ export class TransactionsServiceProxy {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionTypesAndCategories";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = "";
-        
-        let options_ = {
-            body: content_,
+        let options_ : any = {
             method: "get",
             headers: new Headers({
-                "Content-Type": "application/json; charset=UTF-8", 
-                "Accept": "application/json; charset=UTF-8"
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
-        return this.http.request(url_, options_).flatMap((response_) => {
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
             return this.processGetTransactionTypesAndCategories(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
@@ -13505,15 +13594,16 @@ export class TransactionsServiceProxy {
     protected processGetTransactionTypesAndCategories(response: Response): Observable<TransactionTypesAndCategoriesDto> {
         const status = response.status; 
 
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
         if (status === 200) {
-            const responseText = response.text();
-            let result200: TransactionTypesAndCategoriesDto = null;
-            let resultData200 = responseText === "" ? null : JSON.parse(responseText, this.jsonParseReviver);
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = resultData200 ? TransactionTypesAndCategoriesDto.fromJS(resultData200) : new TransactionTypesAndCategoriesDto();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
-            const responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, responseText);
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<TransactionTypesAndCategoriesDto>(<any>null);
     }
@@ -18084,6 +18174,8 @@ export class TransactionCommonDetailsDto implements ITransactionCommonDetailsDto
     bankId: number;
     bankAccountId: number;
     standardDescriptor: string;
+    transactionCategoryId: string;
+    transactionTypeId: string;
     descriptionPhrases: string[];
     attributes: TransactionAttributeDto[];
 
@@ -18102,6 +18194,8 @@ export class TransactionCommonDetailsDto implements ITransactionCommonDetailsDto
             this.bankId = data["bankId"];
             this.bankAccountId = data["bankAccountId"];
             this.standardDescriptor = data["standardDescriptor"];
+            this.transactionCategoryId = data["transactionCategoryId"];
+            this.transactionTypeId = data["transactionTypeId"];
             if (data["descriptionPhrases"] && data["descriptionPhrases"].constructor === Array) {
                 this.descriptionPhrases = [];
                 for (let item of data["descriptionPhrases"])
@@ -18127,6 +18221,8 @@ export class TransactionCommonDetailsDto implements ITransactionCommonDetailsDto
         data["bankId"] = this.bankId;
         data["bankAccountId"] = this.bankAccountId;
         data["standardDescriptor"] = this.standardDescriptor;
+        data["transactionCategoryId"] = this.transactionCategoryId;
+        data["transactionTypeId"] = this.transactionTypeId;
         if (this.descriptionPhrases && this.descriptionPhrases.constructor === Array) {
             data["descriptionPhrases"] = [];
             for (let item of this.descriptionPhrases)
@@ -18146,6 +18242,8 @@ export interface ITransactionCommonDetailsDto {
     bankId: number;
     bankAccountId: number;
     standardDescriptor: string;
+    transactionCategoryId: string;
+    transactionTypeId: string;
     descriptionPhrases: string[];
     attributes: TransactionAttributeDto[];
 }
