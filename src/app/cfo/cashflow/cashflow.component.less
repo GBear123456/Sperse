@@ -610,8 +610,8 @@
         height: 100%;
         top: -1px;
         #cashflowFooterToolbar {
-            position: fixed;
-            bottom: 0;
+            position: absolute;
+            bottom: 135px;
             width: 100%;
             z-index: 1;
             /deep/ dx-toolbar {
@@ -642,6 +642,7 @@
                 .dx-toolbar-item {
                     max-width: initial !important;
                     font-size: 13px;
+                    font-weight: 600;
                     letter-spacing: 0.3px;
                     color: #212c36;
                     .dx-button {
@@ -673,10 +674,10 @@
                     .dx-toolbar-item {
                         color: #677380;
                         padding-left: 38px;
-                        font-weight: 300;
+                        font-weight: 500;
                         .value {
                             color: #424c56;
-                            font-weight: 400;
+                            font-weight: 600;
                         }
                     }
                 }
@@ -704,7 +705,7 @@
         border-left: 1px solid #ddd;
         padding: 0 15px;
         background: #fff;
-        z-index: 1;
+        z-index: 2;
         .close-btn {
             border: 0;
             padding: 0;
