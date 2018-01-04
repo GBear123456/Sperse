@@ -377,7 +377,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private requestFilter: StatsFilter;
     private anotherPeriodAccountsValues: Map<object, number> = new Map();
     private cashedColumnActivity: Map<string, boolean> = new Map();
-
+    transactionsTotal = 0;
+    transactionsAmount = 0;
+    transactionsAverage = 0;
     constructor(injector: Injector,
                 route: ActivatedRoute,
                 private _cashflowServiceProxy: CashflowServiceProxy,
@@ -535,10 +537,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             items: items,
             selectedItemIndex: selectedForecastModelIndex
         };
-        this.initFooterToolbar(this.forecastModelsObj);
     }
 
-    initFooterToolbar(forecastModelsObj: { items: Array<any>, selectedItemIndex: number }) {
+    initFooterToolbar() {
         this.footerToolbarConfig = [
             {
                 location: 'before',
@@ -555,8 +556,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         name: 'forecastModels',
                         widget: 'dxTabs',
                         options: {
-                            items: forecastModelsObj.items,
-                            selectedIndex: forecastModelsObj.selectedItemIndex,
+                            items: this.forecastModelsObj.items,
+                            selectedIndex: this.forecastModelsObj.selectedItemIndex,
                             accessKey: 'cashflowForecastSwitcher',
                             onSelectionChanged: (e) => {
                                 this.changeSelectedForecastModel(e);
@@ -574,15 +575,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 items: [
                     {
                         name: 'total',
-                        html: this.ls('Platform', 'Total') + ': <span class="value">372291,20</span>'
+                        html: `${this.ls('Platform', 'Total')} : <span class="value">${this.transactionsTotal}</span>`
                     },
                     {
                         name: 'count',
-                        html: this.l('Cashflow_BottomToolbarCount') + ': <span class="value">17</span>'
+                        html: `${this.l('Cashflow_BottomToolbarCount')} : <span class="value">${this.transactionsAmount}</span>`
                     },
                     {
                         name: 'average',
-                        html: this.l('Cashflow_BottomToolbarAverage') + ': <span class="value">1454, 24</span>'
+                        html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this.transactionsAverage}</span>`
                     }
                 ]
             }
@@ -674,6 +675,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.cashflowData = null;
                 }
                 this.dataSource = this.getApiDataSource();
+
+                /** Init footer toolbar with the gathered data from the previous requests */
+                this.initFooterToolbar();
             });
     }
 
@@ -765,7 +769,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @return {TransactionStatsDto[]}
      */
     getCashflowDataFromTransactions(transactions) {
-        return transactions.map(transactionObj => {
+        this.transactionsAmount = 0;
+        this.transactionsTotal = 0;
+        this.transactionsAverage = 0;
+        const data = transactions.map(transactionObj => {
             transactionObj.categorization = {};
             transactionObj.date.add(new Date().getTimezoneOffset(), 'minutes');
             /** change the second level for started balance and reconciliations for the account id */
@@ -773,6 +780,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 transactionObj.categorization[this.categorization[0]] = transactionObj.accountId;
             } else {
                 let groupId = this.categories.items[transactionObj.categoryId] ? this.categories.items[transactionObj.categoryId]['groupId'] : null;
+
+                this.transactionsTotal += transactionObj.amount;
+                this.transactionsAmount = this.transactionsAmount + transactionObj.count;
+
                 /** Add group and categories numbers to the categorization list and show the names in
                  *  customize functions by finding the names with ids
                  */
@@ -782,6 +793,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             return transactionObj;
         });
+        this.transactionsTotal = +this.transactionsTotal.toFixed(2);
+        this.transactionsAverage = this.transactionsAmount ? +(this.transactionsTotal / this.transactionsAmount).toFixed(2) : 0;
+        return data;
     }
 
     /**
@@ -1659,7 +1673,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     prepareColumnCell(cellObj) {
 
         let fieldName, columnFields = this.pivotGrid.instance.getDataSource().getAreaFields('column', false),
-            fieldObj = columnFields.find(field => field.areaIndex === cellObj.cell.path.length - 1),
+            columnNumber = cellObj.cell.path.length ? cellObj.cell.path.length  - 1 : 0,
+            fieldObj = columnFields.find(field => field.areaIndex === columnNumber),
             fieldGroup = fieldObj.groupInterval ? 'dateField' : fieldObj.caption.toLowerCase() + 'Field';
 
         if (fieldGroup === 'dateField') {
