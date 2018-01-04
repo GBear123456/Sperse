@@ -18,14 +18,12 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
             this.initToolbarConfig(forecastModelsObj);
         }, 300);
     }
-    @Output() refreshCashflow: EventEmitter<any> = new EventEmitter();
     @Output() repaintCashflow: EventEmitter<any> = new EventEmitter();
     @Output() onGroupBy: EventEmitter<any> = new EventEmitter();
     @Output() onToggleRows: EventEmitter<any> = new EventEmitter();
     @Output() handleFullscreen: EventEmitter<any> = new EventEmitter();
     @Output() download: EventEmitter<any> = new EventEmitter();
     @Output() showPreferencesDialog: EventEmitter<any> = new EventEmitter();
-    @Output() changeForecastModel: EventEmitter<any> = new EventEmitter();
 
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number} = { 'items' : [], 'selectedItemIndex': null}) {
         this._appService.toolbarConfig = [
@@ -125,29 +123,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                     {
                         name: 'rules',
                         action: this.preferencesDialog.bind(this)
-                    },
-                    {
-                        name: 'slider',
-                        widget: 'dxGallery',
-                        options: {
-                            hint: this.l('Scenario'),
-                            accessKey: 'cashflowForecastSwitcher',
-                            items: forecastModelsObj.items,
-                            showNavButtons: true,
-                            showIndicator: false,
-                            scrollByContent: true,
-                            selectedIndex: forecastModelsObj.selectedItemIndex,
-                            height: 39,
-                            width: 138,
-                            /** to change the default template for dxGallery with rendering of an image */
-                            itemTemplate: itemData => {
-                                return itemData.text;
-                            },
-                            onSelectionChanged: (e) => {
-                                this.changeSelectedForecastModel(e);
-                            }
-                        }
-                    },
+                    }
                 ]
             },
             {
@@ -242,15 +218,6 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 {name: 'fullscreen', action: this.fullscreen.bind(this)}
             ]
             },
-            {
-                location: 'after',
-                items: [
-                    {
-                        name: 'refresh',
-                        action: this.refresh.bind(this)
-                    }
-                ]
-            }
         ];
     }
 
@@ -269,10 +236,6 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
         this.onGroupBy.emit(event);
     }
 
-    refresh() {
-        this.refreshCashflow.emit(null);
-    }
-
     repaint() {
         this.repaintCashflow.emit(null);
     }
@@ -283,10 +246,6 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
 
     fullscreen() {
         this.handleFullscreen.emit();
-    }
-
-    changeSelectedForecastModel(event) {
-        this.changeForecastModel.emit(event);
     }
 
     preferencesDialog() {

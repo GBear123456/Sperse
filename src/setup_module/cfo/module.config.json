@@ -2,7 +2,7 @@
   "name": "CFO",
   "search": false,
   "navigation": [
-    ["Accounts", "", "icon-home", "/setup/cfo/accounts"],
+    ["Accounts", "", "icon-home", "/setup/cfo/linkaccounts"],
     ["Logs", "", "", ""]
   ]
 }

@@ -1,11 +1,12 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Input, Output, EventEmitter, Injector, OnInit,  ViewChild, HostBinding } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
-import { ClassificationServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ClassificationServiceProxy, InstanceType17 } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'categorization',
@@ -13,7 +14,7 @@ import * as _ from 'underscore';
   styleUrls: ['categorization.component.less'],
   providers: [ClassificationServiceProxy]
 })
-export class CategorizationComponent extends AppComponentBase implements OnInit {
+export class CategorizationComponent extends CFOComponentBase implements OnInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @Output() close: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
@@ -31,14 +32,17 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     constructor(
         injector: Injector,
+        route: ActivatedRoute,
         private _filtersService: FiltersService,
         private _classificationServiceProxy: ClassificationServiceProxy
     ) {
-        super(injector);
+        super(injector, route);       
     }
 
     ngOnInit() {
-        this._classificationServiceProxy.getCategories().subscribe((data) => {
+        super.ngOnInit();
+
+        this._classificationServiceProxy.getCategories(InstanceType17[this.instanceType], this.instanceId).subscribe((data) => {
             let categories = [];
             if (data.types)
                  _.mapObject(data.types, (item, key) => {
@@ -60,7 +64,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                  _.mapObject(data.items, (item, key) => {
                     categories.push({
                         key: key,
-                        parent: item.groupId +
+                        parent: item.groupId + 
                             data.groups[item.groupId].typeId,
                         name: item.name
                     });
@@ -68,7 +72,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
             this.categories = categories;
         });
-    }
+    }        
 
     initDragAndDropEvents($event) {
         $event.element.find('tr[aria-level="2"] .dx-treelist-text-content')
@@ -76,7 +80,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             .on('dragenter', (e) => {
                 e.target.classList.add('drag-hover');
             }).on('dragover', (e) => {
-                e.originalEvent.preventDefault();
+                e.originalEvent.preventDefault(); 
                 e.originalEvent.stopPropagation();
             }).on('dragleave', (e) => {
                 e.target.classList.remove('drag-hover');

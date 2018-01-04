@@ -1,7 +1,8 @@
 import { Component, OnInit, Injector, EventEmitter, Output, OnDestroy } from '@angular/core';
-import { FinancialInformationServiceProxy, SyncProgressOutput } from '@shared/service-proxies/service-proxies';
+import { FinancialInformationServiceProxy, SyncProgressOutput, InstanceType44, InstanceType45 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     templateUrl: './synch-progress.component.html',
@@ -9,7 +10,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     selector: 'synch-progress',
     providers: [FinancialInformationServiceProxy]
 })
-export class SynchProgressComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class SynchProgressComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @Output() onComplete = new EventEmitter();
     @Output() completed: boolean = true;
     synchData: SyncProgressOutput;
@@ -18,25 +19,34 @@ export class SynchProgressComponent extends AppComponentBase implements OnInit, 
     timeoutHandler: any;
 
     constructor(injector: Injector,
-        private _financialInformationServiceProxy: FinancialInformationServiceProxy) {
-        super(injector);
+        route: ActivatedRoute,
+        private _financialInformationServiceProxy: FinancialInformationServiceProxy
+    ) {
+        super(injector, route);
 
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit(): void {
+        super.ngOnInit();
+
         this.requestSync();
     }
 
     public requestSync() {
-        this._financialInformationServiceProxy.syncAllAccounts(true)
+        this._financialInformationServiceProxy.syncAllAccounts(
+            InstanceType44[this.instanceType],
+            this.instanceId,
+            true)
             .subscribe((result) => {
                 this.getSynchProgress();
             });
     }
 
     getSynchProgress() {
-        this._financialInformationServiceProxy.getSyncProgress()
+        this._financialInformationServiceProxy.getSyncProgress(
+            InstanceType45[this.instanceType],
+            this.instanceId)
             .subscribe((result) => {
                 if (result.totalProgress.progressPercent != 100) {
                     this.completed = false;
@@ -57,7 +67,10 @@ export class SynchProgressComponent extends AppComponentBase implements OnInit, 
     }
 
     ngOnDestroy(): void {
-        if (!this.completed)
+        if (!this.completed) {
             clearTimeout(this.timeoutHandler);
+        }
+        
+        super.ngOnDestroy();
     }
 }

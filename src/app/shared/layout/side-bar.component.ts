@@ -62,6 +62,7 @@ export class SideBarComponent extends AppComponentBase {
     }
     
     clearAllFilters() {
+        $('.show-all-elements').removeClass('show-all-elements');
         this._filtersService.clearAllFilters();
     }
 
@@ -105,5 +106,19 @@ export class SideBarComponent extends AppComponentBase {
             this._filtersService.disable(() => {
                 this.activeFilter = undefined;
             });            
+    }
+
+    itemClick(event, filter) {
+        filter.showAllSelected = !filter.showAllSelected;
+        let container = $(event.target.parentElement.previousElementSibling);
+
+        if (filter.showAllSelected) {
+            container.addClass('show-all-elements');
+            event.target.text = "show less";
+        }
+        else {
+            container.removeClass('show-all-elements');
+            event.target.text = '+' + (filter.displayElements.length - 2) + ' more';
+        }
     }
 }

@@ -11,11 +11,17 @@ import {
     CashFlowForecastServiceProxy,
     ClassificationServiceProxy,
     GetCategoriesOutput,
-    CashFlowGridSettingsDto
+    CashFlowGridSettingsDto,
+    InstanceType,
+    InstanceType3,
+    InstanceType4,
+    InstanceType6,
+    InstanceType8,
+    InstanceType17,
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { DxPivotGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
 import * as underscore from 'underscore';
@@ -39,6 +45,7 @@ import 'rxjs/add/observable/forkJoin';
 
 import { SortState } from '@app/cfo/shared/common/sorting/sort-state';
 import { SortingItemModel } from '@app/cfo/shared/common/sorting/sorting-item.model';
+import { ActivatedRoute } from '@angular/router';
 
 const moment = extendMoment(Moment);
 
@@ -47,7 +54,8 @@ const StartedBalance = 'B',
       Income         = 'I',
       Expense        = 'E',
       Reconciliation = 'D',
-      Total          = 'T';
+      Total          = 'T',
+      GrandTotal     = 'GT';
 
 @Component({
     selector: 'app-cashflow',
@@ -55,7 +63,7 @@ const StartedBalance = 'B',
     styleUrls: ['./cashflow.component.less'],
     providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService ]
 })
-export class CashflowComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     headlineConfig: any;
     categories: GetCategoriesOutput;
@@ -84,7 +92,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         {
             'groupInterval': 'year',
             'optionText': this.l('Years').toUpperCase(),
-            'customizeTextFunction': this.getDateIntervalHeaderCustomizer.bind(this, 'year')(),
             'historicalSelectionFunction': this.getYearHistoricalSelectorWithCurrent
         },
         {
@@ -102,7 +109,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         {
             'groupInterval': 'day',
             'optionText': this.l('Days').toUpperCase(),
-            'customizeTextFunction': this.getDateIntervalHeaderCustomizer.bind(this, 'day'),
             'historicalSelectionFunction': this.getYearHistoricalSelectorWithCurrent
         }
     ];
@@ -225,7 +231,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             area: 'column',
             groupInterval: 'year',
             showTotals: false,
-            customizeText: this.getDateIntervalHeaderCustomizer.bind(this)('year'),
             visible: true,
             summaryDisplayMode: 'percentVariation'
         },
@@ -260,9 +265,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             },
             customizeText: cellInfo => {
                 let projectedKey = cellInfo.value === 1 ? 'Projected' : 'Mtd';
-                let cellValue = this.l(projectedKey).toUpperCase();
-                let cssMarker = ' @css:{projectedField ' + (cellInfo.value === 1 ? 'projected' : 'mtd') + '}';
-                return cellValue + cssMarker;
+                return this.l(projectedKey).toUpperCase();
             },
             expanded: false,
             allowExpand: false
@@ -273,12 +276,9 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             dataType: 'date',
             area: 'column',
             groupInterval: 'day',
-            customizeText: this.getDateIntervalHeaderCustomizer.bind(this)('day'),
             visible: true
         }
     ];
-    /** @todo move to some constant general file */
-    cssMarker = ' @css';
     historicalTextsKeys = [
         'Periods_Historical',
         'Periods_Current',
@@ -290,7 +290,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         'forecast'
     ];
     fieldPathsToClick = [];
-    forecastModelsObj: { items: Array<any>, selectedForecastModel: number };
+    forecastModelsObj: { items: Array<any>, selectedItemIndex: number };
     selectedForecastModel;
     currencyId = 'USD';
     userPreferencesHandlers = {
@@ -352,7 +352,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     sortings: SortingItemModel[] = [
         {
             name: 'Category',
-            text: this.ls('Platform', 'SortBy', this.l('Transactions_CategoryName')),
+            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_CategoryName')),
             activeByDefault: true,
             sortOptions: {
                 sortBy: 'displayText',
@@ -361,7 +361,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         },
         {
             name: 'Account',
-            text: this.ls('Platform', 'SortBy', this.l('Transactions_Amount')),
+            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_Amount')),
             sortOptions: {
                 sortBySummaryField: 'amount',
                 sortBySummaryPath: [],
@@ -370,6 +370,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
     ];
     maxCategoriesWidth = 25;
+    footerToolbarConfig = [];
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
@@ -378,6 +379,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     private cashedColumnActivity: Map<string, boolean> = new Map();
 
     constructor(injector: Injector,
+                route: ActivatedRoute,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
                 private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
@@ -386,21 +388,22 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
                 public dialog: MatDialog,
                 public userPreferencesService: UserPreferencesService
     ) {
-        super(injector);
+        super(injector, route);
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit() {
+        super.ngOnInit();
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = this.currencyId;
 
         /** Create parallel operations */
-        let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData();
-        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels();
-        let getCategoriesObservalbel = this._classificationServiceProxy.getCategories();
-        let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings();
+        let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType4[this.instanceType], this.instanceId);
+        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType8[this.instanceType], this.instanceId);
+        let getCategoriesObservalbel = this._classificationServiceProxy.getCategories(InstanceType17[this.instanceType], this.instanceId);
+        let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType6[this.instanceType], this.instanceId);
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoriesObservalbel, getCashflowGridSettings)
             .subscribe(result => {
                 /** Initial data handling */
@@ -527,13 +530,63 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         this.selectedForecastModel = cachedForecastModel && items.findIndex(item => item.id === cachedForecastModel.id) !== -1 ?
             cachedForecastModel :
             items[0];
-        let selectedForecastModelIndex = items.findIndex(
-            item => item.id === this.selectedForecastModel.id
-        );
+        let selectedForecastModelIndex = items.findIndex(item => item.id === this.selectedForecastModel.id);
         this.forecastModelsObj = {
             items: items,
-            selectedForecastModel: selectedForecastModelIndex
+            selectedItemIndex: selectedForecastModelIndex
         };
+        this.initFooterToolbar(this.forecastModelsObj);
+    }
+
+    initFooterToolbar(forecastModelsObj: { items: Array<any>, selectedItemIndex: number }) {
+        this.footerToolbarConfig = [
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'refresh',
+                        action: this.refreshDataGrid.bind(this)
+                    },
+                    {
+                        name: 'amount',
+                        text: '3 of 9'
+                    },
+                    {
+                        name: 'forecastModels',
+                        widget: 'dxTabs',
+                        options: {
+                            items: forecastModelsObj.items,
+                            selectedIndex: forecastModelsObj.selectedItemIndex,
+                            accessKey: 'cashflowForecastSwitcher',
+                            onSelectionChanged: (e) => {
+                                this.changeSelectedForecastModel(e);
+                            }
+                        }
+                    },
+                    {
+                        name: 'forecastModelAdd',
+                        action: function(){ console.log( 'add forecast model' ); },
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                items: [
+                    {
+                        name: 'total',
+                        html: this.ls('Platform', 'Total') + ': <span class="value">372291,20</span>'
+                    },
+                    {
+                        name: 'count',
+                        html: this.l('Cashflow_BottomToolbarCount') + ': <span class="value">17</span>'
+                    },
+                    {
+                        name: 'average',
+                        html: this.l('Cashflow_BottomToolbarAverage') + ': <span class="value">1454, 24</span>'
+                    }
+                ]
+            }
+        ];
     }
 
     /**
@@ -585,13 +638,15 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
+
+        super.ngOnDestroy();
     }
 
     loadGridDataSource() {
         abp.ui.setBusy();
         $('.pivot-grid').addClass('invisible');
         this.requestFilter.forecastModelId = this.selectedForecastModel.id;
-        this._cashflowServiceProxy.getStats(this.requestFilter)
+        this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.requestFilter)
             .subscribe(result => {
                 if (result.transactionStats.length) {
                     let transactions = result.transactionStats;
@@ -872,7 +927,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
             notificationMessage = this.l('AppliedSuccessfully');
         /** If settings were saved - get them from the api */
         } else {
-            preferencesObservable = this._cashflowServiceProxy.getCashFlowGridSettings();
+            preferencesObservable = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType6[this.instanceType], this.instanceId);
             notificationMessage = this.l('SavedSuccessfully');
         }
         preferencesObservable.subscribe(result => {
@@ -1049,21 +1104,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         return this.groupbyItems[currentIndex + 1].groupInterval;
     }
 
-    /**
-     * @returns {function(any): string}
-     */
-    getDateIntervalHeaderCustomizer(dateInterval: string) {
-        return cellInfo => {
-            /** @todo find out how to inject the this.cssMarker instead of hardcoded ' @css' */
-            return cellInfo.value + ' @css:{dateField ' + dateInterval + '}';
-        };
-    }
-
     getHistoricalCustomizer() {
-        return cellInfo => {
-            return this.l(this.historicalTextsKeys[cellInfo.value]).toUpperCase() +
-                ' @css:{historicalField ' + this.historicalClasses[cellInfo.value] + '}';
-        };
+        return cellInfo => this.l(this.historicalTextsKeys[cellInfo.value]).toUpperCase();
     }
 
     getYearHistoricalSelectorWithCurrent(): any {
@@ -1094,9 +1136,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @returns {string}
      */
     getQuarterHeaderCustomizer(): any {
-        return cellInfo => {
-            return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField quarter}';
-        };
+        return cellInfo => cellInfo.valueText.slice(0, 3).toUpperCase();
     }
 
     /**
@@ -1104,9 +1144,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @returns {string}
      */
     getMonthHeaderCustomizer(): any {
-        return function(cellInfo) {
-            return cellInfo.valueText.slice(0, 3).toUpperCase() + ' @css:{dateField month}';
-        };
+        return cellInfo => cellInfo.valueText.slice(0, 3).toUpperCase();
     }
 
     /**
@@ -1195,10 +1233,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     clearAllFilters(event) {
         this._filtersService.clearAllFilters();
-    }
-
-    cutCssFromValue(text) {
-        return text.slice(text.indexOf(this.cssMarker) + this.cssMarker.length + 2, text.length - 1);
     }
 
     /**
@@ -1342,15 +1376,6 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     }
 
     /**
-     * whether the cell contains the css marker for adding css to it
-     * @param cellObj
-     * @returns {boolean}
-     */
-    isCellContainsCssMarker(cellObj) {
-        return cellObj.cell.text ? cellObj.cell.text.indexOf(this.cssMarker) !== -1 : '';
-    }
-
-    /**
      * Event that runs before rendering of every cell of the pivot grid
      * @param e - the object with the cell info
      * https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxPivotGrid/Events/#cellPrepared
@@ -1393,10 +1418,8 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
         }
 
         /** headers manipulation (adding css classes and appending 'Totals text') */
-        if (e.area === 'column') {
-            if (this.isCellContainsCssMarker(e)) {
-                this.prepareColumnCell(e);
-            }
+        if (e.area === 'column' && e.cell.type !== GrandTotal) {
+            this.prepareColumnCell(e);
 
             /** Historical horizontal header columns */
             /** @todo exclude disabling for current month (in future) */
@@ -1583,7 +1606,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     /** Get column activity */
     columnHasActivity(cellObj, lowestPeriod) {
         let columnHasActivity = false;
-        let path = cellObj.cell.columnPath || cellObj.cell.path
+        let path = cellObj.cell.columnPath || cellObj.cell.path;
         let cellDate = this.getDateByPath(path, this.getColumnFields(), lowestPeriod);
         if (cellDate) {
             let dateKey = this.formatToLowest(cellDate, lowestPeriod);
@@ -1634,23 +1657,34 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
      * @param cellObj
      */
     prepareColumnCell(cellObj) {
-        /** get the css class from name */
-        let valueWithoutCss = cellObj.cell.text.slice(0, (cellObj.cell.text.indexOf(this.cssMarker)));
-        /** cut off the css from the cell text */
-        let cssClass = this.cutCssFromValue(cellObj.cell.text);
-        /** update the columns with the text without the marker */
-        cellObj.cellElement.text(valueWithoutCss);
-        /** Added 'Total' text to the year and quarter headers */
-        let fieldName = cssClass.slice(cssClass.indexOf(' ') + 1, cssClass.length).trim();
-        if (fieldName === 'year' || fieldName === 'quarter') {
-            let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
-                (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length >= 6);
-            cellObj.cellElement.html(this.getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName));
+
+        let fieldName, columnFields = this.pivotGrid.instance.getDataSource().getAreaFields('column', false),
+            fieldObj = columnFields.find(field => field.areaIndex === cellObj.cell.path.length - 1),
+            fieldGroup = fieldObj.groupInterval ? 'dateField' : fieldObj.caption.toLowerCase() + 'Field';
+
+        if (fieldGroup === 'dateField') {
+            fieldName = fieldObj.groupInterval;
+            /** Added 'Total' text to the year and quarter headers */
+            if (fieldName === 'year' || fieldName === 'quarter') {
+                let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
+                    (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length >= 6);
+                cellObj.cellElement.html(this.getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName));
+            }
+            if (fieldName === 'day') {
+                let dayNumber = cellObj.cell.path.pop(),
+                    dayEnding = [, 'st', 'nd', 'rd'][ dayNumber % 100 >> 3 ^ 1 && dayNumber % 10] || 'th';
+                cellObj.cellElement.append(`<span class="dayEnding">${dayEnding}</span>`);
+            }
+        } else if (fieldGroup === 'historicalField') {
+            fieldName = this.historicalClasses[cellObj.cell.path.pop()];
+            if (!cellObj.cellElement.parent().hasClass('historicalRow')) {
+                cellObj.cellElement.parent().addClass('historicalRow');
+            }
+        } else if (fieldGroup === 'projected') {
+            fieldName = cellObj.cell.value === 1 ? 'projected' : 'mtd';
         }
-        if (_.startsWith(cssClass, 'historicalField') && !cellObj.cellElement.parent().hasClass('historicalRow')) {
-            cellObj.cellElement.parent().addClass('historicalRow');
-        }
-        cellObj.cellElement.addClass(cssClass);
+
+        cellObj.cellElement.addClass(`${fieldGroup} ${fieldName}`);
     }
 
     getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName) {
@@ -2173,7 +2207,7 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
 
     getStatsDetails(params): void {
         this._cashflowServiceProxy
-            .getStatsDetails(params)
+            .getStatsDetails(InstanceType3[this.instanceType], this.instanceId, params)
             .subscribe(result => {
                 this.statsDetailResult = result.map(detail => {
                     detail.date = this.removeLocalTimezoneOffset(detail.date);
@@ -2194,7 +2228,11 @@ export class CashflowComponent extends AppComponentBase implements OnInit, After
     showPreferencesDialog() {
         this.dialog.open(PreferencesDialogComponent, {
             panelClass: 'slider',
-            data: { localization: this.localizationSourceName }
+            data: {
+                instanceId: this.instanceId,
+                instanceType: this.instanceType,
+                localization: this.localizationSourceName
+            }
         }).afterClosed().subscribe(options => {
             if (options && options.update) {
                 this.refreshDataGridWithPreferences(options);

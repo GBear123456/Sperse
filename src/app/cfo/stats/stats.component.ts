@@ -1,5 +1,5 @@
 import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
 import { FiltersService } from '@shared/filters/filters.service';
@@ -22,8 +22,12 @@ import {
     BankAccountsServiceProxy,
     BankAccountDailyStatDto,
     GroupBy,
-    CashFlowForecastServiceProxy
+    CashFlowForecastServiceProxy,
+    InstanceType4,
+    InstanceType8,
+    InstanceType2
 } from '@shared/service-proxies/service-proxies';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     'selector': 'app-stats',
@@ -31,7 +35,7 @@ import {
     'templateUrl': './stats.component.html',
     'styleUrls': ['./stats.component.less']
 })
-export class StatsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class StatsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('linearChart') private linearChart: DxChartComponent;
     @ViewChild('barChart') private barChart: DxChartComponent;
     statsData: Array<BankAccountDailyStatDto>;
@@ -74,19 +78,20 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     private requestFilter: StatsFilter;
     constructor(
         injector: Injector,
+        route: ActivatedRoute,
         private _filtersService: FiltersService,
         private _cashflowService: CashflowServiceProxy,
         private _bankAccountService: BankAccountsServiceProxy,
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
         private _cacheService: CacheService
     ) {
-        super(injector);
+        super(injector, route);
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
-    initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedForecastModel: number } = { items: [], selectedForecastModel: null }) {
+    initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null }) {
         this.toolbarConfig = <any>[
             {
                 location: 'before',
@@ -113,7 +118,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                             hint: this.l('Scenario'),
                             accessKey: 'statsForecastSwitcher',
                             items: forecastModelsObj.items,
-                            selectedIndex: forecastModelsObj.selectedForecastModel,
+                            selectedIndex: forecastModelsObj.selectedItemIndex,
                             showNavButtons: true,
                             showIndicator: false,
                             scrollByContent: true,
@@ -193,12 +198,14 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     ngOnInit() {
+        super.ngOnInit();
+
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
 
         /** Create parallel operations */
-        let getCashFlowInitialDataObservable = this._cashflowService.getCashFlowInitialData();
-        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels();
+        let getCashFlowInitialDataObservable = this._cashflowService.getCashFlowInitialData(InstanceType4[this.instanceType], this.instanceId);
+        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType8[this.instanceType], this.instanceId);
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable)
             .subscribe(result => {
                 /** Initial data handling */
@@ -299,7 +306,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         let selectedForecastModelIndex = items.findIndex(item => item.id === this.selectedForecastModel.id);
         let forecastModelsObj = {
             items: items,
-            selectedForecastModel: selectedForecastModelIndex
+            selectedItemIndex: selectedForecastModelIndex
         };
         this.initToolbarConfig(forecastModelsObj);
     }
@@ -326,6 +333,7 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     loadStatsData() {
         let {startDate = undefined, endDate = undefined, accountIds = []} = this.requestFilter;
         this._bankAccountService.getStats(
+            InstanceType2[this.instanceType], this.instanceId,
             'USD', this.selectedForecastModel.id, accountIds, startDate, endDate, GroupBy.Monthly
         ).subscribe(result => {
                     if (result) {
@@ -368,6 +376,8 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         this._filtersService.unsubscribe();
         this._filtersService.enabled = false;
         this.rootComponent.overflowHidden();
+
+        super.ngOnDestroy();
     }
 
     /** Calculates the max amount of the labels for displaying to not clutter the screen */

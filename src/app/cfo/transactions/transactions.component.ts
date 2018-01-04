@@ -407,6 +407,8 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         this.dialog.open(RuleDialogComponent, {
             panelClass: 'slider', 
             data: {
+                instanceId: this.instanceId,
+                instanceType: this.instanceType,
                 categoryId: $event.categoryId,
                 transactions: transactions,
                 transactionIds: transactions
@@ -429,5 +431,7 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
             = AppConsts.localization.defaultLocalizationSourceName;
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
+
+        super.ngOnDestroy();
     }
 }
