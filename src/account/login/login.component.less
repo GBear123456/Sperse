@@ -129,3 +129,55 @@
         }
     }
 }
+
+@media (max-width: 767px) {
+    .form-wrapper {
+        h1 {
+            margin: 40px 0 50px;
+            font-weight: 500 !important;
+            font-size: 30px;
+            color: #282f38;
+        }
+        
+        * {
+            font-weight: 400 !important;
+        }
+        
+        form {
+            padding: 0 17px;
+            
+            input.form-control {
+                color: #888d92;
+                padding: 8px 0;
+            }
+        }
+        
+        .forget-password {
+            margin-top: 0;
+            color: #6eade9;
+            
+            &:hover,
+            &:focus {
+                color: darken(#6eade9, 20%);
+            }
+        }
+    
+        .agree-rights {
+            font-size: 14px;
+            margin-bottom: 20px;
+            a {
+                font-weight: 500 !important;
+            }
+        }
+        
+        .form-actions {
+            padding-top: 40px;
+            
+            .submit {
+                min-width: 0;
+                width: 100%;
+            }
+        }
+        
+    }
+}

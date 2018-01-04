@@ -1,7 +1,8 @@
 ﻿<div class="container-fluid" [@routerTransition]>
     <div class="row">
         <div class="col-md-6 col-sm-12 col-xs-12 text-center form-wrapper">
-            <h1>{{l("SperseLogin")}}</h1>
+            <h1 class="hidden-xs">{{l("SperseLogin")}}</h1>
+            <h1 class="visible-xs">{{l("Login")}}</h1>
 
             <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
 
