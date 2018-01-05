@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChil
 import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 
-import { ClassificationServiceProxy, InstanceType18, InstanceType23 } from '@shared/service-proxies/service-proxies';
+import { ClassificationServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 
 import { MatDialog } from '@angular/material';
 import { RuleDialogComponent } from './rule-edit-dialog/rule-edit-dialog.component';
@@ -85,7 +85,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     onRowRemoved($event) {
-        this._ClassificationService.deleteRule(InstanceType23[this.instanceType], this.instanceId, [], null, $event.key);
+        this._ClassificationService.deleteRule(InstanceType[this.instanceType], this.instanceId, [], null, $event.key);
     }
 
     showEditDialog(data = {}) {
@@ -101,7 +101,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     ngOnInit(): void {
         super.ngOnInit();
 
-        this._ClassificationService.getRules(InstanceType18[this.instanceType], this.instanceId, null)
+        this._ClassificationService.getRules(InstanceType[this.instanceType], this.instanceId, null)
             .subscribe(result => {
                   this.ruleTreeList = _.sortBy(result.map((item) => {
                       item['order'] =

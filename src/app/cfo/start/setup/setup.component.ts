@@ -5,7 +5,7 @@ import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { SetupStepComponent } from '../../shared/setup-steps/setup-steps.component';
 import { Router } from '@angular/router';
-import { InstanceServiceProxy, InstanceType48 } from 'shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { AppService } from 'app/app.service';
 
 @Component({
@@ -37,7 +37,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit {
     }
 
     onStart(): void {
-        this._instanceServiceProxy.setup(InstanceType48[this.instanceType]).subscribe((data) => {
+        this._instanceServiceProxy.setup(InstanceType[this.instanceType]).subscribe((data) => {
             this._cfoService.instanceChangeProcess();
             this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/bank-accounts']);
         });

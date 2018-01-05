@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector, ViewChild } from '@angular/core';
-import { FinancialInformationServiceProxy, InstanceType43 } from '@shared/service-proxies/service-proxies';
+import { FinancialInformationServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AppConsts } from '@shared/AppConsts';
@@ -54,7 +54,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     }
     initIFrame() {
         this._financialInformationServiceProxy.getSetupAccountsLink(
-            InstanceType43[this.instanceType],
+            InstanceType[this.instanceType],
             this.instanceId,
             'https://testadmin.sperse.com/assets/cfo-css/custom.css',
             ''
@@ -69,6 +69,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     onNextClick() {
-        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase + '/cashflow']);
+        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/cashflow']);
     }
 }

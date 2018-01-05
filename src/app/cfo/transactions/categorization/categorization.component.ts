@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter, Injector, OnInit,  ViewChild, H
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
-import { ClassificationServiceProxy, InstanceType17 } from '@shared/service-proxies/service-proxies';
+import { ClassificationServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -40,7 +40,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     ngOnInit() {
         super.ngOnInit();
 
-        this._classificationServiceProxy.getCategories(InstanceType17[this.instanceType], this.instanceId).subscribe((data) => {
+        this._classificationServiceProxy.getCategories(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
             let categories = [];
             if (data.types)
                  _.mapObject(data.types, (item, key) => {
