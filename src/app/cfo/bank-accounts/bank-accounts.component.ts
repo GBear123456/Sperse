@@ -28,7 +28,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
         super(injector, route);
 
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-        this.syncComponent = this.getElementRef().nativeElement.querySelector('synch-progress');
     }
 
     ngOnInit() {
