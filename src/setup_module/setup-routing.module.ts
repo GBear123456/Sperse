@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { SetupComponent } from './setup.component';
 import { SetupRouteGuard } from './shared/common/auth/auth-route-guard';
 

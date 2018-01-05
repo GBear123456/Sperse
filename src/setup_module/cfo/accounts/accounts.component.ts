@@ -29,7 +29,6 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
     ngOnInit() {
         super.ngOnInit();
-        
         this.initIFrame();
     }
 
