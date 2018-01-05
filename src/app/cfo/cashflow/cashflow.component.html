@@ -12,14 +12,13 @@
     (showPreferencesDialog)="showPreferencesDialog()"
 ></cashflow-operations>
 
-<div class="cashflow">
+<div class="cashflow" *ngIf="cashflowData && cashflowData.length">
     <div class="sort-options">
         <app-sorting [sortings]="sortings" (sortingChange)="resortPivotGrid($event)"></app-sorting>
     </div>
-
     <dx-scroll-view>
         <div class="pivot-grid-wrapper">
-            <dx-pivot-grid id="operations"
+            <dx-pivot-grid *ngIf="cashflowData && cashflowData.length" id="operations"
                            class="pivot-grid invisible"
                            [allowSortingBySummary]="false"
                            [allowSorting]="false"
@@ -43,9 +42,7 @@
                 <dxo-scrolling mode="standard"></dxo-scrolling>
             </dx-pivot-grid>
         </div>
-
     </dx-scroll-view>
-
     <div *ngIf="statsDetailResult !== undefined" class="cashflow-wrap">
         <dx-button icon="close" (onClick)="closeTransactionsDetail()" class="close-btn"></dx-button>
         <dx-data-grid id="cashflowGridContainer"
@@ -89,3 +86,10 @@
     </div>
 
 </div>
+
+<app-no-data
+    *ngIf="startDataLoading && (!cashflowData || !cashflowData.length)"
+    text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidid"
+    linkUrl="/app/cfo/business/start"
+    [linkText]="l('Go_to_sfo_setup')">
+</app-no-data>

@@ -379,6 +379,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     transactionsTotal = 0;
     transactionsAmount = 0;
     transactionsAverage = 0;
+    startDataLoading = false;
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -649,6 +650,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.requestFilter.forecastModelId = this.selectedForecastModel.id;
         this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.requestFilter)
             .subscribe(result => {
+                this.startDataLoading = true;
                 if (result.transactionStats.length) {
                     let transactions = result.transactionStats;
                     /** categories - object with categories */
@@ -671,6 +673,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     );
                 } else {
                     this.cashflowData = null;
+                    abp.ui.clearBusy();
+                    $('.pivot-grid').removeClass('invisible');
                 }
                 this.dataSource = this.getApiDataSource();
 
@@ -1689,35 +1693,36 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param cellObj
      */
     prepareColumnCell(cellObj) {
+        if (cellObj.cell.path) {
+            let fieldName, columnFields = this.pivotGrid.instance.getDataSource().getAreaFields('column', false);
+            let columnNumber = cellObj.cell.path.length ? cellObj.cell.path.length  - 1 : 0;
+            let fieldObj = columnFields.find(field => field.areaIndex === columnNumber);
+            let fieldGroup = fieldObj.groupInterval ? 'dateField' : fieldObj.caption.toLowerCase() + 'Field';
 
-        let fieldName, columnFields = this.pivotGrid.instance.getDataSource().getAreaFields('column', false),
-            columnNumber = cellObj.cell.path.length ? cellObj.cell.path.length  - 1 : 0,
-            fieldObj = columnFields.find(field => field.areaIndex === columnNumber),
-            fieldGroup = fieldObj.groupInterval ? 'dateField' : fieldObj.caption.toLowerCase() + 'Field';
+            if (fieldGroup === 'dateField') {
+                fieldName = fieldObj.groupInterval;
+                /** Added 'Total' text to the year and quarter headers */
+                if (fieldName === 'year' || fieldName === 'quarter') {
+                    let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
+                        (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length >= 6);
+                    cellObj.cellElement.html(this.getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName));
+                }
+                if (fieldName === 'day') {
+                    let dayNumber = cellObj.cell.path.pop(),
+                        dayEnding = [, 'st', 'nd', 'rd'][ dayNumber % 100 >> 3 ^ 1 && dayNumber % 10] || 'th';
+                    cellObj.cellElement.append(`<span class="dayEnding">${dayEnding}</span>`);
+                }
+            } else if (fieldGroup === 'historicalField') {
+                fieldName = this.historicalClasses[cellObj.cell.path.pop()];
+                if (!cellObj.cellElement.parent().hasClass('historicalRow')) {
+                    cellObj.cellElement.parent().addClass('historicalRow');
+                }
+            } else if (fieldGroup === 'projected') {
+                fieldName = cellObj.cell.value === 1 ? 'projected' : 'mtd';
+            }
 
-        if (fieldGroup === 'dateField') {
-            fieldName = fieldObj.groupInterval;
-            /** Added 'Total' text to the year and quarter headers */
-            if (fieldName === 'year' || fieldName === 'quarter') {
-                let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
-                    (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length >= 6);
-                cellObj.cellElement.html(this.getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName));
-            }
-            if (fieldName === 'day') {
-                let dayNumber = cellObj.cell.path.pop(),
-                    dayEnding = [, 'st', 'nd', 'rd'][ dayNumber % 100 >> 3 ^ 1 && dayNumber % 10] || 'th';
-                cellObj.cellElement.append(`<span class="dayEnding">${dayEnding}</span>`);
-            }
-        } else if (fieldGroup === 'historicalField') {
-            fieldName = this.historicalClasses[cellObj.cell.path.pop()];
-            if (!cellObj.cellElement.parent().hasClass('historicalRow')) {
-                cellObj.cellElement.parent().addClass('historicalRow');
-            }
-        } else if (fieldGroup === 'projected') {
-            fieldName = cellObj.cell.value === 1 ? 'projected' : 'mtd';
+            cellObj.cellElement.addClass(`${fieldGroup} ${fieldName}`);
         }
-
-        cellObj.cellElement.addClass(`${fieldGroup} ${fieldName}`);
     }
 
     getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName) {
