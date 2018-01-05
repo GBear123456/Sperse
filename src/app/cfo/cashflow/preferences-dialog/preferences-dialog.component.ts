@@ -1,7 +1,7 @@
-import { Component, ViewChild, Injector, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { CashflowServiceProxy, CashFlowGridSettingsDto, CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity, InstanceType6, InstanceType7 } from '@shared/service-proxies/service-proxies';
 import * as ModelEnums from '../models/setting-enums';
-import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';;
+import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { CacheService } from 'ng2-cache-service';
 import { Observable } from 'rxjs/Observable';
@@ -43,7 +43,6 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         private _cacheService: CacheService
     ) {
         super(injector);
-        
         for (let i = 10; i < 21; i++)
             this.fontSizes.push(i + 'px');
     }
