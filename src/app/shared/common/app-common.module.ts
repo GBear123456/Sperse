@@ -21,6 +21,9 @@ import { AppRouteGuard } from './auth/auth-route-guard';
 import { DateTimeService } from './timing/date-time.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
+import { DataTableModule } from 'primeng/primeng';
+import { PaginatorModule } from 'primeng/primeng';
+
 @NgModule({
     imports: [
         ngCommon.CommonModule,
@@ -29,6 +32,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
         UtilsModule,
         AbpModule,
         CommonModule,
+        DataTableModule,
+        PaginatorModule,
 
         DxListModule,
         DxButtonModule, 

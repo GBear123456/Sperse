@@ -1,9 +1,10 @@
-﻿import { Component, Injector, AfterViewInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, AfterViewInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { OrganizationUnitServiceProxy, ListResultDtoOfOrganizationUnitDto, OrganizationUnitDto, MoveOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
 import { Observable } from 'rxjs/Observable';
 import { IBasicOrganizationUnitInfo } from './basic-organization-unit-info';
 import { IUserWithOrganizationUnit } from './user-with-organization-unit';
+import { IUsersWithOrganizationUnit } from './users-with-organization-unit';
 
 import * as _ from 'lodash';
 import { CreateOrEditUnitModalComponent } from './create-or-edit-unit-modal.component';
@@ -13,7 +14,7 @@ export interface IOrganizationUnitOnTree extends IBasicOrganizationUnitInfo {
     parent: string | number;
     code: string;
     displayName: string;
-    memberCount: number,
+    memberCount: number;
     text: string;
     state: any;
 }
@@ -40,7 +41,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
         super(injector);
     }
 
-    totalUnitCount: number = 0;
+    totalUnitCount = 0;
 
     set selectedOu(ou: IOrganizationUnitOnTree) {
         this._selectedOu = ou;
@@ -50,12 +51,12 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
     private _selectedOu: IOrganizationUnitOnTree;
 
     ngAfterViewInit(): void {
-        let self = this;
+        const self = this;
         this._$tree = $(this.tree.nativeElement);
         this.getTreeDataFromServer(treeData => {
             this.totalUnitCount = treeData.length;
 
-            let jsTreePlugins = [
+            const jsTreePlugins = [
                 'types',
                 'contextmenu',
                 'wholerow',
@@ -75,13 +76,12 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                     }
                 })
                 .on('move_node.jstree', (e, data) => {
-
                     if (!this.isGranted('Pages.Administration.OrganizationUnits.ManageOrganizationTree')) {
                         this._$tree.jstree('refresh'); //rollback
                         return;
                     }
 
-                    let parentNodeName = (!data.parent || data.parent === '#')
+                    const parentNodeName = (!data.parent || data.parent === '#')
                         ? this.l('Root')
                         : this._$tree.jstree('get_node', data.parent).original.displayName;
 
@@ -89,7 +89,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                         this.l('OrganizationUnitMoveConfirmMessage', data.node.original.displayName, parentNodeName),
                         isConfirmed => {
                             if (isConfirmed) {
-                                let input = new MoveOrganizationUnitInput();
+                                const input = new MoveOrganizationUnitInput();
                                 input.id = data.node.id;
                                 input.newParentId = (!data.parent || data.parent === '#') ? undefined : data.parent;
                                 this._organizationUnitService.moveOrganizationUnit(input)
@@ -115,14 +115,14 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                     },
                     types: {
                         'default': {
-                            'icon': 'fa fa-folder tree-item-icon-color icon-lg'
+                            'icon': 'fa fa-folder m--font-warning'
                         },
                         'file': {
-                            'icon': 'fa fa-file tree-item-icon-color icon-lg'
+                            'icon': 'fa fa-file m--font-warning'
                         }
                     },
                     contextmenu: {
-                        items: function(node) { return self.contextMenu(node, self); }
+                        items: function (node) { return self.contextMenu(node, self); }
                     },
                     sort: function (node1, node2) {
                         if (this.get_node(node2).original.displayName < this.get_node(node1).original.displayName) {
@@ -137,7 +137,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
             this._$tree.on('click', '.ou-text .fa-caret-down', function (e) {
                 e.preventDefault();
 
-                let ouId = $(this).closest('.ou-text').attr('data-ou-id');
+                const ouId = $(this).closest('.ou-text').attr('data-ou-id');
                 setTimeout(() => {
                     self._$tree.jstree('show_contextmenu', ouId);
                 }, 100);
@@ -155,7 +155,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
 
     private getTreeDataFromServer(callback: (ous: IOrganizationUnitOnTree[]) => void): void {
         this._organizationUnitService.getOrganizationUnits().subscribe((result: ListResultDtoOfOrganizationUnitDto) => {
-            let treeData = _.map(result.items, item => (<IOrganizationUnitOnTree>{
+            const treeData = _.map(result.items, item => (<IOrganizationUnitOnTree>{
                 id: item.id,
                 parent: item.parentId ? item.parentId : '#',
                 code: item.code,
@@ -173,14 +173,14 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
     }
 
     private generateTextOnTree(ou: IOrganizationUnitOnTree | OrganizationUnitDto) {
-        let itemClass = ou.memberCount > 0 ? ' ou-text-has-members' : ' ou-text-no-members';
+        const itemClass = ou.memberCount > 0 ? ' ou-text-has-members' : ' ou-text-no-members';
         return '<span title="' + ou.code + '" class="ou-text' + itemClass + '" data-ou-id="' + ou.id + '">' + ou.displayName + ' (<span class="ou-text-member-count">' + ou.memberCount + '</span>) <i class="fa fa-caret-down text-muted"></i></span>';
     }
 
     private contextMenu(node: any, self: OrganizationTreeComponent) {
-        let canManageOrganizationTree = self.isGranted('Pages.Administration.OrganizationUnits.ManageOrganizationTree');
+        const canManageOrganizationTree = self.isGranted('Pages.Administration.OrganizationUnits.ManageOrganizationTree');
 
-        let items = {
+        const items = {
             editUnit: {
                 label: self.l('Edit'),
                 _disabled: !canManageOrganizationTree,
@@ -205,7 +205,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                 label: self.l('Delete'),
                 _disabled: !canManageOrganizationTree,
                 action: data => {
-                    let instance = $.jstree.reference(data.reference);
+                    const instance = $.jstree.reference(data.reference);
 
                     this.message.confirm(
                         this.l('OrganizationUnitDeleteWarningMessage', node.original.displayName),
@@ -221,7 +221,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                     );
                 }
             }
-        }
+        };
 
         return items;
     }
@@ -247,6 +247,8 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
                     opened: true
                 }
             });
+
+        this.totalUnitCount += 1;
     }
 
     unitUpdated(ou: OrganizationUnitDto): void {
@@ -255,8 +257,8 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
         instance.rename_node(this._updatingNode, this.generateTextOnTree(ou));
     }
 
-    memberAdded(data: IUserWithOrganizationUnit): void {
-        this.incrementMemberCount(data.ouId, 1);
+    membersAdded(data: IUsersWithOrganizationUnit): void {
+        this.incrementMemberCount(data.ouId, data.userIds.length);
     }
 
     memberRemoved(data: IUserWithOrganizationUnit): void {
@@ -264,7 +266,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
     }
 
     incrementMemberCount(ouId: number, incrementAmount: number): void {
-        let treeNode = this._$tree.jstree('get_node', ouId);
+        const treeNode = this._$tree.jstree('get_node', ouId);
         treeNode.original.memberCount = treeNode.original.memberCount + incrementAmount;
         this._$tree.jstree('rename_node', treeNode, this.generateTextOnTree(treeNode.original));
     }
