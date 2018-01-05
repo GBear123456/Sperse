@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector, EventEmitter, Output, OnDestroy } from '@angular/core';
-import { FinancialInformationServiceProxy, SyncProgressOutput, InstanceType44, InstanceType45 } from '@shared/service-proxies/service-proxies';
+import { FinancialInformationServiceProxy, SyncProgressOutput, InstanceType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 
@@ -31,7 +31,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
 
     public requestSync() {
         this._financialInformationServiceProxy.syncAllAccounts(
-            InstanceType44[this.instanceType],
+            InstanceType[this.instanceType],
             this.instanceId,
             true)
             .subscribe((result) => {
@@ -41,7 +41,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
 
     getSynchProgress() {
         this._financialInformationServiceProxy.getSyncProgress(
-            InstanceType45[this.instanceType],
+            InstanceType[this.instanceType],
             this.instanceId)
             .subscribe((result) => {
                 if (result.totalProgress.progressPercent != 100) {
