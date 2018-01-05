@@ -12,7 +12,7 @@ import {
     CreateCategoryGroupInput, CreateCategoryInput, UpdateCategoryGroupInput, UpdateCategoryInput,
     CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
-    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType49, InstanceType4, InstanceType20, InstanceType17, InstanceType33, InstanceType28, InstanceType31, InstanceType35 } from '@shared/service-proxies/service-proxies';
+    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType49, InstanceType4, InstanceType20, InstanceType17, InstanceType33, InstanceType28, InstanceType31, InstanceType35, InstanceType } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -182,7 +182,9 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             action: () => {
                 if (this.validate()) {
                     let option = this.data.options[0].value ? 'MatchedAndUnclassified': 'SelectedOnly';
-                    this._classificationServiceProxy[(this.data.id ? 'edit': 'create') + 'Rule'](
+                    this._classificationServiceProxy[(this.data.id ? 'edit' : 'create') + 'Rule'](
+                        InstanceType[this.instanceType],
+                        this.instanceId,
                         (this.data.id ? EditRuleDto: CreateRuleDto).fromJS({
                             id: this.data.id,
                             name: this.data.title,
@@ -340,7 +342,9 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     onCategoryUpdated($event) {
         let groupUpdate = this.categorization.groups[$event.key];
-        this._classificationServiceProxy['updateCategory' + (groupUpdate ? 'Group': '')](
+        this._classificationServiceProxy['updateCategory' + (groupUpdate ? 'Group' : '')](
+            InstanceType[this.instanceType],
+            this.instanceId,
             (groupUpdate ? UpdateCategoryGroupInput: UpdateCategoryInput).fromJS({
                 id: parseInt($event.key),
                 groupId: groupUpdate ? undefined: this.categorization.items[$event.key].groupId,
@@ -355,7 +359,9 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     onCategoryInserted($event) {
         let groupCreate = this.categorization.types[$event.data.parent];
-        this._classificationServiceProxy['createCategory' + (groupCreate ? 'Group': '')](
+        this._classificationServiceProxy['createCategory' + (groupCreate ? 'Group' : '')](
+            InstanceType[this.instanceType],
+            this.instanceId,
             (groupCreate ? CreateCategoryGroupInput: CreateCategoryInput).fromJS({
                 typeId: $event.data.parent,
                 groupId: this.getCategoryItemId($event.data.parent),
