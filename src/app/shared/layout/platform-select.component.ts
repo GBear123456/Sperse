@@ -44,7 +44,9 @@ export class PlatformSelectComponent extends AppComponentBase {
 
         });
         _appService.subscribeModuleChange((config) => {
-            this.cssClass = (this.module = config['name']).toLowerCase();
+            this.module = config['name'];
+            this.uri = _appService.params.instance;
+            this.cssClass = this.module.toLowerCase();
             this.hoverModule = this.module;
         });
     }
