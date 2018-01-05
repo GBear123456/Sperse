@@ -3,7 +3,7 @@ import { FinancialInformationServiceProxy, InstanceType43 } from '@shared/servic
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AppConsts } from '@shared/AppConsts';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { SynchProgressComponent } from '@app/cfo/shared/synch-progress/synch-progress.component';
 
 @Component({
@@ -20,14 +20,12 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        route: ActivatedRoute,
         private sanitizer: DomSanitizer,
         private _financialInformationServiceProxy: FinancialInformationServiceProxy,
         private _router: Router
     ) {
-        super(injector, route);
+        super(injector);
 
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.syncComponent = this.getElementRef().nativeElement.querySelector('synch-progress');
     }
 
@@ -72,6 +70,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     onNextClick() {
-        this._router.navigate(['app/cfo/cashflow']);
+        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase + '/cashflow']);
     }
 }

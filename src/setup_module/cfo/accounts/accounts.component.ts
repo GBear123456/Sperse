@@ -3,7 +3,7 @@ import { FinancialInformationServiceProxy, InstanceType43 } from '@shared/servic
 import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AppConsts } from '@shared/AppConsts';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'accounts',
@@ -17,14 +17,11 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        route: ActivatedRoute,
         private sanitizer: DomSanitizer,
         private _financialInformationServiceProxy: FinancialInformationServiceProxy,
         private _router: Router
     ) {
-        super(injector, route);
-
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
+        super(injector);
     }
 
     ngOnInit() {

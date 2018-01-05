@@ -14,7 +14,6 @@ import 'devextreme/data/odata/store';
 
 import * as _ from 'underscore';
 import * as moment from 'moment';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
     templateUrl: './rules.component.html',
@@ -49,11 +48,10 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
 
 
     constructor(injector: Injector,
-        route: ActivatedRoute,
         public dialog: MatDialog,
         private _ClassificationService: ClassificationServiceProxy
     ) {
-        super(injector, route);
+        super(injector);
     }
 
     refreshList() {

@@ -27,7 +27,6 @@ import {
     InstanceType8,
     InstanceType2
 } from '@shared/service-proxies/service-proxies';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
     'selector': 'app-stats',
@@ -78,17 +77,16 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private requestFilter: StatsFilter;
     constructor(
         injector: Injector,
-        route: ActivatedRoute,
         private _filtersService: FiltersService,
         private _cashflowService: CashflowServiceProxy,
         private _bankAccountService: BankAccountsServiceProxy,
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
         private _cacheService: CacheService
     ) {
-        super(injector, route);
+        super(injector);
+
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null }) {
