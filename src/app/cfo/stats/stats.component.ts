@@ -1,5 +1,5 @@
 import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
 import { FiltersService } from '@shared/filters/filters.service';
@@ -11,7 +11,10 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { CacheService } from 'ng2-cache-service';
 
-import { SourceDataComponent } from './source-data/source-data.component';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+import { DxChartComponent } from 'devextreme-angular';
+import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 
 import {
     StatsFilter,
@@ -19,7 +22,10 @@ import {
     BankAccountsServiceProxy,
     BankAccountDailyStatDto,
     GroupBy,
-    CashFlowForecastServiceProxy
+    CashFlowForecastServiceProxy,
+    InstanceType4,
+    InstanceType8,
+    InstanceType2
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -28,96 +34,44 @@ import {
     'templateUrl': './stats.component.html',
     'styleUrls': ['./stats.component.less']
 })
-export class StatsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('SourceDataComponent') sourceDataComponent: SourceDataComponent;
+export class StatsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild('linearChart') private linearChart: DxChartComponent;
+    @ViewChild('barChart') private barChart: DxChartComponent;
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
-    toolbarConfig = <any>[
-        {
-            location: 'before',
-            items: [
-                {
-                    name: 'filters',
-                    action: this._filtersService.toggle.bind(this._filtersService)
-                }
-            ]
-        },
-        {
-            location: 'before',
-            items: [
-                { name: 'back' }
-            ]
-        },
-        {
-            location: 'before',
-            items: [
-                {
-                    name: 'slider',
-                    widget: 'dxGallery',
-                    options: {
-                        hint: this.l('Scenario'),
-                        accessKey: 'statsForecastSwitcher',
-                        items: [],
-                        showNavButtons: true,
-                        showIndicator: false,
-                        scrollByContent: true,
-                        height: 39,
-                        width: 200,
-                        itemTemplate: itemData => {
-                            return itemData.text;
-                        },
-                        onSelectionChanged: (e) => {
-                            this.changeSelectedForecastModel(e);
-                            this.loadStatsData();
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            location: 'after',
-            items: [
-                { name: 'flag' },
-                {
-                    name: 'pen',
-                    options: {
-                        hint: this.l('Label')
-                    }
-                },
-                { name: 'more' }
-            ]
-        },
-        {
-            location: 'after',
-            items: [
-                { name: 'download' },
-                { name: 'print' }
-            ]
-        },
-        {
-            location: 'after',
-            items: [
-                {name: 'pen'}
-            ]
-        }
-    ];
-    updatedConfig = [];
+    selectedForecastModel;
+    toolbarConfig = [];
     headlineConfig: any;
-    interval = 'date';
     axisDateFormat = 'month';
     currency = 'USD';
     labelPositiveBackgroundColor = '#626b73';
-    historicalEndingBalanceColor = '#01b0f0';
-    forecastEndingBalanceColor = '#f9bb4d';
-    historicalIncomeColor = '#01b0f0';
-    historicalExpensesColor = '#e72f6a';
-    forecastIncomeColor = '#f9bb4d';
-    forecastExpensesColor = '#f15a25';
+    labelNegativeBackgroundColor = '#f05b2a';
+    historicalEndingBalanceColor = '#00aeef';
+    forecastEndingBalanceColor = '#f9ba4e';
+    historicalIncomeColor = '#00aeef';
+    historicalExpensesColor = '#f05b2a';
+    forecastIncomeColor = '#a9e3f9';
+    forecastExpensesColor = '#fec6b3';
+    historicalShadowStartedColor = 'rgba(0, 174, 239, .5)';
+    forecastShadowStartedColor = 'rgba(249, 186, 78, .5)';
+    historicalNetChangeColor = '#fab800';
+    forecastNetChangeColor = '#a82aba';
     maxLabelCount = 0;
     labelWidth = 45;
-    selectedForecastModel;
     showSourceData = false;
+    exporting = false;
+    chartsHeight = 400;
+    barChartTooltipFieldsNames = [
+        'startingBalance',
+        'income',
+        'expenses',
+        'endingBalance',
+        'forecastStartingBalance',
+        'forecastIncome',
+        'forecastExpenses',
+        'forecastEndingBalance'
+    ];
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
@@ -130,71 +84,147 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         private _cacheService: CacheService
     ) {
         super(injector);
+
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
+    }
+
+    initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null }) {
+        this.toolbarConfig = <any>[
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'filters',
+                        action: this._filtersService.toggle.bind(this._filtersService)
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    { name: 'back' }
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'slider',
+                        widget: 'dxGallery',
+                        options: {
+                            hint: this.l('Scenario'),
+                            accessKey: 'statsForecastSwitcher',
+                            items: forecastModelsObj.items,
+                            selectedIndex: forecastModelsObj.selectedItemIndex,
+                            showNavButtons: true,
+                            showIndicator: false,
+                            scrollByContent: true,
+                            height: 39,
+                            width: 200,
+                            itemTemplate: itemData => {
+                                return itemData.text;
+                            },
+                            onSelectionChanged: (e) => {
+                                this.changeSelectedForecastModel(e);
+                                this.loadStatsData();
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                items: [
+                    { name: 'flag' },
+                    {
+                        name: 'pen',
+                        options: {
+                            hint: this.l('Label')
+                        }
+                    },
+                    { name: 'more' }
+                ]
+            },
+            {
+                location: 'after',
+                items: [
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [
+                                {
+                                    action: this.download.bind(this, 'pdf'),
+                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PDF'),
+                                    icon: 'pdf',
+                                },
+                                {
+                                    action: this.download.bind(this, 'png'),
+                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PNG'),
+                                    icon: 'png',
+                                },
+                                {
+                                    action: this.download.bind(this, 'jpeg'),
+                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'JPEG'),
+                                    icon: 'jpeg',
+                                },
+                                {
+                                    action: this.download.bind(this, 'svg'),
+                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'SVG'),
+                                    icon: 'svg',
+                                },
+                                {
+                                    action: this.download.bind(this, 'gif'),
+                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'GIF'),
+                                    icon: 'gif',
+                                }
+                            ]
+                        }
+                    },
+                    { name: 'print', action: this.print.bind(this) }
+                ]
+            },
+            {
+                location: 'after',
+                items: [
+                    {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.body)}
+                ]
+            }
+        ];
     }
 
     ngOnInit() {
+        super.ngOnInit();
+
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
-        this._cashflowService.getCashFlowInitialData()
+
+        /** Create parallel operations */
+        let getCashFlowInitialDataObservable = this._cashflowService.getCashFlowInitialData(InstanceType4[this.instanceType], this.instanceId);
+        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType8[this.instanceType], this.instanceId);
+        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable)
             .subscribe(result => {
-                this._filtersService.setup(
-                    this.filters = [
-                        new FilterModel({
-                            component: FilterCalendarComponent,
-                            caption: 'Date',
-                            items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                        }),
-                        new FilterModel({
-                            field: 'accountIds',
-                            component: FilterCheckBoxesComponent,
-                            caption: 'Account',
-                            items: {
-                                element: new FilterCheckBoxesModel(
-                                    {
-                                        dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
-                                        nameField: 'name',
-                                        parentExpr: 'parentId',
-                                        keyExpr: 'id'
-                                    })
-                            }
-                        })
-                    ]
-                );
+                /** Initial data handling */
+                this.handleCashFlowInitialResult(result[0]);
+
+                /** Forecast models handling */
+                this.handleForecastModelResult(result[1]);
+
+                /** load stats */
+                this.loadStatsData();
             });
 
-        this._cashFlowForecastServiceProxy.getModels().subscribe(
-            result => {
-                let newToolbar = this.toolbarConfig.slice();
-                let sliderObj = newToolbar.filter(toolbarItem => toolbarItem.items[0].name === 'slider')[0];
-                sliderObj.items[0].options.items = result.map(forecastModelItem => {
-                    return {
-                        id: forecastModelItem.id,
-                        text: forecastModelItem.name
-                    };
-                });
+        this.initHeadlineConfig();
+        this.initFiltering();
+        this.calculateChartsHeight();
+    }
 
-                /** If we have the forecast model in cache - get it there, else - get the first model */
-                let cachedForecastModel = this.getForecastModel();
-                /** If we have cached forecast model and cached forecast exists in items list - then use it **/
-                this.selectedForecastModel = cachedForecastModel && sliderObj.items[0].options.items.findIndex(
-                        item => item.id === cachedForecastModel.id
-                    ) !== -1 ?
-                    cachedForecastModel :
-                    sliderObj.items[0].options.items[0];
-                sliderObj.items[0].options.selectedIndex = sliderObj.items[0].options.items.findIndex(
-                    item => item.id === this.selectedForecastModel.id
-                );
-                this.updatedConfig = newToolbar;
-                this.loadStatsData();
-            }
-        );
-
+    initHeadlineConfig() {
         this.headlineConfig = {
-            name: this.l('Daily Cash Balances'),
-            icon: '',
+            names: [this.l('Daily Cash Balances')],
+            iconSrc: 'assets/common/icons/pulse-icon.svg',
             buttons: [
                 {
                     enabled: true,
@@ -203,18 +233,80 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
                 }
             ]
         };
+    }
 
-        for (let filter of this.filters) {
-                let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
-
-            if (filterMethod)
-                filterMethod(filter, this.requestFilter);
-            else
-                this.requestFilter[filter.field] = undefined;
-        }
+    initFiltering() {
         this._filtersService.apply(() => {
+
+            for (let filter of this.filters) {
+                let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
+                if (filterMethod)
+                    filterMethod(filter, this.requestFilter);
+                else
+                    this.requestFilter[filter.field] = undefined;
+            }
+
             this.loadStatsData();
         });
+    }
+
+    /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
+    calculateChartsHeight() {
+        let chartsHeight = window.innerHeight - 410;
+        this.chartsHeight =  chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
+        return this.chartsHeight;
+    }
+
+    /** Calculates the height of the charts scrollable height after resizing */
+    calculateChartsScrolableHeight() {
+        return window.innerHeight - 360;
+    }
+
+    handleCashFlowInitialResult(result) {
+        this._filtersService.setup(
+            this.filters = [
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    caption: 'Date',
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    field: 'accountIds',
+                    component: FilterCheckBoxesComponent,
+                    caption: 'Account',
+                    items: {
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
+                                nameField: 'name',
+                                parentExpr: 'parentId',
+                                keyExpr: 'id'
+                            })
+                    }
+                })
+            ]
+        );
+    }
+
+    handleForecastModelResult(result) {
+        let items = result.map(forecastModelItem => {
+            return {
+                id: forecastModelItem.id,
+                text: forecastModelItem.name
+            };
+        });
+        /** If we have the forecast model in cache - get it there, else - get the first model */
+        let cachedForecastModel = this.getForecastModel();
+        /** If we have cached forecast model and cached forecast exists in items list - then use it **/
+        this.selectedForecastModel = cachedForecastModel && items.findIndex(item => item.id === cachedForecastModel.id) !== -1 ?
+            cachedForecastModel :
+            items[0];
+        let selectedForecastModelIndex = items.findIndex(item => item.id === this.selectedForecastModel.id);
+        let forecastModelsObj = {
+            items: items,
+            selectedItemIndex: selectedForecastModelIndex
+        };
+        this.initToolbarConfig(forecastModelsObj);
     }
 
     /**
@@ -239,10 +331,30 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     loadStatsData() {
         let {startDate = undefined, endDate = undefined, accountIds = []} = this.requestFilter;
         this._bankAccountService.getStats(
+            InstanceType2[this.instanceType], this.instanceId,
             'USD', this.selectedForecastModel.id, accountIds, startDate, endDate, GroupBy.Monthly
         ).subscribe(result => {
                     if (result) {
-                        this.statsData = result;
+                        let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
+                        minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
+                        this.statsData = result.map(statsItem => {
+                            Object.defineProperties(statsItem, {
+                                'netChange': {
+                                    value: statsItem.income || statsItem.expenses ? (statsItem.income + statsItem.expenses) / 2 : null,
+                                    enumerable: true
+                                },
+                                'minRange': { value: minRange, enumerable: true }
+                            });
+                            if (statsItem.isForecast) {
+                                for (let prop in statsItem) {
+                                    if (statsItem.hasOwnProperty(prop) && prop !== 'date' && prop !== 'isForecast') {
+                                        statsItem['forecast' + this.capitalize(prop)] = statsItem[prop];
+                                        delete statsItem[prop];
+                                    }
+                                }
+                            }
+                            return statsItem;
+                        });
                         this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
                     } else {
                         console.log('No daily stats');
@@ -262,6 +374,8 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
         this._filtersService.unsubscribe();
         this._filtersService.enabled = false;
         this.rootComponent.overflowHidden();
+
+        super.ngOnDestroy();
     }
 
     /** Calculates the max amount of the labels for displaying to not clutter the screen */
@@ -286,4 +400,156 @@ export class StatsComponent extends AppComponentBase implements OnInit, AfterVie
     customizeBottomAxis(elem) {
         return elem.valueText.substring(0, 3).toUpperCase();
     }
+
+    /** Different styles for labels for positive and negative values */
+    customizeLabel = (arg: any) => {
+        if (arg.series.type !== 'rangearea' && arg.value < 0) {
+            return {
+                backgroundColor: this.labelNegativeBackgroundColor,
+                visible: this.maxLabelCount >= this.statsData.length,
+                customizeText: (e: any) => {
+                    return this.replaceMinusWithBrackets(e.valueText);
+                }
+            };
+        }
+    }
+
+    /** Replace minus for the brackets */
+    customizeAxisValues = (arg: any) => {
+        return arg.value < 0 ? this.replaceMinusWithBrackets(arg.valueText) : arg.valueText;
+    }
+
+    customizePoint = (arg: any) => {
+        if (arg.series.type !== 'rangearea' && arg.value < 0) {
+            return {
+                color: this.labelNegativeBackgroundColor,
+                size: 0.01,
+                border: {
+                    width: 8,
+                    color: 'rgba(240, 91, 42, .2)',
+                    visible: true
+                }
+            };
+        }
+    }
+
+    /**
+     * Replace string negative value like '$-1000' for the string '$(1000)' (with brackets)
+     * @param {string} value
+     * @return {string}
+     */
+    replaceMinusWithBrackets(value: string) {
+        return value.replace(/\B(?=(\d{3})+\b)/g, ',').replace(/-(.*)/, '($1)');
+    }
+
+    onDone(event) {
+        /** Added the Historical and forecast text block to the charts */
+        this.addTextBlocks(event);
+    }
+
+    /**
+     * Creates div text block
+     * @param {{[p: string]: any}} options
+     */
+    createDivTextBlock(options: { [key: string ]: any } = { 'text': '', 'class': '', 'styles': {} }) {
+        let stylesStr = Object.keys(options.styles).reduce((styleString, key) => (
+            styleString + key + ':' + options.styles[key] + ';'
+        ), '');
+        return `<div class="${options.class}" style="${stylesStr}">${options.text}</div>`;
+    }
+
+    /**
+     * Added the text blocks to the charts
+     * @param event
+     */
+    addTextBlocks(event) {
+        ['historical', 'forecast'].forEach(period => {
+            /** Add the historical and forecast big texts above the charts */
+            let chartSeries = event.component.getSeriesByName(period),
+                points = event.component.getSeriesByName(period).getVisiblePoints();
+            if (chartSeries && points.length && event.element.find(`.${period}Label`).length === 0) {
+                let x = points[0].vx || points[0].x || 0,
+                    left = x / window.outerWidth * 100,
+                    y = 25,
+                    firstPoint = points[0],
+                    lastPoint = points[points.length - 1],
+                    seriesWidth = lastPoint.vx - firstPoint.vx;
+                event.element.append(this.createDivTextBlock({
+                    'text': period === 'historical' ? this.l('Periods_Historical') : this.l('Periods_Forecast'),
+                    'class': `${period}Label`,
+                    'styles': {
+                        'left': left + '%',
+                        'top': y + 'px',
+                        'position': 'absolute'
+                    }
+                }));
+                let elementTextWidth = $(`.${period}Label`).width(),
+                    newLeft = elementTextWidth > seriesWidth ?
+                        x - (elementTextWidth - seriesWidth) / 2 :
+                        x + (seriesWidth / 2) - (elementTextWidth / 2);
+                    newLeft = newLeft / window.outerWidth * 100;
+                $(`.${period}Label`).css('left', newLeft > 0 ? newLeft + '%' : 0);
+            }
+        });
+    }
+
+    /** Open the print window to print the charts */
+    print() {
+        let vizWindow = window.open(),
+            chartsMarkup = this.getChartsMarkup();
+        vizWindow.document.open();
+        vizWindow.document.write(chartsMarkup);
+        vizWindow.document.close();
+        vizWindow.print();
+        vizWindow.close();
+    }
+
+    /**
+     * Download the charts into file
+     * @param {'png' | 'pdf' | 'jpeg' | 'svg' | 'gif'} format
+     */
+    download(format: 'png' | 'pdf' | 'jpeg' | 'svg' | 'gif') {
+        /** hack to avoid 3 exports */
+        if (this.exporting) return; this.exporting = true;
+        let lineChartSize = this.linearChart.instance.getSize(),
+            barChartSize = this.barChart.instance.getSize(),
+            markup = this.getChartsMarkup();
+        exportFromMarkup(markup, {
+            fileName: 'stats',
+            format: format.toUpperCase(),
+            height: lineChartSize.height + barChartSize.height,
+            width: lineChartSize.width,
+            backgroundColor: '#fff'
+        });
+        /** hack to avoid 3 exporting */
+        setTimeout(() => { this.exporting = false; }, 200);
+    }
+
+    /**
+     * Get the markup using devextreme getMarkup method and replacing linear gradient url with the simple color
+     * @return {string}
+     */
+    getChartsMarkup() {
+        return getMarkup([this.linearChart.instance, this.barChart.instance])
+                    .replace(new RegExp('url\\(#historical-linear-gradient\\)', 'g'), this.historicalShadowStartedColor)
+                    .replace(new RegExp('url\\(#forecast-linear-gradient\\)', 'g'), this.forecastShadowStartedColor);
+    }
+
+    customizeBarTooltip = (pointInfo) => {
+        return {
+            html: this.getTooltipInfoHtml(pointInfo)
+        };
+    }
+
+    getTooltipInfoHtml(pointInfo) {
+        let html = '';
+        let pointDataObject = this.statsData.find(item => item.date = pointInfo.argument);
+        this.barChartTooltipFieldsNames.forEach(fieldName => {
+            if (pointDataObject[fieldName] !== null && pointDataObject[fieldName] !== undefined) {
+                html += `${this.l('Stats_' + fieldName)} : ${pointDataObject[fieldName]}<br>`;
+            }
+        });
+        return html;
+    }
+
 }

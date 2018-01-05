@@ -37,6 +37,12 @@
       "tsconfig": "tsconfig.json",
       "prefix": "app",
       "styles": [
+        "../src/assets/metronic/libs/bootstrap/css/bootstrap.css",
+        "../src/assets/metronic/global/css/components-md.css",
+        "../src/assets/metronic/global/css/plugins-md.css",
+        "../src/assets/metronic/admin/layout4/css/layout.css",
+        "../src/assets/metronic/admin/layout4/css/themes/light.css",
+
         "../node_modules/simple-line-icons/css/simple-line-icons.css",
         "../node_modules/font-awesome/css/font-awesome.css",
         "../node_modules/famfamfam-flags/dist/sprite/famfamfam-flags.css",
@@ -44,7 +50,6 @@
         "../node_modules/bootstrap-select/dist/css/bootstrap-select.css",
         "../node_modules/jquery.uniform/dist/css/default.css",
         "../node_modules/toastr/build/toastr.css",
-        "../node_modules/sweetalert/dist/sweetalert.css",
         "../node_modules/jstree/dist/themes/default/style.min.css",
         "../node_modules/jtable/lib/themes/metro/blue/jtable.min.css",
         "../node_modules/morris.js/morris.css",
@@ -53,8 +58,6 @@
         "../node_modules/bootstrap-daterangepicker/daterangepicker.css",
         "../node_modules/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css",
 
-        "../src/app/shared/core.less",
-        "../src/app/shared/layout/layout.less",
         "../src/assets/bootstrap-datepicker/css/bootstrap-datepicker.min.css",
         "../node_modules/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css",
 
@@ -63,6 +66,8 @@
 
         "../node_modules/dragula/dist/dragula.css",
 
+        "../src/app/shared/core.less",
+        "../src/app/shared/layout/layout.less",
         "../src/app/shared/dx-customs.less",
 
         "styles.css"
@@ -74,7 +79,8 @@
         "../node_modules/js-cookie/src/js.cookie.js",
         "../node_modules/jstree/dist/jstree.min.js",
 
-        "../node_modules/bootstrap/dist/js/bootstrap.js",
+        "../node_modules/popper.js/dist/umd/popper.min.js",
+        "../node_modules/bootstrap/dist/js/bootstrap.min.js",
         "../node_modules/bootstrap-select/dist/js/bootstrap-select.js",
         "../node_modules/tether/dist/js/tether.min.js",
 
@@ -92,7 +98,7 @@
         "../node_modules/jquery-sparkline/jquery.sparkline.min.js",
 
         "../node_modules/toastr/toastr.js",
-        "../node_modules/sweetalert/dist/sweetalert-dev.js",
+        "../node_modules/sweetalert/dist/sweetalert.min.js",
         "../node_modules/block-ui/jquery.blockUI.js",
         "../node_modules/spin.js/spin.min.js",
         "../node_modules/spin.js/jquery.spin.js",
@@ -102,7 +108,7 @@
         "../node_modules/timeago/jquery.timeago.js",
         "../node_modules/localforage/dist/localforage.min.js",
         "../node_modules/bootstrap-switch/dist/js/bootstrap-switch.min.js",
-        "../node_modules/push.js/push.min.js",
+        "../node_modules/push.js/bin/push.min.js",
 
         "../node_modules/flot/jquery.flot.js",
         "../node_modules/flot/jquery.flot.pie.js",
@@ -112,7 +118,7 @@
         "../node_modules/waypoints/lib/jquery.waypoints.min.js",
         "../node_modules/jquery.flot.tooltip/js/jquery.flot.tooltip.min.js",
 
-        "../node_modules/topojson/build/topojson.min.js",
+        "../node_modules/topojson/dist/topojson.min.js",
         "../node_modules/d3/d3.js",
         "../node_modules/datamaps/dist/datamaps.world.min.js",
         "../node_modules/easy-pie-chart/dist/easypiechart.js",

@@ -3,15 +3,18 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { SetupStepComponent } from '../shared/setup-steps/setup-steps.component';
 
 @Component({
-    templateUrl: './cashflow-setup.component.html',
-    styleUrls: ['./cashflow-setup.component.less'],
+    templateUrl: './introduction.component.html',
+    styleUrls: ['./introduction.component.less'],
     animations: [appModuleAnimation()]
 })
-export class CashflowSetupComponent extends AppComponentBase implements OnInit {
-    public headlineConfig;
+export class IntroductionComponent extends AppComponentBase implements OnInit {
+    public headlineConfig = {
+        names: [this.l("Interactive API Documentation")],
+        icon: 'magic-wand',
+        buttons: []
+    };
 
     constructor(injector: Injector) {
         super(injector);
@@ -20,10 +23,5 @@ export class CashflowSetupComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
-        this.headlineConfig = { 
-            name: this.l('CashflowSetup_Title'), 
-            icon: 'globe', 
-            buttons: []
-        }
     }
 }

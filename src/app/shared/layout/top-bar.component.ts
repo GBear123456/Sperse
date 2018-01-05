@@ -52,6 +52,8 @@ export class TopBarComponent extends AppComponentBase {
       this.menu = new PanelMenu('MainMenu', 'MainMenu',
         this.initMenu(config['navigation'], 0)
       );
+
+      _appService.topMenu = this.menu;
     });
   }
 

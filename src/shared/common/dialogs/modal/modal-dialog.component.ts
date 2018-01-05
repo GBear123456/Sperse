@@ -1,7 +1,7 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector, OnInit, AfterViewInit, ElementRef } from '@angular/core';
 import { AppComponentBase } from '../../app-component-base';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'modal-dialog',
@@ -9,22 +9,28 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
   styleUrls: ['modal-dialog.component.less']
 })
 export class ModalDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
+  private elementRef: ElementRef;
   private slider: any;
+  public data: any;
+  public dialogRef: MatDialogRef<ModalDialogComponent>;
 
   constructor(
-    injector: Injector,
-    @Inject(MD_DIALOG_DATA) public data: any,
-    public dialogRef: MdDialogRef<ModalDialogComponent>,
-    private elementRef: ElementRef
-  ) { 
-    super(injector, data.localization);
+    injector: Injector
+  ) {
+    super(injector);
+
+    this.data = injector.get(MAT_DIALOG_DATA);
+    this.elementRef = injector.get(ElementRef);
+    this.dialogRef = injector.get(MatDialogRef);
+
+    this.localizationSourceName = this.data.localization;
   }
 
   private fork(callback, timeout = 0) {
       setTimeout(callback.bind(this), timeout);
   }
 
-  ngOnInit() {      
+  ngOnInit() {
       this.dialogRef.disableClose = true;
       this.slider = this.elementRef.nativeElement.closest('.slider');
       if (this.slider) {
@@ -48,15 +54,15 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
           });
   }
 
-  close(slide: boolean = false) {
+  close(slide: boolean = false, closeData = null) {
       if (slide) {
           this.dialogRef.updatePosition({
               right: '-100vw'
           });
           this.fork(() => {
-              this.dialogRef.close();
+              this.dialogRef.close(closeData);
           }, 300);
       } else
-          this.dialogRef.close();
+          this.dialogRef.close(closeData);
   }
 }

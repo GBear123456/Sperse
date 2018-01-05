@@ -1,7 +1,7 @@
 <dx-button accessKey="sourceDataCloseButton" icon="close" (onClick)="emitClosingSourceData()" class="close-btn"></dx-button>
-<md-tab-group class="sourceDataSidebar">
+<mat-tab-group class="sourceDataSidebar">
     <ng-container *ngFor="let period of ['historical', 'forecast']" >
-        <md-tab *ngIf="this[period + 'SourceData'] !== undefined" label="{{l('Periods_' + capitalize(period))}}">
+        <mat-tab *ngIf="this[period + 'SourceData'] !== undefined" label="{{l('Periods_' + capitalize(period))}}">
             <dx-data-grid [accessKey]="period + 'SourceDataContainer'"
                           [rowAlternationEnabled]="true"
                           [dataSource]="this[period + 'SourceData']">
@@ -30,7 +30,7 @@
                 <dxo-load-panel [enabled]="true"></dxo-load-panel>
                 <dxo-paging [pageSize]="15"></dxo-paging>
             </dx-data-grid>
-        </md-tab>
+        </mat-tab>
     </ng-container>
-</md-tab-group>
+</mat-tab-group>
 

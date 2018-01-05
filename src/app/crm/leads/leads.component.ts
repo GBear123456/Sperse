@@ -12,6 +12,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
+import { AppService } from '@app/app.service';
+
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
@@ -37,6 +39,7 @@ import * as moment from 'moment';
 @Component({
     templateUrl: './leads.component.html',
     styleUrls: ['./leads.component.less'],
+    providers: [PipelineServiceProxy],
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -52,7 +55,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private filters: FilterModel[];
 
     public headlineConfig = {
-        name: this.l('Leads'),
+        names: [this.l('Leads')],
         icon: 'basket',
         buttons: [
             {
@@ -63,11 +66,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ]
     };
 
-    public toolbarConfig;
-
     constructor(injector: Injector,
         private _filtersService: FiltersService,
-        // private _clientService: ClientServiceProxy,
+        private _appService: AppService,
         private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy,
         private _pipelineService: PipelineServiceProxy) {
@@ -251,15 +252,54 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this.toolbarConfig = [
+        this._appService.toolbarConfig = [
             {
                 location: 'before', items: [
-                    { name: 'back' }
+                    { 
+                        name: 'filters', 
+                        action: (event) => {                            
+                            setTimeout(() => {
+                                this.dataGrid.instance.repaint();
+                            }, 1000);
+
+                            event.element.attr('filter-pressed', 
+                                this._filtersService.fixed = 
+                                    !this._filtersService.fixed);  
+                        },
+                        options: {
+                            mouseover: (event) => {
+                                this._filtersService.enable();
+                            },
+                            mouseout: (event) => {
+                                if (!this._filtersService.fixed)
+                                    this._filtersService.disable();
+                            } 
+                        },
+                        attr: { 
+                            'filter-selected': this._filtersService.hasFilterSelected,
+                            'filter-pressed': this._filtersService.fixed
+                        } 
+                    } 
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',   
+                        widget: 'dxTextBox',
+                        options: {
+                            width: '300',
+                            mode: 'search',
+                            placeholder: this.l('Search') + ' ' 
+                                + this.l('Leads').toLowerCase()
+                        }
+                    }
                 ]
             },
             {
                 location: 'before', items: [
-                    { name: 'filters', action: this._filtersService.toggle.bind(this._filtersService), attr: { 'filter-selected': this._filtersService.hasFilterSelected } }
+                    { name: 'back' }
                 ]
             },
             {
@@ -343,9 +383,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     ngOnDestroy() {
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+        this._appService.toolbarConfig = null;
+        this._filtersService.localizationSourceName 
+            = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
-        this._filtersService.enabled = false;
         this.rootComponent.overflowHidden();
     }
 }

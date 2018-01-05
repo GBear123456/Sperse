@@ -9,8 +9,8 @@
     </div>
     <operations-widget></operations-widget>
   </div>
-  <md-sidenav-container>
-    <md-sidenav mode="side" opened="true" align="start">
+  <mat-sidenav-container>
+    <mat-sidenav mode="side" opened="true" align="start">
       <div class="short-contact">
         <div class="small-phones">
           <div class="phone" *ngFor="let phone of primaryContact?.phones">
@@ -19,17 +19,17 @@
         </div>
       </div>
       <dx-scroll-view showScrollbar="onHover">
-        <nav md-tab-nav-bar>
-            <a md-tab-link *ngFor="let link of navLinks" [routerLink]="link.route" routerLinkActive="active">{{link.label}}</a>
+        <nav mat-tab-nav-bar>
+            <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.route" routerLinkActive="active">{{link.label}}</a>
         </nav>
       </dx-scroll-view>
-    </md-sidenav>
+    </mat-sidenav>
     <div class="main-content">    
       <router-outlet></router-outlet>
     </div>
-    <md-sidenav class="right_sidenav" mode="side" align="end" opened="true">
-      <md-tab-group>
-        <md-tab label="Credit overview">
+    <mat-sidenav class="right_sidenav" mode="side" align="end" opened="true">
+      <mat-tab-group>
+        <mat-tab label="Credit overview">
           <dx-scroll-view showScrollbar="onHover">
             <div class="right-content">
               <client-scores></client-scores>
@@ -38,9 +38,9 @@
               <required-documents></required-documents>
             </div>
           </dx-scroll-view>
-        </md-tab>
-        <md-tab label="Activity">Activity</md-tab>
-      </md-tab-group>
-    </md-sidenav>
-  </md-sidenav-container>
+        </mat-tab>
+        <mat-tab label="Activity">Activity</mat-tab>
+      </mat-tab-group>
+    </mat-sidenav>
+  </mat-sidenav-container>
 </div>

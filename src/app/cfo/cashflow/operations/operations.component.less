@@ -1,85 +1,42 @@
-@borderColor: #dadee1;
-
-.operations {
-    background-color: #FFF;
-    display: flex;
-    overflow-x: hidden;
-    button,
-    input {
-        height: 37px;
-        color: #677380;
-    }
-
-    .toolbar {
-      width: 100%;
-    }
-
-    .search_transaction {
-        position: relative;
-        margin: 13px 6px 0 21px;
-
-        input {
-            font-weight: 300;
-            line-height: 1.71;
-            letter-spacing: 0.3px;
-            text-align: left;
-            padding-left: 36px;
-            border: 1px solid @borderColor;
-            border-radius: 3px;
-            font-size: 14px;
-            height: 37px;
-            width: 300px;
-        }
-
-        &:before {
-            content: "";
-            background: url('../../../../assets/common/icons/search-icon.svg');
-            text-decoration: inherit;
-            position: absolute;
-            font-size: 20px;
-            width: 16px;
-            height: 16px;
-            top: 11px;
-            left: 12px;
-            color: #677380;
-        }
-        &.dirty:before {
-            display: none;
-        }
-    }
-
-    /deep/ .dx-gallery.dx-widget[accesskey='cashflowForecastSwitcher'] {
-        border: 1px solid #ddd;
-        vertical-align: middle;
-        border-top-right-radius: 4px;
-        border-bottom-right-radius: 4px;
-        color: #677380;
-        font-size: 13px;
-        font-weight: 300;
-        line-height: 2.9;
-        letter-spacing: 0.3px;
-        display: inline-block;
-        font-weight: 400;
-        .dx-widget {
-            &.dx-gallery-nav-button-next {
-                &:before {
-                    content: url(../../../../assets/common/icons/arrow-right.svg);
-                }
-            }
-
-            &.dx-gallery-nav-button-prev {
-                &:before {
-                    content: url(../../../../assets/common/icons/arrow-left.svg);
-                }
-            }
+/deep/ .dx-gallery.dx-widget[accesskey='cashflowForecastSwitcher'] {
+    border: 1px solid #ddd;
+    vertical-align: middle;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    color: #677380;
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 2.9;
+    letter-spacing: 0.3px;
+    display: inline-block;
+    font-weight: 400;
+    .dx-widget {
+        &.dx-gallery-nav-button-next {
             &:before {
-                top: 0;
-                margin: 0 auto;
-                font-size: 29px;
+                content: url(../../../../assets/common/icons/slider-arrow.svg);
+                top: 7px;
+                right: 9px;
             }
-            &:after {
-                background: none
+        }
+
+        &.dx-gallery-nav-button-prev {
+            &:before {
+                transform: rotate(180deg);
+                -webkit-transform: rotate(180deg);
+                -ms-transform: rotate(180deg);
+                content: url(../../../../assets/common/icons/slider-arrow.svg);
+                left: 9px;
+                top: 16px
             }
+        }
+        &:before {
+            margin: 0 auto;
+            font-size: 29px;
+            width: 8px;
+            height: 15px;
+        }
+        &:after {
+            background: none
         }
     }
 }

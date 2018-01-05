@@ -1,55 +1,185 @@
 <modal-dialog>
-    <div class="rule-container">
+    <div class="transactions-container" *ngIf="showSelectedTransactions">
+        <div class="close-transactions" (click)="showSelectedTransactions=false"></div>
+        <dx-data-grid
+             class="grid-layout"
+             [noDataText]="'No Transactions'"
+             [dataSource]="data.transactions"
+             [showColumnHeaders]="true"
+             [showColumnLines]="false"
+             [showRowLines]="false"
+             [showBorders]="false">
+            <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" dataType="date" format="shortDate" sortOrder="desc" sortIndex="0" [width]="100"></dxi-column>
+            <dxi-column dataField="TypeName" caption="{{l('Transactions_Type')}}" [width]="200"></dxi-column>
+            <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}"></dxi-column>
+            <dxi-column dataField="Amount" cssClass="tabular" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate" [width]="100"></dxi-column>
+            <dxi-column dataField="Amount" cssClass="tabular" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate" [width]="100"></dxi-column>
+            <dxi-column dataField="close" caption="" [width]="100"></dxi-column>
+
+            <div *dxTemplate="let cell of 'amountTemplate'">
+                <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value >= 0 && cell.column.name == 'Debit') || (cell.value < 0 && cell.column.name == 'Credit'))">
+                    <span [style.color]="cell.value < 0 ? 'red': '#000'"> {{ cell.text | number:'1.2-2' }} </span>
+                </ng-container>
+            </div>
+        </dx-data-grid>
+    </div>
+    <div class="rule-container" *ngIf="!showSelectedTransactions">
         <div class="warning-box">
-            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
             <div>
                 <h3>You are about to overwrite an existing rule!</h3>
                 <p>Gksdfjlsdfkfg sdkjfsdk sdfjgskdsg skjgfs sal adfasgfg sadfsdf sdfasdf sdfsafa asdfas</p>
             </div>
         </div>
-        <dx-scroll-view [showScrollbar]="onHover">
-            <div class="rule-wrapper">
-                <div class="rule">
-                    <h3>{{l('RuleName')}}</h3>
-                    <div class="field">
-                        <label>{{l('RuleName')}}</label>
-                        <dx-text-box
-                            name="name"
-                            [(value)]="data.name">
-                        </dx-text-box>
-                    </div>
+        <div class="rule-wrapper">
+            <div class="rule">
+                <h2>{{l('IF')}}</h2>
+                <div class="inline-header">
+                    <h3>{{l('Original transactions Descriptors')}}</h3>
+                </div>
+                <dx-data-grid #keywordsComponent
+                     id="keywords"
+                     [noDataText]="'No Keywords'"
+                     [dataSource]="keywords"
+                     [showColumnHeaders]="false"
+                     [showColumnLines]="false"
+                     [showRowLines]="true"
+                     [showBorders]="true"
+                     (onInitNewRow)="onInitNewKeyword($event)">
+                     <dxo-editing
+                         mode="row"
+                         [allowUpdating]="true"
+                         [allowDeleting]="true"
+                         [allowAdding]="true">
+                    </dxo-editing>
+                    <dxi-column dataField="caption" [allowEditing]="false"></dxi-column>
+                    <dxi-column dataField="keyword"></dxi-column>
+                </dx-data-grid>
+                <span (click)="addKeywordRow()">{{l('+ Add keyword')}}</span>
 
-                    <h3>{{l('DescriptorRule')}}</h3>
-                    <div class="field">
-                        <label>{{l('DescriptorRule')}}</label>
-                    </div>
+                <div class="transactions-link" *ngIf="data.transactions && data.transactions.length">
+                    <a (click)="showSelectedTransactions = true">{{l('Show selected transactions')}}</a>
+                </div>
 
-                    <h3>{{l('Amount')}}</h3>
-                    <div>
-                        <div class="field">
-                            <label>{{l('Min')}}</label>
-                            <dx-text-box
-                                name="min"
-                                [(value)]="data.min">
-                            </dx-text-box>
-                            <label>{{l('Max')}}</label>
-                            <dx-text-box
-                                name="max"
-                                [(value)]="data.max">
-                            </dx-text-box>
-                        </div>
-                        <div class="field">
-                            <label>{{l('Format')}}</label>
-                            <dx-text-box
-                                name="format"
-                                [(value)]="data.format">
-                            </dx-text-box>
-                        </div>
+                <h3>{{l('Attributes')}}</h3>
+                <dx-data-grid #attributesComponent
+                     [noDataText]="'No Attributes'"
+                     [dataSource]="attributes"
+                     [showColumnHeaders]="false"
+                     [showColumnLines]="false"
+                     [showRowLines]="true"
+                     [showBorders]="true"
+                     (onContentReady)="onAttributeUpdated($event)">
+                     <dxo-editing
+                         mode="row"
+                         [allowUpdating]="true"
+                         [allowDeleting]="true"
+                         [allowAdding]="true">
+                    </dxo-editing>
+                    <dxi-column dataField="id" [visible]="false"></dxi-column>
+                    <dxi-column
+                        width="150"
+                        dataField="attributeTypeId">
+                        <dxo-lookup
+                            [dataSource]="attributeTypes"
+                            displayExpr="name"
+                            valueExpr="id">
+                        </dxo-lookup>
+                    </dxi-column>
+                    <dxi-column dataField="conditionTypeId">
+                        <dxo-lookup
+                            [dataSource]="conditionTypes"
+                            displayExpr="condition"
+                            valueExpr="condition">
+                        </dxo-lookup>
+                    </dxi-column>
+                    <dxi-column dataField="conditionValue"></dxi-column>
+                </dx-data-grid>
+                <span (click)="addAttributeRow()">{{l('+ Add attribute')}}</span>
+
+                <h3>{{l('Account Info')}}</h3>
+                <div class="field">
+                    <label>{{l('Bank')}}</label>
+                   <dx-select-box
+                       placeholder=""
+                       [dataSource]="banks"
+                       valueExpr="id"
+                       displayExpr="name"
+                       [(value)]="bankId"
+                       (onValueChanged)="onBankChanged($event)">
+                   </dx-select-box>
+                </div><div class="field">
+                    <label>{{l('Account')}}</label>
+                   <dx-select-box
+                       placeholder=""
+                       [dataSource]="accounts"
+                       valueExpr="id"
+                       displayExpr="name"
+                       [(value)]="accountId">
+                   </dx-select-box>
+                </div>
+
+                <h3>{{l('Amount')}}</h3>
+                <div>
+                    <div class="field">
+                        <label>{{l('Min')}}</label>
+                        <dx-number-box
+                            format="currency"
+                            mode="number"
+                            name="min"
+                            [(value)]="minAmount">
+                        </dx-number-box>
+                        <label>{{l('Max')}}</label>
+                        <dx-number-box
+                            format="currency"
+                            mode="number"
+                            name="max"
+                            [(value)]="maxAmount">
+                        </dx-number-box>
+                    </div><div class="field">
+                        <label>{{l('Format')}}</label>
+                        <dx-select-box
+                            placeholder=""
+                            [dataSource]="formats"
+                            valueExpr="format"
+                            displayExpr="format"
+                            [(value)]="amountFormat">
+                        </dx-select-box>
                     </div>
-                </div>  
-                <div class="category">
                 </div>
             </div>
-        </dx-scroll-view>
+            <div class="category">
+                <h2>{{l('THEN')}}</h2>
+                <h3>{{l('Use the following Standard Descriptor')}}</h3>
+                <div class="field">
+                    <dx-select-box
+                        placeholder=""
+                        [acceptCustomValue]="true"
+                        [dataSource]="descriptors"
+                        valueExpr="id"
+                        displayExpr="name"
+                        (onCustomItemCreating)="onCustomItemCreating($event)"
+                        [(value)]="descriptor">
+                    </dx-select-box>
+                </div>
+                <h3>{{l('Assign transaction(s) to the following account')}}</h3>
+
+                <dx-tree-list
+                    height="570px"
+                    keyExpr="key"
+                    parentIdExpr="parent"
+                    [hoverStateEnabled]="true"
+                    [(dataSource)]="categories"
+                    [selectedRowKeys]="[data.categoryId]"
+                    [editing]="{allowAdding: true, allowUpdating: true, allowDeleting: true}"
+                    [selection]="{allowSelectAll: false, mode: 'single'}"
+                    [rootValue]="0"
+                    [autoExpandAll]="true"
+                    (onRowUpdated)="onCategoryUpdated($event)"
+                    (onRowInserted)="onCategoryInserted($event)"
+                    (onRowRemoving)="onCategoryRemoving($event)">
+                    <dxi-column dataField="name"></dxi-column>
+                </dx-tree-list>
+            </div>
+        </div>
     </div>
 </modal-dialog>

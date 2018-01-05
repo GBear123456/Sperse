@@ -9,10 +9,11 @@ export class FiltersService {
     private filters: FilterModel[];
     private subjectFilters: Subject<FilterModel[]>;
     private subjectFilter: Subject<FilterModel>;
-
     private subscribers: Array<Subscription> = [];
+    private disableTimeout: any;
 
     public enabled = false;
+    public fixed = false;
     public localizationSourceName: string;
     public hasFilterSelected = false;
 
@@ -71,7 +72,26 @@ export class FiltersService {
     }
 
     toggle() {
-        this.enabled = !this.enabled;
+        this[this.enabled ? 'disable': 'enable']();
+    }
+
+    enable() {
+        this.preventDisable();   
+        this.enabled = true; 
+    }
+
+    disable(callback: () => void = null) {
+        this.preventDisable();
+        this.disableTimeout = setTimeout(() => {
+            callback && callback();
+            this.enabled = false;
+            this.fixed = false;
+        }, 300);
+    }
+
+    preventDisable() {
+        clearTimeout(this.disableTimeout);
+        this.disableTimeout = null;
     }
 
     checkIfAnySelected() {

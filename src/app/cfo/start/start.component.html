@@ -1,0 +1,4 @@
+<div [@routerTransition]>
+    <setup *ngIf="_cfoService.initialized === false"></setup>
+    <dashboard *ngIf="_cfoService.initialized === true"></dashboard>
+</div>

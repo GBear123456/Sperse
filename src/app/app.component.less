@@ -23,10 +23,11 @@
         padding: 0;
         .page-sidebar-wrapper {
             z-index: 10;
+            transition: 1s;
             position: relative;
-            display: none;
+            left: -340px;
             &.show-sidebar-wrapper {
-                display: block;
+                left: 0px;
             }
         }
     }
@@ -39,10 +40,16 @@
         height: 100%;
     }
 
+    app-toolbar {
+        top: 75px;
+        position: relative;
+    }
+
     .page-content-wrapper .page-content {
         margin-left: 0;
-        &.enabled-filters {
-            margin-left: 320px;
+        transition: 1s;
+        &.fixed-filters {
+            margin-left: 340px;
         }
     }
 }

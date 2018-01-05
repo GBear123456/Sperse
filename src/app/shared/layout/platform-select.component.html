@@ -6,20 +6,20 @@
   (onInitialized)="onDropDownInit($event)">
     <div *dxTemplate="let data of 'content'" style="display:flex;">
         <dx-list (onItemClick)="changeModule($event)" accessKey="module-select-list" width="280px">
-            <dxi-item *ngFor="let item of modules" (mouseover)="onHover(item)">
-                <div class="module-select-item {{item | lowercase }}">
-                    <input value="{{item}}" readonly>
-                    <div [class]="isDisabled(item) ? 'disabled': (item==module ? 'selected': '')">{{item}}</div>
-                    <i *ngIf="item==module" class="dx-icon-check"></i>
+            <dxi-item *ngFor="let item of modules" (mouseover)="onHover(item.code)">
+                <div class="module-select-item {{item.code | lowercase }}">
+                    <input value="{{item.code}}" readonly>
+                    <div [class]="isDisabled(item.code) ? 'disabled': (item.code==module && item.uri==uri ? 'selected': '')">{{item.name}}</div>
+                    <i *ngIf="item.code==module && item.uri==uri" class="dx-icon-check"></i>
                 </div>
             </dxi-item>
         </dx-list>
         <div class="module-description">
           <ng-template ngFor let-module [ngForOf]="modules" let-i="index">
-            <div *ngIf="hoverModule==module" [class]="module.toLowerCase()">
-              <h3><input [value]="module" readonly>{{l(module + 'ModuleHeader')}}</h3>
+            <div *ngIf="hoverModule==module.code" [class]="module.code.toLowerCase()">
+              <h3><input [value]="module.code" readonly>{{l(module.code + 'ModuleHeader')}}</h3>
               <div class="description-container">
-                {{l(module + 'ModuleDescription')}}
+                  {{l(module.code + 'ModuleDescription')}}
               </div>
             </div>
           </ng-template>

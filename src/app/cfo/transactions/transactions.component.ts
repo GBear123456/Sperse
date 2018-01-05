@@ -1,8 +1,10 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 
-import { TransactionsServiceProxy, BankAccountDto } from '@shared/service-proxies/service-proxies';
+import { AppService } from '@app/app.service';
+
+import { TransactionsServiceProxy, BankAccountDto, InstanceType48 } from '@shared/service-proxies/service-proxies';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
@@ -13,9 +15,11 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { MatDialog } from '@angular/material';
 
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
@@ -27,25 +31,66 @@ import * as moment from 'moment';
     animations: [appModuleAnimation()],
     providers: [TransactionsServiceProxy]
 })
-export class TransactionsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+
     items: any;
     private readonly dataSourceURI = 'Transaction';
     private filters: FilterModel[];
     private rootComponent: any;
-    private toolbarConfig: any;
+    private cashFlowCategoryFilter = [];
 
+    public dragInProgress = false;
+    public ctegoriesShowed = false;
     public headlineConfig = {
-        name: this.l('Transactions'),
-        icon: 'credit-card',
+        names: [this.l('Transactions')],
+        iconSrc: 'assets/common/icons/credit-card-icon.svg',
         buttons: []
     };
 
     initToolbarConfig() {
-        this.toolbarConfig = [
+        this._appService.toolbarConfig = [
             {
                 location: 'before', items: [
-                    { name: 'filters', action: this._filtersService.toggle.bind(this._filtersService), attr: { 'filter-selected': this._filtersService.hasFilterSelected } }
+                    { 
+                        name: 'filters', 
+                        action: (event) => {                            
+                            setTimeout(() => {
+                                this.dataGrid.instance.repaint();
+                            }, 1000);
+                            event.element.attr('filter-pressed', 
+                                this.filtersService.fixed = 
+                                    !this.filtersService.fixed);  
+                        },
+                        options: {
+                            mouseover: (event) => {
+                                this.filtersService.enable();
+                            },
+                            mouseout: (event) => {
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
+                            } 
+                        },
+                        attr: { 
+                            'filter-selected': this.filtersService.hasFilterSelected,
+                            'filter-pressed': this.filtersService.fixed
+                        } 
+                    } 
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',   
+                        widget: 'dxTextBox',
+                        options: {
+                            width: '300',
+                            mode: 'search',
+                            placeholder: this.l('Search') + ' ' 
+                                + this.l('Customers').toLowerCase()
+                        }
+                    }
                 ]
             },
             {
@@ -81,24 +126,15 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         ];
     }
 
-    constructor(injector: Injector, private _TransactionsServiceProxy: TransactionsServiceProxy,
-        private _filtersService: FiltersService) {
+    constructor(injector: Injector,
+        public dialog: MatDialog,
+        private _appService: AppService,
+        private _TransactionsServiceProxy: TransactionsServiceProxy,
+        public filtersService: FiltersService
+    ) {
         super(injector);
 
-        this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-
-        this.dataSource = {
-            store: {
-                type: 'odata',
-                url: this.getODataURL(this.dataSourceURI),
-                version: this.getODataVersion(),
-                beforeSend: function (request) {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
-                }
-            }
-        };
+        this.filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
 
         this.initToolbarConfig();
     }
@@ -112,9 +148,23 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
     }
 
     ngOnInit(): void {
-        this._TransactionsServiceProxy.getFiltersInitialData()
+        super.ngOnInit();
+
+        this.dataSource = {
+            store: {
+                type: 'odata',
+                url: this.getODataURL(this.dataSourceURI),
+                version: this.getODataVersion(),
+                beforeSend: function (request) {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
+                }
+            }
+        };
+
+        this._TransactionsServiceProxy.getFiltersInitialData(InstanceType48[this.instanceType], this.instanceId)
             .subscribe(result => {
-                this._filtersService.setup(
+                this.filtersService.setup(
                     this.filters = [
                         new FilterModel({
                             component: FilterCalendarComponent,
@@ -148,18 +198,6 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                             caption: 'Amount',
                             field: 'Amount',
                             items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                        }),
-                        new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            field: 'CashFlowTypeId',
-                            caption: 'CashflowType',
-                            items: {
-                                element: new FilterCheckBoxesModel({
-                                    dataSource: result.cashflowTypes,
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
-                            }
                         }),
                         new FilterModel({
                             component: FilterCheckBoxesComponent,
@@ -225,17 +263,22 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
                 );
             });
 
-        this._filtersService.apply(() => {
+        this.filtersService.apply(() => {
             this.initToolbarConfig();
-            this.processODataFilter(this.dataGrid.instance,
-                this.dataSourceURI, this.filters, (filter) => {
+            this.processFilterInternal();
+        });
+    }
+  
+    processFilterInternal() {
+        this.processODataFilter(this.dataGrid.instance,
+            this.dataSourceURI, this.cashFlowCategoryFilter.concat(this.filters), 
+                (filter) => {
                     let filterMethod = this['filterBy' +
                         this.capitalize(filter.caption)];
                     if (filterMethod)
                         return filterMethod.call(this, filter);
                 }
-            );
-        });
+        );
     }
 
     filterByDate(filter) {
@@ -286,10 +329,6 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         return data;
     }
 
-    filterByCashflowType(filter) {
-        return this.filterByFilterElement(filter);
-    }
-
     filterByTransactionCategory(filter) {
         return this.filterByFilterElement(filter);
     }
@@ -323,15 +362,77 @@ export class TransactionsComponent extends AppComponentBase implements OnInit, A
         return data;
     }
 
+    filterByCashflowCategory($event) {
+        let key = $event.selectedRowKeys.pop();
+        if (key) {
+            let field = {};
+            if (!parseInt(key))
+                field['CashFlowTypeId'] = new FilterItemModel(key);
+            else if (!parseInt(key.split('').reverse().join('')))
+                field['CashflowCategoryGroupId'] = new FilterItemModel(parseInt(key));
+            else
+                field['CashflowCategoryId'] = new FilterItemModel(parseInt(key));
+
+            this.cashFlowCategoryFilter = [
+                new FilterModel({
+                    items: field
+                })
+            ];
+
+            this.processFilterInternal();          
+        }
+    }
+
+    checkUncategozired(rowData) {
+        this['cssClass'] = (rowData.CashflowCategoryId ? '': 'un') + 'categorized';
+        return '';
+    }
+
+    onSelectionChanged($event) {
+        let img = new Image();
+        img.src = 'assets/common/images/transactions.png';
+        this.ctegoriesShowed = Boolean($event.selectedRowKeys.length);
+        $event.element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend') 
+            .filter('.dx-selection').attr('draggable', true).on('dragstart', (e) => {
+                this.dragInProgress = true;
+                e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
+            }).on('dragend', (e) => {
+                this.dragInProgress = false;
+            });      
+    }
+
+    openCategorizationWindow($event) {
+        let transactions = this.dataGrid
+            .instance.getSelectedRowKeys();
+
+        this.dialog.open(RuleDialogComponent, {
+            panelClass: 'slider', 
+            data: {
+                instanceId: this.instanceId,
+                instanceType: this.instanceType,
+                categoryId: $event.categoryId,
+                transactions: transactions,
+                transactionIds: transactions
+                    .map((obj) => {
+                        return obj.Id;
+                    }),
+                refershParent: Function()
+            }
+        }).afterClosed().subscribe(result => {});
+    }
+
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }
 
     ngOnDestroy() {
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._filtersService.unsubscribe();
-        this._filtersService.enabled = false;
+        this._appService.toolbarConfig = null;
+        this.filtersService.localizationSourceName 
+            = AppConsts.localization.defaultLocalizationSourceName;
+        this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
+
+        super.ngOnDestroy();
     }
 }

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Kameron|Lato|Open+Sans|Work+Sans');
+
 @left-column-width: 339px;
 
 /** general */
@@ -43,418 +45,379 @@
         top: -75px !important;
     }
 
-    .filter-sort-options {
+    .sort-options {
         padding: 20px 15px 0px 20px;
-        .active-filter::after {
-            content: '';
-            position: absolute;
-            display: block;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: red;
-            top: 7px;
-            right: 7px;
-        }
-
-        .clear-all {
-            height: 37px;
-            font-size: 11px;
-            line-height: 2.18;
-            letter-spacing: 0.4px;
-            color: #677380;
-            text-transform: uppercase;
-            background-color: transparent;
-            border: 0;
-            box-shadow: none;
-            float: right;
-            font-weight: 400;
-            outline: none;
-        }
-
-        /deep/ .dx-button {
-            width: 104px;
-            position: relative;
-            &:first-child {
-              margin-right: 7px;
-            }
-            &:nth-child(2) {
-                min-width: 60px;
-                &:after {
-                    content: '';
-                    display: block;
-                    background: url('../../../assets/common/icons/down-arrow-icon.svg');
-                    position: absolute;
-                    width: 8px;
-                    height: 4px;
-                    right: 12px;
-                    top: 48%;
-                }
-                .dx-icon {
-                  right: 10px!important;
-                }
-                .dx-button-content {
-                    padding-right: 28px;
-                }
-            }
-            &.dx-state-hover,
-            &.dx-state-focused,
-            &.dx-state-active {
-              background-color: #FFF;
-            }
-            .dx-button-content {
-                height: 37px;
-                min-width: 50px;
-                padding: 6px 15px;
-                img.dx-icon {
-                    width: auto!important;
-                    height: auto!important;
-                }
-                .dx-button-text {
-                    color: #677380;
-                    font-size: 13px;
-                    font-weight: 300;
-                    line-height: 1.85;
-                    letter-spacing: 0.3px;
-                }
-            }
-        }
     }
 
-    /deep/ .cashflow .dx-pivotgrid .dx-pivotgrid-container table.dx-pivotgrid-border {
-        .dx-pivotgrid-horizontal-headers {
-            .dx-pivotgrid-expanded.dateField {
-                padding: 5px 10px!important;
-                .head-cell-expand {
-                  position: relative;
-                  &:after {
-                    content: '';
-                    position: absolute;
-                    visibility: visible;
-                    left: -10px;
-                    top: -5px;
-                    width: 0;
-                    height: 0;
-                    border: 0 solid transparent;
-                    border-bottom-width: 10px;
-                    border-top-width: 0px;
-                    border-left: 10px solid #686f76;
-                  }
-
-                  &.closed {
-                    visibility: hidden;
-                    position: absolute;
-                  }
-                }
-            }
-        }
-        /** general */
-        .dx-grandtotal {
-            background: @grandTotalBackgroundColor;
-            color: @grandTotalTextColor;
-        }
-        .dx-pivotgrid-area td.chosenFilterForCashFlow {
-            border: 1px solid #f9b83a !important;
-            background-color: #fbf3e4 !important;
-            color: #333 !important;
-        }
-
-        .dx-total,
-        .dx-data-header,
-        .dx-column-header {
-            background: @totalDataCellBackgroundColor;
-        }
-
-        .dx-texteditor {
-            border: none;
-        }
-
-        /** upper left column */
-        .dx-area-description-cell {
-            vertical-align: top;
-            background-color: #fff;
-            min-width: @left-column-width;
-        }
-
-        /** upper right column (historical row and dates rows) */
-        .dx-area-column-cell {
-            tr {
-
-                /** @todo move general classes like dateField and historicalField  from td to tr */
-                td {
-                    font-size: 10px;
-                    &.cashflow {
-                        color: #00aeef;
-                    }
-                    .totals {
-                        font-size: 10px;
-                    }
-                    &.dx-pivotgrid-expanded,
-                    &.dx-pivotgrid-collapsed {
-                        text-align: center;
-                    }
-                    .dx-expand-icon-container {
-                        display: none;
-                    }
-                    &.year {
-                        color: @yearTextColor;
-                        font-weight: 600;
-                        font-size: 20px;
-                    }
-                    &.lowestOpenedCurrent:not(.mtdCell) {
-                        background-color: @currentPeriodCellBackgroundColor;
-                    }
-                    &.month,
-                    &.quarter,
-                    &.day,
-                    &.dx-row-total {
-                        color: @generalColor;
-                        font-weight: 600;
-                        font-size: 18px;
-                        &.current {
-                            color: #fff;
-                            background: @currentTextColor;
-                        }
-                    }
-                    &.dataFieldHidden {
-                        padding: 0;
-                        height: 0;
-                        max-height: 0;
-                    }
-                    &.historicalField {
-                        cursor: default;
-                        font-size: 10px;
-                        letter-spacing: 0.6px;
-                        &.historical {
-                            color: @historicalTextColor;
-                        }
-                        &.current {
-                            background: @currentTextColor;
-                            color: #fff;
-                        }
-                        &.forecast {
-                            color: @forecastTextColor
-                        }
-                    }
-                    &.projectedField.projectedHidden {
-                        border: none;
-                        padding: 0;
-                    }
-                }
-            }
-        }
-
-        /** bottom left column (labels cells) */
-        .dx-area-row-cell {
-            tr {
-                position: relative;
-                &.startedBalance + tr,
-                &.incomeRow + tr {
-                    .dx-white-space-column {
-                        &:nth-child(1) {
-                            border-right: none;
-                            min-width: 0;
-                            padding-left: 0;
-                            &:after {
-                                display: none;
-                            }
-                            &:before {
-                                content: '';
-                            }
-                        }
-                    }
-                }
-
-                td {
-                    text-align: left;
-                    color: inherit;
-                    width: 23px;
-                    min-width: 23px;
-                    &.dx-white-space-column {
-                        background: #fff;
-                        border-right: none;
-                        border-top: 1px solid @tableBorderColor;
-                        position: relative;
-                        cursor: pointer;
-                        &:before {
-                            content: url('../../../assets/common/icons/collapse-icon.svg');
-                            position: absolute;
-                            top: 6px;
-                            left: 16px;
-                            width: 16px;
-                        }
-                        &:after {
-                            content: '';
-                            position: absolute;
-                            top: 21px;
-                            left: 23px;
-                            display: block;
-                            border-right: 2px solid @expendedLineColor;
-                            height: 100%;
-                        }
-                    }
-                    &.dx-total {
-                        font-weight: 700;
-                        &.income {
-                            background: @incomeVerticalHeaderBackgroundColor;
-                        }
-                        &.expenses {
-                            background: @expensesVerticalHeaderBackgroundColor;
-                        }
-                        &.income,
-                        &.expenses {
-                            cursor: default;
-                            text-align: left;
-                            padding-left: 20px;
-                            border: none;
-                            .dx-expand-icon-container {
-                                display: none;
-                            }
-                        }
-                    }
-                    &.dx-last-cell {
-                        width: 100%;
-                        padding-left: 22px;
-                    }
-
-                    &.emptyChildren {
-                        padding-left: 40px;
-                        cursor: default;
-                        .dx-expand-icon-container {
-                            display: none;
-                        }
-                    }
-
-                    .dx-expand-icon-container {
-                        font: inherit;
-                        margin-right: 10px;
-                        &:before {
-                            display: none;
-                        }
-                        .dx-expand:before {
-                            top: auto;
-                            left: auto;
-                            position: relative;
-                            width: auto;
-                            margin: auto;
-                        }
-                    }
-                    &.dx-pivotgrid-collapsed {
-                        .dx-expand:before {
-                            content: url('../../../assets/common/icons/expand-icon.svg');
-                        }
-                    }
-
+    /deep/ .cashflow .dx-pivotgrid {
+        overflow: visible;
+        .dx-pivotgrid-container table.dx-pivotgrid-border {
+            .dx-pivotgrid-horizontal-headers {
+                .dateField{
                     &.dx-pivotgrid-expanded {
-                        position: relative;
-                        .dx-expand:before {
-                            content: url('../../../assets/common/icons/collapse-icon.svg');
-                        }
-                        .dx-expand-icon-container {
+                        padding: 5px 10px;
+                        .head-cell-expand {
                             position: relative;
                             &:after {
                                 content: '';
                                 display: block;
-                                height: 7px;
-                                border-right: 2px solid @expendedLineColor;
-                                top: -7px;
+                                background: url('../../../assets/common/icons/cfo-down.png') 100%;
                                 position: absolute;
-                                left: 6px;
+                                visibility: visible;
+                                left: -7px;
+                                top: -1px;
+                                width: 12px;
+                                height: 7px;
+                            }
+
+                            &.closed {
+                                visibility: hidden;
+                                height: 5px;
+                                .closed-head-cell {
+                                    display: block;
+                                }
                             }
                         }
                     }
-                }
 
-                &.startedBalance,
-                &.incomeRow,
-                &.expensesRow,
-                &.endingCashPosition {
-                    td {
-                        letter-spacing: 0.8px;
-                        font-weight: 600;
-                    }
-                }
-
-                &.startedBalance {
-                    td {
-                        background: @startedBalanceBackgroundColor;
-                    }
-                }
-                &.endingCashPosition {
-                    td {
-                        background: #00aff0;
-                        color: #fff;
-                        padding-left: 22px;
-                    }
-                }
-                &.reconciliation {
-                    td {
-                        letter-spacing: 0.2px;
-                        padding-left: 22px;
-                        font-weight: 600;
-                        background: @reconciliationVerticalHeaderBackgroundColor;
+                    .closed-head-cell {
+                        top: -2px;
+                        position: absolute;
+                        line-height: 10px;
+                        visibility: visible;
+                        font-size: 10px;
+                        color: @historicalTextColor;
+                        font-weight: 400;
+                        left: 0;
+                        right: 0;
+                        margin: 0 auto;
+                        display: none;
                     }
                 }
             }
-        }
-
-        /** bottom right column (data cells) */
-        .dx-area-data-cell {
-            tr {
-                td {
-                    background: @dataCellBackgroundColor;
-                    color: @middleGrayColor;
-                    font-family: Lato!important;
-                    font-size: 13.5px;
-                    letter-spacing: 0.2px;
-                    &.zeroValue {
-                        &,
-                        & span {
-                            color: @dataCellColorForZeroValues;
-                            font-weight: 300;
-                        }
-                    }
+            /** general */
+            .dx-grandtotal {
+                background: @grandTotalBackgroundColor;
+                color: @grandTotalTextColor;
+            }
+            .dx-pivotgrid-area td {
+                &.month, &.quarter, &.year {
+                    //min-width: 80px;
+                }
+                &.hideZeroActivity {
+                    border: 0.1px solid #ccc!important;
+                    padding: 0 !important;
+                }
+                &.chosenFilterForCashFlow {
+                    border: 1px solid #f9b83a !important;
+                    background-color: #fbf3e4 !important;
+                    color: #333 !important;
                     span {
-                        font-family: Lato!important;
-                        color: @middleGrayColor;
+                        color: #333 !important;
                     }
-                    &.dx-total {
-                        background: @totalDataCellBackgroundColor;
-                        &.income {
-                            background: @incomeDataCellBackgroundColor;
+                }
+            }
+
+            .dx-total,
+            .dx-data-header,
+            .dx-column-header {
+                background: @totalDataCellBackgroundColor;
+            }
+
+            .dx-texteditor {
+                border: none;
+            }
+
+            .cfoThemeLightDarkTheme {
+                &.dx-area-row-cell,
+                &.dx-area-data-cell {
+                    tr {
+                        &.startedBalance,
+                        &.incomeRow,
+                        &.expensesRow,
+                        &.endingCashPosition,
+                        &.reconciliation {
+                            td {
+                                background: rgba(221, 221, 221, .32) !important;
+                            }
                         }
-                        &.expenses {
-                            background: @expensesDataCellBackgroundColor;
+                        &.endingCashPosition {
+                            td {
+                                &, & span {
+                                    color: inherit;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            /** upper left column */
+            .dx-area-description-cell {
+                vertical-align: top;
+                background-color: #fff;
+                min-width: @left-column-width;
+            }
+
+            /** upper right column (historical row and dates rows) */
+            .dx-area-column-cell {
+                tr {
+                    td {
+                        font-size: 10px;
+                        &.cashflow {
+                            color: #00aeef;
+                        }
+                        .totals {
+                            font-size: 10px;
+                        }
+                        &.dx-pivotgrid-expanded,
+                        &.dx-pivotgrid-collapsed {
+                            text-align: center;
+                        }
+                        .dx-expand-icon-container {
+                            display: none;
+                        }
+                        &.year {
+                            color: @yearTextColor;
+                            font-weight: 600;
+                            font-size: 20px;
                         }
                         &.lowestOpenedCurrent:not(.mtdCell) {
+                            background-color: @currentPeriodCellBackgroundColor;
+                        }
+                        &.month,
+                        &.quarter,
+                        &.day,
+                        &.dx-row-total {
+                            color: @generalColor;
+                            font-weight: 600;
+                            font-size: 18px;
+                            &.current {
+                                color: #fff;
+                                background: @currentTextColor;
+                            }
+                        }
+                        &.dataFieldHidden {
+                            padding: 0;
+                            height: 0;
+                            max-height: 0;
+                        }
+                        &.historicalField {
+                            cursor: default;
+                            font-size: 10px;
+                            letter-spacing: 0.6px;
+                            &.historical {
+                                color: @historicalTextColor;
+                            }
+                            &.current {
+                                background: @currentTextColor;
+                                color: #fff;
+                            }
+                            &.forecast {
+                                color: @forecastTextColor
+                            }
+                        }
+                        span.dayEnding {
+                            font-size: 10px;
+                            position: absolute;
+                        }
+                        &.projectedField.projectedHidden {
+                            border: none;
+                            padding: 0;
+                        }
+                    }
+                }
+            }
+
+            /** bottom left column (labels cells) */
+            .dx-area-row-cell {
+                tr {
+                    position: relative;
+                    td {
+                        text-align: left;
+                        color: inherit;
+                        width: 23px;
+                        min-width: 23px;
+                        &.dx-white-space-column {
+                            background: #fff;
+                            border-right: none;
+                            border-top: 1px solid @tableBorderColor;
+                            position: relative;
+                            cursor: pointer;
+                            &:before {
+                                content: url('../../../assets/common/icons/collapse-icon.svg');
+                                position: absolute;
+                                top: 6px;
+                                left: 16px;
+                                width: 16px;
+                                z-index: 1
+                            }
+                            &:after {
+                                content: '';
+                                position: absolute;
+                                top: 21px;
+                                left: 23px;
+                                display: block;
+                                border-right: 2px solid @expendedLineColor;
+                                height: calc(~"100%" - 12px);
+                                z-index: 1;
+                            }
+                            &.hiddenWhiteSpace {
+                                border-right: none;
+                                min-width: 0;
+                                padding-left: 0;
+                                &:after {
+                                    display: none;
+                                }
+                                &:before {
+                                    content: '';
+                                }
+                            }
+                            &.startedBalanceWhiteSpace {
+                                border-top: none
+                            }
+                        }
+                        &.dx-total {
+                            font-weight: 700;
                             &.income {
-                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
-                                            linear-gradient(@incomeDataCellBackgroundColor, @incomeDataCellBackgroundColor);
+                                background: @incomeVerticalHeaderBackgroundColor;
                             }
                             &.expenses {
-                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
-                                            linear-gradient(@expensesDataCellBackgroundColor, @expensesDataCellBackgroundColor);
+                                background: @expensesVerticalHeaderBackgroundColor;
+                            }
+                            &.income,
+                            &.expenses {
+                                cursor: default;
+                                text-align: left;
+                                padding-left: 20px;
+                                border: none;
+                                .dx-expand-icon-container {
+                                    display: none;
+                                }
+                            }
+                        }
+                        &.dx-last-cell {
+                            width: 100%;
+                            padding-left: 22px;
+                        }
+                        &.emptyChildren {
+                            padding-left: 40px;
+                            cursor: default;
+                            .dx-expand-icon-container {
+                                display: none;
+                            }
+                        }
+                        .dx-expand-icon-container {
+                            font: inherit;
+                            margin-right: 10px;
+                            &:before {
+                                display: none;
+                            }
+                            .dx-expand:before {
+                                top: auto;
+                                left: auto;
+                                position: relative;
+                                width: auto;
+                                margin: auto;
+                            }
+                        }
+                        &.dx-pivotgrid-collapsed {
+                            .dx-expand:before {
+                                content: url('../../../assets/common/icons/expand-icon.svg');
+                            }
+                        }
+                        &.dx-pivotgrid-expanded {
+                            position: relative;
+                            .dx-expand:before {
+                                content: url('../../../assets/common/icons/collapse-icon.svg');
+                            }
+                            .dx-expand-icon-container {
+                                position: relative;
+                                &:after {
+                                    content: '';
+                                    display: block;
+                                    height: 7px;
+                                    border-right: 2px solid @expendedLineColor;
+                                    top: -7px;
+                                    position: absolute;
+                                    left: 6px;
+                                }
                             }
                         }
                     }
-                    &.lowestOpenedCurrent:not(.mtdCell) {
-                        background-color: @currentPeriodCellBackgroundColor;
+
+                    &.startedBalance,
+                    &.incomeRow,
+                    &.expensesRow,
+                    &.endingCashPosition {
+                        td {
+                            letter-spacing: 0.8px;
+                            font-weight: 600;
+                        }
+                    }
+
+                    &.startedBalance {
+                        td {
+                            background: @startedBalanceBackgroundColor;
+                        }
+                    }
+                    &.endingCashPosition {
+                        td {
+                            background: #00aff0;
+                            color: #fff;
+                            padding-left: 22px;
+                        }
+                    }
+                    &.reconciliation {
+                        td {
+                            letter-spacing: 0.2px;
+                            padding-left: 22px;
+                            font-weight: 600;
+                            background: @reconciliationVerticalHeaderBackgroundColor;
+                        }
+                    }
+                }
+            }
+
+            /** bottom right column (data cells) */
+            .dx-area-data-cell {
+
+                &.fontNameLato tr td {
+                    &, & span {
+                        font-family: Lato!important;
                     }
                 }
 
-                &.startedBalance,
-                &.incomeRow,
-                &.expensesRow,
-                &.endingCashPosition,
-                &.reconciliation {
-                    td {
-                        &,
-                        & span {
-                            color: @totalsTextColor;
-                            font-weight: 600;
-                            font-size: 14px;
-                        }
+                &.fontNameOpenSans tr td {
+                    &, & span {
+                        font-family: "Open Sans"!important;
+                    }
+                }
 
+                &.fontNameKameron tr td {
+                    &, & span {
+                        font-family: Kameron !important;
+                    }
+                }
+
+                &.fontNameWorkSans tr td {
+                    &, & span {
+                        font-family: Work Sans !important;
+                    }
+                }
+
+                tr {
+                    td {
+                        background: @dataCellBackgroundColor;
+                        color: @middleGrayColor;
+                        font-family: Lato!important;
+                        letter-spacing: 0.2px;
+                        &.red {
+                            &,
+                            & span {
+                                color: red !important;
+                            }
+                        }
                         &.zeroValue {
                             &,
                             & span {
@@ -462,59 +425,118 @@
                                 font-weight: 300;
                             }
                         }
-                    }
-                }
-
-                &.startedBalance {
-                    td {
+                        span {
+                            font-family: Lato!important;
+                            color: @middleGrayColor;
+                        }
                         &.dx-total {
-                            background: @startedBalanceDataCellColor;
+                            background: @totalDataCellBackgroundColor;
+                            &.income {
+                                background: @incomeDataCellBackgroundColor;
+                            }
+                            &.expenses {
+                                background: @expensesDataCellBackgroundColor;
+                            }
+                            &.lowestOpenedCurrent:not(.mtdCell) {
+                                &.income {
+                                    background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
+                                    linear-gradient(@incomeDataCellBackgroundColor, @incomeDataCellBackgroundColor);
+                                }
+                                &.expenses {
+                                    background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
+                                    linear-gradient(@expensesDataCellBackgroundColor, @expensesDataCellBackgroundColor);
+                                }
+                            }
                         }
                         &.lowestOpenedCurrent:not(.mtdCell) {
-                            background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
-                                        linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
+                            background-color: @currentPeriodCellBackgroundColor;
                         }
                     }
-                    &:first-child {
+
+                    &.startedBalance,
+                    &.incomeRow,
+                    &.expensesRow,
+                    &.endingCashPosition,
+                    &.reconciliation {
                         td {
-                            background: @startedBalanceDataCellColor;
-                            &.lowestOpenedCurrent:not(.mtdCell) {
-                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
-                                            linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
+                            &,
+                            & span {
+                                color: @totalsTextColor;
+                                font-weight: 600;
+                            }
+
+                            &.zeroValue {
+                                &,
+                                & span {
+                                    color: @dataCellColorForZeroValues;
+                                    font-weight: 300;
+                                }
                             }
                         }
                     }
 
-                }
-                &.endingCashPosition {
-                    td {
-                        background: @grandTotalBackgroundColor;
-                        &.lowestOpenedCurrent:not(.mtdCell) {
-                            background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
-                                        linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
+                    &.startedBalance {
+                        td {
+                            &.dx-total {
+                                background: @startedBalanceDataCellColor;
+                            }
+                            &.lowestOpenedCurrent:not(.mtdCell) {
+                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
+                                linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
+                            }
                         }
-                        span {
-                            color: @grandTotalTextColor;
+                        &:first-child {
+                            td {
+                                background: @startedBalanceDataCellColor;
+                                &.lowestOpenedCurrent:not(.mtdCell) {
+                                    background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
+                                    linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
+                                }
+                            }
+                        }
+
+                    }
+                    &.endingCashPosition {
+                        td {
+                            background: @grandTotalBackgroundColor;
+                            &.lowestOpenedCurrent:not(.mtdCell) {
+                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
+                                linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
+                            }
+                            span {
+                                color: @grandTotalTextColor;
+                            }
+                        }
+                    }
+                    &.reconciliation {
+                        td {
+                            background: @reconciliationDataCellBackgroundColor;
+                            color: @reconciliationDataCellTextColor;
+                            &.lowestOpenedCurrent:not(.mtdCell) {
+                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
+                                linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
+                            }
                         }
                     }
                 }
-                &.reconciliation {
-                    td {
-                        background: @reconciliationDataCellBackgroundColor;
-                        color: @reconciliationDataCellTextColor;
-                        &,
-                        & span {
-                            font-size: 13.5px;
-                        }
-                        &.lowestOpenedCurrent:not(.mtdCell) {
-                            background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor),
-                                        linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
+
+                .dx-scrollable-scrollbar {
+                    bottom: -7px;
+                    &.dx-state-hover,
+                    &.dx-scrollable-scrollbar-hoverable,
+                    &.dx-scrollable-scrollbar-active {
+                        height: 8px;
+                    }
+                    .dx-scrollable-scroll {
+                        height: 10px;
+                        .dx-scrollable-scroll-content {
+                            background-color: rgb(191,191,191)
                         }
                     }
                 }
             }
-        }
 
+        }
     }
 
     /deep/ .dx-dropdowneditor[accesskey="cashflowGroupby"] {
@@ -586,6 +608,81 @@
         background-color: #FFF;
         position: relative;
         height: 100%;
+        top: -1px;
+        #cashflowFooterToolbar {
+            position: absolute;
+            bottom: 135px;
+            width: 100%;
+            z-index: 1;
+            /deep/ dx-toolbar {
+                padding: 11px 0 9px 0;
+                .dx-toolbar-items-container {
+                    height: 22px;
+                }
+
+                .dx-tabs {
+                    border: none;
+                    .dx-tab {
+                        padding: 0px 11px 0px 15px;
+                        color: #677380;
+                        margin-right: 23px;
+                        background-color: initial;
+                        &.dx-tab-selected {
+                            border-radius: 12px;
+                            color: #212c36;
+                            background-color: #f3f7fa;
+                            &:after {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+
+
+                .dx-toolbar-item {
+                    max-width: initial !important;
+                    font-size: 13px;
+                    font-weight: 600;
+                    letter-spacing: 0.3px;
+                    color: #212c36;
+                    .dx-button {
+                        border: none;
+                        .dx-button-content {
+                            height: 17px;
+                            min-width: 0;
+                        }
+                    }
+                }
+                .dx-toolbar-before .dx-toolbar-item {
+                    &:not(:first-child) {
+                        padding-left: 13px;
+                    }
+                    &:not(:nth-child(3)) {
+                        border-right: 1px solid #e5e9ec;
+                    }
+                    &:not(:last-child) {
+                        padding-right: 20px;
+                    }
+                    .dx-button[group-item-position="last"] {
+                        margin-right: 0;
+                    }
+                    &:last-child {
+                        padding-right: 9px;
+                    }
+                }
+                .dx-toolbar-after {
+                    .dx-toolbar-item {
+                        color: #677380;
+                        padding-left: 38px;
+                        font-weight: 500;
+                        .value {
+                            color: #424c56;
+                            font-weight: 600;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     .groupBy {
@@ -608,6 +705,7 @@
         border-left: 1px solid #ddd;
         padding: 0 15px;
         background: #fff;
+        z-index: 2;
         .close-btn {
             border: 0;
             padding: 0;

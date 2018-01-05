@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, ViewChild, AfterViewInit, Injector, Inject, OpaqueToken } from '@angular/core';
+﻿import { Component, OnInit, ViewChild, AfterViewInit, Injector, Inject } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';

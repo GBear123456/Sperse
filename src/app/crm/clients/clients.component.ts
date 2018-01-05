@@ -13,6 +13,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateOrEditClientModalComponent } from './create-or-edit-client-modal.component';
 
+import { AppService } from '@app/app.service';
+
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
@@ -46,7 +48,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     private rootComponent: any;
 
     public headlineConfig = {
-        name: this.l('Customers'),
+        names: [this.l('Customers')],
         icon: 'people',
         buttons: [
             {
@@ -57,10 +59,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         ]
     };
 
-    public toolbarConfig;
-
     constructor(injector: Injector,
         private _router: Router,
+        private _appService: AppService,
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy
@@ -184,15 +185,53 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     initToolbarConfig() {
-        this.toolbarConfig = [
+        this._appService.toolbarConfig = [
             {
                 location: 'before', items: [
-                    { name: 'back' }
+                    { 
+                        name: 'filters', 
+                        action: (event) => {                            
+                            setTimeout(() => {
+                                this.dataGrid.instance.repaint();
+                            }, 1000);
+                            event.element.attr('filter-pressed', 
+                                this._filtersService.fixed = 
+                                    !this._filtersService.fixed);  
+                        },
+                        options: {
+                            mouseover: (event) => {
+                                this._filtersService.enable();
+                            },
+                            mouseout: (event) => {
+                                if (!this._filtersService.fixed)
+                                    this._filtersService.disable();
+                            } 
+                        },
+                        attr: { 
+                            'filter-selected': this._filtersService.hasFilterSelected,
+                            'filter-pressed': this._filtersService.fixed
+                        } 
+                    } 
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',   
+                        widget: 'dxTextBox',
+                        options: {
+                            width: '300',
+                            mode: 'search',
+                            placeholder: this.l('Search') + ' ' 
+                                + this.l('Customers').toLowerCase()
+                        }
+                    }
                 ]
             },
             {
                 location: 'before', items: [
-                    { name: 'filters', action: this._filtersService.toggle.bind(this._filtersService), attr: { 'filter-selected': this._filtersService.hasFilterSelected } }
+                    { name: 'back' }
                 ]
             },
             {
@@ -294,8 +333,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     ngOnDestroy() {
-        this._filtersService.enabled = false;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+        this._appService.toolbarConfig = null;
+        this._filtersService.localizationSourceName = 
+            AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }

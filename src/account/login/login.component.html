@@ -1,13 +1,14 @@
 ﻿<div class="container-fluid" [@routerTransition]>
     <div class="row">
         <div class="col-md-6 col-sm-12 col-xs-12 text-center form-wrapper">
-            <h1>{{l("SperseLogin")}}</h1>
+            <h1 class="hidden-xs">{{l("SperseLogin")}}</h1>
+            <h1 class="visible-xs">{{l("Login")}}</h1>
 
             <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
 
                 <div class="form-group clearfix">
                     <label class="control-label visible-ie8 visible-ie9">{{l("UserNameOrEmail")}}</label>
-                    <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off" placeholder="{{l('UserNameOrEmail')}}" name="userNameOrEmailAddress" required />
+                    <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off" placeholder="{{l('UserNameOrEmail')}}" name="userNameOrEmailAddress" required tabindex="1" />
 
                     <div class="form-group clearfix">
                         <div class="mt-checkbox-list pull-right">
@@ -21,7 +22,7 @@
 
                 <div class="form-group clearfix">
                     <label class="control-label visible-ie8 visible-ie9">{{l('Password')}}</label>
-                    <input [(ngModel)]="loginService.authenticateModel.password" class="form-control form-control-solid placeholder-no-fix input-ltr" type="password" autocomplete="off" placeholder="{{l('Password')}}" name="password" required maxlength="32" />
+                    <input [(ngModel)]="loginService.authenticateModel.password" class="form-control form-control-solid placeholder-no-fix input-ltr" type="password" autocomplete="off" placeholder="{{l('Password')}}" name="password" required maxlength="32" tabindex="2" />
                     <div class="form-group clearfix">
                         <a routerLink="/account/forgot-password" id="forget-password" class="forget-password pull-right">{{l("ForgotPassword")}}</a>
                     </div>
@@ -34,7 +35,9 @@
                     </button>
                 </div>
 
-                <p class="agree-rights">By continuing I agree to <a href="javascript:;">Terms & Policies</a>.</p>
+                <p class="agree-rights">By continuing I agree to
+                    <a href="javascript:;">Terms</a> &
+                    <a href="" data-toggle="modal" data-target=".modal">Policies</a>.</p>
             </form>
 
             <div class="login-options" *ngIf="multiTenancySideIsTeanant && loginService.externalLoginProviders.length > 0">
@@ -68,4 +71,26 @@
             <p class="slogan-description">Augumented by Artificial Intelligence</p>
         </div>
     </div>
+
+    <div class="modal right fade" id="privacy" tabindex="-1" role="dialog" aria-labelledby="termsLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <div class="control-buttons">
+                        <a class="download" href="https://testapi.sperse.com/docs/SpersePrivacyPolicy.pdf" target="_blank">
+                            <img src="assets/common/icons/download-icon.svg" alt="download">
+                        </a>
+                        <button class="print-this">
+                            <img src="assets/common/icons/print-icon.svg" alt="print">
+                        </button>
+                    </div>
+                    <h4 class="modal-title">SPERSE PRIVACY POLICY</h4>
+                </div>
+                <div class="modal-body print-this-section">
+                </div>
+            </div><!-- modal-content -->
+        </div><!-- modal-dialog -->
+    </div><!-- modal -->
+
 </div>

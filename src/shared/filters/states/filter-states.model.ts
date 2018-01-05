@@ -6,18 +6,26 @@ export class FilterStatesModel extends FilterItemModel {
     list: any[];
 
     getDisplayElements(): DisplayElement[] {
-        var result: DisplayElement[] = this.value && this.value.map(x => {
+        var result: DisplayElement[] = [];
+        this.value && this.value.map(x => {
             let data = _.find(this.list, (val: any, i, arr) => val.code == x);
             if (data) {
                 let parentName = data.parent ? _.find(this.list, (val) => val.code == data.parent).name : null;
                 let sortField = (parentName) ? parentName + ':' : '';
                 sortField += data.name;
-                return <DisplayElement>{ item: this, displayValue: data.name, args: x, parentCode: data.parent, sortField: sortField }
+                result.push(<DisplayElement>{   
+                    item: this, 
+                    displayValue: data.name, 
+                    args: x, 
+                    parentCode: data.parent, 
+                    sortField: sortField 
+                });
             }
-        }).filter(Boolean);
-
-        result = _.sortBy(result, x => x.sortField);
-        result = this.generateParents(result);
+        });
+       
+        result = this.generateParents(
+            _.sortBy(result, 'sortField')
+        );
         return result;
     }
    

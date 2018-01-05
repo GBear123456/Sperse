@@ -1,6 +1,6 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, OnInit, Injector } from '@angular/core';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
@@ -21,7 +21,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
 
   constructor(
     injector: Injector,
-    public dialog: MdDialog,
+    public dialog: MatDialog,
     private _customerService: CustomersServiceProxy,
     private _contactEmailService: ContactEmailServiceProxy,
     private _contactPhoneService: ContactPhoneServiceProxy

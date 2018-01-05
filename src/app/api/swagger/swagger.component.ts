@@ -5,40 +5,49 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
-  templateUrl: './swagger.component.html',
-  styleUrls: ['./swagger.component.less']
+    templateUrl: './swagger.component.html',
+    styleUrls: ['./swagger.component.less']
 })
 export class SwaggerComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
-  link: SafeResourceUrl;
-  public headlineConfig = { 
-    name: this.l("Interactive API Documentation"), 
-    icon: 'magic-wand', 
-    buttons: []
-  };
+    link: SafeResourceUrl;
+    public headlineConfig = {
+        names: [this.l("Interactive API Documentation")],
+        icon: 'magic-wand',
+        buttons: []
+    };
 
-  constructor(
-    injector: Injector,
-    private _router: Router,
-    private _sanitizer: DomSanitizer
-  ) {
-    super(injector);
-  }
+    constructor(
+        injector: Injector,
+        private _router: Router,
+        private _sanitizer: DomSanitizer
+    ) {
+        super(injector);
+    }
 
-  ngAfterViewInit(): void {
-    this.getRootComponent().overflowHidden(true);
-  }
+    ngAfterViewInit(): void {
+        this.getRootComponent().overflowHidden(true);
+    }
 
-  ngOnInit() {
-    this.link = this._sanitizer
-      .bypassSecurityTrustResourceUrl(
-        AppConsts.remoteServiceBaseUrl +
-        '/swagger/index.html?tenantId=' +
-        abp.multiTenancy.getTenantIdCookie() +
-        '&tokenAuth=' + abp.auth.getToken()
-    );
-  }
+    ngOnInit() {
+        window.addEventListener("message", this.onSwaggerLoaded);
+        this.link = this._sanitizer
+            .bypassSecurityTrustResourceUrl(
+            AppConsts.remoteServiceBaseUrl +
+            '/swagger/index.html?tenantId=' +
+            abp.multiTenancy.getTenantIdCookie() +
+            '&tokenAuth=' + abp.auth.getToken()
+        );
+        abp.ui.setBusy();
+    }
 
-  ngOnDestroy() {
-    this.getRootComponent().overflowHidden();
-  }
+    onSwaggerLoaded(e) {
+        if (e.origin == AppConsts.remoteServiceBaseUrl && e.data) {
+            abp.ui.clearBusy();
+        }
+    }
+
+    ngOnDestroy() {
+        window.removeEventListener("message", this.onSwaggerLoaded);
+        this.getRootComponent().overflowHidden();
+    }
 }

@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { NotificationsComponent } from './shared/layout/notifications/notifications.component';
 import { AppComponent } from './app.component';
@@ -41,7 +41,7 @@ import { AppRouteGuard } from './shared/common/auth/auth-route-guard';
                         data: { preload: true }
                     },
                     {
-                        path: 'cfo',
+                        path: 'cfo/:instance',
                         loadChildren: 'app/cfo/cfo.module#CfoModule', //Lazy load cfo *module
                         data: { preload: true }
                     }

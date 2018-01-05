@@ -12,9 +12,12 @@ import * as _ from 'underscore';
 export class ToolBarComponent extends AppComponentBase {
     public options = {};
     private supportedButtons = {
+        search: {
+            accessKey: 'search'
+        },
         filters: {
-            text: this.l('Filters'),
-            iconSrc: this.getImgURI('funnel-icon')
+            hint: this.l('Filters'),
+            accessKey: 'filters'
         },
         back: {
             hint: this.l('Back'),
@@ -113,6 +116,10 @@ export class ToolBarComponent extends AppComponentBase {
         },
         slider: {
             hint: this.l('Slider')
+        },
+        forecastModelAdd: {
+            hint: this.l('CreateForecastModel'),
+            iconSrc: this.getImgURI('add-button')
         }
     };
 
@@ -160,8 +167,17 @@ export class ToolBarComponent extends AppComponentBase {
         return item.attr || {};
     }
 
+    onItemRendered($event) {
+        if ($event.itemData.options.mouseover)
+            $event.itemElement.on('mouseover',
+                $event.itemData.options.mouseover);
+        if ($event.itemData.options.mouseout)
+            $event.itemElement.on('mouseout',
+                $event.itemData.options.mouseout);
+    }
+
     initToolbarItems() {
-        let newItems = [];
+        let items = [];
         this._config.forEach((group) => {
             let count = group.items.length;
             group.items.forEach((item, index) => {
@@ -179,10 +195,12 @@ export class ToolBarComponent extends AppComponentBase {
                         };
                     });
                 }
-
-                newItems.push({
+                items.push({
                     location: group.location,
-                    widget: item.template ? null : (item.widget || 'dxButton'),
+                    widget: (item.text !== undefined || item.html !== undefined) && !item.widget ? null : item.widget || 'dxButton',
+                    text: !item.widget && item.text,
+                    html: !item.widget && item.html,
+                    itemTemplate: item.itemTemplate || group.itemTemplate,
                     options: _.extend({
                         onClick: item.action,
                         elementAttr: _.extend({
@@ -194,7 +212,6 @@ export class ToolBarComponent extends AppComponentBase {
                 });
             });
         });
-
-        this.items = newItems;
+        this.items = items;
     }
 }

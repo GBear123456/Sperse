@@ -1,8 +1,8 @@
-<h2 md-dialog-title>{{data.title}}</h2>
-<md-dialog-content>
+<h2 mat-dialog-title>{{data.title}}</h2>
+<mat-dialog-content>
   <p>{{data.message}}</p>
-</md-dialog-content>
-<md-dialog-actions>
-  <button md-button md-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
-  <button md-button [md-dialog-close]="true" class="button-layout button-primary">{{l('Confirm')}}</button>
-</md-dialog-actions>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button md-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
+  <button md-button [mat-dialog-close]="true" class="button-layout button-primary">{{l('Confirm')}}</button>
+</mat-dialog-actions>

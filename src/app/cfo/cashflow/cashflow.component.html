@@ -3,35 +3,22 @@
 </app-headline>
 
 <cashflow-operations
-    (refreshCashflow)="refreshDataGrid($event)"
+    [forecastModelsObj]="forecastModelsObj"
+    (repaintCashflow)="repaintDataGrid($event)"
     (onGroupBy)="changeGroupBy($event)"
     (handleFullscreen)="toggleFullscreen(getFullscreenElement())"
     (onToggleRows)="togglePivotGridRows($event)"
     (download)="downloadData($event)"
-    (showPreferences)="userGridPreferences.show()"
-    (changeForecastModel)="changeSelectedForecastModel($event)"
+    (showPreferencesDialog)="showPreferencesDialog()"
 ></cashflow-operations>
 
-<div class="cashflow">
-    <div class="filter-sort-options">
-        <dx-button
-          [ngClass]="{'active-filter':_filtersService.hasFilterSelected}"
-          [text]="ls('Platform', 'Filters')"
-          [iconSrc]="'assets/common/icons/funnel-icon.svg'"
-          (onClick)="toggleFilters($event)"
-        ></dx-button>
-        <dx-button
-          [text]="ls('Platform', 'Sort')"
-          [iconSrc]="'assets/common/icons/sort-icon.svg'"
-        ></dx-button>
-        <button class="clear-all" (click)="clearAllFilters()">
-            {{ls('Platform', 'ClearAll')}}
-        </button>
+<div class="cashflow" *ngIf="cashflowData && cashflowData.length">
+    <div class="sort-options">
+        <app-sorting [sortings]="sortings" (sortingChange)="resortPivotGrid($event)"></app-sorting>
     </div>
-
     <dx-scroll-view>
         <div class="pivot-grid-wrapper">
-            <dx-pivot-grid id="operations"
+            <dx-pivot-grid *ngIf="cashflowData && cashflowData.length" id="operations"
                            class="pivot-grid invisible"
                            [allowSortingBySummary]="false"
                            [allowSorting]="false"
@@ -50,12 +37,12 @@
                            [loadPanel]="{enabled: false}"
                            (onCellPrepared)="onCellPrepared($event)"
                            (onContentReady)="onContentReady($event)"
-                           (onCellClick)="onCellClick($event)">
+                           (onCellClick)="onCellClick($event)"
+                           [wordWrapEnabled]="false">
                 <dxo-scrolling mode="standard"></dxo-scrolling>
             </dx-pivot-grid>
         </div>
     </dx-scroll-view>
-
     <div *ngIf="statsDetailResult !== undefined" class="cashflow-wrap">
         <dx-button icon="close" (onClick)="closeTransactionsDetail()" class="close-btn"></dx-button>
         <dx-data-grid id="cashflowGridContainer"
@@ -63,7 +50,7 @@
                       [dataSource]="statsDetailResult"
                       (onDataErrorOccurred)="httpConfig.handleError($event.error)">
             <dxo-header-filter [visible]="true"></dxo-header-filter>
-            <dxi-column dataField="date" width="130" dataType="date" format="shortDate" [alignment]="left"></dxi-column>
+            <dxi-column dataField="date" width="130" cellTemplate="dateCell" [alignment]="left"></dxi-column>
             <dxi-column dataField="description">
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
             </dxi-column>
@@ -88,8 +75,21 @@
             </dxi-column>
             <dxo-load-panel [enabled]="true"></dxo-load-panel>
             <dxo-scrolling mode="virtual"></dxo-scrolling>
+            <div *dxTemplate="let cellData of 'dateCell'">
+                {{cellData.value | date: 'MM/dd/yyyy'}}
+            </div>
         </dx-data-grid>
     </div>
 
-    <userGridPreferences #userGridPreferences></userGridPreferences>
+    <div id="cashflowFooterToolbar">
+        <app-toolbar [(config)]="footerToolbarConfig"></app-toolbar>
+    </div>
+
 </div>
+
+<app-no-data
+    *ngIf="startDataLoading && (!cashflowData || !cashflowData.length)"
+    text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidid"
+    linkUrl="/app/cfo/business/start"
+    [linkText]="l('Go_to_sfo_setup')">
+</app-no-data>

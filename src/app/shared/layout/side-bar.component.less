@@ -1,9 +1,9 @@
 :host {
-    top: 74px;
+    top: 135px;
     position: absolute;
 
     &.fullscreen {
-        top: -74px;
+        top: -15px !important;
 
         .sidebar-filters,
         .sidebar-filter-links {
@@ -93,9 +93,11 @@
         width: 341px;
         height: calc(~"100vh - 148px");
         background-color: #fff;
-        padding: 13px 20px 15px 20px;
+        margin-bottom: 300px;
+        padding: 13px 0px 15px 20px;
 
         .filter-title {
+            padding-right: 20px;
             font-size: 15px;
             line-height: 1.6;
             letter-spacing: 0.3px;
@@ -103,18 +105,6 @@
             display: inline-block;
             width: 100%;
             font-weight: 500;
-
-            .active-filter::after {
-                content: '';
-                position: absolute;
-                display: block;
-                width: 5px;
-                height: 5px;
-                border-radius: 50%;
-                background: red;
-                top: 7px;
-                right: 7px;
-            }
 
             img {
                 margin-right: 10px;
@@ -143,15 +133,6 @@
                 position: relative;
 
                 &:first-child {
-                    margin-right: 7px;
-                    border-color: #00aeef;
-
-                    .dx-button-text {
-                        color: #00aeef;
-                    }
-                }
-
-                &:nth-child(2) {
                     min-width: 60px;
 
                     &:after {
@@ -203,14 +184,28 @@
         .filter-links {
             margin: 15px 0 0;
             list-style-type: none;
-            padding-left: 35px;
+            padding: 0px 0px 50px 35px;
 
             .filter-link {
+                position: relative;
+                padding-right: 20px;
                 text-decoration: none;
 
-                a {
+                &.active-filter::after {
+                    content: '';
+                    position: absolute;
+                    display: block;
+                    width: 5px;
+                    height: 5px;
+                    border-radius: 50%;
+                    background: red;
+                    top: 18px;
+                    left: -17px;
+                }
+
+                .filter-link-header {
                     font-size: 15px;
-                    font-weight: 400; // 300 is too thin
+                    font-weight: 400;
                     line-height: 1.4;
                     letter-spacing: 0.3px;
                     padding: 10px 0;
@@ -238,7 +233,7 @@
             padding-left: 14px;
             border-left: 1px solid #e5e9ec;
 
-            .sub-filter-item {
+            .sub-filter-item, .toggle-more {
                 font-size: 14px;
                 font-weight: 300;
                 line-height: 1.43;
@@ -251,6 +246,20 @@
                 &.nested {
                     padding-left: 15px;
                 }
+            }
+
+            .hide-all-elements {
+                height: 0;
+                overflow: hidden;
+            }
+
+            .show-all-elements {
+                height: auto;
+            }
+
+            .toggle-more {
+                color: #01b0f0;
+                font-weight: 500;
             }
         }
     }

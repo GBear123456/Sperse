@@ -1,19 +1,25 @@
 <div class="close-dialog" (click)="close(true)"></div>
 <div class="md-dialog-header">
-    <h2 md-dialog-title>{{data.title}}</h2>
-    <md-dialog-actions>
+    <dx-text-box
+        name="title"
+        [(value)]="data.title"
+        [readOnly]="!data.editTitle">
+    </dx-text-box>
+    <mat-dialog-actions>
         <div class="md-dialog-options">
-            <ng-template ngFor let-option [ngForOf]="data.options" let-i="index">  
-                <dx-check-box class="md-dialog-option pull-right" [value]="option.value" [text]="option.text"></dx-check-box>
+            <ng-template ngFor let-option [ngForOf]="data.options" let-i="index">
+                <dx-check-box class="md-dialog-option pull-right" (onValueChanged)="option.onValueChanged($event)" [(value)]="option.value" [text]="option.text"></dx-check-box>
             </ng-template>
         </div>
         <div class="md-dialog-buttons">
-            <ng-template ngFor let-button [ngForOf]="data.buttons" let-i="index">  
+            <ng-template ngFor let-button [ngForOf]="data.buttons" let-i="index">
                 <button md-button (click)="button.action($event)" class="button-layout button-{{button.class}}">{{l(button.title)}}</button>
             </ng-template>
         </div>
-    </md-dialog-actions>
+    </mat-dialog-actions>
 </div>
-<md-dialog-content>
-  <ng-content></ng-content>
-</md-dialog-content>
+<mat-dialog-content>
+    <dx-scroll-view showScrollbar="onHover">
+        <ng-content></ng-content>
+    </dx-scroll-view>
+</mat-dialog-content>

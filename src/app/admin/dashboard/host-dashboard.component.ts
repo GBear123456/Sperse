@@ -90,8 +90,10 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             )
             .subscribe(result => {
                 this.hostDashboardData = result;
+/*
                 this.drawEditionStatisticsData(result.editionStatistics);
                 this.drawIncomeStatisticsChart(result.incomeStatistics);
+*/
                 this.loadRecentTenantsTable(result.recentTenants);
                 this.loadExpiringTenantsTable(result.expiringTenants);
                 this.loading = false;

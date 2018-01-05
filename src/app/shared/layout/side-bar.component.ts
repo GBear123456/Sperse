@@ -17,7 +17,9 @@ import * as moment from 'moment';
     styleUrls: ['./side-bar.component.less'],
     selector: 'side-bar',
     host: {
-        '(document:click)': 'hideFilterDialog($event)'
+        '(document:click)': 'hideFilterDialog($event)',
+        '(mouseover)': 'preventFilterDisable($event)',
+        '(mouseout)': 'checkFilterDisable($event)'
     }
 })
 export class SideBarComponent extends AppComponentBase {
@@ -60,6 +62,7 @@ export class SideBarComponent extends AppComponentBase {
     }
     
     clearAllFilters() {
+        $('.show-all-elements').removeClass('show-all-elements');
         this._filtersService.clearAllFilters();
     }
 
@@ -91,6 +94,31 @@ export class SideBarComponent extends AppComponentBase {
                 rect.left > event.clientX || rect.right < event.clientX
             )
                 this.activeFilter = undefined;
+        }
+    }
+
+    preventFilterDisable($event) {
+        this._filtersService.preventDisable();
+    }
+
+    checkFilterDisable($event) {
+        if (!this._filtersService.fixed)
+            this._filtersService.disable(() => {
+                this.activeFilter = undefined;
+            });            
+    }
+
+    itemClick(event, filter) {
+        filter.showAllSelected = !filter.showAllSelected;
+        let container = $(event.target.parentElement.previousElementSibling);
+
+        if (filter.showAllSelected) {
+            container.addClass('show-all-elements');
+            event.target.text = "show less";
+        }
+        else {
+            container.removeClass('show-all-elements');
+            event.target.text = '+' + (filter.displayElements.length - 2) + ' more';
         }
     }
 }

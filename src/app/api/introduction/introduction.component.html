@@ -1,0 +1,18 @@
+<div [@routerTransition]>
+    <app-headline [config]="headlineConfig"></app-headline>
+    <div class="content">
+        <setup-steps></setup-steps>
+        <div class="api-into portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <div>
+                    <p class="sperse-api">Sperse <span class="green">API</span></p>
+                    <div>
+                        <img class="logo-api" alt="API Logo" src="/assets/common/icons/api.png" />
+                    </div>
+                    <p class="welcome-api">{{ l('API_Intro_Welcome') }}</p>
+                    <button class="btn btn-layout">{{ l('API_Intro_GenerateKey') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

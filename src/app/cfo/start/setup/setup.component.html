@@ -1,0 +1,19 @@
+<div [@routerTransition]>
+    <app-headline [config]="headlineConfig"></app-headline>
+    <div class="content">
+        <setup-steps></setup-steps>
+        <div class="cashflow-setup portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <div>
+                    <p class="sperse-cfo">Sperse CFO</p>
+                    <div>
+                        <img class="logo-cfo" alt="CFO Logo" src="/assets/common/icons/cfo.png" />
+                    </div>
+                    <p class="welcome-cfo">{{ l('Setup_Welcome') }}</p>
+                    <p class="text-cfo">{{ l('Setup_BodyText') }}</p>
+                    <button (click)="onStart()" class="btn btn-layout">{{ l('Setup_GetStarted') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

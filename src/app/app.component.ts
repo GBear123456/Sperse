@@ -23,7 +23,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
         viewContainerRef: ViewContainerRef,
         private _chatSignalrService: ChatSignalrService,
         private _appSessionService: AppSessionService,
-        private _appService: AppService,
+        public appService: AppService,
         public filtersService: FiltersService
     ) {
         super(injector);
@@ -31,7 +31,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     }
 
     ngOnInit(): void {
-        this._appService.initModule();
+        this.appService.initModule();
 
         if (this.appSession.application.features['SignalR']) {
             SignalRHelper.initSignalR(() => { this._chatSignalrService.init(); });

@@ -1,7 +1,7 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import * as _ from 'underscore';
 
@@ -35,9 +35,9 @@ export class EditContactDialog extends AppComponentBase {
 
   constructor(
     injector: Injector,
-    @Inject(MD_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private elementRef: ElementRef,
-    public dialogRef: MdDialogRef<EditContactDialog>,
+    public dialogRef: MatDialogRef<EditContactDialog>,
     private _contactEmailService: ContactEmailServiceProxy,
     private _contactPhoneService: ContactPhoneServiceProxy,
     private _contactLinkService: ContactLinkServiceProxy

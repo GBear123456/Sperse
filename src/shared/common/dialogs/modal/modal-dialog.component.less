@@ -1,6 +1,6 @@
 /deep/ .cdk-overlay-container {
     .cdk-overlay-pane.slider {
-        transition: 1s;
+        transition: margin 1s;
 
         .mat-dialog-container {
             overflow: visible;
@@ -16,7 +16,7 @@
         position: absolute;
         width: 42px;
         height: 40px;
-        top: 18px;
+        top: 25px;
         left: -42px;
         cursor: pointer;
         border-radius: 5px 0px 0px 5px;
@@ -46,27 +46,48 @@
 
     .md-dialog-header {
         display: flex;
-        height: 75px;
+        height: 82px;
         padding: 0px 10px;
         justify-content: space-between;
         background-color: #F3F7FA;
 
-        .mat-dialog-title {
-            align-self: center;
-            padding: 0px 0px 0px 10px;
-            font-size: 22px;
-            font-weight: 600;
-            line-height: 24px;
-            margin-bottom: 0px;
+        /deep/ dx-text-box[name="title"] {
+            width: 440px;
+            &.dx-state-readonly {
+                .dx-texteditor-container:after {
+                    display: none;
+                }
+            }
+            .dx-texteditor-container:after {
+                content: '';
+                left: 15px;
+                width: 442px;
+                height: 1px;
+                bottom: 18px;
+                position: absolute;
+                display: inline-block;
+                background-color: #dadee1;
+            }
+            input {                                
+                &, &:read-only {
+                    font-size: 22px;
+                    font-weight: 500;
+                    line-height: 1.09;
+                    letter-spacing: 0.4px;
+                    color: #202b35;
+                    padding-left: 17px;
+                    background-color: #F3F7FA;
+                    border: none;
+                }
+            }
         }
     }
 
     md-dialog-content {
         height: 100%;
-        max-height: 100%;
+        max-height: calc(~"100% - 82px");
         margin: 0px;
         padding: 0px;
-        overflow: hidden;
     }
 
     md-dialog-actions {
@@ -89,11 +110,11 @@
 
     /deep/ .dx-checkbox {
         .dx-checkbox-icon {
-            width: 20px;
-            height: 20px;
+            width: 14px;
+            height: 14px;
             background-color: #FFF;
             border: 1px solid #DADEE1 !important;
-            border-radius: 4px;
+            border-radius: 3px;
         }
 
         &.dx-checkbox-checked {

@@ -13,30 +13,33 @@ export class EqualValidator implements Validator {
     constructor(
         @Attribute('validateEqual') public validateEqual: string,
         @Attribute('reverse') public reverse: string
-        ) {
+    ) {
     }
 
     private get isReverse() {
-        if (!this.reverse) return false;
-        return this.reverse === 'true' ? true: false;
+        if (!this.reverse) {
+            return false;
+        }
+
+        return this.reverse === 'true';
     }
 
     validate(control: AbstractControl): { [key: string]: any } {
-        let pairControl = control.root.get(this.validateEqual);
+        const pairControl = control.root.get(this.validateEqual);
         if (!pairControl) {
             return null;
         }
 
-        let value = control.value;
-        let pairValue = pairControl.value;
+        const value = control.value;
+        const pairValue = pairControl.value;
 
         if (!value && !pairValue) {
             return null;
         }
 
-        if(this.isReverse) {
+        if (this.isReverse) {
             if (value === pairValue) {
-                if(pairControl.errors){
+                if (pairControl.errors) {
                     delete pairControl.errors['validateEqual'];
                 }
 
@@ -46,7 +49,7 @@ export class EqualValidator implements Validator {
             } else {
                 pairControl.setErrors({
                     validateEqual: false
-                })
+                });
             }
 
             return null;
@@ -54,7 +57,7 @@ export class EqualValidator implements Validator {
             if (value !== pairValue) {
                 return {
                     validateEqual: false
-                }
+                };
             }
         }
     }

@@ -1,40 +1,42 @@
 <div class="sidebar-filter-links" *ngIf="filters.length">
-    <div class="search-field">
-        <input type="text" placeholder="Search" value="">
-    </div>
-
-    <div class="filter-title">
-        <dx-button
-          [ngClass]="{'active-filter':_filtersService.hasFilterSelected}"
-          [text]="ls('Platform', 'Filters')"
-          [iconSrc]="'assets/common/icons/funnel-blue-icon.svg'"
-          (onClick)="closeFilters($event)"
-        ></dx-button>
-        <dx-button
-          [text]="ls('Platform', 'Sort')"
-          [iconSrc]="'assets/common/icons/sort-icon.svg'"
-        ></dx-button>
-        <button class="clear-all" (click)="clearAllFilters()">
-            {{ls('Platform', 'ClearAll')}}
-        </button>
-    </div>
+    <dx-scroll-view [showScrollbar]="onHover">
+        <div class="filter-title">
+            <dx-button
+              [text]="ls('Platform', 'Sort')"
+              [iconSrc]="'assets/common/icons/sort-icon-down.svg'"
+            ></dx-button>
+            <button class="clear-all" (click)="clearAllFilters()">
+                {{ls('Platform', 'ClearAll')}}
+            </button>
+        </div>
         <ul class="filter-links">
             <ng-template ngFor let-filter [ngForOf]="filters" let-i="index">
-                <li class="filter-link">
-                    <a (click)="showFilterDialog($event, filter)">
+                <li class="filter-link" [ngClass]="{'active-filter':filter.displayElements && filter.displayElements.length}">
+                    <a class="filter-link-header" (click)="showFilterDialog($event, filter)">
                         {{l('FilterBy' + capitalize(filter.caption) + 'Header')}}
                         <i class="fa fa-angle-right pull-right" aria-hidden="true"></i>
                     </a>
                     <ul class="sub-filter-list">
-                        <ng-template ngFor let-displayFilterElement [ngForOf]="filter.displayElements">
+                        <ng-container *ngFor="let displayFilterElement of filter.displayElements | slice:0:2">
                             <li *ngIf="displayFilterElement.displayValue" class="sub-filter-item" [ngClass]="{'nested': displayFilterElement.parentCode}">
                                 {{displayFilterElement.displayValue}}<i *ngIf="!displayFilterElement.readonly" class="minus-icon" aria-hidden="true" (click)="excludeFilter($event, filter, displayFilterElement)"></i>
                             </li>
-                        </ng-template>
+                        </ng-container>
+                        <div class="hide-all-elements">
+                            <ng-container *ngFor="let displayFilterElement of filter.displayElements | slice:2">
+                                <li *ngIf="displayFilterElement.displayValue" class="sub-filter-item" [ngClass]="{'nested': displayFilterElement.parentCode}">
+                                    {{displayFilterElement.displayValue}}<i *ngIf="!displayFilterElement.readonly" class="minus-icon" aria-hidden="true" (click)="excludeFilter($event, filter, displayFilterElement)"></i>
+                                </li>
+                            </ng-container>
+                        </div>
+                        <li *ngIf="filter.displayElements && filter.displayElements.length > 2" class="sub-filter-item">
+                            <a class="toggle-more" (click)="itemClick($event, filter)">+{{filter.displayElements.length - 2}} more</a>
+                        </li>
                     </ul>
                 </li>
             </ng-template>
         </ul>
+    </dx-scroll-view>
 </div>
 
 <div class="sidebar-filters" *ngIf="activeFilter">
