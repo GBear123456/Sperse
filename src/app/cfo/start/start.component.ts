@@ -29,7 +29,7 @@ export class StartComponent extends CFOComponentBase implements OnInit {
     }
 
     loadData() {
-        this._instanceServiceProxy.getStatus(InstanceType46[this.instanceType]).subscribe((data) => {
+        this._instanceServiceProxy.getStatus(InstanceType46[this.instanceType], this.instanceId).subscribe((data) => {
             this.isInitialized = data.status == GetStatusOutputStatus.Active;
 
             let setupItem = this._appService.topMenu.items[0];

@@ -7055,14 +7055,16 @@ export class InstanceServiceProxy {
     }
 
     /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType46): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType46, instanceId: number): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
-        if (instanceType === undefined || instanceType === null)
-            throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
-        else
+        if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {

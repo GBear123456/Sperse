@@ -26,9 +26,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @ViewChild('keywordsComponent') keywordList: DxDataGridComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
-    
     showSelectedTransactions = false;
-    
     minAmount: number;
     maxAmount: number;
     bankId: number;
@@ -107,7 +105,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         else if (this.data.transactionIds && this.data.transactionIds.length)
             _classificationServiceProxy.getTransactionCommonDetails(InstanceType35[this.instanceType], this.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data))
                 .subscribe((data) => {
-                    this.bankId = data.bankId;          
+                    this.bankId = data.bankId;
                     this.accountId = data.bankAccountId;
                     if (data.amountFormat)
                         this.amountFormat = ConditionDtoCashFlowAmountFormat[data.amountFormat.toString()];
@@ -134,11 +132,11 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             let categories = [];
             this.categorization = data;
             if (data.types)
-                 _.mapObject(data.types, (item, key) => {
+                Object.keys(data.types).sort((a, b) => +(a < b) ).forEach(typeKey => {
                     categories.push({
-                        key: key,
+                        key: typeKey,
                         parent: 0,
-                        name: item.name
+                        name: data.types[typeKey].name
                     });
                 });
             if (data.groups)
@@ -153,7 +151,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                  _.mapObject(data.items, (item, key) => {
                     categories.push({
                         key: key,
-                        parent: item.groupId + 
+                        parent: item.groupId +
                             data.groups[item.groupId].typeId,
                         name: item.name
                     });

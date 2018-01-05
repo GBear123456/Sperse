@@ -3,8 +3,6 @@ import { AppComponentBase } from 'shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { SubscriptionStartType } from '@shared/AppEnums';
 import { SetupService } from './setup.service';
-import { AppConsts } from '@shared/AppConsts';
-import * as moment from 'moment';
 
 @Component({
     templateUrl: './setup.component.html',

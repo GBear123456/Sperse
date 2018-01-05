@@ -7,18 +7,13 @@ import { AccountsComponent } from './accounts/accounts.component';
 
 import { ModalModule } from 'ngx-bootstrap';
 
-import { MatTabsModule, MatDialogModule } from '@angular/material';
-
 @NgModule({
     imports: [
         CfoRoutingModule,
         ngCommon.CommonModule,
         CommonModule,
         AppCommonModule,
-        ModalModule.forRoot(),
-
-        MatTabsModule,
-        MatDialogModule
+        ModalModule.forRoot()
     ],
     declarations: [
         AccountsComponent
