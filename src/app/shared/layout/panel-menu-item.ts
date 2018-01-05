@@ -1,4 +1,4 @@
-﻿export class PanelMenuItem {
+export class PanelMenuItem {
     text: string = '';
     permissionName: string = '';
     icon: string = '';
@@ -13,6 +13,7 @@
         this.icon = icon;
         this.route = route;
         this.disabled = !route;
+        this.visible = Boolean(text);
 
         if (items === undefined) {
             this.items = [];

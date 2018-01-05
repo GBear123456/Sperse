@@ -4,7 +4,7 @@ import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { SetupStepComponent } from '../../shared/setup-steps/setup-steps.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { InstanceServiceProxy, InstanceType48 } from 'shared/service-proxies/service-proxies';
 import { AppService } from 'app/app.service';
 
@@ -19,14 +19,11 @@ export class SetupComponent extends CFOComponentBase implements OnInit {
     public headlineConfig;
 
     constructor(injector: Injector,
-        route: ActivatedRoute,
         private _appService: AppService,
         private _instanceServiceProxy: InstanceServiceProxy,
         private _router: Router
     ) {
-        super(injector, route);
-
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
+        super(injector);
     }
 
     ngOnInit(): void {
@@ -41,7 +38,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit {
 
     onStart(): void {
         this._instanceServiceProxy.setup(InstanceType48[this.instanceType]).subscribe((data) => {
-            this._appService.topMenu.items[0].text = this.l('Dashboard');
+            this._cfoService.instanceChangeProcess();
             this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/bank-accounts']);
         });
     }

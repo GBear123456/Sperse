@@ -2,7 +2,6 @@ import { Component, OnInit, Injector, EventEmitter, Output, OnDestroy } from '@a
 import { FinancialInformationServiceProxy, SyncProgressOutput, InstanceType44, InstanceType45 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
     templateUrl: './synch-progress.component.html',
@@ -19,12 +18,9 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     timeoutHandler: any;
 
     constructor(injector: Injector,
-        route: ActivatedRoute,
         private _financialInformationServiceProxy: FinancialInformationServiceProxy
     ) {
-        super(injector, route);
-
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
+        super(injector);
     }
 
     ngOnInit(): void {
