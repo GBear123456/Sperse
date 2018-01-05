@@ -3,20 +3,22 @@
      aria-hidden="true" [config]="{backdrop: 'static'}">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
+
             <div class="modal-header">
-                <h4 class="modal-title">
-                    {{options.title}}
-                </h4>
+                <h5 class="modal-title">
+                    <span>{{l('SelectUsers')}}</span>
+                </h5>
                 <button type="button" class="close" (click)="close()" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+
             <div class="modal-body">
                 <form novalidate (ngSubmit)="refreshTable()" autocomplete="off">
-                    <div *ngIf="options.isFilterEnabled" class="input-group margin-bottom-10">
+                    <div class="input-group margin-bottom-10">
                         <input autoFocus [(ngModel)]="filterText" name="filterText" class="form-control" placeholder="{{l('SearchWithThreeDot')}}" type="text">
                         <span class="input-group-btn">
-                            <button class="btn btn btn-primary" type="submit"><i class="flaticon-search-1"></i></button>
+                            <button class="btn btn-primary" type="submit"><i class="flaticon-search-1"></i></button>
                         </span>
                     </div>
 
@@ -29,20 +31,9 @@
                                      [paginator]="false"
                                      [lazy]="true"
                                      emptyMessage="{{l('NoData')}}"
-                                     [responsive]="primengDatatableHelper.isResponsive">
-                            <p-column field=""
-                                      header="{{l('Select')}}"
-                                      [sortable]="false"
-                                      [style]="{'width':'15%'}"
-                                      styleClass="text-center">
-                                <ng-template let-record="rowData" pTemplate="body">
-                                    <button class="btn btn-metal m-btn m-btn--icon m-btn--icon-only"
-                                            (click)="selectItem(record)"
-                                            title="{{l('Select')}}">
-                                        <i class="la la-chevron-circle-right"></i>
-                                    </button>
-                                </ng-template>
-                            </p-column>
+                                     [responsive]="primengDatatableHelper.isResponsive"
+                                     [(selection)]="selectedMembers">
+                            <p-column selectionMode="multiple" [style]="{'width':'38px'}"></p-column>
                             <p-column field="name" header="{{l('Name')}}" [sortable]="false"></p-column>
                         </p-dataTable>
                         <div class="primeng-paging-container">
@@ -61,9 +52,10 @@
                 </form>
 
             </div>
-
+            
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
+                <button [disabled]="saving" type="button" class="btn btn-secondary" (click)="close()">{{l("Cancel")}}</button>
+                <button class="btn btn-primary" (click)="addUsersToOrganizationUnit()" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
             </div>
 
         </div>

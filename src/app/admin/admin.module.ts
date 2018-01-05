@@ -17,6 +17,7 @@ import { RoleComboComponent } from './shared/role-combo.component';
 import { CreateOrEditUserModalComponent } from './users/create-or-edit-user-modal.component'
 import { EditUserPermissionsModalComponent } from './users/edit-user-permissions-modal.component';
 import { PermissionTreeComponent } from './shared/permission-tree.component';
+import { AddMemberModalComponent } from './organization-units/add-member-modal.component';
 
 import {RolesComponent} from './roles/roles.component';
 import {CreateOrEditRoleModalComponent} from './roles/create-or-edit-role-modal.component';
@@ -39,6 +40,9 @@ import {AddOrEditSSLBindingModal} from './settings/modals/add-or-edit-ssl-bindin
 import {HostDashboardComponent} from './dashboard/host-dashboard.component';
 import {SubscriptionManagementComponent} from './subscription-management/subscription-management.component';
 
+import { DataTableModule } from 'primeng/primeng';
+import { PaginatorModule } from 'primeng/primeng';
+
 @NgModule({
     imports: [
       FormsModule,
@@ -57,7 +61,9 @@ import {SubscriptionManagementComponent} from './subscription-management/subscri
       DxSelectBoxModule,
       DxTextBoxModule,
       DxButtonModule,
-      UtilsModule
+      UtilsModule,
+      DataTableModule,
+      PaginatorModule
     ],
     declarations: [
       UsersComponent,
@@ -86,7 +92,11 @@ import {SubscriptionManagementComponent} from './subscription-management/subscri
       UploadSSLCertificateModalComponent,
       AddOrEditSSLBindingModal,
       HostDashboardComponent,
-      SubscriptionManagementComponent
+      SubscriptionManagementComponent,
+      AddMemberModalComponent
+    ],
+    exports: [
+        AddMemberModalComponent
     ]
 })
 

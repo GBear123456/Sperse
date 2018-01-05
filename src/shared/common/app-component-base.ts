@@ -11,6 +11,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ExportService } from '@shared/common/export/export.service';
 import { httpConfiguration } from '@shared/http/httpConfiguration';
 import { ScreenHelper } from '@shared/helpers/ScreenHelper';
+import { PrimengDatatableHelper } from 'shared/helpers/PrimengDatatableHelper';
 
 import buildQuery from 'odata-query';
 import * as _ from 'underscore';
@@ -34,6 +35,7 @@ export abstract class AppComponentBase {
     multiTenancy: AbpMultiTenancyService;
     appSession: AppSessionService;
     httpConfig: httpConfiguration;
+    primengDatatableHelper: PrimengDatatableHelper;
 
     private _elementRef: ElementRef;
     private _applicationRef: ApplicationRef;
@@ -53,6 +55,7 @@ export abstract class AppComponentBase {
         this.httpConfig = _injector.get(httpConfiguration);
         this._applicationRef = _injector.get(ApplicationRef);
         this._exportService = _injector.get(ExportService);
+        this.primengDatatableHelper = new PrimengDatatableHelper();
     }
 
     getRootComponent() {
