@@ -12,9 +12,9 @@
       line-height: 1.38;
       letter-spacing: 0.3px;
       font-weight: 500;
-    }    
+    }
 
-    .transactions-container {        
+    .transactions-container {
         div.close-transactions {
             position: absolute;
             right: 10px;
@@ -22,7 +22,7 @@
             height: 45px;
             z-index: 1;
             cursor: pointer;
-            top: 10px;            
+            top: 10px;
 
             &:before, &:after {
                 position: absolute;
@@ -94,7 +94,7 @@
         min-width: 720px;
         .warning-box {
             width: 100%;
-            height: 68px;  
+            height: 68px;
             padding-left: 57px;
             display: flex;
             background-color: #FDEFF3;
@@ -128,8 +128,18 @@
             h3 {
                 color: #202b35;
             }
+
+            .rule {
+                div.field {
+                    display: inline-flex;
+                    width: 49%;
+                    &:nth-child(2n + 1) {
+                        margin-right: 2%;
+                    }
+                }
+            }
+
             div.field {
-                display: flex;
                 justify-content: space-between;
                 dx-number-box {
                     /deep/ input {
@@ -175,7 +185,7 @@
                             background: url('../../../../assets/common/icons/cancel.svg') no-repeat center;
                         }
                     }
-                }      
+                }
                 input {
                     font-size: 15px;
                     font-weight: 300;
@@ -208,20 +218,20 @@
                     color: #00aeef;
                     cursor: pointer;
                 }
-                &:before { 
+                &:before {
                     content: "";
                     top: 25px;
                     z-index: 1;
                     right: -44px;
                     position: absolute;
                     border-top: 13px solid transparent;
-                    border-bottom: 13px solid transparent;  
+                    border-bottom: 13px solid transparent;
                     border-left: 15px solid #FFF;
                 }
                 .inline-header {
                     display: flex;
                     justify-content: space-between;
-                    & > * { 
+                    & > * {
                         align-self: center;
                         margin-top: 24px;
                         margin-bottom: 16px;
@@ -237,7 +247,7 @@
                     }
                     .dx-radiobutton-checked {
                         .dx-item-content {
-                            font-weight: 400;                          
+                            font-weight: 400;
                         }
                         .dx-radiobutton-icon:before {
                             border: solid 1px #dadee1;
@@ -262,7 +272,7 @@
                         height: auto!important;
                         padding-bottom: 50px;
                         border: solid 1px #dadee1;
-                        border-radius: 8px;   
+                        border-radius: 8px;
                         .dx-datagrid-nodata {
                             width: 100%;
                             left: 0px;
@@ -271,7 +281,7 @@
                             margin-right: 0px!important;
                             margin-left: 0px!important;
                             text-align: center;
-                        }         
+                        }
                         .dx-datagrid-content {
                             padding: 10px 24px;
                             .dx-datagrid-focus-overlay {
@@ -282,24 +292,24 @@
                     }
                 }
             }
-            .category {  
+            .category {
                 width: 510px;
                 position: relative;
                 background-color: #F9FBFC;
                 padding: 0px 24px 15px 31px;
                 border-left: 1px solid #dfdfdf;
-                &:before { 
+                &:before {
                     content: "";
                     top: 25px;
                     left: 0px;
                     position: absolute;
                     border-top: 13px solid transparent;
-                    border-bottom: 13px solid transparent;  
+                    border-bottom: 13px solid transparent;
                     border-left: 15px solid #dfdfdf;
                 }
                 div.field {
-                    margin-bottom: 40px;  
-                }                
+                    margin-bottom: 40px;
+                }
 
                 dx-select-box {
                     /deep/ input {
@@ -310,7 +320,7 @@
                 }
 
                 /deep/ dx-tree-list {
-                    .dx-treelist-header-panel, 
+                    .dx-treelist-header-panel,
                     .dx-treelist-headers {
                         display: none;
                     }
@@ -325,8 +335,8 @@
                                 border: 1px solid #00aeef;
                             }
                         }
-                        table { 
-                            border-collapse: separate; 
+                        table {
+                            border-collapse: separate;
                             td {
                                 border: solid 1px #fff;
                             }
@@ -345,26 +355,26 @@
                                         }
                                     }
                                 }
-                                td.dx-command-edit a {                                    
+                                td.dx-command-edit a {
                                     visibility: hidden;
                                 }
                                 &.dx-state-hover, &.dx-selection, &.dx-edit-row {
                                     cursor: pointer;
-                                    td:first-child { 
+                                    td:first-child {
                                         border-right: none!important;
-                                        border-top-left-radius: 2px; 
-                                        border-bottom-left-radius: 2px; 
+                                        border-top-left-radius: 2px;
+                                        border-bottom-left-radius: 2px;
                                     }
-                                    td:last-child { 
+                                    td:last-child {
                                         border-left: none!important;
-                                        border-top-right-radius: 2px; 
-                                        border-bottom-right-radius: 2px; 
+                                        border-top-right-radius: 2px;
+                                        border-bottom-right-radius: 2px;
                                     }
                                     td {
                                         border: solid 1px #00aeef;
                                         background-color: #F0FAFE;
                                         color: #424c56;
-                                    }    
+                                    }
                                     td.dx-command-edit a {
                                         visibility: visible;
                                     }
@@ -385,7 +395,7 @@
                     }
                 }
 
-                h3 {                    
+                h3 {
                   margin-top: 34px;
                   margin-bottom: 16px;
                 }
