@@ -45,7 +45,6 @@ import 'rxjs/add/observable/forkJoin';
 
 import { SortState } from '@app/cfo/shared/common/sorting/sort-state';
 import { SortingItemModel } from '@app/cfo/shared/common/sorting/sorting-item.model';
-import { ActivatedRoute } from '@angular/router';
 
 const moment = extendMoment(Moment);
 
@@ -382,7 +381,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     transactionsAverage = 0;
     startDataLoading = false;
     constructor(injector: Injector,
-                route: ActivatedRoute,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
                 private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
@@ -391,10 +389,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 public dialog: MatDialog,
                 public userPreferencesService: UserPreferencesService
     ) {
-        super(injector, route);
+        super(injector);
+        
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit() {

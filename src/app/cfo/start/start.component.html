@@ -1,4 +1,4 @@
 <div [@routerTransition]>
-    <setup *ngIf="isInitialized === false"></setup>
-    <dashboard *ngIf="isInitialized === true"></dashboard>
+    <setup *ngIf="_cfoService.initialized === false"></setup>
+    <dashboard *ngIf="_cfoService.initialized === true"></dashboard>
 </div>

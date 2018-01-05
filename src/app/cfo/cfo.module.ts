@@ -29,6 +29,9 @@ import { MatTabsModule, MatDialogModule } from '@angular/material';
 
 import { SortingComponent } from '@app/cfo/shared/common/sorting/sorting.component';
 
+import { CFOService } from 'app/cfo/cfo.service';
+import { InstanceServiceProxy } from 'shared/service-proxies/service-proxies';
+
 import {
     DxButtonModule,
     DxCheckBoxModule,
@@ -105,7 +108,8 @@ import {
         RuleDialogComponent,
         CategoryDeleteDialogComponent,
         PreferencesDialogComponent
-    ]
+    ],
+    providers: [InstanceServiceProxy, CFOService]
 })
 
 export class CfoModule { }

@@ -1,11 +1,13 @@
-﻿<div [@routerTransition]>
-    <app-headline [config]="headlineConfig"></app-headline>
-    <div class="row">
-        <div class="col-lg-6">
-            <organization-tree #ouTree (ouSelected)="ouMembers.organizationUnit = $event"></organization-tree>
-        </div>
-        <div class="col-lg-6">
-            <organization-unit-members #ouMembers (memberAdded)="ouTree.memberAdded($event)" (memberRemoved)="ouTree.memberRemoved($event)"></organization-unit-members>
+<app-headline [config]="headlineConfig"></app-headline>
+<div [@routerTransition]>
+    <div class="m-content">
+        <div class="row">
+            <div class="col-lg-6">
+                <organization-tree #ouTree (ouSelected)="ouMembers.organizationUnit = $event"></organization-tree>
+            </div>
+            <div class="col-lg-6">
+                <organization-unit-members #ouMembers (membersAdded)="ouTree.membersAdded($event)" (memberRemoved)="ouTree.memberRemoved($event)"></organization-unit-members>
+            </div>
         </div>
     </div>
 </div>

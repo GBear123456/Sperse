@@ -24,6 +24,8 @@ export class AppService {
 
     public toolbarConfig: any;
 
+    public params: any;
+
     constructor() {
         this._config = new Subject<Object>();
     }
@@ -64,6 +66,7 @@ export class AppService {
             clone[3] = this.replaceParams(record[3], params);
             return clone;
         });
+        this.params = params;
         this._config.next(config);
     }
 

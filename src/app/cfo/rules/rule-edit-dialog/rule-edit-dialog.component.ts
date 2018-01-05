@@ -188,9 +188,9 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                             name: this.data.title,
                             parentId: this.data.parentId,
                             categoryId: this.getSelectedCategoryId(),
-                            sourceTransactionsList: this.data.transactionIds,
+                            sourceTransactionList: this.data.transactionIds,
                             transactionDecriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
-                            transactionDecriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor: undefined,
+                            transactionDecriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
                             applyOption: (this.data.id ? EditRuleDtoApplyOption: CreateRuleDtoApplyOption)[option],
                             condition: ConditionDto.fromJS({
                                 minAmount: this.minAmount,

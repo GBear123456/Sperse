@@ -1,10 +1,12 @@
-﻿import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, Injector, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ModalDirective } from 'ngx-bootstrap';
 import { Observable } from 'rxjs/Observable';
 import { PagedResultDtoOfNameValueDto, NameValueDto } from '@shared/service-proxies/service-proxies';
-import { JTableHelper } from '@shared/helpers/JTableHelper';
 import { AppConsts } from '@shared/AppConsts';
+import { DataTable } from 'primeng/components/datatable/datatable';
+import { Paginator } from 'primeng/components/paginator/paginator';
+import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 
 export interface ICommonLookupModalOptions {
     title?: string;
@@ -15,12 +17,13 @@ export interface ICommonLookupModalOptions {
     pageSize?: number;
 }
 
+//For more modal options http://valor-software.com/ngx-bootstrap/#/modals#modal-directive
+
 @Component({
     selector: 'commonLookupModal',
     templateUrl: './common-lookup-modal.component.html'
 })
 export class CommonLookupModalComponent extends AppComponentBase {
-
     static defaultOptions: ICommonLookupModalOptions = {
         dataSource: null,
         canSelect: () => true,
@@ -32,15 +35,15 @@ export class CommonLookupModalComponent extends AppComponentBase {
     @Output() itemSelected: EventEmitter<NameValueDto> = new EventEmitter<NameValueDto>();
 
     @ViewChild('modal') modal: ModalDirective;
-    @ViewChild('table') table: ElementRef;
-
-    private _$table: JQuery;
+    @ViewChild('dataTable') dataTable: DataTable;
+    @ViewChild('paginator') paginator: Paginator;
 
     options: ICommonLookupModalOptions;
 
-    filterText: string = '';
+    isShown = false;
+    isInitialized = false;
+    filterText = '';
     tenantId?: number;
-    loading = false;
 
     constructor(
         injector: Injector
@@ -64,68 +67,57 @@ export class CommonLookupModalComponent extends AppComponentBase {
             throw Error('Should call CommonLookupModalComponent.configure once before CommonLookupModalComponent.show!');
         }
 
-        //this.filterText = '';
         this.modal.show();
-        this.createTableIfNeeded();
-        if (this.options.loadOnStartup) {
-            this.refreshTable();
-        }
     }
 
     refreshTable(): void {
-        this._$table.jtable('load');
+        this.paginator.changePage(this.paginator.getPage());
     }
 
     close(): void {
         this.modal.hide();
     }
 
-    createTableIfNeeded(): void {
-        if (this._$table) {
+    shown(): void {
+        this.isShown = true;
+        this.getRecordsIfNeeds(null);
+    }
+
+    getRecordsIfNeeds(event?: LazyLoadEvent): void {
+        if (!this.isShown) {
             return;
         }
 
-        this._$table = $(this.table.nativeElement);
-        this._$table.jtable({
-            title: this.options.title,
-            paging: true,
-            pageSize: this.options.pageSize,
+        if (!this.options.loadOnStartup && !this.isInitialized) {
+            return;
+        }
 
-            actions: {
-                listAction: (postData, jtParams: JTableParams) => {
-                    this.loading = true;
-                    return JTableHelper.toJTableListAction(
-                        this.options
-                            .dataSource(jtParams.jtStartIndex, jtParams.jtPageSize, this.filterText, this.tenantId)
-                            .finally(() => this.loading = false)
-                    );
-                }
-            },
+        this.getRecords(event);
+        this.isInitialized = true;
+    }
 
-            fields: {
-                select: {
-                    title: this.l('Select'),
-                    width: '10%',
-                    display: (data: JTableFieldOptionDisplayData<NameValueDto>) => {
-                        let $span = $('<span></span>');
-                        $('<button class="btn btn-default btn-xs" title="' + this.l('Select') + '"><i class="fa fa-check"></i></button>')
-                            .appendTo($span)
-                            .click(() => {
-                                this.selectItem(data.record);
-                            });
-                        return $span;
-                    }
-                },
-                name: {
-                    title: this.l('Name'),
-                    width: '90%'
-                }
-            }
-        });
+    getRecords(event?: LazyLoadEvent): void {
+        const maxResultCount = this.primengDatatableHelper.getMaxResultCount(this.paginator, event);
+        const skipCount = this.primengDatatableHelper.getSkipCount(this.paginator, event);
+        if (this.primengDatatableHelper.shouldResetPaging(event)) {
+            this.paginator.changePage(0);
+
+            return;
+        }
+
+        this.primengDatatableHelper.showLoadingIndicator();
+
+        this.options
+            .dataSource(skipCount, maxResultCount, this.filterText, this.tenantId)
+            .subscribe(result => {
+                this.primengDatatableHelper.totalRecordsCount = result.totalCount;
+                this.primengDatatableHelper.records = result.items;
+                this.primengDatatableHelper.hideLoadingIndicator();
+            });
     }
 
     selectItem(item: NameValueDto) {
-        let boolOrPromise = this.options.canSelect(item);
+        const boolOrPromise = true; //this.options.canSelect(item);
         if (!boolOrPromise) {
             return;
         }
@@ -137,9 +129,7 @@ export class CommonLookupModalComponent extends AppComponentBase {
         }
 
         //assume as observable
-        this.loading = true;
         (boolOrPromise as Observable<boolean>)
-            .finally(() => this.loading = false)
             .subscribe(result => {
                 if (result) {
                     this.itemSelected.emit(item);

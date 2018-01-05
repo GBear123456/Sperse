@@ -24,7 +24,6 @@ import { MatDialog } from '@angular/material';
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 import * as moment from 'moment';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -128,16 +127,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     constructor(injector: Injector,
-        route: ActivatedRoute,
         public dialog: MatDialog,
         private _appService: AppService,
         private _TransactionsServiceProxy: TransactionsServiceProxy,
         public filtersService: FiltersService
     ) {
-        super(injector, route);
+        super(injector);
 
         this.filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
 
         this.initToolbarConfig();
     }

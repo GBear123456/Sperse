@@ -1,6 +1,5 @@
 import { CFOComponentBase } from "@app/cfo/shared/common/cfo-component-base";
 import { Component, OnInit, Injector } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
 import { AppConsts } from "shared/AppConsts";
 import { appModuleAnimation } from "shared/animations/routerTransition";
 
@@ -13,12 +12,8 @@ import { appModuleAnimation } from "shared/animations/routerTransition";
 export class DashboardComponent extends CFOComponentBase implements OnInit {
     public headlineConfig;
 
-    constructor(injector: Injector,
-        route: ActivatedRoute
-    ) {
-        super(injector, route);
-
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
+    constructor(injector: Injector) {
+        super(injector);
     }
 
     ngOnInit(): void {

@@ -6,7 +6,6 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { ClassificationServiceProxy, InstanceType17 } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'categorization',
@@ -32,11 +31,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
     constructor(
         injector: Injector,
-        route: ActivatedRoute,
         private _filtersService: FiltersService,
         private _classificationServiceProxy: ClassificationServiceProxy
     ) {
-        super(injector, route);       
+        super(injector);       
     }
 
     ngOnInit() {
