@@ -10,6 +10,7 @@ export class NoDataComponent extends AppComponentBase implements OnInit {
     @Input('imageSource') imageSource = '/assets/common/icons/no-data-icon.png';
     @Input('title') title: string = this.l('No_Available_Data');
     @Input('text') text;
+    @Input('showLink') showLink: boolean;
     @Input('linkText') linkText: string;
     @Input('linkUrl') linkUrl: string;
 

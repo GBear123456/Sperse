@@ -380,6 +380,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     transactionsAmount = 0;
     transactionsAverage = 0;
     startDataLoading = false;
+    filteredLoad = false;
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -390,7 +391,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 public userPreferencesService: UserPreferencesService
     ) {
         super(injector);
-        
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
@@ -399,7 +399,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         super.ngOnInit();
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = this.currencyId;
-
         /** Create parallel operations */
         let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType4[this.instanceType], this.instanceId);
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType8[this.instanceType], this.instanceId);
@@ -446,6 +445,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.requestFilter[filter.field] = undefined;
             }
             this.closeTransactionsDetail();
+            this.filteredLoad = true;
             this.loadGridDataSource();
         });
     }
@@ -576,7 +576,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 items: [
                     {
                         name: 'total',
-                        html: `${this.ls('Platform', 'Total')} : <span class="value">${this.transactionsTotal}</span>`
+                        html: `${this.ls('Platform', 'Total')} : <span class="value">${this.transactionsTotal.toLocaleString('en-EN', {style: 'currency',  currency: 'USD' })}</span>`
                     },
                     {
                         name: 'count',
@@ -584,7 +584,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     },
                     {
                         name: 'average',
-                        html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this.transactionsAverage}</span>`
+                        html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this.transactionsAverage.toLocaleString('en-EN', {style: 'currency',  currency: 'USD' })}</span>`
                     }
                 ]
             }
@@ -645,7 +645,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     loadGridDataSource() {
-        abp.ui.setBusy();
+        this.startLoading();
         $('.pivot-grid').addClass('invisible');
         this.requestFilter.forecastModelId = this.selectedForecastModel.id;
         this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.requestFilter)
@@ -673,8 +673,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     );
                 } else {
                     this.cashflowData = null;
-                    abp.ui.clearBusy();
-                    $('.pivot-grid').removeClass('invisible');
+                    this.finishLoading();
                 }
                 this.dataSource = this.getApiDataSource();
 
@@ -1026,8 +1025,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.changeHistoricalColspans(lowestOpenedInterval);
 
         if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
-            abp.ui.clearBusy();
-            $('.pivot-grid').removeClass('invisible');
+            this.finishLoading();
         }
 
         /** Clear cache with columns activity */
@@ -2298,5 +2296,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             'sortBySummaryField': null,
             'sortBySummaryPath': null
         });
+    }
+
+    /** Begin loading animation */
+    startLoading() {
+        abp.ui.setBusy();
+    }
+
+    /** Finish loading animation */
+    finishLoading() {
+        abp.ui.clearBusy();
+        $('.pivot-grid').removeClass('invisible');
     }
 }
