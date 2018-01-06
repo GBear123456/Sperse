@@ -12,12 +12,7 @@ import {
     ClassificationServiceProxy,
     GetCategoriesOutput,
     CashFlowGridSettingsDto,
-    InstanceType,
-    InstanceType3,
-    InstanceType4,
-    InstanceType6,
-    InstanceType8,
-    InstanceType17,
+    InstanceType
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 
@@ -400,10 +395,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = this.currencyId;
         /** Create parallel operations */
-        let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType4[this.instanceType], this.instanceId);
-        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType8[this.instanceType], this.instanceId);
-        let getCategoriesObservalbel = this._classificationServiceProxy.getCategories(InstanceType17[this.instanceType], this.instanceId);
-        let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType6[this.instanceType], this.instanceId);
+        let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
+        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
+        let getCategoriesObservalbel = this._classificationServiceProxy.getCategories(InstanceType[this.instanceType], this.instanceId);
+        let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoriesObservalbel, getCashflowGridSettings)
             .subscribe(result => {
                 /** Initial data handling */
@@ -962,7 +957,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             notificationMessage = this.l('AppliedSuccessfully');
         /** If settings were saved - get them from the api */
         } else {
-            preferencesObservable = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType6[this.instanceType], this.instanceId);
+            preferencesObservable = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
             notificationMessage = this.l('SavedSuccessfully');
         }
         preferencesObservable.subscribe(result => {
@@ -2243,7 +2238,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     getStatsDetails(params): void {
         this._cashflowServiceProxy
-            .getStatsDetails(InstanceType3[this.instanceType], this.instanceId, params)
+            .getStatsDetails(InstanceType[this.instanceType], this.instanceId, params)
             .subscribe(result => {
                 this.statsDetailResult = result.map(detail => {
                     detail.date = this.removeLocalTimezoneOffset(detail.date);
