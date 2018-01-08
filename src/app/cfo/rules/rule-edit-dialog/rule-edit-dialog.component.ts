@@ -174,26 +174,25 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         super.ngOnInit();
 
         this.data.editTitle = true;
-        this.data.title = this.data.name ||
-            this.l('Enter the rule name');
+        this.data.placeholder = this.l('Enter the rule name');
         this.data.buttons = [{
-            title: this.l(this.data.id ? 'Edit rule': 'Add rule'),
+            title: this.l(this.data.id ? 'Edit rule' : 'Add rule'),
             class: 'primary',
             action: () => {
                 if (this.validate()) {
-                    let option = this.data.options[0].value ? 'MatchedAndUnclassified': 'SelectedOnly';
+                    let option = this.data.options[0].value ? 'MatchedAndUnclassified' : 'SelectedOnly';
                     this._classificationServiceProxy[(this.data.id ? 'edit' : 'create') + 'Rule'](
                         InstanceType[this.instanceType],
                         this.instanceId,
-                        (this.data.id ? EditRuleDto: CreateRuleDto).fromJS({
+                        (this.data.id ? EditRuleDto : CreateRuleDto).fromJS({
                             id: this.data.id,
                             name: this.data.title,
                             parentId: this.data.parentId,
                             categoryId: this.getSelectedCategoryId(),
                             sourceTransactionList: this.data.transactionIds,
-                            transactionDecriptor: this.transactionAttributeTypes[this.descriptor] ? undefined: this.descriptor,
-                            transactionDecriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor: undefined,
-                            applyOption: (this.data.id ? EditRuleDtoApplyOption: CreateRuleDtoApplyOption)[option],
+                            transactionDecriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
+                            transactionDecriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
+                            applyOption: (this.data.id ? EditRuleDtoApplyOption : CreateRuleDtoApplyOption)[option],
                             condition: ConditionDto.fromJS({
                                 minAmount: this.minAmount,
                                 maxAmount: this.maxAmount,
