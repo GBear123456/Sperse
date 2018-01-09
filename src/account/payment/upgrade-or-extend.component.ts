@@ -1,4 +1,4 @@
-﻿import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 
@@ -12,7 +12,7 @@ import {
     PaymentPeriodType,
     SubscriptionPaymentGatewayType,
     EditionPaymentType
-} from "@shared/AppEnums";
+} from '@shared/AppEnums';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -42,8 +42,8 @@ export class UpgradeOrExtendComponent extends AppComponentBase implements OnInit
     }
 
     ngOnInit(): void {
-        this.editionPaymentType = parseInt(this._activatedRoute.snapshot.queryParams["editionPaymentType"]);
-        let upgradeEditionId = this._activatedRoute.snapshot.queryParams["upgradeEditionId"];
+        this.editionPaymentType = parseInt(this._activatedRoute.snapshot.queryParams['editionPaymentType']);
+        const upgradeEditionId = this._activatedRoute.snapshot.queryParams['upgradeEditionId'];
 
         this._paymentAppService.getPaymentInfo(upgradeEditionId)
             .subscribe((result: PaymentInfoDto) => {

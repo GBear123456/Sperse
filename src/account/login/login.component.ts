@@ -1,4 +1,4 @@
-﻿import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SessionServiceProxy, UpdateUserSignInTokenOutput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -12,7 +12,7 @@ import { UrlHelper } from 'shared/helpers/UrlHelper';
     animations: [accountModuleAnimation()]
 })
 export class LoginComponent extends AppComponentBase implements OnInit {
-    submitting: boolean = false;
+    submitting = false;
 
     constructor(
         injector: Injector,
@@ -40,8 +40,8 @@ export class LoginComponent extends AppComponentBase implements OnInit {
         if (this._sessionService.userId > 0 && UrlHelper.getReturnUrl() && UrlHelper.getSingleSignIn()) {
             this._sessionAppService.updateUserSignInToken()
                 .subscribe((result: UpdateUserSignInTokenOutput) => {
-                    var initialReturnUrl = UrlHelper.getReturnUrl();
-                    let returnUrl = initialReturnUrl + (initialReturnUrl.indexOf('?') >= 0 ? '&' : '?') +
+                    const initialReturnUrl = UrlHelper.getReturnUrl();
+                    const returnUrl = initialReturnUrl + (initialReturnUrl.indexOf('?') >= 0 ? '&' : '?') +
                         'accessToken=' + result.signInToken +
                         '&userId=' + result.encodedUserId +
                         '&tenantId=' + result.encodedTenantId;

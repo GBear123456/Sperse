@@ -1,6 +1,6 @@
-﻿import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AccountServiceProxy, PasswordComplexitySetting, ProfileServiceProxy } from '@shared/service-proxies/service-proxies'
+import { AccountServiceProxy, PasswordComplexitySetting, ProfileServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LoginService } from '../login/login.service';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
@@ -17,7 +17,7 @@ export class RegisterComponent extends AppComponentBase implements OnInit {
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     recaptchaSiteKey: string = AppConsts.recaptchaSiteKey;
 
-    saving: boolean = false;
+    saving = false;
 
     constructor(
         injector: Injector,

@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
@@ -18,26 +18,26 @@ import { LoginAttemptsModalComponent } from './login-attempts-modal.component';
 import { LinkedAccountsModalComponent } from './linked-accounts-modal.component';
 import { ChangePasswordModalComponent } from './profile/change-password-modal.component';
 import { ChangeProfilePictureModalComponent } from './profile/change-profile-picture-modal.component';
-import { MySettingsModalComponent } from './profile/my-settings-modal.component'
+import { MySettingsModalComponent } from './profile/my-settings-modal.component';
 import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
-import { NotificationSettingsModalCompoent } from '@app/shared/layout/notifications/notification-settings-modal.component';
+import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from '@shared/AppConsts';
-import { SubscriptionStartType, EditionPaymentType } from "@shared/AppEnums";
+import { SubscriptionStartType, EditionPaymentType } from '@shared/AppEnums';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
 @Component({
     templateUrl: './header.component.html',
-    selector: 'header',
+    selector: 'header-bar',
     encapsulation: ViewEncapsulation.None
 })
 export class HeaderComponent extends AppComponentBase implements OnInit {
 
-    @ViewChild('notificationSettingsModal') notificationSettingsModal: NotificationSettingsModalCompoent;
+    @ViewChild('notificationSettingsModal') notificationSettingsModal: NotificationSettingsModalComponent;
 
     @ViewChild('loginAttemptsModal') loginAttemptsModal: LoginAttemptsModalComponent;
     @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;
@@ -47,11 +47,11 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
-    isImpersonatedLogin: boolean = false;
+    isImpersonatedLogin = false;
 
-    shownLoginNameTitle: string = "";
-    shownLoginName: string = "";
-    profilePicture: string = "/assets/common/images/default-profile-picture.png";
+    shownLoginNameTitle = '';
+    shownLoginName = '';
+    profilePicture = '/assets/common/images/default-profile-picture.png';
     recentlyLinkedUsers: LinkedUserDto[];
     unreadChatMessageCount = 0;
 
@@ -62,7 +62,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
     subscriptionStartType = SubscriptionStartType;
     editionPaymentType: typeof EditionPaymentType = EditionPaymentType;
-
+    
     constructor(
         injector: Injector,
         private _abpSessionService: AbpSessionService,
@@ -87,11 +87,11 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     ngOnInit() {
         this._userNotificationHelper.settingsModal = this.notificationSettingsModal;
 
-        this.languages = _.filter(this.localization.languages, l => (<any>l).isDisabled == false);
+        this.languages = _.filter(this.localization.languages, l => (<any>l).isDisabled === false);
         this.currentLanguage = this.localization.currentLanguage;
         this.isImpersonatedLogin = this._abpSessionService.impersonatorUserId > 0;
 
-        this.shownLoginNameTitle = this.isImpersonatedLogin ? this.l("YouCanBackToYourAccount") : "";
+        this.shownLoginNameTitle = this.isImpersonatedLogin ? this.l('YouCanBackToYourAccount') : '';
         this.getCurrentLoginInformations();
         this.getProfilePicture();
         this.getRecentlyLinkedUsers();
@@ -100,7 +100,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     registerToEvents() {
-        abp.event.on("profilePictureChanged", () => {
+        abp.event.on('profilePictureChanged', () => {
             this.getProfilePicture();
         });
 
@@ -114,12 +114,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     changeLanguage(languageName: string): void {
-        let input = new ChangeUserLanguageDto();
+        const input = new ChangeUserLanguageDto();
         input.languageName = languageName;
 
         this._profileServiceProxy.changeLanguage(input).subscribe(() => {
             abp.utils.setCookieValue(
-                "Abp.Localization.CultureName",
+                'Abp.Localization.CultureName',
                 languageName,
                 new Date(new Date().getTime() + 5 * 365 * 86400000), //5 year
                 abp.appPath
@@ -142,7 +142,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
             return linkedUser.username;
         }
 
-        return (linkedUser.tenantId ? linkedUser.tenancyName : ".") + "\\" + linkedUser.username;
+        return (linkedUser.tenantId ? linkedUser.tenancyName : '.') + '\\' + linkedUser.username;
     }
 
     getProfilePicture(): void {
@@ -196,7 +196,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     get chatEnabled(): boolean {
-        return this.appSession.application.features['SignalR'] && (!this._abpSessionService.tenantId || this.feature.isEnabled("App.ChatFeature"));
+        return this.appSession.application.features['SignalR'] && (!this._abpSessionService.tenantId || this.feature.isEnabled('App.ChatFeature'));
     }
 
     subscriptionStatusBarVisible(): boolean {
@@ -220,9 +220,9 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getTrialSubscriptionNotification(): string {
-        return abp.utils.formatString(this.l("TrialSubscriptionNotification"),
-            "<strong>" + this._appSessionService.tenant.edition.displayName + "</strong>",
-            "<a href='/account/buy?editionId=" + this._appSessionService.tenant.edition.id + "&editionPaymentType=" + this.editionPaymentType.BuyNow + "'>" + this.l("ClickHere") + "</a>");
+        return abp.utils.formatString(this.l('TrialSubscriptionNotification'),
+            '<strong>' + this._appSessionService.tenant.edition.displayName + '</strong>',
+            '<a href=\'/account/buy?editionId=' + this._appSessionService.tenant.edition.id + '&editionPaymentType=' + this.editionPaymentType.BuyNow + '\'>' + this.l('ClickHere') + '</a>');
     }
 
     getExpireNotification(localizationKey: string): string {

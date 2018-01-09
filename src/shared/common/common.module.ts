@@ -4,6 +4,7 @@ import { AbpModule } from '@abp/abp.module';
 
 import { AppSessionService } from './session/app-session.service';
 import { AppUrlService } from './nav/app-url.service';
+import { AppUiCustomizationService } from './ui/app-ui-customization.service';
 
 @NgModule({
     imports: [
@@ -17,8 +18,9 @@ export class CommonModule {
             ngModule: CommonModule,
             providers: [
                 AppSessionService,
-                AppUrlService
+                AppUrlService,
+                AppUiCustomizationService
             ]
-        }
+        };
     }
 }

@@ -1,28 +1,31 @@
-﻿import { Component, OnInit, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TenantServiceProxy, TenantListDto, NameValueDto, CommonLookupServiceProxy, FindUsersInput, EntityDtoOfInt64 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateTenantModalComponent } from './create-tenant-modal.component';
 import { EditTenantModalComponent } from './edit-tenant-modal.component';
-import { TenantFeaturesModalComponent } from './tenant-features-modal.component'
-import { JTableHelper } from '@shared/helpers/JTableHelper';
+import { TenantFeaturesModalComponent } from './tenant-features-modal.component';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import * as moment from "moment";
+import * as moment from 'moment';
+import { DataTable } from 'primeng/components/datatable/datatable';
+import { Paginator } from 'primeng/components/paginator/paginator';
+import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 
 @Component({
-    templateUrl: "./tenants.component.html",
-    styleUrls: ["./tenants.component.less"],
+    templateUrl: './tenants.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
-export class TenantsComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class TenantsComponent extends AppComponentBase implements OnInit {
 
     @ViewChild('impersonateUserLookupModal') impersonateUserLookupModal: CommonLookupModalComponent;
     @ViewChild('createTenantModal') createTenantModal: CreateTenantModalComponent;
     @ViewChild('editTenantModal') editTenantModal: EditTenantModalComponent;
     @ViewChild('tenantFeaturesModal') tenantFeaturesModal: TenantFeaturesModalComponent;
+    @ViewChild('dataTable') dataTable: DataTable;
+    @ViewChild('paginator') paginator: Paginator;
 
     private _$tenantsTable: JQuery;
     filters: {
@@ -44,7 +47,10 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
         private _impersonationService: ImpersonationService
     ) {
         super(injector);
+        this.setFiltersFromRoute();
+    }
 
+    setFiltersFromRoute(): void {
         if (this._activatedRoute.snapshot.queryParams['subscriptionEndDateStart'] != null) {
             this.filters.subscriptionEndDateRangeActive = true;
             this.filters.subscriptionEndDateStart = moment(this._activatedRoute.snapshot.queryParams['subscriptionEndDateStart']);
@@ -63,14 +69,14 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
             this.filters.creationDateRangeActive = true;
             this.filters.creationDateStart = moment(this._activatedRoute.snapshot.queryParams['creationDateStart']);
         } else {
-            this.filters.creationDateStart = moment().add(-7, 'days').startOf('day')
+            this.filters.creationDateStart = moment().add(-7, 'days').startOf('day');
         }
 
         if (this._activatedRoute.snapshot.queryParams['creationDateEnd'] != null) {
             this.filters.creationDateRangeActive = true;
             this.filters.creationDateEnd = moment(this._activatedRoute.snapshot.queryParams['creationDateEnd']);
         } else {
-            this.filters.creationDateEnd = moment().endOf("day");
+            this.filters.creationDateEnd = moment().endOf('day');
         }
     }
 
@@ -80,7 +86,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
         this.impersonateUserLookupModal.configure({
             title: this.l('SelectAUser'),
             dataSource: (skipCount: number, maxResultCount: number, filter: string, tenantId?: number) => {
-                var input = new FindUsersInput();
+                let input = new FindUsersInput();
                 input.filter = filter;
                 input.maxResultCount = maxResultCount;
                 input.skipCount = skipCount;
@@ -90,158 +96,51 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
         });
     }
 
-    ngAfterViewInit(): void {
-        let self = this;
-        
-        var initTenantsTable = () => {
-            self._$tenantsTable = $('#TenantsTable');
-            self._$tenantsTable.jtable({
-                title: self.l('Tenants'),
-                paging: true,
-                sorting: true,
-                multiSorting: true,
-                actions: {
-                    listAction(postData, jtParams: JTableParams) {
-                        return JTableHelper.toJTableListAction(
-                            self._tenantService.getTenants(
-                                self.filters.filterText,
-                                self.filters.subscriptionEndDateRangeActive ? self.filters.subscriptionEndDateStart : undefined,
-                                self.filters.subscriptionEndDateRangeActive ? self.filters.subscriptionEndDateEnd : undefined,
-                                self.filters.creationDateRangeActive ? self.filters.creationDateStart : undefined,
-                                self.filters.creationDateRangeActive ? self.filters.creationDateEnd : undefined,
-                                self.filters.selectedEditionId,
-                                self.filters.selectedEditionId !== undefined && (self.filters.selectedEditionId + "") !== "-1",
-                                jtParams.jtSorting,
-                                jtParams.jtPageSize,
-                                jtParams.jtStartIndex
-                            )
-                        );
-                    }
-                },
-                fields: {
-                    id: {
-                        key: true,
-                        list: false
-                    },
-                    actions: {
-                        title: this.l('Actions'),
-                        width: '15%',
-                        sorting: false,
-                        type: 'record-actions',
-                        cssClass: 'btn btn-xs btn-primary blue',
-                        text: '<i class="fa fa-cog"></i> ' + this.l('Actions') + ' <span class="caret"></span>',
-                        list: self.permission.isGranted('Pages.Tenants.Edit') || self.permission.isGranted('Pages.Tenants.Delete'),
+    getTenants(event?: LazyLoadEvent) {
+        if (this.primengDatatableHelper.shouldResetPaging(event)) {
+            this.paginator.changePage(0);
 
-                        items: [{
-                            text: this.l('LoginAsThisTenant'),
-                            visible: (): boolean => {
-                                return self.permission.isGranted("Pages.Tenants.Impersonation");
-                            },
-                            enabled(data) {
-                                return data.record.isActive;
-                            },
-                            action(data) {
-                                self.impersonateUserLookupModal.tenantId = data.record.id;
-                                self.impersonateUserLookupModal.show();
-                            }
-                        }, {
-                            text: this.l('Edit'),
-                            visible: (): boolean => {
-                                return self.permission.isGranted("Pages.Tenants.Edit");
-                            },
-                            action(data) {
-                                self.editTenantModal.show(data.record.id);
-                            }
-                        }, {
-                            text: this.l('Features'),
-                            visible: (): boolean => {
-                                return self.permission.isGranted("Pages.Tenants.ChangeFeatures");
-                            },
-                            action(data) {
-                                self.tenantFeaturesModal.show(data.record.id, data.record.name);
-                            }
-                        }, {
-                            text: this.l('Delete'),
-                            visible: (): boolean => {
-                                return self.permission.isGranted("Pages.Tenants.Delete");
-                            },
-                            action(data) {
-                                self.deleteTenant(data.record);
-                            }
-                        }, {
-                            text: this.l('Unlock'),
-                            action(data) {
-                                self._tenantService.unlockTenantAdmin(new EntityDtoOfInt64({ id: data.record.id })).subscribe(() => {
-                                    self.notify.success(self.l('UnlockedTenandAdmin', data.record.name));
-                                });
-                            }
-                        }]
-                    },
-                    tenancyName: {
-                        title: self.l('TenancyCodeName'),
-                        display(data) {
-                            var $div = $('<div> ' + data.record.tenancyName + '</div>');
-                            if (data.record.connectionString) {
-                                $div.prepend($("<i class='fa fa-database' title=\"" + self.l('HasOwnDatabase') + "\"></i>"));
-                            }
+            return;
+        }
 
-                            return $div;
-                        },
-                        width: '18%'
-                    },
-                    name: {
-                        title: self.l('Name'),
-                        width: '20%'
-                    },
-                    editionDisplayName: {
-                        title: self.l('Edition'),
-                        width: '18%'
-                    },
-                    subscriptionEndDateUtc: {
-                        title: this.l('SubscriptionEndDateUtc'),
-                        width: '15%',
-                        display(data) {
-                            if (data.record.subscriptionEndDateUtc) {
-                                return moment(data.record.subscriptionEndDateUtc).format('L');
-                            }
+        this.primengDatatableHelper.showLoadingIndicator();
 
-                            return "";
-                        }
-                    },
-                    isActive: {
-                        title: self.l('Active'),
-                        width: '9%',
-                        display: data => {
-                            if (data.record.isActive) {
-                                return '<span class="label label-success">' + self.l('Yes') + '</span>';
-                            } else {
-                                return '<span class="label label-default">' + self.l('No') + '</span>';
-                            }
-                        }
-                    },
-                    creationTime: {
-                        title: self.l('CreationTime'),
-                        width: '20%',
-                        display(data) {
-                            return moment(data.record.creationTime).format('L');
-                        }
-                    }
-                }
-            });
-
-            self.getTenants();
-        };
-
-        initTenantsTable();
+        this._tenantService.getTenants(
+            this.filters.filterText,
+            this.filters.subscriptionEndDateRangeActive ? this.filters.subscriptionEndDateStart : undefined,
+            this.filters.subscriptionEndDateRangeActive ? this.filters.subscriptionEndDateEnd : undefined,
+            this.filters.creationDateRangeActive ? this.filters.creationDateStart : undefined,
+            this.filters.creationDateRangeActive ? this.filters.creationDateEnd : undefined,
+            this.filters.selectedEditionId,
+            this.filters.selectedEditionId !== undefined && (this.filters.selectedEditionId + '') !== '-1',
+            this.primengDatatableHelper.getSorting(this.dataTable),
+            this.primengDatatableHelper.getMaxResultCount(this.paginator, event),
+            this.primengDatatableHelper.getSkipCount(this.paginator, event)
+        ).subscribe(result => {
+            this.primengDatatableHelper.totalRecordsCount = result.totalCount;
+            this.primengDatatableHelper.records = result.items;
+            this.primengDatatableHelper.hideLoadingIndicator();
+        });
     }
 
-    getTenants(): void {
-        this._$tenantsTable.jtable('load');
+    showUserImpersonateLookUpModal(record: any): void {
+        this.impersonateUserLookupModal.tenantId = record.id;
+        this.impersonateUserLookupModal.show();
+    }
+
+    unlockUser(record: any): void {
+        this._tenantService.unlockTenantAdmin(new EntityDtoOfInt64({ id: record.id })).subscribe(() => {
+            this.notify.success(this.l('UnlockedTenandAdmin', record.name));
+        });
+    }
+
+    reloadPage(): void {
+        this.paginator.changePage(this.paginator.getPage());
     }
 
     createTenant(): void {
         this.createTenantModal.show();
-    };
+    }
 
     deleteTenant(tenant: TenantListDto): void {
         this.message.confirm(
@@ -249,7 +148,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, AfterV
             isConfirmed => {
                 if (isConfirmed) {
                     this._tenantService.deleteTenant(tenant.id).subscribe(() => {
-                        this.getTenants();
+                        this.reloadPage();
                         this.notify.success(this.l('SuccessfullyDeleted'));
                     });
                 }

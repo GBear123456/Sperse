@@ -1,11 +1,11 @@
-﻿import { Component, ViewChild, Injector } from '@angular/core';
+import { Component, ViewChild, Injector } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { UserServiceProxy, GetUserPermissionsForEditOutput, UpdateUserPermissionsInput, EntityDtoOfInt64 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { PermissionTreeComponent } from '../shared/permission-tree.component';
 import { PermissionTreeEditModel } from '@app/admin/shared/permission-tree-edit.model';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'editUserPermissionsModal',
@@ -16,8 +16,8 @@ export class EditUserPermissionsModalComponent extends AppComponentBase {
     @ViewChild('editModal') modal: ModalDirective;
     @ViewChild('permissionTree') permissionTree: PermissionTreeComponent;
 
-    saving: boolean = false;
-    resettingPermissions: boolean = false;
+    saving = false;
+    resettingPermissions = false;
 
     userId: number;
     userName: string;
@@ -26,22 +26,22 @@ export class EditUserPermissionsModalComponent extends AppComponentBase {
         injector: Injector,
         private _userService: UserServiceProxy
     ) {
-        super(injector);        
+        super(injector);
     }
 
-    show(userId: number, userName?: string):void {
+    show(userId: number, userName?: string): void {
         this.userId = userId;
         this.userName = userName;
 
-        this._userService.getUserPermissionsForEdit(userId).subscribe(result => {            
+        this._userService.getUserPermissionsForEdit(userId).subscribe(result => {
             this.permissionTree.editData = result;
             this.modal.show();
         });
     }
 
     save(): void {
-        var input = new UpdateUserPermissionsInput();
-        
+        let input = new UpdateUserPermissionsInput();
+
         input.id = this.userId;
         input.grantedPermissionNames = this.permissionTree.getGrantedPermissionNames();
 
@@ -56,14 +56,14 @@ export class EditUserPermissionsModalComponent extends AppComponentBase {
 
     resetPermissions(): void {
 
-        var input = new EntityDtoOfInt64();
-        
+        let input = new EntityDtoOfInt64();
+
         input.id = this.userId;
-        
+
         this.resettingPermissions = true;
         this._userService.resetUserSpecificPermissions(input).subscribe(() => {
             this.notify.info(this.l('ResetSuccessfully'));
-            this._userService.getUserPermissionsForEdit(this.userId).subscribe(result => {            
+            this._userService.getUserPermissionsForEdit(this.userId).subscribe(result => {
                 this.permissionTree.editData = result;
             });
         }, undefined, () => {
@@ -72,6 +72,6 @@ export class EditUserPermissionsModalComponent extends AppComponentBase {
     }
 
     close(): void {
-        this.modal.hide();        
+        this.modal.hide();
     }
 }

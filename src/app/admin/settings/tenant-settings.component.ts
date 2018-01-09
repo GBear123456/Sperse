@@ -1,33 +1,30 @@
-﻿import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import { TenantSettingsServiceProxy, HostSettingsServiceProxy, DefaultTimezoneScope, TenantSettingsEditDto, SendTestEmailInput } from '@shared/service-proxies/service-proxies';
+import { Component, OnInit, AfterViewChecked, Injector } from '@angular/core';
+import { TenantSettingsServiceProxy, DefaultTimezoneScope, TenantSettingsEditDto, SendTestEmailInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { FileUploader, FileUploaderOptions, Headers } from '@node_modules/ng2-file-upload';
+import { FileUploader, FileUploaderOptions } from '@node_modules/ng2-file-upload';
 import { TokenService } from '@abp/auth/token.service';
 import { IAjaxResponse } from '@abp/abpHttp';
 
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
-    templateUrl: "./tenant-settings.component.html",
+    templateUrl: './tenant-settings.component.html',
     animations: [appModuleAnimation()]
 })
-export class TenantSettingsComponent extends AppComponentBase implements OnInit {
+export class TenantSettingsComponent extends AppComponentBase implements OnInit, AfterViewChecked {
 
-
-    usingDefaultTimeZone: boolean = false;
+    usingDefaultTimeZone = false;
     initialTimeZone: string = null;
     testEmailAddress: string = undefined;
 
     isMultiTenancyEnabled: boolean = this.multiTenancy.isEnabled;
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     activeTabIndex: number = (abp.clock.provider.supportsMultipleTimezone) ? 0 : 1;
-    loading: boolean = false;
+    loading = false;
     settings: TenantSettingsEditDto = undefined;
 
     logoUploader: FileUploader;
@@ -52,6 +49,12 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         this.initUploaders();
     }
 
+    ngAfterViewChecked(): void {
+        //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
+        $('tabset ul.nav').addClass('m-tabs-line');
+        $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
+    };
+
     getSettings(): void {
         this.loading = true;
         this._tenantSettingsService.getAllSettings()
@@ -62,14 +65,14 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
                 this.settings = result;
                 if (this.settings.general) {
                     this.initialTimeZone = this.settings.general.timezone;
-                    this.usingDefaultTimeZone = this.settings.general.timezoneForComparison === abp.setting.values["Abp.Timing.TimeZone"];
+                    this.usingDefaultTimeZone = this.settings.general.timezoneForComparison === abp.setting.values['Abp.Timing.TimeZone'];
                 }
             });
     }
 
     initUploaders(): void {
         this.logoUploader = this.createUploader(
-            "/TenantCustomization/UploadLogo",
+            '/TenantCustomization/UploadLogo',
             result => {
                 this._appSessionService.tenant.logoFileType = result.fileType;
                 this._appSessionService.tenant.logoId = result.id;
@@ -77,7 +80,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         );
 
         this.customCssUploader = this.createUploader(
-            "/TenantCustomization/UploadCustomCss",
+            '/TenantCustomization/UploadCustomCss',
             result => {
                 this.appSession.tenant.customCssId = result.id;
                 $('#TenantCustomCss').remove();
@@ -94,10 +97,12 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         };
 
         uploader.onSuccessItem = (item, response, status) => {
-            let ajaxResponse = <IAjaxResponse>JSON.parse(response);
+            const ajaxResponse = <IAjaxResponse>JSON.parse(response);
             if (ajaxResponse.success) {
                 this.notify.info(this.l('SavedSuccessfully'));
-                success && success(ajaxResponse.result);
+                if (success) {
+                    success(ajaxResponse.result);
+                }
             } else {
                 this.message.error(ajaxResponse.error.message);
             }
@@ -144,13 +149,13 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
                 });
             }
         });
-    };
+    }
 
     sendTestEmail(): void {
-        let input = new SendTestEmailInput();
+        const input = new SendTestEmailInput();
         input.emailAddress = this.testEmailAddress;
         this._tenantSettingsService.sendTestEmail(input).subscribe(result => {
-            this.notify.info(this.l("TestEmailSentSuccessfully"));
+            this.notify.info(this.l('TestEmailSentSuccessfully'));
         });
-    };
+    }
 }

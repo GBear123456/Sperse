@@ -1,10 +1,12 @@
-﻿import { Component, OnInit, Injector, ViewChild, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
+import { Component, Injector, ViewChild, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { NotificationServiceProxy, GetNotificationsOutput, UserNotification, State } from '@shared/service-proxies/service-proxies';
+import { NotificationServiceProxy, UserNotification } from '@shared/service-proxies/service-proxies';
 import { UserNotificationHelper, IFormattedUserNotification } from './UserNotificationHelper';
-import { JTableHelper } from '@shared/helpers/JTableHelper';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppUserNotificationState } from '@shared/AppEnums';
+import { DataTable } from 'primeng/components/datatable/datatable';
+import { Paginator } from 'primeng/components/paginator/paginator';
+import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 
 import * as moment from 'moment';
 
@@ -14,111 +16,81 @@ import * as moment from 'moment';
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
-export class NotificationsComponent extends AppComponentBase implements AfterViewInit {
+export class NotificationsComponent extends AppComponentBase {
 
-    @ViewChild('table') table: ElementRef;
-    private _$table: JQuery;
+    @ViewChild('dataTable') dataTable: DataTable;
+    @ViewChild('paginator') paginator: Paginator;
 
-    readStateFilter: string = 'ALL';
-    loading: boolean = false;
+    readStateFilter = 'ALL';
+    loading = false;
 
     constructor(
         injector: Injector,
         private _notificationService: NotificationServiceProxy,
-        private _userNotificationHelper: UserNotificationHelper
+        private _userNotificationHelper: UserNotificationHelper,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
         super(injector);
     }
 
-    ngAfterViewInit(): void {
-        this._$table = $(this.table.nativeElement);
-        this._$table.jtable({
-            title: this.l('Notifications'),
-            paging: true,
-
-            actions: {
-                listAction: (postData, jtParams: JTableParams) => {
-                    return JTableHelper.toJTableListAction(
-                        this._notificationService.getUserNotifications(
-                            this.readStateFilter === 'ALL' ? undefined : AppUserNotificationState.Unread,
-                            jtParams.jtPageSize,
-                            jtParams.jtStartIndex
-                        )
-                    );
-                }
-            },
-
-            fields: {
-                id: {
-                    key: true,
-                    list: false
-                },
-                actions: {
-                    title: this.l('Actions'),
-                    width: '10%',
-                    sorting: false,
-                    listClass: 'text-center',
-                    display: (data: JTableFieldOptionDisplayData<UserNotification>) => {
-                        const $span = $('<span></span>');
-                        var $button = $('<button class="btn btn-xs btn-primary blue" title="' + this.l('SetAsRead') + '"></button>')
-                            .click((e) => {
-                                e.preventDefault();
-                                this.setNotificationAsRead(data.record, () => {
-                                    $button.find('i')
-                                        .removeClass('fa-circle-o')
-                                        .addClass('fa-check');
-                                    $button.attr('disabled', 'disabled');
-                                });
-                            }).appendTo($span);
-
-                        var $i = $('<i class="fa" >').appendTo($button);
-
-                        var notificationState = this._userNotificationHelper.format(<any>data.record).state;
-
-                        if (notificationState === 'READ') {
-                            $button.attr('disabled', 'disabled');
-                            $i.addClass('fa-check');
-                        }
-
-                        if (notificationState === 'UNREAD') {
-                            $i.addClass('fa-circle-o');
-                        }
-
-                        return $span;
-                    }
-                },
-                notification: {
-                    title: this.l('Notification'),
-                    width: '70%',
-                    display: (data: JTableFieldOptionDisplayData<UserNotification>) => {
-                        var formattedRecord = this._userNotificationHelper.format(<any>data.record, false);
-                        var rowClass = this.getRowClass(formattedRecord);
-
-                        if (formattedRecord.url) {
-                            return $('<a href="' + formattedRecord.url + '" class="' + rowClass + '">' + abp.utils.truncateStringWithPostfix(formattedRecord.text, 120) + '</a>');
-                        } else {
-                            return $('<span title="' + formattedRecord.text + '" class="' + rowClass + '">' + abp.utils.truncateStringWithPostfix(formattedRecord.text, 120) + '</span>');
-                        }
-                    }
-                },
-                creationTime: {
-                    title: this.l('CreationTime'),
-                    width: '20%',
-                    display: (data: JTableFieldOptionDisplayData<UserNotification>) => {
-                        var formattedRecord = this._userNotificationHelper.format(<any>data.record);
-                        var rowClass = this.getRowClass(formattedRecord);
-                        var $span = $('<span title="' + moment(data.record.notification.creationTime).format("llll") + '" class="' + rowClass + '">' + moment(data.record.notification.creationTime).fromNow() + '</span> &nbsp;');
-                        $span.timeago();
-                        return $span;
-                    }
-                }
-            }
-        });
-        this.getNotifications();
+    reloadPage(): void {
+        this.paginator.changePage(this.paginator.getPage());
     }
 
-    getNotifications(): void {
-        this._$table.jtable('load');
+    setAsRead(record: any): void {
+        this.setNotificationAsRead(record, () => {
+            this.reloadPage();
+        });
+    }
+
+    isRead(record: any): boolean {
+        return record.formattedNotification.state === 'READ';
+    }
+
+    fromNow(date: moment.Moment): string {
+        return moment(date).fromNow();
+    }
+
+    formatRecord(record: any): IFormattedUserNotification {
+        return this._userNotificationHelper.format(record, false);
+    }
+
+    formatNotification(record: any): string {
+        const formattedRecord = this.formatRecord(record);
+        return abp.utils.truncateStringWithPostfix(formattedRecord.text, 120);
+    }
+
+    formatNotifications(records: any[]): any[] {
+        const formattedRecords = [];
+        for (const record of records) {
+            record.formattedNotification = this.formatRecord(record);
+            formattedRecords.push(record);
+        }
+        return formattedRecords;
+    }
+
+    truncateString(text: any, length: number): string {
+        return abp.utils.truncateStringWithPostfix(text, length);
+    }
+
+    getNotifications(event?: LazyLoadEvent): void {
+        if (this.primengDatatableHelper.shouldResetPaging(event)) {
+            this.paginator.changePage(0);
+
+            return;
+        }
+
+        this.primengDatatableHelper.showLoadingIndicator();
+
+        this._notificationService.getUserNotifications(
+            this.readStateFilter === 'ALL' ? undefined : AppUserNotificationState.Unread,
+            this.primengDatatableHelper.getMaxResultCount(this.paginator, event),
+            this.primengDatatableHelper.getSkipCount(this.paginator, event)
+        ).subscribe((result) => {
+            this.primengDatatableHelper.totalRecordsCount = result.totalCount;
+            this.primengDatatableHelper.records = this.formatNotifications(result.items);
+            this.primengDatatableHelper.hideLoadingIndicator();
+        });
     }
 
     setAllNotificationsAsRead(): void {
@@ -134,11 +106,13 @@ export class NotificationsComponent extends AppComponentBase implements AfterVie
     setNotificationAsRead(userNotification: UserNotification, callback: () => void): void {
         this._userNotificationHelper
             .setAsRead(userNotification.id, () => {
-                callback && callback();
+                if (callback) {
+                    callback();
+                }
             });
     }
 
-    private getRowClass(formattedRecord: IFormattedUserNotification): string {
+    public getRowClass(formattedRecord: IFormattedUserNotification): string {
         return formattedRecord.state === 'READ' ? 'notification-read' : '';
     }
 }

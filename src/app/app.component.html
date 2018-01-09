@@ -1,23 +1,26 @@
-﻿<header></header>
-
-<div class="clearfix">
-</div>
-<div class="page-container" [ngClass]="{'subscription-bar-visible': subscriptionStatusBarVisible()}">
-    <div class="page-sidebar-wrapper">
-        <side-bar></side-bar>
-    </div>
-
-    <div class="page-content-wrapper">
-        <div class="page-content">
+<div class="m-grid m-grid--hor m-grid--root m-page" [ngClass]="{'subscription-bar-visible': subscriptionStatusBarVisible()}">
+    <!-- BEGIN: Header -->
+    <header-bar *ngIf="!installationMode"></header-bar>
+    <!-- END: Header -->
+    <!-- begin::Body -->
+    <div class="m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body">
+        <!-- BEGIN: Left Aside -->
+        <button *ngIf="ui.leftMenuUsed()" class="m-aside-left-close m-aside-left-close--skin-{{s('App.UiManagement.Left.AsideSkin')}}" id="m_aside_left_close_btn">
+            <i class="la la-close"></i>
+        </button>
+        <div *ngIf="ui.leftMenuUsed()" id="m_aside_left" class="m-grid__item	m-aside-left m-aside-left--skin-{{s('App.UiManagement.Left.AsideSkin')}}">
+            <!-- BEGIN: Aside Menu -->
+            <side-bar-menu></side-bar-menu>
+            <!-- END: Aside Menu -->
+        </div>
+        <!-- END: Left Aside -->
+        <div class="m-grid__item m-grid__item--fluid m-wrapper">
             <router-outlet></router-outlet>
         </div>
     </div>
-
-    <!-- chat-bar.component here... -->
-
+    <!-- end:: Body -->
+    <!-- begin::Footer -->
+    <footer-bar></footer-bar>
+    <!-- end::Footer -->
 </div>
-
-<div class="page-footer">
-    <footer></footer>
-</div>
-<chat-bar *ngIf="appSession.application.features['SignalR']"></chat-bar>
+<chat-bar *ngIf="appSession.application.features['SignalR'] && !installationMode"></chat-bar>

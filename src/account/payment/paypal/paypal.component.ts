@@ -1,11 +1,11 @@
-﻿import { Component, Input, Injector, } from '@angular/core';
+import { Component, Input, Injector, } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import {
-    CreatePaymentDto,
     EditionSelectDto,
+    CreatePaymentDto,
     ExecutePaymentDto,
     CreatePaymentDtoPaymentPeriodType,
     CreatePaymentDtoEditionPaymentType,
@@ -19,7 +19,7 @@ import {
     SubscriptionPaymentGatewayType,
     SubscriptionStartType,
     EditionPaymentType
-} from "@shared/AppEnums";
+} from '@shared/AppEnums';
 
 @Component({
     selector: 'paypal-component',
@@ -31,10 +31,10 @@ export class PayPalComponent extends AppComponentBase {
     @Input() selectedPaymentPeriodType: PaymentPeriodType = PaymentPeriodType.Monthly;
     @Input() editionPaymentType: EditionPaymentType;
 
-    _edition: EditionSelectDto = null;
+    _edition: EditionSelectDto = new EditionSelectDto();
 
-    demoUsername: string = '';
-    demoPassword: string = '';
+    demoUsername = '';
+    demoPassword = '';
 
     @Input()
     get edition() {
@@ -54,7 +54,7 @@ export class PayPalComponent extends AppComponentBase {
         }
     }
 
-    paypalIsLoading: boolean = true;
+    paypalIsLoading = true;
     subscriptionPaymentGateway = SubscriptionPaymentGatewayType;
     subscriptionStartType = SubscriptionStartType;
 
@@ -77,13 +77,13 @@ export class PayPalComponent extends AppComponentBase {
 
     preparePaypalButton(): void {
 
-        let self = this;
+        const self = this;
         (<any>window).paypal.Button.render({
             style: { size: 'responsive' },
             env: this.getAdditionalData('Environment'),
             commit: true,
             payment() {
-                var input = new CreatePaymentDto();
+                const input = new CreatePaymentDto();
                 input.editionId = self.edition.id;
                 input.editionPaymentType = <CreatePaymentDtoEditionPaymentType>(self.editionPaymentType);
                 input.subscriptionPaymentGatewayType = self.subscriptionPaymentGateway.Paypal;
@@ -96,7 +96,7 @@ export class PayPalComponent extends AppComponentBase {
             },
 
             onAuthorize(data) {
-                var input = new ExecutePaymentDto();
+                const input = new ExecutePaymentDto();
 
                 input.gateway = self.subscriptionPaymentGateway.Paypal;
                 input.paymentPeriodType = <ExecutePaymentDtoPaymentPeriodType>(self.selectedPaymentPeriodType);

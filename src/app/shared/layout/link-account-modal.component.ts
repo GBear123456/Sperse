@@ -1,8 +1,8 @@
-﻿import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { UserLinkServiceProxy, LinkToUserInput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     selector: 'linkAccountModal',
@@ -15,14 +15,15 @@ export class LinkAccountModalComponent extends AppComponentBase {
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active: boolean = false;
-    saving: boolean = false;
+    active = false;
+    saving = false;
 
     linkUser: LinkToUserInput = new LinkToUserInput();
 
     constructor(
         injector: Injector,
-        private _userLinkService: UserLinkServiceProxy
+        private _userLinkService: UserLinkServiceProxy,
+        private _sessionAppService: AppSessionService
     ) {
         super(injector);
     }
@@ -30,6 +31,7 @@ export class LinkAccountModalComponent extends AppComponentBase {
     show(): void {
         this.active = true;
         this.linkUser = new LinkToUserInput();
+        this.linkUser.tenancyName = this._sessionAppService.tenancyName;
         this.modal.show();
     }
 

@@ -1,26 +1,26 @@
-﻿<div bsModal #createOrEditModal="bs-modal" (onShown)="onShown()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal"
+<div bsModal #createOrEditModal="bs-modal" (onShown)="onShown()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal"
      aria-hidden="true" [config]="{backdrop: 'static'}">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
 
         <div class="modal-content">
 
             <form *ngIf="active" #editForm="ngForm" novalidate (ngSubmit)="save()">
 
                 <div class="modal-header">
+                    <h5 class="modal-title">
+                        <span *ngIf="organizationUnit.id">{{l("Edit")}}: {{organizationUnit.displayName}}</span>
+                        <span *ngIf="!organizationUnit.id">{{l("NewOrganizationUnit")}}</span>
+                    </h5>
                     <button type="button" class="close" (click)="close()" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title">
-                        <span *ngIf="organizationUnit.id">{{l("Edit")}}: {{organizationUnit.displayName}}</span>
-                        <span *ngIf="!organizationUnit.id">{{l("NewOrganizationUnit")}}</span>
-                    </h4>
                 </div>
 
                 <div class="modal-body">
 
                     <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                        <input #organizationUnitDisplayName class="form-control" type="text" name="displayName" [ngClass]="{'edited': organizationUnit.displayName}" [(ngModel)]="organizationUnit.displayName" required maxlength="128">
                         <label>{{l("Name")}}</label>
+                        <input #organizationUnitDisplayName class="form-control" type="text" name="displayName" [ngClass]="{'edited': organizationUnit.displayName}" [(ngModel)]="organizationUnit.displayName" required maxlength="128">
                     </div>
 
                 </div>

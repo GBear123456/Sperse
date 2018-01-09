@@ -1,4 +1,4 @@
-﻿import { Injector } from '@angular/core';
+import { Injector } from '@angular/core';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ChatFriendDto } from './ChatFriendDto';
 import { AppConsts } from '@shared/AppConsts';
@@ -8,7 +8,7 @@ import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.ser
     templateUrl: './chat-friend-list-item.component.html',
     selector: 'chat-friend-list-item'
 })
-export class ChatFriendListItem {
+export class ChatFriendListItemComponent {
 
     remoteServiceUrl: string = AppConsts.remoteServiceBaseUrl;
     appPath: string = AppConsts.appBaseUrl;

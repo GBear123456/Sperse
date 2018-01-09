@@ -1,4 +1,4 @@
-﻿import {
+import {
     ChatMessageDtoReadState,
     ChatMessageDtoSide,
     FriendDtoState,
@@ -67,8 +67,8 @@ export class EditionPaymentType {
 }
 
 export class AppEditionExpireAction {
-    static DeactiveTenant: string = "DeactiveTenant";
-    static AssignToAnotherEdition: string = "AssignToAnotherEdition";
+    static DeactiveTenant = 'DeactiveTenant';
+    static AssignToAnotherEdition = 'AssignToAnotherEdition';
 }
 
 export class PaymentPeriodType  {

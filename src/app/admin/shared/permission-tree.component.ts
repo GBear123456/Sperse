@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, AfterViewChecked, ElementRef, ViewChi
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { GetUserPermissionsForEditOutput } from '@shared/service-proxies/service-proxies';
 import { PermissionTreeEditModel } from '@app/admin/shared/permission-tree-edit.model';
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'permission-tree',
@@ -44,10 +44,10 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
             return [];
         }
 
-        var permissionNames = [];
+        let permissionNames = [];
 
-        var selectedPermissions = this._$tree.jstree('get_selected', true);
-        for (var i = 0; i < selectedPermissions.length; i++) {
+        let selectedPermissions = this._$tree.jstree('get_selected', true);
+        for (let i = 0; i < selectedPermissions.length; i++) {
             permissionNames.push(selectedPermissions[i].original.id);
         }
 
@@ -55,7 +55,7 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
     }
 
     refreshTree(): void {
-        var self = this;
+        let self = this;
 
         if (this._createdTreeBefore) {
             this._$tree.jstree('destroy');
@@ -67,7 +67,7 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
             return;
         }
 
-        var treeData = _.map(this._editData.permissions, function (item) {
+        let treeData = _.map(this._editData.permissions, function (item) {
             return {
                 id: item.name,
                 parent: item.parentName ? item.parentName : '#',
@@ -83,12 +83,12 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
             'core': {
                 data: treeData
             },
-            "types": {
-                "default": {
-                    "icon": "fa fa-folder tree-item-icon-color icon-lg"
+            'types': {
+                'default': {
+                    'icon': 'fa fa-folder m--font-warning'
                 },
-                "file": {
-                    "icon": "fa fa-file tree-item-icon-color icon-lg"
+                'file': {
+                    'icon': 'fa fa-file m--font-warning'
                 }
             },
             'checkbox': {
@@ -105,23 +105,23 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
 
         function selectNodeAndAllParents(node) {
             self._$tree.jstree('select_node', node, true);
-            var parent = self._$tree.jstree('get_parent', node);
+            let parent = self._$tree.jstree('get_parent', node);
             if (parent) {
                 selectNodeAndAllParents(parent);
             }
-        };
+        }
 
-        this._$tree.on("changed.jstree", function (e, data) {
+        this._$tree.on('changed.jstree', function (e, data) {
             if (!data.node) {
                 return;
             }
 
-            var wasInTreeChangeEvent = inTreeChangeEvent;
+            let wasInTreeChangeEvent = inTreeChangeEvent;
             if (!wasInTreeChangeEvent) {
                 inTreeChangeEvent = true;
             }
 
-            var childrenNodes;
+            let childrenNodes;
 
             if (data.node.state.selected) {
                 selectNodeAndAllParents(self._$tree.jstree('get_parent', data.node));

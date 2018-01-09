@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { NotificationServiceProxy, GetNotificationSettingsOutput, UpdateNotificationSettingsInput, NotificationSubscriptionDto } from '@shared/service-proxies/service-proxies';
@@ -9,11 +9,11 @@ import * as _ from 'lodash';
     selector: 'notificationSettingsModal',
     templateUrl: './notification-settings-modal.component.html'
 })
-export class NotificationSettingsModalCompoent extends AppComponentBase {
+export class NotificationSettingsModalComponent extends AppComponentBase {
 
     @ViewChild('modal') modal: ModalDirective;
 
-    saving: boolean = false;
+    saving = false;
 
     settings: GetNotificationSettingsOutput;
 
@@ -42,7 +42,7 @@ export class NotificationSettingsModalCompoent extends AppComponentBase {
         input.receiveNotifications = this.settings.receiveNotifications;
         input.notifications = _.map(this.settings.notifications,
             (n) => {
-                var subscription = new NotificationSubscriptionDto();
+                let subscription = new NotificationSubscriptionDto();
                 subscription.name = n.name;
                 subscription.isSubscribed = n.isSubscribed;
                 return subscription;

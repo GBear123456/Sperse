@@ -1,10 +1,10 @@
-﻿import { Component, AfterViewInit, Injector, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, Injector, ViewEncapsulation, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { TenantDashboardServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppSalesSummaryDatePeriod } from '@shared/AppEnums';
 declare let d3, Datamap: any;
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -19,9 +19,10 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     salesSummaryChart: SalesSummaryChart;
     regionalStatsWorldMap: RegionalStatsWorldMap;
     generalStatsPieChart: GeneralStatsPieChart;
-    serverStatsLineChart: ServerStatsLineChart;
-    activitiesTimeline: ActivitiesTimeline;
+    dailySalesLineChart: DailySalesLineChart;
+    profitSharePieChart: ProfitSharePieChart;
     memberActivityTable: MemberActivityTable;
+
 
     constructor(
         injector: Injector,
@@ -29,29 +30,28 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     ) {
         super(injector);
         this.dashboardHeaderStats = new DashboardHeaderStats();
-        this.salesSummaryChart = new SalesSummaryChart(this._dashboardService, "salesStatistics");
-        this.regionalStatsWorldMap = new RegionalStatsWorldMap(this._dashboardService, "worldmap");
+        this.salesSummaryChart = new SalesSummaryChart(this._dashboardService, 'salesStatistics');
+        this.regionalStatsWorldMap = new RegionalStatsWorldMap(this._dashboardService, 'worldmap');
         this.generalStatsPieChart = new GeneralStatsPieChart(this._dashboardService);
-        this.serverStatsLineChart = new ServerStatsLineChart(this._dashboardService, "#network", "#cpu-load", "#load-rate");
-        this.activitiesTimeline = new ActivitiesTimeline("#timelineDetails", "#timelineDateList", "#horizontalTimelineContainer");
+        this.dailySalesLineChart = new DailySalesLineChart(this._dashboardService, '#m_chart_daily_sales');
+        this.profitSharePieChart = new ProfitSharePieChart(this._dashboardService, '#m_chart_profit_share');
         this.memberActivityTable = new MemberActivityTable(this._dashboardService);
     }
 
     getDashboardStatisticsData(datePeriod): void {
         this.salesSummaryChart.showLoading();
         this.generalStatsPieChart.showLoading();
-        this.activitiesTimeline.showLoading();
 
         this._dashboardService
             .getDashboardData(datePeriod)
             .subscribe(result => {
                 this.dashboardHeaderStats.init(result.totalProfit, result.newFeedbacks, result.newOrders, result.newUsers);
                 this.generalStatsPieChart.init(result.transactionPercent, result.newVisitPercent, result.bouncePercent);
-                this.serverStatsLineChart.init(result.networkLoad, result.cpuLoad, result.loadRate);
-                this.activitiesTimeline.init(result.timeLineItems);
+                this.dailySalesLineChart.init(result.dailySales);
+                this.profitSharePieChart.init(result.profitShares);
                 this.salesSummaryChart.init(result.salesSummary, result.totalSales, result.revenue, result.expenses, result.growth);
             });
-    };
+    }
 
     ngAfterViewInit(): void {
         this.getDashboardStatisticsData(AppSalesSummaryDatePeriod.Daily);
@@ -62,11 +62,11 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     ngOnDestroy() {
         this.regionalStatsWorldMap.dispose();
     }
-};
+}
 
 
 abstract class DashboardChartBase {
-    loading: boolean = true;
+    loading = true;
 
     showLoading() {
         setTimeout(() => { this.loading = true; });
@@ -75,16 +75,16 @@ abstract class DashboardChartBase {
     hideLoading() {
         setTimeout(() => { this.loading = false; });
     }
-};
+}
 
 class SalesSummaryChart extends DashboardChartBase {
     //Sales summary => MorrisJs: https://github.com/morrisjs/morris.js/
 
     instance: morris.GridChart;
-    totalSales: number = 0; totalSalesCounter: number = 0;
-    revenue: number = 0; revenuesCounter: number = 0;
-    expenses: number = 0; expensesCounter: number = 0;
-    growth: number = 0; growthCounter: number = 0;
+    totalSales = 0; totalSalesCounter = 0;
+    revenue = 0; revenuesCounter = 0;
+    expenses = 0; expensesCounter = 0;
+    growth = 0; growthCounter = 0;
 
     constructor(private _dashboardService: TenantDashboardServiceProxy, private _containerElement: any) {
         super();
@@ -96,7 +96,7 @@ class SalesSummaryChart extends DashboardChartBase {
             padding: 0,
             behaveLikeLine: false,
             gridEnabled: false,
-            gridLineColor: "transparent",
+            gridLineColor: 'transparent',
             axes: false,
             fillOpacity: 1,
             data: salesSummaryData,
@@ -118,7 +118,7 @@ class SalesSummaryChart extends DashboardChartBase {
         this.growth = growth;
 
         this.hideLoading();
-    };
+    }
 
     reload(datePeriod) {
         this.showLoading();
@@ -140,30 +140,30 @@ class RegionalStatsWorldMap extends DashboardChartBase {
 
     worldMap = element => {
         let instance: any;
-        var init = data => new Datamap({
+        let init = data => new Datamap({
             element: document.getElementById(element),
             projection: 'mercator',
             fills: {
-                defaultFill: "#ABDDA4",
-                key: "#fa0fa0"
+                defaultFill: '#ABDDA4',
+                key: '#fa0fa0'
             },
             data: data,
             done(datamap) {
                 const redraw = () => {
-                    datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+                    datamap.svg.selectAll('g').attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
                 };
 
-                datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
+                datamap.svg.call(d3.behavior.zoom().on('zoom', redraw));
             }
         });
 
-        var redraw = () => {
+        let redraw = () => {
             this._dashboardService
                 .getWorldMap({})
                 .subscribe(result => {
-                    var mapData = {};
-                    for (var i = 0; i < result.countries.length; i++) {
-                        var country = result.countries[i];
+                    let mapData = {};
+                    for (let i = 0; i < result.countries.length; i++) {
+                        let country = result.countries[i];
                         mapData[country.countryName] = this.colors(Math.random() * country.color);
                     }
 
@@ -172,7 +172,7 @@ class RegionalStatsWorldMap extends DashboardChartBase {
 
         };
 
-        var draw = data => {
+        let draw = data => {
             if (!instance) {
                 instance = init(data);
             } else {
@@ -183,8 +183,8 @@ class RegionalStatsWorldMap extends DashboardChartBase {
         return {
             draw: draw,
             redraw: redraw
-        }
-    };
+        };
+    }
 
     constructor(private _dashboardService: TenantDashboardServiceProxy, private _containerElement) {
         super();
@@ -193,14 +193,14 @@ class RegionalStatsWorldMap extends DashboardChartBase {
 
     draw(isAutoReload = false, reloadInterval = 3000) {
         this._worldMap.draw({
-            USA: { fillKey: "key" },
-            JPN: { fillKey: "key" },
-            ITA: { fillKey: "key" },
-            CRI: { fillKey: "key" },
-            KOR: { fillKey: "key" },
-            DEU: { fillKey: "key" },
-            TUR: { fillKey: "key" },
-            RUS: { fillKey: "key" }
+            USA: { fillKey: 'key' },
+            JPN: { fillKey: 'key' },
+            ITA: { fillKey: 'key' },
+            CRI: { fillKey: 'key' },
+            KOR: { fillKey: 'key' },
+            DEU: { fillKey: 'key' },
+            TUR: { fillKey: 'key' },
+            RUS: { fillKey: 'key' }
         });
 
         if (isAutoReload) {
@@ -208,7 +208,7 @@ class RegionalStatsWorldMap extends DashboardChartBase {
         }
 
         this.hideLoading();
-    };
+    }
 
     dispose() {
         if (!this.refreshIntervalId) {
@@ -216,7 +216,7 @@ class RegionalStatsWorldMap extends DashboardChartBase {
         }
 
         clearInterval(this.refreshIntervalId);
-    };
+    }
 
     reloadEvery(milliseconds) {
         this.refreshIntervalId = setInterval(() => {
@@ -301,44 +301,84 @@ class GeneralStatsPieChart extends DashboardChartBase {
     }
 }
 
-class ServerStatsLineChart extends DashboardChartBase {
-    //Server stats => Sparklines: https://github.com/imsky/jquery.sparkline
+class DailySalesLineChart extends DashboardChartBase {
+    //== Daily Sales chart.
+    //** Based on Chartjs plugin - http://www.chartjs.org/
 
-    constructor(private _dashboardService: TenantDashboardServiceProxy
-        , private _networkContainerElement: any
-        , private _cpuLoadContainerElement: any
-        , private _loadRateContainerElement: any) {
+    _canvasId: string;
+
+    constructor(private _dashboardService: TenantDashboardServiceProxy, canvasId: string) {
         super();
+        this._canvasId = canvasId;
     }
 
-    init(networkLoad, cpuLoad, loadRate) {
-        $(this._networkContainerElement).sparkline(loadRate,
-            {
-                type: 'bar',
-                width: '100',
-                barWidth: 5,
-                height: '55',
-                barColor: '#35aa47',
-                negBarColor: '#e02222'
-            });
+    init(data) {
+        var dayLabels = [];
+        for (var day = 1; day <= data.length; day++) {
+            dayLabels.push("Day " + day);
+        }
 
-        $(this._cpuLoadContainerElement).sparkline(cpuLoad,
-            {
-                type: 'bar',
-                width: '100',
-                barWidth: 5,
-                height: '55',
-                barColor: '#ffb848',
-                negBarColor: '#e02222'
-            });
+        var chartData = {
+            labels: dayLabels,
+            datasets: [{
+                //label: 'Dataset 1',
+                backgroundColor: mUtil.getColor('success'),
+                data: data
+            }, {
+                //label: 'Dataset 2',
+                backgroundColor: '#f3f3fb',
+                data: data
+            }]
+        };
 
-        $(this._loadRateContainerElement).sparkline(loadRate,
-            {
-                type: 'line',
-                width: '100',
-                height: '55',
-                lineColor: '#ffb848'
-            });
+        var chartContainer = $(this._canvasId);
+
+        if (chartContainer.length === 0) {
+            return;
+        }
+
+        var chart = new Chart(chartContainer, {
+            type: 'bar',
+            data: chartData,
+            options: {
+                title: {
+                    display: false,
+                },
+                tooltips: {
+                    intersect: false,
+                    mode: 'nearest',
+                    xPadding: 10,
+                    yPadding: 10,
+                    caretPadding: 10
+                },
+                legend: {
+                    display: false
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+                barRadius: 4,
+                scales: {
+                    xAxes: [{
+                        display: false,
+                        gridLines: false,
+                        stacked: true
+                    }],
+                    yAxes: [{
+                        display: false,
+                        stacked: true,
+                        gridLines: false
+                    }]
+                },
+                layout: {
+                    padding: {
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        bottom: 0
+                    }
+                }
+            }
+        });
 
         this.hideLoading();
     }
@@ -346,79 +386,103 @@ class ServerStatsLineChart extends DashboardChartBase {
     reload() {
         this.showLoading();
         this._dashboardService
-            .getServerStats({})
+            .getSalesSummary(AppSalesSummaryDatePeriod.Monthly)
             .subscribe(result => {
-                this.init(result.networkLoad, result.cpuLoad, result.loadRate);
+                this.init(result.salesSummary);
                 this.hideLoading();
             });
     }
 }
 
-class ActivitiesTimeline extends DashboardChartBase {
-    //Activities => Horizontal timeline: https://github.com/CodyHouse/horizontal-timeline
+class ProfitSharePieChart extends DashboardChartBase {
+    //== Profit Share Chart.
+    //** Based on Chartist plugin - https://gionkunz.github.io/chartist-js/index.html
 
-    constructor(private _detailsContainer: any,
-        private _dateListContainer: any,
-        private _mainContainer: any) {
+    _canvasId: string;
+    data: number[];
+
+    constructor(private _dashboardService: TenantDashboardServiceProxy, canvasId: string) {
         super();
+        this._canvasId = canvasId;
     }
 
-    init(timelineItems) {
-        var $detailsContainer = $(this._detailsContainer);
-        var $dateListContainer = $(this._dateListContainer);
-        var $mainContainer = $(this._mainContainer);
-
-        $detailsContainer.empty();
-        $dateListContainer.empty();
-
-        for (var i = 0; i < timelineItems.length; i++) {
-            var timeline = timelineItems[i];
-
-            var timeLineHeader = abp.utils.formatString(
-                "<li><a href='#0' data-date='{0}' class='border-after-red bg-after-red {2}'>{1}</a></li>",
-                timeline.shortDate,
-                timeline.titleDate,
-                i === 0 ? "selected" : "");
-
-            $dateListContainer.append(timeLineHeader);
-
-            const templateHtml = `
-<li class='{0}' data-date='{1}'>
-   <div class='mt-title'>
-      <h2 class='mt-content-title'>{2}</h2>
-   </div>
-   <div class='mt-author' >
-      <div class='mt-avatar' > 
-         <img src='{3}'/>
-      </div>
-      <div class='mt-author-name' > 
-         <a href= 'javascript:;' class='font-blue-madison'>{4}</a > 
-      </div>
-      <div class='mt-author-datetime font-grey-mint'>{5}</div>
-   </div>
-   <div class='clearfix'></div >
-   <div class='mt-content border-grey-steel' style='max-height: 70px;overflow: auto;'>
-      <p>{6}</p>
-   </div >
-</li>`;
-
-            var timeLineDetail = abp.utils.formatString(templateHtml,
-                (i === 0 ? "selected" : ""),
-                timeline.shortDate,
-                timeline.title,
-                abp.appPath + 'assets/metronic/admin/layout4/media/users/' + timeline.image,
-                timeline.autherName,
-                timeline.longDate,
-                timeline.text);
-
-            $detailsContainer.append(timeLineDetail);
+    init(data: number[]) {
+        this.data = data;
+        if ($(this._canvasId).length === 0) {
+            return;
         }
 
-        $mainContainer.addClass("cd-horizontal-timeline mt-timeline-horizontal");
+        var chart = new Chartist.Pie(this._canvasId, {
+            series: [{
+                value: data[0],
+                className: 'custom',
+                meta: {
+                    color: mUtil.getColor('brand')
+                }
+            },
+            {
+                value: data[1],
+                className: 'custom',
+                meta: {
+                    color: mUtil.getColor('accent')
+                }
+            },
+            {
+                value: data[2],
+                className: 'custom',
+                meta: {
+                    color: mUtil.getColor('warning')
+                }
+            }
+            ],
+            labels: [1, 2, 3]
+        }, {
+                donut: true,
+                donutWidth: 17,
+                showLabel: false
+            });
 
-        if (timelineItems) {
-            $('.cd-horizontal-timeline').horizontalTimeline();
-        }
+        chart.on('draw', (data) => {
+            if (data.type === 'slice') {
+                // Get the total path length in order to use for dash array animation
+                var pathLength = data.element._node.getTotalLength();
+
+                // Set a dasharray that matches the path length as prerequisite to animate dashoffset
+                data.element.attr({
+                    'stroke-dasharray': pathLength + 'px ' + pathLength + 'px'
+                });
+
+                // Create animation definition while also assigning an ID to the animation for later sync usage
+                var animationDefinition = {
+                    'stroke-dashoffset': {
+                        id: 'anim' + data.index,
+                        dur: 1000,
+                        from: -pathLength + 'px',
+                        to: '0px',
+                        easing: Chartist.Svg.Easing.easeOutQuint,
+                        // We need to use `fill: 'freeze'` otherwise our animation will fall back to initial (not visible)
+                        fill: 'freeze',
+                        'stroke': data.meta.color
+                    }
+                };
+
+                // If this was not the first slice, we need to time the animation so that it uses the end sync event of the previous animation
+                if (data.index !== 0) {
+                    (animationDefinition['stroke-dashoffset'] as any).begin = 'anim' + (data.index - 1) + '.end';
+                }
+
+                // We need to set an initial value before the animation starts as we are not in guided mode which would do that for us
+
+                data.element.attr({
+                    'stroke-dashoffset': -pathLength + 'px',
+                    'stroke': data.meta.color
+                });
+
+                // We can't use guided mode as the animations need to rely on setting begin manually
+                // See http://gionkunz.github.io/chartist-js/api-documentation.html#chartistsvg-function-animate
+                data.element.animate(animationDefinition, false);
+            }
+        });
 
         this.hideLoading();
     }
@@ -426,15 +490,15 @@ class ActivitiesTimeline extends DashboardChartBase {
 
 class DashboardHeaderStats extends DashboardChartBase {
 
-    totalProfit: number = 0; totalProfitCounter: number = 0;
-    newFeedbacks: number = 0; newFeedbacksCounter: number = 0;
-    newOrders: number = 0; newOrdersCounter: number = 0;
-    newUsers: number = 0; newUsersCounter: number = 0;
+    totalProfit = 0; totalProfitCounter = 0;
+    newFeedbacks = 0; newFeedbacksCounter = 0;
+    newOrders = 0; newOrdersCounter = 0;
+    newUsers = 0; newUsersCounter = 0;
 
-    totalProfitChange: number = 76; totalProfitChangeCounter: number = 0;
-    newFeedbacksChange: number = 85; newFeedbacksChangeCounter: number = 0;
-    newOrdersChange: number = 45; newOrdersChangeCounter: number = 0;
-    newUsersChange: number = 57; newUsersChangeCounter: number = 0;
+    totalProfitChange = 76; totalProfitChangeCounter = 0;
+    newFeedbacksChange = 85; newFeedbacksChangeCounter = 0;
+    newOrdersChange = 45; newOrdersChangeCounter = 0;
+    newUsersChange = 57; newUsersChangeCounter = 0;
 
     init(totalProfit, newFeedbacks, newOrders, newUsers) {
         this.totalProfit = totalProfit;
@@ -442,8 +506,8 @@ class DashboardHeaderStats extends DashboardChartBase {
         this.newOrders = newOrders;
         this.newUsers = newUsers;
         this.hideLoading();
-    };
-};
+    }
+}
 
 class MemberActivityTable extends DashboardChartBase {
 

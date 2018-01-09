@@ -11,10 +11,10 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 export class EmailActivationComponent extends AppComponentBase {
 
     model: SendEmailActivationLinkInput = new SendEmailActivationLinkInput();
-    saving: boolean = false;
+    saving = false;
 
     constructor (
-        injector: Injector, 
+        injector: Injector,
         private _accountService: AccountServiceProxy,
         private _router: Router
         ) {

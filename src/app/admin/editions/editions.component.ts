@@ -1,23 +1,20 @@
-﻿import { Component, AfterViewInit, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { EditionServiceProxy, EditionListDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-modal.component';
-import { JTableHelper } from '@shared/helpers/JTableHelper';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-
-import * as moment from "moment";
+import { DataTable } from 'primeng/components/datatable/datatable';
+import { Paginator } from 'primeng/components/paginator/paginator';
 
 @Component({
-    templateUrl: "./editions.component.html",
-    styleUrls: ["./editions.component.less"],
+    templateUrl: './editions.component.html',
     animations: [appModuleAnimation()]
 })
-export class EditionsComponent extends AppComponentBase implements AfterViewInit {
+export class EditionsComponent extends AppComponentBase  {
 
     @ViewChild('createOrEditEditionModal') createOrEditEditionModal: CreateOrEditEditionModalComponent;
-
-    private _$editionsTable: JQuery;
-    loading: boolean = false;
+    @ViewChild('dataTable') dataTable: DataTable;
+    @ViewChild('paginator') paginator: Paginator;
 
     constructor(
         injector: Injector,
@@ -26,80 +23,18 @@ export class EditionsComponent extends AppComponentBase implements AfterViewInit
         super(injector);
     }
 
-    ngAfterViewInit(): void {
-        let self = this;
-
-        var initEditionsTable = () => {
-            self._$editionsTable = $('#EditionsTable');
-
-            self._$editionsTable.jtable({
-
-                title: self.l('Editions'),
-
-                actions: {
-                    listAction(postData, jtParams: JTableParams) {
-                        return JTableHelper.toJTableListAction(self._editionService.getEditions());
-                    }
-                },
-
-                fields: {
-                    id: {
-                        key: true,
-                        list: false
-                    },
-                    actions: {
-                        title: this.l('Actions'),
-                        width: '30%',
-                        sorting: false,
-                        type: 'record-actions',
-                        cssClass: 'btn btn-xs btn-primary blue',
-                        text: '<i class="fa fa-cog"></i> ' + this.l('Actions') + ' <span class="caret"></span>',
-                        items: [{
-                            text: this.l('Edit'),
-                            visible: (): boolean => {
-                                return self.isGranted('Pages.Editions.Edit');
-                            },
-                            action(data) {
-                                self.createOrEditEditionModal.show(data.record.id);
-                            }
-                        }, {
-                            text: this.l('Delete'),
-                            visible: (): boolean => {
-                                return self.isGranted('Pages.Editions.Delete');
-                            },
-                            action(data) {
-                                self.deleteEdition(data.record);
-                            }
-                        }]
-                    },
-                    displayName: {
-                        title: self.l('EditionName'),
-                        width: '35%'
-                    },
-                    creationTime: {
-                        title: self.l('CreationTime'),
-                        width: '35%',
-                        display: (data: JTableFieldOptionDisplayData<EditionListDto>) => {
-                            return moment(data.record.creationTime).format('L');
-                        }
-                    }
-                }
-
-            });
-
-            self.getEditions();
-        };
-
-        initEditionsTable();
-    }
-
     getEditions(): void {
-        this._$editionsTable.jtable('load');
+        this.primengDatatableHelper.showLoadingIndicator();
+        this._editionService.getEditions().subscribe(result => {
+            this.primengDatatableHelper.totalRecordsCount = result.items.length;
+            this.primengDatatableHelper.records = result.items;
+            this.primengDatatableHelper.hideLoadingIndicator();
+        });
     }
 
     createEdition(): void {
         this.createOrEditEditionModal.show();
-    };
+    }
 
     deleteEdition(edition: EditionListDto): void {
         this.message.confirm(

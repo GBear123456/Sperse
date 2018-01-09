@@ -1,4 +1,4 @@
-﻿import { Directive, forwardRef, Attribute, Input } from '@angular/core';
+import { Directive, forwardRef, Attribute, Input } from '@angular/core';
 import { Validator, AbstractControl, NG_VALIDATORS } from '@angular/forms';
 
 
@@ -17,35 +17,35 @@ export class PasswordComplexityValidator implements Validator {
   @Input('requiredLength') requiredLength: number;
 
   validate(control: AbstractControl): { [key: string]: any } {
-    let givenPassword = control.value;
+    const givenPassword = control.value;
     let validationResult = null;
 
-    let requireDigit = this.requireDigit;
+    const requireDigit = this.requireDigit;
     if (requireDigit && givenPassword && !/[0-9]/.test(givenPassword)) {
       validationResult = validationResult || {};
       validationResult.requireDigit = true;
     }
 
-    let requireUppercase = this.requireUppercase;
+    const requireUppercase = this.requireUppercase;
     if (requireUppercase && givenPassword && !/[A-Z]/.test(givenPassword)) {
       validationResult = validationResult || {};
       validationResult.requireUppercase = true;
     }
 
-    let requireLowercase = this.requireLowercase;
+    const requireLowercase = this.requireLowercase;
     if (requireLowercase && givenPassword && !/[a-z]/.test(givenPassword)) {
       validationResult = validationResult || {};
       validationResult.requireLowercase = true;
     }
 
-    let requiredLength = this.requiredLength;
+    const requiredLength = this.requiredLength;
     if (requiredLength && givenPassword && givenPassword.length < requiredLength) {
       validationResult = validationResult || {};
       validationResult.requiredLength = true;
     }
 
-    //use upperCaseLetters
-    let requireNonAlphanumeric = this.requireNonAlphanumeric;
+    // use upperCaseLetters
+    const requireNonAlphanumeric = this.requireNonAlphanumeric;
     if (requireNonAlphanumeric && givenPassword && /[0-9a-zA-Z]+$/.test(givenPassword)) {
       validationResult = validationResult || {};
       validationResult.requireNonAlphanumeric = true;

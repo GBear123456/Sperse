@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, AfterViewChecked, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { HostSettingsServiceProxy, HostSettingsEditDto, CommonLookupServiceProxy, ComboboxItemDto, DefaultTimezoneScope, SendTestEmailInput } from '@shared/service-proxies/service-proxies';
@@ -6,25 +6,25 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { AppTimezoneScope  } from '@shared/AppEnums';
+import { AppTimezoneScope } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Component({
-    templateUrl: "./host-settings.component.html",
+    templateUrl: './host-settings.component.html',
     animations: [appModuleAnimation()]
 })
-export class HostSettingsComponent extends AppComponentBase implements OnInit {
+export class HostSettingsComponent extends AppComponentBase implements OnInit, AfterViewChecked {
 
-    loading: boolean = false;
+    loading = false;
     hostSettings: HostSettingsEditDto;
     editions: ComboboxItemDto[] = undefined;
     testEmailAddress: string = undefined;
     showTimezoneSelection = abp.clock.provider.supportsMultipleTimezone;
     defaultTimezoneScope: DefaultTimezoneScope = AppTimezoneScope.Application;
 
-    usingDefaultTimeZone: boolean = false;
+    usingDefaultTimeZone = false;
     initialTimeZone: string = undefined;
 
     constructor(
@@ -37,30 +37,30 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit {
     }
 
     loadHostSettings(): void {
-        let self = this;
+        const self = this;
         self._hostSettingService.getAllSettings()
             .subscribe(setting => {
                 self.hostSettings = setting;
                 self.initialTimeZone = setting.general.timezone;
-                self.usingDefaultTimeZone = setting.general.timezoneForComparison === self.setting.get("Abp.Timing.TimeZone");
+                self.usingDefaultTimeZone = setting.general.timezoneForComparison === self.setting.get('Abp.Timing.TimeZone');
             });
     }
 
     loadEditions(): void {
-        let self = this;
+        const self = this;
         self._commonLookupService.getEditionsForCombobox(false).subscribe((result) => {
             self.editions = result.items;
 
-            let notAssignedEdition = new ComboboxItemDto();
+            const notAssignedEdition = new ComboboxItemDto();
             notAssignedEdition.value = null;
-            notAssignedEdition.displayText = self.l("NotAssigned");
+            notAssignedEdition.displayText = self.l('NotAssigned');
 
             self.editions.unshift(notAssignedEdition);
         });
     }
 
     init(): void {
-        let self = this;
+        const self = this;
         self.testEmailAddress = self._appSessionService.user.emailAddress;
         self.showTimezoneSelection = abp.clock.provider.supportsMultipleTimezone;
         self.loadHostSettings();
@@ -68,21 +68,27 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
-        let self = this;
+        const self = this;
         self.init();
     }
 
+    ngAfterViewChecked(): void {
+        //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
+        $('tabset ul.nav').addClass('m-tabs-line');
+        $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
+    }
+
     sendTestEmail(): void {
-        let self = this;
-        let input = new SendTestEmailInput();
+        const self = this;
+        const input = new SendTestEmailInput();
         input.emailAddress = self.testEmailAddress;
         self._hostSettingService.sendTestEmail(input).subscribe(result => {
-            self.notify.info(self.l("TestEmailSentSuccessfully"));
+            self.notify.info(self.l('TestEmailSentSuccessfully'));
         });
-    };
+    }
 
     saveAll(): void {
-        let self = this;
+        const self = this;
         self._hostSettingService.updateAllSettings(self.hostSettings).subscribe(result => {
             self.notify.info(self.l('SavedSuccessfully'));
 

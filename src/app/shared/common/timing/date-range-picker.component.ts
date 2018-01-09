@@ -1,5 +1,4 @@
-﻿import { Component, AfterViewInit, ElementRef, ViewChild, Injector, Input, Output, EventEmitter } from '@angular/core';
-import { TimingServiceProxy, NameValueDto, DefaultTimezoneScope } from '@shared/service-proxies/service-proxies';
+import { Component, AfterViewInit, ElementRef, ViewChild, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import * as moment from 'moment';
@@ -16,9 +15,9 @@ export class DateRangePickerComponent extends AppComponentBase implements AfterV
     _startDate: moment.Moment = moment().startOf('day');
     _endDate: moment.Moment = moment().startOf('day');
 
-    @Input() isDisabled: boolean = false;
-    @Input() allowFutureDate: boolean = false;
-    @Input() isSingleDatePicker: boolean = false;
+    @Input() isDisabled = false;
+    @Input() allowFutureDate = false;
+    @Input() isSingleDatePicker = false;
 
     @Input() dateRangePickerOptions: any = undefined;
 
@@ -55,7 +54,7 @@ export class DateRangePickerComponent extends AppComponentBase implements AfterV
     ngAfterViewInit(): void {
         const $element = $(this.dateRangePickerElement.nativeElement);
 
-        var _selectedDateRange = {
+        const _selectedDateRange = {
             startDate: this._startDate,
             endDate: this._endDate
         };
@@ -65,7 +64,7 @@ export class DateRangePickerComponent extends AppComponentBase implements AfterV
                 singleDatePicker: this.isSingleDatePicker
             };
         }
-      
+
         $element.daterangepicker(
             $.extend(true, this.createDateRangePickerOptions(), this.dateRangePickerOptions, _selectedDateRange), (start, end, label) => {
                 this.startDate = start;
@@ -74,8 +73,8 @@ export class DateRangePickerComponent extends AppComponentBase implements AfterV
     }
 
     createDateRangePickerOptions(): any {
-        let self = this;
-        let options: any = {
+        const self = this;
+        const options: any = {
             locale: {
                 format: 'L',
                 applyLabel: self.l('Apply'),

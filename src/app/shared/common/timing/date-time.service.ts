@@ -1,16 +1,16 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import * as moment from "moment";
+import * as moment from 'moment';
 
 @Injectable()
 export class DateTimeService  {
 
     constructor(private _appLocalizationService: AppLocalizationService) {
-        
+
     }
 
     createDateRangePickerOptions(): any {
-        var options = {
+        let options = {
             locale: {
                 format: 'L',
                 applyLabel: this._appLocalizationService.l('Apply'),
@@ -21,6 +21,7 @@ export class DateTimeService  {
             minDate: moment('2015-05-01'),
             max: moment(),
             maxDate: moment(),
+            opens: 'left',
             ranges: {}
         };
 

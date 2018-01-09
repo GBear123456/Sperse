@@ -1,10 +1,10 @@
-﻿import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { TenantServiceProxy, ProfileServiceProxy, CreateTenantInput, CommonLookupServiceProxy, PasswordComplexitySetting } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import * as moment from 'moment';
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'createTenantModal',
@@ -18,15 +18,15 @@ export class CreateTenantModalComponent extends AppComponentBase {
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active: boolean = false;
-    saving: boolean = false;
-    setRandomPassword: boolean = true;
-    useHostDb: boolean = true;
+    active = false;
+    saving = false;
+    setRandomPassword = true;
+    useHostDb = true;
     editions = [];
     tenant: CreateTenantInput;
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
-    isUnlimited: boolean = false;
-    isSubscriptionFieldsVisible: boolean = false;
+    isUnlimited = false;
+    isSubscriptionFieldsVisible = false;
     isSelectedEditionFree = false;
 
     constructor(
@@ -70,7 +70,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
                 this.editions.unshift({ value: 0, displayText: this.l('NotAssigned') });
 
                 this._commonLookupService.getDefaultEditionName().subscribe((getDefaultEditionResult) => {
-                    var defaultEdition = _.filter(this.editions, { displayText: getDefaultEditionResult.name });
+                    let defaultEdition = _.filter(this.editions, { 'displayText': getDefaultEditionResult.name });
                     if (defaultEdition && defaultEdition[0]) {
                         this.tenant.editionId = parseInt(defaultEdition[0].value);
                         this.toggleSubscriptionFields();
@@ -84,12 +84,12 @@ export class CreateTenantModalComponent extends AppComponentBase {
     }
 
     selectedEditionIsFree(): boolean {
-        var selectedEditions = _.filter(this.editions, { value: this.tenant.editionId });
+        let selectedEditions = _.filter(this.editions, { 'value': this.tenant.editionId });
         if (selectedEditions.length !== 1) {
             this.isSelectedEditionFree = true;
         }
 
-        var selectedEdition = selectedEditions[0];
+        let selectedEdition = selectedEditions[0];
         this.isSelectedEditionFree = selectedEdition.isFree;
         return this.isSelectedEditionFree;
     }
@@ -107,8 +107,8 @@ export class CreateTenantModalComponent extends AppComponentBase {
             return false;
         }
 
-        var subscriptionEndDateUtc = $(this.subscriptionEndDateUtc.nativeElement).val();
-        return subscriptionEndDateUtc != undefined && subscriptionEndDateUtc !== '';
+        let subscriptionEndDateUtc = $(this.subscriptionEndDateUtc.nativeElement).val();
+        return subscriptionEndDateUtc !== undefined && subscriptionEndDateUtc !== '';
     }
 
     save(): void {
@@ -118,13 +118,13 @@ export class CreateTenantModalComponent extends AppComponentBase {
             this.tenant.adminPassword = null;
         }
 
-        if (this.tenant.editionId == 0) {
+        if (this.tenant.editionId === 0) {
             this.tenant.editionId = null;
         }
 
         //take selected date as UTC
         if (!this.isUnlimited && this.tenant.editionId > 0) {
-            this.tenant.subscriptionEndDateUtc = moment($(this.subscriptionEndDateUtc.nativeElement).data("DateTimePicker").date().format("YYYY-MM-DDTHH:mm:ss") + 'Z');
+            this.tenant.subscriptionEndDateUtc = moment($(this.subscriptionEndDateUtc.nativeElement).data('DateTimePicker').date().format('YYYY-MM-DDTHH:mm:ss') + 'Z');
         } else {
             this.tenant.subscriptionEndDateUtc = null;
         }

@@ -1,15 +1,19 @@
-﻿import { Component, Injector, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Injector, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { LanguageServiceProxy, ApplicationLanguageListDto, LanguageTextListDto } from '@shared/service-proxies/service-proxies';
+import { LanguageServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { JTableHelper } from '@shared/helpers/JTableHelper';
 import { EditTextModalComponent } from './edit-text-modal.component';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
 
+import { DataTable } from 'primeng/components/datatable/datatable';
+import { Paginator } from 'primeng/components/paginator/paginator';
+import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import * as _ from 'lodash';
 
 @Component({
-    templateUrl: "./language-texts.component.html",
-    styleUrls: ["./language-texts.component.less"]
+    templateUrl: './language-texts.component.html',
+    styleUrls: ['./language-texts.component.less'],
+    animations: [appModuleAnimation()]
 })
 export class LanguageTextsComponent extends AppComponentBase implements AfterViewInit, OnInit {
 
@@ -17,21 +21,18 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     @ViewChild('baseLanguageNameCombobox') baseLanguageNameCombobox: ElementRef;
     @ViewChild('sourceNameCombobox') sourceNameCombobox: ElementRef;
     @ViewChild('targetValueFilterCombobox') targetValueFilterCombobox: ElementRef;
-
     @ViewChild('textsTable') textsTable: ElementRef;
-
     @ViewChild('editTextModal') editTextModal: EditTextModalComponent;
+    @ViewChild('dataTable') dataTable: DataTable;
+    @ViewChild('paginator') paginator: Paginator;
 
     sourceNames: string[] = [];
     languages: abp.localization.ILanguageInfo[] = [];
-
     targetLanguageName: string;
     sourceName: string;
     baseLanguageName: string;
     targetValueFilter: string;
     filterText: string;
-
-    private _$textsTable: JQuery;
 
     constructor(
         injector: Injector,
@@ -53,77 +54,30 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
         });
     }
 
-    init(): void {
-        this._$textsTable = $(this.textsTable.nativeElement);
-        this._$textsTable.jtable({
+    getLanguageTexts(event?: LazyLoadEvent) {
+        if (!this.paginator || !this.dataTable || !this.sourceName) {
+            return;
+        }
 
-            title: this.l('LanguageTexts'),
+        this.primengDatatableHelper.showLoadingIndicator();
 
-            paging: true,
-            sorting: true,
-
-            actions: {
-                listAction: (postData, jtParams: JTableParams) => {
-                    return JTableHelper.toJTableListAction(
-                        this._languageService.getLanguageTexts(
-                            jtParams.jtPageSize,
-                            jtParams.jtStartIndex,
-                            jtParams.jtSorting,
-                            this.sourceName,
-                            this.baseLanguageName,
-                            this.targetLanguageName,
-                            this.targetValueFilter,
-                            this.filterText
-                        )
-                    );
-                }
-            },
-
-            fields: {
-                key: {
-                    key: true,
-                    list: true,
-                    title: this.l('Key'),
-                    width: '30%',
-                    display: (data: JTableFieldOptionDisplayData<LanguageTextListDto>) => '<span title="' + data.record.key + '">' + abp.utils.truncateString(data.record.key, 32) + '</span>'
-                },
-                baseValue: {
-                    title: this.l('BaseValue'),
-                    width: '30%',
-                    display: (data: JTableFieldOptionDisplayData<LanguageTextListDto>) => '<span title="' + (data.record.baseValue || '') + '">' + (abp.utils.truncateString(data.record.baseValue, 32) || '') + '</span>'
-                },
-                targetValue: {
-                    title: this.l('TargetValue'),
-                    width: '30%',
-                    display: (data: JTableFieldOptionDisplayData<LanguageTextListDto>) => '<span title="' + (data.record.targetValue || '') + '">' + (abp.utils.truncateString(data.record.targetValue, 32) || '') + '</span>'
-                },
-                actions: {
-                    title: '',
-                    width: '10%',
-                    sorting: false,
-                    display: (data: JTableFieldOptionDisplayData<LanguageTextListDto>) => {
-                        var $span = $('<span></span>');
-
-                        $('<button class="btn btn-default btn-xs" title="' + this.l('Edit') + '"><i class="fa fa-edit"></i></button>')
-                            .appendTo($span)
-                            .click(() => {
-                                this.editTextModal.show(
-                                    this.baseLanguageName,
-                                    this.targetLanguageName,
-                                    this.sourceName,
-                                    data.record.key,
-                                    data.record.baseValue,
-                                    data.record.targetValue
-                                );
-                            });
-
-                        return $span;
-                    }
-                }
-            }
-
+        this._languageService.getLanguageTexts(
+            this.primengDatatableHelper.getMaxResultCount(this.paginator, event),
+            this.primengDatatableHelper.getSkipCount(this.paginator, event),
+            this.primengDatatableHelper.getSorting(this.dataTable),
+            this.sourceName,
+            this.baseLanguageName,
+            this.targetLanguageName,
+            this.targetValueFilter,
+            this.filterText
+        ).subscribe(result => {
+            this.primengDatatableHelper.totalRecordsCount = result.totalCount;
+            this.primengDatatableHelper.records = result.items;
+            this.primengDatatableHelper.hideLoadingIndicator();
         });
+    }
 
+    init(): void {
         this._activatedRoute.params.subscribe((params: Params) => {
             this.baseLanguageName = params['baseLanguageName'] || abp.localization.currentLanguage.name;
             this.targetLanguageName = params['name'];
@@ -138,12 +92,12 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
                 $(this.targetValueFilterCombobox.nativeElement).selectpicker('refresh');
             }, 0);
 
-            this.getTexts();
+            this.reloadPage();
         });
     }
 
-    getTexts(): void {
-        this._$textsTable.jtable('load');
+    reloadPage(): void {
+        this.paginator.changePage(this.paginator.getPage());
     }
 
     applyFilters(): void {
@@ -153,16 +107,24 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
             targetValueFilter: this.targetValueFilter,
             filterText: this.filterText
         }]);
+
+        if (this.paginator.getPage() !== 0) {
+            this.paginator.changePage(0);
+
+            return;
+        }
+    }
+
+    truncateString(text): string {
+        return abp.utils.truncateStringWithPostfix(text, 32, '...');
     }
 
     refreshTextValueFromModal(): void {
-        this._$textsTable.jtable('updateRecord',
-            {
-                record: {
-                    key: this.editTextModal.model.key,
-                    targetValue: this.editTextModal.model.value
-                },
-                clientOnly: true
-            });
+        for (let i = 0; i < this.primengDatatableHelper.records.length; i++) {
+            if (this.primengDatatableHelper.records[i].key === this.editTextModal.model.key) {
+                this.primengDatatableHelper.records[i].targetValue = this.editTextModal.model.value;
+                return;
+            }
+        }
     }
 }

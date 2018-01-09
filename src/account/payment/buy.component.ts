@@ -1,4 +1,4 @@
-﻿import { Component, Injector, OnInit, ComponentFactoryResolver, ViewContainerRef } from '@angular/core';
+import { Component, Injector, OnInit, ComponentFactoryResolver, ViewContainerRef, ViewEncapsulation } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 
@@ -11,7 +11,7 @@ import {
     PaymentPeriodType,
     SubscriptionPaymentGatewayType,
     EditionPaymentType
-} from "@shared/AppEnums";
+} from '@shared/AppEnums';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -41,8 +41,8 @@ export class BuyComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
-        this.editionPaymentType = parseInt(this._activatedRoute.snapshot.queryParams["editionPaymentType"]);
-        let editionId = this._activatedRoute.snapshot.queryParams["editionId"];
+        this.editionPaymentType = parseInt(this._activatedRoute.snapshot.queryParams['editionPaymentType']);
+        const editionId = this._activatedRoute.snapshot.queryParams['editionId'];
 
         this._tenantRegistrationService.getEdition(editionId)
             .subscribe((result: EditionSelectDto) => {

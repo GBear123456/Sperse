@@ -1,8 +1,8 @@
-﻿import { Component, OnInit, ViewChild, Injector, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, Injector, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { ProfileServiceProxy, ChangePasswordInput, PasswordComplexitySetting } from '@shared/service-proxies/service-proxies'
+import { ProfileServiceProxy, ChangePasswordInput, PasswordComplexitySetting } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'changePasswordModal',
@@ -18,8 +18,8 @@ export class ChangePasswordModalComponent extends AppComponentBase {
     password: string;
     confirmPassword: string;
 
-    saving: boolean = false;
-    active: boolean = false;
+    saving = false;
+    active = false;
 
     constructor(
         injector: Injector,
@@ -50,7 +50,7 @@ export class ChangePasswordModalComponent extends AppComponentBase {
     }
 
     save(): void {
-        var input = new ChangePasswordInput();
+        let input = new ChangePasswordInput();
         input.currentPassword = this.currentPassword;
         input.newPassword = this.password;
 

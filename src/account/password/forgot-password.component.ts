@@ -13,10 +13,10 @@ export class ForgotPasswordComponent extends AppComponentBase {
 
     model: SendPasswordResetCodeInput = new SendPasswordResetCodeInput();
 
-    saving: boolean = false;
+    saving = false;
 
     constructor (
-        injector: Injector, 
+        injector: Injector,
         private _accountService: AccountServiceProxy,
         private _appUrlService: AppUrlService,
         private _router: Router

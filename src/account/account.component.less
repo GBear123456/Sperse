@@ -57,20 +57,10 @@ Login page
     height: 43px;
     color: #8290a3;
     border: 1px solid #dde3ec;
-    border-left: 4px solid #c3ccda;
-}
-
-.login .content .form-control.ng-touched.ng-invalid {
-    border-left-color: red;
-}
-
-.login .content .form-control.ng-touched.ng-valid {
-    border-left-color: #5cb85c;
 }
 
 .login .content .form-control:focus, .login .content .form-control:active {
-    border: 1px solid #ccc;
-    border-left-width: 4px;
+    border: 1px solid #c3ccda;
 }
 
 .login .content .form-control::-moz-placeholder {
@@ -120,6 +110,62 @@ Login page
 .login-options .social-icons {
     float: right;
     padding-top: 3px;
+}
+
+.social-icons {
+    padding: 0;
+    margin: 0;
+}
+
+.social-icons li {
+    float: left;
+    display: inline;
+    list-style: none;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    text-indent: -9999px;
+}
+
+.social-icons li > a {
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    -ms-border-radius: 2px;
+    -o-border-radius: 2px;
+    border-radius: 2px;
+    width: 28px;
+    height: 28px;
+    display: block;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+}
+
+.social-icons li:hover > a {
+    background-position: 0 -38px;
+}
+
+.social-icons li .twitter {
+    background: url(/assets/common/images/social/twitter.png) no-repeat;
+}
+
+.social-icons li .facebook {
+    background: url(/assets/common/images/social/facebook.png) no-repeat;
+}
+
+.social-icons li .googleplus {
+    background: url(/assets/common/images/social/google.png) no-repeat;
+}
+
+.social-icons li .microsoft {
+    background: url(/assets/common/images/social/microsoft.png) no-repeat;
+}
+
+.social-icons li .openidconnect {
+    background: url(/assets/common/images/social/open-id-connect.png) no-repeat;
 }
 
 .login-options .social-icons li a {
@@ -229,18 +275,23 @@ Login page
     font-size: 13px;
 }
 
-.login .language-switch-area {
+.language-switch-area {
     text-align: center;
-    padding: 10px;    
-}
-.login .language-switch-area .language-icon {
-    -ms-opacity: 0.5;
-    opacity: 0.5;
-}
+    padding: 10px;
 
-.login .language-switch-area .language-icon-current {
-    -ms-opacity: 1;
-    opacity: 1;
+    a {
+        cursor: pointer;
+
+        span {
+            -ms-opacity: 0.5;
+            opacity: 0.5;
+
+            &.language-icon-current {
+                -ms-opacity: 1;
+                opacity: 1;
+            }
+        }
+    }
 }
 
 @media (max-width: 440px) {

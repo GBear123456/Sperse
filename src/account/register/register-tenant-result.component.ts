@@ -1,6 +1,6 @@
-﻿import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { RegisterTenantOutput } from '@shared/service-proxies/service-proxies'
+import { RegisterTenantOutput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
@@ -15,7 +15,7 @@ export class RegisterTenantResultComponent extends AppComponentBase implements O
     model: RegisterTenantOutput = new RegisterTenantOutput();
     tenantUrl: string;
 
-    saving: boolean = false;
+    saving = false;
 
     constructor(
         injector: Injector,

@@ -1,9 +1,9 @@
-﻿import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { OrganizationUnitServiceProxy, CreateOrganizationUnitInput, UpdateOrganizationUnitInput, OrganizationUnitDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 export interface IOrganizationUnitOnEdit {
     id?: number;
@@ -23,8 +23,8 @@ export class CreateOrEditUnitModalComponent extends AppComponentBase {
     @Output() unitCreated: EventEmitter<OrganizationUnitDto> = new EventEmitter<OrganizationUnitDto>();
     @Output() unitUpdated: EventEmitter<OrganizationUnitDto> = new EventEmitter<OrganizationUnitDto>();
 
-    active: boolean = false;
-    saving: boolean = false;
+    active = false;
+    saving = false;
 
     organizationUnit: IOrganizationUnitOnEdit = {};
 
@@ -39,7 +39,7 @@ export class CreateOrEditUnitModalComponent extends AppComponentBase {
     onShown(): void {
         $(this.organizationUnitDisplayNameInput.nativeElement).focus();
     }
-    
+
     show(organizationUnit: IOrganizationUnitOnEdit): void {
         this.organizationUnit = organizationUnit;
         this.active = true;
@@ -56,7 +56,7 @@ export class CreateOrEditUnitModalComponent extends AppComponentBase {
     }
 
     createUnit() {
-        let createInput = new CreateOrganizationUnitInput();
+        const createInput = new CreateOrganizationUnitInput();
         createInput.parentId = this.organizationUnit.parentId;
         createInput.displayName = this.organizationUnit.displayName;
 
@@ -72,7 +72,7 @@ export class CreateOrEditUnitModalComponent extends AppComponentBase {
     }
 
     updateUnit() {
-        let updateInput = new UpdateOrganizationUnitInput();
+        const updateInput = new UpdateOrganizationUnitInput();
         updateInput.id = this.organizationUnit.id;
         updateInput.displayName = this.organizationUnit.displayName;
 

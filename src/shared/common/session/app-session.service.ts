@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { SessionServiceProxy, UserLoginInfoDto, TenantLoginInfoDto, ApplicationInfoDto, GetCurrentLoginInformationsOutput } from '@shared/service-proxies/service-proxies'
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service'
+import { SessionServiceProxy, UserLoginInfoDto, TenantLoginInfoDto, ApplicationInfoDto, GetCurrentLoginInformationsOutput } from '@shared/service-proxies/service-proxies';
+import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 
 @Injectable()
 export class AppSessionService {
@@ -30,17 +30,21 @@ export class AppSessionService {
         return this._tenant;
     }
 
+    get tenancyName(): string {
+        return this._tenant ? this.tenant.tenancyName : '';
+    }
+
     get tenantId(): number {
         return this.tenant ? this.tenant.id : null;
     }
 
     getShownLoginName(): string {
-        let userName = this._user.userName;
+        const userName = this._user.userName;
         if (!this._abpMultiTenancyService.isEnabled) {
             return userName;
         }
 
-        return (this._tenant ? this._tenant.tenancyName : ".") + "\\" + userName;
+        return (this._tenant ? this._tenant.tenancyName : '.') + '\\' + userName;
     }
 
     init(): Promise<boolean> {

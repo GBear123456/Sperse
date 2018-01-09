@@ -1,5 +1,6 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { Routes, RouterModule, Router, NavigationEnd } from '@angular/router';
+import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 
 const routes: Routes = [
     { path: '', redirectTo: '/app/main/dashboard', pathMatch: 'full' },
@@ -16,7 +17,9 @@ const routes: Routes = [
     providers: []
 })
 export class RootRoutingModule {
-    constructor(private router: Router) {
+    constructor(
+        private router: Router,
+        private _uiCustomizationService: AppUiCustomizationService) {
         router.events.subscribe((event: NavigationEnd) => {
             setTimeout(() => {
                 this.toggleBodyCssClass(event.url);
@@ -26,20 +29,23 @@ export class RootRoutingModule {
 
     toggleBodyCssClass(url: string): void {
         if (url) {
-
             if (url === '/') {
                 if (abp.session.userId > 0) {
-                    $('body').attr('class', 'page-md page-header-fixed page-sidebar-closed-hide-logo');
+                    $('body').attr('class', this._uiCustomizationService.getAppModuleBodyClass());
                 } else {
-                    $('body').attr('class', 'page-md login');
+                    $('body').attr('class', this._uiCustomizationService.getAccountModuleBodyClass());
                 }
             }
 
-            if (url.indexOf("/account/") >= 0) {
-                $('body').attr('class', 'page-md login');
+            if (url.indexOf('/account/') >= 0) {
+                $('body').attr('class', this._uiCustomizationService.getAccountModuleBodyClass());
             } else {
-                $('body').attr('class', 'page-md page-header-fixed page-sidebar-closed-hide-logo');
+                $('body').attr('class', this._uiCustomizationService.getAppModuleBodyClass());
             }
         }
+    }
+
+    getSetting(key: string): string {
+        return abp.setting.get(key);
     }
 }

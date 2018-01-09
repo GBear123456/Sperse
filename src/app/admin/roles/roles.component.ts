@@ -1,30 +1,24 @@
-﻿import { Component, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
+import { Component,  Injector, ViewChild } from '@angular/core';
 import { RoleServiceProxy, RoleListDto } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
-import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileDownloadService } from '@shared/utils/file-download.service';
-import { FlatPermissionWithLevelDto } from '@shared/service-proxies/service-proxies';
 import { CreateOrEditRoleModalComponent } from './create-or-edit-role-modal.component';
-import { JTableHelper } from '@shared/helpers/JTableHelper';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-
-import * as moment from "moment";
+import { DataTable } from 'primeng/components/datatable/datatable';
 
 @Component({
-    templateUrl: "./roles.component.html",
+    templateUrl: './roles.component.html',
     animations: [appModuleAnimation()]
 })
-export class RolesComponent extends AppComponentBase implements AfterViewInit {
+export class RolesComponent extends AppComponentBase {
 
     @ViewChild('createOrEditRoleModal') createOrEditRoleModal: CreateOrEditRoleModalComponent;
+    @ViewChild('dataTable') dataTable: DataTable;
+
 
     //Filters
-    selectedPermission: string = '';
-
-    private _$rolesTable: JQuery;
+    selectedPermission = '';
 
     constructor(
         injector: Injector,
@@ -35,93 +29,15 @@ export class RolesComponent extends AppComponentBase implements AfterViewInit {
         super(injector);
     }
 
-    ngAfterViewInit(): void {
-        var self = this;
-
-        var initRolesTable = () => {
-            self._$rolesTable = $('#RolesTable');
-
-            self._$rolesTable.jtable({
-
-                title: self.l('Roles'),
-
-                actions: {
-                    listAction(postData, jtParams: JTableParams) {
-                        return JTableHelper.toJTableListAction(self._roleService.getRoles(
-                            self.permission ? self.selectedPermission : undefined
-                        ));
-                    }
-                },
-
-                fields: {
-                    id: {
-                        key: true,
-                        list: false
-                    },
-                    actions: {
-                        title: this.l('Actions'),
-                        width: '30%',
-                        sorting: false,
-                        type: 'record-actions',
-                        cssClass: 'btn btn-xs btn-primary blue',
-                        text: '<i class="fa fa-cog"></i> ' + this.l('Actions') + ' <span class="caret"></span>',
-                        items: [{
-                            text: this.l('Edit'),
-                            visible: (): boolean => {
-                                return self.isGranted('Pages.Administration.Roles.Edit');
-                            },
-                            action(data) {
-                                self.createOrEditRoleModal.show(data.record.id);
-                            }
-                        }, {
-                            text: this.l('Delete'),
-                            visible: (data): boolean => {
-                                return !data.record.isStatic && self.isGranted('Pages.Administration.Roles.Delete');
-                            },
-                            action(data) {
-                                self.deleteRole(data.record);
-                            }
-                        }]
-                    },
-                    displayName: {
-                        title: self.l('RoleName'),
-                        width: '35%',
-                        display(data) {
-                            var $span = $('<span></span>');
-
-                            $span.append(data.record.displayName + " &nbsp; ");
-
-                            if (data.record.isStatic) {
-                                $span.append('<span class="label label-info" data-toggle="tooltip" title="' + self.l('StaticRole_Tooltip') + '" data-placement="top">' + self.l('Static') + '</span>&nbsp;');
-                            }
-
-                            if (data.record.isDefault) {
-                                $span.append('<span class="label label-default" data-toggle="tooltip" title="' + self.l('DefaultRole_Description') + '" data-placement="top">' + self.l('Default') + '</span>&nbsp;');
-                            }
-
-                            $span.find('[data-toggle=tooltip]').tooltip();
-
-                            return $span;
-                        }
-                    },
-                    creationTime: {
-                        title: self.l('CreationTime'),
-                        width: '35%',
-                        display: function (data) {
-                            return moment(data.record.creationTime).format('L');
-                        }
-                    }
-                }
-            });
-
-            self.getRoles();
-        };
-
-        initRolesTable();
-    }
-
     getRoles(): void {
-        this._$rolesTable.jtable('load');
+        this.primengDatatableHelper.showLoadingIndicator();
+        let permission = this.permission ? this.selectedPermission : undefined;
+
+        this._roleService.getRoles(permission).subscribe(result => {
+            this.primengDatatableHelper.records = result.items;
+            this.primengDatatableHelper.totalRecordsCount = result.items.length;
+            this.primengDatatableHelper.hideLoadingIndicator();
+        });
     }
 
     createRole(): void {
@@ -129,14 +45,14 @@ export class RolesComponent extends AppComponentBase implements AfterViewInit {
     }
 
     deleteRole(role: RoleListDto): void {
-        var self = this;
+        let self = this;
         self.message.confirm(
             self.l('RoleDeleteWarningMessage', role.displayName),
-            function (isConfirmed) {
+            isConfirmed => {
                 if (isConfirmed) {
-                    self._roleService.deleteRole(role.id).subscribe(() => {
-                        self.getRoles();
-                        abp.notify.success(self.l('SuccessfullyDeleted'));
+                    this._roleService.deleteRole(role.id).subscribe(() => {
+                        this.getRoles();
+                        abp.notify.success(this.l('SuccessfullyDeleted'));
                     });
                 }
             }

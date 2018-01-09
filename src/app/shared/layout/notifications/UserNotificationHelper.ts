@@ -1,15 +1,16 @@
-﻿import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { NotificationServiceProxy, EntityDtoOfGuid } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { NotificationSettingsModalCompoent } from './notification-settings-modal.component';
+import { NotificationSettingsModalComponent } from './notification-settings-modal.component';
 
 import * as moment from 'moment';
-import * as Push from 'push.js'; // if using ES6 
+import * as Push from 'push.js'; // if using ES6
 
 export interface IFormattedUserNotification {
     userNotificationId: string;
     text: string;
     time: string;
+    creationTime: Date;
     icon: string;
     state: String;
     data: any;
@@ -20,7 +21,7 @@ export interface IFormattedUserNotification {
 @Injectable()
 export class UserNotificationHelper extends AppComponentBase {
 
-    settingsModal: NotificationSettingsModalCompoent;
+    settingsModal: NotificationSettingsModalComponent;
 
     constructor(
         injector: Injector,
@@ -58,13 +59,14 @@ export class UserNotificationHelper extends AppComponentBase {
             default:
                 return 'fa fa-info';
         }
-    };
+    }
 
     format(userNotification: abp.notifications.IUserNotification, truncateText?: boolean): IFormattedUserNotification {
-        var formatted: IFormattedUserNotification = {
+        let formatted: IFormattedUserNotification = {
             userNotificationId: userNotification.id,
             text: abp.notifications.getFormattedMessageFromUserNotification(userNotification),
-            time: moment(userNotification.notification.creationTime).format("YYYY-MM-DD HH:mm:ss"),
+            time: moment(userNotification.notification.creationTime).format('YYYY-MM-DD HH:mm:ss'),
+            creationTime: userNotification.notification.creationTime,
             icon: this.getUiIconBySeverity(userNotification.notification.severity),
             state: abp.notifications.getUserNotificationStateAsString(userNotification.state),
             data: userNotification.notification.data,
@@ -85,15 +87,15 @@ export class UserNotificationHelper extends AppComponentBase {
         abp.notifications.showUiNotifyForUserNotification(userNotification, {
             'onclick': () => {
                 //Take action when user clicks to live toastr notification
-                var url = this.getUrl(userNotification);
+                let url = this.getUrl(userNotification);
                 if (url) {
                     location.href = url;
                 }
             }
         });
-        
+
         //Desktop notification
-        Push.create("Platform", {
+        Push.create('Platform', {
             body: this.format(userNotification).text,
             icon: abp.appPath + 'assets/common/images/app-logo-small.png',
             timeout: 6000,
@@ -107,7 +109,9 @@ export class UserNotificationHelper extends AppComponentBase {
     setAllAsRead(callback?: () => void): void {
         this._notificationService.setAllNotificationsAsRead().subscribe(() => {
             abp.event.trigger('app.notifications.refresh');
-            callback && callback();
+            if (callback) {
+                callback();
+            }
         });
     }
 
@@ -116,7 +120,9 @@ export class UserNotificationHelper extends AppComponentBase {
         input.id = userNotificationId;
         this._notificationService.setNotificationAsRead(input).subscribe(() => {
             abp.event.trigger('app.notifications.read', userNotificationId);
-            callback && callback(userNotificationId);
+            if (callback) {
+                callback(userNotificationId);
+            }
         });
     }
 

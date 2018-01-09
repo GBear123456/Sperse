@@ -1,4 +1,4 @@
-﻿///<reference path="../node_modules/@types/jquery/index.d.ts"/>
+///<reference path="../node_modules/@types/jquery/index.d.ts"/>
 ///<reference path="../node_modules/@types/jstree/index.d.ts"/>
 ///<reference path="../node_modules/abp-web-resources/Abp/Framework/scripts/abp.d.ts"/>
 ///<reference path="../node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.jquery.d.ts"/>
@@ -7,6 +7,7 @@
 ///<reference path="../node_modules/@types/moment-timezone/index.d.ts"/>
 ///<reference path="../node_modules/@types/bootstrap/index.d.ts"/>
 ///<reference path="../node_modules/@types/toastr/index.d.ts"/>
+///<reference path="../node_modules/@types/tether/index.d.ts"/>
 
 // Typings reference file, see links for more information
 // https://github.com/typings/typings
@@ -14,8 +15,9 @@
 
 declare var System: any;
 
-declare var App: any; //Related to Metronic
-declare var Layout: any; //Related to Metronic
+declare var mApp: any; // Related to Metronic
+declare var mLayout: any; // Related to Metronic
+declare var mUtil: any; // Related to Metronic
 
 interface JQuery {
     Jcrop(...any): any;
@@ -39,24 +41,6 @@ interface JQuery {
 
 interface JQuery {
     timeago(...any): any;
-}
-
-/**
- * jTable
- */
-
-interface JTableParams {
-    jtStartIndex: number;
-    jtPageSize: number;
-    jtSorting: string;
-}
-
-interface JQuery {
-    jtable(...any): JQuery;
-}
-
-interface JTableFieldOptionDisplayData<TRecord> {
-    record: TRecord;
 }
 
 /**
@@ -90,10 +74,30 @@ interface JQuery {
 declare namespace morris {
     interface IAreaOptions {
         gridEnabled?: boolean;
-        //gridLineColor?: string;
+        // gridLineColor?: string;
         padding?: number;
     }
 }
+
+/**
+ * Chartjs
+ */
+
+declare var Chart: any;
+
+/**
+ * Chartist
+ */
+
+declare namespace Chartist {
+    interface ChartistStatic {
+        Pie: any;
+        Svg: any;
+    }
+}
+
+declare var Chartist: Chartist.ChartistStatic;
+
 
 /**
  * rtl-detect
@@ -111,5 +115,5 @@ interface JQuery {
 interface JQuery {
     inputmask(...any): any;
 }
- 
+
 

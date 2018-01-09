@@ -1,15 +1,15 @@
-﻿<div bsModal #modal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal" (onShown)="onShown()"
+<div bsModal #modal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal" (onShown)="onShown()"
      aria-hidden="true" [config]="{backdrop: 'static'}">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form #editForm="ngForm" novalidate (ngSubmit)="save()">
                 <div class="modal-header">
+                    <h5 class="modal-title">
+                        <span>{{l("NotificationSettings")}}</span>
+                    </h5>
                     <button type="button" class="close" (click)="close()" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title">
-                        <span>{{l("NotificationSettings")}}</span>
-                    </h4>
                 </div>
                 <div class="modal-body" *ngIf="settings">
                     <h4>{{l("ReceiveNotifications")}}</h4>
@@ -21,23 +21,21 @@
                                attr.switch-size="small"
                                [attr.switch-on-text]="l('On')"
                                [attr.switch-off-text]="l('Off')"/>
-                        <span class="help-block">{{l("ReceiveNotifications_Definition")}}</span>
+                        <div class="help-block">{{l("ReceiveNotifications_Definition")}}</div>
                     </div>
-                    <h4 *ngIf="settings.notifications.length">{{l("NotificationTypes")}}</h4>
-                    <p *ngIf="settings.notifications.length && !settings.receiveNotifications" class="text-danger"><small>{{l("ReceiveNotifications_DisableInfo")}}</small></p>
-                    <div class="md-checkbox-list">
-                        <div class="md-checkbox" *ngFor="let notification of settings.notifications">
-                            <input id="Notification_{{notification.name}}" class="md-check" type="checkbox" name="Notification_{{notification.name}}" [(ngModel)]="notification.isSubscribed" [disabled]="!settings.receiveNotifications">
-                            <label attr.for="Notification_{{notification.name}}">
-                                <span class="inc"></span>
-                                <span class="check"></span>
-                                <span class="box"></span>
+                    <h4 *ngIf="settings.notifications.length" class="m--margin-top-20">{{l("NotificationTypes")}}</h4>
+                    <p *ngIf="settings.notifications.length && !settings.receiveNotifications" class="text-danger"><small>{{l("ReceiveNotifications_DisableInfo")}}</small>
+                    </p>
+                    <div class="m-checkbox-list">
+                        <div *ngFor="let notification of settings.notifications">
+                            <label attr.for="Notification_{{notification.name}}" class="m-checkbox">
+                                <input id="Notification_{{notification.name}}" type="checkbox" name="Notification_{{notification.name}}" [(ngModel)]="notification.isSubscribed" [disabled]="!settings.receiveNotifications">
                                 {{notification.displayName}}
+                                <span></span>
                             </label>
                             <span *ngIf="notification.description" class="help-block">{{notification.description}}</span>
                         </div>
                     </div>
-
                 </div>
                 <div class="modal-footer">
                     <button [disabled]="saving" type="button" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>

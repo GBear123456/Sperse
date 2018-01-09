@@ -1,4 +1,4 @@
-﻿import { Injector } from '@angular/core';
+import { Injector } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -8,6 +8,8 @@ import { SettingService } from '@abp/settings/setting.service';
 import { MessageService } from '@abp/message/message.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { PrimengDatatableHelper } from 'shared/helpers/PrimengDatatableHelper';
+import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 
 export abstract class AppComponentBase {
 
@@ -21,6 +23,8 @@ export abstract class AppComponentBase {
     message: MessageService;
     multiTenancy: AbpMultiTenancyService;
     appSession: AppSessionService;
+    primengDatatableHelper: PrimengDatatableHelper;
+    ui: AppUiCustomizationService;
 
     constructor(injector: Injector) {
         this.localization = injector.get(LocalizationService);
@@ -31,10 +35,12 @@ export abstract class AppComponentBase {
         this.message = injector.get(MessageService);
         this.multiTenancy = injector.get(AbpMultiTenancyService);
         this.appSession = injector.get(AppSessionService);
+        this.ui = injector.get(AppUiCustomizationService);
+        this.primengDatatableHelper = new PrimengDatatableHelper();
     }
 
     l(key: string, ...args: any[]): string {
-        return this.ls(this.localizationSourceName, key);
+        return this.ls(this.localizationSourceName, key, args);
     }
 
     ls(sourcename: string, key: string, ...args: any[]): string {
@@ -48,11 +54,30 @@ export abstract class AppComponentBase {
             return localizedText;
         }
 
-        args.unshift(localizedText);
-        return abp.utils.formatString.apply(this, args);
+        args[0].unshift(localizedText);
+
+        return abp.utils.formatString.apply(this, args[0]);
     }
 
     isGranted(permissionName: string): boolean {
         return this.permission.isGranted(permissionName);
+    }
+
+    isGrantedAny(...permissions: string[]): boolean {
+        if (!permissions) {
+            return false;
+        }
+
+        for (const permission of permissions) {
+            if (this.isGranted(permission)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    s(key: string): string {
+        return abp.setting.get(key);
     }
 }

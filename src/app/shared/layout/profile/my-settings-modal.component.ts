@@ -1,11 +1,11 @@
-﻿import { Component, OnInit, ViewChild, AfterViewInit, Injector, Inject, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { FileUploader, FileUploaderOptions, Headers } from '@node_modules/ng2-file-upload';
-import { ProfileServiceProxy, CurrentUserProfileEditDto, DefaultTimezoneScope, UserLoginInfoDto } from "@shared/service-proxies/service-proxies";
-import { AppSessionService } from '@shared/common/session/app-session.service'
+import { ProfileServiceProxy, CurrentUserProfileEditDto, DefaultTimezoneScope, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppTimezoneScope } from '@shared/AppEnums';
+import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 
 @Component({
     selector: 'mySettingsModal',
@@ -13,14 +13,18 @@ import { AppTimezoneScope } from '@shared/AppEnums';
 })
 export class MySettingsModalComponent extends AppComponentBase {
 
+
     @ViewChild('nameInput') nameInput: ElementRef;
     @ViewChild('mySettingsModal') modal: ModalDirective;
-
+    @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    public active: boolean = false;
-    public saving: boolean = false;
-
+    public active = false;
+    public saving = false;
+    public isGoogleAuthenticatorEnabled = false;
+    public isPhoneNumberConfirmed: boolean;
+    public isPhoneNumberEmpty = false;
+    public smsEnabled: boolean;
     public user: CurrentUserProfileEditDto;
     public showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     public canChangeUserName: boolean;
@@ -35,14 +39,42 @@ export class MySettingsModalComponent extends AppComponentBase {
         super(injector);
     }
 
+    ngAfterViewChecked(): void {
+        //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
+        $('tabset ul.nav').addClass('m-tabs-line');
+        $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
+    }
+
     show(): void {
         this.active = true;
         this._profileService.getCurrentUserProfileForEdit().subscribe((result) => {
+            this.smsEnabled = this.setting.getBoolean('App.UserManagement.SmsVerificationEnabled');
             this.user = result;
             this._initialTimezone = result.timezone;
-            this.canChangeUserName = this.user.userName != AppConsts.userManagement.defaultAdminUserName;
+            this.canChangeUserName = this.user.userName !== AppConsts.userManagement.defaultAdminUserName;
             this.modal.show();
+            this.isGoogleAuthenticatorEnabled = result.isGoogleAuthenticatorEnabled;
+            this.isPhoneNumberConfirmed = result.isPhoneNumberConfirmed;
+            this.isPhoneNumberEmpty = result.phoneNumber === '';
         });
+    }
+
+    updateQrCodeSetupImageUrl(): void {
+        this._profileService.updateGoogleAuthenticatorKey().subscribe((result: UpdateGoogleAuthenticatorKeyOutput) => {
+            this.user.qrCodeSetupImageUrl = result.qrCodeSetupImageUrl;
+            this.isGoogleAuthenticatorEnabled = true;
+        });
+    }
+
+    smsVerify(): void {
+        this._profileService.sendVerificationSms()
+            .subscribe(() => {
+                 this.smsVerificationModal.show();
+        });
+    }
+
+    changePhoneNumberToVerified(): void {
+        this.isPhoneNumberConfirmed = true;
     }
 
     onShown(): void {

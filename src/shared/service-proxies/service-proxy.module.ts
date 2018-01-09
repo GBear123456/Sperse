@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 
 import * as ApiServiceProxies from './service-proxies';
 
@@ -11,6 +11,7 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.EditionServiceProxy,
         ApiServiceProxies.FriendshipServiceProxy,
         ApiServiceProxies.HostSettingsServiceProxy,
+        ApiServiceProxies.InstallServiceProxy,
         ApiServiceProxies.LanguageServiceProxy,
         ApiServiceProxies.NotificationServiceProxy,
         ApiServiceProxies.OrganizationUnitServiceProxy,
@@ -30,7 +31,12 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.TokenAuthServiceProxy,
         ApiServiceProxies.TenantRegistrationServiceProxy,
         ApiServiceProxies.HostDashboardServiceProxy,
-        ApiServiceProxies.PaymentServiceProxy
+        ApiServiceProxies.PaymentServiceProxy,
+        ApiServiceProxies.DemoUiComponentsServiceProxy,
+        ApiServiceProxies.InvoiceServiceProxy,
+        ApiServiceProxies.SubscriptionServiceProxy,
+        ApiServiceProxies.InstallServiceProxy,
+        ApiServiceProxies.UiCustomizationSettingsServiceProxy
     ]
 })
 export class ServiceProxyModule { }
