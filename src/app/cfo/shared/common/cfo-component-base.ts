@@ -47,7 +47,8 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
     }
 
     getODataURL(uri: String, filter?: Object) {
-        let url = super.getODataURL(uri, filter) + "?";
+        let url = super.getODataURL(uri, filter);
+        url += (url.indexOf('?') == -1 ? '?' : '&');
 
         if (this.instanceType !== undefined && InstanceType[this.instanceType] !== undefined) {
             url += "instanceType=" + encodeURIComponent("" + InstanceType[this.instanceType]) + "&";
@@ -56,6 +57,8 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
         if (this.instanceId !== undefined) {
             url += "instanceId=" + encodeURIComponent("" + this.instanceId) + "&";
         }
+
+        url = url.replace(/[?&]$/, "");
 
         return url;
     }
