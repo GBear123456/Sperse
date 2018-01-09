@@ -23,9 +23,7 @@ import {
     BankAccountDailyStatDto,
     GroupBy,
     CashFlowForecastServiceProxy,
-    InstanceType4,
-    InstanceType8,
-    InstanceType2
+    InstanceType
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -202,8 +200,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.requestFilter.currencyId = 'USD';
 
         /** Create parallel operations */
-        let getCashFlowInitialDataObservable = this._cashflowService.getCashFlowInitialData(InstanceType4[this.instanceType], this.instanceId);
-        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType8[this.instanceType], this.instanceId);
+        let getCashFlowInitialDataObservable = this._cashflowService.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
+        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable)
             .subscribe(result => {
                 /** Initial data handling */
@@ -331,7 +329,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     loadStatsData() {
         let {startDate = undefined, endDate = undefined, accountIds = []} = this.requestFilter;
         this._bankAccountService.getStats(
-            InstanceType2[this.instanceType], this.instanceId,
+            InstanceType[this.instanceType], this.instanceId,
             'USD', this.selectedForecastModel.id, accountIds, startDate, endDate, GroupBy.Monthly
         ).subscribe(result => {
                     if (result) {

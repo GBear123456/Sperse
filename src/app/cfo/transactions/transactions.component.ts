@@ -4,7 +4,7 @@ import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 
 import { AppService } from '@app/app.service';
 
-import { TransactionsServiceProxy, BankAccountDto, InstanceType48 } from '@shared/service-proxies/service-proxies';
+import { TransactionsServiceProxy, BankAccountDto, InstanceType } from '@shared/service-proxies/service-proxies';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
@@ -162,7 +162,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             }
         };
 
-        this._TransactionsServiceProxy.getFiltersInitialData(InstanceType48[this.instanceType], this.instanceId)
+        this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId)
             .subscribe(result => {
                 this.filtersService.setup(
                     this.filters = [

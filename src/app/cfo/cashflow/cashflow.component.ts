@@ -12,12 +12,7 @@ import {
     ClassificationServiceProxy,
     GetCategoriesOutput,
     CashFlowGridSettingsDto,
-    InstanceType,
-    InstanceType3,
-    InstanceType4,
-    InstanceType6,
-    InstanceType8,
-    InstanceType17,
+    InstanceType
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 
@@ -379,6 +374,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     transactionsTotal = 0;
     transactionsAmount = 0;
     transactionsAverage = 0;
+    startDataLoading = false;
+    filteredLoad = false;
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -389,7 +386,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 public userPreferencesService: UserPreferencesService
     ) {
         super(injector);
-        
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
@@ -398,12 +394,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         super.ngOnInit();
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = this.currencyId;
-
         /** Create parallel operations */
-        let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType4[this.instanceType], this.instanceId);
-        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType8[this.instanceType], this.instanceId);
-        let getCategoriesObservalbel = this._classificationServiceProxy.getCategories(InstanceType17[this.instanceType], this.instanceId);
-        let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType6[this.instanceType], this.instanceId);
+        let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
+        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
+        let getCategoriesObservalbel = this._classificationServiceProxy.getCategories(InstanceType[this.instanceType], this.instanceId);
+        let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoriesObservalbel, getCashflowGridSettings)
             .subscribe(result => {
                 /** Initial data handling */
@@ -445,6 +440,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.requestFilter[filter.field] = undefined;
             }
             this.closeTransactionsDetail();
+            this.filteredLoad = true;
             this.loadGridDataSource();
         });
     }
@@ -575,7 +571,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 items: [
                     {
                         name: 'total',
-                        html: `${this.ls('Platform', 'Total')} : <span class="value">${this.transactionsTotal}</span>`
+                        html: `${this.ls('Platform', 'Total')} : <span class="value">${this.transactionsTotal.toLocaleString('en-EN', {style: 'currency',  currency: 'USD' })}</span>`
                     },
                     {
                         name: 'count',
@@ -583,7 +579,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     },
                     {
                         name: 'average',
-                        html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this.transactionsAverage}</span>`
+                        html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this.transactionsAverage.toLocaleString('en-EN', {style: 'currency',  currency: 'USD' })}</span>`
                     }
                 ]
             }
@@ -644,11 +640,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     loadGridDataSource() {
-        abp.ui.setBusy();
+        this.startLoading();
         $('.pivot-grid').addClass('invisible');
         this.requestFilter.forecastModelId = this.selectedForecastModel.id;
         this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.requestFilter)
             .subscribe(result => {
+                this.startDataLoading = true;
                 if (result.transactionStats.length) {
                     let transactions = result.transactionStats;
                     /** categories - object with categories */
@@ -671,6 +668,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     );
                 } else {
                     this.cashflowData = null;
+                    this.finishLoading();
                 }
                 this.dataSource = this.getApiDataSource();
 
@@ -959,7 +957,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             notificationMessage = this.l('AppliedSuccessfully');
         /** If settings were saved - get them from the api */
         } else {
-            preferencesObservable = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType6[this.instanceType], this.instanceId);
+            preferencesObservable = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
             notificationMessage = this.l('SavedSuccessfully');
         }
         preferencesObservable.subscribe(result => {
@@ -1022,8 +1020,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.changeHistoricalColspans(lowestOpenedInterval);
 
         if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
-            abp.ui.clearBusy();
-            $('.pivot-grid').removeClass('invisible');
+            this.finishLoading();
         }
 
         /** Clear cache with columns activity */
@@ -1689,35 +1686,36 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param cellObj
      */
     prepareColumnCell(cellObj) {
+        if (cellObj.cell.path) {
+            let fieldName, columnFields = this.pivotGrid.instance.getDataSource().getAreaFields('column', false);
+            let columnNumber = cellObj.cell.path.length ? cellObj.cell.path.length  - 1 : 0;
+            let fieldObj = columnFields.find(field => field.areaIndex === columnNumber);
+            let fieldGroup = fieldObj.groupInterval ? 'dateField' : fieldObj.caption.toLowerCase() + 'Field';
 
-        let fieldName, columnFields = this.pivotGrid.instance.getDataSource().getAreaFields('column', false),
-            columnNumber = cellObj.cell.path.length ? cellObj.cell.path.length  - 1 : 0,
-            fieldObj = columnFields.find(field => field.areaIndex === columnNumber),
-            fieldGroup = fieldObj.groupInterval ? 'dateField' : fieldObj.caption.toLowerCase() + 'Field';
+            if (fieldGroup === 'dateField') {
+                fieldName = fieldObj.groupInterval;
+                /** Added 'Total' text to the year and quarter headers */
+                if (fieldName === 'year' || fieldName === 'quarter') {
+                    let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
+                        (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length >= 6);
+                    cellObj.cellElement.html(this.getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName));
+                }
+                if (fieldName === 'day') {
+                    let dayNumber = cellObj.cell.path.pop(),
+                        dayEnding = [, 'st', 'nd', 'rd'][ dayNumber % 100 >> 3 ^ 1 && dayNumber % 10] || 'th';
+                    cellObj.cellElement.append(`<span class="dayEnding">${dayEnding}</span>`);
+                }
+            } else if (fieldGroup === 'historicalField') {
+                fieldName = this.historicalClasses[cellObj.cell.path.pop()];
+                if (!cellObj.cellElement.parent().hasClass('historicalRow')) {
+                    cellObj.cellElement.parent().addClass('historicalRow');
+                }
+            } else if (fieldGroup === 'projected') {
+                fieldName = cellObj.cell.value === 1 ? 'projected' : 'mtd';
+            }
 
-        if (fieldGroup === 'dateField') {
-            fieldName = fieldObj.groupInterval;
-            /** Added 'Total' text to the year and quarter headers */
-            if (fieldName === 'year' || fieldName === 'quarter') {
-                let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
-                    (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length >= 6);
-                cellObj.cellElement.html(this.getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName));
-            }
-            if (fieldName === 'day') {
-                let dayNumber = cellObj.cell.path.pop(),
-                    dayEnding = [, 'st', 'nd', 'rd'][ dayNumber % 100 >> 3 ^ 1 && dayNumber % 10] || 'th';
-                cellObj.cellElement.append(`<span class="dayEnding">${dayEnding}</span>`);
-            }
-        } else if (fieldGroup === 'historicalField') {
-            fieldName = this.historicalClasses[cellObj.cell.path.pop()];
-            if (!cellObj.cellElement.parent().hasClass('historicalRow')) {
-                cellObj.cellElement.parent().addClass('historicalRow');
-            }
-        } else if (fieldGroup === 'projected') {
-            fieldName = cellObj.cell.value === 1 ? 'projected' : 'mtd';
+            cellObj.cellElement.addClass(`${fieldGroup} ${fieldName}`);
         }
-
-        cellObj.cellElement.addClass(`${fieldGroup} ${fieldName}`);
     }
 
     getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName) {
@@ -2240,7 +2238,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     getStatsDetails(params): void {
         this._cashflowServiceProxy
-            .getStatsDetails(InstanceType3[this.instanceType], this.instanceId, params)
+            .getStatsDetails(InstanceType[this.instanceType], this.instanceId, params)
             .subscribe(result => {
                 this.statsDetailResult = result.map(detail => {
                     detail.date = this.removeLocalTimezoneOffset(detail.date);
@@ -2293,5 +2291,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             'sortBySummaryField': null,
             'sortBySummaryPath': null
         });
+    }
+
+    /** Begin loading animation */
+    startLoading() {
+        abp.ui.setBusy();
+    }
+
+    /** Finish loading animation */
+    finishLoading() {
+        abp.ui.clearBusy();
+        $('.pivot-grid').removeClass('invisible');
     }
 }

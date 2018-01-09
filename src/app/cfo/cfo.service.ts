@@ -1,6 +1,6 @@
 import { Injectable, Input } from "@angular/core";
 import { AppService } from "app/app.service";
-import { InstanceServiceProxy, InstanceType46, GetStatusOutputStatus } from "shared/service-proxies/service-proxies";
+import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus } from "shared/service-proxies/service-proxies";
 import { ActivatedRoute } from "@angular/router";
 
 @Injectable()
@@ -31,7 +31,7 @@ export class CFOService {
     }
 
     instanceChangeProcess() {
-        this._instanceServiceProxy.getStatus(InstanceType46[this.instanceType], this.instanceId).subscribe((data) => {
+        this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
             this.initialized = (data.status == GetStatusOutputStatus.Active);
             this._appService.topMenu.items
                 .forEach((item, i) => {

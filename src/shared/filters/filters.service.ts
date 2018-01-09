@@ -72,12 +72,12 @@ export class FiltersService {
     }
 
     toggle() {
-        this[this.enabled ? 'disable': 'enable']();
+        this[this.enabled ? 'disable' : 'enable']();
     }
 
     enable() {
-        this.preventDisable();   
-        this.enabled = true; 
+        this.preventDisable();
+        this.enabled = true;
     }
 
     disable(callback: () => void = null) {

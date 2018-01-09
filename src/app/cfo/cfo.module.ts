@@ -20,6 +20,7 @@ import { CategoryDeleteDialogComponent } from './rules/rule-edit-dialog/category
 
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
+import { NoDataComponent } from './shared/common/no-data/no-data.component';
 import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
@@ -29,7 +30,7 @@ import { MatTabsModule, MatDialogModule } from '@angular/material';
 import { SortingComponent } from '@app/cfo/shared/common/sorting/sorting.component';
 
 import { CFOService } from 'app/cfo/cfo.service';
-import { InstanceServiceProxy } from "shared/service-proxies/service-proxies";
+import { InstanceServiceProxy } from 'shared/service-proxies/service-proxies';
 
 import {
     DxButtonModule,
@@ -79,9 +80,8 @@ import {
         DxTreeListModule,
         DxRadioGroupModule,
         ModalModule.forRoot(),
-
         DxChartModule,
-        MatTabsModule, 
+        MatTabsModule,
         MatDialogModule
     ],
     declarations: [
@@ -101,7 +101,8 @@ import {
         RuleDialogComponent,
         CategoryDeleteDialogComponent,
         RulesComponent,
-        SortingComponent
+        SortingComponent,
+        NoDataComponent
     ],
     entryComponents: [
         RuleDialogComponent,
