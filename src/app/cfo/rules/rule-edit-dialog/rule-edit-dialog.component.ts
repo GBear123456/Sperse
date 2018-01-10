@@ -90,7 +90,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
         if (this.data.id)
             _classificationServiceProxy.getRuleForEdit(InstanceType[this.instanceType], this.instanceId, this.data.id).subscribe((rule) => {
-                this.descriptor = rule.transactionDecriptorAttributeTypeId || rule.transactionDecriptor;
+                this.descriptor = rule.transactionDescriptorAttributeTypeId || rule.transactionDescriptor;
                 this.data.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
                 if (rule.condition) {
                     this.bankId = rule.condition.bankId;
@@ -190,8 +190,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                             parentId: this.data.parentId,
                             categoryId: this.getSelectedCategoryId(),
                             sourceTransactionList: this.data.transactionIds,
-                            transactionDecriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
-                            transactionDecriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
+                            transactionDescriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
+                            transactionDescriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
                             applyOption: (this.data.id ? EditRuleDtoApplyOption : CreateRuleDtoApplyOption)[option],
                             condition: ConditionDto.fromJS({
                                 minAmount: this.minAmount,

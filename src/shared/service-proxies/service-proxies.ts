@@ -15963,6 +15963,7 @@ export class CashFlowInitialData implements ICashFlowInitialData {
     banks: BankDto[];
     businessEntities: BusinessEntityDto[];
     cashflowTypes: { [key: string] : string; };
+    bankAccountBalances: BankAccountBalanceDto[];
 
     constructor(data?: ICashFlowInitialData) {
         if (data) {
@@ -15992,6 +15993,11 @@ export class CashFlowInitialData implements ICashFlowInitialData {
                         this.cashflowTypes[key] = data["cashflowTypes"][key];
                 }
             }
+            if (data["bankAccountBalances"] && data["bankAccountBalances"].constructor === Array) {
+                this.bankAccountBalances = [];
+                for (let item of data["bankAccountBalances"])
+                    this.bankAccountBalances.push(BankAccountBalanceDto.fromJS(item));
+            }
         }
     }
 
@@ -16020,6 +16026,11 @@ export class CashFlowInitialData implements ICashFlowInitialData {
                     data["cashflowTypes"][key] = this.cashflowTypes[key];
             }
         }
+        if (this.bankAccountBalances && this.bankAccountBalances.constructor === Array) {
+            data["bankAccountBalances"] = [];
+            for (let item of this.bankAccountBalances)
+                data["bankAccountBalances"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -16028,6 +16039,7 @@ export interface ICashFlowInitialData {
     banks: BankDto[];
     businessEntities: BusinessEntityDto[];
     cashflowTypes: { [key: string] : string; };
+    bankAccountBalances: BankAccountBalanceDto[];
 }
 
 export class BankDto implements IBankDto {
@@ -16118,6 +16130,61 @@ export class BusinessEntityDto implements IBusinessEntityDto {
 export interface IBusinessEntityDto {
     id: number;
     name: string;
+}
+
+export class BankAccountBalanceDto implements IBankAccountBalanceDto {
+    bankAccountId: number;
+    currencyId: string;
+    balance: number;
+    balanceDate: moment.Moment;
+    isActive: boolean;
+    reconciledBalance: number;
+
+    constructor(data?: IBankAccountBalanceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.bankAccountId = data["bankAccountId"];
+            this.currencyId = data["currencyId"];
+            this.balance = data["balance"];
+            this.balanceDate = data["balanceDate"] ? moment(data["balanceDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.reconciledBalance = data["reconciledBalance"];
+        }
+    }
+
+    static fromJS(data: any): BankAccountBalanceDto {
+        let result = new BankAccountBalanceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["bankAccountId"] = this.bankAccountId;
+        data["currencyId"] = this.currencyId;
+        data["balance"] = this.balance;
+        data["balanceDate"] = this.balanceDate ? this.balanceDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["reconciledBalance"] = this.reconciledBalance;
+        return data; 
+    }
+}
+
+export interface IBankAccountBalanceDto {
+    bankAccountId: number;
+    currencyId: string;
+    balance: number;
+    balanceDate: moment.Moment;
+    isActive: boolean;
+    reconciledBalance: number;
 }
 
 export class BankAccountDto implements IBankAccountDto {
@@ -17433,8 +17500,8 @@ export class CreateRuleDto implements ICreateRuleDto {
     parentId: number;
     name: string;
     categoryId: number;
-    transactionDecriptor: string;
-    transactionDecriptorAttributeTypeId: string;
+    transactionDescriptor: string;
+    transactionDescriptorAttributeTypeId: string;
     condition: ConditionDto = new ConditionDto();
     sourceTransactionList: number[];
     applyOption: CreateRuleDtoApplyOption;
@@ -17453,8 +17520,8 @@ export class CreateRuleDto implements ICreateRuleDto {
             this.parentId = data["parentId"];
             this.name = data["name"];
             this.categoryId = data["categoryId"];
-            this.transactionDecriptor = data["transactionDecriptor"];
-            this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
+            this.transactionDescriptorAttributeTypeId = data["transactionDescriptorAttributeTypeId"];
             this.condition = data["condition"] ? ConditionDto.fromJS(data["condition"]) : new ConditionDto();
             if (data["sourceTransactionList"] && data["sourceTransactionList"].constructor === Array) {
                 this.sourceTransactionList = [];
@@ -17476,8 +17543,8 @@ export class CreateRuleDto implements ICreateRuleDto {
         data["parentId"] = this.parentId;
         data["name"] = this.name;
         data["categoryId"] = this.categoryId;
-        data["transactionDecriptor"] = this.transactionDecriptor;
-        data["transactionDecriptorAttributeTypeId"] = this.transactionDecriptorAttributeTypeId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
+        data["transactionDescriptorAttributeTypeId"] = this.transactionDescriptorAttributeTypeId;
         data["condition"] = this.condition ? this.condition.toJSON() : <any>undefined;
         if (this.sourceTransactionList && this.sourceTransactionList.constructor === Array) {
             data["sourceTransactionList"] = [];
@@ -17493,8 +17560,8 @@ export interface ICreateRuleDto {
     parentId: number;
     name: string;
     categoryId: number;
-    transactionDecriptor: string;
-    transactionDecriptorAttributeTypeId: string;
+    transactionDescriptor: string;
+    transactionDescriptorAttributeTypeId: string;
     condition: ConditionDto;
     sourceTransactionList: number[];
     applyOption: CreateRuleDtoApplyOption;
@@ -17634,8 +17701,8 @@ export class EditRuleDto implements IEditRuleDto {
     id: number;
     name: string;
     categoryId: number;
-    transactionDecriptor: string;
-    transactionDecriptorAttributeTypeId: string;
+    transactionDescriptor: string;
+    transactionDescriptorAttributeTypeId: string;
     condition: ConditionDto = new ConditionDto();
     sourceTransactionList: number[];
     applyOption: EditRuleDtoApplyOption;
@@ -17654,8 +17721,8 @@ export class EditRuleDto implements IEditRuleDto {
             this.id = data["id"];
             this.name = data["name"];
             this.categoryId = data["categoryId"];
-            this.transactionDecriptor = data["transactionDecriptor"];
-            this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
+            this.transactionDescriptorAttributeTypeId = data["transactionDescriptorAttributeTypeId"];
             this.condition = data["condition"] ? ConditionDto.fromJS(data["condition"]) : new ConditionDto();
             if (data["sourceTransactionList"] && data["sourceTransactionList"].constructor === Array) {
                 this.sourceTransactionList = [];
@@ -17677,8 +17744,8 @@ export class EditRuleDto implements IEditRuleDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["categoryId"] = this.categoryId;
-        data["transactionDecriptor"] = this.transactionDecriptor;
-        data["transactionDecriptorAttributeTypeId"] = this.transactionDecriptorAttributeTypeId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
+        data["transactionDescriptorAttributeTypeId"] = this.transactionDescriptorAttributeTypeId;
         data["condition"] = this.condition ? this.condition.toJSON() : <any>undefined;
         if (this.sourceTransactionList && this.sourceTransactionList.constructor === Array) {
             data["sourceTransactionList"] = [];
@@ -17694,8 +17761,8 @@ export interface IEditRuleDto {
     id: number;
     name: string;
     categoryId: number;
-    transactionDecriptor: string;
-    transactionDecriptorAttributeTypeId: string;
+    transactionDescriptor: string;
+    transactionDescriptorAttributeTypeId: string;
     condition: ConditionDto;
     sourceTransactionList: number[];
     applyOption: EditRuleDtoApplyOption;
