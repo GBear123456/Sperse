@@ -12,7 +12,7 @@ import {
     CreateCategoryGroupInput, CreateCategoryInput, UpdateCategoryGroupInput, UpdateCategoryInput,
     CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
-    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType } from '@shared/service-proxies/service-proxies';
+    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType, TransactionTypesAndCategoriesDto } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -49,6 +49,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     
     private transactionAttributeTypes: any;
 
+    transactionTypesAndCategoriesData: TransactionTypesAndCategoriesDto;
     transactionTypes: any;
     transactionCategories: any;
     selectedTransactionCategory: string;
@@ -92,11 +93,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             this.banks = data.banks;
             if (this.bankId)
                 this.onBankChanged({value: this.accountId});
-        });
-
-        _transactionsServiceProxy.getTransactionTypesAndCategories().subscribe((data) => {
-            this.transactionTypes = data.types;
-            this.transactionCategories = data.categories;
         });
 
         if (this.data.id)
@@ -259,6 +255,16 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             text: this.l('Apply this rule to other occurences'),
             value: true
         }];
+
+        this._transactionsServiceProxy.getTransactionTypesAndCategories().subscribe((data) => {
+            this.transactionTypesAndCategoriesData = data;
+            this.transactionTypes = data.types;
+            this.transactionCategories = data.categories;
+            if (this.selectedTransactionCategory)
+                this.onTransactionCategoryChanged(null);
+            if (this.selectedTransactionTypes)
+                this.onTransactionTypesChanged(null);
+        });
     }
 
     ngAfterViewInit() {
@@ -425,6 +431,27 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                             });
             });
         }
+    }
+
+    onTransactionCategoryChanged(e) {
+        if (this.selectedTransactionCategory)
+            this.transactionTypes = this.transactionTypesAndCategoriesData.types.filter((t) => t.categories.some((c) => c == this.selectedTransactionCategory));
+        else
+            this.transactionTypes = this.transactionTypesAndCategoriesData.types;
+    }
+
+    onTransactionTypesChanged(e) {
+        if (this.selectedTransactionTypes && this.selectedTransactionTypes.length) {
+
+            let categories: any = this.transactionTypesAndCategoriesData.types.filter((t) => this.selectedTransactionTypes.some((c) => c == t.id))
+                .map((v) => v.categories);
+            categories = _.uniq(_.flatten(categories));
+            this.transactionCategories = this.transactionTypesAndCategoriesData.categories.filter((c) => categories.some(x => x == c.id));
+        }
+        else
+            this.transactionCategories = this.transactionTypesAndCategoriesData.categories;
+
+        this.syncTreeViewSelection(e);
     }
 
     onMultipleDropDownChange(event) {

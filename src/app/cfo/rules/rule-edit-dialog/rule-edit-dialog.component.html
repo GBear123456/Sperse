@@ -130,7 +130,8 @@
                                        valueExpr="id"
                                        displayExpr="name"
                                        [showClearButton]="true"
-                                       [(value)]="selectedTransactionCategory">
+                                       [(value)]="selectedTransactionCategory"
+                                       (onValueChanged)="onTransactionCategoryChanged($event)">
                         </dx-select-box>
                     </div>
                     <div class="field">
@@ -141,7 +142,7 @@
                                           displayExpr="name"
                                           [showClearButton]="true"
                                           [(value)]="selectedTransactionTypes"
-                                          (onValueChanged)="syncTreeViewSelection()">
+                                          (onValueChanged)="onTransactionTypesChanged()">
                             <div *dxTemplate="let contentData of 'content'">
                                 <dx-tree-view [dataSource]="transactionTypes"
                                               dataStructure="plain"
@@ -150,7 +151,7 @@
                                               keyExpr="id"
                                               displayExpr="name"
                                               [selectByClick]="true"
-                                              (onContentReady)="syncTreeViewSelection($event)"
+                                              (onContentReady)="onTransactionTypesChanged($event)"
                                               (onItemSelectionChanged)="onMultipleDropDownChange($event)">
                                     <dxi-column dataField="name"></dxi-column>
                                 </dx-tree-view>
