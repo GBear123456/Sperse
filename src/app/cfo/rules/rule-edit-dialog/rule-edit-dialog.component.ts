@@ -2,7 +2,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
 import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
-import { DxTreeListComponent, DxDataGridComponent } from 'devextreme-angular';
+import { DxTreeListComponent, DxDataGridComponent, DxTreeViewComponent } from 'devextreme-angular';
 
 import { MatDialog } from '@angular/material';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
@@ -24,6 +24,7 @@ import * as _ from 'underscore';
 })
 export class RuleDialogComponent extends CFOModalDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
+    @ViewChild(DxTreeViewComponent) transactionTypesList: DxTreeViewComponent;
     @ViewChild('keywordsComponent') keywordList: DxDataGridComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
     showSelectedTransactions = false;
@@ -45,8 +46,13 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     conditionTypes: any;
     categorization: any;
     addedCategoryItems: any = {};
-
+    
     private transactionAttributeTypes: any;
+
+    transactionTypes: any;
+    transactionCategories: any;
+    selectedTransactionCategory: string;
+    selectedTransactionTypes: string[] = [];
 
     constructor(
         injector: Injector,
@@ -88,6 +94,11 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 this.onBankChanged({value: this.accountId});
         });
 
+        _transactionsServiceProxy.getTransactionTypesAndCategories().subscribe((data) => {
+            this.transactionTypes = data.types;
+            this.transactionCategories = data.categories;
+        });
+
         if (this.data.id)
             _classificationServiceProxy.getRuleForEdit(InstanceType[this.instanceType], this.instanceId, this.data.id).subscribe((rule) => {
                 this.descriptor = rule.transactionDescriptorAttributeTypeId || rule.transactionDescriptor;
@@ -100,6 +111,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.maxAmount = rule.condition.maxAmount;
                     this.keywords = this.getKeywordsFromString(rule.condition.descriptionWords);
                     this.attributes = rule.condition.attributes;
+                    this.selectedTransactionCategory = rule.condition.transactionCategoryId;
+                    this.selectedTransactionTypes = rule.condition.transactionTypes;
                 }
             });
         else if (this.data.transactionIds && this.data.transactionIds.length)
@@ -112,6 +125,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.descriptor = data.standardDescriptor;
                     this.keywords = this.getKeywordsFromString(data.descriptionPhrases.join(','));
                     this.attributes = data.attributes;
+                    this.selectedTransactionCategory = data.transactionCategoryId;
+                    this.selectedTransactionTypes = [data.transactionTypeId];
                 });
 
         this.refreshCategories();
@@ -199,7 +214,9 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                                 bankId: this.bankId,
                                 bankAccountId: this.accountId,
                                 descriptionWords: this.getDescriptionKeywords(),
-                                attributes: this.getAttributes()
+                                attributes: this.getAttributes(),
+                                transactionCategoryId: this.selectedTransactionCategory,
+                                transactionTypes: this.selectedTransactionTypes
                             })
                     })).subscribe((error) => {
                         if (!error) {
@@ -407,6 +424,24 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                                 this.refreshCategories();
                             });
             });
+        }
+    }
+
+    onMultipleDropDownChange(event) {
+        this.selectedTransactionTypes = event.component.getSelectedNodesKeys();
+    }
+
+    syncTreeViewSelection(e) {
+        var component = (e && e.component) || (this.transactionTypesList && this.transactionTypesList.instance);
+
+        if (!component) return;
+
+        component.unselectAll();
+
+        if (this.selectedTransactionTypes) {
+            this.selectedTransactionTypes.forEach((function (value) {
+                component.selectItem(value);
+            }).bind(this));
         }
     }
 }

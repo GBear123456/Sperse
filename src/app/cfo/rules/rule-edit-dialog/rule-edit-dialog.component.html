@@ -105,17 +105,58 @@
                        valueExpr="id"
                        displayExpr="name"
                        [(value)]="bankId"
+                       [showClearButton]="true"
                        (onValueChanged)="onBankChanged($event)">
                    </dx-select-box>
-                </div><div class="field">
+                </div>
+                <div class="field">
                     <label>{{l('Account')}}</label>
                    <dx-select-box
                        placeholder=""
                        [dataSource]="accounts"
                        valueExpr="id"
                        displayExpr="name"
+                       [showClearButton]="true"
                        [(value)]="accountId">
                    </dx-select-box>
+                </div>
+
+                <h3>{{l('Transaction Type')}}</h3>
+                <div>
+                    <div class="field">
+                        <label>{{l('Category')}}</label>
+                        <dx-select-box placeholder=""
+                                       [dataSource]="transactionCategories"
+                                       valueExpr="id"
+                                       displayExpr="name"
+                                       [showClearButton]="true"
+                                       [(value)]="selectedTransactionCategory">
+                        </dx-select-box>
+                    </div>
+                    <div class="field">
+                        <label>{{l('Types')}}</label>
+                        <dx-drop-down-box placeholder=""
+                                          [dataSource]="transactionTypes"
+                                          valueExpr="id"
+                                          displayExpr="name"
+                                          [showClearButton]="true"
+                                          [(value)]="selectedTransactionTypes"
+                                          (onValueChanged)="syncTreeViewSelection()">
+                            <div *dxTemplate="let contentData of 'content'">
+                                <dx-tree-view [dataSource]="transactionTypes"
+                                              dataStructure="plain"
+                                              selectionMode="multiple"
+                                              showCheckBoxesMode="normal"
+                                              keyExpr="id"
+                                              displayExpr="name"
+                                              [selectByClick]="true"
+                                              (onContentReady)="syncTreeViewSelection($event)"
+                                              (onItemSelectionChanged)="onMultipleDropDownChange($event)">
+                                    <dxi-column dataField="name"></dxi-column>
+                                </dx-tree-view>
+                            </div>
+                        </dx-drop-down-box>
+                    </div>
                 </div>
 
                 <h3>{{l('Amount')}}</h3>
