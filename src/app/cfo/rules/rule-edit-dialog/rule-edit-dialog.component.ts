@@ -99,6 +99,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             _classificationServiceProxy.getRuleForEdit(InstanceType[this.instanceType], this.instanceId, this.data.id).subscribe((rule) => {
                 this.descriptor = rule.transactionDescriptorAttributeTypeId || rule.transactionDescriptor;
                 this.data.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
+                this.data.title = rule.name;
                 if (rule.condition) {
                     this.bankId = rule.condition.bankId;
                     this.accountId = rule.condition.bankAccountId;
