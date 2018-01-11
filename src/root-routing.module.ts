@@ -1,5 +1,6 @@
-﻿import { NgModule, ApplicationRef, Injector, AfterViewInit } from '@angular/core';
+import { NgModule, ApplicationRef, Injector, AfterViewInit } from '@angular/core';
 import { Routes, RouterModule, Router, NavigationEnd } from '@angular/router';
+import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 
 const routes: Routes = [
     {path: '', redirectTo: '/app/main/dashboard', pathMatch: 'full'},
@@ -19,6 +20,7 @@ const routes: Routes = [
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule]
 })
+
 export class RootRoutingModule implements AfterViewInit {
     constructor(private _router: Router,
                 private _injector: Injector,
@@ -32,5 +34,9 @@ export class RootRoutingModule implements AfterViewInit {
                 }, 0);
             }
         );
+    }
+
+    getSetting(key: string): string {
+        return abp.setting.get(key);
     }
 }

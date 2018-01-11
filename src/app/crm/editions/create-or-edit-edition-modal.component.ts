@@ -1,4 +1,4 @@
-﻿import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { EditionServiceProxy, CommonLookupServiceProxy, EditionEditDto, CreateOrUpdateEditionDto, ComboboxItemDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -19,17 +19,17 @@ export class CreateOrEditEditionModalComponent extends AppComponentBase {
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active: boolean = false;
-    saving: boolean = false;
+    active = false;
+    saving = false;
 
     edition: EditionEditDto = new EditionEditDto();
     expiringEditions: ComboboxItemDto[] = [];
 
     expireAction: AppEditionExpireAction = AppEditionExpireAction.DeactiveTenant;
     expireActionEnum: typeof AppEditionExpireAction = AppEditionExpireAction;
-    isFree: boolean = false;
-    isTrialActive: boolean = false;
-    isWaitingDayActive: boolean = false;
+    isFree = false;
+    isTrialActive = false;
+    isWaitingDayActive = false;
 
     constructor(
         injector: Injector,
@@ -39,22 +39,28 @@ export class CreateOrEditEditionModalComponent extends AppComponentBase {
         super(injector);
     }
 
+    ngAfterViewChecked(): void {
+        //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
+        $('tabset ul.nav').addClass('m-tabs-line');
+        $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
+    }
+
     show(editionId?: number): void {
         this.active = true;
 
-        this._commonLookupService.getEditionsForCombobox(true).subscribe(result => {
-            this.expiringEditions = result.items;
+        this._commonLookupService.getEditionsForCombobox(true).subscribe(editionsResult => {
+            this.expiringEditions = editionsResult.items;
             this.expiringEditions.unshift(new ComboboxItemDto({ value: null, displayText: this.l('NotAssigned'), isSelected: true }));
 
-            this._editionService.getEditionForEdit(editionId).subscribe(result => {
-                this.edition = result.edition;
-                this.featureTree.editData = result;
+            this._editionService.getEditionForEdit(editionId).subscribe(editionResult => {
+                this.edition = editionResult.edition;
+                this.featureTree.editData = editionResult;
 
                 this.expireAction = this.edition.expiringEditionId > 0 ? AppEditionExpireAction.AssignToAnotherEdition : AppEditionExpireAction.DeactiveTenant;
 
-                this.isFree = !result.edition.monthlyPrice && !result.edition.annualPrice;
-                this.isTrialActive = result.edition.trialDayCount > 0;
-                this.isWaitingDayActive = result.edition.waitingDayAfterExpire > 0;
+                this.isFree = !editionResult.edition.monthlyPrice && !editionResult.edition.annualPrice;
+                this.isTrialActive = editionResult.edition.trialDayCount > 0;
+                this.isWaitingDayActive = editionResult.edition.waitingDayAfterExpire > 0;
 
                 this.modal.show();
             });

@@ -6,13 +6,13 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     selector: 'role-combo',
     template:
     `<select #RoleCombobox
-        class='form-control'
-        [(ngModel)]='selectedRole'
-        (ngModelChange)='selectedRoleChange.emit($event)'
-        [attr.data-live-search]='true'
-        jq-plugin='selectpicker'>        
-            <option value=''>{{emptyText}}</option>
-            <option *ngFor='let role of roles' [value]='role.id'>{{role.displayName}}</option>
+        class="form-control"
+        [(ngModel)]="selectedRole"
+        (ngModelChange)="selectedRoleChange.emit($event)"
+        [attr.data-live-search]="true"
+        jq-plugin="selectpicker">
+            <option value="">{{emptyText}}</option>
+            <option *ngFor="let role of roles" [value]="role.id">{{role.displayName}}</option>
     </select>`
 })
 export class RoleComboComponent extends AppComponentBase implements OnInit {
@@ -24,7 +24,7 @@ export class RoleComboComponent extends AppComponentBase implements OnInit {
     @Input() selectedRole: string = undefined;
     @Output() selectedRoleChange: EventEmitter<string> = new EventEmitter<string>();
 
-    @Input() emptyText: string = '';
+    @Input() emptyText = '';
 
     constructor(
         private _roleService: RoleServiceProxy,
@@ -33,7 +33,7 @@ export class RoleComboComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
-        let self = this;
+        const self = this;
         this._roleService.getRoles(undefined).subscribe(result => {
             this.roles = result.items;
             setTimeout(() => {

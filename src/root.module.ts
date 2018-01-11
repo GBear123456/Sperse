@@ -1,6 +1,7 @@
-﻿import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule, Injector, APP_INITIALIZER } from '@angular/core';
+import { NgModule, Injector, APP_INITIALIZER, LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
 
 import { HttpModule, JsonpModule, Http, XHRBackend, RequestOptions } from '@angular/http';
 
@@ -21,16 +22,28 @@ import { AppPreBootstrap } from './AppPreBootstrap';
 
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
+import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
+
+import * as _ from 'lodash';
 
 import { FiltersModule } from '@shared/filters/filters.module';
 
 import { AbpHttpConfiguration } from '@abp/abpHttp';
 
 export function appInitializerFactory(injector: Injector) {
-	var process = (method) => {
+	let process = (method) => {
 		return (result) => {
 			abp.ui.clearBusy();
-			method(result);
+
+      if (shouldLoadLocale()) {
+          let angularLocale = convertAbpLocaleToAngularLocale(abp.localization.currentLanguage.name);
+          System.import(`@angular/common/locales/${angularLocale}.js`)
+              .then(module => {
+                  registerLocaleData(module.default);
+                  method(result);
+              }, method);
+      } else 
+        method(result);			
 		};
 	};
 
@@ -41,20 +54,41 @@ export function appInitializerFactory(injector: Injector) {
 
 		return new Promise<boolean>((resolve, reject) => {
 			AppPreBootstrap.run(() => {
-            	injector.get(AppSessionService).init()
-					.then(process(resolve), process(reject));
-			});
+          injector.get(AppSessionService).init()
+					    .then(process(resolve), process(reject));
+			}, resolve, reject);
 		});
 	}
+}
+
+export function shouldLoadLocale(): boolean {
+    return abp.localization.currentLanguage.name && abp.localization.currentLanguage.name !== 'en-US';
+}
+
+export function convertAbpLocaleToAngularLocale(locale: string): string {
+    if (!AppConsts.localeMappings) {
+        return locale;
+    }
+
+    let localeMapings = _.filter(AppConsts.localeMappings, { from: locale });
+    if (localeMapings && localeMapings.length) {
+        return localeMapings[0]['to'];
+    }
+
+    return locale;
 }
 
 export function getRemoteServiceBaseUrl(): string {
     return AppConsts.remoteServiceBaseUrl;
 }
 
+export function getCurrentLanguage(): string {
+    return abp.localization.currentLanguage.name;
+}
+
 function handleLogoutRequest(authService: AppAuthService) {
-    var currentUrl = UrlHelper.initialUrl;
-    var returnUrl = UrlHelper.getReturnUrl();
+    let currentUrl = UrlHelper.initialUrl;
+    let returnUrl = UrlHelper.getReturnUrl();
     if (currentUrl.indexOf(('account/logout')) >= 0 && returnUrl) {
         authService.logout(true, returnUrl);
     }
@@ -86,6 +120,10 @@ ABP_HTTP_PROVIDER.deps = [XHRBackend, RequestOptions, httpConfiguration];
             useFactory: appInitializerFactory,
             deps: [Injector],
             multi: true
+        },
+        {
+            provide: LOCALE_ID,
+            useFactory: getCurrentLanguage
         }
     ],
     bootstrap: [RootComponent]

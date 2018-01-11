@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Router, NavigationEnd, RouteConfigLoadStart, RouteConfigLoadEnd } from '@angular/router';
 import { NotificationsComponent } from './shared/layout/notifications/notifications.component';
 import { AppComponent } from './app.component';
 import { AppRouteGuard } from './shared/common/auth/auth-route-guard';
@@ -44,6 +44,8 @@ import { AppRouteGuard } from './shared/common/auth/auth-route-guard';
                         path: 'cfo/:instance',
                         loadChildren: 'app/cfo/cfo.module#CfoModule', //Lazy load cfo *module
                         data: { preload: true }
+                    }, {
+                        path: '**', redirectTo: 'notifications'
                     }
                 ]
             }
@@ -51,4 +53,25 @@ import { AppRouteGuard } from './shared/common/auth/auth-route-guard';
     ],
     exports: [RouterModule]
 })
-export class AppRoutingModule { }
+
+export class AppRoutingModule {
+    constructor(
+        private router: Router
+    ) {
+        router.events.subscribe((event) => {
+
+            if (event instanceof RouteConfigLoadStart) {
+                abp.ui.setBusy();
+            }
+
+            if (event instanceof RouteConfigLoadEnd) {
+                abp.ui.clearBusy();
+            }
+
+            if (event instanceof NavigationEnd) {
+                $('meta[property=og\\:url]').attr('content', window.location.href);
+            }
+            
+        });
+    }
+}

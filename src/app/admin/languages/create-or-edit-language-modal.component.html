@@ -1,23 +1,18 @@
-﻿<div bsModal #createOrEditModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal"
+<div bsModal #createOrEditModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal"
      aria-hidden="true" [config]="{backdrop: 'static'}">
-    <div class="modal-dialog">
-
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-
             <form *ngIf="active" #editForm="ngForm" novalidate (ngSubmit)="save()">
-
                 <div class="modal-header">
-                    <button type="button" class="close" (click)="close()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                     <h4 class="modal-title">
                         <span *ngIf="language.id">{{l("EditLanguage")}}: {{language.name}}</span>
                         <span *ngIf="!language.id">{{l("CreateNewLanguage")}}</span>
                     </h4>
+                    <button type="button" class="close" (click)="close()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-
                 <div class="modal-body">
-                    
                     <div class="form-group">
                         <select #languageCombobox
                                 name="languageName"
@@ -30,7 +25,6 @@
                             <option *ngFor="let languageName of languageNames" [value]="languageName.value">{{languageName.displayText}}</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <select #iconCombobox
                                 name="languageIcon"
@@ -42,29 +36,20 @@
                             <option *ngFor="let flag of flags" [value]="flag.value" [attr.data-icon]="flag.value">{{flag.displayText}}</option>
                         </select>
                     </div>
-                    
-                    <div class="md-checkbox-list">
-                        <div class="md-checkbox">
-                            <input id="EditLanguage_IsEnabled" class="md-check" type="checkbox" name="languageIsEnabled"
+                    <div class="m-checkbox-list">
+                        <label for="EditLanguage_IsEnabled" class="m-checkbox">
+                            <input id="EditLanguage_IsEnabled" type="checkbox" name="languageIsEnabled"
                                    [(ngModel)]="language.isEnabled">
-                            <label for="EditLanguage_IsEnabled">
-                                <span class="inc"></span>
-                                <span class="check"></span>
-                                <span class="box"></span>
-                                {{l("IsEnabled")}}
-                            </label>
-                        </div>
+                            {{l("IsEnabled")}}
+                            <span></span>
+                        </label>
                     </div>
-
                 </div>
-
                 <div class="modal-footer">
                     <button [disabled]="saving" type="button" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
                     <button type="submit" class="btn btn-layout" [disabled]="!editForm.form.valid" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
                 </div>
-
             </form>
-
         </div>
     </div>
 </div>

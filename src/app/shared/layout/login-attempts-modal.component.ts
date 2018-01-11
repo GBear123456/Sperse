@@ -1,7 +1,6 @@
-﻿import { Component, OnInit, ViewChild, Injector } from '@angular/core';
+import { Component, ViewChild, Injector } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 
 import { UserLoginServiceProxy, ProfileServiceProxy, UserLoginAttemptDto } from '@shared/service-proxies/service-proxies';
 
@@ -16,7 +15,7 @@ export class LoginAttemptsModalComponent extends AppComponentBase {
     @ViewChild('loginAttemptsModal') modal: ModalDirective;
 
     userLoginAttempts: UserLoginAttemptDto[];
-    profilePicture: string = '/assets/common/images/default-profile-picture.png';
+    profilePicture = '/assets/common/images/default-profile-picture.png';
 
     constructor(
         injector: Injector,
@@ -43,10 +42,10 @@ export class LoginAttemptsModalComponent extends AppComponentBase {
     }
 
     setProfilePictureClass(userLoginAttemptResult: string): any {
-        let classes = {
+        const classes = {
             label: true,
-            'label-success': userLoginAttemptResult == 'Success',
-            'label-danger': userLoginAttemptResult != 'Success'
+            'label-success': userLoginAttemptResult === 'Success',
+            'label-danger': userLoginAttemptResult !== 'Success'
         };
 
         return classes;

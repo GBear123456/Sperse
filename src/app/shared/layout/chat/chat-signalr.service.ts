@@ -1,4 +1,4 @@
-﻿import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Injectable()
@@ -14,7 +14,9 @@ export class ChatSignalrService extends AppComponentBase {
 
     sendMessage(messageData, callback): void {
         if ($.connection.hub.state !== $.signalR.connectionState.connected) {
-            callback && callback();
+            if (callback) {
+                callback();
+            }
             abp.notify.warn(this.l('ChatIsNotConnectedWarning'));
             return;
         }
@@ -24,7 +26,9 @@ export class ChatSignalrService extends AppComponentBase {
                 abp.notify.warn(result);
             }
         }).always(() => {
-            callback && callback();
+            if (callback) {
+                callback();
+            }
         });
     }
 
@@ -71,6 +75,13 @@ export class ChatSignalrService extends AppComponentBase {
 
         this.chatHub.client.getallUnreadMessagesOfUserRead = friend => {
             abp.event.trigger('app.chat.allUnreadMessagesOfUserRead',
+                {
+                    friend: friend
+                });
+        };
+
+        this.chatHub.client.getReadStateChange = friend => {
+            abp.event.trigger('app.chat.readStateChange',
                 {
                     friend: friend
                 });

@@ -27,12 +27,12 @@ export class ConfirmEmailComponent extends AppComponentBase implements OnInit {
     ngOnInit(): void {
         this.waitMessage = this.l('PleaseWaitToConfirmYourEmailMessage');
 
-        this.model.userId = this._activatedRoute.snapshot.queryParams["userId"];
-        this.model.confirmationCode = this._activatedRoute.snapshot.queryParams["confirmationCode"];
+        this.model.userId = this._activatedRoute.snapshot.queryParams['userId'];
+        this.model.confirmationCode = this._activatedRoute.snapshot.queryParams['confirmationCode'];
 
         if (this._appSessionService.changeTenantIfNeeded(
             this.parseTenantId(
-                this._activatedRoute.snapshot.queryParams["tenantId"]
+                this._activatedRoute.snapshot.queryParams['tenantId']
             )
         )) {
             return;
@@ -47,7 +47,7 @@ export class ConfirmEmailComponent extends AppComponentBase implements OnInit {
 
 
     parseTenantId(tenantIdAsStr?: string): number {
-        let tenantId = !tenantIdAsStr ? undefined : parseInt(tenantIdAsStr);
+        let tenantId = !tenantIdAsStr ? undefined : parseInt(tenantIdAsStr, 10);
         if (tenantId === NaN) {
             tenantId = undefined;
         }

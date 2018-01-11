@@ -26,6 +26,9 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
 import { EditionComboComponent } from './shared/edition-combo.component';
 import { FeatureTreeComponent } from './shared/feature-tree.component';
 
+import { DataTableModule } from 'primeng/primeng';
+import { PaginatorModule } from 'primeng/primeng';
+
 import {
     DxDataGridModule,
     DxToolbarModule,
@@ -64,7 +67,9 @@ import {
       UtilsModule,
       AppCommonModule,
       FiltersModule,
-      PipelineModule
+      PipelineModule,
+      DataTableModule,
+      PaginatorModule
     ],
     declarations: [
       ClientsComponent,

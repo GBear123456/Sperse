@@ -1,4 +1,4 @@
-﻿import * as ngCommon from '@angular/common';
+import * as ngCommon from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { AbpModule } from '@abp/abp.module';
 
@@ -6,6 +6,7 @@ import { MatDialogModule } from '@angular/material';
 
 import { AppSessionService } from './session/app-session.service';
 import { AppUrlService } from './nav/app-url.service';
+
 import { ExportService } from './export/export.service';
 import { ExportGoogleSheetService } from './export/export-google-sheets/export-google-sheets';
 
@@ -14,6 +15,9 @@ import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.compone
 import { CalendarComponent } from './widgets/calendar/calendar.component';
 
 import { DxCheckBoxModule, DxTextBoxModule, DxScrollViewModule } from 'devextreme-angular';
+
+import { AppUiCustomizationService } from './ui/app-ui-customization.service';
+
 
 @NgModule({
     declarations: [
@@ -47,7 +51,8 @@ export class CommonModule {
                 AppSessionService,
                 AppUrlService,
                 ExportService,
-                ExportGoogleSheetService
+                ExportGoogleSheetService,
+                AppUiCustomizationService
             ]
         };
     }

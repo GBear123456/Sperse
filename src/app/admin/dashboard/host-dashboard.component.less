@@ -1,45 +1,30 @@
-﻿#HostDashboard {
+#HostDashboard {
     @chartHeight: 260;
 
     div.chart {
         height: @chartHeight*1px;
-    }
+        width: 100%;
 
-    .jtableTheme(@backgroundColor, @loadingGifUrl) {
-        .jtable-main-container {
-            border: 0 !important;
-            box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.03);
-
-            .jtable-busy-message {
-                background: url(@loadingGifUrl) no-repeat;
-                background-color: @backgroundColor !important;
-            }
-
-            .jtable {
-                border: 1px solid #e7ecf1 !important;
-
-                thead {
-                    background-color: @backgroundColor !important;
-                }
-
-                .jtable-data-row > td {
-                    border: 0 !important;
-                }
-
-                .jtable-column-header {
-                    border: 1px solid #e7ecf1 !important;
-                    box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.03) !important;
-                }
+        h3 {
+            small {
+                padding-left: 0px !important;
             }
         }
     }
 
+    .primeNgDataTableTheme(@backgroundColor) {
+        thead th {
+            background-color: @backgroundColor !important;
+            color: white;
+        }
+    }
+
     .expiring-tenants-table {
-        .jtableTheme(#E08283, '/assets/common/images/redLoading.gif');
+        .primeNgDataTableTheme(#E08283);
     }
 
     .recent-tenants-table {
-        .jtableTheme(#8877a9, '/assets/common/images/purpleLoading.gif');
+        .primeNgDataTableTheme(#8877a9);
     }
 
     .expiring-tenants-table {

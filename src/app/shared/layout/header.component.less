@@ -1,10 +1,23 @@
 .page-header.navbar {
+  height: 75px;
   border-bottom: 1px solid #e5e9ec !important;
+
+  .page-header-inner {
+      width: 100%;
+  }
 
   .page-top {
     width: auto!important;
     clear: none!important;
     background: none!important;
+
+    .m-topbar .m-topbar__nav.m-nav {
+        margin: 0px!important;
+        padding-top: 6px;
+        .m-nav__item {
+            padding: 0 8px!important;    
+        }
+    }
   }
 
   &.navbar-fixed-top,
@@ -23,13 +36,20 @@
   }  
 
   .page-logo {
+    float: left;
     position: relative;
   	max-width: 310px;
     width: 220px;
+    height: 60px;
 
     a {
       max-width: 200px;
       overflow: hidden;
+      display: table;
+      position: absolute;
+      margin: auto;
+      top: 0px;
+      bottom: 0px;
     }
 
     &:after {

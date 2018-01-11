@@ -1,4 +1,4 @@
-﻿import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { NotificationServiceProxy, EntityDtoOfGuid } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { NotificationSettingsModalComponent } from './notification-settings-modal.component';
@@ -10,6 +10,7 @@ export interface IFormattedUserNotification {
     userNotificationId: string;
     text: string;
     time: string;
+    creationTime: Date;
     icon: string;
     state: String;
     data: any;
@@ -58,13 +59,14 @@ export class UserNotificationHelper extends AppComponentBase {
             default:
                 return 'fa fa-info';
         }
-    };
+    }
 
     format(userNotification: abp.notifications.IUserNotification, truncateText?: boolean): IFormattedUserNotification {
         let formatted: IFormattedUserNotification = {
             userNotificationId: userNotification.id,
             text: abp.notifications.getFormattedMessageFromUserNotification(userNotification),
             time: moment(userNotification.notification.creationTime).format('YYYY-MM-DD HH:mm:ss'),
+            creationTime: userNotification.notification.creationTime,
             icon: this.getUiIconBySeverity(userNotification.notification.severity),
             state: abp.notifications.getUserNotificationStateAsString(userNotification.state),
             data: userNotification.notification.data,
@@ -107,7 +109,9 @@ export class UserNotificationHelper extends AppComponentBase {
     setAllAsRead(callback?: () => void): void {
         this._notificationService.setAllNotificationsAsRead().subscribe(() => {
             abp.event.trigger('app.notifications.refresh');
-            callback && callback();
+            if (callback) {
+                callback();
+            }
         });
     }
 
@@ -116,7 +120,9 @@ export class UserNotificationHelper extends AppComponentBase {
         input.id = userNotificationId;
         this._notificationService.setNotificationAsRead(input).subscribe(() => {
             abp.event.trigger('app.notifications.read', userNotificationId);
-            callback && callback(userNotificationId);
+            if (callback) {
+                callback(userNotificationId);
+            }
         });
     }
 

@@ -1,7 +1,8 @@
 import { Component, OnInit, AfterViewInit, AfterViewChecked, ElementRef, ViewChild, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { GetUserPermissionsForEditOutput } from '@shared/service-proxies/service-proxies';
-import { PermissionTreeEditModel } from './permission-tree-edit.model';
+import { PermissionTreeEditModel } from '@app/admin/shared/permission-tree-edit.model';
+
 import * as _ from 'lodash';
 
 @Component({
@@ -85,10 +86,10 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
             },
             'types': {
                 'default': {
-                    'icon': 'fa fa-folder tree-item-icon-color icon-lg'
+                    'icon': 'fa fa-folder m--font-warning'
                 },
                 'file': {
-                    'icon': 'fa fa-file tree-item-icon-color icon-lg'
+                    'icon': 'fa fa-file m--font-warning'
                 }
             },
             'checkbox': {
@@ -109,7 +110,7 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
             if (parent) {
                 selectNodeAndAllParents(parent);
             }
-        };
+        }
 
         this._$tree.on('changed.jstree', function (e, data) {
             if (!data.node) {

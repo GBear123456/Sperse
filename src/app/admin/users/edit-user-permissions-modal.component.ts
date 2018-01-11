@@ -1,4 +1,4 @@
-﻿import { Component, ViewChild, Injector } from '@angular/core';
+import { Component, ViewChild, Injector } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { UserServiceProxy, GetUserPermissionsForEditOutput, UpdateUserPermissionsInput, EntityDtoOfInt64 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -16,8 +16,8 @@ export class EditUserPermissionsModalComponent extends AppComponentBase {
     @ViewChild('editModal') modal: ModalDirective;
     @ViewChild('permissionTree') permissionTree: PermissionTreeComponent;
 
-    saving: boolean = false;
-    resettingPermissions: boolean = false;
+    saving = false;
+    resettingPermissions = false;
 
     userId: number;
     userName: string;
@@ -29,7 +29,7 @@ export class EditUserPermissionsModalComponent extends AppComponentBase {
         super(injector);
     }
 
-    show(userId: number, userName?: string):void {
+    show(userId: number, userName?: string): void {
         this.userId = userId;
         this.userName = userName;
 

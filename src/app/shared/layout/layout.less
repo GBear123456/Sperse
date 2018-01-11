@@ -1,4 +1,4 @@
-﻿body.page-sidebar-closed {
+body.page-sidebar-closed {
 	.filter-toggle {
 	    left: 15px;
     	position: absolute;
@@ -140,6 +140,10 @@
     }
 }
 
+div.user-notification-item.user-notification-item-unread .m-list-timeline__text {
+    color: #575962 !important;
+}
+/* End Notification Bar */
 .jcrop-keymgr {
     opacity: 0;
 }
@@ -171,5 +175,52 @@
 @media only screen and (max-device-width: 640px) {
     .edition-info-text {
         display: none;
+    }
+}
+
+li.dropdown-language a {
+    padding-top: 25px !important;
+}
+
+li.dropdown-language ul {
+    top: 0px !important;
+    min-width: 200px;
+}
+
+li.dropdown-language ul li a {
+    padding-top: 5px !important;
+}
+
+@media (max-width: 992px) {
+    li.dropdown-language a {
+        padding-top: 15px !important;
+    }
+}
+
+@media (min-width: 993px) {
+    #m_header_nav {
+        height: 70px !important;
+    }
+}
+
+ul.linked-accounts li {
+    margin-left: 35px !important;
+}
+
+span.m-topbar__username {
+    padding-right: 10px;
+}
+
+.m-list-timeline__items.empty {
+    &:before {
+        background-color: transparent !important;
+    }
+}
+
+ul.dropdown-menu {
+    li {
+        a {
+            cursor: pointer;
+        }
     }
 }

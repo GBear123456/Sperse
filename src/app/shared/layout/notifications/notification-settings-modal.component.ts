@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { NotificationServiceProxy, GetNotificationSettingsOutput, UpdateNotificationSettingsInput, NotificationSubscriptionDto } from '@shared/service-proxies/service-proxies';
@@ -13,7 +13,7 @@ export class NotificationSettingsModalComponent extends AppComponentBase {
 
     @ViewChild('modal') modal: ModalDirective;
 
-    saving: boolean = false;
+    saving = false;
 
     settings: GetNotificationSettingsOutput;
 

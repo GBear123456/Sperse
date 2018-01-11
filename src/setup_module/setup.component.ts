@@ -28,8 +28,8 @@ export class SetupComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     ngAfterViewInit(): void {
-        App.init();
-        App.initComponents();
-        Layout.init();
+        mApp.init();
+        mApp.initComponents();
+        mLayout.init();
     }
 }

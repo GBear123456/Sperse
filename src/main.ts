@@ -1,12 +1,10 @@
 import './polyfills.ts';
 
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { enableProdMode, ChangeDetectorRef } from '@angular/core';
+import { enableProdMode } from '@angular/core';
 import { environment } from './environments/environment';
 import { RootModule } from './root.module';
 import { hmrBootstrap } from './hmr';
-
-import * as moment from 'moment';
 
 import 'moment/min/locales.min';
 import 'moment-timezone';

@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import * as moment from 'moment';
 
@@ -21,6 +21,7 @@ export class DateTimeService  {
             minDate: moment('2015-05-01'),
             max: moment(),
             maxDate: moment(),
+            opens: 'left',
             ranges: {}
         };
 

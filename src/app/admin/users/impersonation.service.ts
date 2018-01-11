@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AccountServiceProxy, ImpersonateInput, ImpersonateOutput } from '@shared/service-proxies/service-proxies';
 import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
@@ -16,7 +16,7 @@ export class ImpersonationService {
 
     impersonate(userId: number, tenantId?: number): void {
 
-        let input = new ImpersonateInput();
+        const input = new ImpersonateInput();
         input.userId = userId;
         input.tenantId = tenantId;
 

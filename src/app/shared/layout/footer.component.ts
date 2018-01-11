@@ -3,7 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
     templateUrl: './footer.component.html',
-    selector: 'footer'
+    selector: 'footer-bar'
 })
 export class FooterComponent extends AppComponentBase implements OnInit {
 
