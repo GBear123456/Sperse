@@ -435,7 +435,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     onTransactionCategoryChanged(e) {
         if (this.selectedTransactionCategory)
-            this.transactionTypes = this.transactionTypesAndCategoriesData.types.filter((t) => t.categories.some((c) => c == this.selectedTransactionCategory));
+            setTimeout(() => this.transactionTypes = this.transactionTypesAndCategoriesData.types.filter((t) => t.categories.some((c) => c == this.selectedTransactionCategory)), 0);
         else
             this.transactionTypes = this.transactionTypesAndCategoriesData.types;
     }
@@ -446,7 +446,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             let categories: any = this.transactionTypesAndCategoriesData.types.filter((t) => this.selectedTransactionTypes.some((c) => c == t.id))
                 .map((v) => v.categories);
             categories = _.uniq(_.flatten(categories));
-            this.transactionCategories = this.transactionTypesAndCategoriesData.categories.filter((c) => categories.some(x => x == c.id));
+            setTimeout(() => this.transactionCategories = this.transactionTypesAndCategoriesData.categories.filter((c) => categories.some(x => x == c.id)), 0);
         }
         else
             this.transactionCategories = this.transactionTypesAndCategoriesData.categories;
