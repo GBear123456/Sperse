@@ -61,8 +61,8 @@
         "../src/assets/bootstrap-datepicker/css/bootstrap-datepicker.min.css",
         "../node_modules/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css",
 
-        "../node_modules/devextreme/dist/css/dx.common.css",
-        "../node_modules/devextreme/dist/css/dx.light.css",
+        "../src/node_modules/devextreme/dist/css/dx.common.css",
+        "../src/node_modules/devextreme/dist/css/dx.light.css",
 
         "../node_modules/dragula/dist/dragula.css",
 

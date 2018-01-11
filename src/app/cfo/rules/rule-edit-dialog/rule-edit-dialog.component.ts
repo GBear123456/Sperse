@@ -2,7 +2,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
 import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
-import { DxTreeListComponent, DxDataGridComponent } from 'devextreme-angular';
+import { DxTreeListComponent, DxDataGridComponent, DxTreeViewComponent } from 'devextreme-angular';
 
 import { MatDialog } from '@angular/material';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
@@ -12,7 +12,7 @@ import {
     CreateCategoryGroupInput, CreateCategoryInput, UpdateCategoryGroupInput, UpdateCategoryInput,
     CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
-    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType } from '@shared/service-proxies/service-proxies';
+    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType, TransactionTypesAndCategoriesDto } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -24,6 +24,7 @@ import * as _ from 'underscore';
 })
 export class RuleDialogComponent extends CFOModalDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
+    @ViewChild(DxTreeViewComponent) transactionTypesList: DxTreeViewComponent;
     @ViewChild('keywordsComponent') keywordList: DxDataGridComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
     showSelectedTransactions = false;
@@ -45,8 +46,14 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     conditionTypes: any;
     categorization: any;
     addedCategoryItems: any = {};
-
+    
     private transactionAttributeTypes: any;
+
+    transactionTypesAndCategoriesData: TransactionTypesAndCategoriesDto;
+    transactionTypes: any;
+    transactionCategories: any;
+    selectedTransactionCategory: string;
+    selectedTransactionTypes: string[] = [];
 
     constructor(
         injector: Injector,
@@ -90,7 +97,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
         if (this.data.id)
             _classificationServiceProxy.getRuleForEdit(InstanceType[this.instanceType], this.instanceId, this.data.id).subscribe((rule) => {
-                this.descriptor = rule.transactionDecriptorAttributeTypeId || rule.transactionDecriptor;
+                this.descriptor = rule.transactionDescriptorAttributeTypeId || rule.transactionDescriptor;
                 this.data.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
                 if (rule.condition) {
                     this.bankId = rule.condition.bankId;
@@ -100,6 +107,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.maxAmount = rule.condition.maxAmount;
                     this.keywords = this.getKeywordsFromString(rule.condition.descriptionWords);
                     this.attributes = rule.condition.attributes;
+                    this.selectedTransactionCategory = rule.condition.transactionCategoryId;
+                    this.selectedTransactionTypes = rule.condition.transactionTypes;
                 }
             });
         else if (this.data.transactionIds && this.data.transactionIds.length)
@@ -112,6 +121,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.descriptor = data.standardDescriptor;
                     this.keywords = this.getKeywordsFromString(data.descriptionPhrases.join(','));
                     this.attributes = data.attributes;
+                    this.selectedTransactionCategory = data.transactionCategoryId;
+                    this.selectedTransactionTypes = [data.transactionTypeId];
                 });
 
         this.refreshCategories();
@@ -190,8 +201,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                             parentId: this.data.parentId,
                             categoryId: this.getSelectedCategoryId(),
                             sourceTransactionList: this.data.transactionIds,
-                            transactionDecriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
-                            transactionDecriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
+                            transactionDescriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
+                            transactionDescriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
                             applyOption: (this.data.id ? EditRuleDtoApplyOption : CreateRuleDtoApplyOption)[option],
                             condition: ConditionDto.fromJS({
                                 minAmount: this.minAmount,
@@ -199,7 +210,9 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                                 bankId: this.bankId,
                                 bankAccountId: this.accountId,
                                 descriptionWords: this.getDescriptionKeywords(),
-                                attributes: this.getAttributes()
+                                attributes: this.getAttributes(),
+                                transactionCategoryId: this.selectedTransactionCategory,
+                                transactionTypes: this.selectedTransactionTypes
                             })
                     })).subscribe((error) => {
                         if (!error) {
@@ -242,6 +255,16 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             text: this.l('Apply this rule to other occurences'),
             value: true
         }];
+
+        this._transactionsServiceProxy.getTransactionTypesAndCategories().subscribe((data) => {
+            this.transactionTypesAndCategoriesData = data;
+            this.transactionTypes = data.types;
+            this.transactionCategories = data.categories;
+            if (this.selectedTransactionCategory)
+                this.onTransactionCategoryChanged(null);
+            if (this.selectedTransactionTypes)
+                this.onTransactionTypesChanged(null);
+        });
     }
 
     ngAfterViewInit() {
@@ -407,6 +430,45 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                                 this.refreshCategories();
                             });
             });
+        }
+    }
+
+    onTransactionCategoryChanged(e) {
+        if (this.selectedTransactionCategory)
+            setTimeout(() => this.transactionTypes = this.transactionTypesAndCategoriesData.types.filter((t) => t.categories.some((c) => c == this.selectedTransactionCategory)), 0);
+        else
+            this.transactionTypes = this.transactionTypesAndCategoriesData.types;
+    }
+
+    onTransactionTypesChanged(e) {
+        if (this.selectedTransactionTypes && this.selectedTransactionTypes.length) {
+
+            let categories: any = this.transactionTypesAndCategoriesData.types.filter((t) => this.selectedTransactionTypes.some((c) => c == t.id))
+                .map((v) => v.categories);
+            categories = _.uniq(_.flatten(categories));
+            setTimeout(() => this.transactionCategories = this.transactionTypesAndCategoriesData.categories.filter((c) => categories.some(x => x == c.id)), 0);
+        }
+        else
+            this.transactionCategories = this.transactionTypesAndCategoriesData.categories;
+
+        this.syncTreeViewSelection(e);
+    }
+
+    onMultipleDropDownChange(event) {
+        this.selectedTransactionTypes = event.component.getSelectedNodesKeys();
+    }
+
+    syncTreeViewSelection(e) {
+        var component = (e && e.component) || (this.transactionTypesList && this.transactionTypesList.instance);
+
+        if (!component) return;
+
+        component.unselectAll();
+
+        if (this.selectedTransactionTypes) {
+            this.selectedTransactionTypes.forEach((function (value) {
+                component.selectItem(value);
+            }).bind(this));
         }
     }
 }

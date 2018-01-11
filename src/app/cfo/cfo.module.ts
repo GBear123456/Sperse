@@ -37,6 +37,7 @@ import {
     DxCheckBoxModule,
     DxDataGridModule,
     DxDateBoxModule,
+    DxDropDownBoxModule,
     DxFileUploaderModule,
     DxLoadIndicatorModule,
     DxPivotGridModule,
@@ -51,7 +52,8 @@ import {
     DxScrollViewModule,
     DxChartModule,
     DxRadioGroupModule,
-    DxTreeListModule
+    DxTreeListModule,
+    DxTreeViewModule
 } from 'devextreme-angular';
 
 @NgModule({
@@ -65,6 +67,7 @@ import {
         DxCheckBoxModule,
         DxDataGridModule,
         DxDateBoxModule,
+        DxDropDownBoxModule,
         DxFileUploaderModule,
         DxLoadIndicatorModule,
         DxPivotGridModule,
@@ -78,6 +81,7 @@ import {
         DxValidatorModule,
         DxScrollViewModule,
         DxTreeListModule,
+        DxTreeViewModule,
         DxRadioGroupModule,
         ModalModule.forRoot(),
         DxChartModule,

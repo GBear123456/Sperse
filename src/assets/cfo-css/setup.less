@@ -1,0 +1,1026 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500');
+
+#loading-overlay {
+    background-color: #fff;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif !important;
+    background: #fff;
+}
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    color: #677380;
+    font-size: 14px;
+    font-weight: 300;
+    font-family: 'Montserrat', sans-serif;
+}
+::-moz-placeholder { /* Firefox 19+ */
+    color: #677380;
+    font-size: 14px;
+    font-weight: 300;
+    font-family: 'Montserrat', sans-serif;
+}
+:-ms-input-placeholder { /* IE 10+ */
+    color: #677380;
+    font-size: 14px;
+    font-weight: 300;
+    font-family: 'Montserrat', sans-serif;
+}
+:-moz-placeholder { /* Firefox 18- */
+    color: #677380;
+    font-size: 14px;
+    font-weight: 300;
+    font-family: 'Montserrat', sans-serif;
+}
+
+@media (min-width: 768px) {
+    .col-sm-4 {
+        width: 32.33333%;
+    }
+    .col-sm-4 + .col-sm-4 {
+        margin-left: 1.5%;
+    }
+}
+
+#client-details {
+    .header-container {
+        h1 {
+            font-size: 20px;
+            font-weight: 500;
+            font-family: 'Montserrat', sans-serif;
+            color: #212c36;
+        }
+        .client-details__userid {
+            display: none;
+        }
+    }
+    .button-container {
+        button {
+            background-color: transparent;
+            text-transform: none;
+            border-radius: 0;
+            border: 0;
+            font-size: 15px;
+            color: #00aeef;
+            font-weight: 400;
+            font-family: 'Montserrat', sans-serif;
+            i {
+                font-size: 8px;
+                margin-right: 0;
+                position: relative;
+                top: -2px;
+            }
+        }
+    }
+    .banner.row {
+        .col-xs-12.col-sm-4 {
+            padding: 10px 15px 10px 160px;
+            border: 1px solid #ccc;
+            font-family: 'Montserrat', sans-serif;
+            text-align: left;
+            position: relative;
+            border-radius: 4px;
+
+            &::before {
+                content: '';
+                background: url('https://testadmin.sperse.com/assets/cfo-css/copy-icon.svg') 50% 50% no-repeat;
+                width: 24px;
+                height: 24px;
+                display: block;
+                position: absolute;
+                left: 120px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            &:last-child {
+                padding-left: 128px;
+                &::before {
+                    left: 85px;
+                }
+            }
+
+            .value {
+                color: #212c36;
+                font-size: 28px;
+                font-weight: 500;
+            }
+            .key {
+                color: #677380;
+                font-size: 12px;
+                font-weight: 300;
+            }
+
+            @media all and (max-width: 1000px) {
+				padding-left: 120px;
+				&::before {
+					left: 80px;
+				}
+				&:last-child {
+					padding-left: 96px;
+					&::before {
+						left: 58px;
+					}
+				}
+			}
+        }
+
+        .col-xs-12.col-sm-4:nth-child(2) {
+            &::before {
+                background: url('https://testadmin.sperse.com/assets/cfo-css/total-icon.svg') 50% 50% no-repeat;
+            }
+        }
+        .col-xs-12.col-sm-4:nth-child(3) {
+            &::before {
+                background: url('https://testadmin.sperse.com/assets/cfo-css/hand-icon.svg') 50% 50% no-repeat;
+            }
+        }
+    }
+    .accounts-list {
+        .accounts-list-header {
+            color: #212c36;
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 500;
+            padding: 20px 0;
+            background-color: #fff !important;
+            border-top: 1px solid #DCDEE2;
+            border-bottom: 1px solid #DCDEE2;
+            i {
+                color: #c6c8cb;
+            }
+        }
+
+        ul {
+            li {
+                i {
+                    color: #c6c8cb;
+                }
+                *:not(i) {
+                    font-family: 'Montserrat', sans-serif !important;
+                    font-weight: 400 !important;
+                }
+                .fdt.fake {
+                    table {
+                        border: 1px solid #e5e9ec;
+                        color: #686f76;
+                        thead {
+                            th,
+                            .public_fixedDataTable_header {
+                                background-color: #F4F4F6 !important;
+                                border: 0;
+                                a {
+                                    color: #686f76;
+                                    font-weight: 500 !important;
+                                    &:hover {
+                                        color: darken(#686f76, 15%);
+                                    }
+                                }
+                            }
+                            th:first-child {
+                                padding-left: 54px;
+                            }
+                        }
+                        tbody {
+                            tr {
+                                &.shaded {
+                                    background-color: #f9fbfc !important;
+                                }
+                            }
+                            td {
+                                border: 0;
+                                color: #677380;
+                                font-size: 14px;
+                                a {
+                                    color: #677380;
+                                    text-transform: none;
+                                    &:hover {
+                                        color: darken(#677380, 15%);
+                                    }
+                                }
+                            }
+                            td:first-child {
+                                padding-left: 54px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .status {
+            font-size: 11px;
+
+            .account-status {
+                background: #f3f7fa;
+                color: #424c56;
+                text-transform: uppercase;
+                text-align: center;
+                width: 130px;
+                position: relative;
+                border: 0;
+                font-weight: 400 !important;
+                border-radius: 15px;
+                padding-left: 16px;
+                font-family: 'Montserrat', sans-serif;
+                &::before {
+                    width: 8px;
+                    height: 8px;
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    left: 10px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    border-radius: 50%;
+                }
+                &.in-progress {
+                    &::before {
+                        background: #00b7fa;
+                    }
+                }
+                &.questions,
+                &.login,
+                &.config {
+                    &::before {
+                        background: #f9af47;
+                    }
+                }
+                &.good {
+                    &::before {
+                        background: #37d749;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.action-bar {
+    .header-container {
+        h1 {
+            color: #212c36;
+            font-size: 20px;
+            font-weight: 400;
+        }
+    }
+    .button-container {
+        #back-to-accounts {
+            background-color: transparent;
+            text-transform: none;
+            border-radius: 0;
+            border: 0;
+            font-size: 15px;
+            color: #00aeef !important;
+            font-weight: 400;
+            font-family: 'Montserrat', sans-serif;
+        }
+    }
+}
+
+#sync {
+    .sync-steps  {
+        div {
+            font-size: 16px;
+            color: #677380 !important;
+            background-color: #f9fbfc;
+            border-top: 1px solid #f9fbfc;
+            border-bottom: 1px solid #f9fbfc;
+            text-transform: capitalize !important;
+            &.active,
+            &.active.locked {
+                color: #fff !important;
+                cursor: default;
+                pointer-events: none;
+                background-color: #00aeef;
+                border-color: #00aeef;
+                .tri {
+                    border-left: 30px solid #00aeef;
+                    background-color: transparent;
+                    &::after {
+                        border-left-color: #00aeef;
+                    }
+                }
+            }
+            &.locked {
+                background-color: #f9fbfc;
+                border-color: #f9fbfc;
+                text-transform: capitalize;
+                .tri {
+                    background-color: transparent;
+                }
+            }
+            &:not(:last-child) {
+                border-right-color: #f9fbfc;
+            }
+
+            .tri {
+                right: -32px;
+                top: -1px;
+                border-left: 30px solid #f9fbfc;
+                border-top: 30px solid transparent;
+                border-bottom: 30px solid transparent;
+                background-color: #00aeef;
+
+                &::after {
+                    border-left-color: #f9fbfc;
+                }
+            }
+
+            .icon-checkmark-circle {
+                color: #00aeef;
+            }
+        }
+    }
+}
+
+.view-container {
+    *:not(i) {
+        font-family: 'Montserrat', sans-serif !important;
+    }
+}
+
+#sync #sync-account .brokerage-header h2 {
+    font-size: 24px !important;
+}
+
+.search {
+    width: 55%;
+    h2 {
+        font-size: 24px !important;
+        color: #202b35;
+        font-weight: 500;
+    }
+    h4 {
+        font-weight: 300;
+        color: #677380;
+        font-size: 14px !important;
+    }
+}
+
+#sync #sync-account .terms {
+    font-size: 13px !important;
+}
+
+#login-tos-link {
+    font-size: 13px !important;
+}
+
+#sync #sync-brokerage .top-brokerages {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+
+    .hover-swap {
+        max-width: 20%;
+        width: 150px;
+        height: 80px;
+        border-radius: 5px;
+        border: 1px solid #e5e9ec;
+        padding: 0 !important;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .brokerage-card {
+        border: 0 !important;
+        padding: 10px !important;
+        img {
+            max-width: 100%;
+        }
+    }
+
+    .brokerage-card.hover {
+        border: 0 !important;
+        background-color: transparent;
+        margin-top: -20px;
+        position: absolute;
+        width: 150px;
+        top: 100%;
+        div {
+            margin: 0;
+            display: block;
+            width: 100%;
+        }
+        a {
+            font-size: 12px !important;
+            color: #677380;
+            text-transform: capitalize;
+            border-right: 0;
+            text-decoration: none;
+            display: block;
+            float: left;
+            padding: 0;
+            width: 49%;
+            &:hover {
+                color: darken(#677380, 15%);
+            }
+            + a {
+                color: #00aeef;
+                float: right;
+                text-align: right;
+                &:hover {
+                    color: darken(#00aeef, 15%);
+                }
+            }
+        }
+    }
+}
+.view-container button, .view-container .button {
+    text-transform: capitalize;
+    border-color: #00B7FA;
+}
+
+.safe {
+    display: inline-block;
+    padding-left: 20px;
+    position: relative;
+    &::before {
+        content: '';
+        background: url("https://testadmin.sperse.com/assets/cfo-css/lock-icon.svg") 50% 50% no-repeat;
+        width: 18px;
+        height: 18px;
+        position: absolute;
+        left: 0;
+        background-size: cover;
+        opacity: .3;
+    }
+}
+
+.view-container button:disabled, .view-container .button:disabled {
+    text-transform: capitalize;
+    border-color: #00B7FA;
+    background-color: #00B7FA;
+    cursor: not-allowed;
+    opacity: .8;
+}
+
+@media (min-width: 768px) {
+    #sync #sync-client .results, #sync #sync-brokerage .results {
+        .col-sm-4 + .col-sm-4 {
+            margin-left: 0;
+        }
+    }
+}
+
+@media (min-width: 787px) {
+    #sync #sync-client .top-brokerages .hover-swap:hover > div, #sync #sync-brokerage .top-brokerages .hover-swap:hover > div {
+        display: flex;
+    }
+}
+
+#sync #sync-account {
+    .login {
+        .special-info {
+            width: 50%;
+            float: right;
+            padding: 15px 15px 15px 30px;
+            label {
+                font-weight: 500;
+                font-size: 14px;
+                color: #000;
+                text-transform: none;
+            }
+            div {
+                padding: 0;
+                background-color: transparent;
+                color: #A4A9B3;
+            }
+
+            + form {
+                width: 50%;
+                float: left;
+                padding: 15px 30px 15px 15px;
+                border-right: 1px solid #e5e9ec;
+                input,
+                label {
+                    width: 100% !important;
+                }
+            }
+        }
+    }
+
+    .results {
+        .success-summary {
+            .special-info {
+                text-align: center;
+                padding: 15px 15px 15px 30px;
+                label {
+                    font-weight: 500;
+                    font-size: 14px;
+                    color: #000;
+                    text-transform: none;
+                }
+                div {
+                    padding: 0;
+                    background-color: transparent;
+                    color: #A4A9B3;
+                }
+            }
+            .positive {
+                .sum-msg {
+                    color: #202b35;
+                }
+            }
+        }
+    }
+
+    .mfa {
+        display: flex;
+        justify-content: space-around;
+        
+        .special-info {
+            margin: 0;
+            width: 42%;
+        }
+        
+        form {
+            width: 42%;
+        }
+
+        .challenge {
+            label {
+                width: 100%;
+            }
+            input[type="text"],
+            textarea {
+                width: 100% !important;
+            }
+
+            .choices {
+                div {
+                    h3 {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+}
+#login-tos-link {
+    font-size: 12px;
+}
+
+#login {
+    div {
+        div:first-child {
+            visibility: hidden;
+            opacity: 0;
+        }
+    }
+}
+
+// setup
+@media (max-width: 767px) {
+    #client-details {
+        .action-bar {
+            .header-container {
+                .visible-xs {
+                    font-size: 22px;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 0.91;
+                    letter-spacing: normal;
+                    color: #282f38;
+                }
+            }
+            .button-container {
+                button {
+                    padding: 0;
+
+                    span {
+                        font-size: 16px;
+                        font-weight: normal;
+                        font-style: normal;
+                        font-stretch: normal;
+                        line-height: 1.5;
+                        letter-spacing: 0.3px;
+                        color: #6eade9;
+
+                        &.hidden-xs {
+                            display: inline-block !important;
+                        }
+                    }
+                }
+            }
+        }
+
+        .banner {
+            background-color: #f9fbfc;
+            padding: 20px 24px 20px 65%;
+            border: 0;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column-reverse;
+            position: relative;
+            .col-xs-12 {
+                padding: 0 !important;
+                border: 0 !important;
+
+                &:not(:nth-child(3)) {
+                    .value {
+                        display: block;
+                        float: left;
+                    }
+                    .key {
+                        display: block;
+                        float: left;
+                        max-width: 40px;
+                        margin-left: 6px;
+                        position: relative;
+                        top: 3px;
+                    }
+                }
+
+                &::before {
+                    content: none !important;
+                }
+
+                &:nth-child(3) {
+                    position: absolute !important; 
+                    left: 24px;
+                    top: 20px;
+                    width: calc(~"65% - 38px");
+                    height: calc(~"100% - 40px");
+                    border-right: 1px solid #e5e8eb !important;
+                    .value {
+                        margin-top: 20px;
+                    }
+                }
+            }
+        }
+
+        .accounts-list {
+            padding: 0 24px;
+    
+            .accounts-list-header {
+                display: none;
+            }
+    
+            ul {
+
+                li {
+                    padding: 20px 20px 16px;
+                    border-radius: 6px;
+                    background-color: #fff;
+                    border: solid 1px #e5e8eb;
+                    margin-bottom: 20px;
+
+                    .row.flex {
+                        position: relative;
+                        flex-direction: column;
+
+                        .name,
+                        .status,
+                        .stats {
+                            display: block !important;
+                            width: 100% !important;
+                        }
+
+                        .name {
+                            padding-right: 30px;
+                            a {
+
+                                i {
+                                    display: none;
+                                }
+                                div {
+                                    width: 100%;
+                                    font-family: Montserrat;
+                                    font-size: 16px;
+                                    font-weight: 400 !important;
+                                    font-style: normal;
+                                    font-stretch: normal;
+                                    line-height: 1.5;
+                                    letter-spacing: 0.3px;
+                                    color: #293039;
+                                    float: left;
+                                }
+                            }
+
+                            div {
+                                width: 100%;
+                                font-family: Montserrat;
+                                font-size: 16px;
+                                font-weight: 400 !important;
+                                font-style: normal;
+                                font-stretch: normal;
+                                line-height: 1.5;
+                                letter-spacing: 0.3px;
+                                color: #293039;
+                                float: left;
+                                padding-left: 0;
+                            }
+                        }
+
+                        .status {
+                            position: absolute;
+                            bottom: 5px;
+                            left: 0;
+                        }
+
+                        .stats {
+                            padding: 3px 0;
+
+                            * {
+                                font-family: Montserrat;
+                                font-size: 12px;
+                                font-weight: 400;
+                                font-style: normal;
+                                font-stretch: normal;
+                                line-height: 2;
+                                letter-spacing: 0.5px;
+                                color: #293039;
+                            }
+
+                            > .value {
+                                display: block;
+                                float: right;
+                                text-align: right;
+                                width: 49%;
+                                color: #474d56;
+                                line-height: 1.6;
+                                letter-spacing: 0.3px;
+                                font-size: 15px;
+                                font-weight: 300;
+                            }
+
+                            &::before {
+                                display: block;
+                                float: left;
+                                width: 49%;
+                                content: 'Value';
+                                text-transform: uppercase;
+                            }
+                        }
+
+                        .stats.hidden-xs {
+                            &::before {
+                                display: block;
+                                float: left;
+                                width: 49%;
+                                content: 'Portofolios';
+                                text-transform: uppercase;
+                            }
+                        }
+
+                        .stats.updated-container {
+                            &:before {
+                                content: none;
+                            }
+
+                            .updated.value {
+                                font-family: Montserrat;
+                                font-size: 10px;
+                                font-weight: 300;
+                                font-style: normal;
+                                font-stretch: normal;
+                                line-height: 2.4;
+                                letter-spacing: 0.2px;
+                                color: #677380;
+                            }
+                        }
+
+                        .settings {
+                            position: absolute;
+                            display: block;
+                            top: 1px;
+                            right: -6px;
+
+                            .dropdown-menu {
+                                li {
+                                    border: 0;
+                                    margin-bottom: 0;
+                                }
+                            }
+                        }
+                    }
+
+                    .row.collapse {
+
+                    }
+
+                }
+            }
+        }
+    }
+
+    #sync {
+        .action-bar {
+            flex-flow: row-reverse;
+            .header-container {
+                padding-left: 0;
+                font-size: 21px;
+                line-height: 0.95;
+                letter-spacing: normal;
+                color: #282f38;
+            }
+
+            #back-to-accounts {
+                position: relative;
+                text-indent: -9999px;
+                &::before {
+                    content: '< Back';
+                    font-size: 16px;
+                    line-height: 1.5;
+                    letter-spacing: 0.3px;
+                    text-align: left;
+                    color: #6eade9;
+                    display: block;
+                    position: absolute;
+                    left: 24px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    text-indent: initial;
+                }
+            }
+        }
+
+        .sync-steps {
+
+            > div {
+                padding: 0;
+                height: 54px;
+                position: relative;
+                
+                span {
+                    i {
+                        font-size: 16px;
+                        position: relative;
+                        top: 5px;
+                    }
+                    div {
+                        background: transparent !important;
+                        border: 0 !important;
+                        font-size: 12px;
+                    }
+                }
+
+                &.col-xs-4 {
+                    &::after {
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        width: 0; 
+                        height: 0; 
+                        border-top: 27px solid transparent;
+                        border-bottom: 27px solid transparent;
+                        border-left: 20px solid #f9fbfc;
+                        top: -1px;
+                        left: 101%;
+                        z-index: 11;
+                    }
+                    &.col-xs-4.locked {
+                        &::after {
+                            content: none;
+                        }
+                    }
+                }
+
+                &.col-xs-4.active.locked {
+                    color: #fff !important;
+
+                    &::after {
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        width: 0; 
+                        height: 0; 
+                        border-top: 27px solid transparent;
+                        border-bottom: 27px solid transparent;
+                        border-left: 20px solid #00aeef;
+                        top: -1px;
+                        left: 101%;
+                        z-index: 10;
+                    }
+
+                    span {
+                        div {
+                            color: #fff !important;
+                        }
+                    }
+                }
+            }
+        }
+
+        #sync-brokerage {
+            .manual-assets-notice {
+                padding-top: 20px;
+            }
+
+            .search {
+                padding: 0 20px !important;
+                margin: 0 !important;
+    
+                h2 {
+                    margin-top: 50px !important;
+                    font-family: Montserrat;
+                    font-size: 22px;
+                    font-weight: normal;
+                    line-height: 2.27;
+                    letter-spacing: 0.4px;
+                    text-align: center;
+                    color: #282f38;
+                }
+    
+                h4 {
+                    margin-bottom: 50px !important;
+                    font-family: Montserrat;
+                    font-size: 14px;
+                    font-weight: 300 !important;
+                    line-height: 1.43;
+                    letter-spacing: 0.3px;
+                    text-align: center;
+                    color: #6a727f;
+                    padding: 0 20px;
+                }
+            }
+        }
+
+        #sync-account {
+
+            .login {
+                display: flex;
+                flex-flow: column-reverse wrap;
+                padding: 0 24px;
+
+                .terms {
+                    margin-bottom: 15px;
+                }
+
+                .special-info,
+                .special-info + form {
+                    width: 100%;
+                }
+
+                .special-info + form,
+                #login-search-form {
+                    border: 0;
+                    padding: 0;
+                }
+
+                .special-info {
+                    padding: 20px 0;
+                    margin-top: 35px;
+                    border-top: 1px solid #dadde0;
+                    position: relative;
+
+                    &::before {
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        width: 0; 
+                        height: 0; 
+                        border-left: 10px solid transparent;
+                        border-right: 10px solid transparent;
+                        border-bottom: 8px solid #dadde0;
+                        top: -8px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        z-index: 10;
+                    }
+
+                    &::after {
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        width: 0; 
+                        height: 0; 
+                        border-left: 9px solid transparent;
+                        border-right: 9px solid transparent;
+                        border-bottom: 7px solid #fff;
+                        top: -7px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        z-index: 11;
+                    }
+                }
+
+            }
+
+            .safe {
+                margin-top: 20px;
+            }
+        }
+        
+
+        .top-brokerages {
+            display: block !important;
+            
+            div.col-xs-12 {
+                width: 32% !important;
+                margin-right: 2%;
+                max-width: 100% !important;
+                margin-bottom: 10px;
+
+                &:nth-child(3n+3) {
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+
+    .shell__footer {
+        margin-top: 0;
+    }
+}

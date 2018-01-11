@@ -1,5 +1,5 @@
 <div class="close-dialog" (click)="close(true)"></div>
-<div class="md-dialog-header">
+<div class="mat-dialog-header">
     <dx-text-box
         name="title"
         [placeholder]="data.placeholder"
@@ -7,14 +7,14 @@
         [readOnly]="!data.editTitle">
     </dx-text-box>
     <mat-dialog-actions>
-        <div class="md-dialog-options">
+        <div class="mat-dialog-options">
             <ng-template ngFor let-option [ngForOf]="data.options" let-i="index">
-                <dx-check-box class="md-dialog-option pull-right" (onValueChanged)="option.onValueChanged($event)" [(value)]="option.value" [text]="option.text"></dx-check-box>
+                <dx-check-box class="mat-dialog-option pull-right" (onValueChanged)="option.onValueChanged($event)" [(value)]="option.value" [text]="option.text"></dx-check-box>
             </ng-template>
         </div>
-        <div class="md-dialog-buttons">
+        <div class="mat-dialog-buttons">
             <ng-template ngFor let-button [ngForOf]="data.buttons" let-i="index">
-                <button md-button (click)="button.action($event)" class="button-layout button-{{button.class}}">{{l(button.title)}}</button>
+                <button mat-button (click)="button.action($event)" class="button-layout button-{{button.class}}">{{l(button.title)}}</button>
             </ng-template>
         </div>
     </mat-dialog-actions>
