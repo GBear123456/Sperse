@@ -227,7 +227,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 }
             }
         }];
-        if (!this.data.id)
+        if (this.data.transactions && this.data.transactions.length)
             this.data.buttons.unshift({
                 title: this.l('Don\'t add'),
                 class: 'default',
