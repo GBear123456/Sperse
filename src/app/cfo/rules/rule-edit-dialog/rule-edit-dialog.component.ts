@@ -207,6 +207,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                             condition: ConditionDto.fromJS({
                                 minAmount: this.minAmount,
                                 maxAmount: this.maxAmount,
+                                cashFlowAmountFormat: ConditionDtoCashFlowAmountFormat[this.amountFormat],
                                 bankId: this.bankId,
                                 bankAccountId: this.accountId,
                                 descriptionWords: this.getDescriptionKeywords(),
