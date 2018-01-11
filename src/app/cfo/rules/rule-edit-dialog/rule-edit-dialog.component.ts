@@ -329,11 +329,11 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 return this.notify.error(this.l('RuleTransactionDescriptorError'));
 */
 
-            if (!this.getAttributes().length)
-                return this.notify.error(this.l('RuleAttributesError'));
+            //if (!this.getAttributes().length)
+            //    return this.notify.error(this.l('RuleAttributesError'));
 
-            if (isNaN(this.bankId) || isNaN(this.accountId))
-                return this.notify.error(this.l('RuleBankAccountError'));
+            //if (isNaN(this.bankId) || isNaN(this.accountId))
+            //    return this.notify.error(this.l('RuleBankAccountError'));
 
             if (this.minAmount && this.maxAmount && this.minAmount > this.maxAmount)
                 return this.notify.error(this.l('RuleAmountError'));
@@ -385,7 +385,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             InstanceType[this.instanceType],
             this.instanceId,
             (groupCreate ? CreateCategoryGroupInput: CreateCategoryInput).fromJS({
-                typeId: $event.data.parent,
+                cashFlowTypeId: $event.data.parent,
                 groupId: this.getCategoryItemId($event.data.parent),
                 name: $event.data.name
             })
@@ -400,8 +400,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         $event.cancel = true;
         let itemId = this.getCategoryItemId($event.key),
             parentId = this.getCategoryItemId($event.data.parent);
-        if (this.categorization.types[parentId]) {
-            if (_.findWhere(this.categories, {parent: itemId}))
+        if (this.categorization.types[$event.data.parent]) {
+            if (_.findWhere(this.categories, { parent: $event.key}))
                 this.notify.error(this.l('Category group should be empty to perform delete action'));
             else
                 this._classificationServiceProxy.deleteCategoryGroup(InstanceType[this.instanceType], this.instanceId, itemId)
