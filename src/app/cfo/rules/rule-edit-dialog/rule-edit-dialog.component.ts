@@ -264,7 +264,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             this.transactionCategories = data.categories;
             if (this.selectedTransactionCategory)
                 this.onTransactionCategoryChanged(null);
-            if (this.selectedTransactionTypes)
+            if (this.selectedTransactionTypes && this.selectedTransactionTypes.length)
                 this.onTransactionTypesChanged(null);
         });
     }
@@ -436,6 +436,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onTransactionCategoryChanged(e) {
+        if (!this.transactionTypesAndCategoriesData) return;
         if (this.selectedTransactionCategory)
             setTimeout(() => this.transactionTypes = this.transactionTypesAndCategoriesData.types.filter((t) => t.categories.some((c) => c == this.selectedTransactionCategory)), 0);
         else
@@ -443,8 +444,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onTransactionTypesChanged(e) {
+        if (!this.transactionTypesAndCategoriesData) return;
         if (this.selectedTransactionTypes && this.selectedTransactionTypes.length) {
-
             let categories: any = this.transactionTypesAndCategoriesData.types.filter((t) => this.selectedTransactionTypes.some((c) => c == t.id))
                 .map((v) => v.categories);
             categories = _.uniq(_.flatten(categories));
