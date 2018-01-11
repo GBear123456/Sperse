@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, AfterViewChecked, ElementRef, ViewChi
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { NameValueDto, FlatFeatureDto } from '@shared/service-proxies/service-proxies';
 import { FeatureTreeEditModel } from './feature-tree-edit.model';
+
 import * as _ from 'lodash';
 
 @Component({

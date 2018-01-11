@@ -1,16 +1,15 @@
-﻿import { Component, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
+import { Component, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { AuditLogServiceProxy, AuditLogListDto } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
-import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileDownloadService } from '@shared/utils/file-download.service';
 import { AuditLogDetailModalComponent } from './audit-log-detail-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { DataTable } from 'primeng/components/datatable/datatable';
+import { Paginator } from 'primeng/components/paginator/paginator';
+import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 
 import * as moment from 'moment';
-import { JTableHelper } from '@shared/helpers/JTableHelper';
 
 @Component({
     templateUrl: './audit-logs.component.html',
@@ -18,9 +17,11 @@ import { JTableHelper } from '@shared/helpers/JTableHelper';
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
-export class AuditLogsComponent extends AppComponentBase implements AfterViewInit {
+export class AuditLogsComponent extends AppComponentBase {
 
     @ViewChild('auditLogDetailModal') auditLogDetailModal: AuditLogDetailModalComponent;
+    @ViewChild('dataTable') dataTable: DataTable;
+    @ViewChild('paginator') paginator: Paginator;
 
     //Filters
     public startDate: moment.Moment = moment().startOf('day');
@@ -34,7 +35,7 @@ export class AuditLogsComponent extends AppComponentBase implements AfterViewIni
     public maxExecutionDuration: number;
 
     private _$auditLogsTable: JQuery;
-    advancedFiltersAreShown: boolean = false;
+    advancedFiltersAreShown = false;
 
     constructor(
         injector: Injector,
@@ -45,142 +46,41 @@ export class AuditLogsComponent extends AppComponentBase implements AfterViewIni
         super(injector);
     }
 
-    ngAfterViewInit(): void {
-        let self = this;
-
-        let initAuditLogsTable = () => {
-            self._$auditLogsTable = $('#AuditLogsTable');
-
-            self._$auditLogsTable.jtable({
-
-                title: self.l('Roles'),
-
-                paging: true,
-                sorting: true,
-                multiSorting: true,
-
-                actions: {
-                    listAction(postData, jtParams: JTableParams) {
-                        return JTableHelper.toJTableListAction(self._auditLogService.getAuditLogs(
-                            self.startDate,
-                            self.endDate,
-                            self.username,
-                            self.serviceName,
-                            self.methodName,
-                            self.browserInfo,
-                            self.hasException,
-                            self.minExecutionDuration,
-                            self.maxExecutionDuration,
-                            jtParams.jtSorting,
-                            jtParams.jtPageSize,
-                            jtParams.jtStartIndex
-                        ));
-                    }
-                },
-
-                fields: {
-                    id: {
-                        key: true,
-                        list: false
-                    },
-                    actions: {
-                        title: '',
-                        width: '5%',
-                        sorting: false,
-                        display: function (data) {
-                            let $div = $('<div class=\'text-center\'></div>');
-
-                            $div.append('<button class="btn btn-default btn-xs"><i class="fa fa-search"></i></button>')
-                                .click(function () {
-                                    self.showDetails(data.record);
-                                });
-
-                            return $div;
-                        }
-                    },
-                    exception: {
-                        title: '',
-                        width: '5%',
-                        sorting: false,
-                        display: function (data) {
-                            let $div = $('<div class="text-center"></div>');
-
-                            if (data.record.exception) {
-                                $div.append('<i class="fa fa-warning font-yellow-gold"></i>');
-                            } else {
-                                $div.append('<i class="fa fa-check-circle font-green"></i>');
-                            }
-
-                            return $div;
-                        }
-                    },
-                    executionTime: {
-                        title: self.l('Time'),
-                        width: '13%',
-                        display: function (data) {
-                            return moment(data.record.executionTime).format('YYYY-MM-DD HH:mm:ss');
-                        }
-                    },
-                    userName: {
-                        title: self.l('UserName'),
-                        width: '10%'
-                    },
-                    serviceName: {
-                        title: self.l('Service'),
-                        width: '17%',
-                        sorting: false
-                    },
-                    methodName: {
-                        title: self.l('Action'),
-                        width: '10%',
-                        sorting: false
-                    },
-                    executionDuration: {
-                        title: self.l('Duration'),
-                        width: '5%',
-                        display: function (data) {
-                            return self.l('Xms', data.record.executionDuration);
-                        }
-                    },
-                    clientIpAddress: {
-                        title: self.l('IpAddress'),
-                        width: '10%',
-                        sorting: false
-                    },
-                    clientName: {
-                        title: self.l('Client'),
-                        width: '10%',
-                        sorting: false
-                    },
-                    browserInfo: {
-                        title: self.l('Browser'),
-                        width: '15%',
-                        sorting: false,
-                        display: (data: JTableFieldOptionDisplayData<AuditLogListDto>) => {
-                            return $('<span></span>')
-                                .attr('title', data.record.browserInfo)
-                                .text(abp.utils.truncateStringWithPostfix(data.record.browserInfo, 20));
-                        }
-                    }
-                }
-            });
-
-            self.getAuditLogs();
-        };
-
-        initAuditLogsTable();
-    }
-
     showDetails(record: AuditLogListDto): void {
         this.auditLogDetailModal.show(record);
     }
 
-    getAuditLogs(): void {
-        this._$auditLogsTable.jtable('load');
+    getAuditLogs(event?: LazyLoadEvent) {
+        if (this.primengDatatableHelper.shouldResetPaging(event)) {
+            this.paginator.changePage(0);
+
+            return;
+        }
+
+        this.primengDatatableHelper.showLoadingIndicator();
+
+        this._auditLogService.getAuditLogs(
+            this.startDate,
+            this.endDate,
+            this.username,
+            this.serviceName,
+            this.methodName,
+            this.browserInfo,
+            this.hasException,
+            this.minExecutionDuration,
+            this.maxExecutionDuration,
+            this.primengDatatableHelper.getSorting(this.dataTable),
+            this.primengDatatableHelper.getMaxResultCount(this.paginator, event),
+            this.primengDatatableHelper.getSkipCount(this.paginator, event)
+        ).subscribe((result) => {
+            this.primengDatatableHelper.totalRecordsCount = result.totalCount;
+            this.primengDatatableHelper.records = result.items;
+            this.primengDatatableHelper.hideLoadingIndicator();
+        });
     }
 
     exportToExcel(): void {
-        let self = this;
+        const self = this;
         self._auditLogService.getAuditLogsToExcel(
             self.startDate,
             self.endDate,
@@ -192,10 +92,14 @@ export class AuditLogsComponent extends AppComponentBase implements AfterViewIni
             self.minExecutionDuration,
             self.maxExecutionDuration,
             undefined,
-            undefined,
-            undefined)
+            1,
+            0)
             .subscribe(result => {
                 self._fileDownloadService.downloadTempFile(result);
             });
+    }
+
+    truncateStringWithPostfix(text: string, length: number): string {
+        return abp.utils.truncateStringWithPostfix(text, length);
     }
 }

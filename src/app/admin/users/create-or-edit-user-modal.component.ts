@@ -1,8 +1,9 @@
-﻿import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
-import { UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput, UserRoleDto, PasswordComplexitySetting } from '@shared/service-proxies/service-proxies';
+import { UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput, OrganizationUnitDto, UserRoleDto, PasswordComplexitySetting } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
+import { OrganizationUnitsTreeComponent, IOrganizationUnitsTreeComponentData } from '../shared/organization-unit-tree.component';
 
 import * as _ from 'lodash';
 
@@ -18,22 +19,27 @@ export class CreateOrEditUserModalComponent extends AppComponentBase {
 
     @ViewChild('nameInput') nameInput: ElementRef;
     @ViewChild('createOrEditModal') modal: ModalDirective;
+    @ViewChild('organizationUnitTree') organizationUnitTree: OrganizationUnitsTreeComponent;
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active: boolean = false;
-    saving: boolean = false;
-    canChangeUserName: boolean = true;
+    active = false;
+    saving = false;
+    canChangeUserName = true;
+
     isTwoFactorEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled');
     isLockoutEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
 
     user: UserEditDto = new UserEditDto();
     roles: UserRoleDto[];
-    sendActivationEmail: boolean = true;
-    setRandomPassword: boolean = true;
-    passwordComplexityInfo: string = '';
+    sendActivationEmail = true;
+    setRandomPassword = true;
+    passwordComplexityInfo = '';
     profilePicture: string;
+
+    allOrganizationUnits: OrganizationUnitDto[];
+    memberedOrganizationUnits: string[];
 
     constructor(
         injector: Injector,
@@ -43,29 +49,41 @@ export class CreateOrEditUserModalComponent extends AppComponentBase {
         super(injector);
     }
 
-    show(userId?: number): void {
+    ngAfterViewChecked(): void {
+        //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
+        $('tabset ul.nav').addClass('m-tabs-line');
+        $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
+    }
 
+    show(userId?: number): void {
         if (!userId) {
             this.active = true;
             this.setRandomPassword = true;
             this.sendActivationEmail = true;
         }
 
-        this._userService.getUserForEdit(userId).subscribe(result => {
-            this.user = result.user;
-            this.roles = result.roles;
+        this._userService.getUserForEdit(userId).subscribe(userResult => {
+            this.user = userResult.user;
+            this.roles = userResult.roles;
             this.canChangeUserName = this.user.userName !== AppConsts.userManagement.defaultAdminUserName;
 
-            this.getProfilePicture(result.profilePictureId);
+            this.allOrganizationUnits = userResult.allOrganizationUnits;
+            this.memberedOrganizationUnits = userResult.memberedOrganizationUnits;
+
+            this.getProfilePicture(userResult.profilePictureId);
 
             if (userId) {
                 this.active = true;
-                this.setRandomPassword = false;
+
+                setTimeout(() => {
+                    this.setRandomPassword = false;
+                }, 0);
+
                 this.sendActivationEmail = false;
             }
 
-            this._profileService.getPasswordComplexitySetting().subscribe(result => {
-                this.passwordComplexitySetting = result.setting;
+            this._profileService.getPasswordComplexitySetting().subscribe(passwordComplexityResult => {
+                this.passwordComplexitySetting = passwordComplexityResult.setting;
                 this.setPasswordComplexityInfo();
                 this.modal.show();
             });
@@ -116,6 +134,11 @@ export class CreateOrEditUserModalComponent extends AppComponentBase {
 
     onShown(): void {
         $(this.nameInput.nativeElement).focus();
+
+        this.organizationUnitTree.data = <IOrganizationUnitsTreeComponentData>{
+            allOrganizationUnits : this.allOrganizationUnits,
+            selectedOrganizationUnits: this.memberedOrganizationUnits
+        };
     }
 
     save(): void {
@@ -128,6 +151,8 @@ export class CreateOrEditUserModalComponent extends AppComponentBase {
             _.map(
                 _.filter(this.roles, { isAssigned: true }), role => role.roleName
             );
+
+        input.organizationUnits = this.organizationUnitTree.getSelectedOrganizations();
 
         this.saving = true;
         this._userService.createOrUpdateUser(input)

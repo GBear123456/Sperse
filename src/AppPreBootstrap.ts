@@ -1,4 +1,4 @@
-﻿import * as moment from 'moment';
+import * as moment from 'moment';
 import { AppConsts } from '@shared/AppConsts';
 import { UrlHelper } from './shared/helpers/UrlHelper';
 import { LocalizedResourcesHelper } from './shared/helpers/LocalizedResourcesHelper';
@@ -12,18 +12,23 @@ import { TenantApiHostOutput } from '@shared/service-proxies/service-proxies';
 
 export class AppPreBootstrap {
 
-    static run(callback: () => void): void {
+    static run(callback: () => void, resolve: any, reject: any): void {
         AppPreBootstrap.getApplicationConfig(() => {
+            if (UrlHelper.isInstallUrl(location.href)) {
+                LocalizedResourcesHelper.loadMetronicStyles("");
+                callback();
+                return;
+            }
+
             const queryStringObj = UrlHelper.getQueryParameters();
 
-            if (queryStringObj.redirect && queryStringObj.redirect === "TenantRegistration") {
+            if (queryStringObj.redirect && queryStringObj.redirect === 'TenantRegistration') {
                 if (queryStringObj.forceNewRegistration) {
                     new AppAuthService().logout();
                 }
 
                 location.href = AppConsts.appBaseUrl + '/account/select-edition';
-            }
-            else if (queryStringObj.impersonationToken) {
+            } else if (queryStringObj.impersonationToken) {
                 AppPreBootstrap.impersonatedAuthenticate(queryStringObj.impersonationToken, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
             } else if (queryStringObj.switchAccountToken) {
                 AppPreBootstrap.linkedAccountAuthenticate(queryStringObj.switchAccountToken, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
@@ -84,11 +89,11 @@ export class AppPreBootstrap {
     }
 
     private static getCurrentClockProvider(currentProviderName: string): abp.timing.IClockProvider {
-        if (currentProviderName === "unspecifiedClockProvider") {
+        if (currentProviderName === 'unspecifiedClockProvider') {
             return abp.timing.unspecifiedClockProvider;
         }
 
-        if (currentProviderName === "utcClockProvider") {
+        if (currentProviderName === 'utcClockProvider') {
             return abp.timing.utcClockProvider;
         }
 
@@ -97,7 +102,7 @@ export class AppPreBootstrap {
 
     private static impersonatedAuthenticate(impersonationToken: string, tenantId: number, callback: () => void): JQueryPromise<any> {
         abp.multiTenancy.setTenantIdCookie(tenantId);
-        const cookieLangValue = abp.utils.getCookieValue("Abp.Localization.CultureName");
+        const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
         return abp.ajax({
             url: AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/ImpersonatedAuthenticate?impersonationToken=' + impersonationToken,
             method: 'POST',
@@ -115,7 +120,7 @@ export class AppPreBootstrap {
 
     private static linkedAccountAuthenticate(switchAccountToken: string, tenantId: number, callback: () => void): JQueryPromise<any> {
         abp.multiTenancy.setTenantIdCookie(tenantId);
-        const cookieLangValue = abp.utils.getCookieValue("Abp.Localization.CultureName");
+        const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
         return abp.ajax({
             url: AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/LinkedAccountAuthenticate?switchAccountToken=' + switchAccountToken,
             method: 'POST',
@@ -132,8 +137,9 @@ export class AppPreBootstrap {
     }
 
     private static getUserConfiguration(callback: () => void): JQueryPromise<any> {
-        const cookieLangValue = abp.utils.getCookieValue("Abp.Localization.CultureName");
+        const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
         const token = abp.auth.getToken();
+
         var requestHeaders = {
             '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),
             'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
@@ -161,6 +167,9 @@ export class AppPreBootstrap {
             }
 
             abp.event.trigger('abp.dynamicScriptsInitialized');
+
+            AppConsts.recaptchaSiteKey = abp.setting.get('Recaptcha.SiteKey');
+            AppConsts.subscriptionExpireNootifyDayCount = parseInt(abp.setting.get('App.TenantManagement.SubscriptionExpireNotifyDayCount'));
 
             LocalizedResourcesHelper.loadResources(callback);
         });

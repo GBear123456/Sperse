@@ -1,4 +1,4 @@
-﻿import { Component, Injector, OnInit, AfterViewInit } from '@angular/core';
+import { Component, Injector, OnInit, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -9,7 +9,7 @@ import {
     ProfileServiceProxy,
     EditionSelectDto,
     PaymentServiceProxy
-} from '@shared/service-proxies/service-proxies'
+} from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { TenantRegistrationHelperService } from './tenant-registration-helper.service';
@@ -25,17 +25,17 @@ import {
     animations: [accountModuleAnimation()]
 })
 export class RegisterTenantComponent extends AppComponentBase implements OnInit, AfterViewInit {
-       
+
     model: RegisterTenantModel = new RegisterTenantModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     subscriptionStartType = SubscriptionStartType;
     paymentPeriodType = PaymentPeriodType;
     selectedPaymentPeriodType: PaymentPeriodType = PaymentPeriodType.Monthly;
     subscriptionPaymentGateway = SubscriptionPaymentGatewayType;
-    paymentId: string = '';
+    paymentId = '';
     recaptchaSiteKey: string = AppConsts.recaptchaSiteKey;
 
-    saving: boolean = false;
+    saving = false;
 
     constructor(
         injector: Injector,
@@ -50,11 +50,11 @@ export class RegisterTenantComponent extends AppComponentBase implements OnInit,
     }
 
     ngOnInit() {
-        this.model.editionId = this._activatedRoute.snapshot.queryParams["editionId"];
+        this.model.editionId = this._activatedRoute.snapshot.queryParams['editionId'];
         if (this.model.editionId) {
-            this.model.subscriptionStartType = this._activatedRoute.snapshot.queryParams["subscriptionStartType"];
-            this.model.gateway = this._activatedRoute.snapshot.queryParams["gateway"];
-            this.model.paymentId = this._activatedRoute.snapshot.queryParams["paymentId"];
+            this.model.subscriptionStartType = this._activatedRoute.snapshot.queryParams['subscriptionStartType'];
+            this.model.gateway = this._activatedRoute.snapshot.queryParams['gateway'];
+            this.model.paymentId = this._activatedRoute.snapshot.queryParams['paymentId'];
         }
 
         //Prevent to create tenant in a tenant context
@@ -78,7 +78,7 @@ export class RegisterTenantComponent extends AppComponentBase implements OnInit,
     }
 
     get useCaptcha(): boolean {
-        return this.setting.getBoolean('App.UserManagement.UseCaptchaOnRegistration');
+        return this.setting.getBoolean('App.TenantManagement.UseCaptchaOnRegistration');
     }
 
     save(): void {

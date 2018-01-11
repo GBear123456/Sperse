@@ -2,6 +2,6 @@ import { FriendDto, ChatMessageDto } from '@shared/service-proxies/service-proxi
 
 export class ChatFriendDto extends FriendDto {
     messages: ChatMessageDto[];
-    allPreviousMessagesLoaded: boolean = false;
-    messagesLoaded: boolean = false;
+    allPreviousMessagesLoaded = false;
+    messagesLoaded = false;
 }

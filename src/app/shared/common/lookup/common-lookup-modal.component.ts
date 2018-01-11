@@ -117,7 +117,7 @@ export class CommonLookupModalComponent extends AppComponentBase {
     }
 
     selectItem(item: NameValueDto) {
-        const boolOrPromise = true; //this.options.canSelect(item);
+        const boolOrPromise = this.options.canSelect(item);
         if (!boolOrPromise) {
             return;
         }

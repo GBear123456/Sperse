@@ -1,13 +1,11 @@
-﻿import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import { TenantSettingsServiceProxy, HostSettingsServiceProxy, DefaultTimezoneScope, TenantSettingsEditDto, SendTestEmailInput, TenantSettingsCreditReportServiceProxy, IdcsSettings, TenantPaymentSettingsServiceProxy, BaseCommercePaymentSettings, TenantCustomizationServiceProxy, TenantCustomizationDto } from '@shared/service-proxies/service-proxies';
+import { Component, OnInit, AfterViewChecked, Injector } from '@angular/core';
+import { TenantSettingsServiceProxy, DefaultTimezoneScope, TenantSettingsEditDto, SendTestEmailInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { FileUploader, FileUploaderOptions, Headers } from '@node_modules/ng2-file-upload';
+import { FileUploader, FileUploaderOptions } from '@node_modules/ng2-file-upload';
 import { TokenService } from '@abp/auth/token.service';
 import { IAjaxResponse } from '@abp/abpHttp';
 
@@ -17,26 +15,20 @@ import * as moment from 'moment';
     templateUrl: './tenant-settings.component.html',
     animations: [appModuleAnimation()]
 })
-export class TenantSettingsComponent extends AppComponentBase implements OnInit {
+export class TenantSettingsComponent extends AppComponentBase implements OnInit, AfterViewChecked {
 
-    usingDefaultTimeZone: boolean = false;
+    usingDefaultTimeZone = false;
     initialTimeZone: string = null;
     testEmailAddress: string = undefined;
 
     isMultiTenancyEnabled: boolean = this.multiTenancy.isEnabled;
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     activeTabIndex: number = (abp.clock.provider.supportsMultipleTimezone) ? 0 : 1;
-    loading: boolean = false;
+    loading = false;
     settings: TenantSettingsEditDto = undefined;
-    idcsSettings: IdcsSettings = new IdcsSettings();
-    baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
-    siteTitle: TenantCustomizationDto = new TenantCustomizationDto();
-
-    isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('CreditReportFeature');
 
     logoUploader: FileUploader;
     customCssUploader: FileUploader;
-    faviconUploader: FileUploader;
 
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
 
@@ -45,11 +37,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
     constructor(
         injector: Injector,
         private _tenantSettingsService: TenantSettingsServiceProxy,
-        private _tenantSettingsCreditReportService: TenantSettingsCreditReportServiceProxy,
-        private _tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private _appSessionService: AppSessionService,
-        private _tokenService: TokenService,
-        private _tenantCustomizationService: TenantCustomizationServiceProxy
+        private _tokenService: TokenService
     ) {
         super(injector);
     }
@@ -60,38 +49,17 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         this.initUploaders();
     }
 
+    ngAfterViewChecked(): void {
+        //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
+        $('tabset ul.nav').addClass('m-tabs-line');
+        $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
+    };
+
     getSettings(): void {
         this.loading = true;
         this._tenantSettingsService.getAllSettings()
             .finally(() => {
-                this._tenantCustomizationService.getTenantCustomization(AppConsts.tenantCustomizations.uiCustomizationsGroupName, AppConsts.tenantCustomizations.UiCustomizationsSiteTitleName)
-                    .finally(() => {
-                        this._tenantPaymentSettingsService.getBaseCommercePaymentSettings()
-                            .finally(() => {
-                                if (this.isCreditReportFeatureEnabled) {
-                                    this._tenantSettingsCreditReportService.getIdcsSettings()
-                                        .finally(() => this.loading = false)
-                                        .subscribe((result: IdcsSettings) => {
-                                            this.idcsSettings = result;
-                                        });
-                                }
-                                else {
-                                    this.loading = false;
-                                }
-                            })
-                            .subscribe((result: BaseCommercePaymentSettings) => {
-                                this.baseCommercePaymentSettings = result;
-                            });
-                    })
-                    .subscribe((result: TenantCustomizationDto) => {
-                        if (typeof (result.value) !== 'undefined') {
-                            this.siteTitle = result;
-                        }
-                        else {
-                            this.siteTitle.customizationGroupName = AppConsts.tenantCustomizations.uiCustomizationsGroupName;
-                            this.siteTitle.customizationName = AppConsts.tenantCustomizations.UiCustomizationsSiteTitleName;
-                        }
-                    })
+                this.loading = false;
             })
             .subscribe((result: TenantSettingsEditDto) => {
                 this.settings = result;
@@ -119,12 +87,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
                 $('head').append('<link id="TenantCustomCss" href="' + AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + this.appSession.tenant.customCssId + '" rel="stylesheet"/>');
             }
         );
-
-        this.faviconUploader = this.createUploader(
-            '/TenantCustomization/UploadFavicons',
-            result => {
-            }
-        );
     }
 
     createUploader(url: string, success?: (result: any) => void): FileUploader {
@@ -135,10 +97,12 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         };
 
         uploader.onSuccessItem = (item, response, status) => {
-            let ajaxResponse = <IAjaxResponse>JSON.parse(response);
+            const ajaxResponse = <IAjaxResponse>JSON.parse(response);
             if (ajaxResponse.success) {
                 this.notify.info(this.l('SavedSuccessfully'));
-                success && success(ajaxResponse.result);
+                if (success) {
+                    success(ajaxResponse.result);
+                }
             } else {
                 this.message.error(ajaxResponse.error.message);
             }
@@ -159,10 +123,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         this.customCssUploader.uploadAll();
     }
 
-    uploadFavicon(): void {
-        this.faviconUploader.uploadAll();
-    }
-
     clearLogo(): void {
         this._tenantSettingsService.clearLogo().subscribe(() => {
             this._appSessionService.tenant.logoFileType = null;
@@ -179,48 +139,23 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit 
         });
     }
 
-    clearFavicon(): void {
-        this._tenantSettingsService.clearFavicons().subscribe(() => {
-            this._appSessionService.tenant.tenantCustomizations.favicons = [];
-            this.notify.info(this.l('ClearedSuccessfully'));
+    saveAll(): void {
+        this._tenantSettingsService.updateAllSettings(this.settings).subscribe(() => {
+            this.notify.info(this.l('SavedSuccessfully'));
+
+            if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone && this.initialTimeZone !== this.settings.general.timezone) {
+                this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
+                    window.location.reload();
+                });
+            }
         });
     }
 
-    saveAll(): void {
-        this._tenantSettingsService.updateAllSettings(this.settings).subscribe(() => {
-            this._tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings).subscribe(() => {
-                if (typeof (this.siteTitle.value) !== 'undefined') {
-                    this._tenantCustomizationService.addTenantCustomization(this.siteTitle).subscribe(() => {
-                        this.saveAnother();
-                    });
-                }
-                else {
-                    this.saveAnother();
-                }
-            });
-        });
-    };
-
     sendTestEmail(): void {
-        let input = new SendTestEmailInput();
+        const input = new SendTestEmailInput();
         input.emailAddress = this.testEmailAddress;
         this._tenantSettingsService.sendTestEmail(input).subscribe(result => {
             this.notify.info(this.l('TestEmailSentSuccessfully'));
         });
-    };
-
-    saveAnother(): void {
-        if (this.isCreditReportFeatureEnabled) {
-            this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings).subscribe(() => {
-                this.notify.info(this.l('SavedSuccessfully'));
-            });
-        }
-        else this.notify.info(this.l('SavedSuccessfully'));
-
-        if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone && this.initialTimeZone !== this.settings.general.timezone) {
-            this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
-                window.location.reload();
-            });
-        }
-    };
+    }
 }

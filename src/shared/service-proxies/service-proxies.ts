@@ -2321,17 +2321,17 @@ export class ClassificationServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
-     * @sourceTransactionList (optional) 
+     * @sourceTransactionsList (optional) 
      * @return Success
      */
-    deleteRule(instanceType: InstanceType23, instanceId: number, sourceTransactionList: number[], applyOption: ApplyOption, id: number): Observable<void> {
+    deleteRule(instanceType: InstanceType23, instanceId: number, sourceTransactionsList: number[], applyOption: ApplyOption, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteRule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (sourceTransactionList !== undefined)
-            sourceTransactionList && sourceTransactionList.forEach(item => { url_ += "SourceTransactionList=" + encodeURIComponent("" + item) + "&"; });
+        if (sourceTransactionsList !== undefined)
+            sourceTransactionsList && sourceTransactionsList.forEach(item => { url_ += "SourceTransactionsList=" + encodeURIComponent("" + item) + "&"; });
         if (applyOption === undefined || applyOption === null)
             throw new Error("The parameter 'applyOption' must be defined and cannot be null.");
         else
@@ -7055,16 +7055,14 @@ export class InstanceServiceProxy {
     }
 
     /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType46, instanceId: number): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType46): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
-        if (instanceType !== undefined)
+        if (instanceType === undefined || instanceType === null)
+            throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
+        else
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -17388,7 +17386,7 @@ export class CreateRuleDto implements ICreateRuleDto {
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
     condition: ConditionDto = new ConditionDto();
-    sourceTransactionList: number[];
+    sourceTransactionsList: number[];
     applyOption: CreateRuleDtoApplyOption;
 
     constructor(data?: ICreateRuleDto) {
@@ -17408,10 +17406,10 @@ export class CreateRuleDto implements ICreateRuleDto {
             this.transactionDecriptor = data["transactionDecriptor"];
             this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
             this.condition = data["condition"] ? ConditionDto.fromJS(data["condition"]) : new ConditionDto();
-            if (data["sourceTransactionList"] && data["sourceTransactionList"].constructor === Array) {
-                this.sourceTransactionList = [];
-                for (let item of data["sourceTransactionList"])
-                    this.sourceTransactionList.push(item);
+            if (data["sourceTransactionsList"] && data["sourceTransactionsList"].constructor === Array) {
+                this.sourceTransactionsList = [];
+                for (let item of data["sourceTransactionsList"])
+                    this.sourceTransactionsList.push(item);
             }
             this.applyOption = data["applyOption"];
         }
@@ -17431,10 +17429,10 @@ export class CreateRuleDto implements ICreateRuleDto {
         data["transactionDecriptor"] = this.transactionDecriptor;
         data["transactionDecriptorAttributeTypeId"] = this.transactionDecriptorAttributeTypeId;
         data["condition"] = this.condition ? this.condition.toJSON() : <any>undefined;
-        if (this.sourceTransactionList && this.sourceTransactionList.constructor === Array) {
-            data["sourceTransactionList"] = [];
-            for (let item of this.sourceTransactionList)
-                data["sourceTransactionList"].push(item);
+        if (this.sourceTransactionsList && this.sourceTransactionsList.constructor === Array) {
+            data["sourceTransactionsList"] = [];
+            for (let item of this.sourceTransactionsList)
+                data["sourceTransactionsList"].push(item);
         }
         data["applyOption"] = this.applyOption;
         return data; 
@@ -17448,7 +17446,7 @@ export interface ICreateRuleDto {
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
     condition: ConditionDto;
-    sourceTransactionList: number[];
+    sourceTransactionsList: number[];
     applyOption: CreateRuleDtoApplyOption;
 }
 
@@ -17589,7 +17587,7 @@ export class EditRuleDto implements IEditRuleDto {
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
     condition: ConditionDto = new ConditionDto();
-    sourceTransactionList: number[];
+    sourceTransactionsList: number[];
     applyOption: EditRuleDtoApplyOption;
 
     constructor(data?: IEditRuleDto) {
@@ -17609,10 +17607,10 @@ export class EditRuleDto implements IEditRuleDto {
             this.transactionDecriptor = data["transactionDecriptor"];
             this.transactionDecriptorAttributeTypeId = data["transactionDecriptorAttributeTypeId"];
             this.condition = data["condition"] ? ConditionDto.fromJS(data["condition"]) : new ConditionDto();
-            if (data["sourceTransactionList"] && data["sourceTransactionList"].constructor === Array) {
-                this.sourceTransactionList = [];
-                for (let item of data["sourceTransactionList"])
-                    this.sourceTransactionList.push(item);
+            if (data["sourceTransactionsList"] && data["sourceTransactionsList"].constructor === Array) {
+                this.sourceTransactionsList = [];
+                for (let item of data["sourceTransactionsList"])
+                    this.sourceTransactionsList.push(item);
             }
             this.applyOption = data["applyOption"];
         }
@@ -17632,10 +17630,10 @@ export class EditRuleDto implements IEditRuleDto {
         data["transactionDecriptor"] = this.transactionDecriptor;
         data["transactionDecriptorAttributeTypeId"] = this.transactionDecriptorAttributeTypeId;
         data["condition"] = this.condition ? this.condition.toJSON() : <any>undefined;
-        if (this.sourceTransactionList && this.sourceTransactionList.constructor === Array) {
-            data["sourceTransactionList"] = [];
-            for (let item of this.sourceTransactionList)
-                data["sourceTransactionList"].push(item);
+        if (this.sourceTransactionsList && this.sourceTransactionsList.constructor === Array) {
+            data["sourceTransactionsList"] = [];
+            for (let item of this.sourceTransactionsList)
+                data["sourceTransactionsList"].push(item);
         }
         data["applyOption"] = this.applyOption;
         return data; 
@@ -17649,7 +17647,7 @@ export interface IEditRuleDto {
     transactionDecriptor: string;
     transactionDecriptorAttributeTypeId: string;
     condition: ConditionDto;
-    sourceTransactionList: number[];
+    sourceTransactionsList: number[];
     applyOption: EditRuleDtoApplyOption;
 }
 
@@ -17657,7 +17655,7 @@ export class MoveRuleDto implements IMoveRuleDto {
     parentId: number;
     sortOrder: number;
     isRecategorize: boolean;
-    sourceTransactionList: number[];
+    sourceTransactionsList: number[];
     applyOption: MoveRuleDtoApplyOption;
     id: number;
 
@@ -17675,10 +17673,10 @@ export class MoveRuleDto implements IMoveRuleDto {
             this.parentId = data["parentId"];
             this.sortOrder = data["sortOrder"];
             this.isRecategorize = data["isRecategorize"];
-            if (data["sourceTransactionList"] && data["sourceTransactionList"].constructor === Array) {
-                this.sourceTransactionList = [];
-                for (let item of data["sourceTransactionList"])
-                    this.sourceTransactionList.push(item);
+            if (data["sourceTransactionsList"] && data["sourceTransactionsList"].constructor === Array) {
+                this.sourceTransactionsList = [];
+                for (let item of data["sourceTransactionsList"])
+                    this.sourceTransactionsList.push(item);
             }
             this.applyOption = data["applyOption"];
             this.id = data["id"];
@@ -17696,10 +17694,10 @@ export class MoveRuleDto implements IMoveRuleDto {
         data["parentId"] = this.parentId;
         data["sortOrder"] = this.sortOrder;
         data["isRecategorize"] = this.isRecategorize;
-        if (this.sourceTransactionList && this.sourceTransactionList.constructor === Array) {
-            data["sourceTransactionList"] = [];
-            for (let item of this.sourceTransactionList)
-                data["sourceTransactionList"].push(item);
+        if (this.sourceTransactionsList && this.sourceTransactionsList.constructor === Array) {
+            data["sourceTransactionsList"] = [];
+            for (let item of this.sourceTransactionsList)
+                data["sourceTransactionsList"].push(item);
         }
         data["applyOption"] = this.applyOption;
         data["id"] = this.id;
@@ -17711,7 +17709,7 @@ export interface IMoveRuleDto {
     parentId: number;
     sortOrder: number;
     isRecategorize: boolean;
-    sourceTransactionList: number[];
+    sourceTransactionsList: number[];
     applyOption: MoveRuleDtoApplyOption;
     id: number;
 }

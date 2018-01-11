@@ -31,7 +31,7 @@ export class CFOService {
     }
 
     instanceChangeProcess() {
-        this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
+        this._instanceServiceProxy.getStatus(InstanceType[this.instanceType]).subscribe((data) => {
             this.initialized = (data.status == GetStatusOutputStatus.Active);
             this._appService.topMenu.items
                 .forEach((item, i) => {

@@ -1,4 +1,4 @@
-﻿import { Injector, Inject, Input, ApplicationRef, ElementRef, HostBinding, HostListener } from '@angular/core';
+import { Injector, Inject, Input, ApplicationRef, ElementRef, HostBinding, HostListener } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -12,6 +12,7 @@ import { ExportService } from '@shared/common/export/export.service';
 import { httpConfiguration } from '@shared/http/httpConfiguration';
 import { ScreenHelper } from '@shared/helpers/ScreenHelper';
 import { PrimengDatatableHelper } from 'shared/helpers/PrimengDatatableHelper';
+import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 
 import buildQuery from 'odata-query';
 import * as _ from 'underscore';
@@ -36,6 +37,7 @@ export abstract class AppComponentBase {
     appSession: AppSessionService;
     httpConfig: httpConfiguration;
     primengDatatableHelper: PrimengDatatableHelper;
+    ui: AppUiCustomizationService;
 
     private _elementRef: ElementRef;
     private _applicationRef: ApplicationRef;
@@ -52,6 +54,7 @@ export abstract class AppComponentBase {
         this.message = _injector.get(MessageService);
         this.multiTenancy = _injector.get(AbpMultiTenancyService);
         this.appSession = _injector.get(AppSessionService);
+        this.ui = _injector.get(AppUiCustomizationService);
         this.httpConfig = _injector.get(httpConfiguration);
         this._applicationRef = _injector.get(ApplicationRef);
         this._exportService = _injector.get(ExportService);
@@ -86,6 +89,7 @@ export abstract class AppComponentBase {
             return localizedText;
 
         args.unshift(localizedText);
+
         return abp.utils.formatString.apply(this, args);
     }
 
@@ -128,6 +132,24 @@ export abstract class AppComponentBase {
         return this.permission.isGranted(permissionName);
     }
 
+    isGrantedAny(...permissions: string[]): boolean {
+        if (!permissions) {
+            return false;
+        }
+
+        for (const permission of permissions) {
+            if (this.isGranted(permission)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    s(key: string): string {
+        return abp.setting.get(key);
+    }
+    
     exportToXLS(option) {
         this.dataGrid.export.fileName =
             this._exportService.getFileName();

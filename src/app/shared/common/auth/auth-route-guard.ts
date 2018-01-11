@@ -1,13 +1,14 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 import {
     CanActivate, Router,
     ActivatedRouteSnapshot,
     RouterStateSnapshot,
     CanActivateChild
-} from '@angular/router';
+    } from '@angular/router';
 
 @Injectable()
 export class AppRouteGuard implements CanActivate, CanActivateChild {
@@ -19,6 +20,11 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
     ) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+        
+        if (state && UrlHelper.isInstallUrl(state.url)) {
+            return true;
+        }
+
         if (!this._sessionService.user) {
             this._router.navigate(['/account/login']);
             return false;

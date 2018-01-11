@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, ViewChild, Injector, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ModalDirective } from 'ngx-bootstrap';
 import { AccountServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -14,9 +14,9 @@ export class TenantChangeModalComponent extends AppComponentBase {
     @ViewChild('tenantChangeModal') modal: ModalDirective;
     @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
 
-    tenancyName: string = '';
-    active: boolean = false;
-    saving: boolean = false;
+    tenancyName = '';
+    active = false;
+    saving = false;
 
     constructor(
         private _accountService: AccountServiceProxy,
@@ -38,13 +38,13 @@ export class TenantChangeModalComponent extends AppComponentBase {
     save(): void {
 
         if (!this.tenancyName) {
-            abp.multiTenancy.setTenantIdCookie(undefined);;
+            abp.multiTenancy.setTenantIdCookie(undefined);
             this.close();
             location.reload();
             return;
         }
 
-        var input = new IsTenantAvailableInput();
+        let input = new IsTenantAvailableInput();
         input.tenancyName = this.tenancyName;
 
         this.saving = true;

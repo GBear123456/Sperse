@@ -12,6 +12,8 @@ export class AppConsts {
     static recaptchaSiteKey: string;
     static subscriptionExpireNootifyDayCount: number;
 
+    static localeMappings: any = [];
+
     static readonly userManagement = {
         defaultAdminUserName: 'admin'
     };

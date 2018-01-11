@@ -1,4 +1,4 @@
-﻿import { Component, Injector, OnInit, AfterViewInit } from '@angular/core';
+import { Component, Injector, OnInit, AfterViewInit } from '@angular/core';
 import { CachingServiceProxy, EntityDtoOfString, WebLogServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileDownloadService } from '@shared/utils/file-download.service';
@@ -20,12 +20,18 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
         super(injector);
     }
 
-    loading: boolean = false;
+    ngAfterViewChecked(): void {
+        //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
+        $('tabset ul.nav').addClass('m-tabs-line');
+        $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
+    }
+
+    loading = false;
     caches: any = null;
     logs: any = '';
 
     getCaches(): void {
-        let self = this;
+        const self = this;
         self.loading = true;
         self._cacheService.getAllCaches()
             .finally(() => {
@@ -34,11 +40,11 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
             .subscribe((result) => {
                 self.caches = result.items;
             });
-    };
+    }
 
     clearCache(cacheName): void {
-        let self = this;
-        let input = new EntityDtoOfString();
+        const self = this;
+        const input = new EntityDtoOfString();
         input.id = cacheName;
 
         self._cacheService.clearCache(input).subscribe(() => {
@@ -47,22 +53,22 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
     }
 
     clearAllCaches(): void {
-        let self = this;
+        const self = this;
         self._cacheService.clearAllCaches().subscribe(() => {
             self.notify.success(self.l('AllCachesSuccessfullyCleared'));
         });
-    };
+    }
 
     getWebLogs(): void {
-        let self = this;
+        const self = this;
         self._webLogService.getLatestWebLogs().subscribe((result) => {
             self.logs = result.latestWebLogLines;
             self.fixWebLogsPanelHeight();
         });
-    };
+    }
 
     downloadWebLogs = function () {
-        let self = this;
+        const self = this;
         self._webLogService.downloadWebLogs().subscribe((result) => {
             self._fileDownloadService.downloadTempFile(result);
         });
@@ -127,10 +133,10 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
     }
 
     fixWebLogsPanelHeight(): void {
-        let windowHeight = $(window).height();
-        let panelHeight = $('.full-height').height();
-        let difference = windowHeight - panelHeight;
-        let fixedHeight = panelHeight + difference;
+        const windowHeight = $(window).height();
+        const panelHeight = $('.full-height').height();
+        const difference = windowHeight - panelHeight;
+        const fixedHeight = panelHeight + difference;
         $('.full-height').css('height', (fixedHeight - 350) + 'px');
     }
 
@@ -141,7 +147,7 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
     }
 
     ngOnInit(): void {
-        let self = this;
+        const self = this;
         self.getCaches();
         self.getWebLogs();
     }

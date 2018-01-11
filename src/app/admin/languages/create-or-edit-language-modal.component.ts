@@ -1,4 +1,4 @@
-﻿import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { LanguageServiceProxy, ApplicationLanguageEditDto, CreateOrUpdateLanguageInput, ComboboxItemDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -17,8 +17,8 @@ export class CreateOrEditLanguageModalComponent extends AppComponentBase {
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active: boolean = false;
-    saving: boolean = false;
+    active = false;
+    saving = false;
 
     language: ApplicationLanguageEditDto = new ApplicationLanguageEditDto();
 
@@ -39,6 +39,11 @@ export class CreateOrEditLanguageModalComponent extends AppComponentBase {
             this.language = result.language;
             this.languageNames = result.languageNames;
             this.flags = result.flags;
+
+            if (!languageId) {
+                this.language.isEnabled = true;
+            }
+
             this.modal.show();
             setTimeout(() => {
                     $(this.languageCombobox.nativeElement).selectpicker('refresh');

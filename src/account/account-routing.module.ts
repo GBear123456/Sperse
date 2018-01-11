@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
@@ -15,6 +15,7 @@ import { SendTwoFactorCodeComponent } from './login/send-two-factor-code.compone
 import { ValidateTwoFactorCodeComponent } from './login/validate-two-factor-code.component';
 import { SelectTenantComponent } from './login/select-tenant.component';
 import { AccountComponent } from './account.component';
+import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 
 @NgModule({
     imports: [
@@ -47,19 +48,30 @@ import { AccountComponent } from './account.component';
     ]
 })
 export class AccountRoutingModule {
-    constructor(private router: Router) {
+    constructor(
+        private router: Router,
+        private _uiCustomizationService: AppUiCustomizationService
+    ) {
         router.events.subscribe((event: NavigationEnd) => {
             setTimeout(() => {
+                //this will reinitialize metronic App, when navigated to admin module
+                mApp.initialized = false;
+
                 this.toggleBodyCssClass(event.url);
             }, 0);
         });
     }
 
     toggleBodyCssClass(url: string): void {
-        if (url && url.indexOf("/account/select-edition") >= 0) {
-            $('.account-forms').addClass("select-edition");
+        if (!url) {
+            $('body').attr('class', this._uiCustomizationService.getAccountModuleBodyClass());
+            return;
+        }
+
+        if (url.indexOf('/account/') >= 0) {
+            $('body').attr('class', this._uiCustomizationService.getAccountModuleBodyClass());
         } else {
-            $('.account-forms').removeClass("select-edition");
+            $('body').attr('class', this._uiCustomizationService.getAppModuleBodyClass());
         }
     }
 }

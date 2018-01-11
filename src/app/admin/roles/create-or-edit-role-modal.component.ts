@@ -1,8 +1,7 @@
-﻿import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { RoleServiceProxy, RoleEditDto, CreateOrUpdateRoleInput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { PermissionTreeComponent } from '../shared/permission-tree.component';
 
 import * as _ from 'lodash';
@@ -19,8 +18,8 @@ export class CreateOrEditRoleModalComponent extends AppComponentBase {
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active: boolean = false;
-    saving: boolean = false;
+    active = false;
+    saving = false;
 
     role: RoleEditDto = new RoleEditDto();
     constructor(
@@ -30,8 +29,14 @@ export class CreateOrEditRoleModalComponent extends AppComponentBase {
         super(injector);
     }
 
+    ngAfterViewChecked(): void {
+        //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
+        $('tabset ul.nav').addClass('m-tabs-line');
+        $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
+    }
+
     show(roleId?: number): void {
-        let self = this;
+        const self = this;
         self.active = true;
 
         self._roleService.getRoleForEdit(roleId).subscribe(result => {
@@ -47,9 +52,9 @@ export class CreateOrEditRoleModalComponent extends AppComponentBase {
     }
 
     save(): void {
-        let self = this;
+        const self = this;
 
-        let input = new CreateOrUpdateRoleInput();
+        const input = new CreateOrUpdateRoleInput();
         input.role = self.role;
         input.grantedPermissionNames = self.permissionTree.getGrantedPermissionNames();
 

@@ -1,4 +1,4 @@
-﻿import { Directive, AfterViewInit, ElementRef, ViewChild, Injector, Input, Output, EventEmitter } from '@angular/core';
+import { Directive, AfterViewInit, ElementRef, ViewChild, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import * as moment from 'moment';
@@ -6,7 +6,7 @@ import * as moment from 'moment';
 @Directive({
     selector: '[datePicker]'
 })
-export class DatePickerComponent extends AppComponentBase implements AfterViewInit {
+export class DatePickerDirective extends AppComponentBase implements AfterViewInit {
 
     hostElement: ElementRef;
 
@@ -35,12 +35,15 @@ export class DatePickerComponent extends AppComponentBase implements AfterViewIn
 
     ngAfterViewInit(): void {
         const $element = $(this.hostElement.nativeElement);
-        $element.datepicker({
-            language: abp.localization.currentLanguage.name
-        }).on('changeDate', e => {
-            this.selectedDate = moment(e.date);
-        }).on('clearDate', e => {
-            this.selectedDate = null;
+        $element.datetimepicker({
+            locale: abp.localization.currentLanguage.name,
+            format: 'L'
+        }).on('dp.change', e => {
+            if (e.date) {
+                this.selectedDate = moment(e.date);
+            } else {
+                this.selectedDate = null;
+            }
         });
     }
 

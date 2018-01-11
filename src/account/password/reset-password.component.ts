@@ -1,4 +1,4 @@
-﻿import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AccountServiceProxy, ResetPasswordOutput } from '@shared/service-proxies/service-proxies';
@@ -18,7 +18,7 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
 
     model: ResetPasswordModel = new ResetPasswordModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
-    saving: boolean = false;
+    saving = false;
 
     constructor(
         injector: Injector,
@@ -34,12 +34,12 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
-        this.model.userId = this._activatedRoute.snapshot.queryParams["userId"];
-        this.model.resetCode = this._activatedRoute.snapshot.queryParams["resetCode"];
+        this.model.userId = this._activatedRoute.snapshot.queryParams['userId'];
+        this.model.resetCode = this._activatedRoute.snapshot.queryParams['resetCode'];
 
         this._appSessionService.changeTenantIfNeeded(
             this.parseTenantId(
-                this._activatedRoute.snapshot.queryParams["tenantId"]
+                this._activatedRoute.snapshot.queryParams['tenantId']
             )
         );
 
@@ -58,7 +58,7 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
                     return;
                 }
 
-                //Autheticate
+                // Autheticate
                 this.saving = true;
                 this._loginService.authenticateModel.userNameOrEmailAddress = result.userName;
                 this._loginService.authenticateModel.password = this.model.password;

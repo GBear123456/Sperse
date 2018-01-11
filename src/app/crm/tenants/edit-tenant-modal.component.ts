@@ -1,4 +1,4 @@
-﻿import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { TenantServiceProxy, CommonLookupServiceProxy, TenantEditDto, SubscribableEditionComboboxItemDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -18,14 +18,15 @@ export class EditTenantModalComponent extends AppComponentBase {
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active: boolean = false;
-    saving: boolean = false;
-    isUnlimited: boolean = false;
-    subscriptionEndDateUtcIsValid: boolean = false;
+    active = false;
+    saving = false;
+    isUnlimited = false;
+    subscriptionEndDateUtcIsValid = false;
 
     tenant: TenantEditDto = undefined;
+    currentConnectionString: string;
     editions: SubscribableEditionComboboxItemDto[] = [];
-    isSubscriptionFieldsVisible: boolean = false;
+    isSubscriptionFieldsVisible = false;
 
     constructor(
         injector: Injector,
@@ -38,15 +39,18 @@ export class EditTenantModalComponent extends AppComponentBase {
     show(tenantId: number): void {
         this.active = true;
 
-        this._commonLookupService.getEditionsForCombobox(false).subscribe(result => {
-            this.editions = result.items;
+        this._commonLookupService.getEditionsForCombobox(false).subscribe(editionsResult => {
+            this.editions = editionsResult.items;
+
             let notSelectedEdition = new SubscribableEditionComboboxItemDto();
             notSelectedEdition.displayText = this.l('NotAssigned');
             notSelectedEdition.value = '0';
             this.editions.unshift(notSelectedEdition);
 
-            this._tenantService.getTenantForEdit(tenantId).subscribe((result) => {
-                this.tenant = result;
+            this._tenantService.getTenantForEdit(tenantId).subscribe((tenantResult) => {
+                this.tenant = tenantResult;
+                this.currentConnectionString = tenantResult.connectionString;
+
                 this.tenant.editionId = this.tenant.editionId || 0;
                 this.isUnlimited = !this.tenant.subscriptionEndDateUtc;
                 this.subscriptionEndDateUtcIsValid = this.isUnlimited || this.tenant.subscriptionEndDateUtc !== undefined;
@@ -99,7 +103,7 @@ export class EditTenantModalComponent extends AppComponentBase {
 
     save(): void {
         this.saving = true;
-        if (this.tenant.editionId == 0) {
+        if (this.tenant.editionId === 0) {
             this.tenant.editionId = null;
         }
 

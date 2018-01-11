@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { ModalModule, TooltipModule } from 'ngx-bootstrap';
+import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
 
 import { PlatformSelectComponent } from './platform-select.component';
 import { HeaderComponent } from './header.component';
@@ -17,13 +17,15 @@ import { ChangePasswordModalComponent } from './profile/change-password-modal.co
 import { ChangeProfilePictureModalComponent } from './profile/change-profile-picture-modal.component';
 import { MySettingsModalComponent } from './profile/my-settings-modal.component';
 
+import { SmsVerificationModalComponent } from '@app/shared/layout/profile/sms-verification-modal.component';
 import { LinkedAccountsModalComponent } from './linked-accounts-modal.component';
 import { LinkAccountModalComponent } from './link-account-modal.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { NotificationSettingsModalComponent } from './notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from './notifications/UserNotificationHelper';
 import { ChatBarComponent } from './chat/chat-bar.component';
-import { ChatFriendListItem } from './chat/chat-friend-list-item.component';
+import { ChatMessageComponent } from './chat/chat-message.component';
+import { ChatFriendListItemComponent } from './chat/chat-friend-list-item.component';
 import { ChatSignalrService } from './chat/chat-signalr.service';
 import { QuickSideBarChat } from './chat/QuickSideBarChat';
 import { LinkedAccountService } from './linked-account.service';
@@ -32,6 +34,18 @@ import { FiltersModule } from '@shared/filters/filters.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
+
+import { SideBarMenuComponent } from './nav/side-bar-menu.component';
+import { TopBarMenuComponent } from './nav/top-bar-menu.component';
+
+/* Components and modules added from ASP.NET ZERO template v5.0.6
+import { AbpModule } from '@abp/abp.module';
+import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
+*/
+
+import { FileUploadModule as PrimeNgFileUploadModule, ProgressBarModule } from 'primeng/primeng';
+import { DataTableModule } from 'primeng/primeng';
+import { PaginatorModule } from 'primeng/primeng';
 
 import {
     DxMenuModule, DxScrollViewModule, DxButtonModule,
@@ -55,8 +69,12 @@ let COMPONENTS = [
     MySettingsModalComponent,
     NotificationsComponent,
     ChatBarComponent,
-    ChatFriendListItem,
-    NotificationSettingsModalComponent
+    ChatMessageComponent,
+    ChatFriendListItemComponent,
+    NotificationSettingsModalComponent,
+    SmsVerificationModalComponent,
+    SideBarMenuComponent,
+    TopBarMenuComponent
 ];
 
 @NgModule({
@@ -64,15 +82,13 @@ let COMPONENTS = [
         ngCommon.CommonModule,
         FormsModule,
         RouterModule,
-
         AppCommonModule,
-
         ModalModule.forRoot(),
         TooltipModule.forRoot(),
-
+        TabsModule.forRoot(), 
+        PopoverModule.forRoot(),
         UtilsModule,
         FiltersModule,
-
         FileUploadModule,
 
         DxListModule,
@@ -82,7 +98,12 @@ let COMPONENTS = [
         DxNavBarModule,
         DxDropDownBoxModule,
 
-        MatTabsModule
+        MatTabsModule,
+
+        PrimeNgFileUploadModule, 
+        ProgressBarModule,
+        DataTableModule,
+        PaginatorModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,

@@ -1,4 +1,4 @@
-﻿import { Component, AfterViewInit, Injector, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Injector, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import {
     HostDashboardServiceProxy,
     HostDashboardData,
@@ -8,7 +8,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import * as moment from 'moment';
 import { DateTimeService } from '@app/shared/common/timing/date-time.service';
 import { AppIncomeStatisticsDateInterval } from '@shared/AppEnums';
-import { JTableHelper } from '@shared/helpers/JTableHelper';
+import { DataTable } from 'primeng/components/datatable/datatable';
 
 @Component({
     templateUrl: './host-dashboard.component.html',
@@ -16,22 +16,23 @@ import { JTableHelper } from '@shared/helpers/JTableHelper';
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
-export class HostDashboardComponent extends AppComponentBase implements AfterViewInit {
+export class HostDashboardComponent extends AppComponentBase implements AfterViewInit, OnInit {
     @ViewChild('DashboardDateRangePicker') dateRangePickerElement: ElementRef;
     @ViewChild('EditionStatisticsChart') editionStatisticsChart: ElementRef;
     @ViewChild('IncomeStatisticsChart') incomeStatisticsChart: ElementRef;
-    @ViewChild('RecentTenantsTable') recentTenantsTable: ElementRef;
-    @ViewChild('ExpiringTenantsTable') expiringTenantsTable: ElementRef;
 
-    loading: boolean = false;
-    loadingIncomeStatistics: boolean = false;
+    @ViewChild('RecentTenantsTable') recentTenantsTable: DataTable;
+    @ViewChild('ExpiringTenantsTable') expiringTenantsTable: DataTable;
+
+    loading = false;
+    loadingIncomeStatistics = false;
     isInitialized: boolean;
     hostDashboardData: HostDashboardData;
     initialStartDate: moment.Moment = moment().add(-7, 'days').startOf('day');
     initialEndDate: moment.Moment = moment().endOf('day');
     currency = '$';
     appIncomeStatisticsDateInterval = AppIncomeStatisticsDateInterval;
-    selectedIncomeStatisticsDateInterval: any;
+    selectedIncomeStatisticsDateInterval: number;
     editionStatisticsHasData: boolean;
     incomeStatisticsHasData: boolean;
     selectedDateRange = {
@@ -40,8 +41,8 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
     };
 
     private _$editionsTable: JQuery;
-    private _expiringTenantsData = [];
-    private _recentTenantsData = [];
+    expiringTenantsData = [];
+    recentTenantsData = [];
 
     constructor(
         injector: Injector,
@@ -64,9 +65,7 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             this.createDateRangePicker();
             this.getDashboardStatisticsData();
             this.bindToolTipForIncomeStatisticsChart($(this.incomeStatisticsChart.nativeElement));
-            this.initRecentTenantsTable();
-            this.initExpiringTenantsTable();
-        });
+        }, 0);
     }
 
     createDateRangePicker(): void {
@@ -90,10 +89,8 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             )
             .subscribe(result => {
                 this.hostDashboardData = result;
-/*
                 this.drawEditionStatisticsData(result.editionStatistics);
                 this.drawIncomeStatisticsChart(result.incomeStatistics);
-*/
                 this.loadRecentTenantsTable(result.recentTenants);
                 this.loadExpiringTenantsTable(result.expiringTenants);
                 this.loading = false;
@@ -106,7 +103,8 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
 
     normalizeEditionStatisticsData(data): Array<any> {
         const colorPalette = ['#81A17E', '#BA9B7C', '#569BC6', '#e08283', '#888888'];
-        let chartData = new Array(data.length);
+        const chartData = new Array(data.length);
+
         let pie: any;
         for (let i = 0; i < data.length; i++) {
             pie = {
@@ -130,34 +128,37 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             return;
         }
 
-        let self = this;
-        const normalizedData = this.normalizeEditionStatisticsData(data);
-        ($ as any).plot($(self.editionStatisticsChart.nativeElement), normalizedData, {
-            series: {
-                pie: {
-                    show: true,
-                    innerRadius: 0.3,
-                    radius: 1,
-                    label: {
+        setTimeout(() => {
+            const self = this;
+            const normalizedData = this.normalizeEditionStatisticsData(data);
+
+            ($ as any).plot($(self.editionStatisticsChart.nativeElement), normalizedData, {
+                series: {
+                    pie: {
                         show: true,
+                        innerRadius: 0.3,
                         radius: 1,
-                        formatter(label, series) {
-                            return '<div class="pie-chart-label">' + label + ' : ' + Math.round(series.percent) + '%</div>';
-                        },
-                        background: {
-                            opacity: 0.8
+                        label: {
+                            show: true,
+                            radius: 1,
+                            formatter(label, series) {
+                                return '<div class=\'pie-chart-label\'>' + label + ' : ' + Math.round(series.percent) + '%</div>';
+                            },
+                            background: {
+                                opacity: 0.8
+                            }
                         }
                     }
+                },
+                legend: {
+                    show: false
+                },
+                grid: {
+                    hoverable: true,
+                    clickable: true
                 }
-            },
-            legend: {
-                show: false
-            },
-            grid: {
-                hoverable: true,
-                clickable: true
-            }
-        });
+            });
+        }, 0);
     }
 
     /*
@@ -166,9 +167,10 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
 
 
     normalizeIncomeStatisticsData(data): Array<any> {
-        let chartData = [];
+        const chartData = [];
         for (let i = 0; i < data.length; i++) {
-            let point = new Array(2);
+            const point = new Array(2);
+
             point[0] = moment(data[i].date).utc().valueOf();
             point[1] = data[i].amount;
             chartData.push(point);
@@ -183,7 +185,7 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             return;
         }
 
-        let self = this;
+        const self = this;
         const normalizedData = this.normalizeIncomeStatisticsData(data);
         ($ as any).plot($(self.incomeStatisticsChart.nativeElement),
             [{
@@ -251,7 +253,8 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             });
     }
 
-    incomeStatisticsDateIntervalChange(event) {
+    incomeStatisticsDateIntervalChange(interval: number) {
+        this.selectedIncomeStatisticsDateInterval = interval;
         this.refreshIncomeStatisticsData();
     }
 
@@ -270,8 +273,8 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
     bindToolTipForIncomeStatisticsChart(incomeStatisticsChartContainer: any): void {
         let incomeStatisticsChartLastTooltipIndex = null;
 
-        let removeChartTooltipIfExists = () => {
-            let $chartTooltip = $('#chartTooltip');
+        const removeChartTooltipIfExists = () => {
+            const $chartTooltip = $('#chartTooltip');
             if ($chartTooltip.length === 0) {
                 return;
             }
@@ -279,9 +282,9 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             $chartTooltip.remove();
         };
 
-        let showChartTooltip = (x, y, label, value) => {
+        const showChartTooltip = (x, y, label, value) => {
             removeChartTooltipIfExists();
-            $('<div id="chartTooltip" class="chart-tooltip">' + label + '<br/>' + value + '</div >')
+            $('<div id=\'chartTooltip\' class=\'chart-tooltip\'>' + label + '<br/>' + value + '</div >')
                 .css({
                     position: 'absolute',
                     display: 'none',
@@ -302,24 +305,23 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
 
             if (incomeStatisticsChartLastTooltipIndex !== item.dataIndex) {
                 let label = '';
-                let isSingleDaySelected = this.selectedDateRange.startDate.format('L') === this.selectedDateRange.endDate.format('L');
+                const isSingleDaySelected = this.selectedDateRange.startDate.format('L') === this.selectedDateRange.endDate.format('L');
                 if (this.selectedIncomeStatisticsDateInterval === AppIncomeStatisticsDateInterval.Daily ||
                     isSingleDaySelected) {
                     label = moment(item.datapoint[0]).format('dddd, DD MMMM YYYY');
-                }
-                else {
-                    let isLastItem = item.dataIndex === item.series.data.length - 1;
+                } else {
+                    const isLastItem = item.dataIndex === item.series.data.length - 1;
                     label += moment(item.datapoint[0]).format('LL');
                     if (isLastItem) {
                         label += ' - ' + this.selectedDateRange.endDate.format('LL');
                     } else {
-                        let nextItem = item.series.data[item.dataIndex + 1];
+                        const nextItem = item.series.data[item.dataIndex + 1];
                         label += ' - ' + moment(nextItem[0]).format('LL');
                     }
                 }
 
                 incomeStatisticsChartLastTooltipIndex = item.dataIndex;
-                let value = this.l('IncomeWithAmount', '<strong>' + item.datapoint[1] + this.currency + '</strong>');
+                const value = this.l('IncomeWithAmount', '<strong>' + item.datapoint[1] + this.currency + '</strong>');
                 showChartTooltip(item.pageX, item.pageY, label, value);
             }
         });
@@ -334,34 +336,8 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
      * Recent tenants
      */
 
-    initRecentTenantsTable(): void {
-        let self = this;
-        $(this.recentTenantsTable.nativeElement).jtable({
-            paging: false,
-            sorting: false,
-            multiSorting: false,
-            actions: {
-                listAction(postData, jtParams: JTableParams) {
-                    return JTableHelper.toJTableListActionWithData(self._recentTenantsData, self._recentTenantsData.length, self._recentTenantsData);
-                }
-            },
-            fields: {
-                name: {
-                    title: this.l('TenantName')
-                },
-                creationTime: {
-                    title: this.l('CreationTime'),
-                    display(data) {
-                        return moment(data.record.creationTime).format('L LT');
-                    }
-                }
-            }
-        });
-    }
-
     loadRecentTenantsTable(recentTenants): void {
-        this._recentTenantsData = recentTenants;
-        $(this.recentTenantsTable.nativeElement).jtable('load');
+        this.recentTenantsData = recentTenants;
     }
 
     gotoAllRecentTenants(): void {
@@ -373,32 +349,8 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
      * Expiring tenants
      */
 
-    initExpiringTenantsTable(): void {
-        let self = this;
-        $(this.expiringTenantsTable.nativeElement).jtable({
-            paging: false,
-            sorting: false,
-            multiSorting: false,
-            actions: {
-                listAction(postData, jtParams: JTableParams) {
-                    return JTableHelper.toJTableListActionWithData(self._expiringTenantsData, self._expiringTenantsData.length, self._recentTenantsData);
-                }
-            },
-            fields: {
-                tenantName: {
-                    title: this.l('TenantName')
-                },
-                remainingDayCount: {
-                    title: this.l('RemainingDay')
-                }
-            }
-        });
-
-    }
-
     loadExpiringTenantsTable(expiringTenants): void {
-        this._expiringTenantsData = expiringTenants;
-        $(this.expiringTenantsTable.nativeElement).jtable('load');
+        this.expiringTenantsData = expiringTenants;
     }
 
     gotoAllExpiringTenants(): void {

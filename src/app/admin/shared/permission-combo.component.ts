@@ -6,12 +6,12 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     selector: 'permission-combo',
     template:
     `<select #PermissionCombobox
-        class='form-control'
-        [(ngModel)]='selectedPermission'
-        (ngModelChange)='selectedPermissionChange.emit($event)'
-        [attr.data-live-search]='true'>        
-            <option value=''>{{l('FilterByPermission')}}</option>
-            <option *ngFor='let permission of permissions' [value]='permission.name'>{{permission.displayName}}</option>
+        class="form-control"
+        [(ngModel)]="selectedPermission"
+        (ngModelChange)="selectedPermissionChange.emit($event)"
+        [attr.data-live-search]="true">
+            <option value="">{{l('FilterByPermission')}}</option>
+            <option *ngFor="let permission of permissions" [value]="permission.name">{{permission.displayName}}</option>
     </select>`
 })
 export class PermissionComboComponent extends AppComponentBase implements OnInit, AfterViewInit {
