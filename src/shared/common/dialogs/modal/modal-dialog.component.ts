@@ -35,7 +35,7 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
       this.slider = this.elementRef.nativeElement.closest('.slider');
       if (this.slider) {
           this.slider.classList.add('hide');
-          this.dialogRef.updateSize(undefined, '100vh');
+          this.dialogRef.updateSize('0px', '0px');
           this.dialogRef.updatePosition({
               right: '-100vw'
           });
@@ -46,6 +46,7 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
       if (this.slider)
           this.fork(() => {
               this.slider.classList.remove('hide');
+              this.dialogRef.updateSize(undefined, '100vh');
               this.fork(() => {
                   this.dialogRef.updatePosition({
                       right: '0px'

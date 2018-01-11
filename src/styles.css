@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 
-:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker):not([class^=dx-sort]):not(.dx-header-filter):not(.dx-treeview-toggle-item-visibility) {
+:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker):not([class^=dx-sort]):not([class*=fa-]):not(.dx-header-filter):not(.dx-treeview-toggle-item-visibility) {
     font-family: Montserrat !important;
 }
 

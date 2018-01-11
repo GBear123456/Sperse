@@ -1,6 +1,6 @@
 /deep/ .cdk-overlay-container {
     .cdk-overlay-pane.slider {
-        transition: margin 1s;
+        transition: margin 1s!important;
 
         .mat-dialog-container {
             overflow: visible;
@@ -8,6 +8,10 @@
             margin: 0px;
         }
     }
+}
+
+/deep/ .hide {
+    display: none;
 }
 
 :host {
