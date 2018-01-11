@@ -58,11 +58,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            event.element.attr('filter-pressed', 
-                                this.filtersService.fixed = 
-                                    !this.filtersService.fixed);  
+                            this.filtersService.fixed = 
+                                !this.filtersService.fixed;
                         },
                         options: {
+                            checkPressed: () => {
+                                return this.filtersService.fixed;
+                            },
                             mouseover: (event) => {
                                 this.filtersService.enable();
                             },
@@ -72,8 +74,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             } 
                         },
                         attr: { 
-                            'filter-selected': this.filtersService.hasFilterSelected,
-                            'filter-pressed': this.filtersService.fixed
+                            'filter-selected': this.filtersService.hasFilterSelected
                         } 
                     } 
                 ]

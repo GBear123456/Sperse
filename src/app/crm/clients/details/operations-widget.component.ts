@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
 @Component({
   selector: 'operations-widget',
@@ -6,7 +7,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./operations-widget.component.less']
 })
 export class OperationsWidgetComponent implements OnInit {
-  toolbarConfig=[
+  private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
+  
+  toggleDataLayout(dataLayoutType) {
+    this.dataLayoutType = dataLayoutType;
+  }
+
+  toolbarConfig = [
     {location: 'before', items: [
       {name: 'back'}
     ]},
@@ -19,9 +26,39 @@ export class OperationsWidgetComponent implements OnInit {
     {location: 'center', items: [
       {name: 'more'}
     ]},
-    {location: 'after', items: [
-      {name: 'box'}, {name: 'pipeline'}, {name: 'grid'}
-    ]},
+    {                
+      location: 'after', 
+      areItemsDependent: true,
+      items: [
+          { 
+              name: 'box',
+              action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
+              options: {
+                  checkPressed: () => {
+                      return (this.dataLayoutType == DataLayoutType.Box);
+                  },
+              }
+          },
+          { 
+              name: 'pipeline', 
+              action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
+              options: {
+                  checkPressed: () => {
+                      return (this.dataLayoutType == DataLayoutType.Pipeline);
+                  },
+              }
+          },
+          { 
+              name: 'grid', 
+              action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
+              options: {
+                  checkPressed: () => {
+                      return (this.dataLayoutType == DataLayoutType.Grid);
+                  },
+              } 
+          }
+      ]
+    },
     {location: 'after', items: [
       {name: 'prev'}, {name: 'next'}
     ]}

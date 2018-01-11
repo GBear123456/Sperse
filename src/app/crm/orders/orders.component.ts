@@ -25,6 +25,8 @@ import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.mo
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+
 import { CommonLookupServiceProxy, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
@@ -51,6 +53,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     gridDataSource: any = {};
     private rootComponent: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
+    private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Order';
     private filters: FilterModel[];
 
@@ -108,8 +111,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.dataGrid.instance.showColumnChooser();
     }
 
-    togglePipeline(param) {
-        this.showPipeline = param;
+    toggleDataLayout(dataLayoutType) {
+        this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
+        this.dataLayoutType = dataLayoutType;
         if (!this.firstRefresh) {
             this.firstRefresh = true;
             abp.ui.setBusy(
@@ -279,11 +283,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);                          
-                            event.element.attr('filter-pressed', 
-                                this._filtersService.fixed = 
-                                    !this._filtersService.fixed);  
+                            this._filtersService.fixed = 
+                                !this._filtersService.fixed;
                         },
                         options: {
+                            checkPressed: () => {
+                                return this._filtersService.fixed;
+                            },
                             mouseover: (event) => {
                                 this._filtersService.enable();
                             },
@@ -293,8 +299,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             } 
                         },
                         attr: { 
-                            'filter-selected': this._filtersService.hasFilterSelected,
-                            'filter-pressed': this._filtersService.fixed
+                            'filter-selected': this._filtersService.hasFilterSelected
                         } 
                     } 
                 ]
@@ -355,10 +360,36 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 ]
             },
             {
-                location: 'after', items: [
-                    { name: 'box' },
-                    { name: 'pipeline', action: this.togglePipeline.bind(this, true) },
-                    { name: 'grid', action: this.togglePipeline.bind(this, false) }
+                location: 'after', 
+                areItemsDependent: true,
+                items: [
+                    { 
+                        name: 'box',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
+                        options: {
+                            checkPressed: () => {
+                                return (this.dataLayoutType == DataLayoutType.Box);
+                            },
+                        }
+                    },
+                    { 
+                        name: 'pipeline', 
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
+                        options: {
+                            checkPressed: () => {
+                                return (this.dataLayoutType == DataLayoutType.Pipeline);
+                            },
+                        }
+                    },
+                    { 
+                        name: 'grid', 
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
+                        options: {
+                            checkPressed: () => {
+                                return (this.dataLayoutType == DataLayoutType.Grid);
+                            },
+                        } 
+                    }
                 ]
             }
         ];

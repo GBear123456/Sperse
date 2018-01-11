@@ -33,11 +33,13 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                         name: 'filters',
                         action: (event) => {
                             setTimeout(this.repaint.bind(this), 1000);
-                            event.element.attr('filter-pressed',
-                                this._filtersService.fixed =
-                                    !this._filtersService.fixed);
+                            this._filtersService.fixed = 
+                                !this._filtersService.fixed;
                         },
                         options: {
+                            checkPressed: () => {
+                                return this._filtersService.fixed;
+                            },
                             mouseover: (event) => {
                                 this._filtersService.enable();
                             },
@@ -47,8 +49,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                             }
                         },
                         attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected,
-                            'filter-pressed': this._filtersService.fixed
+                            'filter-selected': this._filtersService.hasFilterSelected
                         }
                     }
                 ]

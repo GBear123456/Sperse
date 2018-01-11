@@ -24,6 +24,8 @@ import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.comp
 import { FilterCBoxesComponent } from '@shared/filters/cboxes/filter-cboxes.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+
 import { CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
@@ -43,6 +45,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     @ViewChild('createOrEditClientModal') createOrEditClientModal: CreateOrEditClientModalComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
+    private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Customer';
     private filters: FilterModel[];
     private rootComponent: any;
@@ -107,6 +110,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     showClientDetails(event) {
         event.component.cancelEditData();
         this._router.navigate(['app/crm/client', event.data.Id]);
+    }
+
+    toggleDataLayout(dataLayoutType) {
+        this.dataLayoutType = dataLayoutType;
     }
 
     ngOnInit(): void {
@@ -194,11 +201,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            event.element.attr('filter-pressed', 
-                                this._filtersService.fixed = 
-                                    !this._filtersService.fixed);  
+                            this._filtersService.fixed = 
+                                !this._filtersService.fixed;
                         },
                         options: {
+                            checkPressed: () => {
+                                return this._filtersService.fixed;
+                            },
                             mouseover: (event) => {
                                 this._filtersService.enable();
                             },
@@ -208,8 +217,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                             } 
                         },
                         attr: { 
-                            'filter-selected': this._filtersService.hasFilterSelected,
-                            'filter-pressed': this._filtersService.fixed
+                            'filter-selected': this._filtersService.hasFilterSelected
                         } 
                     } 
                 ]
@@ -270,8 +278,36 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 ]
             },
             {
-                location: 'after', items: [
-                    { name: 'box' }, { name: 'pipeline' }, { name: 'grid' }
+                location: 'after', 
+                areItemsDependent: true,
+                items: [
+                    { 
+                        name: 'box',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
+                        options: {
+                            checkPressed: () => {
+                                return (this.dataLayoutType == DataLayoutType.Box);
+                            },
+                        }
+                    },
+                    { 
+                        name: 'pipeline', 
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
+                        options: {
+                            checkPressed: () => {
+                                return (this.dataLayoutType == DataLayoutType.Pipeline);
+                            },
+                        }
+                    },
+                    { 
+                        name: 'grid', 
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
+                        options: {
+                            checkPressed: () => {
+                                return (this.dataLayoutType == DataLayoutType.Grid);
+                            },
+                        } 
+                    }
                 ]
             }
         ];

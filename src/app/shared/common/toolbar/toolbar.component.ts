@@ -1,6 +1,6 @@
 import {Component, Injector, Input, Output, EventEmitter} from '@angular/core';
 import {AppComponentBase} from '@shared/common/app-component-base';
-import {ToolbarGroupModel} from './toolbar.model';
+import {ToolbarGroupModel, ToolbarGroupModelItem} from './toolbar.model';
 
 import * as _ from 'underscore';
 
@@ -47,14 +47,17 @@ export class ToolBarComponent extends AppComponentBase {
             text: this.l('More')
         },
         box: {
+            accessKey: 'box',
             hint: this.l('Box'),
             iconSrc: this.getImgURI('box-icon')
         },
         pipeline: {
+            accessKey: 'pipeline',
             hint: this.l('Pipeline'),
             iconSrc: this.getImgURI('funnel-icon')
         },
         grid: {
+            accessKey: 'grid',
             hint: this.l('Grid'),
             iconSrc: this.getImgURI('table-icon')
         },
@@ -138,6 +141,20 @@ export class ToolBarComponent extends AppComponentBase {
         super(injector);
     }
 
+    private toolbarItemAction(item: ToolbarGroupModelItem, group: ToolbarGroupModel, event: any) {
+        if (item.action)
+            item.action.call(this, event);
+       
+        if (group.areItemsDependent)
+            group.items.forEach((i, index) => {
+                $('.dx-button[accesskey=' + i.name + ']').removeAttr('button-pressed');
+            });
+
+        var checkPressed = item.options && item.options['checkPressed'];
+        if (checkPressed)
+            event.element.attr('button-pressed', Boolean(checkPressed.call(this)));
+    }
+
     getImgURI(name: string) {
         return 'assets/common/icons/' + name + '.svg';
     }
@@ -202,7 +219,7 @@ export class ToolBarComponent extends AppComponentBase {
                     html: !item.widget && item.html,
                     itemTemplate: item.itemTemplate || group.itemTemplate,
                     options: _.extend({
-                        onClick: item.action,
+                        onClick: (e) => this.toolbarItemAction(item, group, e),
                         elementAttr: _.extend({
                             'group-item-position': index ? (isLast ? 'last' : 'inside') : (isLast ? 'single' : 'first'),
                             'group-item-count': count,
