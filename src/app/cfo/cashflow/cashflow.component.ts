@@ -1831,7 +1831,23 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 businessEntityIds: this.requestFilter.businessEntityIds || []
             });
 
-            this.getStatsDetails(this.statsDetailFilter);
+            // check on double click
+            let component = cellObj.component;
+            if (!component.clickCount) component.clickCount = 1;
+            else component.clickCount = component.clickCount + 1;
+            if (component.clickCount == 1) {
+                component.lastClickTime = new Date();
+                setTimeout(function () {
+                    component.lastClickTime = 0;
+                    component.clickCount = 0;
+                }, 350);
+            } else if (component.clickCount == 2) {
+                if (((new Date()) - component.lastClickTime) < 300) {
+                    this.getStatsDetails(this.statsDetailFilter);
+                }
+                component.clickCount = 0;
+                component.lastClickTime = 0;
+            }
         }
 
         /** If month cell has only one child (mtd or projected) - then click on it
