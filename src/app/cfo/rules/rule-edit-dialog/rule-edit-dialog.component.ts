@@ -326,28 +326,15 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     validate(ruleCheckOnly: boolean = false) {
         if (!ruleCheckOnly) {
-/*
-            if (!this.getDescriptionKeywords())
-                return this.notify.error(this.l('RuleTransactionDescriptorError'));
-*/
-
-            //if (!this.getAttributes().length)
-            //    return this.notify.error(this.l('RuleAttributesError'));
-
-            //if (isNaN(this.bankId) || isNaN(this.accountId))
-            //    return this.notify.error(this.l('RuleBankAccountError'));
+            if (!this.getDescriptionKeywords() && !this.getAttributes().length)
+                return this.notify.error(this.l('RuleDialog_AttributeOrKeywordRequired'));
 
             if (this.minAmount && this.maxAmount && this.minAmount > this.maxAmount)
-                return this.notify.error(this.l('RuleAmountError'));
+                return this.notify.error(this.l('RuleDialog_AmountError'));
         }
 
-/*
-        if (!this.descriptor)
-            return this.notify.error(this.l('RuleDescriptorError'));
-*/
-
         if (isNaN(this.getSelectedCategoryId()))
-            return this.notify.error(this.l('RuleCategoryError'));
+            return this.notify.error(this.l('RuleDialog_CategoryError'));
 
         return true;
     }
