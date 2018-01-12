@@ -11,6 +11,8 @@
     ["Subscription", "Pages.Administration.Tenant.SubscriptionManagement", "icon-refresh", "/app/admin/subscription-management"],
     ["Settings", "Pages.Administration.Host.Settings", "icon-settings", "/app/admin/hostSettings"],
     ["Settings", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/tenantSettings"],
-    ["System", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/systemSettings"]
+    ["System", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/systemSettings"],
+    ["UI Customization", "", "icon-settings", "/app/admin/ui-customization"],
+    ["Subscription", "Pages.Administration.Tenant.SubscriptionManagement", "icon-settings", "/app/admin/subscription-management"]
   ]
 }
