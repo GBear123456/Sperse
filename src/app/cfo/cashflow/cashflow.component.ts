@@ -1701,7 +1701,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     cellObj.cellElement.html(this.getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName));
                 }
                 if (fieldName === 'day') {
-                    let dayNumber = cellObj.cell.path.pop(),
+                    let dayNumber = cellObj.cell.path.slice(-1)[0],
                         dayEnding = [, 'st', 'nd', 'rd'][ dayNumber % 100 >> 3 ^ 1 && dayNumber % 10] || 'th';
                     cellObj.cellElement.append(`<span class="dayEnding">${dayEnding}</span>`);
                 }
