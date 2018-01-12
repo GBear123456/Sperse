@@ -182,6 +182,41 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         });
     }
 
+    getDataObject() {
+        return {
+            id: this.data.id,
+            name: this.data.title,
+            parentId: this.data.parentId,
+            categoryId: this.getSelectedCategoryId(),
+            sourceTransactionList: this.data.transactionIds,
+            transactionDescriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
+            transactionDescriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
+            applyOption: (this.data.id ? EditRuleDtoApplyOption : CreateRuleDtoApplyOption)[
+                this.data.options[0].value ? 'MatchedAndUnclassified' : 'SelectedOnly'
+            ],
+            condition: ConditionDto.fromJS({
+                minAmount: this.minAmount,
+                maxAmount: this.maxAmount,
+                bankId: this.bankId,
+                bankAccountId: this.accountId,
+                descriptionWords: this.getDescriptionKeywords(),
+                attributes: this.getAttributes(),
+                transactionCategoryId: this.selectedTransactionCategory,
+                transactionTypes: this.selectedTransactionTypes
+            })
+        };
+    }
+
+    updateDataHandler(error) {
+        if (error) 
+            this.notify.error(error);
+        else {
+            this.notify.info(this.l('SavedSuccessfully'));
+            this.data.refershParent();
+            this.close(true);
+        }            
+    }
+
     ngOnInit() {
         super.ngOnInit();
 
@@ -192,38 +227,17 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             class: 'primary',
             action: () => {
                 if (this.validate()) {
-                    let option = this.data.options[0].value ? 'MatchedAndUnclassified' : 'SelectedOnly';
-                    this._classificationServiceProxy[(this.data.id ? 'edit' : 'create') + 'Rule'](
-                        InstanceType[this.instanceType],
-                        this.instanceId,
-                        (this.data.id ? EditRuleDto : CreateRuleDto).fromJS({
-                            id: this.data.id,
-                            name: this.data.title,
-                            parentId: this.data.parentId,
-                            categoryId: this.getSelectedCategoryId(),
-                            sourceTransactionList: this.data.transactionIds,
-                            transactionDescriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
-                            transactionDescriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
-                            applyOption: (this.data.id ? EditRuleDtoApplyOption : CreateRuleDtoApplyOption)[option],
-                            condition: ConditionDto.fromJS({
-                                minAmount: this.minAmount,
-                                maxAmount: this.maxAmount,
-                                cashFlowAmountFormat: ConditionDtoCashFlowAmountFormat[this.amountFormat],
-                                bankId: this.bankId,
-                                bankAccountId: this.accountId,
-                                descriptionWords: this.getDescriptionKeywords(),
-                                attributes: this.getAttributes(),
-                                transactionCategoryId: this.selectedTransactionCategory,
-                                transactionTypes: this.selectedTransactionTypes
-                            })
-                    })).subscribe((error) => {
-                        if (!error) {
-                            this.notify.info(this.l('SavedSuccessfully'));
-                            this.data.refershParent();
-                            this.close(true);
-                        } else
-                            this.notify.error(error);
-                    });
+                    if (this.data.id) 
+                        this._classificationServiceProxy.editRule(
+                            InstanceType[this.instanceType], this.instanceId, 
+                            EditRuleDto.fromJS(this.getDataObject()))
+                        .subscribe(this.updateDataHandler.bind(this));
+                    else 
+                        this._classificationServiceProxy.createRule(
+                            InstanceType[this.instanceType],
+                            this.instanceId,
+                            CreateRuleDto.fromJS(this.getDataObject()))
+                        .subscribe(this.updateDataHandler.bind(this));
                 }
             }
         }];

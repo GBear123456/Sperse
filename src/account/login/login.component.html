@@ -1,13 +1,13 @@
-<div class="container-fluid" [@routerTransition]>
+﻿<div class="container-fluid" [@routerTransition]>
     <div class="row">
         <div class="col-md-6 col-sm-12 col-xs-12 text-center form-wrapper">
-            <h1 class="hidden-xs">{{l("SperseLogin")}}</h1>
-            <h1 class="visible-xs">{{l("Login")}}</h1>
+            <h1 class="d-none d-md-block">{{l("SperseLogin")}}</h1>
+            <h1 class="d-md-none">{{l("Login")}}</h1>
 
             <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
 
                 <div class="form-group clearfix">
-                    <label class="control-label visible-ie8 visible-ie9">{{l("UserNameOrEmail")}}</label>
+                    <!--<label class="control-label visible-ie8 visible-ie9">{{l("UserNameOrEmail")}}</label>-->
                     <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off" placeholder="{{l('UserNameOrEmail')}}" name="userNameOrEmailAddress" required tabindex="1" />
 
                     <div class="form-group clearfix">
@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="form-group clearfix">
-                    <label class="control-label visible-ie8 visible-ie9">{{l('Password')}}</label>
+                    <!--<label class="control-label visible-ie8 visible-ie9">{{l('Password')}}</label>-->
                     <input [(ngModel)]="loginService.authenticateModel.password" class="form-control form-control-solid placeholder-no-fix input-ltr" type="password" autocomplete="off" placeholder="{{l('Password')}}" name="password" required maxlength="32" tabindex="2" />
                     <div class="form-group clearfix">
                         <a routerLink="/account/forgot-password" id="forget-password" class="forget-password pull-right">{{l("ForgotPassword")}}</a>
@@ -65,7 +65,7 @@
                 </span>-->
             </div>
         </div>
-        <div class="col-md-6 col-sm-12 hidden-xs text-center slogan-side">
+        <div class="col-md-6 col-sm-12 d-none d-md-block text-center slogan-side">
             <img src="assets/common/images/brain.svg" alt="The digital brain of your business" width="488" class="img-responsive">
             <h2 class="slogan">The digital brain of your business</h2>
             <p class="slogan-description">Augumented by Artificial Intelligence</p>
