@@ -3,6 +3,7 @@ import { DOCUMENT } from '@angular/platform-browser';
 
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 
 import * as _ from 'underscore';
 
@@ -14,20 +15,18 @@ import * as _ from 'underscore';
     template: '<app-root></app-root>'
 })
 export class RootComponent implements AfterViewInit {
-	@HostBinding('class') public cssClass = 'page-md';
-
-  private readonly LOGGED_CLASSES = ['page-header-fixed'];
-  private readonly LOGGED_OUT_CLASSES = ['login'];
-
   constructor (
     @Inject(DOCUMENT) private document, 
-    private hostElement: ElementRef
+    private hostElement: ElementRef,
+    private _uiCustomizationService: AppUiCustomizationService
   ) {  }
 
   public checkSetClasses(loggedUser) {
-    let classList = this.hostElement.nativeElement.classList;
-    classList.remove.apply(classList, this.LOGGED_CLASSES.concat(this.LOGGED_OUT_CLASSES));
-    classList.add.apply(classList, this[loggedUser ? 'LOGGED_CLASSES': 'LOGGED_OUT_CLASSES']);
+    let classList = this.hostElement.nativeElement.classList,
+        loggedClass = this._uiCustomizationService.getAppModuleBodyClass().split(' ').filter(Boolean),
+        accountClass = this._uiCustomizationService.getAccountModuleBodyClass().split(' ').filter(Boolean);
+    classList.remove.apply(classList, accountClass.concat(accountClass));
+    classList.add.apply(classList, loggedUser ? loggedClass: accountClass);
   }
 
   public pageHeaderFixed(value) {

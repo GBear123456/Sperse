@@ -1,19 +1,4 @@
-﻿<div class="adaptive-menu" *ngIf="showAdaptiveMenu==true">
-  <dx-menu
-    [accessKey]="nav-menu"
-    [dataSource]="menu.items"
-    [selectionMode]="single"
-    [hoverStateEnabled]="true"
-    [submenuDirection]="rightOrBottom"
-    [hideSubmenuOnMouseLeave]="true"
-    [adaptivityEnabled]="true"
-    [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
-    [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
-    (onItemClick)="navigate($event)">
-  </dx-menu>
-</div>
-
-<div class="top-bar-search" *ngIf="config['search']">
+﻿<div class="top-bar-search" *ngIf="config['search']">
 	<i class="icon-magnifier"></i>
 	<input [(ngModel)]="search" name="search" autoFocus class="form-control" placeholder="{{l('SearchAllData')}}" type="text">
 </div>
@@ -41,4 +26,19 @@
         </dx-menu>
       </dxi-item>
   </dx-nav-bar>
+</div>
+
+<div class="adaptive-menu" *ngIf="showAdaptiveMenu==true">
+  <dx-menu
+    [accessKey]="nav-menu"
+    [dataSource]="menu.items"
+    [selectionMode]="single"
+    [hoverStateEnabled]="true"
+    [submenuDirection]="rightOrBottom"
+    [hideSubmenuOnMouseLeave]="true"
+    [adaptivityEnabled]="true"
+    [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
+    [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
+    (onItemClick)="navigate($event)">
+  </dx-menu>
 </div>
