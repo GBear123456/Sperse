@@ -147,7 +147,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 conditionTypeId: v.value ? ConditionAttributeDtoConditionTypeId.Equal : ConditionAttributeDtoConditionTypeId.Exist,
                 conditionValue: v.value
             }
-        }
+        });
     }
 
     refreshCategories() {
@@ -208,6 +208,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             condition: ConditionDto.fromJS({
                 minAmount: this.minAmount,
                 maxAmount: this.maxAmount,
+                cashFlowAmountFormat: this.amountFormat,
                 bankId: this.bankId,
                 bankAccountId: this.accountId,
                 descriptionWords: this.getDescriptionKeywords(),
