@@ -99,6 +99,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             _classificationServiceProxy.getRuleForEdit(InstanceType[this.instanceType], this.instanceId, this.data.id).subscribe((rule) => {
                 this.descriptor = rule.transactionDescriptorAttributeTypeId || rule.transactionDescriptor;
                 this.data.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
+                this.data.title = rule.name;
                 if (rule.condition) {
                     this.bankId = rule.condition.bankId;
                     this.accountId = rule.condition.bankAccountId;
@@ -240,7 +241,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 }
             }
         }];
-        if (!this.data.id)
+        if (this.data.transactions && this.data.transactions.length)
             this.data.buttons.unshift({
                 title: this.l('Don\'t add'),
                 class: 'default',
@@ -277,7 +278,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             this.transactionCategories = data.categories;
             if (this.selectedTransactionCategory)
                 this.onTransactionCategoryChanged(null);
-            if (this.selectedTransactionTypes)
+            if (this.selectedTransactionTypes && this.selectedTransactionTypes.length)
                 this.onTransactionTypesChanged(null);
         });
     }
@@ -332,35 +333,22 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 {id: $event.value})['bankAccounts'] || []).map((item) => {
                     return {
                         id: item.id,
-                        name: item.accountName || item.accountNumber
+                        name: item.accountNumber + ': ' + (item.accountName ? item.accountName : 'No name')
                     };
                 });
     }
 
     validate(ruleCheckOnly: boolean = false) {
         if (!ruleCheckOnly) {
-/*
-            if (!this.getDescriptionKeywords())
-                return this.notify.error(this.l('RuleTransactionDescriptorError'));
-*/
-
-            if (!this.getAttributes().length)
-                return this.notify.error(this.l('RuleAttributesError'));
-
-            if (isNaN(this.bankId) || isNaN(this.accountId))
-                return this.notify.error(this.l('RuleBankAccountError'));
+            if (!this.getDescriptionKeywords() && !this.getAttributes().length)
+                return this.notify.error(this.l('RuleDialog_AttributeOrKeywordRequired'));
 
             if (this.minAmount && this.maxAmount && this.minAmount > this.maxAmount)
-                return this.notify.error(this.l('RuleAmountError'));
+                return this.notify.error(this.l('RuleDialog_AmountError'));
         }
 
-/*
-        if (!this.descriptor)
-            return this.notify.error(this.l('RuleDescriptorError'));
-*/
-
         if (isNaN(this.getSelectedCategoryId()))
-            return this.notify.error(this.l('RuleCategoryError'));
+            return this.notify.error(this.l('RuleDialog_CategoryError'));
 
         return true;
     }
@@ -400,7 +388,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             InstanceType[this.instanceType],
             this.instanceId,
             (groupCreate ? CreateCategoryGroupInput: CreateCategoryInput).fromJS({
-                typeId: $event.data.parent,
+                cashFlowTypeId: $event.data.parent,
                 groupId: this.getCategoryItemId($event.data.parent),
                 name: $event.data.name
             })
@@ -415,8 +403,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         $event.cancel = true;
         let itemId = this.getCategoryItemId($event.key),
             parentId = this.getCategoryItemId($event.data.parent);
-        if (this.categorization.types[parentId]) {
-            if (_.findWhere(this.categories, {parent: itemId}))
+        if (this.categorization.types[$event.data.parent]) {
+            if (_.findWhere(this.categories, { parent: $event.key}))
                 this.notify.error(this.l('Category group should be empty to perform delete action'));
             else
                 this._classificationServiceProxy.deleteCategoryGroup(InstanceType[this.instanceType], this.instanceId, itemId)
@@ -449,6 +437,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onTransactionCategoryChanged(e) {
+        if (!this.transactionTypesAndCategoriesData) return;
         if (this.selectedTransactionCategory)
             setTimeout(() => this.transactionTypes = this.transactionTypesAndCategoriesData.types.filter((t) => t.categories.some((c) => c == this.selectedTransactionCategory)), 0);
         else
@@ -456,8 +445,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onTransactionTypesChanged(e) {
+        if (!this.transactionTypesAndCategoriesData) return;
         if (this.selectedTransactionTypes && this.selectedTransactionTypes.length) {
-
             let categories: any = this.transactionTypesAndCategoriesData.types.filter((t) => this.selectedTransactionTypes.some((c) => c == t.id))
                 .map((v) => v.categories);
             categories = _.uniq(_.flatten(categories));
