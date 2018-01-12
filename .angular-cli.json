@@ -11,6 +11,10 @@
         "assets",
         "favicon.ico",
         {
+          "glob": "web.config",
+          "input": "../"
+        },
+        {
           "glob": "abp.signalr.js",
           "input": "../node_modules/abp-web-resources/Abp/Framework/scripts/libs/",
           "output": "./assets/abp/"
