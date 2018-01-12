@@ -12,7 +12,7 @@ import {
     CreateCategoryGroupInput, CreateCategoryInput, UpdateCategoryGroupInput, UpdateCategoryInput,
     CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
-    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType, TransactionTypesAndCategoriesDto } from '@shared/service-proxies/service-proxies';
+    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType, TransactionTypesAndCategoriesDto, TransactionAttributeDto } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -106,7 +106,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.minAmount = rule.condition.minAmount;
                     this.maxAmount = rule.condition.maxAmount;
                     this.keywords = this.getKeywordsFromString(rule.condition.descriptionWords);
-                    this.attributes = rule.condition.attributes;
+                    this.attributes = rule.condition.attributes ? _.values(rule.condition.attributes) : [];
                     this.selectedTransactionCategory = rule.condition.transactionCategoryId;
                     this.selectedTransactionTypes = rule.condition.transactionTypes;
                 }
@@ -120,7 +120,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                         this.amountFormat = ConditionDtoCashFlowAmountFormat[data.amountFormat.toString()];
                     this.descriptor = data.standardDescriptor;
                     this.keywords = this.getKeywordsFromString(data.descriptionPhrases.join(','));
-                    this.attributes = data.attributes;
+                    this.attributes = this.getAttributesFromCommonDetails(data.attributes);
                     this.selectedTransactionCategory = data.transactionCategoryId;
                     this.selectedTransactionTypes = [data.transactionTypeId];
                 });
@@ -137,6 +137,18 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                             };
                         }) || [];
                 }
+
+    getAttributesFromCommonDetails(attributes: TransactionAttributeDto[]) {
+        if (!attributes || !attributes.length) return [];
+
+        return attributes.map((v) => {
+            return {
+                attributeTypeId: v.typeId,
+                conditionTypeId: v.value ? ConditionAttributeDtoConditionTypeId.Equal : ConditionAttributeDtoConditionTypeId.Exist,
+                conditionValue: v.value
+            }
+        }
+    }
 
     refreshCategories() {
         this._classificationServiceProxy.getCategories(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
@@ -299,11 +311,11 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     getAttributes() {
+        let attributes = {};
         let list = this.attributeList.instance.getVisibleRows();
-        return list.map((row) => {
-            let item = row.data;
-            return ConditionAttributeDto.fromJS(item);
-        });
+        list.forEach((v) => attributes[v.data["attributeTypeId"]] = ConditionAttributeDto.fromJS(v.data));
+
+        return attributes;
     }
 
     addAttributeRow() {
@@ -327,7 +339,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     validate(ruleCheckOnly: boolean = false) {
         if (!ruleCheckOnly) {
-            if (!this.getDescriptionKeywords() && !this.getAttributes().length)
+            if (!this.getDescriptionKeywords() && !Object.keys(this.getAttributes()).length)
                 return this.notify.error(this.l('RuleDialog_AttributeOrKeywordRequired'));
 
             if (this.minAmount && this.maxAmount && this.minAmount > this.maxAmount)
