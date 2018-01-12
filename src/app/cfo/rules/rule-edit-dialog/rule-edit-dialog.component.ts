@@ -319,7 +319,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 {id: $event.value})['bankAccounts'] || []).map((item) => {
                     return {
                         id: item.id,
-                        name: item.accountName || item.accountNumber
+                        name: item.accountNumber + ': ' + (item.accountName ? item.accountName : 'No name')
                     };
                 });
     }
