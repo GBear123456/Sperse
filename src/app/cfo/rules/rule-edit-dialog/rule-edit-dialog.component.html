@@ -67,8 +67,7 @@
                      [showColumnHeaders]="false"
                      [showColumnLines]="false"
                      [showRowLines]="true"
-                     [showBorders]="true"
-                     (onContentReady)="onAttributeUpdated($event)">
+                     [showBorders]="true">
                      <dxo-editing
                          mode="row"
                          [allowUpdating]="true"
@@ -196,7 +195,7 @@
                     <dx-select-box
                         placeholder=""
                         [acceptCustomValue]="true"
-                        [dataSource]="descriptors"
+                        [dataSource]="attributeTypes"
                         valueExpr="id"
                         displayExpr="name"
                         (onCustomItemCreating)="onCustomItemCreating($event)"

@@ -38,7 +38,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     accounts: any;
     categories: any = [];
     descriptor: string;
-    descriptors: any = [];
     attributes: any = [];
     keywords: any = [];
     formats: any = [];
@@ -310,19 +309,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     addAttributeRow() {
         this.attributeList.instance.addRow();
     }
-
-    onAttributeUpdated($event) {
-        let descriptors = [];
-        $event.component.getVisibleRows().forEach((row) => {
-            if (row.data.attributeTypeId)
-                descriptors.push({
-                    id: row.data.attributeTypeId,
-                    name: this.transactionAttributeTypes[row.data.attributeTypeId].name
-                });
-        });
-        this.descriptors = descriptors;
-    }
-
+    
     addKeywordRow() {
         this.keywordList.instance.addRow();
     }
