@@ -328,14 +328,20 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onBankChanged($event) {
-        if ($event.value && this.banks)
+        if (!this.banks) return;
+
+        if ($event.value)
             this.accounts = (_.findWhere(this.banks,
-                {id: $event.value})['bankAccounts'] || []).map((item) => {
+                { id: $event.value })['bankAccounts'] || []).map((item) => {
                     return {
                         id: item.id,
                         name: item.accountNumber + ': ' + (item.accountName ? item.accountName : 'No name')
                     };
                 });
+        else {
+            this.accountId = null;
+            this.accounts = [];
+        }
     }
 
     validate(ruleCheckOnly: boolean = false) {
