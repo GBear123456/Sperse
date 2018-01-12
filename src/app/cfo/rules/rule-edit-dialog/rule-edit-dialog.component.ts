@@ -286,8 +286,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     getSelectedCategoryId() {
-        let selected = this.categoryList.instance.getSelectedRowsData(),
-            key = selected.length && selected[0].key;
+        let selected = this.categoryList.instance.getSelectedRowKeys(),
+            key = selected.length && selected[0];
         return this.categorization.items[key] && key || undefined;
     }
 
