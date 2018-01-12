@@ -91,7 +91,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         _cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
             this.banks = data.banks;
             if (this.bankId)
-                this.onBankChanged({value: this.accountId});
+                this.onBankChanged({ value: this.bankId });
         });
 
         if (this.data.id)
