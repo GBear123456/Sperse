@@ -28,9 +28,11 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number} = { 'items' : [], 'selectedItemIndex': null}) {
         this._appService.toolbarConfig = [
             {
-                location: 'before', items: [
+                location: 'before',
+                items: [
                     {
                         name: 'filters',
+                        adaptive: false,
                         action: (event) => {
                             setTimeout(this.repaint.bind(this), 1000);
                             event.element.attr('filter-pressed',
@@ -58,6 +60,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 items: [
                     {
                         name: 'search',
+                        adaptive: false,
                         widget: 'dxTextBox',
                         options: {
                             width: '300',
@@ -73,7 +76,8 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 items: [
                     {
                         name: 'select-box',
-                        text: this.l('Group By'),
+                        text: this.l('CashflowToolbar_Group_By'),
+                        responsiveText: this.l('CashflowToolbar_Group_By'),
                         widget: 'dxDropDownMenu',
                         options: {
                             width: 175,

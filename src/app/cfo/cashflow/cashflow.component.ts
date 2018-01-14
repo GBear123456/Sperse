@@ -1194,7 +1194,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     changeGroupBy(event) {
         abp.ui.setBusy();
         $('.pivot-grid').addClass('invisible');
-        let value = this.groupbyItems[event.itemIndex],
+        let itemIndex = event.itemData.itemIndex !== undefined ? event.itemData.itemIndex : event.itemData,
+            value = this.groupbyItems[itemIndex],
             startedGroupInterval = value.groupInterval;
         this.groupInterval = startedGroupInterval;
         this.updateDateFields(startedGroupInterval);
@@ -1215,7 +1216,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     togglePivotGridRows(event) {
-        let levelIndex = event.itemIndex;
+        let levelIndex = event.itemData.itemIndex !== undefined ? event.itemData.itemIndex : event.itemData;
         let source;
         switch (levelIndex) {
             case 0:
