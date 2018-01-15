@@ -1,4 +1,4 @@
-import { Component, Injector, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, HostListener, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ToolbarGroupModel } from './toolbar.model';
 
@@ -7,15 +7,22 @@ import * as _ from 'underscore';
 @Component({
     selector: 'app-toolbar',
     templateUrl: './toolbar.component.html',
-    styleUrls: ['./toolbar.component.less'],
-    // @HostLinstener('window:resize'): {
-    //     : 'toogleToolbarMenu()'
-    // }
+    styleUrls: ['./toolbar.component.less']
 })
 export class ToolBarComponent extends AppComponentBase {
     @Input('adaptive') adaptive = false;
+    private _config: ToolbarGroupModel[];
+    @Input()
+    set config(config: ToolbarGroupModel[]) {
+        this._config = config;
+        this.toogleToolbarMenu();
+        this.initToolbarItems();
+    }
+    @HostBinding('style.display') display: string;
+    public items = [];
+    public responsiveItems = [];
     public options = {};
-    showAdaptiveToolbar: boolean;
+    public showAdaptiveToolbar: boolean;
     private supportedButtons = {
         search: {
             accessKey: 'search'
@@ -129,22 +136,12 @@ export class ToolBarComponent extends AppComponentBase {
         }
     };
 
-    responsiveItems = [];
-
-    private _config: ToolbarGroupModel[];
-    @Input()
-    set config(config: ToolbarGroupModel[]) {
-        this._config = config;
-        this.toogleToolbarMenu();
-        this.initToolbarItems();
-    }
-
-    @Output() onApply = new EventEmitter();
-
-    public items = [];
-
     constructor(injector: Injector) {
         super(injector);
+    }
+    @HostListener('window:resize') onResize() {
+        this.toogleToolbarMenu();
+        this.initToolbarItems();
     }
 
     getImgURI(name: string) {
@@ -154,7 +151,7 @@ export class ToolBarComponent extends AppComponentBase {
     getDropDownItemTemplate(link, width) {
         return {
             item: '<div class="toolbar-dropdown-item" ' + (width ? 'style="width:' + width + 'px;"' : '') + '>' +
-            (link.icon ? '<img src="' + this.getImgURI(link.icon) + '">' : '') + link.text + '</div>',
+            (link.icon ? '<img style="margin-right: 15px; position: relative; top: -2px;" src="' + this.getImgURI(link.icon) + '">' : '') + link.text + '</div>',
             downloadOptions: '<div class="toolbar-download-options" onclick="event.stopPropagation()">' +
             '<div><input type="radio" name="export" value="all" checked><label>' + this.l('Export all data') + '</label></div>' +
             '<div><input type="radio" name="export" value="selected"><label>' + this.l('Export selected') + '</label></div>' +
@@ -186,8 +183,9 @@ export class ToolBarComponent extends AppComponentBase {
     }
 
     toogleToolbarMenu() {
-        this.showAdaptiveToolbar = window.innerWidth < 1280;
-        console.log(this.showAdaptiveToolbar);
+        this.showAdaptiveToolbar = this.adaptive && window.innerWidth < 1500;
+        if (this.showAdaptiveToolbar)
+            this.display = 'flex';
     }
 
     initToolbarItems() {
@@ -229,14 +227,16 @@ export class ToolBarComponent extends AppComponentBase {
                         }, mergedConfig)
                     });
                 }
-                if (item.adaptive !== false) {
+                if (this.showAdaptiveToolbar && item.adaptive !== false) {
                     let responsiveSubitems;
                     if (item.options && item.options.items) {
-                        responsiveSubitems = item.options.items.slice();
-                        responsiveSubitems.forEach((responsiveSubitem, index) => {
-                            responsiveSubitem.itemIndex = index;
+                        /** clone array */
+                        responsiveSubitems = item.options.items.map(a => ({...a}));
+                        responsiveSubitems.forEach((responsiveSubitem, subitemIndex) => {
+                            responsiveSubitem.itemIndex = subitemIndex;
                             if (responsiveSubitem.html)
                                 delete responsiveSubitem.text;
+                                delete responsiveSubitem.icon;
                         });
                     }
                     responsiveItems.push({

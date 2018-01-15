@@ -23,7 +23,7 @@ export class AppService {
     public topMenu: PanelMenu;
 
     public toolbarConfig: any;
-
+    public adaptive = false;
     public params: any;
 
     constructor() {

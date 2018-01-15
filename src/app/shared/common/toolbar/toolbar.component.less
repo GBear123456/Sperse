@@ -27,11 +27,6 @@
         line-height: 1.71;
         letter-spacing: 0.3px;
         color: #424c56;
-        img {
-            margin-right: 15px;
-            position: relative;
-            top: -2px;
-        }
     }
     .toolbar-download-options {
         width: 270px;
@@ -90,10 +85,6 @@
 }
 
 :host {
-
-    @media (max-width: 1280px) {
-        display: flex;
-    }
 
     &.fullscreen {
         top: -75px!important;
@@ -301,6 +292,9 @@
             font-size: 14px;
             height: 39px;
             outline: none;
+            @media screen and (max-width: 480px) {
+                width: auto;
+            }
         }
 
         .dx-button-text {
@@ -438,12 +432,13 @@
     .adaptive-menu {
         max-width: 60%;
         padding-right: 20px;
+        /deep/ .dx-menu-adaptive-mode {
+            width: auto !important;
+        }
         /deep/ .dx-menu-hamburger-button {
             margin-top: 12px;
             float: right;
         }
-        /deep/ .toolbar-dropdown-item img {
-            margin-right: 10px;
-        }
     }
+
 }

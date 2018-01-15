@@ -26,6 +26,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     @Output() showPreferencesDialog: EventEmitter<any> = new EventEmitter();
 
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number} = { 'items' : [], 'selectedItemIndex': null}) {
+        this._appService.adaptive = true;
         this._appService.toolbarConfig = [
             {
                 location: 'before',
@@ -192,18 +193,22 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                             items: [{
                                 action: Function(),
                                 text: this.l('SaveAs', 'PDF'),
+                                format: 'pdf',
                                 icon: 'pdf',
                             }, {
                                 action: this.exportTo.bind(this),
                                 text: this.l('Export to Excel'),
+                                format: 'xls',
                                 icon: 'xls',
                             }, {
                                 action: Function(),
                                 text: this.l('Export to CSV'),
+                                format: 'csv',
                                 icon: 'sheet'
                             }, {
                                 action: this.exportTo.bind(this),
                                 text: this.l('Export to Google Sheets'),
+                                format: 'gs',
                                 icon: 'sheet'
                             }]
                         }
