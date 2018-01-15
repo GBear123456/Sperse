@@ -17,6 +17,7 @@ import { AppService } from 'app/app.service';
 })
 export class SetupComponent extends CFOComponentBase implements OnInit {
     public headlineConfig;
+    private isDisabled = false;
 
     constructor(injector: Injector,
         private _appService: AppService,
@@ -29,14 +30,15 @@ export class SetupComponent extends CFOComponentBase implements OnInit {
     ngOnInit(): void {
         super.ngOnInit();
 
-        this.headlineConfig = { 
-            names: [this.l('Setup_Title')], 
+        this.headlineConfig = {
+            names: [this.l('Setup_Title')],
             iconSrc: 'assets/common/icons/magic-stick-icon.svg',
             buttons: []
         }
     }
 
     onStart(): void {
+        this.isDisabled = true;
         this._instanceServiceProxy.setup(InstanceType[this.instanceType]).subscribe((data) => {
             this._cfoService.instanceChangeProcess();
             this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/bank-accounts']);
