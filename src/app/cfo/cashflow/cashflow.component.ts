@@ -1818,7 +1818,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                               [cellObj.cell.rowPath[1]] :
                               this.requestFilter.accountIds || [];
 
-            this.statsDetailFilter = new StatsDetailFilter({
+            this.statsDetailFilter = StatsDetailFilter.fromJS({
                 cashFlowTypeId: cellObj.cell.rowPath[0],
                 categoryGroupId: !isAccountCell ? cellObj.cell.rowPath[1] || -1 : null,
                 categoryId: cellObj.cell.rowPath[2] ? cellObj.cell.rowPath[2] : null,
