@@ -23,6 +23,7 @@ import * as underscore from 'underscore';
 import * as Moment from 'moment';
 import { extendMoment } from 'moment-range';
 
+import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -376,6 +377,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     transactionsAverage = 0;
     startDataLoading = false;
     filteredLoad = false;
+    contentReady = false;
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -383,7 +385,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 private _cacheService: CacheService,
                 private _classificationServiceProxy: ClassificationServiceProxy,
                 public dialog: MatDialog,
-                public userPreferencesService: UserPreferencesService
+                public userPreferencesService: UserPreferencesService,
+                private _appService: AppService
     ) {
         super(injector);
         this._cacheService = this._cacheService.useStorage(0);
@@ -668,6 +671,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     );
                 } else {
                     this.cashflowData = null;
+                    this._appService.toolbarIsHidden = true;
                     this.finishLoading();
                 }
                 this.dataSource = this.getApiDataSource();
@@ -882,9 +886,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Add stub for current period */
         /** if we have no current period */
         if (
-            !cashflowData.concat(stubCashflowData).some(
-                item => item.date.format('DD.MM.YYYY')  === moment().format('DD.MM.YYYY')
-            )
+            (!this.requestFilter.startDate || this.requestFilter.startDate < moment()) &&
+            (!this.requestFilter.endDate || this.requestFilter.endDate > moment()) &&
+            !cashflowData.concat(stubCashflowData).some(item => item.date.format('DD.MM.YYYY') === moment().format('DD.MM.YYYY'))
         ) {
             /** then we add current stub day */
             stubCashflowData.push(
@@ -1000,6 +1004,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param event
      */
     onContentReady(event) {
+
+        this.contentReady = true;
+
         /** Collapse starting and ending balances rows */
         if (!this.collapsedStartingAndEndingBalance) {
             if (this.pivotGrid.instance) {
@@ -1194,7 +1201,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     changeGroupBy(event) {
         abp.ui.setBusy();
         $('.pivot-grid').addClass('invisible');
-        let value = this.groupbyItems[event.itemIndex],
+        let itemIndex = event.itemData.itemIndex !== undefined ? event.itemData.itemIndex : event.itemIndex,
+            value = this.groupbyItems[itemIndex],
             startedGroupInterval = value.groupInterval;
         this.groupInterval = startedGroupInterval;
         this.updateDateFields(startedGroupInterval);
@@ -1207,15 +1215,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     downloadData(event) {
-        let exportTo = event.itemData.text;
-        if (exportTo === this.l('Export to Excel')) {
+        let format = event.itemData.format;
+        if (format === 'xls') {
             this.pivotGrid.export.fileName = this._exportService.getFileName();
             this.pivotGrid.instance.exportToExcel();
         }
     }
 
     togglePivotGridRows(event) {
-        let levelIndex = event.itemIndex;
+        let levelIndex = event.itemData.itemIndex !== undefined ? event.itemData.itemIndex : event.itemIndex;
         let source;
         switch (levelIndex) {
             case 0:
@@ -1706,7 +1714,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     cellObj.cellElement.append(`<span class="dayEnding">${dayEnding}</span>`);
                 }
             } else if (fieldGroup === 'historicalField') {
-                fieldName = this.historicalClasses[cellObj.cell.path.pop()];
+                fieldName = this.historicalClasses[cellObj.cell.path.slice(-1)[0]];
                 if (!cellObj.cellElement.parent().hasClass('historicalRow')) {
                     cellObj.cellElement.parent().addClass('historicalRow');
                 }
@@ -1818,7 +1826,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                               [cellObj.cell.rowPath[1]] :
                               this.requestFilter.accountIds || [];
 
-            this.statsDetailFilter = new StatsDetailFilter({
+            this.statsDetailFilter = StatsDetailFilter.fromJS({
                 cashFlowTypeId: cellObj.cell.rowPath[0],
                 categoryGroupId: !isAccountCell ? cellObj.cell.rowPath[1] || -1 : null,
                 categoryId: cellObj.cell.rowPath[2] ? cellObj.cell.rowPath[2] : null,
@@ -1977,11 +1985,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     calculateSummaryValue() {
         return summaryCell => {
 
-            /** if cell is ending cash position account summary cell */
-            if (this.isEndingBalanceAccountCell(summaryCell)) {
-                return this.modifyEndingBalanceAccountCell(summaryCell);
-            }
-
             /** calculation for ending cash position value */
             if (this.isColumnGrandTotal(summaryCell)) {
                 return this.modifyGrandTotalSummary(summaryCell);
@@ -1997,9 +2000,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
              *  If the grand total is balance or ending cash position cell -
              *  get the previous value - not the total of every cell
              */
-            if (this.isRowGrandTotal(summaryCell) && this.isStartingBalanceAccountCell(summaryCell)) {
-                //console.log(summaryCell.slice(0, 'T').children()[1].value(true));
-                //return summaryCell.slice(0, 'T') ? summaryCell.slice(0, 'T').children()[1].value(true) : 0;
+            if (this.isRowGrandTotal(summaryCell) && (this.isStartingBalanceAccountCell(summaryCell) || this.isEndingBalanceAccountCell(summaryCell))) {
+                let cellAccount = this.initialData.bankAccountBalances.find(bankAccount => bankAccount.bankAccountId === summaryCell.value(summaryCell.field('row')));
+                return cellAccount ? cellAccount.balance : 0;
+            }
+
+            /** if cell is ending cash position account summary cell */
+            if (this.isEndingBalanceAccountCell(summaryCell)) {
+                return this.modifyEndingBalanceAccountCell(summaryCell);
             }
 
             /** if the value is a balance value -
@@ -2063,7 +2071,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
         return prev;
-    };
+    }
 
     /**
      * Modify the value of the starting balance account cell to have a proper calculation
@@ -2248,7 +2256,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     isEndingBalanceAccountCell(summaryCell) {
         return summaryCell.field('row') !== null &&
                summaryCell.field('row').dataField === `categorization.${this.categorization[0]}` &&
-               summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === Total &&
+               summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === Total &&
                Number.isInteger(summaryCell.value(summaryCell.field('row')));
     }
 

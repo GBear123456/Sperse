@@ -2,3 +2,18 @@
     [items]="items"
     (onItemRendered)="onItemRendered($event)">
 </dx-toolbar>
+
+<div class="adaptive-menu" *ngIf="showAdaptiveToolbar">
+    <dx-menu
+        [accessKey]="nav-menu"
+        [dataSource]="responsiveItems"
+        [selectionMode]="single"
+        [hoverStateEnabled]="true"
+        [activeStateEnabled]="false"
+        [submenuDirection]="rightOrBottom"
+        [hideSubmenuOnMouseLeave]="true"
+        [adaptivityEnabled]="true"
+        [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
+        [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}">
+    </dx-menu>
+</div>

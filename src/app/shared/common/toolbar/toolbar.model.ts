@@ -1,11 +1,13 @@
 export class ToolbarGroupModelItem {
     name: string;
     action: () => void;
-    options: object;
+    options: any;
     widget?: string;
     itemTemplate?: string;
     text?: string;
+    responsiveText?: string;
     html?: string;
+    adaptive?: boolean;
     attr?: object;
 }
 

@@ -86,10 +86,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         name: 'search',   
                         widget: 'dxTextBox',
                         options: {
+                            value: this.searchValue,
                             width: '300',
                             mode: 'search',
                             placeholder: this.l('Search') + ' ' 
-                                + this.l('Customers').toLowerCase()
+                            + this.l('Transactions').toLowerCase(),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
+                            }
                         }
                     }
                 ]
@@ -138,6 +142,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
 
         this.initToolbarConfig();
+
+        this.searchColumns = ['Description', 'CashflowCategoryGroupName', 'CashflowCategoryName'];
+        this.searchValue = '';
     }
 
     showColumnChooser() {
@@ -146,6 +153,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
+    }
+
+    searchValueChange(e: object) {
+        this.searchValue = e['value'];
+
+        this.initToolbarConfig();
+        this.processFilterInternal();
     }
 
     ngOnInit(): void {
@@ -271,8 +285,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
   
     processFilterInternal() {
+        let filters = this.cashFlowCategoryFilter.concat(this.filters);/*.push(new FilterModel({
+            component: FilterInputsComponent,
+            operator: 'contains',
+            caption: 'Description',
+            items: {
+                Description: new FilterItemModel('d')
+            }
+        }));*/
+
         this.processODataFilter(this.dataGrid.instance,
-            this.dataSourceURI, this.cashFlowCategoryFilter.concat(this.filters), 
+            this.dataSourceURI, filters, 
                 (filter) => {
                     let filterMethod = this['filterBy' +
                         this.capitalize(filter.caption)];

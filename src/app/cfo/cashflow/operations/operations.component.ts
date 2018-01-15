@@ -26,14 +26,17 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     @Output() showPreferencesDialog: EventEmitter<any> = new EventEmitter();
 
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number} = { 'items' : [], 'selectedItemIndex': null}) {
+        this._appService.toolbarIsAdaptive = true;
         this._appService.toolbarConfig = [
             {
-                location: 'before', items: [
+                location: 'before',
+                items: [
                     {
                         name: 'filters',
+                        adaptive: false,
                         action: (event) => {
                             setTimeout(this.repaint.bind(this), 1000);
-                            this._filtersService.fixed = 
+                            this._filtersService.fixed =
                                 !this._filtersService.fixed;
                         },
                         options: {
@@ -59,6 +62,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 items: [
                     {
                         name: 'search',
+                        adaptive: false,
                         widget: 'dxTextBox',
                         options: {
                             width: '300',
@@ -74,7 +78,8 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 items: [
                     {
                         name: 'select-box',
-                        text: this.l('Group By'),
+                        text: this.l('CashflowToolbar_Group_By'),
+                        responsiveText: this.l('CashflowToolbar_Group_By'),
                         widget: 'dxDropDownMenu',
                         options: {
                             width: 175,
@@ -189,18 +194,22 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                             items: [{
                                 action: Function(),
                                 text: this.l('SaveAs', 'PDF'),
+                                format: 'pdf',
                                 icon: 'pdf',
                             }, {
                                 action: this.exportTo.bind(this),
                                 text: this.l('Export to Excel'),
+                                format: 'xls',
                                 icon: 'xls',
                             }, {
                                 action: Function(),
                                 text: this.l('Export to CSV'),
+                                format: 'csv',
                                 icon: 'sheet'
                             }, {
                                 action: this.exportTo.bind(this),
                                 text: this.l('Export to Google Sheets'),
+                                format: 'gs',
                                 icon: 'sheet'
                             }]
                         }

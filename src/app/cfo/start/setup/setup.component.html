@@ -11,7 +11,7 @@
                     </div>
                     <p class="welcome-cfo">{{ l('Setup_Welcome') }}</p>
                     <p class="text-cfo">{{ l('Setup_BodyText') }}</p>
-                    <button (click)="onStart()" class="btn btn-layout">{{ l('Setup_GetStarted') }}</button>
+                    <button (click)="onStart()" class="btn btn-layout" [disabled]="isDisabled">{{ l('Setup_GetStarted') }}</button>
                 </div>
             </div>
         </div>

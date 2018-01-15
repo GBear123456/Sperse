@@ -13,6 +13,11 @@ import { httpConfiguration } from '@shared/http/httpConfiguration';
 import { ScreenHelper } from '@shared/helpers/ScreenHelper';
 import { PrimengDatatableHelper } from 'shared/helpers/PrimengDatatableHelper';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
+import { AppService } from '@app/app.service';
+
+
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 
 import buildQuery from 'odata-query';
 import * as _ from 'underscore';
@@ -38,6 +43,9 @@ export abstract class AppComponentBase {
     httpConfig: httpConfiguration;
     primengDatatableHelper: PrimengDatatableHelper;
     ui: AppUiCustomizationService;
+
+    public searchValue: string;
+    public searchColumns: string[];
 
     private _elementRef: ElementRef;
     private _applicationRef: ApplicationRef;
@@ -105,13 +113,14 @@ export abstract class AppComponentBase {
     }
 
     advancedODataFilter(grid: any, uri: string, query: any[]) {
+        let queryWithSearch = query.concat(this.getSearchFilter()); 
         grid.getDataSource()['_store']['_url'] =
-            this.getODataURL(uri, query);
+            this.getODataURL(uri, queryWithSearch);
 
         grid.refresh();
     }
 
-    processODataFilter(grid, uri, filters, getCheckCustom) {
+    processODataFilter(grid, uri, filters, getCheckCustom) {        
         this.advancedODataFilter(grid, uri,
             filters.map((filter) => {
                 return getCheckCustom(filter) || _.pairs(filter.items)
@@ -127,6 +136,38 @@ export abstract class AppComponentBase {
             })
         );
     }
+
+    getSearchFilter() {
+        let data = {};
+        let filterData: any[] = [];
+
+        if (this.searchColumns && this.searchValue) {
+            let values = this.searchValue.split(' ');
+            this.searchColumns.forEach((col) => {
+                let colFilterData: any[] = [];
+
+                values.forEach((val) => {
+                    let el = {};
+                    el[col] = {
+                        contains: val
+                    };
+                    colFilterData.push(el);
+                });
+
+                let elF = {
+                    and: colFilterData
+                };
+
+                filterData.push(elF);
+            });
+
+            data = {
+                or: filterData
+            };
+        }
+        
+        return data;
+    }   
 
     isGranted(permissionName: string): boolean {
         return this.permission.isGranted(permissionName);

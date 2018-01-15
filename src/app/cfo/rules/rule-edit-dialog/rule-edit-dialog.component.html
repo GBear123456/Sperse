@@ -166,7 +166,8 @@
                             name="max"
                             [(value)]="maxAmount">
                         </dx-number-box>
-                    </div><div class="field">
+                    </div>
+                    <div class="field">
                         <label>{{l('Format')}}</label>
                         <dx-select-box
                             placeholder=""
@@ -178,37 +179,42 @@
                     </div>
                 </div>
             </div>
+
             <div class="category">
                 <h2>{{l('THEN')}}</h2>
+
                 <h3>{{l('Use the following Standard Descriptor')}}</h3>
                 <div class="field">
-                    <dx-select-box
-                        placeholder=""
-                        [acceptCustomValue]="true"
-                        [dataSource]="attributeTypes"
-                        valueExpr="id"
-                        displayExpr="name"
-                        (onCustomItemCreating)="onCustomItemCreating($event)"
-                        (onValueChanged)="onDescriptorChanged($event)"
-                        [(value)]="descriptor">
+                    <label>{{l('Attribute')}}</label>
+                    <dx-select-box placeholder=""
+                                   [dataSource]="attributeTypes"
+                                   valueExpr="id"
+                                   displayExpr="name"
+                                   [showClearButton]="true"
+                                   [(value)]="descriptorAttribute">
                     </dx-select-box>
                 </div>
-                <h3>{{l('Assign transaction(s) to the following category')}}</h3>
+                <div class="field">
+                    <label>{{l('Descriptor')}}</label>
+                    <dx-text-box placeholder=""
+                                 [(value)]="descriptor">
+                    </dx-text-box>
+                </div>
 
-                <dx-tree-list
-                    height="570px"
-                    keyExpr="key"
-                    parentIdExpr="parent"
-                    [hoverStateEnabled]="true"
-                    [(dataSource)]="categories"
-                    [selectedRowKeys]="[data.categoryId]"
-                    [editing]="{allowAdding: true, allowUpdating: true, allowDeleting: true}"
-                    [selection]="{allowSelectAll: false, mode: 'single'}"
-                    [rootValue]="0"
-                    [autoExpandAll]="true"
-                    (onRowUpdated)="onCategoryUpdated($event)"
-                    (onRowInserted)="onCategoryInserted($event)"
-                    (onRowRemoving)="onCategoryRemoving($event)">
+                <h3>{{l('Assign transaction(s) to the following category')}}</h3>
+                <dx-tree-list height="570px"
+                              keyExpr="key"
+                              parentIdExpr="parent"
+                              [hoverStateEnabled]="true"
+                              [(dataSource)]="categories"
+                              [selectedRowKeys]="[data.categoryId]"
+                              [editing]="{allowAdding: true, allowUpdating: true, allowDeleting: true}"
+                              [selection]="{allowSelectAll: false, mode: 'single'}"
+                              [rootValue]="0"
+                              [autoExpandAll]="true"
+                              (onRowUpdated)="onCategoryUpdated($event)"
+                              (onRowInserted)="onCategoryInserted($event)"
+                              (onRowRemoving)="onCategoryRemoving($event)">
                     <dxi-column dataField="name"></dxi-column>
                 </dx-tree-list>
             </div>

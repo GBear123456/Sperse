@@ -7,7 +7,7 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { AbpModule } from '@abp/abp.module';
 import { CommonModule } from '@shared/common/common.module';
 
-import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule } from 'devextreme-angular';
+import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule, DxMenuModule } from 'devextreme-angular';
 
 import { ToolBarComponent } from './toolbar/toolbar.component';
 import { HeadLineComponent } from './headline/headline.component';
@@ -36,9 +36,10 @@ import { PaginatorModule } from 'primeng/primeng';
         PaginatorModule,
 
         DxListModule,
-        DxButtonModule, 
+        DxButtonModule,
         DxToolbarModule,
-        DxDropDownBoxModule
+        DxDropDownBoxModule,
+        DxMenuModule
     ],
     declarations: [
         TimeZoneComboComponent,
