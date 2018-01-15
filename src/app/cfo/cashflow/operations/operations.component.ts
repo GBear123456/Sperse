@@ -36,7 +36,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                         adaptive: false,
                         action: (event) => {
                             setTimeout(this.repaint.bind(this), 1000);
-                            this._filtersService.fixed = 
+                            this._filtersService.fixed =
                                 !this._filtersService.fixed;
                         },
                         options: {
