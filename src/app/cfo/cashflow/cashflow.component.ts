@@ -882,9 +882,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Add stub for current period */
         /** if we have no current period */
         if (
-            !cashflowData.concat(stubCashflowData).some(
-                item => item.date.format('DD.MM.YYYY')  === moment().format('DD.MM.YYYY')
-            )
+            (!this.requestFilter.startDate || this.requestFilter.startDate < moment()) &&
+            (!this.requestFilter.endDate || this.requestFilter.endDate > moment()) &&
+            !cashflowData.concat(stubCashflowData).some(item => item.date.format('DD.MM.YYYY') === moment().format('DD.MM.YYYY'))
         ) {
             /** then we add current stub day */
             stubCashflowData.push(
