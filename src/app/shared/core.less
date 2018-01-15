@@ -674,12 +674,13 @@ button {
         text-indent: unset !important;
         background-image: none !important;
     }
+
     .modal-header {
         padding: 15px 25px;
         background: #f3f7fa;
         border-bottom: 1px solid #eaeef0;
         button.close {
-            margin-top: -7px !important;
+            margin-top: -20px !important;
         }
         .control-buttons {
             float: right;
@@ -709,11 +710,14 @@ button {
             margin: 0;
             line-height: 1.85;
             font-family: Montserrat;
-            // font-weight: normal;
+            flex: 1 auto;
             color: #424c56;
         }
     }
     
+    .modal-dialog {
+        max-width: 100%;
+    }
     
     .modal-body {
         position: relative;
@@ -773,7 +777,7 @@ button {
     transition: opacity 0.3s linear, left 0.3s ease-out;
 }
 
-.modal.left.fade.in .modal-dialog{
+.modal.left.fade.show .modal-dialog{
     left: 0;
 }
 
@@ -786,7 +790,7 @@ button {
     transition: opacity 0.3s linear, right 0.3s ease-out;
 }
 
-.modal.right.fade.in .modal-dialog {
+.modal.right.fade.show .modal-dialog {
     right: 0;
 }
 
