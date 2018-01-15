@@ -23,6 +23,7 @@ import * as underscore from 'underscore';
 import * as Moment from 'moment';
 import { extendMoment } from 'moment-range';
 
+import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -384,7 +385,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 private _cacheService: CacheService,
                 private _classificationServiceProxy: ClassificationServiceProxy,
                 public dialog: MatDialog,
-                public userPreferencesService: UserPreferencesService
+                public userPreferencesService: UserPreferencesService,
+                private _appService: AppService
     ) {
         super(injector);
         this._cacheService = this._cacheService.useStorage(0);
@@ -669,6 +671,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     );
                 } else {
                     this.cashflowData = null;
+                    this._appService.toolbarIsHidden = true;
                     this.finishLoading();
                 }
                 this.dataSource = this.getApiDataSource();
@@ -2068,7 +2071,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
         return prev;
-    };
+    }
 
     /**
      * Modify the value of the starting balance account cell to have a proper calculation

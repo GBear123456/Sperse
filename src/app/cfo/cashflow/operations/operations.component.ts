@@ -26,7 +26,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     @Output() showPreferencesDialog: EventEmitter<any> = new EventEmitter();
 
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number} = { 'items' : [], 'selectedItemIndex': null}) {
-        this._appService.adaptive = true;
+        this._appService.toolbarIsAdaptive = true;
         this._appService.toolbarConfig = [
             {
                 location: 'before',

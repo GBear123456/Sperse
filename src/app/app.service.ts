@@ -23,7 +23,8 @@ export class AppService {
     public topMenu: PanelMenu;
 
     public toolbarConfig: any;
-    public adaptive = false;
+    public toolbarIsAdaptive = false;
+    public toolbarIsHidden  = false;
     public params: any;
 
     constructor() {
@@ -43,7 +44,7 @@ export class AppService {
     getModuleParams() {
         return {
             instance: (/\/app\/\w+\/(\w+)\//.exec(location.pathname) || ['']).pop().toLowerCase()
-        }
+        };
     }
 
     getModuleConfig(name: string) {
@@ -84,7 +85,7 @@ export class AppService {
     }
 
     replaceParams(url: string, params: {}) {
-        var urlObj: UrlTree = new DefaultUrlSerializer().parse(url);
+        let urlObj: UrlTree = new DefaultUrlSerializer().parse(url);
         if (urlObj.root.children.primary) {
             return '/' + urlObj.root.children.primary.segments
                 .map(segment => {
