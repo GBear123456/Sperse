@@ -1,10 +1,7 @@
 <div class="sidebar-filter-links" *ngIf="filters.length">
     <dx-scroll-view [showScrollbar]="onHover">
         <div class="filter-title">
-            <dx-button
-              [text]="ls('Platform', 'Sort')"
-              [iconSrc]="'assets/common/icons/sort-icon-down.svg'"
-            ></dx-button>
+            <h3>{{ls('Platform', 'Filters')}}</h3>
             <button class="clear-all" (click)="clearAllFilters()">
                 {{ls('Platform', 'ClearAll')}}
             </button>
