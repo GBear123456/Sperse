@@ -258,7 +258,7 @@ export class ToolBarComponent extends AppComponentBase {
                         text: item.text || mergedConfig.text || mergedConfig.hint,
                         items: responsiveSubitems,
                         onClick: item.action
-                    })
+                    });
                 }
             });
         });
