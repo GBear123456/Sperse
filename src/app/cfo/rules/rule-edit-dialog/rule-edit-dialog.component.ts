@@ -267,7 +267,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                             UpdateTransactionsCategoryInput.fromJS({
                                 transactionIds: this.data.transactionIds,
                                 categoryId: this.getSelectedCategoryId(),
-                                standardDescriptor: (this.descriptorAttribute && this.transactionAttributeTypes[this.descriptorAttribute]) || this.descriptor
+                                standardDescriptor: this.descriptor,
+                                descriptorAttributeTypeId: this.descriptorAttribute
                             })
                         ).subscribe((error) => {
                             if (!error) {
