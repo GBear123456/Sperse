@@ -37,6 +37,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     banks: any;
     accounts: any;
     categories: any = [];
+    descriptorAttribute: string; 
     descriptor: string;
     attributes: any = [];
     keywords: any = [];
@@ -96,7 +97,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
         if (this.data.id)
             _classificationServiceProxy.getRuleForEdit(InstanceType[this.instanceType], this.instanceId, this.data.id).subscribe((rule) => {
-                this.descriptor = rule.transactionDescriptorAttributeTypeId || rule.transactionDescriptor;
+                this.descriptor = rule.transactionDescriptor;
+                this.descriptorAttribute = rule.transactionDescriptorAttributeTypeId;
                 this.data.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
                 this.data.title = rule.name;
                 if (rule.condition) {
@@ -200,8 +202,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             parentId: this.data.parentId,
             categoryId: this.getSelectedCategoryId(),
             sourceTransactionList: this.data.transactionIds,
-            transactionDescriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
-            transactionDescriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
+            transactionDescriptor: this.descriptor,
+            transactionDescriptorAttributeTypeId: this.descriptorAttribute,
             applyOption: (this.data.id ? EditRuleDtoApplyOption : CreateRuleDtoApplyOption)[
                 this.data.options[0].value ? 'MatchedAndUnclassified' : 'SelectedOnly'
             ],
@@ -265,7 +267,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                             UpdateTransactionsCategoryInput.fromJS({
                                 transactionIds: this.data.transactionIds,
                                 categoryId: this.getSelectedCategoryId(),
-                                standardDescriptor: this.transactionAttributeTypes[this.descriptor] || this.descriptor
+                                standardDescriptor: (this.descriptorAttribute && this.transactionAttributeTypes[this.descriptorAttribute]) || this.descriptor
                             })
                         ).subscribe((error) => {
                             if (!error) {
@@ -357,10 +359,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             return this.notify.error(this.l('RuleDialog_CategoryError'));
 
         return true;
-    }
-
-    onCustomItemCreating($event) {
-        this.descriptor = $event.text;
     }
 
     onInitNewKeyword($event) {
