@@ -18488,6 +18488,7 @@ export class UpdateTransactionsCategoryInput implements IUpdateTransactionsCateg
     transactionIds: number[];
     categoryId: number;
     standardDescriptor: string;
+    descriptorAttributeTypeId: string;
 
     constructor(data?: IUpdateTransactionsCategoryInput) {
         if (data) {
@@ -18507,6 +18508,7 @@ export class UpdateTransactionsCategoryInput implements IUpdateTransactionsCateg
             }
             this.categoryId = data["categoryId"];
             this.standardDescriptor = data["standardDescriptor"];
+            this.descriptorAttributeTypeId = data["descriptorAttributeTypeId"];
         }
     }
 
@@ -18525,6 +18527,7 @@ export class UpdateTransactionsCategoryInput implements IUpdateTransactionsCateg
         }
         data["categoryId"] = this.categoryId;
         data["standardDescriptor"] = this.standardDescriptor;
+        data["descriptorAttributeTypeId"] = this.descriptorAttributeTypeId;
         return data; 
     }
 }
@@ -18533,12 +18536,14 @@ export interface IUpdateTransactionsCategoryInput {
     transactionIds: number[];
     categoryId: number;
     standardDescriptor: string;
+    descriptorAttributeTypeId: string;
 }
 
 export class UpdateTransactionsCategoryWithFilterInput implements IUpdateTransactionsCategoryWithFilterInput {
     transactionFilter: StatsDetailFilterBase;
     destinationCategoryId: number;
     standardDescriptor: string;
+    descriptorAttributeTypeId: string;
 
     constructor(data?: IUpdateTransactionsCategoryWithFilterInput) {
         if (data) {
@@ -18554,6 +18559,7 @@ export class UpdateTransactionsCategoryWithFilterInput implements IUpdateTransac
             this.transactionFilter = data["transactionFilter"] ? StatsDetailFilterBase.fromJS(data["transactionFilter"]) : <any>undefined;
             this.destinationCategoryId = data["destinationCategoryId"];
             this.standardDescriptor = data["standardDescriptor"];
+            this.descriptorAttributeTypeId = data["descriptorAttributeTypeId"];
         }
     }
 
@@ -18568,6 +18574,7 @@ export class UpdateTransactionsCategoryWithFilterInput implements IUpdateTransac
         data["transactionFilter"] = this.transactionFilter ? this.transactionFilter.toJSON() : <any>undefined;
         data["destinationCategoryId"] = this.destinationCategoryId;
         data["standardDescriptor"] = this.standardDescriptor;
+        data["descriptorAttributeTypeId"] = this.descriptorAttributeTypeId;
         return data; 
     }
 }
@@ -18576,6 +18583,7 @@ export interface IUpdateTransactionsCategoryWithFilterInput {
     transactionFilter: StatsDetailFilterBase;
     destinationCategoryId: number;
     standardDescriptor: string;
+    descriptorAttributeTypeId: string;
 }
 
 export class StatsDetailFilterBase implements IStatsDetailFilterBase {
