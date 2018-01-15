@@ -13,7 +13,7 @@
 ></cashflow-operations>
 
 <div class="cashflow" *ngIf="cashflowData && cashflowData.length">
-    <div class="sort-options">
+    <div class="sort-options" [hidden]="!contentReady">
         <app-sorting [sortings]="sortings" (sortingChange)="resortPivotGrid($event)"></app-sorting>
     </div>
     <dx-scroll-view>

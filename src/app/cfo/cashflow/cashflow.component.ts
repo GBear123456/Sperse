@@ -376,6 +376,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     transactionsAverage = 0;
     startDataLoading = false;
     filteredLoad = false;
+    contentReady = false;
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -1000,6 +1001,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param event
      */
     onContentReady(event) {
+
+        this.contentReady = true;
+
         /** Collapse starting and ending balances rows */
         if (!this.collapsedStartingAndEndingBalance) {
             if (this.pivotGrid.instance) {
@@ -1978,11 +1982,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     calculateSummaryValue() {
         return summaryCell => {
 
-            /** if cell is ending cash position account summary cell */
-            if (this.isEndingBalanceAccountCell(summaryCell)) {
-                return this.modifyEndingBalanceAccountCell(summaryCell);
-            }
-
             /** calculation for ending cash position value */
             if (this.isColumnGrandTotal(summaryCell)) {
                 return this.modifyGrandTotalSummary(summaryCell);
@@ -1998,9 +1997,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
              *  If the grand total is balance or ending cash position cell -
              *  get the previous value - not the total of every cell
              */
-            if (this.isRowGrandTotal(summaryCell) && this.isStartingBalanceAccountCell(summaryCell)) {
-                //console.log(summaryCell.slice(0, 'T').children()[1].value(true));
-                //return summaryCell.slice(0, 'T') ? summaryCell.slice(0, 'T').children()[1].value(true) : 0;
+            if (this.isRowGrandTotal(summaryCell) && (this.isStartingBalanceAccountCell(summaryCell) || this.isEndingBalanceAccountCell(summaryCell))) {
+                let cellAccount = this.initialData.bankAccountBalances.find(bankAccount => bankAccount.bankAccountId === summaryCell.value(summaryCell.field('row')));
+                return cellAccount ? cellAccount.balance : 0;
+            }
+
+            /** if cell is ending cash position account summary cell */
+            if (this.isEndingBalanceAccountCell(summaryCell)) {
+                return this.modifyEndingBalanceAccountCell(summaryCell);
             }
 
             /** if the value is a balance value -
@@ -2249,7 +2253,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     isEndingBalanceAccountCell(summaryCell) {
         return summaryCell.field('row') !== null &&
                summaryCell.field('row').dataField === `categorization.${this.categorization[0]}` &&
-               summaryCell.parent() && summaryCell.parent().value(summaryCell.parent('row').field('row')) === Total &&
+               summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === Total &&
                Number.isInteger(summaryCell.value(summaryCell.field('row')));
     }
 
