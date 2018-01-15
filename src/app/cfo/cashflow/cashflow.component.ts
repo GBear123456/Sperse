@@ -1842,7 +1842,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     component.clickCount = 0;
                 }, 350);
             } else if (component.clickCount == 2) {
-                if (((new Date()) - component.lastClickTime) < 300) {
+                if (((+new Date()) - component.lastClickTime) < 300) {
                     this.getStatsDetails(this.statsDetailFilter);
                 }
                 component.clickCount = 0;
