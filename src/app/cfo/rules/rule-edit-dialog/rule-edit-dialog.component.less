@@ -129,16 +129,6 @@
                 color: #202b35;
             }
 
-            .rule {
-                div.field {
-                    display: inline-flex;
-                    width: 48%;
-                    &:nth-child(2n + 1) {
-                        margin-right: 2%;
-                    }
-                }
-            }
-
             div.field {
                 justify-content: space-between;
                 dx-number-box {
@@ -194,7 +184,7 @@
                     color: #424c56;
                 }
             }
-            .rule {
+            .rule, .category {
                 width: 541px;
                 position: relative;
                 label {
@@ -235,6 +225,13 @@
                         align-self: center;
                         margin-top: 24px;
                         margin-bottom: 16px;
+                    }
+                }
+                div.field {
+                    display: inline-flex;
+                    width: 48%;
+                    &:nth-child(2n + 1) {
+                        margin-right: 2%;
                     }
                 }
                 /deep/ dx-radio-group {
@@ -311,11 +308,9 @@
                     margin-bottom: 40px;
                 }
 
-                dx-select-box {
+                dx-select-box, dx-text-box {
                     /deep/ input {
-                        border: solid 1px #e5e9ec;
-                        background-color: #ffffff;
-                        border-radius: 4px;
+                        background-color: #F9FBFC;
                     }
                 }
 
