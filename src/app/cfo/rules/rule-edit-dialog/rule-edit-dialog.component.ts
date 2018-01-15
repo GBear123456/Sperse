@@ -25,7 +25,6 @@ import * as _ from 'underscore';
 export class RuleDialogComponent extends CFOModalDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @ViewChild(DxTreeViewComponent) transactionTypesList: DxTreeViewComponent;
-    @ViewChild('keywordsComponent') keywordList: DxDataGridComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
     showSelectedTransactions = false;
     minAmount: number;
@@ -45,6 +44,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     conditionTypes: any;
     categorization: any;
     addedCategoryItems: any = {};
+    attributesAndKeywords: any = [];
     
     private transactionAttributeTypes: any;
 
@@ -53,6 +53,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     transactionCategories: any;
     selectedTransactionCategory: string;
     selectedTransactionTypes: string[] = [];
+    showAttributeConditions = true;
 
     constructor(
         injector: Injector,
@@ -77,7 +78,10 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         });
 
         _transactionsServiceProxy.getTransactionAttributeTypes(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
-            let types = [];
+            let types = [{
+                id: 'keyword',
+                name: 'Keyword'
+            }];
             this.transactionAttributeTypes = data.transactionAttributeTypes;
             _.mapObject(data.transactionAttributeTypes, (val, key) => {
                 types.push({
@@ -107,6 +111,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.maxAmount = rule.condition.maxAmount;
                     this.keywords = this.getKeywordsFromString(rule.condition.descriptionWords);
                     this.attributes = rule.condition.attributes ? _.values(rule.condition.attributes) : [];
+                    this.attributesAndKeywords = this.getAtributesAndKeywords();
                     this.selectedTransactionCategory = rule.condition.transactionCategoryId;
                     this.selectedTransactionTypes = rule.condition.transactionTypes;
                 }
@@ -121,6 +126,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.descriptor = data.standardDescriptor;
                     this.keywords = this.getKeywordsFromString(data.descriptionPhrases.join(','));
                     this.attributes = this.getAttributesFromCommonDetails(data.attributes);
+                    this.attributesAndKeywords = this.getAtributesAndKeywords();
                     this.selectedTransactionCategory = data.transactionCategoryId;
                     this.selectedTransactionTypes = [data.transactionTypeId];
                 });
@@ -131,12 +137,12 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     getKeywordsFromString(value: string) {
         return value &&
             value.split(',').map((keyword, index) => {
-                            return {
-                                caption: 'Keyword #' + index,
-                                keyword: keyword
-                            };
-                        }) || [];
-                }
+                return {
+                    caption: 'Keyword #' + index,
+                    keyword: keyword
+                };
+            }) || [];
+    }
 
     getAttributesFromCommonDetails(attributes: TransactionAttributeDto[]) {
         if (!attributes || !attributes.length) return [];
@@ -295,9 +301,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         });
     }
 
-    ngAfterViewInit() {
-    }
-
     getSelectedCategoryId() {
         let selected = this.categoryList.instance.getSelectedRowKeys(),
             key = selected.length && selected[0];
@@ -305,26 +308,28 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     getDescriptionKeywords() {
-        let list = this.keywordList.instance.getVisibleRows();
-        return list.map((row) => {
-            return row.data['keyword'];
+        return this.keywords.map((row) => {
+            return row['keyword'];
         }).join(',') || '';
+    }
+
+    getAtributesAndKeywords() {
+        return this.attributes.concat(this.keywords.map((item) => {
+            return {
+                attributeTypeId: 'keyword',
+                conditionTypeId: '',
+                conditionValue: item.keyword
+            };
+        }));
     }
 
     getAttributes() {
         let attributes = {};
-        let list = this.attributeList.instance.getVisibleRows();
-        list.forEach((v) => attributes[v.data["attributeTypeId"]] = ConditionAttributeDto.fromJS(v.data));
+        let list = this.attributeList.instance.getVisibleRows().filter((item) => {
+            return (item.data.attributeTypeId != 'keyword');
+        }).forEach((v) => attributes[v.data["attributeTypeId"]] = ConditionAttributeDto.fromJS(v.data));
 
         return attributes;
-    }
-
-    addAttributeRow() {
-        this.attributeList.instance.addRow();
-    }
-    
-    addKeywordRow() {
-        this.keywordList.instance.addRow();
     }
 
     onBankChanged($event) {
@@ -345,6 +350,9 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     validate(ruleCheckOnly: boolean = false) {
+        if (!this.data.title)
+            return this.notify.error(this.l('RuleDialog_NameError'));
+
         if (!ruleCheckOnly) {
             if (!this.getDescriptionKeywords() && !Object.keys(this.getAttributes()).length)
                 return this.notify.error(this.l('RuleDialog_AttributeOrKeywordRequired'));
@@ -361,10 +369,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     onCustomItemCreating($event) {
         this.descriptor = $event.text;
-    }
-
-    onInitNewKeyword($event) {
-        $event.data['caption'] = 'Keyword #' + this.keywords.length;
     }
 
     getCategoryItemId(key) {
@@ -480,5 +484,49 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 component.selectItem(value);
             }).bind(this));
         }
+    }
+
+    addAttributeRow() {
+        this.attributeList.instance.addRow();
+    }   
+
+    onAttributeRowPrepared($event) {
+        if ($event.cells[0].value == "keyword")
+            setTimeout(() => {
+                $event.cells[1].cellElement.hide();
+                $event.cells[2].cellElement.attr('colspan', '2');
+            }, 0);
+        
+        if ($event.cells[1].value == "Exist") 
+            setTimeout(() => {
+                $event.cells[2].value = '-';
+                $event.cells[2].cellElement.hide();
+                $event.cells[0].cellElement.attr('colspan', '2');
+            }, 0);
+    }
+
+    updateKeywordList($event) {
+        this.keywords = this.attributeList.instance.getVisibleRows().filter((item) => {
+            return (item.data.attributeTypeId == 'keyword');
+        }).map((item, i) => {
+            return {
+                caption: 'Keyword #' + i,
+                keyword: item.data.conditionValue
+            };        
+        });
+    }
+
+    setCellValue(newData, value) {
+        this['defaultSetCellValue'](newData, value);
+    }      
+
+    onDescriptorChanged($event) {
+        if (!this.data.title && $event.value)
+            this.data.title = $event.value;
+    }
+
+    onAttributeInitNewRow($event) {
+        $event.data.attributeTypeId = 'keyword';
+        $event.data.conditionTypeId = 'Equal';
     }
 }

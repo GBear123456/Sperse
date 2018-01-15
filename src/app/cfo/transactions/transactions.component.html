@@ -17,6 +17,7 @@
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
+                                  [columnResizingMode]="'widget'"
                                   (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                                   (onSelectionChanged)="onSelectionChanged($event)">
                         <dxo-selection
