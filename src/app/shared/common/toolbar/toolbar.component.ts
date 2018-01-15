@@ -1,6 +1,6 @@
-import {Component, Injector, Input, Output, EventEmitter} from '@angular/core';
-import {AppComponentBase} from '@shared/common/app-component-base';
-import {ToolbarGroupModel, ToolbarGroupModelItem} from './toolbar.model';
+import { Component, Injector, Input, Output, EventEmitter, HostListener, HostBinding } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { ToolbarGroupModel, ToolbarGroupModelItem } from './toolbar.model';
 
 import * as _ from 'underscore';
 
@@ -10,7 +10,19 @@ import * as _ from 'underscore';
     styleUrls: ['./toolbar.component.less']
 })
 export class ToolBarComponent extends AppComponentBase {
+    @Input('adaptive') adaptive = false;
+    private _config: ToolbarGroupModel[];
+    @Input()
+    set config(config: ToolbarGroupModel[]) {
+        this._config = config;
+        this.toogleToolbarMenu();
+        this.initToolbarItems();
+    }
+    @HostBinding('style.display') display: string;
+    public items = [];
+    public responsiveItems = [];
     public options = {};
+    public showAdaptiveToolbar: boolean;
     private supportedButtons = {
         search: {
             accessKey: 'search'
@@ -86,7 +98,7 @@ export class ToolBarComponent extends AppComponentBase {
             iconSrc: this.getImgURI('edit-pencil-icon')
         },
         rules: {
-            text: this.l('Preferences'),
+            text: this.l('CashflowToolbar_User_Preferences'),
             iconSrc: this.getImgURI('preferences-icon')
         },
         expand: {
@@ -126,31 +138,23 @@ export class ToolBarComponent extends AppComponentBase {
         }
     };
 
-    private _config: ToolbarGroupModel[];
-    @Input()
-    set config(config: ToolbarGroupModel[]) {
-        this._config = config;
-        this.initToolbarItems();
-    }
-
-    @Output() onApply = new EventEmitter();
-
-    public items = [];
-
     constructor(injector: Injector) {
         super(injector);
+    }
+    @HostListener('window:resize') onResize() {
+        this.toogleToolbarMenu();
+        this.initToolbarItems();
     }
 
     private toolbarItemAction(item: ToolbarGroupModelItem, group: ToolbarGroupModel, event: any) {
         if (item.action)
             item.action.call(this, event);
-       
         if (group.areItemsDependent)
             group.items.forEach((i, index) => {
                 $('.dx-button[accesskey=' + i.name + ']').removeAttr('button-pressed');
             });
 
-        var checkPressed = item.options && item.options['checkPressed'];
+        let checkPressed = item.options && item.options['checkPressed'];
         if (checkPressed)
             event.element.attr('button-pressed', Boolean(checkPressed.call(this)));
     }
@@ -162,7 +166,7 @@ export class ToolBarComponent extends AppComponentBase {
     getDropDownItemTemplate(link, width) {
         return {
             item: '<div class="toolbar-dropdown-item" ' + (width ? 'style="width:' + width + 'px;"' : '') + '>' +
-            (link.icon ? '<img src="' + this.getImgURI(link.icon) + '">' : '') + link.text + '</div>',
+            (link.icon ? '<img style="margin-right: 15px; position: relative; top: -2px;" src="' + this.getImgURI(link.icon) + '">' : '') + link.text + '</div>',
             downloadOptions: '<div class="toolbar-download-options" onclick="event.stopPropagation()">' +
             '<div><input type="radio" name="export" value="all" checked><label>' + this.l('Export all data') + '</label></div>' +
             '<div><input type="radio" name="export" value="selected"><label>' + this.l('Export selected') + '</label></div>' +
@@ -193,8 +197,15 @@ export class ToolBarComponent extends AppComponentBase {
                 $event.itemData.options.mouseout);
     }
 
+    toogleToolbarMenu() {
+        this.showAdaptiveToolbar = this.adaptive && window.innerWidth < 1500;
+        if (this.showAdaptiveToolbar)
+            this.display = 'flex';
+    }
+
     initToolbarItems() {
         let items = [];
+        let responsiveItems = [];
         this._config.forEach((group) => {
             let count = group.items.length;
             group.items.forEach((item, index) => {
@@ -212,23 +223,46 @@ export class ToolBarComponent extends AppComponentBase {
                         };
                     });
                 }
-                items.push({
-                    location: group.location,
-                    widget: (item.text !== undefined || item.html !== undefined) && !item.widget ? null : item.widget || 'dxButton',
-                    text: !item.widget && item.text,
-                    html: !item.widget && item.html,
-                    itemTemplate: item.itemTemplate || group.itemTemplate,
-                    options: _.extend({
-                        onClick: (e) => this.toolbarItemAction(item, group, e),
-                        elementAttr: _.extend({
-                            'group-item-position': index ? (isLast ? 'last' : 'inside') : (isLast ? 'single' : 'first'),
-                            'group-item-count': count,
-                            'group-item-index': count - index
-                        }, this.getElementAttr(item))
-                    }, _.extend(this.supportedButtons[item.name] || {}, item.options))
-                });
+                let internalConfig = this.supportedButtons[item.name];
+                let mergedConfig = _.extend(internalConfig || {}, item.options);
+                if (item.adaptive === false || !this.showAdaptiveToolbar) {
+                    items.push({
+                        location: group.location,
+                        widget: (item.text !== undefined || item.html !== undefined) && !item.widget ? null : item.widget || 'dxButton',
+                        text: !item.widget && item.text,
+                        html: !item.widget && item.html,
+                        itemTemplate: item.itemTemplate || group.itemTemplate,
+                        options: _.extend({
+                            onClick: (e) => this.toolbarItemAction(item, group, e),
+                            elementAttr: _.extend({
+                                'group-item-position': index ? (isLast ? 'last' : 'inside') : (isLast ? 'single' : 'first'),
+                                'group-item-count': count,
+                                'group-item-index': count - index
+                            }, this.getElementAttr(item))
+                        }, mergedConfig)
+                    });
+                }
+                if (this.showAdaptiveToolbar && item.adaptive !== false) {
+                    let responsiveSubitems;
+                    if (item.options && item.options.items) {
+                        /** clone array */
+                        responsiveSubitems = item.options.items.map(a => ({...a}));
+                        responsiveSubitems.forEach((responsiveSubitem, subitemIndex) => {
+                            responsiveSubitem.itemIndex = subitemIndex;
+                            if (responsiveSubitem.html)
+                                delete responsiveSubitem.text;
+                                delete responsiveSubitem.icon;
+                        });
+                    }
+                    responsiveItems.push({
+                        text: item.text || mergedConfig.text || mergedConfig.hint,
+                        items: responsiveSubitems,
+                        onClick: item.action
+                    })
+                }
             });
         });
         this.items = items;
+        this.responsiveItems = responsiveItems;
     }
 }
