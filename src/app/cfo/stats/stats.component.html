@@ -4,7 +4,6 @@
 
 <app-toolbar [(config)]="toolbarConfig"></app-toolbar>
 <div class="mainStatsView">
-    <a *ngIf="statsData && statsData.length" (click)="showSourceDataWidget()" class="showSourceButton" mat-raised-button>{{l('Show source data')}}</a>
     <source-data [ngClass]="{'showen': showSourceData}"
                  (onClose)="hideSourceDataWidget()"
                  [historicalSourceData]="historicalSourceData"

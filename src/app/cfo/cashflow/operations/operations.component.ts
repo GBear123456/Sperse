@@ -78,8 +78,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 items: [
                     {
                         name: 'select-box',
-                        text: this.l('CashflowToolbar_Group_By'),
-                        responsiveText: this.l('CashflowToolbar_Group_By'),
+                        text: this.ls('CFO', 'CashflowToolbar_Group_By'),
                         widget: 'dxDropDownMenu',
                         options: {
                             width: 175,

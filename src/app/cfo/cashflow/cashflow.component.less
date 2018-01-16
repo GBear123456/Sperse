@@ -68,6 +68,7 @@
                                 top: -1px;
                                 width: 12px;
                                 height: 7px;
+                                transform: rotate(180deg);
                             }
 
                             &.closed {
@@ -75,6 +76,9 @@
                                 height: 5px;
                                 .closed-head-cell {
                                     display: block;
+                                }
+                                &:after {
+                                    transform: rotate(0deg);
                                 }
                             }
                         }
@@ -633,6 +637,14 @@
                             background-color: #f3f7fa;
                             &:after {
                                 display: none;
+                            }
+                        }
+                        .editModel {
+                            position: absolute;
+                            z-index: 1;
+                            top: 0;
+                            input {
+                                width: 100%;
                             }
                         }
                     }

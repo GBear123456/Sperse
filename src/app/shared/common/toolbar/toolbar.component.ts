@@ -98,7 +98,7 @@ export class ToolBarComponent extends AppComponentBase {
             iconSrc: this.getImgURI('edit-pencil-icon')
         },
         rules: {
-            text: this.l('CashflowToolbar_User_Preferences'),
+            text: this.ls('CFO', 'CashflowToolbar_User_Preferences'),
             iconSrc: this.getImgURI('preferences-icon')
         },
         expand: {
