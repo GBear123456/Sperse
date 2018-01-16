@@ -12,10 +12,11 @@ import * as _ from 'lodash';
   styleUrls: ['./dashboard.component.less']
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    public headlineConfig = { 
-      names: [this.l('Dashboard')], 
+    private rootComponent: any;
+    public headlineConfig = {
+      names: [this.l('Dashboard')],
       text: this.l('statistics and reports'),
-      icon: 'globe', 
+      icon: 'globe',
       buttons: []
     };
 
@@ -27,9 +28,11 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngAfterViewInit(): void {
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
     }
 
     ngOnDestroy() {
-
+        this.rootComponent.overflowHidden();
     }
-};
+}
