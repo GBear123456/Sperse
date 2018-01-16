@@ -1,11 +1,18 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
+import { AppService } from '@app/app.service';
 
 import { ClassificationServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 
 import { MatDialog } from '@angular/material';
 import { RuleDialogComponent } from './rule-edit-dialog/rule-edit-dialog.component';
+
+import { FiltersService } from '@shared/filters/filters.service';
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterItemModel } from '@shared/filters/models/filter-item.model';
+import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
+import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxTreeListComponent } from 'devextreme-angular';
@@ -22,10 +29,11 @@ import * as moment from 'moment';
     providers: [ClassificationServiceProxy]
 })
 export class RulesComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxTreeListComponent) theeList: DxTreeListComponent;
+    @ViewChild(DxTreeListComponent) treeList: DxTreeListComponent;
 
     private rootComponent: any;
     public ruleTreeList: any = [];
+    private filters: FilterModel[];
     public headlineConfig = {
         names: [this.l('Manage rules')],
         iconSrc: 'assets/common/icons/manage-icon.svg',
@@ -37,21 +45,59 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
             }
         ]
     };
-    private toolbarConfig: any = [
-        {
-            location: 'after', items: [
-                { name: 'fullscreen', action: this.fullscreen.bind(this) },
-                { name: 'refresh', action: this.refreshList.bind(this) }
-            ]
-        }
-    ];
-
 
     constructor(injector: Injector,
         public dialog: MatDialog,
+        public filtersService: FiltersService,
+        private _appService: AppService,
         private _ClassificationService: ClassificationServiceProxy
     ) {
         super(injector);
+
+        this.initToolbarConfig();
+        this.filtersService.localizationSourceName = this.localizationSourceName;
+    }
+
+    initToolbarConfig() {
+        this._appService.toolbarConfig = [
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'filters',
+                        adaptive: false,
+                        action: (event) => {
+                            setTimeout(() => {
+                                this.treeList.instance.repaint();
+                            }, 1000);
+                            this.filtersService.fixed =
+                                !this.filtersService.fixed;
+                        },
+                        options: {
+                            checkPressed: () => {
+                                return this.filtersService.fixed;
+                            },
+                            mouseover: (event) => {
+                                this.filtersService.enable();
+                            },
+                            mouseout: (event) => {
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
+                            }
+                        },
+                        attr: {
+                            'filter-selected': this.filtersService.hasFilterSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    { name: 'fullscreen', action: this.fullscreen.bind(this) },
+                    { name: 'refresh', action: this.refreshList.bind(this) }
+                ]
+            }
+        ];
     }
 
     refreshList() {
@@ -112,6 +158,24 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                   }), 'order');
             });
 
+        this.filtersService.setup(
+            this.filters = [
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'Name',
+                    items: { Name: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    operator: { from: 'ge', to: 'le' },
+                    caption: 'Date',
+                    field: 'Date',
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                })
+            ]
+        );
+
     }
 
     ngAfterViewInit(): void {
@@ -121,6 +185,9 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
+        this.filtersService.localizationSourceName
+            = AppConsts.localization.defaultLocalizationSourceName;
+        this.filtersService.unsubscribe();
 
         super.ngOnDestroy();
     }

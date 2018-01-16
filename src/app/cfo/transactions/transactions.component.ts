@@ -285,17 +285,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
   
     processFilterInternal() {
-        let filters = this.cashFlowCategoryFilter.concat(this.filters);/*.push(new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'Description',
-            items: {
-                Description: new FilterItemModel('d')
-            }
-        }));*/
-
         this.processODataFilter(this.dataGrid.instance,
-            this.dataSourceURI, filters, 
+            this.dataSourceURI, this.cashFlowCategoryFilter.concat(this.filters), 
                 (filter) => {
                     let filterMethod = this['filterBy' +
                         this.capitalize(filter.caption)];

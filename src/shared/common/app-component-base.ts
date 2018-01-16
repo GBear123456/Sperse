@@ -46,6 +46,9 @@ export abstract class AppComponentBase {
 
     public searchValue: string;
     public searchColumns: string[];
+    public _wordRegex = /\b(\w|')+\b/gim;
+    public _removeFromEnd = ['at', 'on', 'and'];
+    public _remove = ['and', 'or', 'no', 'if', 'from', 'to', 'etc', 'for', 'like at'];
 
     private _elementRef: ElementRef;
     private _applicationRef: ApplicationRef;
@@ -142,7 +145,7 @@ export abstract class AppComponentBase {
         let filterData: any[] = [];
 
         if (this.searchColumns && this.searchValue) {
-            let values = this.searchValue.split(' ');
+            let values = this.getSearchKeyWords();
             this.searchColumns.forEach((col) => {
                 let colFilterData: any[] = [];
 
@@ -168,6 +171,12 @@ export abstract class AppComponentBase {
         
         return data;
     }   
+    getSearchKeyWords() {
+        let words = this.searchValue.match(this._wordRegex);
+        let noisyWords = _.union(this._removeFromEnd, this._remove);
+        let keywords = _.difference(words, noisyWords);
+        return keywords;
+    }
 
     isGranted(permissionName: string): boolean {
         return this.permission.isGranted(permissionName);
