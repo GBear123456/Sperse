@@ -6,7 +6,7 @@
             <dx-tree-list 
                 height="calc(100vh - 210px)"
                 [hoverStateEnabled]="true"
-                [dataSource]="ruleTreeList"
+                [dataSource]="ruleTreeListDataSource"
                 [dataStructure]="tree"
                 [sorting]="{mode: 'none'}"
                 [editing]="{allowAdding: true, allowDeleting: true, allowUpdating: true, mode: 'popup', popup: {onShowing: onShowingPopup, height: '0px', width: '0px'}}"
@@ -16,7 +16,6 @@
                 [showRowLines]="true"
                 (onInitNewRow)="onEditingStart($event)"
                 (onEditingStart)="onEditingStart($event)"
-                (onCellClick)="onCellClick($event)"
                 (onRowRemoved)="onRowRemoved($event)"
                 keyExpr="id"
                 parentIdExpr="parentId"
