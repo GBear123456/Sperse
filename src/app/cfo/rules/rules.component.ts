@@ -14,6 +14,8 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 
+import DataSource from 'devextreme/data/data_source';
+
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxTreeListComponent } from 'devextreme-angular';
 
@@ -32,7 +34,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     @ViewChild(DxTreeListComponent) treeList: DxTreeListComponent;
 
     private rootComponent: any;
-    public ruleTreeList: any = [];
+    public ruleTreeListDataSource: DataSource = new DataSource([]);
     private filters: FilterModel[];
     public headlineConfig = {
         names: [this.l('Manage rules')],
@@ -101,7 +103,17 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     refreshList() {
-        this.ngOnInit();
+        this._ClassificationService.getRules(InstanceType[this.instanceType], this.instanceId, null)
+            .subscribe(result => {
+                this.ruleTreeListDataSource = new DataSource(
+                    _.sortBy(result.map((item) => {
+                        item['order'] =
+                            this.normalize(Number(item.parentId)) +
+                            this.normalize(item.sortOrder) +
+                            this.normalize(item.id);
+                        return item;
+                    }), 'order'));
+            });
     }
 
     fullscreen() {
@@ -122,14 +134,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
         e.component.hide();
     }
 
-
-    onCellClick($event) {
-        if ($event.rowType == 'header')
-            $event.component.option('filterRow', {visible:
-                !$event.component.option('filterRow').visible
-            });
-    }
-
     onRowRemoved($event) {
         this._ClassificationService.deleteRule(InstanceType[this.instanceType], this.instanceId, [], null, $event.key);
     }
@@ -141,41 +145,73 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                 instanceType: this.instanceType,
                 refershParent: this.ngOnInit.bind(this)
             })
-        }).afterClosed().subscribe(result => {});
+        }).afterClosed().subscribe(result => { });
     }
 
     ngOnInit(): void {
         super.ngOnInit();
 
-        this._ClassificationService.getRules(InstanceType[this.instanceType], this.instanceId, null)
-            .subscribe(result => {
-                  this.ruleTreeList = _.sortBy(result.map((item) => {
-                      item['order'] =
-                          this.normalize(Number(item.parentId)) +
-                          this.normalize(item.sortOrder) +
-                          this.normalize(item.id);
-                      return item;
-                  }), 'order');
-            });
-
+        this.refreshList();
         this.filtersService.setup(
             this.filters = [
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'Name',
-                    items: { Name: new FilterItemModel() }
+                    field: 'name',
+                    items: { name: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterCalendarComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'Date',
-                    field: 'Date',
+                    operator: { from: '>=', to: '<=' },
+                    caption: 'CreationDate',
+                    field: 'creationTime',
                     items: { from: new FilterItemModel(), to: new FilterItemModel() }
                 })
             ]
         );
 
+        this.filtersService.apply(() => {
+            this.initToolbarConfig();
+
+            var dataSourceFilters = [];
+            for (let filter of this.filters) {
+                let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
+                if (filterMethod) {
+                    var customFilters: any[] = filterMethod(filter);
+                    if (customFilters && customFilters.length)
+                        customFilters.forEach((v) => dataSourceFilters.push(v));
+                }
+                else {
+                    _.pairs(filter.items).forEach((pair) => {
+                        let val = pair.pop().value, key = pair.pop(), operator = {};
+                        if (val)
+                            dataSourceFilters.push([key, filter.operator, val]);
+                    });
+                }
+            }
+
+            dataSourceFilters = dataSourceFilters.length ? dataSourceFilters : null;
+            this.ruleTreeListDataSource.filter(dataSourceFilters);
+            this.ruleTreeListDataSource.load();
+        });
+    }
+
+    filterByCreationDate(filter: FilterModel): any[][] {
+        let result: any[][] = [];
+
+        _.each(filter.items, (item: FilterItemModel, key) => {
+            if (item && item.value) {
+                let date = moment.utc(item.value, 'YYYY-MM-DDT');
+                if (key.toString() === 'to') {
+                    date.add(1, 'd').add(-1, 's');
+                }
+
+                result.push([filter.field, filter.operator[key], date.toDate()]);
+            }
+        });
+
+        return result;
     }
 
     ngAfterViewInit(): void {
