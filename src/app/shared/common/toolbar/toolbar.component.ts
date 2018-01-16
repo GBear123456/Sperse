@@ -135,6 +135,10 @@ export class ToolBarComponent extends AppComponentBase {
         forecastModelAdd: {
             hint: this.l('CreateForecastModel'),
             iconSrc: this.getImgURI('add-button')
+        },
+        showCompactRowsHeight: {
+            hint: this.l('Compact View'),
+            iconSrc: this.getImgURI('ic_format_line_spacing')
         }
     };
 
