@@ -353,7 +353,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                     }
                     return statsItem;
                 });
-                this.statsData = null;
                 /** reinit */
                 this.initHeadlineConfig();
                 this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
