@@ -464,8 +464,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     addHeaderExpandClickHandling() {
         window['onHeaderExpanderClick'] = function ($event) {
             let rect = $event.target.getBoundingClientRect();
-            if (Math.abs($event.clientX - rect.x) < 50 &&
-                Math.abs($event.clientY - rect.y) < 50
+            if (Math.abs($event.clientX - rect.x) < (rect.width * 0.1) &&
+                Math.abs($event.clientY - rect.y) < rect.height
             ) $event.stopPropagation();
             $($event.target).closest('tr').children().each(function () {
                 if ($(this).hasClass('dx-pivotgrid-expanded')) {
@@ -1869,7 +1869,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         ${cellObj.cellElement.html()}
                         <div class="totals">${this.l('Totals').toUpperCase()}</div>
                     </div>
-                    <div class="closed-head-cell">
+                    <div class="closed-head-cell" title="${this.l('Cashflow_ClickToGroupBy', value).toUpperCase()}">
                         ${this.l('Cashflow_ClickToGroupBy', value).toUpperCase()}
                     </div>
                 </div>`;
@@ -1914,8 +1914,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param projected
      */
     getProjectedValueByPath(path) {
-        let projectedFieldIndex = this.getColumnFields().filter(field => field.caption === 'Projected')[0].areaIndex;
-        return path[projectedFieldIndex];
+        let projectedField = this.getColumnFields().filter(field => field.caption === 'Projected');
+        let projectedFieldIndex = projectedField.length ? projectedField[0].areaIndex : null;
+        return projectedFieldIndex ? path[projectedFieldIndex] : undefined;
     }
 
     /**

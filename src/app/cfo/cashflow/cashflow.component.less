@@ -95,6 +95,9 @@
                         right: 0;
                         margin: 0 auto;
                         display: none;
+                        padding-left: 6px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
                     }
                 }
             }
@@ -291,6 +294,15 @@
                         &.expenses {
                             background: @expensesVerticalHeaderBackgroundColor;
                         }
+
+                        &.emptyChildren {
+                            padding-left: 40px;
+                            cursor: default;
+                            .dx-expand-icon-container {
+                                display: none;
+                            }
+                        }
+
                         &.income,
                         &.expenses,
                         &.netChange {
@@ -306,13 +318,6 @@
                         &.dx-last-cell {
                             width: 100%;
                             padding-left: 22px;
-                        }
-                        &.emptyChildren {
-                            padding-left: 40px;
-                            cursor: default;
-                            .dx-expand-icon-container {
-                                display: none;
-                            }
                         }
                         .dx-expand-icon-container {
                             font: inherit;
