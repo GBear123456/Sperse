@@ -306,6 +306,30 @@ body {
 #sync #sync-account .terms {
     font-size: 13px !important;
 }
+#sync #sync-account .terms,
+.terms {
+    position: relative;
+}
+#sync #sync-account .terms a,
+.terms a,
+#sync #sync-account .terms #login-tos-link,
+.terms #login-tos-link {
+    z-index: 0;
+    color: #A4A9B3 !important;
+    cursor: default;
+    font-size: 13px;
+}
+#sync #sync-account .terms::after,
+.terms::after {
+    display: block;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 5;
+}
 #login-tos-link {
     font-size: 13px !important;
 }
@@ -449,6 +473,30 @@ body {
 }
 #sync #sync-account .results .success-summary .positive .sum-msg {
     color: #202b35;
+}
+#sync #sync-account .actions {
+    max-width: 350px;
+    margin: 0 auto;
+    padding: 29px;
+    border-radius: 6px;
+    background-color: #f9fbfc;
+}
+#sync #sync-account .actions button + button {
+    margin-top: 10px;
+}
+#sync #sync-account .actions #results-accounts-button {
+    color: #FFFFFF;
+    background-color: #00aeef;
+    border: 1px solid #00aeef;
+}
+#sync #sync-account .actions #results-reset-button {
+    background: transparent;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+    color: #00aeef;
+    border: 0;
 }
 #sync #sync-account .mfa {
     display: flex;

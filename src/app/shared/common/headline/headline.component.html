@@ -11,7 +11,7 @@
     </div>
     <div class="headline-buttons">
         <ng-template ngFor let-item [ngForOf]="data.buttons">
-            <button ng-if="item.enabled" class="btn {{item?.class || 'btn-layout'}}" (click)="item.action()"><i class="icon-{{item.icon}}"></i> {{item.lable}}</button>
+            <button *ngIf="item.enabled" class="btn {{item?.class || 'btn-layout'}}" (click)="item.action()"><i class="icon-{{item.icon}}"></i> {{item.lable}}</button>
         </ng-template>
     </div>
 </div>

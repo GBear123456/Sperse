@@ -76,6 +76,9 @@
                                 .closed-head-cell {
                                     display: block;
                                 }
+                                &:after {
+                                    transform: rotate(180deg);
+                                }
                             }
                         }
                     }
@@ -92,6 +95,9 @@
                         right: 0;
                         margin: 0 auto;
                         display: none;
+                        padding-left: 6px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
                     }
                 }
             }
@@ -130,13 +136,16 @@
 
             .cfoThemeLightDarkTheme {
                 &.dx-area-row-cell,
+                &.dx-area-column-cell,
                 &.dx-area-data-cell {
                     tr {
                         &.startedBalance,
                         &.incomeRow,
                         &.expensesRow,
+                        &.netChangeRow,
                         &.endingCashPosition,
-                        &.reconciliation {
+                        &.reconciliation,
+                        &.yearRow {
                             td {
                                 background: rgba(221, 221, 221, .32) !important;
                             }
@@ -179,6 +188,7 @@
                         }
                         &.year {
                             color: @yearTextColor;
+                            background: @incomeVerticalHeaderBackgroundColor;
                             font-weight: 600;
                             font-size: 20px;
                         }
@@ -208,6 +218,7 @@
                             letter-spacing: 0.6px;
                             &.historical {
                                 color: @historicalTextColor;
+                                background-color: #f7f9ff;
                             }
                             &.current {
                                 background: @currentTextColor;
@@ -277,35 +288,36 @@
                                 border-top: none
                             }
                         }
-                        &.dx-total {
-                            font-weight: 700;
-                            &.income {
-                                background: @incomeVerticalHeaderBackgroundColor;
-                            }
-                            &.expenses {
-                                background: @expensesVerticalHeaderBackgroundColor;
-                            }
-                            &.income,
-                            &.expenses {
-                                cursor: default;
-                                text-align: left;
-                                padding-left: 20px;
-                                border: none;
-                                .dx-expand-icon-container {
-                                    display: none;
-                                }
-                            }
+                        &.income {
+                            background: @incomeVerticalHeaderBackgroundColor;
                         }
-                        &.dx-last-cell {
-                            width: 100%;
-                            padding-left: 22px;
+                        &.expenses {
+                            background: @expensesVerticalHeaderBackgroundColor;
                         }
+
                         &.emptyChildren {
                             padding-left: 40px;
                             cursor: default;
                             .dx-expand-icon-container {
                                 display: none;
                             }
+                        }
+
+                        &.income,
+                        &.expenses,
+                        &.netChange {
+                            font-weight: 700;
+                            cursor: default;
+                            text-align: left;
+                            padding-left: 20px;
+                            .dx-expand-icon-container {
+                                display: none;
+                            }
+                        }
+
+                        &.dx-last-cell {
+                            width: 100%;
+                            padding-left: 22px;
                         }
                         .dx-expand-icon-container {
                             font: inherit;
@@ -349,6 +361,7 @@
                     &.startedBalance,
                     &.incomeRow,
                     &.expensesRow,
+                    &.netChangeRow,
                     &.endingCashPosition {
                         td {
                             letter-spacing: 0.8px;
@@ -456,6 +469,7 @@
                     &.startedBalance,
                     &.incomeRow,
                     &.expensesRow,
+                    &.netChangeRow,
                     &.endingCashPosition,
                     &.reconciliation {
                         td {
@@ -633,6 +647,14 @@
                             background-color: #f3f7fa;
                             &:after {
                                 display: none;
+                            }
+                        }
+                        .editModel {
+                            position: absolute;
+                            z-index: 1;
+                            top: 0;
+                            input {
+                                width: 100%;
                             }
                         }
                     }

@@ -47,13 +47,13 @@ export class SortingComponent {
                 const newSortBy = this.getNewSortByFromOld(e.component.option('sortBy'));
                 /** Change sorting icon */
                 e.component.option({
-                    sortBy: newSortBy,
-                    icon: this.sortingIcons[newSortBy].icon
+                    sortBy: newSortBy
                 });
                 /** Remove all sorting buttons classes*/
                 e.element.closest('.dx-toolbar-item').siblings().find('.dx-button').removeClass('active');
                 /** Toggle current button class */
                 e.element.addClass('active');
+                e.element.toggleClass('rotated');
                 /** Emit the sorting change event */
                 this.sortingChange.emit({
                     sortBy: e.component.option('name'),

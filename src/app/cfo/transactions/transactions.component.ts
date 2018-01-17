@@ -35,6 +35,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     items: any;
+    private isCompactRowsHeight = false;
     private readonly dataSourceURI = 'Transaction';
     private filters: FilterModel[];
     private rootComponent: any;
@@ -52,13 +53,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this._appService.toolbarConfig = [
             {
                 location: 'before', items: [
-                    { 
-                        name: 'filters', 
-                        action: (event) => {                            
+                    {
+                        name: 'filters',
+                        action: (event) => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            this.filtersService.fixed = 
+                            this.filtersService.fixed =
                                 !this.filtersService.fixed;
                         },
                         options: {
@@ -71,25 +72,25 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             mouseout: (event) => {
                                 if (!this.filtersService.fixed)
                                     this.filtersService.disable();
-                            } 
+                            }
                         },
-                        attr: { 
+                        attr: {
                             'filter-selected': this.filtersService.hasFilterSelected
-                        } 
-                    } 
+                        }
+                    }
                 ]
             },
             {
                 location: 'before',
                 items: [
                     {
-                        name: 'search',   
+                        name: 'search',
                         widget: 'dxTextBox',
                         options: {
                             value: this.searchValue,
                             width: '300',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' 
+                            placeholder: this.l('Search') + ' '
                             + this.l('Transactions').toLowerCase(),
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
@@ -101,6 +102,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             {
                 location: 'after', items: [
                     { name: 'refresh', action: this.refreshDataGrid.bind(this) },
+                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',
@@ -283,19 +285,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.processFilterInternal();
         });
     }
-  
-    processFilterInternal() {
-        let filters = this.cashFlowCategoryFilter.concat(this.filters);/*.push(new FilterModel({
-            component: FilterInputsComponent,
-            operator: 'contains',
-            caption: 'Description',
-            items: {
-                Description: new FilterItemModel('d')
-            }
-        }));*/
 
+    showCompactRowsHeight() {
+        this.dataGrid.instance.element()[this.isCompactRowsHeight ? 'removeClass' : 'addClass']('grid-compact-view');
+        this.isCompactRowsHeight = !this.isCompactRowsHeight;
+    }
+
+    processFilterInternal() {
         this.processODataFilter(this.dataGrid.instance,
-            this.dataSourceURI, filters, 
+            this.dataSourceURI, this.cashFlowCategoryFilter.concat(this.filters),
                 (filter) => {
                     let filterMethod = this['filterBy' +
                         this.capitalize(filter.caption)];
@@ -403,7 +401,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 })
             ];
 
-            this.processFilterInternal();          
+            this.processFilterInternal();
         }
     }
 
@@ -422,7 +420,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
             }).on('dragend', (e) => {
                 this.dragInProgress = false;
-            });      
+            });
     }
 
     onContentReady($event) {
@@ -434,7 +432,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             .instance.getSelectedRowKeys();
 
         this.dialog.open(RuleDialogComponent, {
-            panelClass: 'slider', 
+            panelClass: 'slider',
             data: {
                 instanceId: this.instanceId,
                 instanceType: this.instanceType,
@@ -456,7 +454,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     ngOnDestroy() {
         this._appService.toolbarConfig = null;
-        this.filtersService.localizationSourceName 
+        this.filtersService.localizationSourceName
             = AppConsts.localization.defaultLocalizationSourceName;
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();

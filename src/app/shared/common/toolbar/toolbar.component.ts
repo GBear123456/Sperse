@@ -98,7 +98,7 @@ export class ToolBarComponent extends AppComponentBase {
             iconSrc: this.getImgURI('edit-pencil-icon')
         },
         rules: {
-            text: this.l('CashflowToolbar_User_Preferences'),
+            text: this.ls('CFO', 'CashflowToolbar_User_Preferences'),
             iconSrc: this.getImgURI('preferences-icon')
         },
         expand: {
@@ -135,6 +135,10 @@ export class ToolBarComponent extends AppComponentBase {
         forecastModelAdd: {
             hint: this.l('CreateForecastModel'),
             iconSrc: this.getImgURI('add-button')
+        },
+        showCompactRowsHeight: {
+            hint: this.l('Compact View'),
+            iconSrc: this.getImgURI('ic_format_line_spacing')
         }
     };
 

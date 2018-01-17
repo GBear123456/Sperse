@@ -225,9 +225,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             iconSrc: 'assets/common/icons/pulse-icon.svg',
             buttons: [
                 {
-                    enabled: true,
-                    action: Function(),
-                    lable: this.l('Add New')
+                    enabled: this.statsData && this.statsData.length ? true : false,
+                    action: this.showSourceDataWidget.bind(this),
+                    lable: this.l('Show source data')
                 }
             ]
         };
@@ -332,34 +332,35 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             InstanceType[this.instanceType], this.instanceId,
             'USD', this.selectedForecastModel.id, accountIds, startDate, endDate, GroupBy.Monthly
         ).subscribe(result => {
-                    if (result) {
-                        let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
-                        minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
-                        this.statsData = result.map(statsItem => {
-                            Object.defineProperties(statsItem, {
-                                'netChange': {
-                                    value: statsItem.income || statsItem.expenses ? (statsItem.income + statsItem.expenses) / 2 : null,
-                                    enumerable: true
-                                },
-                                'minRange': { value: minRange, enumerable: true }
-                            });
-                            if (statsItem.isForecast) {
-                                for (let prop in statsItem) {
-                                    if (statsItem.hasOwnProperty(prop) && prop !== 'date' && prop !== 'isForecast') {
-                                        statsItem['forecast' + this.capitalize(prop)] = statsItem[prop];
-                                        delete statsItem[prop];
-                                    }
-                                }
+            if (result) {
+                let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
+                minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
+                this.statsData = result.map(statsItem => {
+                    Object.defineProperties(statsItem, {
+                        'netChange': {
+                            value: statsItem.income || statsItem.expenses ? (statsItem.income + statsItem.expenses) / 2 : null,
+                            enumerable: true
+                        },
+                        'minRange': { value: minRange, enumerable: true }
+                    });
+                    if (statsItem.isForecast) {
+                        for (let prop in statsItem) {
+                            if (statsItem.hasOwnProperty(prop) && prop !== 'date' && prop !== 'isForecast') {
+                                statsItem['forecast' + this.capitalize(prop)] = statsItem[prop];
+                                delete statsItem[prop];
                             }
-                            return statsItem;
-                        });
-                        this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
-                    } else {
-                        console.log('No daily stats');
+                        }
                     }
-                },
-                error => console.log('Error: ' + error)
-            );
+                    return statsItem;
+                });
+                /** reinit */
+                this.initHeadlineConfig();
+                this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
+            } else {
+                console.log('No daily stats');
+            }
+        },
+        error => console.log('Error: ' + error));
     }
 
     ngAfterViewInit(): void {
