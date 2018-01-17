@@ -41,6 +41,13 @@
                             </dxo-label>
                             <dxo-point size="8"></dxo-point>
                         </dxo-common-series-settings>
+
+                        <dxo-tooltip
+                            enabled="true"
+                            zIndex="1"
+                            [customizeTooltip]="customizeBarTooltip">
+                        </dxo-tooltip>
+
                         <dxi-series
                             pane="topPane"
                             color="url(#forecast-linear-gradient)"
@@ -91,6 +98,7 @@
                                     [type]="axisDateFormat">
                                 </dxo-format>
                             </dxo-label>
+                            <dxo-tick-interval months="1"></dxo-tick-interval>
                         </dxo-argument-axis>
 
                         <!-- Common settings for axis -->
@@ -154,6 +162,7 @@
                                     [type]="axisDateFormat">
                                 </dxo-format>
                             </dxo-label>
+                            <dxo-tick-interval months="1"></dxo-tick-interval>
                         </dxo-argument-axis>
 
                         <!-- Left axis -->
@@ -166,17 +175,6 @@
                             </dxo-label>
                             <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>
                         </dxi-value-axis>
-
-                        <!-- Bottom axis -->
-                        <dxo-argument-axis
-                            argumentType="datetime"
-                            visible="true">
-                            <dxo-label [customizeText]="customizeBottomAxis">
-                                <dxo-format
-                                    [type]="axisDateFormat">
-                                </dxo-format>
-                            </dxo-label>
-                        </dxo-argument-axis>
 
                         <!-- Common settings for axis -->
                         <dxo-common-axis-settings allowDecimals="false">

@@ -546,7 +546,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     getTooltipInfoHtml(pointInfo) {
         let html = '';
-        let pointDataObject = this.statsData.find(item => item.date = pointInfo.argument);
+        let pointDataObject = this.statsData.find(item => item.date.toDate().toString() == pointInfo.argument);
         this.barChartTooltipFieldsNames.forEach(fieldName => {
             if (pointDataObject[fieldName] !== null && pointDataObject[fieldName] !== undefined) {
                 html += `${this.l('Stats_' + fieldName)} : ${pointDataObject[fieldName]}<br>`;
