@@ -23,7 +23,7 @@
                         (onDone)="onDone($event)"
                         resolveLabelOverlapping="stack"
                         #linearChart>
-                        <dxo-size [height]="chartsHeight / 2"></dxo-size>
+                        <dxo-size [width]="chartsWidth" [height]="chartsHeight / 2"></dxo-size>
                         <!-- common settings for charts -->
                         <dxo-common-series-settings argumentField="date"
                                                     [showInLegend]="false"
@@ -111,7 +111,7 @@
                         [barWidth]="0.5"
                         (onDone)="onDone($event)"
                         #barChart>
-                        <dxo-size [height]="chartsHeight / 2"></dxo-size>
+                        <dxo-size [width]="chartsWidth" [height]="chartsHeight / 2"></dxo-size>
                         <!-- common settings for charts -->
                         <dxo-common-series-settings
                             argumentField="date"
@@ -209,6 +209,6 @@
 </div>
 
 <app-no-data
-    *ngIf="!statsData || !statsData.length"
+    *ngIf="loadingFinished && (!statsData || !statsData.length)"
     [showLink]="false">
 </app-no-data>

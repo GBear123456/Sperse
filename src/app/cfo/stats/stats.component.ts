@@ -59,7 +59,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     labelWidth = 45;
     showSourceData = false;
     exporting = false;
+    loadingFinished = false;
     chartsHeight = 400;
+    chartsWidth;
     barChartTooltipFieldsNames = [
         'startingBalance',
         'income',
@@ -195,7 +197,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     ngOnInit() {
         super.ngOnInit();
-
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
 
@@ -216,7 +217,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
         this.initHeadlineConfig();
         this.initFiltering();
-        this.calculateChartsHeight();
+        this.calculateChartsSize();
     }
 
     initHeadlineConfig() {
@@ -249,10 +250,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
-    calculateChartsHeight() {
+    calculateChartsSize() {
         let chartsHeight = window.innerHeight - 410;
         this.chartsHeight =  chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
-        return this.chartsHeight;
+        this.chartsWidth = window.innerWidth;
     }
 
     /** Calculates the height of the charts scrollable height after resizing */
@@ -327,6 +328,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** load stats data from api */
     loadStatsData() {
+        abp.ui.setBusy();
         let {startDate = undefined, endDate = undefined, accountIds = []} = this.requestFilter;
         this._bankAccountService.getStats(
             InstanceType[this.instanceType], this.instanceId,
@@ -359,6 +361,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             } else {
                 console.log('No daily stats');
             }
+            this.loadingFinished = true;
+            abp.ui.clearBusy();
         },
         error => console.log('Error: ' + error));
     }
