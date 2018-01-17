@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
+import {Component, OnInit, Injector, ViewChild, OnDestroy, AfterViewInit} from '@angular/core';
 import { FinancialInformationServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -12,11 +12,12 @@ import { SynchProgressComponent } from '@app/cfo/shared/synch-progress/synch-pro
     styleUrls: ['./bank-accounts.component.less'],
     providers: [ FinancialInformationServiceProxy ]
 })
-export class BankAccountsComponent extends CFOComponentBase implements OnInit {
+export class BankAccountsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy  {
     @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
 
     sourceUrl: any;
     headlineConfig: any;
+    private rootComponent: any;
 
     constructor(
         injector: Injector,
@@ -70,5 +71,14 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
 
     onNextClick() {
         this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/cashflow']);
+    }
+
+    ngAfterViewInit(): void {
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.overflowHidden();
     }
 }
