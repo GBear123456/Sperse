@@ -31,72 +31,146 @@
         }
     }
 
-    /deep/ dx-tree-list {
-        &[dropallowed="true"] { 
-            tr[aria-level="2"] .dx-treelist-text-content {
-                border: 1px dashed #dfdfdf;
-                &.drag-hover {
-                    background-color: #FFFBF3;
-                    border: 1px solid #FFE8BF;
-                }
-            }             
+    /deep/ .dx-widget {
+        .dx-placeholder {
+            display: none!important;
         }
-        tr[aria-level="2"] .dx-treelist-text-content {
-            border: 1px dashed transparent;
-        }             
-  
+        tr.dx-edit-row .dx-texteditor-input {
+             font-weight: 400;
+             border-bottom: none!important;
+        }
+        td.dx-command-edit  {
+            text-overflow: unset;
+            text-align: right!important;
+            a.dx-link {
+                width: 25px;
+                display: inline-block;
+                color: transparent!important;
+                &.dx-link-add {
+                    background: url('../../../../assets/common/icons/add.svg') no-repeat center;
+                }
+                &.dx-link-edit {
+                    background: url('../../../../assets/common/icons/edit.svg') no-repeat center;
+                }
+                &.dx-link-delete {
+                    background: url('../../../../assets/common/icons/delete-icon.svg') no-repeat center;
+                }
+                &.dx-link-save {
+                    background: url('../../../../assets/common/icons/check.svg') no-repeat center;
+                }
+                &.dx-link-cancel {
+                    background: url('../../../../assets/common/icons/cancel.svg') no-repeat center;
+                }
+            }
+        }
+        input {
+            font-size: 15px;
+            font-weight: 300;
+            line-height: 1.67;
+            letter-spacing: 0.3px;
+            color: #424c56;
+        }
+    }
+
+    /deep/ dx-tree-list {
         .dx-treelist-header-panel, 
         .dx-treelist-headers {
             display: none;
         }
+        &[dropallowed="true"] { 
+            tr[aria-level="2"] {
+                td {
+                    border: 1px dashed #dfdfdf;
+                    &:first-child {
+                        border-right: none!important;
+                        border-left: 1px dashed #dfdfdf;
+                    }
+                    &:last-child {
+                        border-left: none!important;
+                    }
+                }
+            }             
+            tr.drag-hover td {
+                border: 1px solid #FFE8BF!important;
+                background-color: #FFFBF3!important;
+                &:first-child {
+                    border-right: none!important;
+                }
+                &:last-child {
+                    border-left: none!important;
+                }
+            }
+        }
         .dx-treelist-rowsview {
-            border-top: none;
+            border: none;
             background-color: #ffffff;
+            .dx-treelist-empty-space {
+                padding-right: 5px;
+            }
             .dx-treelist-content {
                 margin: 15px;
                 .dx-treelist-focus-overlay {
+                    border: 1px solid #00aeef;
                     height: 35px!important;
                 }
             }
             table { 
+                border-spacing:0 5px;
                 border-collapse: separate; 
                 td {
-                    padding: 2px!important;
                     border: 1px solid #fff;
-                    .dx-treelist-empty-space {
-                        padding: 5px;
+                    background-color: #fff;
+                    &:first-child { 
+                        border-right: none!important;
+                        border-top-left-radius: 2px; 
+                        border-bottom-left-radius: 2px; 
+                    }
+                    &:last-child { 
+                        border-left: none!important;
+                        border-top-right-radius: 2px; 
+                        border-bottom-right-radius: 2px; 
                     }
                 }
                 tr.dx-data-row {
-                    &.dx-state-hover, 
-                    &.dx-selection, 
-                    &.dx-edit-row {
+                    &[aria-level="0"] {
+                        .dx-command-edit {
+                            .dx-link-delete, .dx-link-edit {
+                                display: none;
+                            }
+                        }
+                    }
+                    &[aria-level="2"] {
+                        .dx-command-edit {
+                            .dx-link-add {
+                                display: none;
+                            }
+                        }
+                    }
+                    td.dx-command-edit a {
+                        visibility: hidden;
+                    }
+                    &.dx-state-hover, &.dx-selection, &.dx-edit-row {
                         cursor: pointer;
-                        td:first-child { 
-                            border-right: none!important;
-                            border-top-left-radius: 2px; 
-                            border-bottom-left-radius: 2px; 
-                        }
-                        td:last-child { 
-                            border-left: none!important;
-                            border-top-right-radius: 2px; 
-                            border-bottom-right-radius: 2px; 
-                        }
                         td {
-                            background-color: #F0FAFE;
+                            border: solid 1px #00aeef;
+                            background-color: #F0FAFE!important;
                             color: #424c56;
+                            &.dx-command-edit a {
+                                visibility: visible;
+                            }
                         }    
-                        td.dx-command-edit a {
-                            visibility: visible;
-                        }
                     }
                     .dx-treelist-text-content {
                         font-size: 14px;
                         letter-spacing: 0.3px;
-                        font-weight: 300;
+                        font-weight: 400;
                         color: #424c56;
-                        padding: 5px;
                     }
+                    &[aria-level="2"] {
+                        .dx-treelist-text-content {
+                            font-weight: 300;
+                        }
+                    }                
                 }
             }
         }

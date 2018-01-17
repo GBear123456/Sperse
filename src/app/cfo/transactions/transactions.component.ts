@@ -41,7 +41,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private cashFlowCategoryFilter = [];
 
     public dragInProgress = false;
-    public ctegoriesShowed = false;
+    public categoriesShowed = false;
     public headlineConfig = {
         names: [this.l('Transactions')],
         iconSrc: 'assets/common/icons/credit-card-icon.svg',
@@ -415,7 +415,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     onSelectionChanged($event) {
         let img = new Image();
         img.src = 'assets/common/images/transactions.png';
-        this.ctegoriesShowed = Boolean($event.selectedRowKeys.length);
+        this.categoriesShowed = Boolean(this.dataGrid.instance.getSelectedRowKeys().length);
         $event.element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend') 
             .filter('.dx-selection').attr('draggable', true).on('dragstart', (e) => {
                 this.dragInProgress = true;
@@ -423,6 +423,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             }).on('dragend', (e) => {
                 this.dragInProgress = false;
             });      
+    }
+
+    onContentReady($event) {
+        this.onSelectionChanged($event);
     }
 
     openCategorizationWindow($event) {

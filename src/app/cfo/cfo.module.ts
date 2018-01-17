@@ -16,7 +16,7 @@ import { ModalModule } from 'ngx-bootstrap';
 
 import { RulesComponent } from './rules/rules.component';
 import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.component';
-import { CategoryDeleteDialogComponent } from './rules/rule-edit-dialog/category-delete-dialog/category-delete-dialog.component';
+import { CategoryDeleteDialogComponent } from './transactions/categorization/category-delete-dialog/category-delete-dialog.component';
 
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
