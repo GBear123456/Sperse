@@ -624,14 +624,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
 
-        if ((!component.clickCount) || (component.clickCount != 1) || (component.clickKey != e.key) ) {
-            initialClick();
-        } else if (component.clickKey == e.key) {
-            if (((new Date()) - component.clickDate) <= 300)
-                doubleClick();
-            else
-                initialClick();
-        }
+        // if ((!component.clickCount) || (component.clickCount != 1) || (component.clickKey != e.key) ) {
+        //     initialClick();
+        // } else if (component.clickKey == e.key) {
+        //     if (((new Date()) - component.clickDate) <= 300)
+        //         doubleClick();
+        //     else
+        //         initialClick();
+        // }
     }
 
     handleForecastModelDoubleClick(e) {
