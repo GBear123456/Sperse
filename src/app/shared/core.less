@@ -21,26 +21,38 @@ body.page-md {
 }
 
 /* Error Modal Design */
-.sweet-alert  {
-    .sa-icon.sa-error {
+.swal-modal  {
+    .swal-icon.swal-icon--error {
         border: 5px solid #E7F9F9;
         box-shadow: 0 0 20px 20px #F4FCFC;
-        .sa-x-mark {
+        .swal-icon--error__x-mark {
             &:before {
                 content: '!';
                 font-family: serif;
                 font-size: 60px;
                 color: #8CD4F5;
+                position: relative;
+                top: -5px;
             }
-            .sa-line {
-                display: none!important;
+            .swal-icon--error__line{
+                display: none !important;
             }
         }
     }
-    h2 {
+    .swal-title {
         color: #8CD4F5;
         font-size: 18px;
         font-weight: normal;
+    }
+    .swal-button {
+        background-color: #00aeef;
+        color: #ffffff;
+        border-radius: 21px;
+        padding: 10px 35px;
+        box-shadow: none;
+        &:hover {
+            background: lighten(#00aeef, 15%);
+        }
     }
 }
 
