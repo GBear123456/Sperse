@@ -1,17 +1,22 @@
 <div>
-    <h3>{{l('Categorize transactions')}}<span (click)="close.emit(null)"></span></h3>
+    <h3 *ngIf="showTitle">{{l('Categorize transactions')}}<span (click)="close.emit(null)"></span></h3>
+
     <dx-tree-list 
-        width="340px"
-        height="calc(100vh - 250px)"
+        width="{{width}}"
+        height="{{height}}"
         keyExpr="key"
         parentIdExpr="parent"
         [hoverStateEnabled]="true"
         [(dataSource)]="categories"
-        (onSelectionChanged)="onSelectionChanged.emit($event)"
-        (onContentReady)="initDragAndDropEvents($event)"
+        [editing]="{allowAdding: true, allowUpdating: true, allowDeleting: true}"
         [selection]="{allowSelectAll: false, mode: 'single'}"
-        [autoExpandAll]="true"
-        [rootValue]="0">
+        [rootValue]="0"
+        [autoExpandAll]="autoExpand"
+        (onContentReady)="initDragAndDropEvents($event)"
+        (onSelectionChanged)="onSelectionChanged.emit($event)"
+        (onRowUpdated)="onCategoryUpdated($event)"
+        (onRowInserted)="onCategoryInserted($event)"
+        (onRowRemoving)="onCategoryRemoving($event)">
         <dxi-column dataField="name"></dxi-column>
     </dx-tree-list>
 </div>

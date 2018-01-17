@@ -2,10 +2,16 @@
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <div class="main-wrapper" [ngClass]="{'expanded': ctegoriesShowed}">
-                <div class="categories" (mouseover)="ctegoriesShowed = true">
-                    <categorization [dragMode]="dragInProgress"
-                        (close)="ctegoriesShowed = false"                          
+            <div class="main-wrapper" [ngClass]="{'expanded': categoriesShowed}">
+                <div class="categories" (mouseover)="categoriesShowed = true">
+                    <categorization 
+                        [width]="'340px'"
+                        [height]="'calc(100vh - 250px)'"
+                        [showTitle]="true"
+                        [dragMode]="dragInProgress"
+                        (close)="categoriesShowed = false"                          
+                        [instanceType]="instanceType"
+                        [instanceId]="instanceId"
                         (onTransactionDrop)="openCategorizationWindow($event)"
                         (onSelectionChanged)="filterByCashflowCategory($event)">
                     </categorization>
@@ -17,6 +23,8 @@
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
+                                  [columnResizingMode]="'widget'"
+                                  (onContentReady)="onContentReady($event)"
                                   (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                                   (onSelectionChanged)="onSelectionChanged($event)">
                         <dxo-selection

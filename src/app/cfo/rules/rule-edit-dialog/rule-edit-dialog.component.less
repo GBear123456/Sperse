@@ -128,7 +128,6 @@
             h3 {
                 color: #202b35;
             }
-
             div.field {
                 justify-content: space-between;
                 dx-number-box {
@@ -142,6 +141,19 @@
                     /deep/ input {
                         padding: 2px 10px;
                     }
+                }
+                dx-select-box, dx-drop-down-box {
+                    /deep/ input {
+                        padding-right: 60px!important;
+                    }
+                }
+            }
+            .transactions-link {
+                margin-bottom: 20px;
+                a {
+                    cursor: pointer;
+                    color: #00aeef;
+                    text-decoration: underline;
                 }
             }
             /deep/ .dx-widget {
@@ -299,13 +311,14 @@
                     content: "";
                     top: 25px;
                     left: 0px;
+                    z-index: 0;
                     position: absolute;
                     border-top: 13px solid transparent;
                     border-bottom: 13px solid transparent;
                     border-left: 15px solid #dfdfdf;
                 }
                 div.field {
-                    margin-bottom: 40px;
+                    margin-bottom: 10px;
                 }
 
                 dx-select-box, dx-text-box {

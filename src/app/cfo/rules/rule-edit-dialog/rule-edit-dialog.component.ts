@@ -4,9 +4,6 @@ import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@
 import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
 import { DxTreeListComponent, DxDataGridComponent, DxTreeViewComponent } from 'devextreme-angular';
 
-import { MatDialog } from '@angular/material';
-import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
-
 import {
     CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto, GetTransactionCommonDetailsInput,
     CreateCategoryGroupInput, CreateCategoryInput, UpdateCategoryGroupInput, UpdateCategoryInput,
@@ -25,7 +22,6 @@ import * as _ from 'underscore';
 export class RuleDialogComponent extends CFOModalDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @ViewChild(DxTreeViewComponent) transactionTypesList: DxTreeViewComponent;
-    @ViewChild('keywordsComponent') keywordList: DxDataGridComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
     showSelectedTransactions = false;
     minAmount: number;
@@ -45,7 +41,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     attributeTypes: any;
     conditionTypes: any;
     categorization: any;
-    addedCategoryItems: any = {};
+    attributesAndKeywords: any = [];
     
     private transactionAttributeTypes: any;
 
@@ -57,7 +53,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     constructor(
         injector: Injector,
-        public dialog: MatDialog,
         private _classificationServiceProxy: ClassificationServiceProxy,
         private _cashflowServiceProxy: CashflowServiceProxy,
         private _transactionsServiceProxy: TransactionsServiceProxy
@@ -78,7 +73,10 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         });
 
         _transactionsServiceProxy.getTransactionAttributeTypes(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
-            let types = [];
+            let types = [{
+                id: 'keyword',
+                name: 'Keyword'
+            }];
             this.transactionAttributeTypes = data.transactionAttributeTypes;
             _.mapObject(data.transactionAttributeTypes, (val, key) => {
                 types.push({
@@ -109,6 +107,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.maxAmount = rule.condition.maxAmount;
                     this.keywords = this.getKeywordsFromString(rule.condition.descriptionWords);
                     this.attributes = rule.condition.attributes ? _.values(rule.condition.attributes) : [];
+                    this.attributesAndKeywords = this.getAtributesAndKeywords();
                     this.selectedTransactionCategory = rule.condition.transactionCategoryId;
                     this.selectedTransactionTypes = rule.condition.transactionTypes;
                 }
@@ -123,22 +122,22 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.descriptor = data.standardDescriptor;
                     this.keywords = this.getKeywordsFromString(data.descriptionPhrases.join(','));
                     this.attributes = this.getAttributesFromCommonDetails(data.attributes);
+                    this.attributesAndKeywords = this.getAtributesAndKeywords();
                     this.selectedTransactionCategory = data.transactionCategoryId;
                     this.selectedTransactionTypes = [data.transactionTypeId];
                 });
 
-        this.refreshCategories();
     }
 
     getKeywordsFromString(value: string) {
         return value &&
             value.split(',').map((keyword, index) => {
-                            return {
-                                caption: 'Keyword #' + index,
-                                keyword: keyword
-                            };
-                        }) || [];
-                }
+                return {
+                    caption: 'Keyword #' + index,
+                    keyword: keyword
+                };
+            }) || [];
+    }
 
     getAttributesFromCommonDetails(attributes: TransactionAttributeDto[]) {
         if (!attributes || !attributes.length) return [];
@@ -152,55 +151,12 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         });
     }
 
-    refreshCategories() {
-        this._classificationServiceProxy.getCategories(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
-            let categories = [];
-            this.categorization = data;
-            if (data.types)
-                Object.keys(data.types).sort((a, b) => +(a < b) ).forEach(typeKey => {
-                    categories.push({
-                        key: typeKey,
-                        parent: 0,
-                        name: data.types[typeKey].name
-                    });
-                });
-            if (data.groups)
-                 _.mapObject(data.groups, (item, key) => {
-                    categories.push({
-                        key: key + item.typeId,
-                        parent: item.typeId,
-                        name: item.name
-                    });
-                });
-            if (data.items)
-                 _.mapObject(data.items, (item, key) => {
-                    categories.push({
-                        key: key,
-                        parent: item.groupId +
-                            data.groups[item.groupId].typeId,
-                        name: item.name
-                    });
-                });
-
-            this.categories = categories;
-            if (this.data.categoryId) {
-                this.categoryList.instance.focus();
-                let category = data.items[this.data.categoryId];
-                this.categoryList.instance.expandRow(data.groups[category.groupId].typeId);
-                this.categoryList.instance.expandRow(category.groupId + data.groups[category.groupId].typeId);
-                setTimeout(() => {
-                    this.categoryList.instance.selectRows([this.data.categoryId], true);
-                }, 0);
-            }
-        });
-    }
-
     getDataObject() {
         return {
             id: this.data.id,
             name: this.data.title,
             parentId: this.data.parentId,
-            categoryId: this.getSelectedCategoryId(),
+            categoryId: this.data.categoryId,
             sourceTransactionList: this.data.transactionIds,
             transactionDescriptor: this.descriptor,
             transactionDescriptorAttributeTypeId: this.descriptorAttribute,
@@ -266,7 +222,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                             this.instanceId,
                             UpdateTransactionsCategoryInput.fromJS({
                                 transactionIds: this.data.transactionIds,
-                                categoryId: this.getSelectedCategoryId(),
+                                categoryId: this.data.categoryId,
                                 standardDescriptor: this.descriptor,
                                 descriptorAttributeTypeId: this.descriptorAttribute
                             })
@@ -298,36 +254,29 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         });
     }
 
-    ngAfterViewInit() {
-    }
-
-    getSelectedCategoryId() {
-        let selected = this.categoryList.instance.getSelectedRowKeys(),
-            key = selected.length && selected[0];
-        return this.categorization.items[key] && key || undefined;
-    }
-
     getDescriptionKeywords() {
-        let list = this.keywordList.instance.getVisibleRows();
-        return list.map((row) => {
-            return row.data['keyword'];
+        return this.keywords.map((row) => {
+            return row['keyword'];
         }).join(',') || '';
+    }
+
+    getAtributesAndKeywords() {
+        return this.attributes.concat(this.keywords.map((item) => {
+            return {
+                attributeTypeId: 'keyword',
+                conditionTypeId: '',
+                conditionValue: item.keyword
+            };
+        }));
     }
 
     getAttributes() {
         let attributes = {};
-        let list = this.attributeList.instance.getVisibleRows();
-        list.forEach((v) => attributes[v.data["attributeTypeId"]] = ConditionAttributeDto.fromJS(v.data));
+        let list = this.attributeList.instance.getVisibleRows().filter((item) => {
+            return (item.data['attributeTypeId'] != 'keyword');
+        }).forEach((v) => attributes[v.data['attributeTypeId']] = ConditionAttributeDto.fromJS(v.data));
 
         return attributes;
-    }
-
-    addAttributeRow() {
-        this.attributeList.instance.addRow();
-    }
-    
-    addKeywordRow() {
-        this.keywordList.instance.addRow();
     }
 
     onBankChanged($event) {
@@ -348,6 +297,12 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     validate(ruleCheckOnly: boolean = false) {
+        if (!this.data.title) {
+            this.data.title = this.descriptor;
+            if (!this.data.title)
+                return this.notify.error(this.l('RuleDialog_NameError'));
+        }
+
         if (!ruleCheckOnly) {
             if (!this.getDescriptionKeywords() && !Object.keys(this.getAttributes()).length)
                 return this.notify.error(this.l('RuleDialog_AttributeOrKeywordRequired'));
@@ -356,89 +311,14 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 return this.notify.error(this.l('RuleDialog_AmountError'));
         }
 
-        if (isNaN(this.getSelectedCategoryId()))
+        if (isNaN(this.data.categoryId))
             return this.notify.error(this.l('RuleDialog_CategoryError'));
 
         return true;
     }
 
-    onInitNewKeyword($event) {
-        $event.data['caption'] = 'Keyword #' + this.keywords.length;
-    }
-
-    getCategoryItemId(key) {
-        return parseInt(this.addedCategoryItems[key] || key);
-    }
-
-    onCategoryUpdated($event) {
-        let groupUpdate = this.categorization.groups[$event.key];
-        this._classificationServiceProxy['updateCategory' + (groupUpdate ? 'Group' : '')](
-            InstanceType[this.instanceType],
-            this.instanceId,
-            (groupUpdate ? UpdateCategoryGroupInput: UpdateCategoryInput).fromJS({
-                id: parseInt($event.key),
-                groupId: groupUpdate ? undefined: this.categorization.items[$event.key].groupId,
-                name: $event.data.name
-            })
-        ).subscribe((error) => {
-            if (error)
-                this.notify.error(this.l('SomeErrorOccurred'));
-        });
-
-    }
-
-    onCategoryInserted($event) {
-        let groupCreate = this.categorization.types[$event.data.parent];
-        this._classificationServiceProxy['createCategory' + (groupCreate ? 'Group' : '')](
-            InstanceType[this.instanceType],
-            this.instanceId,
-            (groupCreate ? CreateCategoryGroupInput: CreateCategoryInput).fromJS({
-                cashFlowTypeId: $event.data.parent,
-                groupId: this.getCategoryItemId($event.data.parent),
-                name: $event.data.name
-            })
-        ).subscribe((id) => {
-            if (isNaN(id))
-                this.notify.error(this.l('SomeErrorOccurred'));
-            this.refreshCategories();
-        });
-    }
-
-    onCategoryRemoving($event) {
-        $event.cancel = true;
-        let itemId = this.getCategoryItemId($event.key),
-            parentId = this.getCategoryItemId($event.data.parent);
-        if (this.categorization.types[$event.data.parent]) {
-            if (_.findWhere(this.categories, { parent: $event.key}))
-                this.notify.error(this.l('Category group should be empty to perform delete action'));
-            else
-                this._classificationServiceProxy.deleteCategoryGroup(InstanceType[this.instanceType], this.instanceId, itemId)
-                  .subscribe(() => {
-                      this.refreshCategories();
-                  });
-        } else {
-            let dialogData = {
-                deleteAllReferences: true,
-                categorizations: this.categorization.items,
-                categories: _.filter(this.categories, (obj) => {
-                    return (obj['parent'] && obj['key'] != itemId)
-                        || (obj['key'] == this.categorization.groups[parentId].typeId);
-                }),
-                categoryId: undefined
-            };
-            this.dialog.open(CategoryDeleteDialogComponent, {
-                data: dialogData
-            }).afterClosed().subscribe((result) => {
-                if (result)
-                    this._classificationServiceProxy.deleteCategory(
-                        InstanceType[this.instanceType],
-                        this.instanceId,
-                        dialogData.categoryId, dialogData.deleteAllReferences, itemId)
-                            .subscribe(() => {
-                                this.refreshCategories();
-                            });
-            });
-        }
+    onCategoryChanged($event) {
+        this.data.categoryId = $event.selectedRowKeys.pop();
     }
 
     onTransactionCategoryChanged(e) {
@@ -479,5 +359,49 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 component.selectItem(value);
             }).bind(this));
         }
+    }
+
+    addAttributeRow() {
+        this.attributeList.instance.addRow();
+    }   
+
+    onAttributeRowPrepared($event) {
+        if ($event.cells[0].value == "keyword")
+            setTimeout(() => {
+                $event.cells[1].cellElement.hide();
+                $event.cells[2].cellElement.attr('colspan', '2');
+            }, 0);
+        
+        if ($event.cells[1].value == "Exist") 
+            setTimeout(() => {
+                $event.cells[2].value = '-';
+                $event.cells[2].cellElement.hide();
+                $event.cells[0].cellElement.attr('colspan', '2');
+            }, 0);
+    }
+
+    updateKeywordList($event) {
+        this.keywords = this.attributeList.instance.getVisibleRows().filter((item) => {
+            return (item.data['attributeTypeId'] == 'keyword');
+        }).map((item, i) => {
+            return {
+                caption: 'Keyword #' + i,
+                keyword: item.data['conditionValue']
+            };        
+        });
+    }
+
+    setCellValue(newData, value) {
+        this['defaultSetCellValue'](newData, value);
+    }      
+
+    onDescriptorChanged($event) {
+        if (!this.data.title && $event.value)
+            this.data.title = $event.value;
+    }
+
+    onAttributeInitNewRow($event) {
+        $event.data.attributeTypeId = 'keyword';
+        $event.data.conditionTypeId = 'Equal';
     }
 }
