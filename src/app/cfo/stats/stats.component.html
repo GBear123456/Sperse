@@ -18,7 +18,6 @@
                         id="chart"
                         [dataSource]="statsData"
                         animation="{easing: 'easeOutCubic',duration: 2000}"
-                        [customizeLabel]="customizeLabel"
                         [customizePoint]="customizePoint"
                         (onDone)="onDone($event)"
                         resolveLabelOverlapping="stack"
@@ -31,7 +30,7 @@
                                                     ignoreEmptyPoints="true"
                                                     hoverMode="none">
                             <dxo-label
-                                [visible]="true"
+                                [visible]="false"
                                 [backgroundColor]="labelPositiveBackgroundColor">
                                 <dxo-format
                                     type="currency largeNumber"
@@ -145,7 +144,6 @@
                             valueField="netChange"
                             name="netChange">
                         </dxi-series>
-
                         <dxi-series
                             type="line"
                             [color]="forecastNetChangeColor"

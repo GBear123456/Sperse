@@ -20,6 +20,12 @@
                             [allowSorting]="false"
                             [allowFiltering]="false">
                 </dxi-column>
+                <dxi-column caption="{{l('Stats_SourceData_NetChange_Field').toUpperCase()}}"
+                            dataField="netChange"
+                            format="currency"
+                            [allowSorting]="false"
+                            [allowFiltering]="false">
+                </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_Balance_Field').toUpperCase()}}"
                             dataField="endingBalance"
                             format="currency"
@@ -28,7 +34,7 @@
                             [alignment]="'right'">
                 </dxi-column>
                 <dxo-load-panel [enabled]="true"></dxo-load-panel>
-                <dxo-paging [pageSize]="15"></dxo-paging>
+                <dxo-paging [pageSize]="amountOfItemsOnPage"></dxo-paging>
             </dx-data-grid>
         </mat-tab>
     </ng-container>

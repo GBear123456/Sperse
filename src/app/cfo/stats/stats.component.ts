@@ -339,10 +339,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
                 this.statsData = result.map(statsItem => {
                     Object.defineProperties(statsItem, {
-                        'netChange': {
-                            value: statsItem.income || statsItem.expenses ? (statsItem.income + statsItem.expenses) / 2 : null,
-                            enumerable: true
-                        },
+                        'netChange': { value: statsItem.income + statsItem.expenses, enumerable: true },
                         'minRange': { value: minRange, enumerable: true }
                     });
                     if (statsItem.isForecast) {
@@ -401,7 +398,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     customizeBottomAxis(elem) {
-        return elem.valueText.substring(0, 3).toUpperCase();
+        return elem.valueText.substring(0, 3).toUpperCase() + ' ' + elem.value.getFullYear().toString().substr(-2);
     }
 
     /** Different styles for labels for positive and negative values */
@@ -448,6 +445,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     onDone(event) {
         /** Added the Historical and forecast text block to the charts */
         this.addTextBlocks(event);
+
+        this.moveYearsToTheBottom(event);
+    }
+
+    moveYearsToTheBottom(event) {
+        //console.log(event);
     }
 
     /**

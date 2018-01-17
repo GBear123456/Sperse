@@ -1,4 +1,4 @@
-import { Component, Injector, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, OnInit, ElementRef } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import * as moment from 'moment';
@@ -9,13 +9,18 @@ import { BankAccountDailyStatDto } from '@shared/service-proxies/service-proxies
     templateUrl: './source-data.component.html',
     styleUrls: ['./source-data.component.less'],
 })
-export class SourceDataComponent extends AppComponentBase {
+export class SourceDataComponent extends AppComponentBase implements OnInit {
     @Input() historicalSourceData: Array<BankAccountDailyStatDto>;
     @Input() forecastSourceData: Array<BankAccountDailyStatDto>;
     @Output('onClose') closingSourceDataEmmitter: EventEmitter<any> = new EventEmitter();
 
-    constructor(injector: Injector) {
+    amountOfItemsOnPage: number;
+    constructor(injector: Injector, private elementRef: ElementRef) {
         super(injector, AppConsts.localization.CFOLocalizationSourceName);
+    }
+
+    ngOnInit() {
+        this.amountOfItemsOnPage = (window.innerHeight - 275) / 27;
     }
 
     formatDate(date) {
