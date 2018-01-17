@@ -306,6 +306,30 @@ body {
 #sync #sync-account .terms {
     font-size: 13px !important;
 }
+#sync #sync-account .terms,
+.terms {
+    position: relative;
+}
+#sync #sync-account .terms a,
+.terms a,
+#sync #sync-account .terms #login-tos-link,
+.terms #login-tos-link {
+    z-index: 0;
+    color: #A4A9B3 !important;
+    cursor: default;
+    font-size: 13px;
+}
+#sync #sync-account .terms::after,
+.terms::after {
+    display: block;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 5;
+}
 #login-tos-link {
     font-size: 13px !important;
 }
