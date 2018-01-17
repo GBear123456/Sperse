@@ -68,7 +68,6 @@
                                 top: -1px;
                                 width: 12px;
                                 height: 7px;
-                                transform: rotate(180deg);
                             }
 
                             &.closed {
@@ -78,7 +77,7 @@
                                     display: block;
                                 }
                                 &:after {
-                                    transform: rotate(0deg);
+                                    transform: rotate(180deg);
                                 }
                             }
                         }
@@ -134,13 +133,16 @@
 
             .cfoThemeLightDarkTheme {
                 &.dx-area-row-cell,
+                &.dx-area-column-cell,
                 &.dx-area-data-cell {
                     tr {
                         &.startedBalance,
                         &.incomeRow,
                         &.expensesRow,
+                        &.netChangeRow,
                         &.endingCashPosition,
-                        &.reconciliation {
+                        &.reconciliation,
+                        &.yearRow {
                             td {
                                 background: rgba(221, 221, 221, .32) !important;
                             }
@@ -183,6 +185,7 @@
                         }
                         &.year {
                             color: @yearTextColor;
+                            background: @incomeVerticalHeaderBackgroundColor;
                             font-weight: 600;
                             font-size: 20px;
                         }
@@ -212,6 +215,7 @@
                             letter-spacing: 0.6px;
                             &.historical {
                                 color: @historicalTextColor;
+                                background-color: #f7f9ff;
                             }
                             &.current {
                                 background: @currentTextColor;
@@ -281,25 +285,24 @@
                                 border-top: none
                             }
                         }
-                        &.dx-total {
+                        &.income {
+                            background: @incomeVerticalHeaderBackgroundColor;
+                        }
+                        &.expenses {
+                            background: @expensesVerticalHeaderBackgroundColor;
+                        }
+                        &.income,
+                        &.expenses,
+                        &.netChange {
                             font-weight: 700;
-                            &.income {
-                                background: @incomeVerticalHeaderBackgroundColor;
-                            }
-                            &.expenses {
-                                background: @expensesVerticalHeaderBackgroundColor;
-                            }
-                            &.income,
-                            &.expenses {
-                                cursor: default;
-                                text-align: left;
-                                padding-left: 20px;
-                                border: none;
-                                .dx-expand-icon-container {
-                                    display: none;
-                                }
+                            cursor: default;
+                            text-align: left;
+                            padding-left: 20px;
+                            .dx-expand-icon-container {
+                                display: none;
                             }
                         }
+
                         &.dx-last-cell {
                             width: 100%;
                             padding-left: 22px;
@@ -353,6 +356,7 @@
                     &.startedBalance,
                     &.incomeRow,
                     &.expensesRow,
+                    &.netChangeRow,
                     &.endingCashPosition {
                         td {
                             letter-spacing: 0.8px;
@@ -460,6 +464,7 @@
                     &.startedBalance,
                     &.incomeRow,
                     &.expensesRow,
+                    &.netChangeRow,
                     &.endingCashPosition,
                     &.reconciliation {
                         td {
