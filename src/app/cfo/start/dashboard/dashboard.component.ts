@@ -21,7 +21,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit {
 
         this.headlineConfig = {
             names: [this.l('Dashboard_Title')],
-            iconSrc: 'assets/common/icons/manage-icon.svg',
+            iconSrc: 'assets/common/icons/pie-chart.svg',
             buttons: []
         }
     }
