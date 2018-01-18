@@ -576,25 +576,24 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             onItemClick: (e) => {
                                 // this.handleClick(e, null, this.handleForecastModelDoubleClick);
                             },
-                            onContentReady: (e) => {
-                                console.log(e);
-                                //e.element.find('').each(function(index, value){
-                                let clickObservable = Observable.create(
-                                    function add(handler) {
-                                        $('.dx-item').on('click', handler);
-                                    },
-                                    function remove(handler) {
-                                        $('.dx-item').off('click', handler);
-                                    }
-                                );
-                                clickObservable.buffer(clickObservable.debounceTime(250))
-                                    .map(list => list.length)
-                                    .filter(x => x === 2)
-                                    .subscribe(() => {
-                                        console.log('doubleclick');
-                                    });
-                                //});
-                            }
+                            // onContentReady: (e) => {
+                            //     //e.element.find('').each(function(index, value){
+                            //     let clickObservable = Observable.create(
+                            //         function add(handler) {
+                            //             $('.dx-item').on('click', handler);
+                            //         },
+                            //         function remove(handler) {
+                            //             $('.dx-item').off('click', handler);
+                            //         }
+                            //     );
+                            //     clickObservable.buffer(clickObservable.debounceTime(250))
+                            //         .map(list => list.length)
+                            //         .filter(x => x === 2)
+                            //         .subscribe(() => {
+                            //             console.log('doubleclick');
+                            //         });
+                            //     //});
+                            // }
                         }
                     },
                     {
@@ -1789,7 +1788,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     reformatCell(cellObj, preference) {
-        const locale = preference.sourceValue.indexOf('.') <= 3 ? 'es-VE' : 'en-EN';
+        const locale = preference.sourceValue.indexOf('.') <= 3 ? 'es-BO' : 'en-EN';
         if (!cellObj.cellElement.hasClass('hideZeroActivity') &&
             !cellObj.cellElement.hasClass('hideZeroValues')) {
             cellObj.cellElement.text(cellObj.cell.value.toLocaleString(locale, {

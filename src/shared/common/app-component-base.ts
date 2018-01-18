@@ -25,6 +25,8 @@ import * as _ from 'underscore';
 export abstract class AppComponentBase {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
     @HostListener('document:webkitfullscreenchange', ['$event'])
+    @HostListener('document:mozfullscreenchange', ['$event'])
+    @HostListener('document:fullscreenchange', ['$event'])
     onWebkitFullscreenChange($event) {
         this.isFullscreenMode = document['fullScreen']
             || document['mozFullScreen'] || document.webkitIsFullScreen;
