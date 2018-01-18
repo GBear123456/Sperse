@@ -189,7 +189,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             {
                 location: 'after',
                 items: [
-                    {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.body)}
+                    {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.documentElement)}
                 ]
             }
         ];

@@ -704,7 +704,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getFullscreenElement() {
-        return document.body; //!!VP To avoid dropdown elements issue in fullscreen mode
+        return document.documentElement; //!!VP To avoid dropdown elements issue in fullscreen mode
     }
 
     ngAfterViewInit(): void {
