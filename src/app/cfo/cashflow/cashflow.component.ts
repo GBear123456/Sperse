@@ -733,7 +733,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.cashflowData = this.getCashflowDataFromTransactions(transactions);
                     /** Make a copy of cashflow data to display it in custom total group on the top level */
                     let stubCashflowDataForEndingCashPosition = this.getStubCashflowDataForEndingCashPosition(this.cashflowData);
-                    this.addCashflowType(Total, this.l('Ending Cash Position'));
+                    this.addCashflowType(Total, this.l('Ending Cash Balance'));
                     let stubCashflowDataForAllDays = this.getStubCashflowDataForAllDays(this.cashflowData);
                     let cashflowWithStubForEndingPosition = this.cashflowData.concat(stubCashflowDataForEndingCashPosition);
                     let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(cashflowWithStubForEndingPosition);

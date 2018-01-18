@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter, Injector, OnInit, ViewChild, Ho
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
-import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput, 
+import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput,
     UpdateCategoryGroupInput, CreateCategoryGroupInput, CreateCategoryInput  } from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 import { MatDialog } from '@angular/material';
@@ -47,11 +47,11 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         private _filtersService: FiltersService,
         private _classificationServiceProxy: ClassificationServiceProxy
     ) {
-        super(injector); 
+        super(injector);
     }
 
     ngOnInit() {
-        this.refreshCategories();      
+        this.refreshCategories();
     }
 
     initDragAndDropEvents($event) {
@@ -62,7 +62,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 dragEnterCount++;
                 e.currentTarget.classList.add('drag-hover');
             }).on('dragover', (e) => {
-                e.originalEvent.preventDefault(); 
+                e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
             }).on('dragleave', (e) => {
                 if (--dragEnterCount == 0)
@@ -77,7 +77,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     getCategoryItemId(key) {
         return parseInt(key);
-    }    
+    }
 
     refreshCategories(autoExpand: boolean = true) {
         this.autoExpand = autoExpand;
