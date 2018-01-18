@@ -39,7 +39,7 @@
                                     [allowHiding]="false"
                                     [allowResizing]="false"
                                     [allowReordering]="false"
-                                    [calculateCellValue]="checkUncategozired"></dxi-column>
+                                    cellTemplate="isCategorizedTemplate"></dxi-column>
                         <dxi-column dataField="Id" cssClass="tabular" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="1"></dxi-column>
                         <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" dataType="date" format="shortDate" sortOrder="desc" sortIndex="0"></dxi-column>
                         <dxi-column dataField="BankAccountNumber" cssClass="tabular" caption="{{l('Transactions_BankAccountNumber')}}"></dxi-column>
@@ -73,6 +73,10 @@
                                 <span class="end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ cell.text | number:'1.2-2' }} </span>
                             </ng-container>
                         </div>
+                        <div *dxTemplate="let cell of 'isCategorizedTemplate'">
+                            <span [ngClass]="{'uncategorized': !cell.data.CashflowCategoryId}"></span>
+                        </div>
+
                         <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-pager [showPageSizeSelector]="true"
                                    [allowedPageSizes]="[20, 100, 500, 1000, 5000]"

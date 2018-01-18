@@ -525,11 +525,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     }
 
-    checkUncategozired(rowData) {
-        this['cssClass'] = (rowData.CashflowCategoryId ? '' : 'un') + 'categorized';
-        return '';
-    }
-
     onSelectionChanged($event) {
         let img = new Image();
         img.src = 'assets/common/images/transactions.png';
