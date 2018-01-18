@@ -87,7 +87,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 this.categorization = data;
                 if (data.types)
                     _.mapObject(data.types, (item, key) => {
-                        categories.unshift({
+                        categories.push({
                             key: key,
                             parent: 0,
                             name: item.name

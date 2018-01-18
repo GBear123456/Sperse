@@ -24,10 +24,10 @@
         </dx-data-grid>
     </div>
     <div class="rule-container" *ngIf="!showSelectedTransactions">
-        <div class="warning-box">
+        <div class="warning-box" *ngIf="showOverwriteWarning">
             <div>
-                <h3>You are about to overwrite an existing rule!</h3>
-                <p>Gksdfjlsdfkfg sdkjfsdk sdfjgskdsg skjgfs sal adfasgfg sadfsdf sdfasdf sdfsafa asdfas</p>
+                <h3>{{l('RuleDialog_OverwriteWarningHeader')}}</h3>
+                <p>{{l('RuleDialog_OverwriteWarningMessage')}}</p>
             </div>
         </div>
         <div class="rule-wrapper">
