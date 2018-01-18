@@ -32,15 +32,21 @@ export class CFOService {
 
     instanceChangeProcess() {
         this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
-            this.initialized = (data.status == GetStatusOutputStatus.Active);
+            this.initialized = (data.status == GetStatusOutputStatus.Active) && data.hasSyncAccounts;
+            var hasTransactions = this.initialized && data.hasTransactions;
             this._appService.topMenu.items
                 .forEach((item, i) => {
                     if (i == 0) {
                         item.text = this.initialized ? 'Dashboard' : 'Setup';
-                    } else {
-                        if (i !== this._appService.topMenu.items.length - 1)
-                        {
+                    }
+                    else {
+                        if (i == 1) {
                             item.disabled = !this.initialized;
+                        }
+                        else {
+                            if (i !== this._appService.topMenu.items.length - 1) {
+                                item.disabled = !hasTransactions;
+                            }
                         }
                     }
                 });
