@@ -188,6 +188,43 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     getTotalValues() {
         let totals = this.totalDataSource.items();
+        let selectedRows = this.dataGrid.instance.getSelectedRowsData();
+
+        if (selectedRows.length) {
+            let creditTotal = this.creditTransactionTotal = 0;
+            let creditCount = this.creditTransactionCount = 0;
+            let debitTotal = this.debitTransactionTotal = 0;
+            let debitCount = this.debitTransactionCount = 0;
+
+            let portfolios = [];
+            let accounts = [];
+
+            _.each(selectedRows, function (row) {
+                portfolios.push(row.BankAccountId);
+                accounts.push(row.SyncAccountId);
+
+                if (row.Amount < 0) {
+                    creditTotal += row.Amount;
+                    creditCount++;
+                }
+                else {
+                    debitTotal += row.Amount;
+                    debitCount++;
+                }                
+            });
+            this.portfolioCount = _.uniq(portfolios).length;
+            this.accountCount = _.uniq(accounts).length;
+
+            this.creditTransactionTotal = creditTotal;
+            this.creditTransactionCount = creditCount;
+
+            this.debitTransactionTotal = debitTotal;
+            this.debitTransactionCount = debitCount;
+
+            this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal;
+            this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
+        }
+        else
         if (totals && totals.length) {
             this.creditTransactionTotal = totals[0].creditTotal;
             this.creditTransactionCount = totals[0].creditCount;
@@ -504,6 +541,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             }).on('dragend', (e) => {
                 this.dragInProgress = false;
             });
+        this.getTotalValues();
     }
 
     onContentReady($event) {
