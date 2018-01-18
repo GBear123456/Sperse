@@ -53,6 +53,7 @@ export abstract class AppComponentBase {
     private _elementRef: ElementRef;
     private _applicationRef: ApplicationRef;
     public _exportService: ExportService;
+    public capitalize = require('underscore.string/capitalize');
 
     constructor(private _injector: Injector,
         public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName
@@ -104,8 +105,6 @@ export abstract class AppComponentBase {
         return abp.utils.formatString.apply(this, args);
     }
 
-    capitalize = require('underscore.string/capitalize');
-
     getODataURL(uri: String, filter?: Object) {
         return AppConsts.remoteServiceBaseUrl + '/odata/' +
             uri + (filter ? buildQuery({ filter }) : '');
@@ -116,14 +115,14 @@ export abstract class AppComponentBase {
     }
 
     advancedODataFilter(grid: any, uri: string, query: any[]) {
-        let queryWithSearch = query.concat(this.getSearchFilter()); 
+        let queryWithSearch = query.concat(this.getSearchFilter());
         grid.getDataSource()['_store']['_url'] =
             this.getODataURL(uri, queryWithSearch);
 
         grid.refresh();
     }
 
-    processODataFilter(grid, uri, filters, getCheckCustom) {        
+    processODataFilter(grid, uri, filters, getCheckCustom) {
         this.advancedODataFilter(grid, uri,
             filters.map((filter) => {
                 return getCheckCustom(filter) || _.pairs(filter.items)
@@ -168,9 +167,10 @@ export abstract class AppComponentBase {
                 or: filterData
             };
         }
-        
+
         return data;
-    }   
+    }
+
     getSearchKeyWords() {
         let words = this.searchValue.match(this._wordRegex);
         let noisyWords = _.union(this._removeFromEnd, this._remove);
@@ -199,7 +199,7 @@ export abstract class AppComponentBase {
     s(key: string): string {
         return abp.setting.get(key);
     }
-    
+
     exportToXLS(option) {
         this.dataGrid.export.fileName =
             this._exportService.getFileName();

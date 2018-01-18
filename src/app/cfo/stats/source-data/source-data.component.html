@@ -9,25 +9,25 @@
                     <dxo-format [formatter]="formatDate"></dxo-format>
                 </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_Inflows_Field').toUpperCase()}}"
-                            dataField="income"
+                            [dataField]="period === 'historical' ? 'income' : 'forecastIncome'"
                             format="currency"
                             [allowSorting]="false"
                             [allowFiltering]="false">
                 </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_Outflows_Field').toUpperCase()}}"
-                            dataField="expenses"
+                            [dataField]="period === 'historical' ? 'expenses' : 'forecastExpenses'"
                             format="currency"
                             [allowSorting]="false"
                             [allowFiltering]="false">
                 </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_NetChange_Field').toUpperCase()}}"
-                            dataField="netChange"
+                            [dataField]="period === 'historical' ? 'netChange' : 'forecastNetChange'"
                             format="currency"
                             [allowSorting]="false"
                             [allowFiltering]="false">
                 </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_Balance_Field').toUpperCase()}}"
-                            dataField="endingBalance"
+                            [dataField]="period === 'historical' ? 'endingBalance' : 'forecastEndingBalance'"
                             format="currency"
                             [allowSorting]="false"
                             [allowFiltering]="false"
@@ -39,4 +39,3 @@
         </mat-tab>
     </ng-container>
 </mat-tab-group>
-

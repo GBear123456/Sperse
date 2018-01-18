@@ -1,4 +1,4 @@
-import { Component, Injector, Input, Output, EventEmitter, OnInit, ElementRef } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import * as moment from 'moment';
@@ -15,7 +15,7 @@ export class SourceDataComponent extends AppComponentBase implements OnInit {
     @Output('onClose') closingSourceDataEmmitter: EventEmitter<any> = new EventEmitter();
 
     amountOfItemsOnPage: number;
-    constructor(injector: Injector, private elementRef: ElementRef) {
+    constructor(injector: Injector) {
         super(injector, AppConsts.localization.CFOLocalizationSourceName);
     }
 

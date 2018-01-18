@@ -1,4 +1,4 @@
-import { Component, HostBinding, Inject, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Inject, ElementRef, AfterViewInit, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser';
 
 import { AppConsts } from '@shared/AppConsts';
@@ -15,50 +15,48 @@ import * as _ from 'underscore';
     template: '<app-root></app-root>'
 })
 export class RootComponent implements AfterViewInit {
-  constructor (
-    @Inject(DOCUMENT) private document, 
-    private hostElement: ElementRef,
-    private _uiCustomizationService: AppUiCustomizationService
-  ) {  }
+    constructor(@Inject(DOCUMENT) private document,
+                private hostElement: ElementRef,
+                private _uiCustomizationService: AppUiCustomizationService) { }
 
-  public checkSetClasses(loggedUser) {
-    let classList = this.hostElement.nativeElement.classList,
-        loggedClass = this._uiCustomizationService.getAppModuleBodyClass().split(' ').filter(Boolean),
-        accountClass = this._uiCustomizationService.getAccountModuleBodyClass().split(' ').filter(Boolean);
-    classList.remove.apply(classList, accountClass.concat(accountClass));
-    classList.add.apply(classList, loggedUser ? loggedClass: accountClass);
-  }
+    public checkSetClasses(loggedUser) {
+        let classList = this.hostElement.nativeElement.classList,
+            loggedClass = this._uiCustomizationService.getAppModuleBodyClass().split(' ').filter(Boolean),
+            accountClass = this._uiCustomizationService.getAccountModuleBodyClass().split(' ').filter(Boolean);
+        classList.remove.apply(classList, accountClass.concat(accountClass));
+        classList.add.apply(classList, loggedUser ? loggedClass : accountClass);
+    }
 
-  public pageHeaderFixed(value) {
-    this.hostElement.nativeElement.classList[
-      value ? 'add': 'remove']('page-header-fixed');
-  }
+    public pageHeaderFixed(value) {
+        this.hostElement.nativeElement.classList[
+            value ? 'add' : 'remove']('page-header-fixed');
+    }
 
-  public overflowHidden(value) {
-    this.hostElement.nativeElement.classList[
-      value ? 'add': 'remove']('overflow-hidden');
-  }
+    public overflowHidden(value) {
+        this.hostElement.nativeElement.classList[
+            value ? 'add' : 'remove']('overflow-hidden');
+    }
 
-  public addScriptLink(src: String, type: String = "text/javascript"): void {
-		let script = this.document.createElement('script');
-    script.type = type;
-    script.src = src;
- 		this.document.head.append(script);
-  }
+    public addScriptLink(src: String, type: String = 'text/javascript'): void {
+        let script = this.document.createElement('script');
+        script.type = type;
+        script.src = src;
+        this.document.head.append(script);
+    }
 
-	public addStyleSheet(id: String, href: String, rel: String = 'stylesheet'): void {
-		let link = this.document.createElement('link');
-		_.mapObject({id: id, href: href, rel: rel}, 
-			(val, key) => {
-				link.setAttribute(key, val);			
-			}
-		);
-		this.document.head.append(link);
-	}
+    public addStyleSheet(id: String, href: String, rel: String = 'stylesheet'): void {
+        let link = this.document.createElement('link');
+        _.mapObject({id: id, href: href, rel: rel},
+            (val, key) => {
+                link.setAttribute(key, val);
+            }
+        );
+        this.document.head.append(link);
+    }
 
-  ngAfterViewInit() {
-    this.checkSetClasses(abp.session.userId);
-  }
+    ngAfterViewInit() {
+        this.checkSetClasses(abp.session.userId);
+    }
 }
 
 /*
@@ -66,20 +64,18 @@ export class RootComponent implements AfterViewInit {
 */
 @Component({
     selector: 'app-root',
-    template:  `<router-outlet></router-outlet>`
+    template: `<router-outlet></router-outlet>`
 })
-export class AppRootComponent {
-	constructor (
-		@Inject(AppSessionService) private SS, 
-		@Inject(RootComponent) private parent
-	) {}
+export class AppRootComponent implements OnInit {
+    constructor(@Inject(AppSessionService) private SS,
+                @Inject(RootComponent) private parent) {}
 
-  ngOnInit() {
-    if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'])
-      this.parent.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
+    ngOnInit() {
+        if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'])
+            this.parent.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
 
-    	//tenant specific custom css
-		this.SS.tenant && this.SS.tenant.customCssId && this.parent.addStyleSheet('TenantCustomCss',
-		  AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + this.SS.tenant.customCssId);
-  }    
+        //tenant specific custom css
+        this.SS.tenant && this.SS.tenant.customCssId && this.parent.addStyleSheet('TenantCustomCss',
+            AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + this.SS.tenant.customCssId);
+    }
 }

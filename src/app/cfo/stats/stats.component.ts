@@ -329,7 +329,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     /** load stats data from api */
     loadStatsData() {
         abp.ui.setBusy();
-        let {startDate = undefined, endDate = undefined, accountIds = []} = this.requestFilter;
+        let { startDate, endDate, accountIds = []} = this.requestFilter;
         this._bankAccountService.getStats(
             InstanceType[this.instanceType], this.instanceId,
             'USD', this.selectedForecastModel.id, accountIds, startDate, endDate, GroupBy.Monthly
@@ -398,7 +398,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     customizeBottomAxis(elem) {
-        return elem.valueText.substring(0, 3).toUpperCase() + ' ' + elem.value.getFullYear().toString().substr(-2);
+        return `${elem.valueText.substring(0, 3).toUpperCase()}<br/><div class="yearArgument">${elem.value.getFullYear().toString().substr(-2)}</div>`;
     }
 
     /** Different styles for labels for positive and negative values */
