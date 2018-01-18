@@ -59,7 +59,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     labelWidth = 45;
     showSourceData = false;
     exporting = false;
+    loadingFinished = false;
     chartsHeight = 400;
+    chartsWidth;
     barChartTooltipFieldsNames = [
         'startingBalance',
         'income',
@@ -195,7 +197,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     ngOnInit() {
         super.ngOnInit();
-
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
 
@@ -216,7 +217,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
         this.initHeadlineConfig();
         this.initFiltering();
-        this.calculateChartsHeight();
+        this.calculateChartsSize();
     }
 
     initHeadlineConfig() {
@@ -249,10 +250,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
-    calculateChartsHeight() {
+    calculateChartsSize() {
         let chartsHeight = window.innerHeight - 410;
         this.chartsHeight =  chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
-        return this.chartsHeight;
+        this.chartsWidth = window.innerWidth;
     }
 
     /** Calculates the height of the charts scrollable height after resizing */
@@ -327,7 +328,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** load stats data from api */
     loadStatsData() {
-        let {startDate = undefined, endDate = undefined, accountIds = []} = this.requestFilter;
+        abp.ui.setBusy();
+        let { startDate, endDate, accountIds = []} = this.requestFilter;
         this._bankAccountService.getStats(
             InstanceType[this.instanceType], this.instanceId,
             'USD', this.selectedForecastModel.id, accountIds, startDate, endDate, GroupBy.Monthly
@@ -337,10 +339,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
                 this.statsData = result.map(statsItem => {
                     Object.defineProperties(statsItem, {
-                        'netChange': {
-                            value: statsItem.income || statsItem.expenses ? (statsItem.income + statsItem.expenses) / 2 : null,
-                            enumerable: true
-                        },
+                        'netChange': { value: statsItem.income + statsItem.expenses, enumerable: true },
                         'minRange': { value: minRange, enumerable: true }
                     });
                     if (statsItem.isForecast) {
@@ -359,6 +358,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             } else {
                 console.log('No daily stats');
             }
+            this.loadingFinished = true;
+            abp.ui.clearBusy();
         },
         error => console.log('Error: ' + error));
     }
@@ -397,7 +398,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     customizeBottomAxis(elem) {
-        return elem.valueText.substring(0, 3).toUpperCase();
+        return `${elem.valueText.substring(0, 3).toUpperCase()}<br/><div class="yearArgument">${elem.value.getFullYear().toString().substr(-2)}</div>`;
     }
 
     /** Different styles for labels for positive and negative values */
@@ -444,6 +445,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     onDone(event) {
         /** Added the Historical and forecast text block to the charts */
         this.addTextBlocks(event);
+
+        this.moveYearsToTheBottom(event);
+    }
+
+    moveYearsToTheBottom(event) {
+        //console.log(event);
     }
 
     /**
@@ -542,7 +549,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     getTooltipInfoHtml(pointInfo) {
         let html = '';
-        let pointDataObject = this.statsData.find(item => item.date = pointInfo.argument);
+        let pointDataObject = this.statsData.find(item => item.date.toDate().toString() == pointInfo.argument);
         this.barChartTooltipFieldsNames.forEach(fieldName => {
             if (pointDataObject[fieldName] !== null && pointDataObject[fieldName] !== undefined) {
                 html += `${this.l('Stats_' + fieldName)} : ${pointDataObject[fieldName]}<br>`;

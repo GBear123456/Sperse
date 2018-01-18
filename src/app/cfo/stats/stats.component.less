@@ -39,8 +39,8 @@
                 letter-spacing: 0.2px;
             }
         }
-        md-tab-group {
-            /deep/ .mat-tab-header {
+        /deep/ .mat-tab-group {
+            .mat-tab-header {
                 margin-bottom: 20px;
                 border-bottom: none;
                 .mat-tab-label {
@@ -72,14 +72,18 @@
                 &:first-of-type {
                     margin-bottom: 42px;
                 }
+                .yearArgument {
+                    font-size: 10px;
+                }
             }
         }
 
         source-data {
-            width: 410px;
+            width: 500px;
+            right: -500px;
             position: absolute;
             top: -137px;
-            right: -410px;
+            height: calc(100% + 198px);
             -webkit-transition-duration: 0.3s;
             -moz-transition-duration: 0.3s;
             -o-transition-duration: 0.3s;

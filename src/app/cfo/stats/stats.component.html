@@ -18,12 +18,11 @@
                         id="chart"
                         [dataSource]="statsData"
                         animation="{easing: 'easeOutCubic',duration: 2000}"
-                        [customizeLabel]="customizeLabel"
                         [customizePoint]="customizePoint"
                         (onDone)="onDone($event)"
                         resolveLabelOverlapping="stack"
                         #linearChart>
-                        <dxo-size [height]="chartsHeight / 2"></dxo-size>
+                        <dxo-size [width]="chartsWidth" [height]="chartsHeight / 2"></dxo-size>
                         <!-- common settings for charts -->
                         <dxo-common-series-settings argumentField="date"
                                                     [showInLegend]="false"
@@ -31,7 +30,7 @@
                                                     ignoreEmptyPoints="true"
                                                     hoverMode="none">
                             <dxo-label
-                                [visible]="true"
+                                [visible]="false"
                                 [backgroundColor]="labelPositiveBackgroundColor">
                                 <dxo-format
                                     type="currency largeNumber"
@@ -41,6 +40,13 @@
                             </dxo-label>
                             <dxo-point size="8"></dxo-point>
                         </dxo-common-series-settings>
+
+                        <dxo-tooltip
+                            enabled="true"
+                            zIndex="1"
+                            [customizeTooltip]="customizeBarTooltip">
+                        </dxo-tooltip>
+
                         <dxi-series
                             pane="topPane"
                             color="url(#forecast-linear-gradient)"
@@ -91,6 +97,7 @@
                                     [type]="axisDateFormat">
                                 </dxo-format>
                             </dxo-label>
+                            <dxo-tick-interval months="1"></dxo-tick-interval>
                         </dxo-argument-axis>
 
                         <!-- Common settings for axis -->
@@ -111,7 +118,7 @@
                         [barWidth]="0.5"
                         (onDone)="onDone($event)"
                         #barChart>
-                        <dxo-size [height]="chartsHeight / 2"></dxo-size>
+                        <dxo-size [width]="chartsWidth" [height]="chartsHeight / 2"></dxo-size>
                         <!-- common settings for charts -->
                         <dxo-common-series-settings
                             argumentField="date"
@@ -137,7 +144,6 @@
                             valueField="netChange"
                             name="netChange">
                         </dxi-series>
-
                         <dxi-series
                             type="line"
                             [color]="forecastNetChangeColor"
@@ -154,6 +160,7 @@
                                     [type]="axisDateFormat">
                                 </dxo-format>
                             </dxo-label>
+                            <dxo-tick-interval months="1"></dxo-tick-interval>
                         </dxo-argument-axis>
 
                         <!-- Left axis -->
@@ -166,17 +173,6 @@
                             </dxo-label>
                             <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>
                         </dxi-value-axis>
-
-                        <!-- Bottom axis -->
-                        <dxo-argument-axis
-                            argumentType="datetime"
-                            visible="true">
-                            <dxo-label [customizeText]="customizeBottomAxis">
-                                <dxo-format
-                                    [type]="axisDateFormat">
-                                </dxo-format>
-                            </dxo-label>
-                        </dxo-argument-axis>
 
                         <!-- Common settings for axis -->
                         <dxo-common-axis-settings allowDecimals="false">
@@ -209,6 +205,6 @@
 </div>
 
 <app-no-data
-    *ngIf="!statsData || !statsData.length"
+    *ngIf="loadingFinished && (!statsData || !statsData.length)"
     [showLink]="false">
 </app-no-data>

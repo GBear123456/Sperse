@@ -38,6 +38,7 @@ import * as ModelEnums from './models/setting-enums';
 import { CacheService } from 'ng2-cache-service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/observable/fromEventPattern';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/map';
@@ -298,6 +299,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     forecastModelsObj: { items: Array<any>, selectedItemIndex: number };
     selectedForecastModel;
     currencyId = 'USD';
+    /** @todo create model */
     userPreferencesHandlers = {
         localizationAndCurrency: {
             applyTo: 'cells',
@@ -569,10 +571,29 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             selectedIndex: this.forecastModelsObj.selectedItemIndex,
                             accessKey: 'cashflowForecastSwitcher',
                             onSelectionChanged: (e) => {
-                                this.handleClick(e, this.changeSelectedForecastModel, this.handleForecastModelDoubleClick);
+                                // this.handleClick(e, this.changeSelectedForecastModel, this.handleForecastModelDoubleClick);
                             },
                             onItemClick: (e) => {
-                                this.handleClick(e, null, this.handleForecastModelDoubleClick);
+                                // this.handleClick(e, null, this.handleForecastModelDoubleClick);
+                            },
+                            onContentReady: (e) => {
+                                console.log(e);
+                                //e.element.find('').each(function(index, value){
+                                let clickObservable = Observable.create(
+                                    function add(handler) {
+                                        $('.dx-item').on('click', handler);
+                                    },
+                                    function remove(handler) {
+                                        $('.dx-item').off('click', handler);
+                                    }
+                                );
+                                clickObservable.buffer(clickObservable.debounceTime(250))
+                                    .map(list => list.length)
+                                    .filter(x => x === 2)
+                                    .subscribe(() => {
+                                        console.log('doubleclick');
+                                    });
+                                //});
                             }
                         }
                     },
@@ -894,7 +915,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.createStubTransaction({
                             'cashflowTypeId': NetChange,
                             'categorization': {
-                                [this.categorization[0]]: cashflowDataItem.accountId
+                                [this.categorization[0]]: null
                             },
                             'expenseCategoryId': null,
                             'amount': cashflowDataItem.amount,
@@ -919,7 +940,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             this.createStubTransaction({
                                 'cashflowTypeId': NetChange,
                                 'categorization': {
-                                    [this.categorization[0]]: cashflowDataItem.accountId
+                                    [this.categorization[0]]: null
                                 },
                                 'expenseCategoryId': null,
                                 'amount': cashflowDataItem.amount,
@@ -1070,6 +1091,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.collapsedStartingAndEndingBalance = false;
             this.closeTransactionsDetail();
             this.startLoading();
+            /** @todo refactor - move to the showNetChangeRow and call here all
+             *  appliedTo data methods before reloading the cashflow
+             */
             if (updateWithNetChange) {
                 /** If user choose to show net change - then add stub data to data source */
                 if (result.general.showNetChangeRow) {
