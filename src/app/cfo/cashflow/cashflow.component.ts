@@ -359,7 +359,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     sortings: SortingItemModel[] = [
         {
             name: 'Category',
-            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_CategoryName')),
+            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_CashflowCategoryName')),
             activeByDefault: true,
             sortOptions: {
                 sortBy: 'displayText',
