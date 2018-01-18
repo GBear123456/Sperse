@@ -77,7 +77,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     getCategoryItemId(key) {
         return parseInt(key);
-    }
+    }    
 
     refreshCategories(autoExpand: boolean = true) {
         this.autoExpand = autoExpand;
@@ -86,11 +86,11 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 let categories = [];
                 this.categorization = data;
                 if (data.types)
-                    Object.keys(data.types).sort((a, b) => +(a < b) ).forEach(typeKey => {
+                    _.mapObject(data.types, (item, key) => {
                         categories.push({
-                            key: typeKey,
+                            key: key,
                             parent: 0,
-                            name: data.types[typeKey].name
+                            name: item.name
                         });
                     });
                 if (data.groups)
@@ -126,7 +126,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     onCategoryUpdated($event) {
-        let groupUpdate = this.categorization.groups[$event.key];
+        let groupUpdate = this.categorization.groups[parseInt($event.key)];
         this._classificationServiceProxy['updateCategory' + (groupUpdate ? 'Group' : '')](
             InstanceType[this.instanceType],
             this.instanceId,
@@ -194,5 +194,9 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                             });
             });
         }
+    }
+
+    sortItem(val1, val2) {
+        return val1.localeCompare(val2);
     }
 }

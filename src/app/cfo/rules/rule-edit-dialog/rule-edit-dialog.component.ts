@@ -50,6 +50,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     transactionCategories: any;
     selectedTransactionCategory: string;
     selectedTransactionTypes: string[] = [];
+    showOverwriteWarning = false;
 
     constructor(
         injector: Injector,
@@ -125,6 +126,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.attributesAndKeywords = this.getAtributesAndKeywords();
                     this.selectedTransactionCategory = data.transactionCategoryId;
                     this.selectedTransactionTypes = [data.transactionTypeId];
+                    this.showOverwriteWarning = data.sourceTransactionsAreMatchingExistingRules;
                 });
 
     }
