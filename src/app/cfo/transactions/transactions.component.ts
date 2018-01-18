@@ -188,7 +188,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     getTotalValues() {
         let totals = this.totalDataSource.items();
-        if (totals) {
+        if (totals && totals.length) {
             this.creditTransactionTotal = totals[0].creditTotal;
             this.creditTransactionCount = totals[0].creditCount;
 
@@ -200,6 +200,19 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
             this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal;
             this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
+        }
+        else {
+            this.creditTransactionTotal = 0;
+            this.creditTransactionCount = 0;
+
+            this.debitTransactionTotal = 0;
+            this.debitTransactionCount = 0;
+
+            this.portfolioCount = 0;
+            this.accountCount = 0;
+
+            this.transactionTotal = 0;
+            this.transactionCount = 0;
         }
     }
 
@@ -494,8 +507,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onContentReady($event) {
-        this.onSelectionChanged($event);
-        this.getTotalValues();
+        this.onSelectionChanged($event);        
     }
 
     openCategorizationWindow($event) {
