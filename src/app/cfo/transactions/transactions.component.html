@@ -49,11 +49,13 @@
                         <dxi-column dataField="Amount" cssClass="tabular" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate"></dxi-column>
                         <dxi-column dataField="Amount" cssClass="tabular" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate"></dxi-column>
                         <dxi-column dataField="EndingBalance" cssClass="tabular" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate"></dxi-column>
+                        <dxi-column dataField="Descriptor" caption="{{l('Transactions_Descriptor')}}"></dxi-column>
                         <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}" [width]="550"></dxi-column>
 
+                        <dxi-column dataField="Comments" caption="{{l('Transactions_Comments')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="BankCode" caption="{{l('Transactions_BankCode')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="IsPending" caption="{{l('Transactions_IsPending')}}" [visible]="false" cellTemplate="isPendingTemplate"></dxi-column>
                         <dxi-column dataField="BankAccountTypeName" caption="{{l('Transactions_BankAccountType')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="Time" cssClass="tabular" caption="{{l('Transactions_Time')}}" dataType="date" format="shortTime" [visible]="false"></dxi-column>
-                        <dxi-column dataField="PostDate" cssClass="tabular" caption="{{l('Transactions_PostDate')}}" dataType="date" format="shortDateShortTime" [visible]="false"></dxi-column>
                         <dxi-column dataField="Currency" caption="{{l('Transactions_Currency')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankAccountBankName" caption="{{l('Transactions_BankName')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="Amount" cssClass="tabular" name="Amount" caption="{{l('Transactions_Amount')}}" cellTemplate="amountTemplate" [visible]="false"></dxi-column>
@@ -66,6 +68,14 @@
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value >= 0 && cell.column.name == 'Debit') || (cell.value < 0 && cell.column.name == 'Credit'))">
                                 <span [ngClass]="{'red': cell.value < 0}"> {{ cell.text | number:'1.2-2' }} </span>
+                            </ng-container>
+                        </div>
+                        <div *dxTemplate="let cell of 'isPendingTemplate'">
+                            <ng-container *ngIf="cell.value">
+                                <span> {{l('Transactions_Pending')}} </span>
+                            </ng-container>
+                            <ng-container *ngIf="!cell.value">
+                                <span> {{l('Transactions_Settled')}} </span>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'endBalanceTemplate'">
@@ -83,33 +93,33 @@
                                    [showInfo]="true">
                         </dxo-pager>
 
-                        <div *dxTemplate="let data of 'accountTotal'">
+                        <div *dxTemplate="let data of 'bankTotal'">
                             <div class="informer">
-                                <h2 class="count">{{accountCount}}</h2>
-                                <span class="name">Total Accounts</span>
+                                <h2 class="count">{{bankCount}}</h2>
+                                <span class="name">Total Banks</span>
                             </div>
                         </div>
                         <div *dxTemplate="let data of 'portfolioTotal'">
                             <div class="informer">
                                 <h2 class="count">{{portfolioCount}}</h2>
-                                <span class="name">Total Portfolios</span>
+                                <span class="name">Total Bank Accounts</span>
                             </div>
                         </div>
                         <div *dxTemplate="let data of 'creditTotal'">
                             <div class="informer">
-                                <h2>{{creditTransactionTotal | number:'1.2-2'}}</h2>
+                                <h2>${{creditTransactionTotal | number:'1.2-2'}}</h2>
                                 <span class="name">Credits ({{creditTransactionCount}} transactions)</span>
                             </div>
                         </div>
                         <div *dxTemplate="let data of 'debitTotal'">
                             <div class="informer">
-                                <h2>{{debitTransactionTotal | number:'1.2-2'}}</h2>
+                                <h2>${{debitTransactionTotal | number:'1.2-2'}}</h2>
                                 <span class="name">Debits ({{debitTransactionCount}} transactions)</span>
                             </div>
                         </div>
                         <div *dxTemplate="let data of 'transactionTotal'">
                             <div class="informer">
-                                <h2>{{transactionTotal | number:'1.2-2'}}</h2>
+                                <h2>${{transactionTotal | number:'1.2-2'}}</h2>
                                 <span class="name">Total ({{transactionCount}} transactions)</span>
                             </div>
                         </div>
