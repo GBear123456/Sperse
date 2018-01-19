@@ -110,24 +110,21 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 location: 'before',
                 items: [
                     {
-                        name: 'slider',
-                        widget: 'dxGallery',
+                        name: 'select-box',
+                        text: '',
+                        widget: 'dxDropDownMenu',
                         options: {
                             hint: this.l('Scenario'),
                             accessKey: 'statsForecastSwitcher',
                             items: forecastModelsObj.items,
                             selectedIndex: forecastModelsObj.selectedItemIndex,
-                            showNavButtons: true,
-                            showIndicator: false,
-                            scrollByContent: true,
                             height: 39,
                             width: 200,
-                            itemTemplate: itemData => {
-                                return itemData.text;
-                            },
                             onSelectionChanged: (e) => {
-                                this.changeSelectedForecastModel(e);
-                                this.loadStatsData();
+                                if (e) {
+                                    this.changeSelectedForecastModel(e);
+                                    this.loadStatsData();
+                                }
                             }
                         }
                     }
@@ -322,7 +319,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
      * @param modelObj - new forecast model
      */
     changeSelectedForecastModel(modelObj) {
-        this.selectedForecastModel = modelObj.addedItems[0];
+        this.selectedForecastModel = modelObj.itemData;
         this._cacheService.set(`stats_forecastModel_${abp.session.userId}`, this.selectedForecastModel);
     }
 

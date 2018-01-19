@@ -1,6 +1,7 @@
 export class ToolbarGroupModelItem {
     name: string;
     action: () => void;
+    onSelectionChanged?: () => void;
     options: any;
     widget?: string;
     itemTemplate?: string;
