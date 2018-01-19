@@ -128,7 +128,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.attributes = this.getAttributesFromCommonDetails(data.attributes);
                     this.attributesAndKeywords = this.getAtributesAndKeywords();
                     this.selectedTransactionCategory = data.transactionCategoryId;
-                    this.selectedTransactionTypes = [data.transactionTypeId];
+                    this.selectedTransactionTypes = data.transactionTypeId ? [data.transactionTypeId]: [];
                     this.showOverwriteWarning = data.sourceTransactionsAreMatchingExistingRules;
                 });
 
