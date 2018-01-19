@@ -30,10 +30,10 @@ export class CFOService {
         });
     }
 
-    instanceChangeProcess() {
+    instanceChangeProcess(callback: any = null) {
         this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
             this.initialized = (data.status == GetStatusOutputStatus.Active) && data.hasSyncAccounts;
-            var hasTransactions = this.initialized && data.hasTransactions;
+            let hasTransactions = this.initialized && data.hasTransactions;            
             this._appService.topMenu.items
                 .forEach((item, i) => {
                     if (i == 0) {
@@ -50,6 +50,7 @@ export class CFOService {
                         }
                     }
                 });
+            callback && callback.call(this, hasTransactions);
         });
     }
 }

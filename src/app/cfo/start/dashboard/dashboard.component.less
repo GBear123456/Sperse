@@ -15,7 +15,6 @@
         .sperse-cfo {
             margin: 10px 0 0 0 !important;
             color: #f3f6fa;
-            font-family: Montserrat;
             font-size: 120px;
             font-weight: 600;
         }
@@ -57,5 +56,58 @@
         &:after {
             content: none;
         }
+    }
+    
+    .dashboard-wrapper {
+        background-color: #F3F7FA;
+        padding: 0 48px 40px;
+        width: 100%;
+        
+        section {
+            header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 40px 0 15px;
+            }
+        }
+        
+        .dashboard-title {
+            color: #424C56;
+            font-size: 16px;
+            letter-spacing: 0.2px;
+            line-height: 24px;
+            margin-bottom: 0;
+            text-transform: uppercase;
+            font-weight: 500;
+            opacity: .5;
+        }
+        
+        .dashboard-link {
+            color: #00AEEF;
+            font-size: 15px;
+            letter-spacing: 0.2px;
+            line-height: 24px;
+            font-weight: 500;
+        }
+        
+        .synch-status {
+            .synch-section-wrap {
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: space-between;
+                
+                .synch-item {
+                    max-width: 49%;
+                    width: 100%;
+                    border: 1px solid #E5E9EC;
+                    background-color: #FFFFFF;
+                    border-radius: 4px;
+                    position: relative;
+                    padding: 30px;
+                }
+            }
+        }
+        
     }
 }

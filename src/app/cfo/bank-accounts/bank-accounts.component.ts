@@ -70,6 +70,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onNextClick() {
+        this._cfoService.instanceChangeProcess();
         this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/start']);
     }
 

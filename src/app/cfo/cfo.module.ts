@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
-import { AppCommonModule } from '@app/shared/common/app-common.module';
+import { AppCommonModule } from '../shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { CfoRoutingModule } from './cfo-routing.module';
 import { StartComponent } from './start/start.component';
@@ -24,13 +24,14 @@ import { NoDataComponent } from './shared/common/no-data/no-data.component';
 import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
+import { DashboardModule } from './shared/dashboard/dashboard.module';
 
 import { MatTabsModule, MatDialogModule } from '@angular/material';
 
 import { SortingComponent } from '@app/cfo/shared/common/sorting/sorting.component';
 
-import { CFOService } from 'app/cfo/cfo.service';
-import { InstanceServiceProxy } from 'shared/service-proxies/service-proxies';
+import { CFOService } from './cfo.service';
+import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import {
     DxButtonModule,
@@ -53,7 +54,7 @@ import {
     DxChartModule,
     DxRadioGroupModule,
     DxTreeListModule,
-    DxTreeViewModule
+    DxTreeViewModule,
 } from 'devextreme-angular';
 
 @NgModule({
@@ -86,7 +87,8 @@ import {
         ModalModule.forRoot(),
         DxChartModule,
         MatTabsModule,
-        MatDialogModule
+        MatDialogModule,
+        DashboardModule
     ],
     declarations: [
         StartComponent,

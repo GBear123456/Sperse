@@ -93,34 +93,34 @@
                                    [showInfo]="true">
                         </dxo-pager>
 
-                        <div *dxTemplate="let data of 'bankTotal'">
+                        <div *dxTemplate="let data of 'accountTotal'">
                             <div class="informer">
-                                <h2 class="count">{{bankCount}}</h2>
-                                <span class="name">Total Banks</span>
+                                <h2 class="count">{{accountCount| number}}</h2>
+                                <span class="name">Accounts</span>
                             </div>
                         </div>
                         <div *dxTemplate="let data of 'portfolioTotal'">
                             <div class="informer">
-                                <h2 class="count">{{portfolioCount}}</h2>
-                                <span class="name">Total Bank Accounts</span>
+                                <h2 class="count">{{portfolioCount| number}}</h2>
+                                <span class="name">Subaccounts</span>
                             </div>
                         </div>
                         <div *dxTemplate="let data of 'creditTotal'">
                             <div class="informer">
-                                <h2>${{creditTransactionTotal | number:'1.2-2'}}</h2>
-                                <span class="name">Credits ({{creditTransactionCount}} transactions)</span>
+                                <h2 class="count">${{creditTransactionTotal | number:'1.2-2'}}</h2>
+                                <span class="name">Credits ({{creditTransactionCount | number}})</span>
                             </div>
                         </div>
                         <div *dxTemplate="let data of 'debitTotal'">
                             <div class="informer">
-                                <h2>${{debitTransactionTotal | number:'1.2-2'}}</h2>
-                                <span class="name">Debits ({{debitTransactionCount}} transactions)</span>
+                                <h2 class="count">${{debitTransactionTotal | number:'1.2-2'}}</h2>
+                                <span class="name">Debits ({{debitTransactionCount | number}})</span>
                             </div>
                         </div>
                         <div *dxTemplate="let data of 'transactionTotal'">
                             <div class="informer">
-                                <h2>${{transactionTotal | number:'1.2-2'}}</h2>
-                                <span class="name">Total ({{transactionCount}} transactions)</span>
+                                <h2 class="count">${{transactionTotal | number:'1.2-2'}}</h2>
+                                <span class="name">Net Amount ({{transactionCount | number}})</span>
                             </div>
                         </div>
                     </dx-data-grid>

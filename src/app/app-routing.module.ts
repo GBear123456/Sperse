@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Router, NavigationEnd, RouteConfigLoadStart, RouteConfigLoadEnd } from '@angular/router';
 import { NotificationsComponent } from './shared/layout/notifications/notifications.component';
 import { AppComponent } from './app.component';
-import { AppRouteGuard } from './shared/common/auth/auth-route-guard';
+import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
 
 @NgModule({
     imports: [

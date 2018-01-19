@@ -12,12 +12,12 @@ import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule, DxM
 import { ToolBarComponent } from './toolbar/toolbar.component';
 import { HeadLineComponent } from './headline/headline.component';
 import { TimeZoneComboComponent } from './timing/timezone-combo.component';
-import { AppAuthService } from './auth/app-auth.service';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { JqPluginDirective } from './libs/jq-plugin.directive';
 import { CommonLookupModalComponent } from './lookup/common-lookup-modal.component';
 import { DateRangePickerComponent } from './timing/date-range-picker.component';
 import { DatePickerDirective } from './timing/date-picker.component';
-import { AppRouteGuard } from './auth/auth-route-guard';
+import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
 import { DateTimeService } from './timing/date-time.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppNavigationService } from '@app/shared/layout/nav/app-navigation.service';

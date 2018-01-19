@@ -9,6 +9,7 @@ import { AbpModule, ABP_HTTP_PROVIDER } from '@abp/abp.module';
 import { httpConfiguration } from '@shared/http/httpConfiguration';
 
 import { AppModule } from './app/app.module';
+import { MobileModule } from './mobile/mobile.module';
 import { CommonModule } from '@shared/common/common.module';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { RootRoutingModule } from './root-routing.module';
@@ -21,7 +22,7 @@ import { RootComponent,AppRootComponent } from './root.components';
 import { AppPreBootstrap } from './AppPreBootstrap';
 
 import { UrlHelper } from '@shared/helpers/UrlHelper';
-import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 
 import * as _ from 'lodash';
@@ -101,7 +102,7 @@ ABP_HTTP_PROVIDER.deps = [XHRBackend, RequestOptions, httpConfiguration];
         HttpModule,
         BrowserModule,
         BrowserAnimationsModule,
-        AppModule,
+        AppConsts.isMobile && MobileModule || AppModule,
         CommonModule.forRoot(),
         AbpModule,
         ServiceProxyModule,

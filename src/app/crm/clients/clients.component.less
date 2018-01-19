@@ -1,4 +1,32 @@
 ﻿:host {
-  position: relative;
-  top: 74px;
+	position: relative;
+	top: 74px;
+
+	/deep/ #gridContainer {
+		.dx-datagrid-rowsview {
+			.dx-column-lines > td {
+				span.link-to-cfo-column {
+					position: relative;
+					width: 100%;
+					&::before {
+						padding-top: 2px;
+						content: 'CFO';
+						border-radius: 14px;
+						background-image: linear-gradient(41deg, #f76b1c, #fad961);
+						background-size: cover;
+						color: #ffffff;
+						text-align: center;
+						font-size: 10px;
+						font-weight: 600;
+						line-height: 2.4;
+						letter-spacing: 0.2px;
+						width: 66px;
+						height: 28px;
+						display: inline-block;
+						cursor: pointer;
+					}
+				}
+			}
+		}
+	}	
 }

@@ -1,7 +1,8 @@
-import { CFOComponentBase } from "@app/cfo/shared/common/cfo-component-base";
-import { Component, OnInit, Injector } from "@angular/core";
-import { AppConsts } from "shared/AppConsts";
-import { appModuleAnimation } from "shared/animations/routerTransition";
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
+import { Component, OnInit, Injector } from '@angular/core';
+import { AppConsts } from 'shared/AppConsts';
+import { appModuleAnimation } from 'shared/animations/routerTransition';
+
 
 @Component({
     selector: 'dashboard',
