@@ -14,6 +14,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateOrEditClientModalComponent } from './create-or-edit-client-modal.component';
 
 import { AppService } from '@app/app.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -26,7 +27,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
-import { CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CommonLookupServiceProxy, InstanceServiceProxy, GetUserInstanceInfoOutputStatus } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -39,7 +40,8 @@ import * as moment from 'moment';
 @Component({
     templateUrl: './clients.component.html',
     styleUrls: ['./clients.component.less'],
-    animations: [appModuleAnimation()]
+    animations: [appModuleAnimation()],
+    providers: [ InstanceServiceProxy ]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('createOrEditClientModal') createOrEditClientModal: CreateOrEditClientModalComponent;
@@ -63,11 +65,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     };
 
     constructor(injector: Injector,
+        private _permissionChecker: PermissionCheckerService,
         private _router: Router,
         private _appService: AppService,
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
-        private _commonLookupService: CommonLookupServiceProxy
+        private _commonLookupService: CommonLookupServiceProxy,
+        private _cfoInstanceServiceProxy: InstanceServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -86,6 +90,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         };
 
         this.initToolbarConfig();
+    }
+
+    private checkCFOClientAccessPermission() {
+        return this._permissionChecker.isGranted('Pages.CFO.ClientAccess');
     }
 
     showColumnChooser() {
@@ -107,9 +115,22 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         this.createOrEditClientModal.show();
     }
 
+    isClientCFOAvailable(userId) {
+        return ((userId != null) && this.checkCFOClientAccessPermission());
+    }
+
     showClientDetails(event) {
         event.component.cancelEditData();
         this._router.navigate(['app/crm/client', event.data.Id]);
+    }
+
+    redirectToCFO(event, userId) {
+        this._cfoInstanceServiceProxy.getUserInstanceInfo(userId).subscribe(result => {
+            if (result && result.id && (result.status === GetUserInstanceInfoOutputStatus.Active))
+                window.open(abp.appPath + 'app/cfo/' + result.id + '/start');
+            else
+                this.notify.error(this.l('CFOInstanceInactive'));
+        });
     }
 
     toggleDataLayout(dataLayoutType) {
