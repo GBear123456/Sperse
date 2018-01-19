@@ -378,7 +378,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             setTimeout(() => {
                 $event.cells[2].value = '-';
                 $event.cells[2].cellElement.hide();
-                $event.cells[0].cellElement.attr('colspan', '2');
+                $event.cells[1].cellElement.attr('colspan', '2');
             }, 0);
     }
 
