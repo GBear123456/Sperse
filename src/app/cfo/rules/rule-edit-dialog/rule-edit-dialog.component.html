@@ -84,11 +84,11 @@
                 </div>
 
                 <h3>{{l('Account Info')}}</h3>
-                <div>
+                <div class="fields-row">
                     <div class="field">
-                        <label>{{l('Bank')}}</label>
+                        <!-- label>{{l('Bank')}}</label -->
                        <dx-select-box
-                           placeholder=""
+                           [placeholder]="l('Bank')"
                            [dataSource]="banks"
                            valueExpr="id"
                            displayExpr="name"
@@ -98,9 +98,9 @@
                        </dx-select-box>
                     </div>
                     <div class="field">
-                        <label>{{l('Account')}}</label>
+                        <!-- label>{{l('Account')}}</label -->
                        <dx-select-box
-                           placeholder=""
+                           [placeholder]="l('Account')"
                            [dataSource]="accounts"
                            valueExpr="id"
                            displayExpr="name"
@@ -111,10 +111,10 @@
                 </div>      
 
                 <h3>{{l('Transaction Type')}}</h3>
-                <div>
+                <div class="fields-row">
                     <div class="field">
-                        <label>{{l('Category')}}</label>
-                        <dx-select-box placeholder=""
+                        <!-- label>{{l('Category')}}</label -->
+                        <dx-select-box [placeholder]="l('Category')"
                                        [dataSource]="transactionCategories"
                                        valueExpr="id"
                                        displayExpr="name"
@@ -124,8 +124,8 @@
                         </dx-select-box>
                     </div>
                     <div class="field">
-                        <label>{{l('Types')}}</label>
-                        <dx-drop-down-box placeholder=""
+                        <!-- label>{{l('Types')}}</label -->
+                        <dx-drop-down-box [placeholder]="l('Types')"
                                           [dataSource]="transactionTypes"
                                           valueExpr="id"
                                           displayExpr="name"
@@ -150,7 +150,7 @@
                 </div>
 
                 <h3>{{l('Amount')}}</h3>
-                <div>
+                <div class="fields-row">
                     <div class="field">
                         <label>{{l('Min')}}</label>
                         <dx-number-box
@@ -210,6 +210,7 @@
                     [instanceType]="instanceType"
                     [instanceId]="instanceId"
                     [categoryId]="data.categoryId"
+                    [isValid]="isCategoryValid"
                     (onSelectionChanged)="onCategoryChanged($event)">
                 </categorization>
 

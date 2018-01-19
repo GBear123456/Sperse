@@ -63,8 +63,18 @@
                     display: none;
                 }
             }
+            &.dx-invalid {
+                .dx-texteditor-container:after {
+                    background-color: #d9534f!important;
+                }
+                .dx-placeholder {
+                    color: #d9534f!important;
+                }
+            }
             .dx-texteditor-container:after {
                 content: '';
+                top: 62px!important;
+                margin-top: 0px!important;
                 left: 15px;
                 width: 442px;
                 height: 1px;

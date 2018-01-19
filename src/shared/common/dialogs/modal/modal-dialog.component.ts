@@ -66,4 +66,8 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
       } else
           this.dialogRef.close(closeData);
   }
+
+  onTitleChanged() {  
+      this.data.isTitleValid = true;
+  }
 }

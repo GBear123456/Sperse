@@ -23,7 +23,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     @Output() onTransactionDrop: EventEmitter<any> = new EventEmitter();
 
     @Input() instanceId: number;
-    @Input() instanceType: string;
+    @Input() instanceType: string;    
 
     @Input() width: string;
     @Input() height: string;
@@ -35,6 +35,13 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             this.categoryList.instance.option('elementAttr', {
                 dropAllowed: value
             });
+    }
+    @Input('isValid')
+    set isValid(value: boolean) {
+        setTimeout(() => {
+            this.categoryList.instance.option(
+                'elementAttr', {invalid: !value});
+        }, 0);
     }
 
     autoExpand = true;
