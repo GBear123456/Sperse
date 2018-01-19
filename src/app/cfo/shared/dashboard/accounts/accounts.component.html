@@ -1,0 +1,9 @@
+<div class="accounts-list">
+    <ng-container *ngFor="let item of accountsData">
+        <div class="account-item {{item.name | lowercase}}">
+            <a href="javascript:;" *ngIf="item.isDetail" class="view-details">View details</a>
+            <div class="value">{{item.value}}</div>
+            <div class="name">{{item.name}}</div>
+        </div>
+    </ng-container>
+</div>

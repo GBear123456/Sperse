@@ -1,0 +1,40 @@
+<section class="categorization-status">
+    <header>
+        <h2 class="title">Accounts synchronization status</h2>
+        <a href="javascript:;" class="view-more">View transactions</a>
+    </header>
+    <p>Adipiscing consectetur do elit</p>
+    <div class="row">
+        <div class="col-4 round-progress">
+            <round-progress
+                [current]="75"
+                [max]="100"
+                [color]="'#32BEF2'"
+                [background]="'#F9B74B'"
+                [radius]="73"
+                [stroke]="18"
+                [rounded]="false"
+                [clockwise]="true"
+                [responsive]="true"
+                [duration]="800"
+                [animation]="'easeInOutQuart'"
+                [animationDelay]="0">
+            </round-progress>
+            <span class="total-synch-progress">20250</span>
+        </div>
+        <div class="col-8">
+            <ul class="category-synch-list">
+                <ng-container *ngFor="let item of categorySynchData">
+                    <li class="category-synch-item">
+                        <span class="category-type">{{item.transactionType}}</span>
+                        <a href="javascript:;">
+                            {{ls('CFO', 'Reset')}}
+                        </a>
+                        <span class="synch-status"><strong>{{item.count}}</strong> ({{item.percents}}%)</span>
+                    </li>
+                </ng-container>
+            </ul>
+        </div>
+    </div>
+
+</section>

@@ -14,6 +14,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     @Output() completed: boolean = true;
     synchData: SyncProgressOutput;
 
+    statusCheckCompleted = false;
     tooltipVisible: boolean;
     timeoutHandler: any;
 
@@ -47,14 +48,25 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                 if (result.totalProgress.progressPercent != 100) {
                     this.completed = false;
                     this.synchData = result;
-                    this.timeoutHandler = setTimeout(() => this.getSynchProgress(), 10 * 1000);
-                }
-                else {
+                    this.timeoutHandler = setTimeout(
+                        () => this.getSynchProgress(), 10 * 1000
+                    );
+              
+                } else {
                     if (!this.completed) {
                         this.completed = true;
                         this.onComplete.emit();
                     }
                 }
+
+                this._cfoService.instanceType = this.instanceType;
+                if (!this.statusCheckCompleted && result.accountProgresses && 
+                    !result.accountProgresses.every((account) => {
+                        return account.progressPercent < 100;
+                    })
+                ) this._cfoService.instanceChangeProcess((hasTransactions) => {
+                    this.statusCheckCompleted = hasTransactions;
+                });
             });
     }
 
