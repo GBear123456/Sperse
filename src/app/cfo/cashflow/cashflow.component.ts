@@ -12,7 +12,8 @@ import {
     ClassificationServiceProxy,
     GetCategoriesOutput,
     CashFlowGridSettingsDto,
-    InstanceType
+    InstanceType,
+    InstanceType18
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 
@@ -561,7 +562,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     },
                     {
                         name: 'amount',
-                        text: '3 of 9'
+                        text: '1 of 9'
                     },
                     {
                         name: 'forecastModels',
@@ -570,30 +571,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             items: this.forecastModelsObj.items,
                             selectedIndex: this.forecastModelsObj.selectedItemIndex,
                             accessKey: 'cashflowForecastSwitcher',
-                            onSelectionChanged: (e) => {
-                                // this.handleClick(e, this.changeSelectedForecastModel, this.handleForecastModelDoubleClick);
-                            },
                             onItemClick: (e) => {
-                                // this.handleClick(e, null, this.handleForecastModelDoubleClick);
-                            },
-                            // onContentReady: (e) => {
-                            //     //e.element.find('').each(function(index, value){
-                            //     let clickObservable = Observable.create(
-                            //         function add(handler) {
-                            //             $('.dx-item').on('click', handler);
-                            //         },
-                            //         function remove(handler) {
-                            //             $('.dx-item').off('click', handler);
-                            //         }
-                            //     );
-                            //     clickObservable.buffer(clickObservable.debounceTime(250))
-                            //         .map(list => list.length)
-                            //         .filter(x => x === 2)
-                            //         .subscribe(() => {
-                            //             console.log('doubleclick');
-                            //         });
-                            //     //});
-                            // }
+                                this.handleDoubleSingleClick(e, this.changeSelectedForecastModel.bind(this), this.handleForecastModelDoubleClick.bind(this));
+                            }
                         }
                     },
                     {
@@ -622,50 +602,65 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         ];
     }
 
-    handleClick(e, singleClickHandler = null, doubleClickHandler = null) {
+    handleDoubleSingleClick(e, singleClickHandler = null, doubleClickHandler = null) {
         let component = e.component;
-
-        function initialClick() {
-            component.clickCount = 1;
-            component.clickKey = e.key;
-            component.clickDate = new Date();
-            if (singleClickHandler && typeof singleClickHandler === 'function') {
-                singleClickHandler(e);
+        component.prevent = false;
+        if (!component.clickCount) component.clickCount = 1;
+        else component.clickCount += 1;
+        if (component.clickCount === 1) {
+            component.lastClickTime = new Date();
+            component.timer = setTimeout(function () {
+                if (!component.prevent) {
+                    if (singleClickHandler && typeof singleClickHandler === 'function') {
+                        singleClickHandler(e);
+                    }
+                }
+                component.lastClickTime = 0;
+                component.clickCount = 0;
+                component.prevent = false;
+            }, 350);
+        } else if (component.clickCount === 2) {
+            clearTimeout(component.timer);
+            component.prevent = true;
+            if (((+new Date()) - component.lastClickTime) < 300) {
+                if (doubleClickHandler && typeof doubleClickHandler === 'function') {
+                    doubleClickHandler(e);
+                }
             }
-        }
-
-        function doubleClick() {
-            console.log('second click');
             component.clickCount = 0;
-            component.clickKey = 0;
-            component.clickDate = null;
-            if (doubleClickHandler && typeof doubleClickHandler === 'function') {
-                doubleClickHandler(e);
-            }
-        }
-
-        if ((!component.clickCount) || (component.clickCount != 1) || (component.clickKey != e.key) ) {
-            initialClick();
-        } else if (component.clickKey == e.key) {
-            if (((+new Date()) - component.clickDate) <= 300)
-                doubleClick();
-            else
-                initialClick();
+            component.lastClickTime = 0;
         }
     }
 
     handleForecastModelDoubleClick(e) {
-        e.itemElement.append(`
-                <div class="editModel">
-                    <input type="text" value="${e.itemData.text}">
-                </div>
-            `);
-        $('.editModel').focusout(function(){
-            console.log('focus out');
-            let value = $(this).find('input').val();
-            console.log(value);
+        e.itemElement.append(`<div class="editModel">
+                                <input type="text" value="${e.itemData.text}">
+                            </div>`);
+        let thisComponent = this;
+        e.itemElement.find('.editModel').focusout(function() {
+            let newName = $(this).find('input').val();
+            /** Rename forecast model if the name changed */
+            if (e.itemData.text !== newName) {
+                thisComponent.renameForecastModel({
+                    id: e.itemData.id,
+                    newName: newName
+                }).subscribe(result => {
+                    e.itemElement.find('.dx-tab-text').text(newName);
+                    thisComponent.forecastModelsObj.items[e.itemIndex].text = newName;
+                }, error => {
+                    console.log('unable to rename forecast model');
+                });
+            }
             $(this).remove();
         });
+    }
+
+    renameForecastModel(modelData) {
+        return this._cashFlowForecastServiceProxy.renameForecastModel(
+            InstanceType18[this.instanceType],
+            this.instanceId,
+            modelData
+        );
     }
 
     /**
@@ -698,9 +693,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param modelObj - new forecast model
      */
     changeSelectedForecastModel(modelObj) {
-        this.selectedForecastModel = modelObj.addedItems[0];
-        this._cacheService.set(`cashflow_forecastModel_${abp.session.userId}`, this.selectedForecastModel);
-        this.loadGridDataSource();
+        if (modelObj.itemIndex !== this.forecastModelsObj.selectedItemIndex &&
+            !modelObj.element.find('.editModel').length) {
+            this.selectedForecastModel = modelObj.itemData;
+            this.forecastModelsObj.selectedItemIndex = modelObj.itemIndex;
+            this._cacheService.set(`cashflow_forecastModel_${abp.session.userId}`, this.selectedForecastModel);
+            this.loadGridDataSource();
+            this.collapsedStartingAndEndingBalance = false;
+        }
     }
 
     getFullscreenElement() {
