@@ -359,7 +359,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     sortings: SortingItemModel[] = [
         {
             name: 'Category',
-            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_CategoryName')),
+            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_CashflowCategoryName')),
             activeByDefault: true,
             sortOptions: {
                 sortBy: 'displayText',
@@ -576,25 +576,24 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             onItemClick: (e) => {
                                 // this.handleClick(e, null, this.handleForecastModelDoubleClick);
                             },
-                            onContentReady: (e) => {
-                                console.log(e);
-                                //e.element.find('').each(function(index, value){
-                                let clickObservable = Observable.create(
-                                    function add(handler) {
-                                        $('.dx-item').on('click', handler);
-                                    },
-                                    function remove(handler) {
-                                        $('.dx-item').off('click', handler);
-                                    }
-                                );
-                                clickObservable.buffer(clickObservable.debounceTime(250))
-                                    .map(list => list.length)
-                                    .filter(x => x === 2)
-                                    .subscribe(() => {
-                                        console.log('doubleclick');
-                                    });
-                                //});
-                            }
+                            // onContentReady: (e) => {
+                            //     //e.element.find('').each(function(index, value){
+                            //     let clickObservable = Observable.create(
+                            //         function add(handler) {
+                            //             $('.dx-item').on('click', handler);
+                            //         },
+                            //         function remove(handler) {
+                            //             $('.dx-item').off('click', handler);
+                            //         }
+                            //     );
+                            //     clickObservable.buffer(clickObservable.debounceTime(250))
+                            //         .map(list => list.length)
+                            //         .filter(x => x === 2)
+                            //         .subscribe(() => {
+                            //             console.log('doubleclick');
+                            //         });
+                            //     //});
+                            // }
                         }
                     },
                     {
@@ -705,7 +704,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getFullscreenElement() {
-        return document.body; //!!VP To avoid dropdown elements issue in fullscreen mode
+        return document.documentElement; //!!VP To avoid dropdown elements issue in fullscreen mode
     }
 
     ngAfterViewInit(): void {
@@ -734,7 +733,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.cashflowData = this.getCashflowDataFromTransactions(transactions);
                     /** Make a copy of cashflow data to display it in custom total group on the top level */
                     let stubCashflowDataForEndingCashPosition = this.getStubCashflowDataForEndingCashPosition(this.cashflowData);
-                    this.addCashflowType(Total, this.l('Ending Cash Position'));
+                    this.addCashflowType(Total, this.l('Ending Cash Balance'));
                     let stubCashflowDataForAllDays = this.getStubCashflowDataForAllDays(this.cashflowData);
                     let cashflowWithStubForEndingPosition = this.cashflowData.concat(stubCashflowDataForEndingCashPosition);
                     let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(cashflowWithStubForEndingPosition);
@@ -1789,7 +1788,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     reformatCell(cellObj, preference) {
-        const locale = preference.sourceValue.indexOf('.') <= 3 ? 'es-VE' : 'en-EN';
+        const locale = preference.sourceValue.indexOf('.') <= 3 ? 'es-BO' : 'en-EN';
         if (!cellObj.cellElement.hasClass('hideZeroActivity') &&
             !cellObj.cellElement.hasClass('hideZeroValues')) {
             cellObj.cellElement.text(cellObj.cell.value.toLocaleString(locale, {

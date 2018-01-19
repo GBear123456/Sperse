@@ -189,7 +189,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             {
                 location: 'after',
                 items: [
-                    {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.body)}
+                    {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.documentElement)}
                 ]
             }
         ];
@@ -374,7 +374,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this._filtersService.unsubscribe();
         this._filtersService.enabled = false;
         this.rootComponent.overflowHidden();
-
         super.ngOnDestroy();
     }
 
@@ -445,12 +444,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     onDone(event) {
         /** Added the Historical and forecast text block to the charts */
         this.addTextBlocks(event);
-
-        this.moveYearsToTheBottom(event);
-    }
-
-    moveYearsToTheBottom(event) {
-        //console.log(event);
     }
 
     /**

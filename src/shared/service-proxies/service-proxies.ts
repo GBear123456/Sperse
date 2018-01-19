@@ -26203,6 +26203,8 @@ export interface ICheckDatabaseOutput {
 
 export class GetStatusOutput implements IGetStatusOutput {
     status: GetStatusOutputStatus;
+    hasSyncAccounts: boolean;
+    hasTransactions: boolean;
 
     constructor(data?: IGetStatusOutput) {
         if (data) {
@@ -26216,6 +26218,8 @@ export class GetStatusOutput implements IGetStatusOutput {
     init(data?: any) {
         if (data) {
             this.status = data["status"];
+            this.hasSyncAccounts = data["hasSyncAccounts"];
+            this.hasTransactions = data["hasTransactions"];
         }
     }
 
@@ -26228,12 +26232,16 @@ export class GetStatusOutput implements IGetStatusOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["status"] = this.status;
+        data["hasSyncAccounts"] = this.hasSyncAccounts;
+        data["hasTransactions"] = this.hasTransactions;
         return data; 
     }
 }
 
 export interface IGetStatusOutput {
     status: GetStatusOutputStatus;
+    hasSyncAccounts: boolean;
+    hasTransactions: boolean;
 }
 
 export class SetupOutput implements ISetupOutput {
@@ -27401,7 +27409,8 @@ export interface ISubmitContactUsRequestInput {
 }
 
 export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRequestInput {
-    serviceLevel: number;
+    editionId: number;
+    paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
     leadInterests: LeadInterestDto[] = [];
     leadRequestXref: string;
     firstName: string;
@@ -27424,7 +27433,8 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 
     init(data?: any) {
         if (data) {
-            this.serviceLevel = data["serviceLevel"];
+            this.editionId = data["editionId"];
+            this.paymentPeriodType = data["paymentPeriodType"];
             if (data["leadInterests"] && data["leadInterests"].constructor === Array) {
                 this.leadInterests = [];
                 for (let item of data["leadInterests"])
@@ -27450,7 +27460,8 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["serviceLevel"] = this.serviceLevel;
+        data["editionId"] = this.editionId;
+        data["paymentPeriodType"] = this.paymentPeriodType;
         if (this.leadInterests && this.leadInterests.constructor === Array) {
             data["leadInterests"] = [];
             for (let item of this.leadInterests)
@@ -27470,7 +27481,8 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 }
 
 export interface ISubmitTenantCreationRequestInput {
-    serviceLevel: number;
+    editionId: number;
+    paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
     leadInterests: LeadInterestDto[];
     leadRequestXref: string;
     firstName: string;
@@ -27528,6 +27540,9 @@ export interface ILeadInterestDto {
 
 export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationRequestOutput {
     leadRequestXref: string;
+    paymentPeriodType: SubmitTenantCreationRequestOutputPaymentPeriodType;
+    totalMonthlyAmount: number;
+    trialDayCount: number;
 
     constructor(data?: ISubmitTenantCreationRequestOutput) {
         if (data) {
@@ -27541,6 +27556,9 @@ export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationR
     init(data?: any) {
         if (data) {
             this.leadRequestXref = data["leadRequestXref"];
+            this.paymentPeriodType = data["paymentPeriodType"];
+            this.totalMonthlyAmount = data["totalMonthlyAmount"];
+            this.trialDayCount = data["trialDayCount"];
         }
     }
 
@@ -27553,12 +27571,18 @@ export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationR
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["leadRequestXref"] = this.leadRequestXref;
+        data["paymentPeriodType"] = this.paymentPeriodType;
+        data["totalMonthlyAmount"] = this.totalMonthlyAmount;
+        data["trialDayCount"] = this.trialDayCount;
         return data; 
     }
 }
 
 export interface ISubmitTenantCreationRequestOutput {
     leadRequestXref: string;
+    paymentPeriodType: SubmitTenantCreationRequestOutputPaymentPeriodType;
+    totalMonthlyAmount: number;
+    trialDayCount: number;
 }
 
 export class LeadBusinessInfoInput implements ILeadBusinessInfoInput {
@@ -36274,6 +36298,16 @@ export enum GetUserInstanceInfoOutputStatus {
     NotInitialized = <any>"NotInitialized", 
     Active = <any>"Active", 
     Inactive = <any>"Inactive", 
+}
+
+export enum SubmitTenantCreationRequestInputPaymentPeriodType {
+    _30 = 30, 
+    _365 = 365, 
+}
+
+export enum SubmitTenantCreationRequestOutputPaymentPeriodType {
+    _30 = 30, 
+    _365 = 365, 
 }
 
 export enum MemberInfoDtoGender {

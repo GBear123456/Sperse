@@ -39,7 +39,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
             iconSrc: 'assets/common/icons/magic-stick-icon.svg',
             buttons: [
                 {
-                    enabled: true,
+                    enabled: this._cfoService.initialized,
                     action: this.onRefreshClick.bind(this),
                     lable: this.l('Refresh'),
                     icon: 'refresh',
@@ -70,7 +70,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onNextClick() {
-        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/cashflow']);
+        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/start']);
     }
 
     ngAfterViewInit(): void {

@@ -25,6 +25,8 @@ import * as _ from 'underscore';
 export abstract class AppComponentBase {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
     @HostListener('document:webkitfullscreenchange', ['$event'])
+    @HostListener('document:mozfullscreenchange', ['$event'])
+    @HostListener('document:fullscreenchange', ['$event'])
     onWebkitFullscreenChange($event) {
         this.isFullscreenMode = document['fullScreen']
             || document['mozFullScreen'] || document.webkitIsFullScreen;
@@ -32,6 +34,7 @@ export abstract class AppComponentBase {
 
     dataGrid: any;
     dataSource: any;
+    totalDataSource: any;
     localization: LocalizationService;
     permission: PermissionCheckerService;
     feature: FeatureCheckerService;
@@ -120,10 +123,11 @@ export abstract class AppComponentBase {
             this.getODataURL(uri, queryWithSearch);
 
         grid.refresh();
+        return queryWithSearch;
     }
 
     processODataFilter(grid, uri, filters, getCheckCustom) {
-        this.advancedODataFilter(grid, uri,
+        return this.advancedODataFilter(grid, uri,
             filters.map((filter) => {
                 return getCheckCustom(filter) || _.pairs(filter.items)
                     .reduce((obj, pair) => {

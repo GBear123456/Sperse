@@ -25,6 +25,10 @@ import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 import * as moment from 'moment';
 
+import query from 'devextreme/data/query';
+import DataSource from 'devextreme/data/data_source';
+
+
 @Component({
     templateUrl: './transactions.component.html',
     styleUrls: ['./transactions.component.less'],
@@ -33,16 +37,29 @@ import * as moment from 'moment';
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-
+    
     items: any;
     private isCompactRowsHeight = false;
     private readonly dataSourceURI = 'Transaction';
+    private readonly totalDataSourceURI = 'TransactionTotal';
     private filters: FilterModel[];
     private rootComponent: any;
     private cashFlowCategoryFilter = [];
 
     public dragInProgress = false;
     public categoriesShowed = false;
+
+    public bankCount: number;
+    public portfolioCount: number;
+    public creditTransactionCount: number = 0;
+    public creditTransactionTotal: number = 0;
+
+    public debitTransactionCount: number = 0;
+    public debitTransactionTotal: number = 0;
+
+    public transactionCount: number = 0;
+    public transactionTotal: number = 0;
+
     public headlineConfig = {
         names: [this.l('Transactions')],
         iconSrc: 'assets/common/icons/credit-card-icon.svg',
@@ -149,6 +166,93 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.searchValue = '';
     }
 
+    onToolbarPreparing(e) {
+        e.toolbarOptions.items.unshift({
+            location: 'after',
+            template: 'bankTotal'
+        },
+            {
+            location: 'after',
+            template: 'portfolioTotal'
+        },{
+            location: 'after',
+            template: 'debitTotal'
+        }, {
+            location: 'after',
+            template: 'creditTotal'
+        },{
+            location: 'after',
+            template: 'transactionTotal'
+        });
+    }
+
+    getTotalValues() {
+        let totals = this.totalDataSource.items();
+        let selectedRows = this.dataGrid.instance.getSelectedRowsData();
+
+        if (selectedRows.length) {
+            let creditTotal = this.creditTransactionTotal = 0;
+            let creditCount = this.creditTransactionCount = 0;
+            let debitTotal = this.debitTransactionTotal = 0;
+            let debitCount = this.debitTransactionCount = 0;
+
+            let portfolios = [];
+            let banks = [];
+
+            _.each(selectedRows, function (row) {
+                portfolios.push(row.BankAccountId);
+                banks.push(row.BankId);
+
+                if (row.Amount < 0) {
+                    creditTotal += row.Amount;
+                    creditCount++;
+                }
+                else {
+                    debitTotal += row.Amount;
+                    debitCount++;
+                }                
+            });
+            this.portfolioCount = _.uniq(portfolios).length;
+            this.bankCount = _.uniq(banks).length;
+
+            this.creditTransactionTotal = creditTotal;
+            this.creditTransactionCount = creditCount;
+
+            this.debitTransactionTotal = debitTotal;
+            this.debitTransactionCount = debitCount;
+
+            this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal;
+            this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
+        }
+        else
+        if (totals && totals.length) {
+            this.creditTransactionTotal = totals[0].creditTotal;
+            this.creditTransactionCount = totals[0].creditCount;
+
+            this.debitTransactionTotal = totals[0].debitTotal;
+            this.debitTransactionCount = totals[0].debitCount;
+
+            this.portfolioCount = totals[0].portfolioCount;
+            this.bankCount = totals[0].bankCount;
+
+            this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal;
+            this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
+        }
+        else {
+            this.creditTransactionTotal = 0;
+            this.creditTransactionCount = 0;
+
+            this.debitTransactionTotal = 0;
+            this.debitTransactionCount = 0;
+
+            this.portfolioCount = 0;
+            this.bankCount = 0;
+
+            this.transactionTotal = 0;
+            this.transactionCount = 0;
+        }
+    }
+
     showColumnChooser() {
         this.dataGrid.instance.showColumnChooser();
     }
@@ -178,6 +282,20 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
             }
         };
+
+        this.totalDataSource = new DataSource({
+            store: {
+                type: 'odata',
+                url: this.getODataURL(this.totalDataSourceURI),
+                version: this.getODataVersion(),
+                beforeSend: function (request) {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
+                }
+            },
+            onChanged: this.getTotalValues.bind(this)
+        });
+        this.totalDataSource.load();
 
         this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId)
             .subscribe(result => {
@@ -292,15 +410,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     processFilterInternal() {
-        this.processODataFilter(this.dataGrid.instance,
+        let filterQuery = this.processODataFilter(this.dataGrid.instance,
             this.dataSourceURI, this.cashFlowCategoryFilter.concat(this.filters),
-                (filter) => {
-                    let filterMethod = this['filterBy' +
-                        this.capitalize(filter.caption)];
-                    if (filterMethod)
-                        return filterMethod.call(this, filter);
-                }
+            (filter) => {
+                let filterMethod = this['filterBy' +
+                    this.capitalize(filter.caption)];
+                if (filterMethod)
+                    return filterMethod.call(this, filter);
+            }
         );
+        this.totalDataSource['_store']['_url'] = this.getODataURL(this.totalDataSourceURI, filterQuery);
+        this.totalDataSource.load();
     }
 
     filterByDate(filter) {
@@ -405,11 +525,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     }
 
-    checkUncategozired(rowData) {
-        this['cssClass'] = (rowData.CashflowCategoryId ? '': 'un') + 'categorized';
-        return '';
-    }
-
     onSelectionChanged($event) {
         let img = new Image(), 
             transactionKeys = this.dataGrid.instance.getSelectedRowKeys();
@@ -432,10 +547,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
                 this.dragInProgress = false;
             });
+        this.getTotalValues();
     }
 
     onContentReady($event) {
-        this.onSelectionChanged($event);
+        this.onSelectionChanged($event);        
     }
 
     openCategorizationWindow($event) {
@@ -455,7 +571,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     }),
                 refershParent: Function()
             }
-        }).afterClosed().subscribe(result => {});
+        }).afterClosed().subscribe(result => { });
     }
 
     ngAfterViewInit(): void {

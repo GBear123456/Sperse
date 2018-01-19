@@ -30,14 +30,14 @@ export class PlatformSelectComponent extends AppComponentBase {
                     name: module
                 });
             } else {
+                //this.modules.push({
+                //    code: module,
+                //    name: 'CFO Personal',
+                //    uri: 'personal',
+                //});
                 this.modules.push({
                     code: module,
-                    name: 'CFO Personal',
-                    uri: 'personal',
-                });
-                this.modules.push({
-                    code: module,
-                    name: 'CFO Business',
+                    name: 'CFO',
                     uri: 'business',
                 });
             }
