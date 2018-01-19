@@ -1,7 +1,6 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="content">
-        <setup-steps></setup-steps>
 
         <div class="dashboard-wrapper">
             <section class="accounts-info">
@@ -9,7 +8,7 @@
                     <h2 class="dashboard-title">
                         {{ls('CFO', 'Accounts')}}
                     </h2>
-                    <a href="javascript:;" class="dashboard-link">+ {{ls('CFO', 'Add account')}}</a>
+                    <a (click)="navigateTo()" class="dashboard-link">+ {{ls('CFO', 'Add account')}}</a>
                 </header>
 
                 <app-accounts></app-accounts>
