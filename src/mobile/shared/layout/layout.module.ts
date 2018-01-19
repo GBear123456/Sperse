@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 
 import { ModalModule, TooltipModule } from 'ngx-bootstrap';
 
-import { AppCommonModule } from '@app/shared/common/app-common.module';
+import { AppCommonModule } from '../common/app-common.module'
 import { UtilsModule } from '@shared/utils/utils.module';
 
 @NgModule({
@@ -13,12 +13,9 @@ import { UtilsModule } from '@shared/utils/utils.module';
         ngCommon.CommonModule,
         FormsModule,
         RouterModule,
-
         AppCommonModule,
-
         ModalModule.forRoot(),
         TooltipModule.forRoot(),
-
         UtilsModule
     ]
 })

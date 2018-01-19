@@ -1,0 +1,7 @@
+{
+  "name": "CFO",
+  "search": false,
+  "navigation": [
+    [ "Accounts", "", "icon-home", "/app/cfo/:instance/linkaccounts" ]
+  ]
+}

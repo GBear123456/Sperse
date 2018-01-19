@@ -7,7 +7,7 @@ import { SubdomainTenancyNameFinder } from '@shared/helpers/SubdomainTenancyName
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Type, CompilerOptions, NgModuleRef } from '@angular/core';
 import { UtilsService } from '@abp/utils/utils.service';
-import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { TenantApiHostOutput } from '@shared/service-proxies/service-proxies';
 
 export class AppPreBootstrap {

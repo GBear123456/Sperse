@@ -19,7 +19,7 @@ import { LinkedAccountsModalComponent } from './linked-accounts-modal.component'
 import { ChangePasswordModalComponent } from './profile/change-password-modal.component';
 import { ChangeProfilePictureModalComponent } from './profile/change-profile-picture-modal.component';
 import { MySettingsModalComponent } from './profile/my-settings-modal.component';
-import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
 import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
