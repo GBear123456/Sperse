@@ -1,0 +1,48 @@
+:host {
+    .accounts-list {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-between;
+        
+        .account-item {
+            max-width: 32%;
+            width: 100%;
+            padding: 34px 20px 30px 110px;
+            border: 1px solid #E5E9EC;
+            background: #FFFFFF url('../../../../../assets/common/icons/total-icon.svg') 45px 50% no-repeat;
+            border-radius: 4px;
+            position: relative;
+    
+            &.totalportfolios {
+                background-image: url('../../../../../assets/common/icons/copy-icon.svg');
+            }
+            &.networth {
+                background-image: url('../../../../../assets/common/icons/hand-icon.svg');
+            }
+            
+            .value {
+                color: #212C36;
+                font-size: 26px;
+                font-weight: 500;
+            }
+            
+            .name {
+                color: #677380;
+                font-size: 14px;
+                font-weight: 300;
+                letter-spacing: 0.2px;
+                line-height: 20px;
+            }
+            
+            .view-details {
+                position: absolute;
+                right: 18px;
+                top: 10px;
+                color: #00AEEF;
+                font-size: 12px;
+                font-weight: 300;
+                line-height: 24px;
+            }
+        }
+    }
+}

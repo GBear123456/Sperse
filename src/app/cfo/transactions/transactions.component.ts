@@ -49,7 +49,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public dragInProgress = false;
     public categoriesShowed = false;
 
-    public bankCount: number;
+    public accountCount: number;
     public portfolioCount: number;
     public creditTransactionCount: number = 0;
     public creditTransactionTotal: number = 0;
@@ -169,7 +169,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     onToolbarPreparing(e) {
         e.toolbarOptions.items.unshift({
             location: 'after',
-            template: 'bankTotal'
+            template: 'accountTotal'
         },
             {
             location: 'after',
@@ -197,11 +197,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             let debitCount = this.debitTransactionCount = 0;
 
             let portfolios = [];
-            let banks = [];
+            let accounts = [];
 
             _.each(selectedRows, function (row) {
                 portfolios.push(row.BankAccountId);
-                banks.push(row.BankId);
+                accounts.push(row.SyncAccountId);
 
                 if (row.Amount < 0) {
                     creditTotal += row.Amount;
@@ -213,7 +213,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }                
             });
             this.portfolioCount = _.uniq(portfolios).length;
-            this.bankCount = _.uniq(banks).length;
+            this.accountCount = _.uniq(accounts).length;
 
             this.creditTransactionTotal = creditTotal;
             this.creditTransactionCount = creditCount;
@@ -233,7 +233,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.debitTransactionCount = totals[0].debitCount;
 
             this.portfolioCount = totals[0].portfolioCount;
-            this.bankCount = totals[0].bankCount;
+            this.accountCount = totals[0].accountCount;
 
             this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal;
             this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
@@ -246,7 +246,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.debitTransactionCount = 0;
 
             this.portfolioCount = 0;
-            this.bankCount = 0;
+            this.accountCount = 0;
 
             this.transactionTotal = 0;
             this.transactionCount = 0;

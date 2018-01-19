@@ -60,7 +60,7 @@
                         [validationRules]="[{ type: 'required' }]"
                         [setCellValue]="setCellValue">
                         <dxo-lookup
-                            [dataSource]="attributeTypes"
+                            [dataSource]="gridAttributeTypes"
                             displayExpr="name"
                             valueExpr="id">
                         </dxo-lookup>
@@ -185,20 +185,15 @@
 
                 <h3>{{l('Use the following Standard Descriptor')}}</h3>
                 <div class="field">
-                    <label>{{l('Attribute')}}</label>
                     <dx-select-box placeholder=""
+                                   [acceptCustomValue]="true"
                                    [dataSource]="attributeTypes"
                                    valueExpr="id"
                                    displayExpr="name"
                                    [showClearButton]="true"
-                                   [(value)]="descriptorAttribute">
+                                   (onCustomItemCreating)="onCustomItemCreating($event)"
+                                   [(value)]="descriptor">
                     </dx-select-box>
-                </div>
-                <div class="field">
-                    <label>{{l('Descriptor')}}</label>
-                    <dx-text-box placeholder=""
-                                 [(value)]="descriptor">
-                    </dx-text-box>
                 </div>
 
                 <h3>{{l('Assign transaction(s) to the following category')}}</h3>
