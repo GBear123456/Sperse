@@ -60,7 +60,7 @@
                         [validationRules]="[{ type: 'required' }]"
                         [setCellValue]="setCellValue">
                         <dxo-lookup
-                            [dataSource]="attributeTypes"
+                            [dataSource]="gridAttributeTypes"
                             displayExpr="name"
                             valueExpr="id">
                         </dxo-lookup>
@@ -84,11 +84,11 @@
                 </div>
 
                 <h3>{{l('Account Info')}}</h3>
-                <div>
+                <div class="fields-row">
                     <div class="field">
-                        <label>{{l('Bank')}}</label>
+                        <!-- label>{{l('Bank')}}</label -->
                        <dx-select-box
-                           placeholder=""
+                           [placeholder]="l('Bank')"
                            [dataSource]="banks"
                            valueExpr="id"
                            displayExpr="name"
@@ -98,9 +98,9 @@
                        </dx-select-box>
                     </div>
                     <div class="field">
-                        <label>{{l('Account')}}</label>
+                        <!-- label>{{l('Account')}}</label -->
                        <dx-select-box
-                           placeholder=""
+                           [placeholder]="l('Account')"
                            [dataSource]="accounts"
                            valueExpr="id"
                            displayExpr="name"
@@ -111,10 +111,10 @@
                 </div>      
 
                 <h3>{{l('Transaction Type')}}</h3>
-                <div>
+                <div class="fields-row">
                     <div class="field">
-                        <label>{{l('Category')}}</label>
-                        <dx-select-box placeholder=""
+                        <!-- label>{{l('Category')}}</label -->
+                        <dx-select-box [placeholder]="l('Category')"
                                        [dataSource]="transactionCategories"
                                        valueExpr="id"
                                        displayExpr="name"
@@ -124,8 +124,8 @@
                         </dx-select-box>
                     </div>
                     <div class="field">
-                        <label>{{l('Types')}}</label>
-                        <dx-drop-down-box placeholder=""
+                        <!-- label>{{l('Types')}}</label -->
+                        <dx-drop-down-box [placeholder]="l('Types')"
                                           [dataSource]="transactionTypes"
                                           valueExpr="id"
                                           displayExpr="name"
@@ -150,7 +150,7 @@
                 </div>
 
                 <h3>{{l('Amount')}}</h3>
-                <div>
+                <div class="fields-row">
                     <div class="field">
                         <label>{{l('Min')}}</label>
                         <dx-number-box
@@ -185,20 +185,15 @@
 
                 <h3>{{l('Use the following Standard Descriptor')}}</h3>
                 <div class="field">
-                    <label>{{l('Attribute')}}</label>
                     <dx-select-box placeholder=""
+                                   [acceptCustomValue]="true"
                                    [dataSource]="attributeTypes"
                                    valueExpr="id"
                                    displayExpr="name"
                                    [showClearButton]="true"
-                                   [(value)]="descriptorAttribute">
+                                   (onCustomItemCreating)="onCustomItemCreating($event)"
+                                   [(value)]="descriptor">
                     </dx-select-box>
-                </div>
-                <div class="field">
-                    <label>{{l('Descriptor')}}</label>
-                    <dx-text-box placeholder=""
-                                 [(value)]="descriptor">
-                    </dx-text-box>
                 </div>
 
                 <h3>{{l('Assign transaction(s) to the following category')}}</h3>
@@ -210,6 +205,7 @@
                     [instanceType]="instanceType"
                     [instanceId]="instanceId"
                     [categoryId]="data.categoryId"
+                    [isValid]="isCategoryValid"
                     (onSelectionChanged)="onCategoryChanged($event)">
                 </categorization>
 

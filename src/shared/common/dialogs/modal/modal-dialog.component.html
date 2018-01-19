@@ -4,7 +4,9 @@
         name="title"
         [placeholder]="data.placeholder"
         [(value)]="data.title"
-        [readOnly]="!data.editTitle">
+        [readOnly]="!data.editTitle"
+        [isValid]="data.isTitleValid == undefined || data.isTitleValid"
+        (onInput)="onTitleChanged($event)">
     </dx-text-box>
     <mat-dialog-actions>
         <div class="mat-dialog-options">
