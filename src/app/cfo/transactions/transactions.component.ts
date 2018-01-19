@@ -411,14 +411,25 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onSelectionChanged($event) {
-        let img = new Image();
+        let img = new Image(), 
+            transactionKeys = this.dataGrid.instance.getSelectedRowKeys();
         img.src = 'assets/common/images/transactions.png';
-        this.categoriesShowed = Boolean(this.dataGrid.instance.getSelectedRowKeys().length);
-        $event.element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend') 
+        this.categoriesShowed = Boolean(transactionKeys.length);
+        $event.element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend')
             .filter('.dx-selection').attr('draggable', true).on('dragstart', (e) => {
                 this.dragInProgress = true;
+                e.originalEvent.dataTransfer.setData('Text', transactionKeys.join(','));
                 e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
+                e.originalEvent.dropEffect = "move";
             }).on('dragend', (e) => {
+                e.originalEvent.preventDefault(); 
+                e.originalEvent.stopPropagation();
+
+                this.dragInProgress = false;
+            }).on('click', (e) => {
+                e.originalEvent.preventDefault(); 
+                e.originalEvent.stopPropagation();
+
                 this.dragInProgress = false;
             });
     }

@@ -59,15 +59,23 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         $event.element.find('tr[aria-level="2"]')
             .off('dragenter').off('dragover').off('dragleave').off('drop')
             .on('dragenter', (e) => {
+                e.originalEvent.preventDefault(); 
+                e.originalEvent.stopPropagation();
+
                 dragEnterCount++;
                 e.currentTarget.classList.add('drag-hover');
             }).on('dragover', (e) => {
                 e.originalEvent.preventDefault(); 
                 e.originalEvent.stopPropagation();
             }).on('dragleave', (e) => {
-                if (--dragEnterCount == 0)
+                if (--dragEnterCount <= 0) {
                     e.currentTarget.classList.remove('drag-hover');
+                    dragEnterCount = 0;
+                }
             }).on('drop', (e) => {
+                e.originalEvent.preventDefault(); 
+                e.originalEvent.stopPropagation();
+
                 this.onTransactionDrop.emit({
                     categoryId: this.categoryList.instance
                       .getKeyByRowIndex($(e.currentTarget).index())

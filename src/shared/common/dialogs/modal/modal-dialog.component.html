@@ -9,7 +9,7 @@
     <mat-dialog-actions>
         <div class="mat-dialog-options">
             <ng-template ngFor let-option [ngForOf]="data.options" let-i="index">
-                <dx-check-box class="mat-dialog-option pull-right" (onValueChanged)="option.onValueChanged($event)" [(value)]="option.value" [text]="option.text"></dx-check-box>
+                <dx-check-box class="mat-dialog-option pull-right" (onValueChanged)="option.onValueChanged && option.onValueChanged($event)" [(value)]="option.value" [text]="option.text"></dx-check-box>
             </ng-template>
         </div>
         <div class="mat-dialog-buttons">
