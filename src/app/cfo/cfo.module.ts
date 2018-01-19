@@ -24,6 +24,7 @@ import { NoDataComponent } from './shared/common/no-data/no-data.component';
 import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
+import { DashboardModule } from './shared/dashboard/dashboard.module';
 
 import { MatTabsModule, MatDialogModule } from '@angular/material';
 
@@ -53,7 +54,7 @@ import {
     DxChartModule,
     DxRadioGroupModule,
     DxTreeListModule,
-    DxTreeViewModule
+    DxTreeViewModule,
 } from 'devextreme-angular';
 
 @NgModule({
@@ -86,7 +87,8 @@ import {
         ModalModule.forRoot(),
         DxChartModule,
         MatTabsModule,
-        MatDialogModule
+        MatDialogModule,
+        DashboardModule
     ],
     declarations: [
         StartComponent,
