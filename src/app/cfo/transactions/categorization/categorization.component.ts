@@ -237,7 +237,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     private _prevClickDate = new Date();
     onRowClick($event) {
         let nowDate = new Date();
-        if (nowDate - this._prevClickDate < 500) {
+        if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
             $event.jQueryEvent.originalEvent.preventDefault();
             $event.jQueryEvent.originalEvent.stopPropagation();
 
