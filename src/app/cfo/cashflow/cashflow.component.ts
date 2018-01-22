@@ -859,8 +859,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             } else {
                 let groupId = this.categories.items[transactionObj.categoryId] ? this.categories.items[transactionObj.categoryId]['groupId'] : null;
 
-                this.transactionsTotal += transactionObj.amount;
-                this.transactionsAmount = this.transactionsAmount + transactionObj.count;
+                if (!transactionObj.forecastId) {
+                    this.transactionsTotal += transactionObj.amount;
+                    this.transactionsAmount = this.transactionsAmount + transactionObj.count;
+                }
 
                 /** Add group and categories numbers to the categorization list and show the names in
                  *  customize functions by finding the names with ids
