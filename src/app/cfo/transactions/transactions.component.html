@@ -108,13 +108,13 @@
                         <div *dxTemplate="let data of 'creditTotal'">
                             <div class="informer">
                                 <h2 class="count">${{creditTransactionTotal | number:'1.2-2'}}</h2>
-                                <span class="name">Credits ({{creditTransactionCount | number}})</span>
+                                <span class="name">Debits ({{creditTransactionCount | number}})</span>
                             </div>
                         </div>
                         <div *dxTemplate="let data of 'debitTotal'">
                             <div class="informer">
                                 <h2 class="count">${{debitTransactionTotal | number:'1.2-2'}}</h2>
-                                <span class="name">Debits ({{debitTransactionCount | number}})</span>
+                                <span class="name">Credits ({{debitTransactionCount | number}})</span>
                             </div>
                         </div>
                         <div *dxTemplate="let data of 'transactionTotal'">
