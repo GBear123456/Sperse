@@ -87,25 +87,31 @@
 :host {
 
     &.fullscreen {
-        top: 0px!important;
+        top: 0px !important;
     }
+
     /deep/ .dx-toolbar {
         padding: 12px 0 13px 0;
         margin: 0;
 
         .dx-state-focused {
             .dx-placeholder {
-                top: -25px!important;
+                top: -25px !important;
             }
         }
+
         .dx-placeholder {
-            font-size: 13px!important;
-            font-weight: 300!important;
-            letter-spacing: 0.3px!important;
+            font-size: 13px !important;
+            font-weight: 300 !important;
+            letter-spacing: 0.3px !important;
 
             &:before {
-                padding-top: 8px!important;
+                padding-top: 8px !important;
             }
+        }
+
+        .dx-texteditor-buttons-container {
+            margin-right: 15px;
         }
 
         [accesskey="select-box"] {
@@ -113,11 +119,13 @@
             align-items: center;
             justify-content: center;
             position: relative;
+
             &:before, &:after {
                 font-family: Montserrat;
                 letter-spacing: 0.3px;
                 padding-right: 5px;
             }
+
             &:before {
                 order: 1;
                 margin-top: -1px;
@@ -128,6 +136,7 @@
                 line-height: 1.85;
                 color: #677380;
             }
+
             &:after {
                 order: 2;
                 content: attr(select-value);
@@ -136,14 +145,17 @@
                 line-height: 1.71;
                 color: #212c36;
             }
+
             .dx-button-content {
                 order: 3;
-                min-width: 8px!important;
-                padding: 0px!important;
+                min-width: 8px !important;
+                padding: 0px !important;
+
                 &:after {
-                    background: url('../../../../assets/common/icons/dark-down-arrow-icon.svg')!important;
-                    right: 0px!important;
+                    background: url('../../../../assets/common/icons/dark-down-arrow-icon.svg') !important;
+                    right: 0px !important;
                 }
+
                 i {
                     display: none;
                 }
@@ -154,23 +166,28 @@
             &[accesskey="flag"] {
                 .dx-button-content {
                     background: url('../../../../assets/common/icons/flag-icon.svg') 17px center no-repeat;
+
                     &::after {
                         right: 12px;
                     }
                 }
             }
+
             &[accesskey="pen"] {
                 .dx-button-content {
                     background: url('../../../../assets/common/icons/pen.svg') 14px center no-repeat;
+
                     &::after {
                         right: 12px;
                     }
                 }
             }
+
             &[accesskey="more"] {
                 .dx-button-content {
                     text-align: left;
                     padding: 6px 11px;
+
                     &::before {
                         content: 'More';
                         font-weight: 300;
@@ -181,16 +198,20 @@
                         display: inline-block;
                         font-family: Montserrat;
                     }
+
                     &::after {
                         right: 8px;
                     }
                 }
             }
+
             &[accesskey="expandRows"] {
                 padding: 6px 11px 7px;
+
                 .dx-button-content {
                     display: none;
                 }
+
                 &::before {
                     content: attr(title);
                     font-weight: 300;
@@ -204,6 +225,7 @@
                     padding-right: 10px;
                     font-family: Montserrat;
                 }
+
                 &::after {
                     content: '';
                     display: block;
@@ -215,14 +237,17 @@
                     top: 48%;
                 }
             }
+
             &[accesskey="download"] {
                 .dx-button-content {
                     &::after {
                         content: none;
                     }
+
                     background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
                 }
             }
+
             .dx-button-content {
                 &::after {
                     content: '';
@@ -234,16 +259,17 @@
                     right: 12px;
                     top: 48%;
                 }
+
                 i {
                     display: none;
                 }
             }
-
         }
 
         [accesskey="download"] {
             .dx-button-content {
                 background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
+
                 i {
                     display: none;
                 }
@@ -254,9 +280,11 @@
             img {
                 display: none
             }
+
             .dx-button-content {
                 background: url('../../../../assets/common/icons/funnel-icon.svg') no-repeat center;
             }
+
             &[filter-selected="true"] {
                 &::after {
                     content: '';
@@ -279,7 +307,7 @@
         }
 
         [accesskey="search"] {
-            width: 245px;
+            width: 263px;
             color: #677380;
             font-weight: 300;
             line-height: 1.71;
@@ -291,6 +319,7 @@
             font-size: 14px;
             height: 39px;
             outline: none;
+
             @media screen and (max-width: 480px) {
                 width: auto;
             }
@@ -344,53 +373,66 @@
             background-color: transparent;
 
             &[button-pressed="true"] {
-                border-color: #00aeef!important;
+                border-color: #00aeef !important;
             }
 
             &[group-item-position="single"] {
                 margin-left: 0;
                 margin-right: 12px;
             }
+
             &[group-item-position="first"] {
                 border-top-right-radius: 0;
                 border-bottom-right-radius: 0;
+
                 &[group-item-count="2"] {
                     right: -1px;
                 }
+
                 &[group-item-count="3"] {
                     right: -2px;
                 }
+
                 &[group-item-count="4"] {
                     right: -3px;
                 }
+
                 &[group-item-count="5"] {
                     right: -4px;
                 }
+
                 &[group-item-count="6"] {
                     right: -5px;
                 }
             }
+
             &[group-item-position="inside"] {
                 border-radius: 0;
                 border-left: 1px solid transparent;
+
                 &:hover, &.dx-state-focused {
                     border-left: 1px solid #bebebe;
                 }
+
                 &[group-item-index="2"] {
                     right: -1px;
                 }
+
                 &[group-item-index="3"] {
                     right: -2px;
                 }
+
                 &[group-item-index="4"] {
                     right: -3px;
                 }
             }
+
             &[group-item-position="last"] {
                 margin-right: 12px;
                 border-top-left-radius: 0;
                 border-bottom-left-radius: 0;
                 border-left: 1px solid transparent;
+
                 &:hover, &.dx-state-focused {
                     border-left: 1px solid #bebebe;
                 }
@@ -402,6 +444,7 @@
                 &:not(.dx-button-has-text) {
                     min-width: 60px;
                 }
+
                 &:after {
                     content: '';
                     display: block;
@@ -412,9 +455,11 @@
                     right: 12px;
                     top: 48%;
                 }
+
                 .dx-icon {
                     right: 10px !important;
                 }
+
                 .dx-button-content {
                     padding-right: 28px;
                 }
@@ -424,6 +469,7 @@
                 .dx-button-content {
                     position: relative;
                 }
+
                 i.dx-icon {
                     position: absolute;
                     margin: auto;
@@ -432,6 +478,7 @@
                     top: 0px;
                     bottom: 0px;
                 }
+
                 img.dx-icon {
                     position: absolute;
                     margin: auto;
@@ -447,26 +494,30 @@
                 min-width: 50px;
                 padding: 6px 15px;
             }
+
             .dx-icon {
                 color: #959a9f;
             }
+
             img.dx-icon {
                 width: auto !important;
                 height: auto !important;
             }
         }
     }
+
     .adaptive-menu {
         max-width: 60%;
         padding-right: 20px;
         background: #fff;
+
         /deep/ .dx-menu-adaptive-mode {
             width: auto !important;
         }
+
         /deep/ .dx-menu-hamburger-button {
             margin-top: 12px;
             float: right;
         }
     }
-
 }
