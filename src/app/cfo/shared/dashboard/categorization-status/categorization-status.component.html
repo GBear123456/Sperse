@@ -6,21 +6,23 @@
     <!--<p>{{ls('CFO', 'Adipiscing consectetur do elit')}}</p>-->
     <div class="row">
         <div class="col-4 round-progress">
-            <round-progress
-                [current]="categorySynchData?.classifiedTransactionPercent"
-                [max]="100"
-                [color]="'#32BEF2'"
-                [background]="'#F9B74B'"
-                [radius]="73"
-                [stroke]="18"
-                [rounded]="false"
-                [clockwise]="true"
-                [responsive]="true"
-                [duration]="800"
-                [animation]="'easeInOutQuart'"
-                [animationDelay]="0">
-            </round-progress>
-            <span class="total-synch-progress">{{categorySynchData?.totalCount | number : '1.0-2'}}</span>
+            <div class="progress-wrap">
+                <round-progress
+                    [current]="categorySynchData?.classifiedTransactionPercent"
+                    [max]="100"
+                    [color]="'#32BEF2'"
+                    [background]="'#F9B74B'"
+                    [radius]="73"
+                    [stroke]="18"
+                    [rounded]="false"
+                    [clockwise]="true"
+                    [responsive]="true"
+                    [duration]="800"
+                    [animation]="'easeInOutQuart'"
+                    [animationDelay]="0">
+                </round-progress>
+                <span class="total-synch-progress">{{categorySynchData?.totalCount | number : '1.0-2'}}</span>
+            </div>
         </div>
 
         <div class="col-8">

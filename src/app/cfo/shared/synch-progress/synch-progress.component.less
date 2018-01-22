@@ -1,13 +1,223 @@
+.synch-progress-wrapper {
+    background: transparent;
+    margin-left: 20px;
+    position: absolute;
+    top: 0;
+}
+.synch-container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    
+    h3 {
+        color: #212c36;
+        font-size: 15px;
+        font-weight: 300;
+        letter-spacing: 0.2px;
+        line-height: 17px;
+        margin-right: 14px;
+        margin-bottom: 0;
+    }
+}
+
 .synch-progress,
 .tooltip-container {
     font-size: 15px;
     text-align: start;
 }
 
-.synch-container {
-    cursor: default;
+:host {
+    /deep/ .dx-loadindicator {
+        width: 45px;
+        height: 75px;
+    }
+    
+    /deep/ .dx-progressbar {
+        &::before {
+            content: none;
+        }
+    }
+    /deep/ .dx-loadindicator-icon {
+        height: 16px;
+        width: 16px;
+        left: 14px;
+        top: 29px;
+    
+        border: 2px solid rgba(53,200,168,.9);
+        border-left-color: rgba(255,255,255,.2);
+        border-bottom-color: rgba(255,255,255,.2);
+    
+        border-radius: 50%;
+        position: relative;
+        -webkit-animation: rotation .6s infinite linear;
+        -moz-animation: rotation .6s infinite linear;
+        -o-animation: rotation .6s infinite linear;
+        animation: rotation .6s infinite linear;
+        
+        * {
+            display: none;
+        }
+    }
+    
+    /deep/ .dx-progressbar-wrapper {
+        display: flex;
+        
+        .dx-progressbar-range-container {
+            display: block;
+            margin-right: 15px;
+            position: relative;
+            
+            .dx-progressbar-container {
+                border: 0;
+                height: 7px;
+                background: #fff;
+                border-radius: 4px;
+                overflow: hidden;
+                top: 7px;
+                
+                .dx-progressbar-range {
+                    border: 0;
+                    background-color: #35c8a8;
+                    border-radius: 4px 0 0 4px;
+                    margin-top: 0;
+                }
+            }
+        }
+        .dx-progressbar-status {
+            display: block;
+            color: #212c36;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+            padding-right: 10px;
+        }
+    }
+    
+    /deep/ .dx-button {
+        background-color: #048C6E;
+        border: 0;
+        border-radius: 20px;
+        color: #FFFFFF;
+        font-size: 12px;
+        font-weight: 300;
+        letter-spacing: 0.4px;
+        line-height: 24px;
+        margin-left: auto;
+        margin-right: 15px;
+        
+        &:hover {
+            background: lighten(#048C6E, 2%);
+        }
+    }
 }
 
-.load-indicator {
-    vertical-align: middle;
+.tooltip-container {
+    h3 {
+        font-size: 18px;
+        line-height: 1.21;
+        letter-spacing: 0.3px;
+        text-align: left;
+        color: #212c36;
+    }
+    
+    .progress-wrap {
+        margin: 0 auto;
+        max-width: 180px;
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    
+    .total-synch-progress {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: 24px;
+        transform: translate(-50%, -50%);
+    }
+    
+    .list-of-synch-accounts {
+        list-style-type: none;
+        
+        li {
+            border-top: 1px solid #e5e9ec;
+            padding: 5px 5px 5px 25px;
+            position: relative;
+            
+            &:last-child {
+                border-bottom: 1px solid #e5e9ec;
+            }
+            
+            &.completed {
+                background: transparent url('../../../../assets/common/icons/completed-icon.svg') 4px 50% no-repeat;
+                &::before {
+                    content: none;
+                }
+            }
+            
+            &::before {
+                content: '';
+                width: 10px;
+                height: 10px;
+                background-color: #f9b74b;
+                border-radius: 50%;
+                display: block;
+                position: absolute;
+                left: 5px;
+                top: 10px;
+            }
+            
+            .name {
+                width: 79%;
+                display: block;
+                float: left;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                padding-right: 5px;
+            }
+            .percent {
+                width: 20%;
+                display: block;
+                float: right;
+            }
+        }
+    }
+}
+
+// animation rotate
+@-webkit-keyframes rotation {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(359deg);
+    }
+}
+
+@-moz-keyframes rotation {
+    from {
+        -moz-transform: rotate(0deg);
+    }
+    to {
+        -moz-transform: rotate(359deg);
+    }
+}
+
+@-o-keyframes rotation {
+    from {
+        -o-transform: rotate(0deg);
+    }
+    to {
+        -o-transform: rotate(359deg);
+    }
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
 }
