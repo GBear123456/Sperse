@@ -198,7 +198,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         this.data.editTitle = true;
         this.data.placeholder = this.l('Enter the rule name');
         this.data.buttons = [{
-            title: this.l(this.data.id ? 'Save Changes' : 'Add rule'),
+            title: this.l(this.data.id ? 'Save' : 'Add rule'),
             class: 'primary',
             action: () => {
                 if (this.validate()) {
