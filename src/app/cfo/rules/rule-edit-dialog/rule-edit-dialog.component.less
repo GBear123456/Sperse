@@ -345,6 +345,17 @@
                         color: #424c56;
                     }
 
+                    .dx-data-row:not(:first-child) td:first-child {
+                        &:before {
+                            content: 'and';
+                            position: absolute;
+                            color: #dfdfdf;
+                            font-size: 10px;
+                            left: 4px;
+                            margin-top: 3px;
+                        }
+                    }
+
                     .dx-datagrid-header-panel {
                         display: none;
                     }
