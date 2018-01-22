@@ -120,15 +120,15 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             _classificationServiceProxy.getTransactionCommonDetails(InstanceType[this.instanceType], this.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data))
                 .subscribe((data) => {
                     this.bankId = data.bankId;
-                    this.accountId = data.bankAccountId;
-                    if (data.amountFormat)
-                        this.amountFormat = ConditionDtoCashFlowAmountFormat[data.amountFormat.toString()];
+                    //this.accountId = data.bankAccountId;
+                    //if (data.amountFormat)
+                    //    this.amountFormat = ConditionDtoCashFlowAmountFormat[data.amountFormat.toString()];
                     this.descriptor = data.standardDescriptor;
                     this.keywords = this.getKeywordsFromString(data.descriptionPhrases.join(','));
                     this.attributes = this.getAttributesFromCommonDetails(data.attributes);
                     this.attributesAndKeywords = this.getAtributesAndKeywords();
-                    this.selectedTransactionCategory = data.transactionCategoryId;
-                    this.selectedTransactionTypes = data.transactionTypeId ? [data.transactionTypeId]: [];
+                    //this.selectedTransactionCategory = data.transactionCategoryId;
+                    //this.selectedTransactionTypes = data.transactionTypeId ? [data.transactionTypeId]: [];
                     this.showOverwriteWarning = data.sourceTransactionsAreMatchingExistingRules;
                 });
 
@@ -153,7 +153,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 conditionTypeId: v.value ? ConditionAttributeDtoConditionTypeId.Equal : ConditionAttributeDtoConditionTypeId.Exist,
                 conditionValue: v.value
             }
-        });
+        }).filter((attr) => attr.attributeTypeId == 'DS' || attr.attributeTypeId == 'PR');
     }
 
     getDataObject() {
