@@ -46,7 +46,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
             InstanceType[this.instanceType],
             this.instanceId)
             .subscribe((result) => {
-                this.currentProgress = 38;
+                this.currentProgress = result.totalProgress.progressPercent;
                 if (this.currentProgress != 100) {
                     this.completed = false;
                     this.synchData = result;
