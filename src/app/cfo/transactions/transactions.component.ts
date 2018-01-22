@@ -575,6 +575,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngAfterViewInit(): void {
+        this.showCompactRowsHeight();
+
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }
