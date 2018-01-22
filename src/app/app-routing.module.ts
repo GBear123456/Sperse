@@ -17,7 +17,7 @@ import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
                         path: '',
                         children: [
                             { path: 'notifications', component: NotificationsComponent },
-                            { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
+                            { path: '', redirectTo: 'main/start', pathMatch: 'full' }
                         ]
                     },
                     {

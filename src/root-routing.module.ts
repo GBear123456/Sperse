@@ -3,7 +3,7 @@ import { Routes, RouterModule, Router, NavigationEnd } from '@angular/router';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 
 const routes: Routes = [
-    {path: '', redirectTo: '/app/main/dashboard', pathMatch: 'full'},
+    {path: '', redirectTo: '/app/main/start', pathMatch: 'full' },
     {
         path: 'account',
         loadChildren: 'account/account.module#AccountModule', //Lazy load account module

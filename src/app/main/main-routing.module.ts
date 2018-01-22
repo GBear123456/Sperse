@@ -8,6 +8,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
             {
                 path: '',
                 children: [
+                    { path: 'start', component: DashboardComponent, data: { permission: 'Pages.Detect.Route' } }
                     { path: 'dashboard', component: DashboardComponent, data: { permission: 'Pages.Tenant.Dashboard' } }
                 ]
             }
