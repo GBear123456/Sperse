@@ -15,7 +15,7 @@
             <dxi-column dataField="Amount" cssClass="tabular" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate" [width]="100"></dxi-column>
             <dxi-column dataField="close" caption="" [width]="100"></dxi-column>
             <div *dxTemplate="let cell of 'amountTemplate'">
-                <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value >= 0 && cell.column.name == 'Debit') || (cell.value < 0 && cell.column.name == 'Credit'))">
+                <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit'))">
                     <span [style.color]="cell.value < 0 ? 'red': '#000'"> {{ cell.text | number:'1.2-2' }} </span>
                 </ng-container>
             </div>

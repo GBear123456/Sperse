@@ -41,7 +41,7 @@
                                     [allowReordering]="false"
                                     cellTemplate="isCategorizedTemplate"></dxi-column>
                         <dxi-column dataField="Id" cssClass="tabular" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="1"></dxi-column>
-                        <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell" sortOrder="desc" sortIndex="0"></dxi-column>
+                        <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell"></dxi-column>
                         <dxi-column dataField="BankAccountNumber" cssClass="tabular" caption="{{l('Transactions_BankAccountNumber')}}"></dxi-column>
                         <dxi-column dataField="CashFlowTypeName" caption="{{l('Transactions_CashFlowType')}}"></dxi-column>
                         <dxi-column dataField="CashflowCategoryGroupName" caption="{{l('Transactions_CashflowCategoryGroupName')}}"></dxi-column>
@@ -66,7 +66,7 @@
                         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
 
                         <div *dxTemplate="let cell of 'amountTemplate'">
-                            <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value >= 0 && cell.column.name == 'Debit') || (cell.value < 0 && cell.column.name == 'Credit'))">
+                            <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit'))">
                                 <span [ngClass]="{'red': cell.value < 0}"> {{ cell.text | number:'1.2-2' }} </span>
                             </ng-container>
                         </div>
@@ -111,13 +111,13 @@
                         <div *dxTemplate="let data of 'creditTotal'">
                             <div class="informer">
                                 <h2 class="count">${{creditTransactionTotal | number:'1.2-2'}}</h2>
-                                <span class="name">Debits ({{creditTransactionCount | number}})</span>
+                                <span class="name">Credits ({{creditTransactionCount | number}})</span>
                             </div>
                         </div>
                         <div *dxTemplate="let data of 'debitTotal'">
                             <div class="informer">
                                 <h2 class="count">${{debitTransactionTotal | number:'1.2-2'}}</h2>
-                                <span class="name">Credits ({{debitTransactionCount | number}})</span>
+                                <span class="name">Debits ({{debitTransactionCount | number}})</span>
                             </div>
                         </div>
                         <div *dxTemplate="let data of 'transactionTotal'">

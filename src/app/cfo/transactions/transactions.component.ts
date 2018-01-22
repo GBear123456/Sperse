@@ -203,7 +203,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 portfolios.push(row.BankAccountId);
                 accounts.push(row.SyncAccountId);
 
-                if (row.Amount < 0) {
+                if (row.Amount > 0) {
                     creditTotal += row.Amount;
                     creditCount++;
                 }
