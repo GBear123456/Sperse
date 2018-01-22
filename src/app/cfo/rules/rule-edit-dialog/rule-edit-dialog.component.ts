@@ -266,13 +266,16 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     getAtributesAndKeywords() {
-        return this.attributes.concat(this.keywords.map((item) => {
+        var array: any[] =  this.attributes.concat(this.keywords.map((item) => {
             return {
                 attributeTypeId: 'keyword',
                 conditionTypeId: ConditionAttributeDtoConditionTypeId.Equal,
                 conditionValue: item.keyword
             };
         }));
+
+        array.forEach((v, i) => v.id = i);
+        return array;
     }
 
     getAttributes() {
@@ -426,7 +429,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         $event.data.attributeTypeId = 'keyword';
         $event.data.conditionTypeId = 'Equal';
         this.attributeList.instance
-          .option('elementAttr', {invalid: false});
+            .option('elementAttr', { invalid: false });
+        $event.data.id = this.attributesAndKeywords.length + 1;
     }
 
     onCustomItemCreating($event) {
