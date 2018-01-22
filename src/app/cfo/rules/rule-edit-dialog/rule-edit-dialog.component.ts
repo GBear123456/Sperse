@@ -269,7 +269,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         return this.attributes.concat(this.keywords.map((item) => {
             return {
                 attributeTypeId: 'keyword',
-                conditionTypeId: '',
+                conditionTypeId: ConditionAttributeDtoConditionTypeId.Equal,
                 conditionValue: item.keyword
             };
         }));
@@ -384,12 +384,22 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 $event.cells[2].cellElement.attr('colspan', '2');
             }, 0);
         
-        if ($event.cells[1].value == "Exist") 
+        if ($event.cells[1].value == "Exist" && $event.cells[0].value != "keyword")
             setTimeout(() => {
                 $event.cells[2].value = '-';
                 $event.cells[2].cellElement.hide();
                 $event.cells[1].cellElement.attr('colspan', '2');
             }, 0);
+    }
+
+    onRowValidating(e) {
+        if (e.isValid) return;
+
+        if (e.newData.conditionTypeId == 'Exist' && e.newData.attributeTypeId != 'keyword') {
+            e.brokenRules = _.reject(e.brokenRules, (rule) => rule.column.dataField == 'conditionValue');
+        }
+
+        e.isValid = !e.brokenRules.length;
     }
 
     updateKeywordList($event) {

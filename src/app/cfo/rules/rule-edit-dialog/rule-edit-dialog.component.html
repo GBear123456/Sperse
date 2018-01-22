@@ -48,7 +48,8 @@
                      (onRowUpdated)="updateKeywordList($event)"
                      (onRowRemoved)="updateKeywordList($event)"
                      (onRowInserted)="updateKeywordList($event)"
-                     (onInitNewRow)="onAttributeInitNewRow($event)">
+                     (onInitNewRow)="onAttributeInitNewRow($event)"
+                     (onRowValidating)="onRowValidating($event)">
                      <dxo-editing
                          mode="row"
                          [allowUpdating]="true"
