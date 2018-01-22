@@ -118,12 +118,13 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                     });
                 if (data.items)
                      _.mapObject(data.items, (item, key) => {
-                        categories.push({
-                            key: key,
-                            parent: item.groupId +
-                                data.groups[item.groupId].typeId,
-                            name: item.name
-                        });
+                        if (data.groups[item.groupId])
+                            categories.push({
+                                key: key,
+                                parent: item.groupId +
+                                    data.groups[item.groupId].typeId,
+                                name: item.name
+                            });
                     });
 
                 this.categories = categories;

@@ -302,15 +302,15 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     validate(ruleCheckOnly: boolean = false) {
-        if (!this.data.title) {
-            this.data.title = this.descriptor;
-            if (!this.data.title) {
-                this.data.isTitleValid = false;
-                return this.notify.error(this.l('RuleDialog_NameError'));
-            }
-        }
-
         if (!ruleCheckOnly) {
+            if (!this.data.title) {
+                this.data.title = this.descriptor;
+                if (!this.data.title) {
+                    this.data.isTitleValid = false;
+                    return this.notify.error(this.l('RuleDialog_NameError'));
+                }
+            }
+
             if (!this.getDescriptionKeywords() && !Object.keys(this.getAttributes()).length) {
                 this.attributeList.instance.option('elementAttr', {invalid: true});
                 return this.notify.error(this.l('RuleDialog_AttributeOrKeywordRequired'));
