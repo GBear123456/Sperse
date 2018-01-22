@@ -293,7 +293,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         name: 'search',   
                         widget: 'dxTextBox',
                         options: {
-                            width: '300',
+                            width: '250',
                             mode: 'search',
                             placeholder: this.l('Search') + ' ' 
                                 + this.l('Leads').toLowerCase()

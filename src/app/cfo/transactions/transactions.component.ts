@@ -105,7 +105,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         widget: 'dxTextBox',
                         options: {
                             value: this.searchValue,
-                            width: '300',
+                            width: '250',
                             mode: 'search',
                             placeholder: this.l('Search') + ' '
                             + this.l('Transactions').toLowerCase(),

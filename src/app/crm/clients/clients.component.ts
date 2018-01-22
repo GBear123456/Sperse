@@ -250,7 +250,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                         name: 'search',   
                         widget: 'dxTextBox',
                         options: {
-                            width: '300',
+                            width: '250',
                             mode: 'search',
                             placeholder: this.l('Search') + ' ' 
                                 + this.l('Customers').toLowerCase()
