@@ -1,7 +1,7 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {CFOComponentBase} from '@app/cfo/shared/common/cfo-component-base';
 import {DashboardServiceProxy, InstanceType} from '@shared/service-proxies/service-proxies';
-import { Router } from '@angular/router';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'app-accounts',

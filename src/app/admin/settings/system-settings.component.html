@@ -28,12 +28,15 @@
                                   (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                         <dxi-column dataField="id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="hostNames" caption="{{l('HostName')}}"></dxi-column>
-                        <dxi-column dataField="expiration" caption="{{l('ExpirationDate')}}" dataType="date" format="shortDateShortTime"></dxi-column>
+                        <dxi-column dataField="expiration" caption="{{l('ExpirationDate')}}" cellTemplate="dateCell"></dxi-column>
                         <dxi-column dataField="thumbprint" caption="{{l('Thumbprint')}}"></dxi-column>
                         <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
                         <div *dxTemplate="let data of 'editDeleteTemplate'">
                             <a class="dx-link" (click)="deleteCertificate(data, $event)">{{l('Delete')}}</a>
-                        </div> 
+                        </div>
+                        <div *dxTemplate="let cellData of 'dateCell'">
+                            {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
+                        </div>
                     </dx-data-grid>
                 </div>
                 <uploadSSLCertificateModal #uploadSSLCertificateModal (modalSave)="refreshSSLGrid()"></uploadSSLCertificateModal>
@@ -48,7 +51,6 @@
                                   [dataSource]="sslBindingsDataSource"
                                   [allowColumnReordering]="true"
                                   [allowColumnResizing]="true">
-
                         <dxi-column dataField="id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="sslCertificateId" caption="{{l('SslCertificateId')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="hostName" caption="{{l('HostName')}}"></dxi-column>
@@ -56,13 +58,16 @@
                             <dxo-lookup [dataSource]="hostTypes" valueExpr="Id" displayExpr="Name"></dxo-lookup>
                         </dxi-column>
                         <dxi-column dataField="isActive" caption="{{l('Active')}}"></dxi-column>
-                        <dxi-column dataField="sslCertificateExpiration" caption="{{l('ExpirationDate')}}" dataType="date" format="shortDateShortTime"></dxi-column>
+                        <dxi-column dataField="sslCertificateExpiration" caption="{{l('ExpirationDate')}}" cellTemplate="dateCell"></dxi-column>
                         <dxi-column dataField="sslCertificateThumbprint" caption="{{l('Thumbprint')}}"></dxi-column>
                         <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
                         <div *dxTemplate="let data of 'editDeleteTemplate'">
                             <a class="dx-link" (click)="showSSLBindingDialog(data, $event)">{{l('Edit')}}</a>
                             <a class="dx-link" (click)="deleteSSLBinding(data, $event)">{{l('Delete')}}</a>
-                        </div> 
+                        </div>
+                        <div *dxTemplate="let cellData of 'dateCell'">
+                            {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
+                        </div>
                     </dx-data-grid>
                 </div>
                 <addOrEditSSLBindingModal #addOrEditSSLBindingModal [hostTypes]="hostTypes" (modalSave)="refreshSSLBindingGrid()"></addOrEditSSLBindingModal>

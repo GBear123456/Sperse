@@ -65,7 +65,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                         adaptive: false,
                         widget: 'dxTextBox',
                         options: {
-                            width: '300',
+                            width: '279',
                             mode: 'search',
                             placeholder: this.l('Search') + ' '
                                 + this.l('Transaction').toLowerCase()
