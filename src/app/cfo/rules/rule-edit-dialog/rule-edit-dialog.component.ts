@@ -420,6 +420,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onCustomItemCreating($event) {
-        this.descriptor = $event.text;
+        setTimeout(() => this.descriptor = $event.text, 0);
     }
 }
