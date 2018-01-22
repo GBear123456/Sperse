@@ -10,7 +10,7 @@ import {Router} from '@angular/router';
     providers: [DashboardServiceProxy]
 })
 export class AccountsComponent extends CFOComponentBase implements OnInit {
-    private accountsData: any;
+    accountsData: any;
 
     constructor(
         injector: Injector,

@@ -24,7 +24,7 @@
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
-                                  (onRowRemoving)="deleteCertificate($event)"
+                                  (onRowRemoving)="deleteCertificate(null, $event)"
                                   (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                         <dxi-column dataField="id" caption="{{l('Id')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="hostNames" caption="{{l('HostName')}}"></dxi-column>
@@ -43,7 +43,7 @@
             </tab>
             <tab heading="{{l('CustomDomains')}}">
                 <div class="text-right">
-                    <button class="btn btn-layout" (click)="showSSLBindingDialog()"><i class="fa fa-plus"></i>{{l("AddSSLBinding")}}</button>
+                    <button class="btn btn-layout" (click)="showSSLBindingDialog(null)"><i class="fa fa-plus"></i>{{l("AddSSLBinding")}}</button>
                 </div>
                 <div id="CustomDomainsTable">
                     <dx-data-grid id="gridContainer"

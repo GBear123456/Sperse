@@ -21,6 +21,8 @@ import { CategoryDeleteDialogComponent } from './transactions/categorization/cat
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
 import { NoDataComponent } from './shared/common/no-data/no-data.component';
+import { CFOModalDialogComponent } from './shared/common/dialogs/modal/cfo-modal-dialog.component'
+
 import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
@@ -108,7 +110,8 @@ import {
         CategoryDeleteDialogComponent,
         RulesComponent,
         SortingComponent,
-        NoDataComponent
+        NoDataComponent,
+        CFOModalDialogComponent
     ],
     entryComponents: [
         RuleDialogComponent,

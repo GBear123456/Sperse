@@ -10,7 +10,7 @@ import {Router} from '@angular/router';
     providers: [DashboardServiceProxy, ClassificationServiceProxy]
 })
 export class CategorizationStatusComponent extends CFOComponentBase implements OnInit {
-    private categorySynchData: any;
+    categorySynchData: any;
     private autoClassifyData = new AutoClassifyDto();
     private resetRules = new ResetClassificationDto();
     constructor(

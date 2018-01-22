@@ -1,7 +1,11 @@
 import { ModalDialogComponent } from "shared/common/dialogs/modal/modal-dialog.component";
-import { OnInit, OnDestroy, Injector } from "@angular/core";
+import { Component, OnInit, OnDestroy, Injector } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 
+@Component({
+    templateUrl : './cfo-modal-dialog.component.html', 
+    styleUrls: ['./cfo-modal-dialog.component.less']
+  })
 export class CFOModalDialogComponent extends ModalDialogComponent {
     instanceId: number;
     instanceType: string;
