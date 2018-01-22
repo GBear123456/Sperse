@@ -48,13 +48,16 @@
                      (onRowUpdated)="updateKeywordList($event)"
                      (onRowRemoved)="updateKeywordList($event)"
                      (onRowInserted)="updateKeywordList($event)"
-                     (onInitNewRow)="onAttributeInitNewRow($event)">
+                     (onInitNewRow)="onAttributeInitNewRow($event)"
+                     (onRowValidating)="onRowValidating($event)">
                      <dxo-editing
                          mode="row"
                          [allowUpdating]="true"
                          [allowDeleting]="true"
                          [allowAdding]="true">
                     </dxo-editing>
+                    <dxi-column dataField="id" [visible]="false" sortOrder="desc">
+                    </dxi-column>
                     <dxi-column
                         width="150"
                         dataField="attributeTypeId"
