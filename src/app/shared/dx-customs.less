@@ -2,7 +2,23 @@
     border: 0;
 }
 
-.dx-placeholder.dx-state-invisible,
+.dx-clear-button-area {
+    opacity: 0;
+}
+
+&.dx-state-hover {
+    .dx-clear-button-area {
+        opacity: 1;
+    }
+}
+
+.dx-placeholder.dx-state-invisible {
+    font-size: 11px;
+    color: #8a9da1;
+    top: -18px;
+    opacity: 0;
+}
+
 .dx-texteditor-empty.dx-state-focused .dx-placeholder {
     display: block !important;
     font-size: 11px;

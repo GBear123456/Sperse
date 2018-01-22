@@ -106,7 +106,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         widget: 'dxTextBox',
                         options: {
                             value: this.searchValue,
-                            width: '300',
+                            width: '279',
                             mode: 'search',
                             placeholder: this.l('Search') + ' '
                             + this.l('Transactions').toLowerCase(),
@@ -204,7 +204,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 portfolios.push(row.BankAccountId);
                 accounts.push(row.SyncAccountId);
 
-                if (row.Amount < 0) {
+                if (row.Amount > 0) {
                     creditTotal += row.Amount;
                     creditCount++;
                 }
@@ -577,6 +577,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngAfterViewInit(): void {
+        this.showCompactRowsHeight();
+
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }

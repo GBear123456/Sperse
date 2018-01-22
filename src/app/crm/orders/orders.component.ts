@@ -311,7 +311,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         name: 'search',   
                         widget: 'dxTextBox',
                         options: {
-                            width: '300',
+                            width: '279',                            
                             mode: 'search',
                             placeholder: this.l('Search') + ' ' 
                                 + this.l('Orders').toLowerCase()

@@ -763,8 +763,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Get the array of stub cashflow data to add stub empty columns for cashflow
      * @param {Array<TransactionStatsDto>} transactions
      */
-    getStubCashflowDataForAccounts(transactions: Array<TransactionStatsDto>) {
-        let stubCashflowDataForAccounts: Array<TransactionStatsDto> = [],
+    getStubCashflowDataForAccounts(transactions) {
+        let stubCashflowDataForAccounts = [],
             allAccountsIds: Array<number> = [],
             currentAccountsIds = {
                 [StartedBalance]: [],
@@ -814,7 +814,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param stubObj - the object with own custom data for stub transaction
      * @return {TransactionStatsDto & any}
      */
-    createStubTransaction(stubObj): TransactionStatsDto {
+    createStubTransaction(stubObj) {
         let categorizationObject: { [key: string]: string; } = this.createCategorizationObject(this.categorization);
         let stubTransaction = {
             'adjustmentType': null,
@@ -824,6 +824,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             'amount': 0,
             'comment': null,
             'date': null,
+            'initialDate': null,
             'categorization': categorizationObject,
             'forecastId': null
         };
@@ -852,6 +853,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.transactionsAverage = 0;
         const data = transactions.map(transactionObj => {
             transactionObj.categorization = {};
+            transactionObj.initialDate = moment(transactionObj.date);
             transactionObj.date.add(new Date().getTimezoneOffset(), 'minutes');
             /** change the second level for started balance and reconciliations for the account id */
             if (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation) {
@@ -859,8 +861,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             } else {
                 let groupId = this.categories.items[transactionObj.categoryId] ? this.categories.items[transactionObj.categoryId]['groupId'] : null;
 
-                this.transactionsTotal += transactionObj.amount;
-                this.transactionsAmount = this.transactionsAmount + transactionObj.count;
+                if (!transactionObj.forecastId) {
+                    this.transactionsTotal += transactionObj.amount;
+                    this.transactionsAmount = this.transactionsAmount + transactionObj.count;
+                }
 
                 /** Add group and categories numbers to the categorization list and show the names in
                  *  customize functions by finding the names with ids
@@ -891,8 +895,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param {Array<TransactionStatsDto>} cashflowData
      * @return {Array<TransactionStatsDto>}
      */
-    getStubCashflowDataForEndingCashPosition(cashflowData: Array<TransactionStatsDto>) {
-        let stubCashflowDataForEndingCashPosition: Array<TransactionStatsDto> = [];
+    getStubCashflowDataForEndingCashPosition(cashflowData) {
+        let stubCashflowDataForEndingCashPosition = [];
         cashflowData.forEach(cashflowDataItem => {
             /** clone transaction to another array */
             if (cashflowDataItem.cashflowTypeId === Income || cashflowDataItem.cashflowTypeId === Expense) {
@@ -904,7 +908,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     'expenseCategoryId': null,
                     'amount': cashflowDataItem.amount,
                     'accountId': cashflowDataItem.accountId,
-                    'date': cashflowDataItem.date
+                    'date': cashflowDataItem.date,
+                    'initialDate': cashflowDataItem.initialDate
                 });
                 stubCashflowDataForEndingCashPosition.push(clonedTransaction);
 
@@ -919,7 +924,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             'expenseCategoryId': null,
                             'amount': cashflowDataItem.amount,
                             'accountId': cashflowDataItem.accountId,
-                            'date': cashflowDataItem.date
+                            'date': cashflowDataItem.date,
+                            'initialDate': cashflowDataItem.initialDate
                         })
                     );
                 }
@@ -997,7 +1003,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             [this.categorization[0]]: firstAccountId
                         },
                         'accountId': firstAccountId,
-                        'date': date
+                        'date': date,
+                        'initialDate': date
                     })
                 );
             }
@@ -1040,7 +1047,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** @todo move to some helper */
     getDescendantPropValue(obj, path) {
         return path.split('.').reduce((acc, part) => acc && acc[part], obj);
-    };
+    }
 
     /**
      * Build the tree from cashflow data
@@ -2366,13 +2373,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     calculateCellValue(cellData) {
         /** {cashflowTypeId: 'T', accountId: 10, quarter: 3, year: 2015, month: 5} */
         let value = this.cashflowData.reduce((sum, cashflowData) => {
+            let date = cashflowData.initialDate || cashflowData.date;
             if (
                 cashflowData.cashflowTypeId === cellData.cashflowTypeId &&
                 cashflowData.accountId === cellData.accountId &&
-                (!cellData.year || (cellData.year === cashflowData.date.year())) &&
-                (!cellData.quarter || (cellData.quarter === cashflowData.date.quarter())) &&
-                (!cellData.month || ( cellData.month - 1 === cashflowData.date.month())) &&
-                (!cellData.day || (cellData.day === cashflowData.date.date()))
+                (!cellData.year || (cellData.year === date.year())) &&
+                (!cellData.quarter || (cellData.quarter === date.quarter())) &&
+                (!cellData.month || ( cellData.month - 1 === date.month())) &&
+                (!cellData.day || (cellData.day === date.date()))
             ) {
                 sum += cashflowData.amount;
             }

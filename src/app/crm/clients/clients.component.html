@@ -1,4 +1,4 @@
-﻿<app-headline [config]="headlineConfig"></app-headline>
+<app-headline [config]="headlineConfig"></app-headline>
 <div [@routerTransition]>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
@@ -9,14 +9,13 @@
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
-                                  [hoverStateEnabled]="true"                                  
+                                  [hoverStateEnabled]="true"
                                   (onContentReady)="onContentReady($event)"
                                   (onEditingStart)="showClientDetails($event)"
                                   (onDataErrorOccurred)="httpConfig.handleError($event.error)">
-                        <dxo-selection
-                            selectAllMode="page"
-                            showCheckBoxesMode="always"
-                            mode="multiple">
+                        <dxo-selection selectAllMode="page"
+                                       showCheckBoxesMode="always"
+                                       mode="multiple">
                         </dxo-selection>
                         <dxo-editing mode="row" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"
@@ -25,11 +24,10 @@
                         <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate"
                                     [width]="65" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
-                            <img
-                                [src]="getPhoto(data.data.Photo, data.data.Gender)"
-                                alt="{{l('AltPersonPhoto')}}"
-                                width="38"
-                                class="img-circle"/>
+                            <img [src]="getPhoto(data.data.Photo, data.data.Gender)"
+                                 alt="{{l('AltPersonPhoto')}}"
+                                 width="38"
+                                 class="img-circle" />
                         </div>
                         <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
                         <dxi-column dataField="Status" caption="{{l('Status')}}"></dxi-column>
@@ -38,22 +36,23 @@
                         <dxi-column dataField="State" caption="{{l('Contact.State')}}"></dxi-column>
                         <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
                         <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}"></dxi-column>
-                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" dataType="date"
-                                    format="shortDateShortTime"></dxi-column>
+                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
                         <dxi-column cellTemplate="linkToCFOTemplate" [width]="75" [fixed]="true" [fixedPosition]="'right'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
                             <span *ngIf="isClientCFOAvailable(data.data.UserId)" [class]="'link-to-cfo-column'" (click)="redirectToCFO($event, data.data.UserId)">
                             </span>
                         </div>
-                        <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
+                        <div *dxTemplate="let cellData of 'dateCell'">
+                            {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
+                        </div>
 
+                        <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
-                        <dxo-pager
-                            [showPageSizeSelector]="true"
-                            [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
-                            [showInfo]="true">
+                        <dxo-pager [showPageSizeSelector]="true"
+                                   [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
+                                   [showInfo]="true">
                         </dxo-pager>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                     </dx-data-grid>

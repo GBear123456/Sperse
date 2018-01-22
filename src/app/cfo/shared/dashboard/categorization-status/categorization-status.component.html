@@ -1,13 +1,13 @@
 <section class="categorization-status">
     <header>
-        <h2 class="title">Accounts synchronization status</h2>
-        <a href="javascript:;" class="view-more">View transactions</a>
+        <h2 class="title">{{ls('CFO', 'Categorization status')}}</h2>
+        <a (click)="navigateTo();" class="view-more">{{ls('CFO', 'View transactions')}}</a>
     </header>
-    <p>Adipiscing consectetur do elit</p>
+    <!--<p>{{ls('CFO', 'Adipiscing consectetur do elit')}}</p>-->
     <div class="row">
         <div class="col-4 round-progress">
             <round-progress
-                [current]="75"
+                [current]="categorySynchData?.classifiedTransactionPercent"
                 [max]="100"
                 [color]="'#32BEF2'"
                 [background]="'#F9B74B'"
@@ -20,19 +20,29 @@
                 [animation]="'easeInOutQuart'"
                 [animationDelay]="0">
             </round-progress>
-            <span class="total-synch-progress">20250</span>
+            <span class="total-synch-progress">{{categorySynchData?.totalCount | number : '1.0-2'}}</span>
         </div>
+
         <div class="col-8">
             <ul class="category-synch-list">
-                <ng-container *ngFor="let item of categorySynchData">
-                    <li class="category-synch-item">
-                        <span class="category-type">{{item.transactionType}}</span>
-                        <a href="javascript:;">
-                            {{ls('CFO', 'Reset')}}
-                        </a>
-                        <span class="synch-status"><strong>{{item.count}}</strong> ({{item.percents}}%)</span>
-                    </li>
-                </ng-container>
+                <li class="category-synch-item">
+                    <span class="category-type">{{ls('CFO', 'Classified Transactions')}}</span>
+                    <span class="synch-status"><strong>{{categorySynchData?.classifiedTransactionCount | number : '1.0-2'}}</strong> ({{categorySynchData?.classifiedTransactionPercent}}%)</span>
+                    <span class="clearfix"></span>
+
+                    <a (click)="reset();" class="small-button btn-layout">
+                        {{ls('CFO', 'Reset')}}
+                    </a>
+                </li>
+                <li class="category-synch-item">
+                    <span class="category-type">{{ls('CFO', 'Unclassified Transactions')}}</span>
+                    <span class="synch-status"><strong>{{categorySynchData?.unclassifiedTransactionCount | number : '1.0-2'}}</strong> ({{categorySynchData?.unclassifiedTransactionPercent}}%)</span>
+                    <span class="clearfix"></span>
+
+                    <a (click)="autoClassify();" class="small-button btn-layout">
+                        {{ls('CFO', 'Auto-classify')}}
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
