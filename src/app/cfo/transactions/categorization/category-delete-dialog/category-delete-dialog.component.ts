@@ -21,7 +21,7 @@ export class CategoryDeleteDialogComponent extends ConfirmDialogComponent implem
     }
 
     ngOnInit() {
-        this.data.deleteAllReferences = true;
+        this.data.deleteAllReferences = false;
     }
         
     confirm($event) {
