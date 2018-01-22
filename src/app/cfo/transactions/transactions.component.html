@@ -41,7 +41,7 @@
                                     [allowReordering]="false"
                                     cellTemplate="isCategorizedTemplate"></dxi-column>
                         <dxi-column dataField="Id" cssClass="tabular" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="1"></dxi-column>
-                        <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" dataType="date" format="shortDate" sortOrder="desc" sortIndex="0"></dxi-column>
+                        <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell" sortOrder="desc" sortIndex="0"></dxi-column>
                         <dxi-column dataField="BankAccountNumber" cssClass="tabular" caption="{{l('Transactions_BankAccountNumber')}}"></dxi-column>
                         <dxi-column dataField="CashFlowTypeName" caption="{{l('Transactions_CashFlowType')}}"></dxi-column>
                         <dxi-column dataField="CashflowCategoryGroupName" caption="{{l('Transactions_CashflowCategoryGroupName')}}"></dxi-column>
@@ -85,6 +85,9 @@
                         </div>
                         <div *dxTemplate="let cell of 'isCategorizedTemplate'">
                             <span [ngClass]="{'uncategorized': !cell.data.CashflowCategoryId}"></span>
+                        </div>
+                        <div *dxTemplate="let cellData of 'dateCell'">
+                            {{cellData.value | date: 'MM/dd/yyyy'}}
                         </div>
 
                         <dxo-paging [pageSize]="20"></dxo-paging>

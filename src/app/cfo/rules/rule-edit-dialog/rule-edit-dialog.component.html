@@ -1,25 +1,26 @@
 <modal-dialog>
     <div class="transactions-container" *ngIf="showSelectedTransactions">
         <div class="close-transactions" (click)="showSelectedTransactions=false"></div>
-        <dx-data-grid
-             class="grid-layout"
-             [noDataText]="'No Transactions'"
-             [dataSource]="data.transactions"
-             [showColumnHeaders]="true"
-             [showColumnLines]="false"
-             [showRowLines]="false"
-             [showBorders]="false">
-            <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" dataType="date" format="shortDate" sortOrder="desc" sortIndex="0" [width]="100"></dxi-column>
+        <dx-data-grid class="grid-layout"
+                      [noDataText]="'No Transactions'"
+                      [dataSource]="data.transactions"
+                      [showColumnHeaders]="true"
+                      [showColumnLines]="false"
+                      [showRowLines]="false"
+                      [showBorders]="false">
+            <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell" sortOrder="desc" sortIndex="0" [width]="100"></dxi-column>
             <dxi-column dataField="TypeName" caption="{{l('Transactions_Type')}}" [width]="200"></dxi-column>
             <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}"></dxi-column>
             <dxi-column dataField="Amount" cssClass="tabular" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate" [width]="100"></dxi-column>
             <dxi-column dataField="Amount" cssClass="tabular" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate" [width]="100"></dxi-column>
             <dxi-column dataField="close" caption="" [width]="100"></dxi-column>
-
             <div *dxTemplate="let cell of 'amountTemplate'">
                 <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value >= 0 && cell.column.name == 'Debit') || (cell.value < 0 && cell.column.name == 'Credit'))">
                     <span [style.color]="cell.value < 0 ? 'red': '#000'"> {{ cell.text | number:'1.2-2' }} </span>
                 </ng-container>
+            </div>
+            <div *dxTemplate="let cellData of 'dateCell'">
+                {{cellData.value | date: 'MM/dd/yyyy'}}
             </div>
         </dx-data-grid>
     </div>
