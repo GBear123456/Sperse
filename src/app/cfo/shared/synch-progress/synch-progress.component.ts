@@ -11,8 +11,9 @@ import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 })
 export class SynchProgressComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @Output() onComplete = new EventEmitter();
-    @Output() completed: boolean = true;
+    @Output() completed = true;
     synchData: SyncProgressOutput;
+    currentProgress: any;
 
     statusCheckCompleted = false;
     tooltipVisible: boolean;
@@ -45,13 +46,14 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
             InstanceType[this.instanceType],
             this.instanceId)
             .subscribe((result) => {
-                if (result.totalProgress.progressPercent != 100) {
+                this.currentProgress = 38;
+                if (this.currentProgress != 100) {
                     this.completed = false;
                     this.synchData = result;
                     this.timeoutHandler = setTimeout(
                         () => this.getSynchProgress(), 10 * 1000
                     );
-              
+
                 } else {
                     if (!this.completed) {
                         this.completed = true;
@@ -60,7 +62,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                 }
 
                 this._cfoService.instanceType = this.instanceType;
-                if (!this.statusCheckCompleted && result.accountProgresses && 
+                if (!this.statusCheckCompleted && result.accountProgresses &&
                     !result.accountProgresses.every((account) => {
                         return account.progressPercent < 100;
                     })
@@ -68,6 +70,10 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                     this.statusCheckCompleted = hasTransactions;
                 });
             });
+    }
+
+    format(value) {
+        return value * 100 + '%';
     }
 
     toggleTooltip() {
@@ -78,7 +84,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         if (!this.completed) {
             clearTimeout(this.timeoutHandler);
         }
-        
+
         super.ngOnDestroy();
     }
 }

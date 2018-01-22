@@ -32,6 +32,7 @@ import { SortingComponent } from '@app/cfo/shared/common/sorting/sorting.compone
 
 import { CFOService } from './cfo.service';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
+import {RoundProgressModule} from 'angular-svg-round-progressbar';
 
 import {
     DxButtonModule,
@@ -55,6 +56,7 @@ import {
     DxRadioGroupModule,
     DxTreeListModule,
     DxTreeViewModule,
+    DxProgressBarModule
 } from 'devextreme-angular';
 
 @NgModule({
@@ -83,12 +85,14 @@ import {
         DxScrollViewModule,
         DxTreeListModule,
         DxTreeViewModule,
+        DxProgressBarModule,
         DxRadioGroupModule,
         ModalModule.forRoot(),
         DxChartModule,
         MatTabsModule,
         MatDialogModule,
-        DashboardModule
+        DashboardModule,
+        RoundProgressModule
     ],
     declarations: [
         StartComponent,
