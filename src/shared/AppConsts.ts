@@ -11,6 +11,7 @@ export class AppConsts {
     static appBaseUrlFormat: string;
     static recaptchaSiteKey: string;
     static subscriptionExpireNootifyDayCount: number;
+    static isMobile: boolean = false;
 
     static localeMappings: any = [];
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AccountServiceProxy, SwitchToLinkedAccountInput, SwitchToLinkedAccountOutput } from '@shared/service-proxies/service-proxies';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
-import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Injectable()
 export class LinkedAccountService {

@@ -1,23 +1,37 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {CFOComponentBase} from '@app/cfo/shared/common/cfo-component-base';
+import {DashboardServiceProxy, InstanceType} from '@shared/service-proxies/service-proxies';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-accounts',
     templateUrl: './accounts.component.html',
-    styleUrls: ['./accounts.component.less']
+    styleUrls: ['./accounts.component.less'],
+    providers: [DashboardServiceProxy]
 })
 export class AccountsComponent extends CFOComponentBase implements OnInit {
-    private accountsData = [
-        {value: '46', name: 'TotalAccounts', isDetail: true},
-        {value: '65', name: 'TotalPortfolios', isDetail: false},
-        {value: '$1,337,656.46', name: 'NetWorth', isDetail: false}
-    ];
-    
-    constructor(injector: Injector) {
+    private accountsData: any;
+
+    constructor(
+        injector: Injector,
+        private _dashboardService: DashboardServiceProxy,
+        private _router: Router
+    ) {
         super(injector);
     }
 
     ngOnInit() {
+        this.getAccountTotals();
     }
 
+    getAccountTotals(): void {
+        this._dashboardService.getAccountTotals(InstanceType[this.instanceType], this.instanceId)
+            .subscribe((result) => {
+                this.accountsData = result;
+            });
+    }
+
+    navigateTo() {
+        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/bank-accounts']);
+    }
 }

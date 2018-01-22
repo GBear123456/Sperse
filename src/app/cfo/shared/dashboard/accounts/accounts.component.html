@@ -1,9 +1,15 @@
 <div class="accounts-list">
-    <ng-container *ngFor="let item of accountsData">
-        <div class="account-item {{item.name | lowercase}}">
-            <a href="javascript:;" *ngIf="item.isDetail" class="view-details">View details</a>
-            <div class="value">{{item.value}}</div>
-            <div class="name">{{item.name}}</div>
-        </div>
-    </ng-container>
+    <div class="account-item totalaccounts">
+        <a (click)="navigateTo()" class="view-details">View details</a>
+        <div class="value">{{accountsData?.syncAccountCount}}</div>
+        <div class="name">{{ls('CFO', 'TotalAccounts')}}</div>
+    </div>
+    <div class="account-item totalportfolios">
+        <div class="value">{{accountsData?.bankAccountCount}}</div>
+        <div class="name">{{ls('CFO', 'TotalPortfolios')}}</div>
+    </div>
+    <div class="account-item networth">
+        <div class="value">{{accountsData?.totalNetWorth | currency: accountsData?.currency : true:'1.2-2'}}</div>
+        <div class="name">{{ls('CFO', 'NetWorth')}}</div>
+    </div>
 </div>
