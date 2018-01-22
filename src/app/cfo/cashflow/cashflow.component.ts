@@ -13,6 +13,7 @@ import {
     GetCategoriesOutput,
     CashFlowGridSettingsDto,
     InstanceType,
+    InstanceType17,
     InstanceType18
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
@@ -578,7 +579,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     },
                     {
                         name: 'forecastModelAdd',
-                        action: function(){ console.log( 'add forecast model' ); },
+                        action: this.showForecastAddingInput.bind(this)
                     }
                 ]
             },
@@ -634,8 +635,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     handleForecastModelDoubleClick(e) {
         e.itemElement.append(`<div class="editModel">
-                                <input type="text" value="${e.itemData.text}">
-                            </div>`);
+                                <input value="${e.itemData.text}">
+                             </div>`);
         let thisComponent = this;
         e.itemElement.find('.editModel').focusout(function() {
             let newName = $(this).find('input').val();
@@ -655,12 +656,41 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
     }
 
+    addForecastModel(modelName) {
+        return this._cashFlowForecastServiceProxy.createForecastModel(
+            InstanceType17[this.instanceType],
+            this.instanceId,
+            modelName
+        );
+    }
+
     renameForecastModel(modelData) {
         return this._cashFlowForecastServiceProxy.renameForecastModel(
             InstanceType18[this.instanceType],
             this.instanceId,
             modelData
         );
+    }
+
+    /** @todo continue implementing in other task */
+    showForecastAddingInput(e) {
+        e.element.append(`<div class="addModel">
+                            <input value="">
+                          </div>`);
+        let thisComponent = this;
+        e.itemElement.find('.addModel').focusout(function() {
+            let modelName = $(this).find('input').val();
+            /** Add forecast model */
+            if (modelName) {
+                thisComponent.addForecastModel(modelName)
+                    .subscribe(result => {
+
+                    }, error => {
+                        console.log('unable to add forecast model');
+                    });
+            }
+            $(this).remove();
+        });
     }
 
     /**
@@ -1040,7 +1070,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** @todo move to some helper */
     getDescendantPropValue(obj, path) {
         return path.split('.').reduce((acc, part) => acc && acc[part], obj);
-    };
+    }
 
     /**
      * Build the tree from cashflow data
