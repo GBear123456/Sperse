@@ -12,6 +12,7 @@
         [selection]="{allowSelectAll: false, mode: 'single'}"
         [rootValue]="0"
         [autoExpandAll]="autoExpand"
+        (onRowClick)="onRowClick($event)"
         (onContentReady)="initDragAndDropEvents($event)"
         (onSelectionChanged)="onSelectionChanged.emit($event)"
         (onRowUpdated)="onCategoryUpdated($event)"

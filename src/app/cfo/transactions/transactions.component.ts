@@ -48,6 +48,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     public dragInProgress = false;
     public categoriesShowed = false;
+    public selectedCashflowCategoryKey: any;
 
     public accountCount: number;
     public portfolioCount: number;
@@ -506,6 +507,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     filterByCashflowCategory($event) {
         let key = $event.selectedRowKeys.pop();
+        this.selectedCashflowCategoryKey = key;
         if (key) {
             let field = {};
             if (!parseInt(key))
@@ -529,7 +531,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         let img = new Image(), 
             transactionKeys = this.dataGrid.instance.getSelectedRowKeys();
         img.src = 'assets/common/images/transactions.png';
-        this.categoriesShowed = Boolean(transactionKeys.length);
+        this.categoriesShowed = Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length);
         $event.element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend')
             .filter('.dx-selection').attr('draggable', true).on('dragstart', (e) => {
                 this.dragInProgress = true;
