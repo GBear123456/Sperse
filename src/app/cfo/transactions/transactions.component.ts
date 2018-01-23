@@ -40,7 +40,7 @@ import DataSource from 'devextreme/data/data_source';
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    
+
     items: any;
     private isCompactRowsHeight = false;
     private readonly dataSourceURI = 'Transaction';
@@ -214,7 +214,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 else {
                     debitTotal += row.Amount;
                     debitCount++;
-                }                
+                }
             });
             this.portfolioCount = _.uniq(portfolios).length;
             this.accountCount = _.uniq(accounts).length;
@@ -302,7 +302,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.totalDataSource.load();
 
         Observable.forkJoin(
-            this._TransactionsServiceProxy.getTransactionTypesAndCategories(InstanceType[this.instanceType], this.instanceId),
+            this._TransactionsServiceProxy.getTransactionTypesAndCategories(),
             this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId)
         ).subscribe(result => {
             this.filtersService.setup(
@@ -533,7 +533,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onSelectionChanged($event) {
-        let img = new Image(), 
+        let img = new Image(),
             transactionKeys = this.dataGrid.instance.getSelectedRowKeys();
         img.src = 'assets/common/images/transactions.png';
         this.categoriesShowed = Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length);
@@ -542,14 +542,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.dragInProgress = true;
                 e.originalEvent.dataTransfer.setData('Text', transactionKeys.join(','));
                 e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
-                e.originalEvent.dropEffect = "move";
+                e.originalEvent.dropEffect = 'move';
             }).on('dragend', (e) => {
-                e.originalEvent.preventDefault(); 
+                e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
                 this.dragInProgress = false;
             }).on('click', (e) => {
-                e.originalEvent.preventDefault(); 
+                e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
                 this.dragInProgress = false;
@@ -558,7 +558,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onContentReady($event) {
-        this.onSelectionChanged($event);        
+        this.onSelectionChanged($event);
     }
 
     openCategorizationWindow($event) {

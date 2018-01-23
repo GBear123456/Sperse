@@ -117,7 +117,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             'historicalSelectionFunction': this.getYearHistoricalSelectorWithCurrent
         }
     ];
-    collapsedStartingAndEndingBalance = false;
+    expandedIncomeExpense = false;
     leftMenuOrder = [
         StartedBalance,
         Income,
@@ -132,7 +132,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             width: 120,
             area: 'row',
             areaIndex: 0,
-            expanded: true,
+            expanded: false,
             allowExpandAll: false,
             allowExpand: false,
             sortOrder: 'asc',
@@ -702,7 +702,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.forecastModelsObj.selectedItemIndex = modelObj.itemIndex;
             this._cacheService.set(`cashflow_forecastModel_${abp.session.userId}`, this.selectedForecastModel);
             this.loadGridDataSource();
-            this.collapsedStartingAndEndingBalance = false;
+            this.expandedIncomeExpense = false;
         }
     }
 
@@ -1078,7 +1078,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     refreshDataGrid() {
-        this.collapsedStartingAndEndingBalance = false;
+        this.expandedIncomeExpense = false;
         this.closeTransactionsDetail();
         this.loadGridDataSource();
     }
@@ -1103,7 +1103,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         preferencesObservable.subscribe(result => {
             let updateWithNetChange = result.general.showNetChangeRow !== this.cashflowGridSettings.general.showNetChangeRow;
             this.handleGetCashflowGridSettingsResult(result);
-            this.collapsedStartingAndEndingBalance = false;
+            this.expandedIncomeExpense = false;
             this.closeTransactionsDetail();
             this.startLoading();
             /** @todo refactor - move to the showNetChangeRow and call here all
@@ -1161,8 +1161,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.contentReady = true;
 
         /** Collapse starting and ending balances rows */
-        if (!this.collapsedStartingAndEndingBalance) {
-            this.collapseFirstRows();
+        if (!this.expandedIncomeExpense) {
+            this.expandIncomeAndExpense();
         }
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
@@ -1183,13 +1183,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.applyUserPreferencesForAreas();
     }
 
-    collapseFirstRows() {
+    expandIncomeAndExpense() {
         if (this.pivotGrid.instance) {
-            this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [StartedBalance]);
-            this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [NetChange]);
-            this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [Total]);
-            this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', [Reconciliation]);
-            this.collapsedStartingAndEndingBalance = true;
+            this.pivotGrid.instance.getDataSource().expandHeaderItem('row', [Income]);
+            this.pivotGrid.instance.getDataSource().expandHeaderItem('row', [Expense]);
+            this.expandedIncomeExpense = true;
         }
     }
 
@@ -1366,7 +1364,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Change historical field for different date intervals */
         let historicalField = this.getHistoricField();
         historicalField ['selector'] = value.historicalSelectionFunction();
-        this.collapsedStartingAndEndingBalance = false;
+        this.expandedIncomeExpense = false;
         this.closeTransactionsDetail();
         this.dataSource = this.getApiDataSource();
     }
@@ -1397,8 +1395,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.pivotGrid.instance.getDataSource().collapseAll(2);
                 this.pivotGrid.instance.getDataSource().collapseAll(1);
                 this.pivotGrid.instance.getDataSource().collapseAll(0);
-                this.pivotGrid.instance.getDataSource().expandHeaderItem('row', [Income]);
-                this.pivotGrid.instance.getDataSource().expandHeaderItem('row', [Expense]);
                 break;
             default:
                 // Don't know yet what to do by default.
@@ -1481,7 +1477,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * return {boolean}
      */
     isNetChangeCell(cellObj) {
-        return cellObj.area === 'row' && cellObj.cell.path && cellObj.cell.path[0] === NetChange;
+        return (cellObj.area === 'row' && cellObj.cell.path && cellObj.cell.path[0] === NetChange) ||
+               (cellObj.area === 'data' && cellObj.cell.rowPath !== undefined && cellObj.cell.rowPath[0] === NetChange);
     }
 
     /**
@@ -1494,6 +1491,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             cellObj.cell.rowPath !== undefined &&
             cellObj.cell.rowPath.length === 1 &&
             (cellObj.cell.rowPath[0] === Income || cellObj.cell.rowPath[0] === Expense);
+    }
+
+    /**
+     * whether or not the cell is income or expenses total cell
+     * @param cellObj - the object that pivot grid passes to the onCellPrepared event
+     * return {boolean}
+     */
+    isIncomeOrExpensesTotalHeaderCell(cellObj) {
+        return cellObj.area === 'row' && cellObj.cell.type === 'D' && !cellObj.cell.isWhiteSpace &&
+            cellObj.cell.path !== undefined && cellObj.cell.path.length === 1 &&
+            (cellObj.cell.path[0] === Income || cellObj.cell.path[0] === Expense);
     }
 
     /** Whether the cell is the ending cash position header cell */
@@ -1595,17 +1603,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.cellElement.parent().addClass('endingCashPosition');
         }
 
-        if (this.isIncomeOrExpenseWhiteSpace(e)) {
-            e.cellElement.addClass('hiddenWhiteSpace');
-        }
-
         if (this.isStartingBalanceWhiteSpace(e)) {
             e.cellElement.addClass('startedBalanceWhiteSpace');
         }
 
         /** added css class to the income and outcomes columns */
-        if ((this.isIncomeOrExpensesHeaderCell(e)) ||
-            (this.isIncomeOrExpensesDataCell(e))) {
+        if (this.isIncomeOrExpensesHeaderCell(e) ||
+            this.isIncomeOrExpensesDataCell(e) ||
+            this.isIncomeOrExpensesTotalHeaderCell(e)
+        ) {
             let isDataCell = this.isIncomeOrExpensesDataCell(e);
             let pathProp = isDataCell ? 'rowPath' : 'path';
             let cssClass = e.cell[pathProp] !== undefined && e.cell[pathProp][0] === Income ? 'income' : 'expenses';
@@ -1614,9 +1620,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** disable collapsing for income and expenses columns */
             if (this.isIncomeOrExpensesHeaderCell(e)) {
                 e.cellElement.addClass('uppercase');
-                e.cellElement.click(function (event) {
-                    event.stopImmediatePropagation();
-                });
             }
         }
 

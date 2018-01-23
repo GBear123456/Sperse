@@ -13,7 +13,7 @@ export class SetupStepComponent extends AppComponentBase implements OnInit {
     public readonly SetupSteps = [
         'FinancialAccounts',
         'BusinessEntity',
-        'Chart',        
+        'Chart',
         'Rules'
     ];
 

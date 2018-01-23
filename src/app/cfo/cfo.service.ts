@@ -33,7 +33,7 @@ export class CFOService {
     instanceChangeProcess(callback: any = null) {
         this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
             this.initialized = (data.status == GetStatusOutputStatus.Active) && data.hasSyncAccounts;
-            let hasTransactions = this.initialized && data.hasTransactions;            
+            let hasTransactions = this.initialized && data.hasTransactions;
             this._appService.topMenu.items
                 .forEach((item, i) => {
                     if (i == 0) {
