@@ -1980,7 +1980,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.bindCollapseActionOnWhiteSpaceColumn(cellObj);
         }
         if (cellObj.area === 'data') {
-            const datePeriod = this.formattingDate(cellObj.cell.columnPath);
+
+            let columnFields = {};
+            cellObj.columnFields.forEach(function(item) {
+                columnFields[item.groupInterval] = item.areaIndex;
+            });
+
+            const datePeriod = this.formattingDate(cellObj.cell.columnPath, columnFields);
 
             /** if somehow user click on the cell that is not in the filter date range - return null */
             if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
@@ -2022,6 +2028,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             } else if (component.clickCount == 2) {
                 if (((+new Date()) - component.lastClickTime) < 300) {
                     this.getStatsDetails(this.statsDetailFilter);
+                    document.getSelection().removeAllRanges();
                 }
                 component.clickCount = 0;
                 component.lastClickTime = 0;
@@ -2093,13 +2100,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return (value).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
-    formattingDate(param = []) {
+    formattingDate(param = [], columnFields) {
         let startDate: Moment.Moment = moment.utc('1970-01-01');
         let endDate: Moment.Moment = moment.utc('1970-01-01');
-        let year = param[1];
-        let quarter = param[2];
-        let month = param[3];
-        let day = param[5];
+        let year = param[columnFields.year];
+        let quarter = param[columnFields.quarter];
+        let month = param[columnFields.month];
+        let day = param[columnFields.day];
 
         startDate.year(year);
         endDate.year(year).endOf('year');
