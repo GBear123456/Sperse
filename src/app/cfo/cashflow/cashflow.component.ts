@@ -393,6 +393,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     startDataLoading = false;
     filteredLoad = false;
     contentReady = false;
+    adjustmentsList = [];
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -853,12 +854,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.transactionsAmount = 0;
         this.transactionsTotal = 0;
         this.transactionsAverage = 0;
-        const data = transactions.map(transactionObj => {
+        this.adjustmentsList = [];
+        const data = transactions.reduce((result, transactionObj) => {
             transactionObj.categorization = {};
             transactionObj.initialDate = moment(transactionObj.date);
             transactionObj.date.add(new Date().getTimezoneOffset(), 'minutes');
             /** change the second level for started balance and reconciliations for the account id */
             if (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation) {
+                if (transactionObj.cashflowTypeId === StartedBalance) {
+                    this.adjustmentsList.push(Object.assign({}, transactionObj));
+                    transactionObj.cashflowTypeId = Total;
+                }
                 transactionObj.categorization[this.categorization[0]] = transactionObj.accountId;
             } else {
                 let groupId = this.categories.items[transactionObj.categoryId] ? this.categories.items[transactionObj.categoryId]['groupId'] : null;
@@ -875,8 +881,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 transactionObj.categorization[this.categorization[1]] = transactionObj.categoryId;
                 transactionObj.categorization[this.categorization[2]] = transactionObj.transactionDescriptor;
             }
-            return transactionObj;
-        });
+            result.push(transactionObj);
+            return result;
+        }, []);
         this.transactionsTotal = +this.transactionsTotal.toFixed(2);
         this.transactionsAverage = this.transactionsAmount ? +(this.transactionsTotal / this.transactionsAmount).toFixed(2) : 0;
         return data;
@@ -2185,15 +2192,21 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     calculateSummaryValue() {
         return summaryCell => {
 
+            let prevWithParent = this.getPrevWithParent(summaryCell);
+
             /** calculation for ending cash position value */
-            if (this.isColumnGrandTotal(summaryCell)) {
+            if (prevWithParent !== null && this.isColumnGrandTotal(summaryCell)) {
                 return this.modifyGrandTotalSummary(summaryCell);
             }
 
-            let prevWithParent = this.getPrevWithParent(summaryCell);
             /** if cell is starting balance account cell - then add account sum from previous period */
             if (prevWithParent !== null && (this.isStartingBalanceAccountCell(summaryCell))) {
                 return this.modifyStartingBalanceAccountCell(summaryCell, prevWithParent);
+            }
+
+            /** If the column is starting balance column but without prev - calculate */
+            if (this.isStartingBalanceAccountCell(summaryCell)) {
+                return this.getCurrentValueForStartingBalanceCell(summaryCell);
             }
 
             /** For proper grand total calculation and proper sorting
@@ -2206,14 +2219,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             /** if cell is ending cash position account summary cell */
-            if (this.isEndingBalanceAccountCell(summaryCell)) {
+            if (prevWithParent !== null && this.isEndingBalanceAccountCell(summaryCell)) {
                 return this.modifyEndingBalanceAccountCell(summaryCell);
             }
 
             /** if the value is a balance value -
              *  then get the prev columns grand total for the column and add */
-            if (prevWithParent && this.isCellIsStartingBalanceSummary(summaryCell)) {
+            if (prevWithParent !== null && this.isCellIsStartingBalanceSummary(summaryCell)) {
                 return this.modifyStartingBalanceSummaryCell(summaryCell, prevWithParent);
+            }
+
+            if (this.isCellIsStartingBalanceSummary(summaryCell)) {
+                return this.getCurrentValueForStartingBalanceCell(summaryCell, false);
             }
 
             return summaryCell.value() || 0;
@@ -2273,6 +2290,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return prev;
     }
 
+    getCurrentValueForStartingBalanceCell(summaryCell, getWholePeriod = false) {
+        let cellData = <any>this.getCellData(summaryCell, summaryCell.value(summaryCell.field('row')), StartedBalance);
+        if (!getWholePeriod) {
+            cellData.quarter = cellData.quarter || 1,
+                cellData.month = cellData.month || 1,
+                cellData.day = cellData.day || 1;
+        }
+        return this.calculateCellValue(cellData, this.adjustmentsList);
+    }
+
     /**
      * Modify the value of the starting balance account cell to have a proper calculation
      * @param summaryCell
@@ -2282,7 +2309,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     modifyStartingBalanceAccountCell(summaryCell, prevWithParent) {
         let prevEndingAccountValue = this.getCellValue(prevWithParent, Total),
             currentCellValue = summaryCell.value() || 0,
-            prevCellValue = prevWithParent ? prevWithParent.value(true) || 0 : 0,
+            prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false,
+            prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0,
             prevReconciliation = this.getCellValue(prevWithParent, Reconciliation);
         return currentCellValue + prevEndingAccountValue + prevCellValue + prevReconciliation;
     }
@@ -2297,7 +2325,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let prevTotal = prevWithParent.slice(0, Total),
             currentCellValue = summaryCell.value() || 0,
             prevTotalValue = prevTotal ? prevTotal.value() || 0 : 0,
-            prevCellValue = prevWithParent ? prevWithParent.value(true) || 0 : 0,
+            prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false,
+            prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0,
             prevReconciliation = prevWithParent.slice(0, Reconciliation),
             prevReconciliationValue = prevReconciliation ? prevReconciliation.value() || 0 : 0;
         return currentCellValue + prevTotalValue + prevCellValue + prevReconciliationValue;
@@ -2351,7 +2380,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 /** if we haven't found the value in cash - then we should calculate the value in the cashflow data by ourselves */
                 if (!targetPeriodAccountCashedValue) {
                     /** calculate the cell value using the cell data and cashflowData */
-                    targetPeriodAccountCashedValue = this.calculateCellValue(cellData);
+                    targetPeriodAccountCashedValue = this.calculateCellValue(cellData, this.cashflowData);
                     this.setAnotherPeriodAccountCashedValue(cellData.toString(), targetPeriodAccountCashedValue);
                 }
             } else {
@@ -2365,7 +2394,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getCellData(summaryCell, accountId, cashflowTypeId) {
-        const groupInterval = summaryCell.field('column').groupInterval,
+        const groupInterval = summaryCell.field('column') ? summaryCell.field('column').groupInterval : 'historical',
               columnValue = summaryCell.value(summaryCell.field('column')),
               /** object with cell data as the key for Map object cash */
               cellData = {
@@ -2402,13 +2431,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Calculates the value of the cell using the cell data and cashflowData array
      * @param cellData
      */
-    calculateCellValue(cellData) {
+    calculateCellValue(cellData, dataArray) {
         /** {cashflowTypeId: 'T', accountId: 10, quarter: 3, year: 2015, month: 5} */
-        let value = this.cashflowData.reduce((sum, cashflowData) => {
+        let value = dataArray.reduce((sum, cashflowData) => {
             let date = cashflowData.initialDate || cashflowData.date;
             if (
                 cashflowData.cashflowTypeId === cellData.cashflowTypeId &&
-                cashflowData.accountId === cellData.accountId &&
+                /** if account id is B - then we should get all accounts */
+                (cellData.accountId === StartedBalance || cellData.accountId === Total || cashflowData.accountId === cellData.accountId) &&
                 (!cellData.year || (cellData.year === date.year())) &&
                 (!cellData.quarter || (cellData.quarter === date.quarter())) &&
                 (!cellData.month || ( cellData.month - 1 === date.month())) &&
