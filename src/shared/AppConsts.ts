@@ -1,5 +1,4 @@
 export class AppConsts {
-
     static readonly tenancyNamePlaceHolderInUrl = '{TENANCY_NAME}';
     static readonly tenantHostType = 1;
 
@@ -10,8 +9,8 @@ export class AppConsts {
     static appBaseUrl: string;
     static appBaseUrlFormat: string;
     static recaptchaSiteKey: string;
-    static subscriptionExpireNootifyDayCount: number;
-    static isMobile: boolean = false;
+    static subscriptionExpireNootifyDayCount: number;    
+    static isMobile: boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     static localeMappings: any = [];
 
