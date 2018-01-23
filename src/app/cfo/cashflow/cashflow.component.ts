@@ -2124,7 +2124,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     reclassifyTransactions($event) {
         let transactions = this.cashFlowGrid.instance.getSelectedRowKeys();
-        this.dialog.open(RuleDialogComponent, {
+        transactions.length && this.dialog.open(RuleDialogComponent, {
             panelClass: 'slider', data: {
                 instanceId: this.instanceId,
                 instanceType: this.instanceType,
@@ -2140,7 +2140,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     .map((obj) => {
                         return obj.id;
                     }),
-                refershParent: Function()
+                refershParent: this.refreshDataGrid.bind(this)
             }
         }).afterClosed().subscribe(result => { });
     }
