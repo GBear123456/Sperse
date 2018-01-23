@@ -32,6 +32,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit {
     }
 
     navigateTo() {
-        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/bank-accounts']);
+        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
     }
 }
