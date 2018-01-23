@@ -18,7 +18,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent, DxPopoverModule } from 'devextreme-angular';
 import { MatDialog } from '@angular/material';
 
 import { Observable } from 'rxjs/Observable';
@@ -42,6 +42,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     items: any;
+    defaultCreditTooltipVisible = false;
+    defaultDebitTooltipVisible = false;
+    defaultTotalTooltipVisible = false;
     private isCompactRowsHeight = false;
     private readonly dataSourceURI = 'Transaction';
     private readonly totalDataSourceURI = 'TransactionTotal';
@@ -57,12 +60,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public portfolioCount: number;
     public creditTransactionCount: number = 0;
     public creditTransactionTotal: number = 0;
+    public creditTransactionTotalCent: number = 0;
+    public creditClassifiedTransactionCount: number = 0;
 
     public debitTransactionCount: number = 0;
     public debitTransactionTotal: number = 0;
+    public debitTransactionTotalCent: number = 0;
+    public debitClassifiedTransactionCount: number = 0;
 
     public transactionCount: number = 0;
     public transactionTotal: number = 0;
+    public transactionTotalCent: number = 0;
 
     public headlineConfig = {
         names: [this.l('Transactions')],
@@ -197,8 +205,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (selectedRows.length) {
             let creditTotal = this.creditTransactionTotal = 0;
             let creditCount = this.creditTransactionCount = 0;
+            let creditClassifiedCount = this.creditClassifiedTransactionCount = 0;
+
             let debitTotal = this.debitTransactionTotal = 0;
             let debitCount = this.debitTransactionCount = 0;
+            let debitClassifiedCount = this.debitClassifiedTransactionCount = 0;
 
             let portfolios = [];
             let accounts = [];
@@ -210,10 +221,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 if (row.Amount > 0) {
                     creditTotal += row.Amount;
                     creditCount++;
+                    if (row.CashflowCategoryId)
+                        creditClassifiedCount++;
                 }
                 else {
                     debitTotal += row.Amount;
                     debitCount++;
+                    if (row.CashflowCategoryId)
+                        debitClassifiedCount++;
                 }
             });
             this.portfolioCount = _.uniq(portfolios).length;
@@ -221,9 +236,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
             this.creditTransactionTotal = creditTotal;
             this.creditTransactionCount = creditCount;
+            this.creditClassifiedTransactionCount = creditClassifiedCount;
 
             this.debitTransactionTotal = debitTotal;
             this.debitTransactionCount = debitCount;
+            this.debitClassifiedTransactionCount = debitClassifiedCount;
 
             this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal;
             this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
@@ -232,9 +249,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (totals && totals.length) {
             this.creditTransactionTotal = totals[0].creditTotal;
             this.creditTransactionCount = totals[0].creditCount;
+            this.creditClassifiedTransactionCount = totals[0].classifiedCreditTransactionCount;
 
             this.debitTransactionTotal = totals[0].debitTotal;
             this.debitTransactionCount = totals[0].debitCount;
+            this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
 
             this.portfolioCount = totals[0].portfolioCount;
             this.accountCount = totals[0].accountCount;
@@ -255,6 +274,20 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.transactionTotal = 0;
             this.transactionCount = 0;
         }
+
+        this.creditTransactionTotalCent = this.getFloatPart(this.creditTransactionTotal);
+        this.creditTransactionTotal = Math.trunc(this.creditTransactionTotal);
+        this.debitTransactionTotalCent = this.getFloatPart(this.debitTransactionTotal);
+        this.debitTransactionTotal = Math.trunc(this.debitTransactionTotal);
+        this.transactionTotalCent = this.getFloatPart(this.transactionTotal);
+        this.transactionTotal = Math.trunc(this.transactionTotal);
+    }
+
+    getFloatPart(value) {
+        let x = Math.abs(value);
+        let int_part = Math.trunc(x);
+        let float_part = (x - int_part) * 100;
+        return float_part;
     }
 
     showColumnChooser() {
@@ -270,6 +303,16 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.initToolbarConfig();
         this.processFilterInternal();
+    }
+
+    toggleCreditDefault() {
+        this.defaultCreditTooltipVisible = !this.defaultCreditTooltipVisible;
+    }
+    toggleDebitDefault() {
+        this.defaultDebitTooltipVisible = !this.defaultDebitTooltipVisible;
+    }
+    toggleTotalDefault() {
+        this.defaultTotalTooltipVisible = !this.defaultTotalTooltipVisible;
     }
 
     ngOnInit(): void {

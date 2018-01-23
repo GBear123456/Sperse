@@ -9,6 +9,7 @@ import { AppComponent } from './app.component';
 import { AppService } from './app.service';
 
 import { ImpersonationService } from '@admin/users/impersonation.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @NgModule({
     declarations: [
@@ -16,9 +17,9 @@ import { ImpersonationService } from '@admin/users/impersonation.service';
     ],
     imports: [
         LayoutModule,
-        AppRoutingModule,
         AppCommonModule.forRoot(),
-        BrowserModule
+        BrowserModule,
+        AppRoutingModule
     ],
     providers: [
         AppService,

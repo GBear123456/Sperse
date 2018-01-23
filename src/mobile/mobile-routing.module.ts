@@ -3,8 +3,10 @@ import { RouterModule, Router, NavigationEnd, RouteConfigLoadStart, RouteConfigL
 import { AppComponent } from './mobile.component';
 import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
 
+import { AppConsts } from '@shared/AppConsts';
+
 @NgModule({
-    imports: [
+    imports: AppConsts.isMobile ? [
         RouterModule.forChild([
             {
                 path: 'app',
@@ -14,13 +16,13 @@ import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
                 children: [
                     {
                         path: 'cfo/:instance',
-                        loadChildren: 'app/cfo/cfo.module#CfoModule', //Lazy load cfo *module
+                        loadChildren: 'mobile/cfo/cfo.module#CfoModule', //Lazy load cfo *module
                         data: { preload: true }
                     }
                 ]
             }
         ])
-    ],
+    ]: [],
     exports: [RouterModule]
 })
 
