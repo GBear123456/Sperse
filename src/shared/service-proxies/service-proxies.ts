@@ -7585,6 +7585,56 @@ export class InstanceServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    setupAndGrantPermissionsForUser(input: SetupInput): Observable<SetupOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Instance/SetupAndGrantPermissionsForUser";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processSetupAndGrantPermissionsForUser(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSetupAndGrantPermissionsForUser(response_);
+                } catch (e) {
+                    return <Observable<SetupOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<SetupOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSetupAndGrantPermissionsForUser(response: Response): Observable<SetupOutput> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SetupOutput.fromJS(resultData200) : new SetupOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<SetupOutput>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getUserInstanceInfo(userId: number): Observable<GetUserInstanceInfoOutput> {
@@ -14397,6 +14447,56 @@ export class UserServiceProxy {
     constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    activateUserForContact(input: ActivateUserForContactInput): Observable<ActivateUserForContactOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/User/ActivateUserForContact";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processActivateUserForContact(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processActivateUserForContact(response_);
+                } catch (e) {
+                    return <Observable<ActivateUserForContactOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ActivateUserForContactOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processActivateUserForContact(response: Response): Observable<ActivateUserForContactOutput> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ActivateUserForContactOutput.fromJS(resultData200) : new ActivateUserForContactOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<ActivateUserForContactOutput>(<any>null);
     }
 
     /**
@@ -26683,6 +26783,41 @@ export interface ISetupOutput {
     alreadyInitialized: boolean;
 }
 
+export class SetupInput implements ISetupInput {
+    userId: number;
+
+    constructor(data?: ISetupInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+        }
+    }
+
+    static fromJS(data: any): SetupInput {
+        let result = new SetupInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        return data; 
+    }
+}
+
+export interface ISetupInput {
+    userId: number;
+}
+
 export class GetUserInstanceInfoOutput implements IGetUserInstanceInfoOutput {
     id: number;
     status: GetUserInstanceInfoOutputStatus;
@@ -35255,6 +35390,76 @@ export interface IUiCustomizationFooterSettingsEditDto {
     fixedFooter: boolean;
 }
 
+export class ActivateUserForContactInput implements IActivateUserForContactInput {
+    contactId: number;
+
+    constructor(data?: IActivateUserForContactInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+        }
+    }
+
+    static fromJS(data: any): ActivateUserForContactInput {
+        let result = new ActivateUserForContactInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        return data; 
+    }
+}
+
+export interface IActivateUserForContactInput {
+    contactId: number;
+}
+
+export class ActivateUserForContactOutput implements IActivateUserForContactOutput {
+    userId: number;
+
+    constructor(data?: IActivateUserForContactOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+        }
+    }
+
+    static fromJS(data: any): ActivateUserForContactOutput {
+        let result = new ActivateUserForContactOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        return data; 
+    }
+}
+
+export interface IActivateUserForContactOutput {
+    userId: number;
+}
+
 export class PagedResultDtoOfUserListDto implements IPagedResultDtoOfUserListDto {
     totalCount: number;
     items: UserListDto[];
@@ -36637,8 +36842,8 @@ export enum CreateRuleDtoApplyOption {
 
 export enum ConditionDtoCashFlowAmountFormat {
     Unspecified = <any>"Unspecified", 
-    Credits = <any>"Credits", 
     Debits = <any>"Debits", 
+    Credits = <any>"Credits", 
 }
 
 export enum ConditionAttributeDtoConditionTypeId {
@@ -36661,8 +36866,8 @@ export enum MoveRuleDtoApplyOption {
 }
 
 export enum TransactionCommonDetailsDtoAmountFormat {
-    Credits = <any>"Credits", 
     Debits = <any>"Debits", 
+    Credits = <any>"Credits", 
 }
 
 export enum AccountDtoState {
