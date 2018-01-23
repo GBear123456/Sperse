@@ -17,7 +17,7 @@ import { AppService } from 'app/app.service';
 })
 export class SetupComponent extends CFOComponentBase implements OnInit {
     public headlineConfig;
-    private isDisabled = false;
+    isDisabled = false;
 
     constructor(injector: Injector,
         private _appService: AppService,

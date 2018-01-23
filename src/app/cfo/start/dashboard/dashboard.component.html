@@ -1,5 +1,8 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig"></app-headline>
+    <app-headline [config]="headlineConfig">
+        <synch-progress class="synch-progress"></synch-progress>
+    </app-headline>
+
     <div class="content">
         <setup-steps SelectedStepIndex="0"></setup-steps>
         <div class="dashboard-wrapper">

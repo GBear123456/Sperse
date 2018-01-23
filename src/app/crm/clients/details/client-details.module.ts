@@ -7,7 +7,7 @@ import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
   MatDialogRef, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
 
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxButtonModule,
-  DxTextBoxModule, DxValidatorModule, DxValidationGroupComponent, DxToolbarModule } from 'devextreme-angular';
+  DxTextBoxModule, DxValidatorModule, DxValidationGroupModule, DxToolbarModule } from 'devextreme-angular';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { RouterModule, Routes } from '@angular/router';
@@ -51,8 +51,7 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     CreditLinesComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent,
-    OperationsWidgetComponent,
-    DxValidationGroupComponent
+    OperationsWidgetComponent
   ],
   imports: [
     FormsModule,
@@ -74,7 +73,8 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     DxNumberBoxModule,
     DxScrollViewModule,
     DxToolbarModule,
-    RoundProgressModule
+    RoundProgressModule,
+    DxValidationGroupModule
   ],
   exports: [
     ClientDetailsComponent,

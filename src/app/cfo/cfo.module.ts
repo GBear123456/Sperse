@@ -21,6 +21,8 @@ import { CategoryDeleteDialogComponent } from './transactions/categorization/cat
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
 import { NoDataComponent } from './shared/common/no-data/no-data.component';
+import { CFOModalDialogComponent } from './shared/common/dialogs/modal/cfo-modal-dialog.component'
+
 import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
@@ -32,6 +34,7 @@ import { SortingComponent } from '@app/cfo/shared/common/sorting/sorting.compone
 
 import { CFOService } from './cfo.service';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
+import {RoundProgressModule} from 'angular-svg-round-progressbar';
 
 import {
     DxButtonModule,
@@ -55,6 +58,7 @@ import {
     DxRadioGroupModule,
     DxTreeListModule,
     DxTreeViewModule,
+    DxProgressBarModule
 } from 'devextreme-angular';
 
 @NgModule({
@@ -83,12 +87,14 @@ import {
         DxScrollViewModule,
         DxTreeListModule,
         DxTreeViewModule,
+        DxProgressBarModule,
         DxRadioGroupModule,
         ModalModule.forRoot(),
         DxChartModule,
         MatTabsModule,
         MatDialogModule,
-        DashboardModule
+        DashboardModule,
+        RoundProgressModule
     ],
     declarations: [
         StartComponent,
@@ -108,7 +114,8 @@ import {
         CategoryDeleteDialogComponent,
         RulesComponent,
         SortingComponent,
-        NoDataComponent
+        NoDataComponent,
+        CFOModalDialogComponent
     ],
     entryComponents: [
         RuleDialogComponent,

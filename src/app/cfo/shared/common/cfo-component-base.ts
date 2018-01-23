@@ -10,7 +10,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
     instanceType: string;
 
     protected _route: ActivatedRoute;
-    protected _cfoService: CFOService;
+    _cfoService: CFOService;
 
     private _sub: any;
 

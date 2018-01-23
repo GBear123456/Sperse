@@ -1,5 +1,5 @@
 export class HeadLineConfigModel {
-  name: string;
+  names: string[];
   text?: string;
   icon?: string;
   iconSrc?: string;

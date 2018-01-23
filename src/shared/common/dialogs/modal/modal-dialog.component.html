@@ -6,7 +6,7 @@
         [(value)]="data.title"
         [readOnly]="!data.editTitle"
         [isValid]="data.isTitleValid == undefined || data.isTitleValid"
-        (onInput)="onTitleChanged($event)">
+        (onInput)="onTitleChanged()">
     </dx-text-box>
     <mat-dialog-actions>
         <div class="mat-dialog-options">

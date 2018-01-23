@@ -1,5 +1,7 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { CustomerInfoDto } from '@shared/service-proxies/service-proxies';
+
 
 @Component({
   selector: 'details-header',
@@ -8,9 +10,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
   @Input()
-  data: { 
-    name?: string;
-  };
+  data: CustomerInfoDto;
 
   person = {
     id: 1,
