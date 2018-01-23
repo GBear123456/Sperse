@@ -16,9 +16,9 @@ import {
     InstanceType18
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
-
+import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
-import { DxPivotGridComponent } from 'devextreme-angular';
+import { DxPivotGridComponent, DxDataGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
 import * as underscore from 'underscore';
 import * as Moment from 'moment';
@@ -68,6 +68,8 @@ const StartedBalance = 'B',
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
+    @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
+
     headlineConfig: any;
     categories: GetCategoriesOutput;
     cashflowData: any;
@@ -2118,6 +2120,29 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     closeTransactionsDetail() {
         this.statsDetailResult = undefined;
+    }
+
+    reclassifyTransactions($event) {
+        let transactions = this.cashFlowGrid.instance.getSelectedRowKeys();
+        this.dialog.open(RuleDialogComponent, {
+            panelClass: 'slider', data: {
+                instanceId: this.instanceId,
+                instanceType: this.instanceType,
+                transactions: transactions.map((obj) => {
+                        return {
+                            Date: obj.date,
+                            Description: obj.description,
+                            TypeName: '',
+                            Amount: obj.credit || -obj.debit
+                        };
+                    }),
+                transactionIds: transactions
+                    .map((obj) => {
+                        return obj.id;
+                    }),
+                refershParent: Function()
+            }
+        }).afterClosed().subscribe(result => { });
     }
 
     /**
