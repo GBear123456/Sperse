@@ -155,11 +155,11 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 groupId: groupUpdate ? undefined: this.categorization.items[$event.key].groupId,
                 name: $event.data.name
             })
-        ).subscribe((error) => {
-            if (error)
-                this.notify.error(this.l('SomeErrorOccurred'));
+        ).subscribe((id) => {
+            this.refreshCategories(false);
+        }, (error) => {
+            this.refreshCategories(false);
         });
-
     }
 
     onCategoryInserted($event) {
@@ -173,8 +173,8 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 name: $event.data.name
             })
         ).subscribe((id) => {
-            if (isNaN(id))
-                this.notify.error(this.l('SomeErrorOccurred'));
+            this.refreshCategories(false);
+        }, (error) => {
             this.refreshCategories(false);
         });
     }
@@ -188,7 +188,9 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 this.notify.error(this.l('Category group should be empty to perform delete action'));
             else
                 this._classificationServiceProxy.deleteCategoryGroup(InstanceType[this.instanceType], this.instanceId, itemId)
-                  .subscribe(() => {
+                  .subscribe((id) => {
+                      this.refreshCategories(false);
+                  }, (error) => {
                       this.refreshCategories(false);
                   });
         } else {
@@ -209,7 +211,9 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                         InstanceType[this.instanceType],
                         this.instanceId,
                         dialogData.categoryId, dialogData.deleteAllReferences, itemId)
-                            .subscribe(() => {
+                            .subscribe((id) => {
+                                this.refreshCategories(false);
+                            }, (error) => {
                                 this.refreshCategories(false);
                             });
             });
