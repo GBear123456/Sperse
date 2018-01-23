@@ -45,7 +45,7 @@
     </dx-scroll-view>
     <div *ngIf="statsDetailResult !== undefined" class="cashflow-wrap">
         <dx-button icon="close" (onClick)="closeTransactionsDetail()" class="close-btn"></dx-button>
-        <dx-button class="reclassify-btn" [text]="l('Reclassify')" (onClick)="reclassifyTransactions($event)"></dx-button>
+        <dx-button class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!cashFlowGrid || !cashFlowGrid.instance.getSelectedRowKeys().length" (onClick)="reclassifyTransactions($event)"></dx-button>
         <dx-data-grid id="cashflowGridContainer"
                       [rowAlternationEnabled]="true"
                       [dataSource]="statsDetailResult"
