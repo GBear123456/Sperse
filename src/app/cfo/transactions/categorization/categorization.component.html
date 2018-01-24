@@ -1,9 +1,9 @@
 <div>
     <h3 *ngIf="showTitle">
         {{l('Categorize transactions')}}
-        <span (click)="close.emit(null)"></span>
+        <span class="close" (click)="close.emit(null)"></span>
+        <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection($event)">{{'Clear'}}</span>
     </h3>
-    <div *ngIf="showClearSelection" class="clearAll"><span (click)="clearSelection($event)">{{'Clear'}}</span></div>
     <dx-tree-list width="{{width}}"
                   height="{{height}}"
                   keyExpr="key"
