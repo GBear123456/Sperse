@@ -58,8 +58,10 @@ import {
     DxRadioGroupModule,
     DxTreeListModule,
     DxTreeViewModule,
-    DxProgressBarModule
+    DxProgressBarModule,
+    DxTabsModule
 } from 'devextreme-angular';
+import { TrendByPeriodComponent } from './start/dashboard/trend-by-period/trend-by-period.component';
 
 @NgModule({
     imports: [
@@ -67,7 +69,6 @@ import {
         ngCommon.CommonModule,
         CommonModule,
         AppCommonModule,
-
         DxButtonModule,
         DxCheckBoxModule,
         DxDataGridModule,
@@ -89,6 +90,7 @@ import {
         DxTreeViewModule,
         DxProgressBarModule,
         DxRadioGroupModule,
+        DxTabsModule,
         ModalModule.forRoot(),
         DxChartModule,
         MatTabsModule,
@@ -115,7 +117,8 @@ import {
         RulesComponent,
         SortingComponent,
         NoDataComponent,
-        CFOModalDialogComponent
+        CFOModalDialogComponent,
+        TrendByPeriodComponent
     ],
     entryComponents: [
         RuleDialogComponent,
