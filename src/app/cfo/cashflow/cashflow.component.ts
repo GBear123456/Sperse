@@ -21,8 +21,7 @@ import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { DxPivotGridComponent, DxDataGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
 import * as underscore from 'underscore';
-import * as Moment from 'moment';
-import { extendMoment } from 'moment-range';
+import * as moment from 'moment';
 
 import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -49,7 +48,9 @@ import 'rxjs/add/operator/buffer';
 import { SortState } from '@app/cfo/shared/common/sorting/sort-state';
 import { SortingItemModel } from '@app/cfo/shared/common/sorting/sorting-item.model';
 
-const moment = extendMoment(Moment);
+class TransactionStatsDtoExtended extends TransactionStatsDto {
+    initialDate: moment.Moment;
+}
 
 /** Constants */
 const StartedBalance = 'B',
@@ -972,27 +973,27 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /**
      * for every day that is absent in cashflow data add stub object
      * (hack to show all days, months and quarters for all years in cashflow data page)
-     * @param {Array<TransactionStatsDto>} cashflowData
-     * @return {TransactionStatsDto[]}
+     * @param {Array<TransactionStatsDtoExtended>} cashflowData
+     * @return {TransactionStatsDtoExtended[]}
      */
-    getStubCashflowDataForAllDays(cashflowData: Array<TransactionStatsDto>) {
-        let stubCashflowData = Array<TransactionStatsDto>(),
+    getStubCashflowDataForAllDays(cashflowData: Array<TransactionStatsDtoExtended>) {
+        let stubCashflowData = Array<TransactionStatsDtoExtended>(),
             allYears: Array<number> = [],
             existingDates: Array<string> = [],
             firstAccountId,
-            minDate: Moment.Moment,
-            maxDate: Moment.Moment;
+            minDate: moment.Moment,
+            maxDate: moment.Moment;
 
         cashflowData.forEach(cashflowItem => {
             /** Move the year to the years array if it is unique */
             let transactionYear = cashflowItem.date.year();
-            let date = cashflowItem.date.format('DD.MM.YYYY');
+            let date = cashflowItem.initialDate.format('DD.MM.YYYY');
             if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
             if (existingDates.indexOf(date) === -1) existingDates.push(date);
-            if (!minDate || cashflowItem.date < minDate)
-                minDate = moment(cashflowItem.date).subtract(new Date().getTimezoneOffset(), 'minutes');
-            if (!maxDate || cashflowItem.date > maxDate)
-                maxDate = moment(cashflowItem.date).subtract(new Date().getTimezoneOffset(), 'minutes');
+            if (!minDate || cashflowItem.initialDate < minDate)
+                minDate = moment(cashflowItem.initialDate);
+            if (!maxDate || cashflowItem.initialDate > maxDate)
+                maxDate = moment(cashflowItem.initialDate);
             if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
         });
         allYears = allYears.sort();
@@ -1001,9 +1002,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.requestFilter.endDate && this.requestFilter.endDate > maxDate) maxDate = moment(this.requestFilter.endDate);
 
         /** cycle from started date to ended date */
-        let datesRange = Array.from(moment.range(minDate, maxDate).by('day'));
         /** added fake data for each date that is not already exists in cashflow data */
-        datesRange.forEach((date: any) => {
+        for (let date = moment(minDate); date <= maxDate; date.add(1, 'days') ) {
             if (existingDates.indexOf(date.format('DD.MM.YYYY')) === -1) {
                 stubCashflowData.push(
                     this.createStubTransaction({
@@ -1012,19 +1012,19 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             [this.categorization[0]]: firstAccountId
                         },
                         'accountId': firstAccountId,
-                        'date': date,
+                        'date': moment(date).add(new Date().getTimezoneOffset(), 'minutes'),
                         'initialDate': date
                     })
                 );
             }
-        });
+        }
 
         /** Add stub for current period */
         /** if we have no current period */
         if (
             (!this.requestFilter.startDate || this.requestFilter.startDate < moment()) &&
             (!this.requestFilter.endDate || this.requestFilter.endDate > moment()) &&
-            !cashflowData.concat(stubCashflowData).some(item => item.date.format('DD.MM.YYYY') === moment().format('DD.MM.YYYY'))
+            !cashflowData.concat(stubCashflowData).some(item => item.initialDate.format('DD.MM.YYYY') === moment().format('DD.MM.YYYY'))
         ) {
             /** then we add current stub day */
             stubCashflowData.push(
@@ -2111,8 +2111,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     formattingDate(param = [], columnFields) {
-        let startDate: Moment.Moment = moment.utc('1970-01-01');
-        let endDate: Moment.Moment = moment.utc('1970-01-01');
+        let startDate: moment.Moment = moment.utc('1970-01-01');
+        let endDate: moment.Moment = moment.utc('1970-01-01');
         let year = param[columnFields.year];
         let quarter = param[columnFields.quarter];
         let month = param[columnFields.month];
