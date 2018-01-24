@@ -16,7 +16,7 @@ import { RulesComponent } from './rules/rules.component';
                 path: '',
                 children: [
                     { path: 'start', component: StartComponent, data: { permission: '' } },
-                    { path: 'bank-accounts', component: BankAccountsComponent, data: { permission: '' } },
+                    { path: 'linkaccounts', component: BankAccountsComponent, data: { permission: '' } },
                     { path: 'cashflow', component: CashflowComponent, data: { permission: '' } },
                     { path: 'stats', component: StatsComponent, data: { permission: '' } },
                     { path: 'transactions', component: TransactionsComponent, data: { permission: '' } },
