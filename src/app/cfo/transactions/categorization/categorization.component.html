@@ -1,7 +1,7 @@
 <div>
     <h3 *ngIf="showTitle">{{l('Categorize transactions')}}<span (click)="close.emit(null)"></span></h3>
 
-    <dx-tree-list 
+    <dx-tree-list
         width="{{width}}"
         height="{{height}}"
         keyExpr="key"
@@ -18,7 +18,7 @@
         (onRowUpdated)="onCategoryUpdated($event)"
         (onRowInserted)="onCategoryInserted($event)"
         (onRowRemoving)="onCategoryRemoving($event)">
-        <dxi-column [allowSorting]="true" [sortIndex]="0" 
+        <dxi-column [allowSorting]="true" [sortIndex]="0"
             [sortingMethod]="sortItem" [sortOrder]="'asc'" dataField="name"></dxi-column>
     </dx-tree-list>
 </div>
