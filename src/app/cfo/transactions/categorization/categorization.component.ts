@@ -28,6 +28,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     @Input() width: string;
     @Input() height: string;
     @Input() showTitle: boolean;
+    @Input() showClearSelection: boolean;
     @Input() categoryId: number;
     @Input('dragMode')
     set dragMode(value: boolean) {
@@ -248,5 +249,9 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             $event.component.editRow($event.rowIndex);
         }
         this._prevClickDate = nowDate;
+    }
+
+    clearSelection(e) {
+        this.categoryList.instance.deselectAll();
     }
 }

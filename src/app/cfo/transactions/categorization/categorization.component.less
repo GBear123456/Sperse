@@ -6,6 +6,7 @@
         letter-spacing: 0.3px;
         font-weight: 500;
         padding: 20px 0px 0px 20px;
+
         span {
             right: 10px;
             width: 20px;
@@ -13,6 +14,7 @@
             float: right;
             cursor: pointer;
             position: relative;
+
             &:after, &:before {
                 position: absolute;
                 top: 0px;
@@ -22,47 +24,74 @@
                 width: 2px;
                 background-color: #1b1b1b;
             }
+
             &:before {
                 transform: rotate(45deg);
             }
+
             &:after {
                 transform: rotate(-45deg);
             }
         }
     }
 
+    .clearAll {
+        width: 340px;
+        font-size: 11px;
+        letter-spacing: 0.4px;
+        color: #677380;
+        text-transform: uppercase;
+        font-weight: 400;
+        text-align: right;
+        padding-right: 15px;
+
+        span {
+            cursor: pointer;
+            display: inline-block;
+        }
+    }
+
     /deep/ .dx-widget {
         .dx-placeholder {
-            display: none!important;
+            display: none !important;
         }
+
         tr.dx-edit-row .dx-texteditor-input {
-             font-weight: 400;
-             border-bottom: none!important;
+            font-weight: 400;
+            border-bottom: none !important;
         }
-        td.dx-command-edit  {
+
+        td.dx-command-edit {
             text-overflow: unset;
-            text-align: right!important;
+            text-align: right !important;
+
             a.dx-link {
                 width: 25px;
                 display: inline-block;
-                color: transparent!important;
+                color: transparent !important;
+
                 &.dx-link-add {
                     background: url('../../../../assets/common/icons/add.svg') no-repeat center;
                 }
+
                 &.dx-link-edit {
                     background: url('../../../../assets/common/icons/edit.svg') no-repeat center;
                 }
+
                 &.dx-link-delete {
                     background: url('../../../../assets/common/icons/delete-icon.svg') no-repeat center;
                 }
+
                 &.dx-link-save {
                     background: url('../../../../assets/common/icons/check.svg') no-repeat center;
                 }
+
                 &.dx-link-cancel {
                     background: url('../../../../assets/common/icons/cancel.svg') no-repeat center;
                 }
             }
         }
+
         input {
             font-size: 15px;
             font-weight: 300;
@@ -73,66 +102,81 @@
     }
 
     /deep/ dx-tree-list {
-        .dx-treelist-header-panel, 
+        .dx-treelist-header-panel,
         .dx-treelist-headers {
             display: none;
         }
-        &[dropallowed="true"] { 
-            tr[aria-level="2"] {            
+
+        &[dropallowed="true"] {
+            tr[aria-level="2"] {
                 td {
                     border: 1px dashed #dfdfdf;
+
                     &:first-child {
-                        border-right: none!important;
+                        border-right: none !important;
                         border-left: 1px dashed #dfdfdf;
                     }
+
                     &:last-child {
-                        border-left: none!important;
+                        border-left: none !important;
                     }
                 }
-            }             
+            }
+
             tr.drag-hover td {
-                border: 1px solid #FFE8BF!important;
-                background-color: #FFFBF3!important;
+                border: 1px solid #FFE8BF !important;
+                background-color: #FFFBF3 !important;
+
                 &:first-child {
-                    border-right: none!important;
+                    border-right: none !important;
                 }
+
                 &:last-child {
-                    border-left: none!important;
+                    border-left: none !important;
                 }
             }
         }
+
         .dx-treelist-rowsview {
             border: none;
             background-color: #ffffff;
+
             .dx-treelist-empty-space {
                 padding-right: 5px;
             }
+
             .dx-treelist-content {
                 margin: 15px;
+
                 .dx-treelist-focus-overlay {
                     border: 1px solid #00aeef;
-                    height: 35px!important;
+                    height: 35px !important;
                 }
             }
-            table { 
-                border-spacing:0 5px;
-                border-collapse: separate; 
+
+            table {
+                border-spacing: 0 5px;
+                border-collapse: separate;
+
                 td {
-                    overflow: visible!important;
-                    text-overflow: initial!important;
+                    overflow: visible !important;
+                    text-overflow: initial !important;
                     border: 1px solid #fff;
                     background-color: #fff;
-                    &:first-child { 
-                        border-right: none!important;
-                        border-top-left-radius: 2px; 
-                        border-bottom-left-radius: 2px; 
+
+                    &:first-child {
+                        border-right: none !important;
+                        border-top-left-radius: 2px;
+                        border-bottom-left-radius: 2px;
                     }
-                    &:last-child { 
-                        border-left: none!important;
-                        border-top-right-radius: 2px; 
-                        border-bottom-right-radius: 2px; 
+
+                    &:last-child {
+                        border-left: none !important;
+                        border-top-right-radius: 2px;
+                        border-bottom-right-radius: 2px;
                     }
                 }
+
                 tr.dx-data-row {
                     &[aria-level="0"] {
                         .dx-command-edit {
@@ -141,6 +185,7 @@
                             }
                         }
                     }
+
                     &[aria-level="2"] {
                         .dx-command-edit {
                             .dx-link-add {
@@ -148,36 +193,41 @@
                             }
                         }
                     }
+
                     td.dx-command-edit a {
                         visibility: hidden;
                     }
+
                     &.dx-state-hover, &.dx-selection, &.dx-edit-row {
                         cursor: pointer;
+
                         td {
                             border: solid 1px #00aeef;
-                            background-color: #F0FAFE!important;
+                            background-color: #F0FAFE !important;
                             color: #424c56;
+
                             &.dx-command-edit a {
                                 visibility: visible;
                             }
-                        }    
+                        }
                     }
+
                     .dx-treelist-text-content {
-                        width: 300px!important;
-                        overflow: visible!important;
+                        width: 300px !important;
+                        overflow: visible !important;
                         font-size: 14px;
                         letter-spacing: 0.3px;
                         font-weight: 400;
                         color: #424c56;
                     }
+
                     &[aria-level="2"] {
                         .dx-treelist-text-content {
                             font-weight: 300;
                         }
-                    }                
+                    }
                 }
             }
         }
     }
-
 }
