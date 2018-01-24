@@ -57,7 +57,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
         this._financialInformationServiceProxy.getSetupAccountsLink(
             InstanceType[this.instanceType],
             this.instanceId,
-            'https://testadmin.sperse.com/assets/cfo-css/custom.css',
+            'https://testadmin.sperse.com/assets/cfo-css/quovocustom.css',
             ''
         ).subscribe((data) => {
             this.sourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data.setupAccountsLink);
