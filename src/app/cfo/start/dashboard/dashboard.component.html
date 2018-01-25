@@ -9,9 +9,9 @@
             <section class="accounts-info">
                 <header>
                     <h2 class="dashboard-title">
-                        {{ls('CFO', 'Accounts')}}
+                        {{l('Accounts')}}
                     </h2>
-                    <a (click)="navigateTo()" class="dashboard-link">+ {{ls('CFO', 'Add account')}}</a>
+                    <a (click)="navigateTo()" class="dashboard-link">+ {{l('Add_account')}}</a>
                 </header>
 
                 <app-accounts></app-accounts>
@@ -19,7 +19,7 @@
 
             <section class="synch-status">
                 <header>
-                    <a href="javascript:;" class="dashboard-link">{{ls('CFO', 'View transactions')}}</a>
+                    <a href="javascript:;" class="dashboard-link">{{l('View_transactions')}}</a>
                 </header>
                 <div class="synch-section-wrap">
                     <div class="synch-item">
@@ -29,8 +29,8 @@
             </section>
             <section class="analytics">
                 <header>
-                    <h2 class="dashboard-title">{{ls('CFO', 'Dashboard_AnalyticsTitle')}}</h2>
-                    <a href="javascript:;" class="dashboard-link">{{ls('CFO', 'View Cash Flow Report')}}</a>
+                    <h2 class="dashboard-title">{{l('Dashboard_AnalyticsTitle')}}</h2>
+                    <a href="javascript:;" class="dashboard-link">{{l('View_Cash_Flow_Report')}}</a>
                 </header>
                 <div class="analytics-wrap">
                     <div class="trendByPeriod">

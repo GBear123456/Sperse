@@ -3,7 +3,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { SetupStepComponent } from '../../shared/setup-steps/setup-steps.component';
+import { SetupStepComponent } from '../../shared/common/setup-steps/setup-steps.component';
 import { Router } from '@angular/router';
 import { InstanceServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { AppService } from 'app/app.service';

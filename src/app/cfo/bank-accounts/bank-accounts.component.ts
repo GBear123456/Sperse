@@ -4,7 +4,7 @@ import { CFOComponentBase } from '../shared/common/cfo-component-base';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AppConsts } from '@shared/AppConsts';
 import { Router } from '@angular/router';
-import { SynchProgressComponent } from '@app/cfo/shared/synch-progress/synch-progress.component';
+import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 
 @Component({
     selector: 'bank-accounts',
