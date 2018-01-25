@@ -791,6 +791,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
             }
         });
+
         /** for all accounts that are absent add stub empty transactions to show
          *  the empty accounts anyway */
         allAccountsIds.filter(accountId => accountId).forEach(accountId => {
@@ -985,26 +986,30 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         cashflowData.forEach(cashflowItem => {
             /** Move the year to the years array if it is unique */
-            let transactionYear = cashflowItem.date.year();
-            let date = cashflowItem.date.format('DD.MM.YYYY');
+            let date = cashflowItem.initialDate;
+            let transactionYear = date.year();
             if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
-            if (existingDates.indexOf(date) === -1) existingDates.push(date);
+            if (existingDates.indexOf(date) === -1) existingDates.push(date.format('YYYY-MM-DD'));
             if (!minDate || cashflowItem.date < minDate)
-                minDate = moment(cashflowItem.date).subtract(new Date().getTimezoneOffset(), 'minutes');
+                minDate = date;
             if (!maxDate || cashflowItem.date > maxDate)
-                maxDate = moment(cashflowItem.date).subtract(new Date().getTimezoneOffset(), 'minutes');
+                maxDate = date;
             if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
         });
         allYears = allYears.sort();
 
-        if (this.requestFilter.startDate && this.requestFilter.startDate < minDate) minDate = moment(this.requestFilter.startDate);
-        if (this.requestFilter.endDate && this.requestFilter.endDate > maxDate) maxDate = moment(this.requestFilter.endDate);
+        if (this.requestFilter.startDate && this.requestFilter.startDate < minDate) minDate = this.requestFilter.startDate;
+        if (this.requestFilter.endDate && this.requestFilter.endDate > maxDate) maxDate = this.requestFilter.endDate;
 
         /** cycle from started date to ended date */
-        let datesRange = Array.from(moment.range(minDate, maxDate).by('day'));
         /** added fake data for each date that is not already exists in cashflow data */
-        datesRange.forEach((date: any) => {
-            if (existingDates.indexOf(date.format('DD.MM.YYYY')) === -1) {
+  
+        let startDate = new Date(moment.utc(minDate).format("YYYY-MM-DD"));
+        let endDate = new Date(moment.utc(maxDate).format("YYYY-MM-DD"));
+
+        while(startDate <= endDate){
+            let date = moment.utc(startDate, "YYYY-MM-DD");
+            if (existingDates.indexOf(date.format('YYYY-MM-DD')) === -1) {
                 stubCashflowData.push(
                     this.createStubTransaction({
                         'cashflowTypeId': StartedBalance,
@@ -1012,12 +1017,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             [this.categorization[0]]: firstAccountId
                         },
                         'accountId': firstAccountId,
-                        'date': date,
+                        'date': date.add(new Date().getTimezoneOffset(), 'minutes'),
                         'initialDate': date
                     })
                 );
             }
-        });
+
+            startDate = new Date(startDate.setDate(startDate.getDate() + 1));
+        }
 
         /** Add stub for current period */
         /** if we have no current period */
@@ -1038,6 +1045,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 })
             );
         }
+
         return stubCashflowData;
     }
 
