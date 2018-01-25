@@ -76,6 +76,10 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         return value * 100 + '%';
     }
 
+    calculateChartsScrolableHeight() {
+        return window.innerHeight - 360;
+    }
+
     toggleTooltip() {
         this.tooltipVisible = !this.tooltipVisible;
     }

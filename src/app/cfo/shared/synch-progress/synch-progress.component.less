@@ -119,13 +119,23 @@
         text-align: left;
         color: #212c36;
     }
+
+    
+
+    @media all and (min-width: 800px) {
+        .row {
+            width: 750px;
+        }
+    }
     
     .progress-wrap {
         margin: 0 auto;
         max-width: 180px;
         width: 100%;
         height: auto;
-        position: relative;
+        position: fixed;
+        left: 45px;
+        top: 60px;
     }
     
     .total-synch-progress {
@@ -138,6 +148,8 @@
     
     .list-of-synch-accounts {
         list-style-type: none;
+        margin-bottom: 0;
+        padding-left: 0;
         
         li {
             border-top: 1px solid #e5e9ec;
@@ -221,3 +233,4 @@
         transform: rotate(359deg);
     }
 }
+
