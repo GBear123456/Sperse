@@ -7,7 +7,7 @@
                 height="calc(100vh - 210px)"
                 [hoverStateEnabled]="true"
                 [dataSource]="ruleTreeListDataSource"
-                [dataStructure]="tree"
+                dataStructure="tree"
                 [sorting]="{mode: 'none'}"
                 [editing]="{allowAdding: true, allowDeleting: true, allowUpdating: true, mode: 'popup', popup: {onShowing: onShowingPopup, height: '0px', width: '0px'}}"
                 [selection]="{allowSelectAll: false, mode: 'none'}"

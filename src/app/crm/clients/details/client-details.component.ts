@@ -1,6 +1,6 @@
 import { Component, Input, Injector, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CustomersServiceProxy, CustomerInfoDto, ContactInfoDto } from '@shared/service-proxies/service-proxies';
+import { CustomersServiceProxy, CustomerInfoDto, PersonContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 
@@ -14,7 +14,7 @@ import { MatDialog } from '@angular/material';
 })
 export class ClientDetailsComponent extends AppComponentBase implements OnInit, OnDestroy {
   customerInfo: CustomerInfoDto;
-  primaryContact: ContactInfoDto;
+  primaryContact: PersonContactInfoDto;
 
   person: any = {
     id: 1,

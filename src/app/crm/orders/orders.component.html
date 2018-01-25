@@ -1,4 +1,4 @@
-﻿<div [@routerTransition]>
+<div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
@@ -6,21 +6,19 @@
                 <div [hidden]="showPipeline">
                     <div id="ClientsTable">
                         <dx-data-grid id="gridContainer"
-                            [dataSource]="dataSource"
-                            [allowColumnReordering]="true"
-                            [columnAutoWidth]="true"
-                            [allowColumnResizing]="true"
-                            [hoverStateEnabled]="true"
-                            (onContentReady)="onContentReady($event)"
-                            (onDataErrorOccurred)="httpConfig.handleError($event.error)">
-                            <dxo-selection
-                                selectAllMode="page"
-                                showCheckBoxesMode="always"
-                                mode="multiple">
+                                      [dataSource]="dataSource"
+                                      [allowColumnReordering]="true"
+                                      [columnAutoWidth]="true"
+                                      [allowColumnResizing]="true"
+                                      [hoverStateEnabled]="true"
+                                      (onContentReady)="onContentReady($event)"
+                                      (onDataErrorOccurred)="httpConfig.handleError($event.error)">
+                            <dxo-selection selectAllMode="page"
+                                           showCheckBoxesMode="always"
+                                           mode="multiple">
                             </dxo-selection>
-                            <dxo-editing
-                                mode="popup"
-                                [allowUpdating]="true">
+                            <dxo-editing mode="popup"
+                                         [allowUpdating]="true">
                             </dxo-editing>
                             <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                             <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="asc"></dxi-column>
@@ -29,7 +27,7 @@
                                 <img [src]="getPhoto(data.data.Photo, data.data.Gender)"
                                      alt="{{l('AltPersonPhoto')}}"
                                      width="38"
-                                     class="img-circle"/>
+                                     class="img-circle" />
                             </div>
                             <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
                             <dxi-column dataField="State" caption="{{l('Contact.State')}}" [visible]="false"></dxi-column>
@@ -43,16 +41,18 @@
                             <dxi-column dataField="NoteCount" caption="{{l('NoteCount')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="DocumentCount" caption="{{l('DocumentCount')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="BillingSubscriptionStatus" caption="{{l('BillingStatus')}}"></dxi-column>
-                            <dxi-column dataField="CreationTime" caption="{{l('Created')}}" dataType="date" format="shortDateShortTime"></dxi-column>
+                            <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
                             <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                             <dxo-sorting mode="multiple"></dxo-sorting>
                             <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-paging [pageSize]="20"></dxo-paging>
-                            <dxo-pager
-                                [showPageSizeSelector]="true"
-                                [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
-                                [showInfo]="true">
+                            <dxo-pager [showPageSizeSelector]="true"
+                                       [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
+                                       [showInfo]="true">
                             </dxo-pager>
+                            <div *dxTemplate="let cellData of 'dateCell'">
+                                {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
+                            </div>
                         </dx-data-grid>
 				    </div>
                 </div>

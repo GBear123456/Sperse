@@ -1,15 +1,15 @@
 <div class="accounts-list">
     <div class="account-item totalaccounts">
-        <a (click)="navigateTo()" class="view-details">View details</a>
+        <a (click)="navigateTo()" class="view-details">{{ls('CFO', 'View details')}}</a>
         <div class="value">{{accountsData?.syncAccountCount}}</div>
-        <div class="name">{{ls('CFO', 'TotalAccounts')}}</div>
+        <div class="name">{{ls('CFO', 'Total Accounts')}}</div>
     </div>
     <div class="account-item totalportfolios">
         <div class="value">{{accountsData?.bankAccountCount}}</div>
-        <div class="name">{{ls('CFO', 'TotalPortfolios')}}</div>
+        <div class="name">{{ls('CFO', 'Total Subaccounts')}}</div>
     </div>
     <div class="account-item networth">
-        <div class="value">{{accountsData?.totalNetWorth | currency: accountsData?.currency : true:'1.2-2'}}</div>
-        <div class="name">{{ls('CFO', 'NetWorth')}}</div>
+        <div class="value">{{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</div>
+        <div class="name">{{ls('CFO', 'Total Balance')}}</div>
     </div>
 </div>

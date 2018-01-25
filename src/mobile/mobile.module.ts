@@ -14,9 +14,9 @@ import { AppService } from './mobile.service';
     ],
     imports: [
         LayoutModule,
-        AppRoutingModule,
         AppCommonModule.forRoot(),
-        BrowserModule
+        BrowserModule,
+        AppRoutingModule
     ],
     providers: [
         AppService

@@ -21,6 +21,8 @@ import { CategoryDeleteDialogComponent } from './transactions/categorization/cat
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
 import { NoDataComponent } from './shared/common/no-data/no-data.component';
+import { CFOModalDialogComponent } from './shared/common/dialogs/modal/cfo-modal-dialog.component'
+
 import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
@@ -31,7 +33,8 @@ import { MatTabsModule, MatDialogModule } from '@angular/material';
 import { SortingComponent } from '@app/cfo/shared/common/sorting/sorting.component';
 
 import { CFOService } from './cfo.service';
-import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, CustomersServiceProxy } from '@shared/service-proxies/service-proxies';
+import {RoundProgressModule} from 'angular-svg-round-progressbar';
 
 import {
     DxButtonModule,
@@ -55,7 +58,10 @@ import {
     DxRadioGroupModule,
     DxTreeListModule,
     DxTreeViewModule,
+    DxProgressBarModule,
+    DxTabsModule
 } from 'devextreme-angular';
+import { TrendByPeriodComponent } from './start/dashboard/trend-by-period/trend-by-period.component';
 
 @NgModule({
     imports: [
@@ -63,7 +69,6 @@ import {
         ngCommon.CommonModule,
         CommonModule,
         AppCommonModule,
-
         DxButtonModule,
         DxCheckBoxModule,
         DxDataGridModule,
@@ -83,12 +88,15 @@ import {
         DxScrollViewModule,
         DxTreeListModule,
         DxTreeViewModule,
+        DxProgressBarModule,
         DxRadioGroupModule,
+        DxTabsModule,
         ModalModule.forRoot(),
         DxChartModule,
         MatTabsModule,
         MatDialogModule,
-        DashboardModule
+        DashboardModule,
+        RoundProgressModule
     ],
     declarations: [
         StartComponent,
@@ -108,14 +116,16 @@ import {
         CategoryDeleteDialogComponent,
         RulesComponent,
         SortingComponent,
-        NoDataComponent
+        NoDataComponent,
+        CFOModalDialogComponent,
+        TrendByPeriodComponent
     ],
     entryComponents: [
         RuleDialogComponent,
         CategoryDeleteDialogComponent,
         PreferencesDialogComponent
     ],
-    providers: [InstanceServiceProxy, CFOService]
+    providers: [InstanceServiceProxy, CFOService, CustomersServiceProxy]
 })
 
 export class CfoModule { }

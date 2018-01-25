@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppSessionService } from '../session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 
@@ -15,6 +16,7 @@ import { AppConsts } from 'shared/AppConsts';
 export class AppRouteGuard implements CanActivate, CanActivateChild {
 
     constructor(
+        private _feature: FeatureCheckerService,
         private _permissionChecker: PermissionCheckerService,
         private _router: Router,
         private _sessionService: AppSessionService,
@@ -31,11 +33,13 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
             return false;
         }
 
-        if (!route.data || !route.data['permission']) {
+        if (!route.data || (!route.data['permission'] && !route.data['feature'])) {
             return true;
         }
 
-        if (this._permissionChecker.isGranted(route.data['permission'])) {
+        if ((!route.data['permission'] || this._permissionChecker.isGranted(route.data['permission']))
+            && (!route.data['feature'] || this._feature.isEnabled(route.data['feature']))
+        ) {
             return true;
         }
 
@@ -57,6 +61,13 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
         {
             return 'app/cfo';
         }
+
+        if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
+            if (this._permissionChecker.isGranted('Pages.CRM') && this._permissionChecker.isGranted('Pages.CFO.BaseAccess') && this._feature.isEnabled('CFO.Partner'))  
+                return '/app/cfo/personal/';
+            else if (this._permissionChecker.isGranted('Pages.CFO.BusinessAccess') /*&& this._feature.isEnabled('CFO.Module')*/)
+                return '/app/cfo/business/';
+        }           
 
         if (this._permissionChecker.isGranted('Pages.Administration.Host.Dashboard')) {
             return '/app/admin/hostDashboard';

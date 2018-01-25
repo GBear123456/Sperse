@@ -18,8 +18,11 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent, DxPopoverModule } from 'devextreme-angular';
 import { MatDialog } from '@angular/material';
+
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
 
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
@@ -37,8 +40,11 @@ import DataSource from 'devextreme/data/data_source';
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    
+
     items: any;
+    defaultCreditTooltipVisible = false;
+    defaultDebitTooltipVisible = false;
+    defaultTotalTooltipVisible = false;
     private isCompactRowsHeight = false;
     private readonly dataSourceURI = 'Transaction';
     private readonly totalDataSourceURI = 'TransactionTotal';
@@ -48,17 +54,23 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     public dragInProgress = false;
     public categoriesShowed = false;
+    public selectedCashflowCategoryKey: any;
 
     public accountCount: number;
     public portfolioCount: number;
     public creditTransactionCount: number = 0;
     public creditTransactionTotal: number = 0;
+    public creditTransactionTotalCent: number = 0;
+    public creditClassifiedTransactionCount: number = 0;
 
     public debitTransactionCount: number = 0;
     public debitTransactionTotal: number = 0;
+    public debitTransactionTotalCent: number = 0;
+    public debitClassifiedTransactionCount: number = 0;
 
     public transactionCount: number = 0;
     public transactionTotal: number = 0;
+    public transactionTotalCent: number = 0;
 
     public headlineConfig = {
         names: [this.l('Transactions')],
@@ -105,7 +117,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         widget: 'dxTextBox',
                         options: {
                             value: this.searchValue,
-                            width: '300',
+                            width: '279',
                             mode: 'search',
                             placeholder: this.l('Search') + ' '
                             + this.l('Transactions').toLowerCase(),
@@ -193,8 +205,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (selectedRows.length) {
             let creditTotal = this.creditTransactionTotal = 0;
             let creditCount = this.creditTransactionCount = 0;
+            let creditClassifiedCount = this.creditClassifiedTransactionCount = 0;
+
             let debitTotal = this.debitTransactionTotal = 0;
             let debitCount = this.debitTransactionCount = 0;
+            let debitClassifiedCount = this.debitClassifiedTransactionCount = 0;
 
             let portfolios = [];
             let accounts = [];
@@ -203,23 +218,29 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 portfolios.push(row.BankAccountId);
                 accounts.push(row.SyncAccountId);
 
-                if (row.Amount < 0) {
+                if (row.Amount > 0) {
                     creditTotal += row.Amount;
                     creditCount++;
+                    if (row.CashflowCategoryId)
+                        creditClassifiedCount++;
                 }
                 else {
                     debitTotal += row.Amount;
                     debitCount++;
-                }                
+                    if (row.CashflowCategoryId)
+                        debitClassifiedCount++;
+                }
             });
             this.portfolioCount = _.uniq(portfolios).length;
             this.accountCount = _.uniq(accounts).length;
 
             this.creditTransactionTotal = creditTotal;
             this.creditTransactionCount = creditCount;
+            this.creditClassifiedTransactionCount = creditClassifiedCount;
 
             this.debitTransactionTotal = debitTotal;
             this.debitTransactionCount = debitCount;
+            this.debitClassifiedTransactionCount = debitClassifiedCount;
 
             this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal;
             this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
@@ -228,9 +249,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (totals && totals.length) {
             this.creditTransactionTotal = totals[0].creditTotal;
             this.creditTransactionCount = totals[0].creditCount;
+            this.creditClassifiedTransactionCount = totals[0].classifiedCreditTransactionCount;
 
             this.debitTransactionTotal = totals[0].debitTotal;
             this.debitTransactionCount = totals[0].debitCount;
+            this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
 
             this.portfolioCount = totals[0].portfolioCount;
             this.accountCount = totals[0].accountCount;
@@ -251,6 +274,20 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.transactionTotal = 0;
             this.transactionCount = 0;
         }
+
+        this.creditTransactionTotalCent = this.getFloatPart(this.creditTransactionTotal);
+        this.creditTransactionTotal = Math.trunc(this.creditTransactionTotal);
+        this.debitTransactionTotalCent = this.getFloatPart(this.debitTransactionTotal);
+        this.debitTransactionTotal = Math.trunc(this.debitTransactionTotal);
+        this.transactionTotalCent = this.getFloatPart(this.transactionTotal);
+        this.transactionTotal = Math.trunc(this.transactionTotal);
+    }
+
+    getFloatPart(value) {
+        let x = Math.abs(value);
+        let int_part = Math.trunc(x);
+        let float_part = (x - int_part) * 100;
+        return float_part;
     }
 
     showColumnChooser() {
@@ -266,6 +303,16 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.initToolbarConfig();
         this.processFilterInternal();
+    }
+
+    toggleCreditDefault() {
+        this.defaultCreditTooltipVisible = !this.defaultCreditTooltipVisible;
+    }
+    toggleDebitDefault() {
+        this.defaultDebitTooltipVisible = !this.defaultDebitTooltipVisible;
+    }
+    toggleTotalDefault() {
+        this.defaultTotalTooltipVisible = !this.defaultTotalTooltipVisible;
     }
 
     ngOnInit(): void {
@@ -297,106 +344,108 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         });
         this.totalDataSource.load();
 
-        this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId)
-            .subscribe(result => {
-                this.filtersService.setup(
-                    this.filters = [
-                        new FilterModel({
-                            component: FilterCalendarComponent,
-                            operator: { from: 'ge', to: 'le' },
-                            caption: 'Date',
-                            field: 'Date',
-                            items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                        }),
-                        new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            caption: 'Account',
-                            items: {
-                                element: new FilterCheckBoxesModel(
-                                    {
-                                        dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
-                                        nameField: 'name',
-                                        parentExpr: 'parentId',
-                                        keyExpr: 'id'
-                                    })
-                            }
-                        }),
-                        new FilterModel({
-                            component: FilterInputsComponent,
-                            operator: 'contains',
-                            caption: 'Description',
-                            items: { Description: new FilterItemModel() }
-                        }),
-                        new FilterModel({
-                            component: FilterInputsComponent,
-                            operator: { from: 'ge', to: 'le' },
-                            caption: 'Amount',
-                            field: 'Amount',
-                            items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                        }),
-                        new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            field: 'CategoryId',
-                            caption: 'TransactionCategory',
-                            items: {
-                                element: new FilterCheckBoxesModel({
-                                    dataSource: result.categories,
+        Observable.forkJoin(
+            this._TransactionsServiceProxy.getTransactionTypesAndCategories(),
+            this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId)
+        ).subscribe(result => {
+            this.filtersService.setup(
+                this.filters = [
+                    new FilterModel({
+                        component: FilterCalendarComponent,
+                        operator: { from: 'ge', to: 'le' },
+                        caption: 'Date',
+                        field: 'Date',
+                        items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'Account',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource: FilterHelpers.ConvertBanksToTreeSource(result[1].banks),
                                     nameField: 'name',
+                                    parentExpr: 'parentId',
                                     keyExpr: 'id'
                                 })
-                            }
-                        }),
-                        new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            field: 'TypeId',
-                            caption: 'TransactionType',
-                            items: {
-                                element: new FilterCheckBoxesModel({
-                                    dataSource: result.types,
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
-                            }
-                        }),
-                        new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            field: 'CurrencyId',
-                            caption: 'Currency',
-                            items: {
-                                element: new FilterCheckBoxesModel({
-                                    dataSource: result.currencies,
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
-                            }
-                        }),
-                        new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            field: 'BusinessEntityId',
-                            caption: 'BusinessEntity',
-                            items: {
-                                element: new FilterCheckBoxesModel({
-                                    dataSource: result.businessEntities,
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
-                            }
-                        }),
-                        new FilterModel({
-                            component: FilterInputsComponent,
-                            //operator: 'contains',
-                            caption: 'CheckNumber',
-                            //items: { BusinessEntity: '' }
-                        }),
-                        new FilterModel({
-                            component: FilterInputsComponent,
-                            //operator: 'contains',
-                            caption: 'Reference',
-                            //items: { BusinessEntity: '' }
-                        })
-                    ]
-                );
-            });
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'Description',
+                        items: { Description: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: { from: 'ge', to: 'le' },
+                        caption: 'Amount',
+                        field: 'Amount',
+                        items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        field: 'CategoryId',
+                        caption: 'TransactionCategory',
+                        items: {
+                            element: new FilterCheckBoxesModel({
+                                dataSource: result[0].categories,
+                                nameField: 'name',
+                                keyExpr: 'id'
+                            })
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        field: 'TypeId',
+                        caption: 'TransactionType',
+                        items: {
+                            element: new FilterCheckBoxesModel({
+                                dataSource: result[0].types,
+                                nameField: 'name',
+                                keyExpr: 'id'
+                            })
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        field: 'CurrencyId',
+                        caption: 'Currency',
+                        items: {
+                            element: new FilterCheckBoxesModel({
+                                dataSource: result[1].currencies,
+                                nameField: 'name',
+                                keyExpr: 'id'
+                            })
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        field: 'BusinessEntityId',
+                        caption: 'BusinessEntity',
+                        items: {
+                            element: new FilterCheckBoxesModel({
+                                dataSource: result[1].businessEntities,
+                                nameField: 'name',
+                                keyExpr: 'id'
+                            })
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        //operator: 'contains',
+                        caption: 'CheckNumber',
+                        //items: { BusinessEntity: '' }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        //operator: 'contains',
+                        caption: 'Reference',
+                        //items: { BusinessEntity: '' }
+                    })
+                ]
+            );
+        });
 
         this.filtersService.apply(() => {
             this.initToolbarConfig();
@@ -523,26 +572,32 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
             this.processFilterInternal();
         }
+        else if (this.selectedCashflowCategoryKey) {
+            this.cashFlowCategoryFilter = [];
+            this.processFilterInternal();
+        }
+
+        this.selectedCashflowCategoryKey = key;
     }
 
     onSelectionChanged($event) {
-        let img = new Image(), 
+        let img = new Image(),
             transactionKeys = this.dataGrid.instance.getSelectedRowKeys();
         img.src = 'assets/common/images/transactions.png';
-        this.categoriesShowed = Boolean(transactionKeys.length);
+        this.categoriesShowed = Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length);
         $event.element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend')
             .filter('.dx-selection').attr('draggable', true).on('dragstart', (e) => {
                 this.dragInProgress = true;
                 e.originalEvent.dataTransfer.setData('Text', transactionKeys.join(','));
                 e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
-                e.originalEvent.dropEffect = "move";
+                e.originalEvent.dropEffect = 'move';
             }).on('dragend', (e) => {
-                e.originalEvent.preventDefault(); 
+                e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
                 this.dragInProgress = false;
             }).on('click', (e) => {
-                e.originalEvent.preventDefault(); 
+                e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
                 this.dragInProgress = false;
@@ -551,7 +606,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onContentReady($event) {
-        this.onSelectionChanged($event);        
+        this.onSelectionChanged($event);
     }
 
     openCategorizationWindow($event) {
@@ -575,6 +630,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngAfterViewInit(): void {
+        this.showCompactRowsHeight();
+
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }

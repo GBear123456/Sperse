@@ -1,7 +1,10 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig"></app-headline>
-    <div class="content">
+    <app-headline [config]="headlineConfig">
+        <synch-progress class="synch-progress"></synch-progress>
+    </app-headline>
 
+    <div class="content">
+        <setup-steps SelectedStepIndex="0"></setup-steps>
         <div class="dashboard-wrapper">
             <section class="accounts-info">
                 <header>
@@ -16,17 +19,25 @@
 
             <section class="synch-status">
                 <header>
-                    <h2 class="dashboard-title">
-                        {{ls('CFO', 'Synchronization status')}}
-                    </h2>
-                    <a href="javascript:;" class="dashboard-link">{{ls('CFO', 'View Cash Flow Report')}}</a>
+                    <a href="javascript:;" class="dashboard-link">{{ls('CFO', 'View transactions')}}</a>
                 </header>
                 <div class="synch-section-wrap">
                     <div class="synch-item">
-                        <app-accounts-synch-status></app-accounts-synch-status>
-                    </div>
-                    <div class="synch-item">
                         <app-categorization-status></app-categorization-status>
+                    </div>
+                </div>
+            </section>
+            <section class="analytics">
+                <header>
+                    <h2 class="dashboard-title">{{ls('CFO', 'Dashboard_AnalyticsTitle')}}</h2>
+                    <a href="javascript:;" class="dashboard-link">{{ls('CFO', 'View Cash Flow Report')}}</a>
+                </header>
+                <div class="analytics-wrap">
+                    <div class="trendByPeriod">
+                        <app-trend-by-period></app-trend-by-period>
+                    </div>
+                    <div class="totalByPeriod">
+
                     </div>
                 </div>
             </section>

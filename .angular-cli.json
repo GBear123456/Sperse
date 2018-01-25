@@ -58,7 +58,6 @@
         "../node_modules/animate.css/animate.min.css",
         "../node_modules/toastr/build/toastr.css",
         "../node_modules/jstree/dist/themes/default/style.min.css",
-        "../node_modules/jtable/lib/themes/metro/blue/jtable.min.css",
         "../node_modules/morris.js/morris.css",
         "../node_modules/chartist/dist/chartist.css",
         "../node_modules/socicon/css/socicon.css",
@@ -123,8 +122,6 @@
 
         "../node_modules/signalr/jquery.signalR.js",
 
-        "../node_modules/jtable/lib/jquery.jtable.min.js",
-        "../node_modules/jtable/lib/extensions/jquery.jtable.record-actions.js",
         "../src/assets/Jcrop/js/Jcrop.js",
         "../node_modules/morris.js/morris.min.js",
         "../node_modules/raphael/raphael.min.js",

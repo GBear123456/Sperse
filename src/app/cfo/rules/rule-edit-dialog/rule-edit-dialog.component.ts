@@ -120,15 +120,15 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             _classificationServiceProxy.getTransactionCommonDetails(InstanceType[this.instanceType], this.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data))
                 .subscribe((data) => {
                     this.bankId = data.bankId;
-                    this.accountId = data.bankAccountId;
-                    if (data.amountFormat)
-                        this.amountFormat = ConditionDtoCashFlowAmountFormat[data.amountFormat.toString()];
+                    //this.accountId = data.bankAccountId;
+                    //if (data.amountFormat)
+                    //    this.amountFormat = ConditionDtoCashFlowAmountFormat[data.amountFormat.toString()];
                     this.descriptor = data.standardDescriptor;
                     this.keywords = this.getKeywordsFromString(data.descriptionPhrases.join(','));
                     this.attributes = this.getAttributesFromCommonDetails(data.attributes);
                     this.attributesAndKeywords = this.getAtributesAndKeywords();
-                    this.selectedTransactionCategory = data.transactionCategoryId;
-                    this.selectedTransactionTypes = data.transactionTypeId ? [data.transactionTypeId]: [];
+                    //this.selectedTransactionCategory = data.transactionCategoryId;
+                    //this.selectedTransactionTypes = data.transactionTypeId ? [data.transactionTypeId]: [];
                     this.showOverwriteWarning = data.sourceTransactionsAreMatchingExistingRules;
                 });
 
@@ -153,7 +153,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 conditionTypeId: v.value ? ConditionAttributeDtoConditionTypeId.Equal : ConditionAttributeDtoConditionTypeId.Exist,
                 conditionValue: v.value
             }
-        });
+        }).filter((attr) => attr.attributeTypeId == 'DS' || attr.attributeTypeId == 'PR');
     }
 
     getDataObject() {
@@ -198,7 +198,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         this.data.editTitle = true;
         this.data.placeholder = this.l('Enter the rule name');
         this.data.buttons = [{
-            title: this.l(this.data.id ? 'Edit rule' : 'Add rule'),
+            title: this.l(this.data.id ? 'Save' : 'Add rule'),
             class: 'primary',
             action: () => {
                 if (this.validate()) {
@@ -266,13 +266,16 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     getAtributesAndKeywords() {
-        return this.attributes.concat(this.keywords.map((item) => {
+        var array: any[] =  this.attributes.concat(this.keywords.map((item) => {
             return {
                 attributeTypeId: 'keyword',
-                conditionTypeId: '',
+                conditionTypeId: ConditionAttributeDtoConditionTypeId.Equal,
                 conditionValue: item.keyword
             };
         }));
+
+        array.forEach((v, i) => v.id = i);
+        return array;
     }
 
     getAttributes() {
@@ -302,15 +305,15 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     validate(ruleCheckOnly: boolean = false) {
-        if (!this.data.title) {
-            this.data.title = this.descriptor;
-            if (!this.data.title) {
-                this.data.isTitleValid = false;
-                return this.notify.error(this.l('RuleDialog_NameError'));
-            }
-        }
-
         if (!ruleCheckOnly) {
+            if (!this.data.title) {
+                this.data.title = this.descriptor;
+                if (!this.data.title) {
+                    this.data.isTitleValid = false;
+                    return this.notify.error(this.l('RuleDialog_NameError'));
+                }
+            }
+
             if (!this.getDescriptionKeywords() && !Object.keys(this.getAttributes()).length) {
                 this.attributeList.instance.option('elementAttr', {invalid: true});
                 return this.notify.error(this.l('RuleDialog_AttributeOrKeywordRequired'));
@@ -384,12 +387,22 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 $event.cells[2].cellElement.attr('colspan', '2');
             }, 0);
         
-        if ($event.cells[1].value == "Exist") 
+        if ($event.cells[1].value == "Exist" && $event.cells[0].value != "keyword")
             setTimeout(() => {
                 $event.cells[2].value = '-';
                 $event.cells[2].cellElement.hide();
                 $event.cells[1].cellElement.attr('colspan', '2');
             }, 0);
+    }
+
+    onRowValidating(e) {
+        if (e.isValid) return;
+
+        if (e.newData.conditionTypeId == 'Exist' && e.newData.attributeTypeId != 'keyword') {
+            e.brokenRules = _.reject(e.brokenRules, (rule) => rule.column.dataField == 'conditionValue');
+        }
+
+        e.isValid = !e.brokenRules.length;
     }
 
     updateKeywordList($event) {
@@ -416,10 +429,11 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         $event.data.attributeTypeId = 'keyword';
         $event.data.conditionTypeId = 'Equal';
         this.attributeList.instance
-          .option('elementAttr', {invalid: false});
+            .option('elementAttr', { invalid: false });
+        $event.data.id = this.attributesAndKeywords.length + 1;
     }
 
     onCustomItemCreating($event) {
-        this.descriptor = $event.text;
+        setTimeout(() => this.descriptor = $event.text, 0);
     }
 }

@@ -23,11 +23,12 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     @Output() onTransactionDrop: EventEmitter<any> = new EventEmitter();
 
     @Input() instanceId: number;
-    @Input() instanceType: string;    
+    @Input() instanceType: string;
 
     @Input() width: string;
     @Input() height: string;
     @Input() showTitle: boolean;
+    @Input() showClearSelection: boolean;
     @Input() categoryId: number;
     @Input('dragMode')
     set dragMode(value: boolean) {
@@ -62,25 +63,29 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     initDragAndDropEvents($event) {
-        let dragEnterCount = 0;
+        let dragEnterTarget;
         $event.element.find('tr[aria-level="2"]')
             .off('dragenter').off('dragover').off('dragleave').off('drop')
             .on('dragenter', (e) => {
-                e.originalEvent.preventDefault(); 
+                e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
-                dragEnterCount++;
+                if (dragEnterTarget && dragEnterTarget != e.currentTarget)
+                    dragEnterTarget.classList.remove('drag-hover');
+
+                dragEnterTarget = e.currentTarget;
                 e.currentTarget.classList.add('drag-hover');
             }).on('dragover', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
             }).on('dragleave', (e) => {
-                if (--dragEnterCount <= 0) {
+                e.originalEvent.preventDefault();
+                e.originalEvent.stopPropagation();
+
+                if (dragEnterTarget != e.currentTarget)
                     e.currentTarget.classList.remove('drag-hover');
-                    dragEnterCount = 0;
-                }
             }).on('drop', (e) => {
-                e.originalEvent.preventDefault(); 
+                e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
                 this.onTransactionDrop.emit({
@@ -118,12 +123,13 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                     });
                 if (data.items)
                      _.mapObject(data.items, (item, key) => {
-                        categories.push({
-                            key: key,
-                            parent: item.groupId +
-                                data.groups[item.groupId].typeId,
-                            name: item.name
-                        });
+                        if (data.groups[item.groupId])
+                            categories.push({
+                                key: key,
+                                parent: item.groupId +
+                                    data.groups[item.groupId].typeId,
+                                name: item.name
+                            });
                     });
 
                 this.categories = categories;
@@ -150,11 +156,11 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 groupId: groupUpdate ? undefined: this.categorization.items[$event.key].groupId,
                 name: $event.data.name
             })
-        ).subscribe((error) => {
-            if (error)
-                this.notify.error(this.l('SomeErrorOccurred'));
+        ).subscribe((id) => {
+            this.refreshCategories(false);
+        }, (error) => {
+            this.refreshCategories(false);
         });
-
     }
 
     onCategoryInserted($event) {
@@ -168,8 +174,8 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 name: $event.data.name
             })
         ).subscribe((id) => {
-            if (isNaN(id))
-                this.notify.error(this.l('SomeErrorOccurred'));
+            this.refreshCategories(false);
+        }, (error) => {
             this.refreshCategories(false);
         });
     }
@@ -183,7 +189,9 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 this.notify.error(this.l('Category group should be empty to perform delete action'));
             else
                 this._classificationServiceProxy.deleteCategoryGroup(InstanceType[this.instanceType], this.instanceId, itemId)
-                  .subscribe(() => {
+                  .subscribe((id) => {
+                      this.refreshCategories(false);
+                  }, (error) => {
                       this.refreshCategories(false);
                   });
         } else {
@@ -204,7 +212,9 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                         InstanceType[this.instanceType],
                         this.instanceId,
                         dialogData.categoryId, dialogData.deleteAllReferences, itemId)
-                            .subscribe(() => {
+                            .subscribe((id) => {
+                                this.refreshCategories(false);
+                            }, (error) => {
                                 this.refreshCategories(false);
                             });
             });
@@ -213,5 +223,35 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     sortItem(val1, val2) {
         return val1.localeCompare(val2);
+    }
+
+/*
+    onKeyDown($event) {
+        if ($event.jQueryEvent.keyCode == 13) {
+            $event.jQueryEvent.originalEvent.preventDefault();
+            $event.jQueryEvent.originalEvent.stopPropagation();
+
+            $event.component.saveEditData();
+            $event.component.closeEditCell();
+
+            $event.handled = true;
+        }
+    }
+*/
+
+    private _prevClickDate = new Date();
+    onRowClick($event) {
+        let nowDate = new Date();
+        if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
+            $event.jQueryEvent.originalEvent.preventDefault();
+            $event.jQueryEvent.originalEvent.stopPropagation();
+
+            $event.component.editRow($event.rowIndex);
+        }
+        this._prevClickDate = nowDate;
+    }
+
+    clearSelection(e) {
+        this.categoryList.instance.deselectAll();
     }
 }

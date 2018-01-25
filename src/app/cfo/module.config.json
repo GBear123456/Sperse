@@ -3,7 +3,7 @@
   "search": false,
   "navigation": [
     [ "", "", "icon-home", "/app/cfo/:instance/start" ],
-    [ "Accounts", "", "icon-home", "/app/cfo/:instance/bank-accounts" ],
+    [ "Accounts", "", "icon-home", "/app/cfo/:instance/linkaccounts" ],
     [ "Cashflow", "", "icon-home", "/app/cfo/:instance/cashflow" ],
     [ "Stats", "", "icon-home", "/app/cfo/:instance/stats" ],
     [ "Transactions", "", "icon-home", "/app/cfo/:instance/transactions" ],

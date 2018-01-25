@@ -1,6 +1,6 @@
 .categorization-status {
     header {
-        margin-bottom: 5px;
+        margin-bottom: 36px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -18,6 +18,28 @@
             font-size: 12px;
             font-weight: 300;
             line-height: 24px;
+            cursor: pointer;
+        }
+    }
+    
+    .small-button {
+        border-radius: 13px!important;
+        font-size: 13px!important;
+        text-transform: initial!important;
+        letter-spacing: 0.3px;
+        margin: 0 0 0 30px;
+        outline: none;
+        border: none;
+        height: 26px;
+        padding: 3px 15px 2px;
+        color: #fff !important;
+        cursor: pointer;
+        width: 175px;
+        transition: .25s;
+        display: inline-block;
+        text-align: center;
+        &:hover {
+            background: lighten(#00aeef, 5%);
         }
     }
     
@@ -31,10 +53,22 @@
         transform: translate(-50%, -50%);
     }
     
+    .progress-wrap {
+        max-width: 180px;
+        width: 100%;
+        height: auto;
+        margin: 0 auto;
+        position: relative;
+    }
+    
     .col-8 {
         align-self: center;
     }
     
+    .total {
+        font-size: 18px;
+    }
+
     .category-synch-list {
         list-style-type: none;
         padding-left: 20px;
@@ -64,6 +98,8 @@
                 letter-spacing: 0.2px;
                 line-height: 17px;
                 font-weight: 500;
+                width: 195px;
+                display: inline-block;
             }
             .synch-status {
                 float: right;

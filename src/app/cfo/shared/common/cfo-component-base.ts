@@ -2,7 +2,7 @@ import { AppComponentBase } from "shared/common/app-component-base";
 import { OnInit, OnDestroy, Injector } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { InstanceType } from "shared/service-proxies/service-proxies";
-import { CFOService } from 'app/cfo/cfo.service';
+import { CFOService } from '../../cfo.service';
 import { AppConsts } from "shared/AppConsts";
 
 export abstract class CFOComponentBase extends AppComponentBase implements OnInit, OnDestroy {
@@ -10,7 +10,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
     instanceType: string;
 
     protected _route: ActivatedRoute;
-    protected _cfoService: CFOService;
+    _cfoService: CFOService;
 
     private _sub: any;
 

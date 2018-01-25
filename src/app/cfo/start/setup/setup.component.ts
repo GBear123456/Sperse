@@ -17,7 +17,7 @@ import { AppService } from 'app/app.service';
 })
 export class SetupComponent extends CFOComponentBase implements OnInit {
     public headlineConfig;
-    private isDisabled = false;
+    isDisabled = false;
 
     constructor(injector: Injector,
         private _appService: AppService,
@@ -29,8 +29,8 @@ export class SetupComponent extends CFOComponentBase implements OnInit {
 
     private finishSetup() {
         this._cfoService.instanceChangeProcess();
-        this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/bank-accounts']);
-    }
+        this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
+}
 
     ngOnInit(): void {
         super.ngOnInit();

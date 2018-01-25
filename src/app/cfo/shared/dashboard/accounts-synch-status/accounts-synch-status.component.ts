@@ -7,7 +7,7 @@ import {CFOComponentBase} from '@app/cfo/shared/common/cfo-component-base';
     styleUrls: ['./accounts-synch-status.component.less']
 })
 export class AccountsSynchStatusComponent extends CFOComponentBase implements OnInit {
-    private accountsSynchData = [
+    accountsSynchData = [
         {accName: 'Bank of America', progress: 100, isDone: true},
         {accName: 'Merrill Lynch', progress: 68, isDone: false},
         {accName: 'City Bank', progress: 23, isDone: false}

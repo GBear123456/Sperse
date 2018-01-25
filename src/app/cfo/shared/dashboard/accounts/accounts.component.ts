@@ -1,7 +1,7 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {CFOComponentBase} from '@app/cfo/shared/common/cfo-component-base';
 import {DashboardServiceProxy, InstanceType} from '@shared/service-proxies/service-proxies';
-import { Router } from '@angular/router';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'app-accounts',
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
     providers: [DashboardServiceProxy]
 })
 export class AccountsComponent extends CFOComponentBase implements OnInit {
-    private accountsData: any;
+    accountsData: any;
 
     constructor(
         injector: Injector,
@@ -32,6 +32,6 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     navigateTo() {
-        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/bank-accounts']);
+        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
     }
 }

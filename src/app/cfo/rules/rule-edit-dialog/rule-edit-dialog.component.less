@@ -16,6 +16,9 @@
     }
 
     .transactions-container {
+        width: 1110px;
+        max-width: 1111px;
+        min-width: 720px;
         div.close-transactions {
             position: absolute;
             right: 10px;
@@ -343,6 +346,17 @@
                         line-height: 1.67;
                         letter-spacing: 0.3px;
                         color: #424c56;
+                    }
+
+                    .dx-data-row:not(:first-child) td:first-child {
+                        &:before {
+                            content: 'and';
+                            position: absolute;
+                            color: #dfdfdf;
+                            font-size: 10px;
+                            left: 4px;
+                            margin-top: 3px;
+                        }
                     }
 
                     .dx-datagrid-header-panel {

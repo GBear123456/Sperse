@@ -4,8 +4,10 @@ import { NotificationsComponent } from './shared/layout/notifications/notificati
 import { AppComponent } from './app.component';
 import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
 
+import { AppConsts } from '@shared/AppConsts';
+
 @NgModule({
-    imports: [
+    imports: !AppConsts.isMobile ? [
         RouterModule.forChild([
             {
                 path: 'app',
@@ -17,7 +19,7 @@ import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
                         path: '',
                         children: [
                             { path: 'notifications', component: NotificationsComponent },
-                            { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
+                            { path: '', redirectTo: 'main/start', pathMatch: 'full' }
                         ]
                     },
                     {
@@ -50,7 +52,7 @@ import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
                 ]
             }
         ])
-    ],
+    ]: [],
     exports: [RouterModule]
 })
 

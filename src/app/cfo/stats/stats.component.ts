@@ -326,7 +326,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     /** load stats data from api */
     loadStatsData() {
         abp.ui.setBusy();
-        let { startDate, endDate, accountIds = []} = this.requestFilter;
+        let { startDate, endDate, accountIds = [] } = this.requestFilter;
         this._bankAccountService.getStats(
             InstanceType[this.instanceType], this.instanceId,
             'USD', this.selectedForecastModel.id, accountIds, startDate, endDate, GroupBy.Monthly
@@ -429,6 +429,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         }
     }
 
+    /** @todo move to helper */
     /**
      * Replace string negative value like '$-1000' for the string '$(1000)' (with brackets)
      * @param {string} value
