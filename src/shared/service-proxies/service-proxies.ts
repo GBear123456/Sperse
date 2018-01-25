@@ -5719,8 +5719,8 @@ export class CustomersServiceProxy {
     /**
      * @return Success
      */
-    getContactInfo(contactId: number): Observable<ContactInfoDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetContactInfo?";
+    getPersonContactInfo(contactId: number): Observable<PersonContactInfoDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetPersonContactInfo?";
         if (contactId === undefined || contactId === null)
             throw new Error("The parameter 'contactId' must be defined and cannot be null.");
         else
@@ -5736,11 +5736,111 @@ export class CustomersServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGetContactInfo(response_);
+            return this.processGetPersonContactInfo(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processGetContactInfo(response_);
+                    return this.processGetPersonContactInfo(response_);
+                } catch (e) {
+                    return <Observable<PersonContactInfoDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<PersonContactInfoDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetPersonContactInfo(response: Response): Observable<PersonContactInfoDto> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PersonContactInfoDto.fromJS(resultData200) : new PersonContactInfoDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<PersonContactInfoDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getOrganizationContactInfo(contactId: number): Observable<OrganizationContactInfoDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetOrganizationContactInfo?";
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetOrganizationContactInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetOrganizationContactInfo(response_);
+                } catch (e) {
+                    return <Observable<OrganizationContactInfoDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<OrganizationContactInfoDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetOrganizationContactInfo(response: Response): Observable<OrganizationContactInfoDto> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? OrganizationContactInfoDto.fromJS(resultData200) : new OrganizationContactInfoDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<OrganizationContactInfoDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getContactInfoByUser(userId: number): Observable<ContactInfoDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetContactInfoByUser?";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetContactInfoByUser(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetContactInfoByUser(response_);
                 } catch (e) {
                     return <Observable<ContactInfoDto>><any>Observable.throw(e);
                 }
@@ -5749,7 +5849,7 @@ export class CustomersServiceProxy {
         });
     }
 
-    protected processGetContactInfo(response: Response): Observable<ContactInfoDto> {
+    protected processGetContactInfoByUser(response: Response): Observable<ContactInfoDto> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -7568,6 +7668,56 @@ export class InstanceServiceProxy {
     }
 
     protected processSetup(response: Response): Observable<SetupOutput> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SetupOutput.fromJS(resultData200) : new SetupOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<SetupOutput>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    setupAndGrantPermissionsForUser(input: SetupInput): Observable<SetupOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Instance/SetupAndGrantPermissionsForUser";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processSetupAndGrantPermissionsForUser(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSetupAndGrantPermissionsForUser(response_);
+                } catch (e) {
+                    return <Observable<SetupOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<SetupOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSetupAndGrantPermissionsForUser(response: Response): Observable<SetupOutput> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -12710,6 +12860,56 @@ export class TenantRegistrationServiceProxy {
      * @input (optional) 
      * @return Success
      */
+    completeTenantRegistration(input: CompleteTenantRegistrationInput): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantRegistration/CompleteTenantRegistration";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processCompleteTenantRegistration(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCompleteTenantRegistration(response_);
+                } catch (e) {
+                    return <Observable<number>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCompleteTenantRegistration(response: Response): Observable<number> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<number>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
     registerTenant(input: RegisterTenantInput): Observable<RegisterTenantOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantRegistration/RegisterTenant";
         url_ = url_.replace(/[?&]$/, "");
@@ -14397,6 +14597,56 @@ export class UserServiceProxy {
     constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    activateUserForContact(input: ActivateUserForContactInput): Observable<ActivateUserForContactOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/User/ActivateUserForContact";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processActivateUserForContact(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processActivateUserForContact(response_);
+                } catch (e) {
+                    return <Observable<ActivateUserForContactOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ActivateUserForContactOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processActivateUserForContact(response: Response): Observable<ActivateUserForContactOutput> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ActivateUserForContactOutput.fromJS(resultData200) : new ActivateUserForContactOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<ActivateUserForContactOutput>(<any>null);
     }
 
     /**
@@ -18063,6 +18313,7 @@ export class RuleDto implements IRuleDto {
     creationTime: moment.Moment;
     sortOrder: number;
     isActive: boolean;
+    transactionCount: number;
     id: number;
 
     constructor(data?: IRuleDto) {
@@ -18082,6 +18333,7 @@ export class RuleDto implements IRuleDto {
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.sortOrder = data["sortOrder"];
             this.isActive = data["isActive"];
+            this.transactionCount = data["transactionCount"];
             this.id = data["id"];
         }
     }
@@ -18100,6 +18352,7 @@ export class RuleDto implements IRuleDto {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["sortOrder"] = this.sortOrder;
         data["isActive"] = this.isActive;
+        data["transactionCount"] = this.transactionCount;
         data["id"] = this.id;
         return data; 
     }
@@ -18112,6 +18365,7 @@ export interface IRuleDto {
     creationTime: moment.Moment;
     sortOrder: number;
     isActive: boolean;
+    transactionCount: number;
     id: number;
 }
 
@@ -23557,11 +23811,10 @@ export interface IScoreSimulatorDto {
     transferCreditBalances: number;
 }
 
-export class ContactInfoDto implements IContactInfoDto {
+export class PersonContactInfoDto implements IPersonContactInfoDto {
+    person: PersonInfoDto;
     id: number;
     fullName: string;
-    person: PersonInfoDto;
-    organization: OrganizationInfoDto;
     photo: ContactPhotoDto;
     emails: ContactEmailDto[];
     phones: ContactPhoneDto[];
@@ -23569,7 +23822,7 @@ export class ContactInfoDto implements IContactInfoDto {
     links: ContactLinkDto[];
     comment: string;
 
-    constructor(data?: IContactInfoDto) {
+    constructor(data?: IPersonContactInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -23580,10 +23833,9 @@ export class ContactInfoDto implements IContactInfoDto {
 
     init(data?: any) {
         if (data) {
+            this.person = data["person"] ? PersonInfoDto.fromJS(data["person"]) : <any>undefined;
             this.id = data["id"];
             this.fullName = data["fullName"];
-            this.person = data["person"] ? PersonInfoDto.fromJS(data["person"]) : <any>undefined;
-            this.organization = data["organization"] ? OrganizationInfoDto.fromJS(data["organization"]) : <any>undefined;
             this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
             if (data["emails"] && data["emails"].constructor === Array) {
                 this.emails = [];
@@ -23609,18 +23861,17 @@ export class ContactInfoDto implements IContactInfoDto {
         }
     }
 
-    static fromJS(data: any): ContactInfoDto {
-        let result = new ContactInfoDto();
+    static fromJS(data: any): PersonContactInfoDto {
+        let result = new PersonContactInfoDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["person"] = this.person ? this.person.toJSON() : <any>undefined;
         data["id"] = this.id;
         data["fullName"] = this.fullName;
-        data["person"] = this.person ? this.person.toJSON() : <any>undefined;
-        data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         if (this.emails && this.emails.constructor === Array) {
             data["emails"] = [];
@@ -23647,11 +23898,10 @@ export class ContactInfoDto implements IContactInfoDto {
     }
 }
 
-export interface IContactInfoDto {
+export interface IPersonContactInfoDto {
+    person: PersonInfoDto;
     id: number;
     fullName: string;
-    person: PersonInfoDto;
-    organization: OrganizationInfoDto;
     photo: ContactPhotoDto;
     emails: ContactEmailDto[];
     phones: ContactPhoneDto[];
@@ -23761,49 +24011,6 @@ export interface IPersonInfoDto {
     contactId: number;
     firstName: string;
     lastName: string;
-}
-
-export class OrganizationInfoDto implements IOrganizationInfoDto {
-    industry: string;
-    type: string;
-    contactPerson: PersonKeyInfoDto;
-
-    constructor(data?: IOrganizationInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.industry = data["industry"];
-            this.type = data["type"];
-            this.contactPerson = data["contactPerson"] ? PersonKeyInfoDto.fromJS(data["contactPerson"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): OrganizationInfoDto {
-        let result = new OrganizationInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["industry"] = this.industry;
-        data["type"] = this.type;
-        data["contactPerson"] = this.contactPerson ? this.contactPerson.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IOrganizationInfoDto {
-    industry: string;
-    type: string;
-    contactPerson: PersonKeyInfoDto;
 }
 
 export class ContactPhotoDto implements IContactPhotoDto {
@@ -24208,6 +24415,148 @@ export interface IUserKeyInfoDto {
     fullName: string;
 }
 
+export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
+    organization: OrganizationInfoDto;
+    id: number;
+    fullName: string;
+    photo: ContactPhotoDto;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+    comment: string;
+
+    constructor(data?: IOrganizationContactInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.organization = data["organization"] ? OrganizationInfoDto.fromJS(data["organization"]) : <any>undefined;
+            this.id = data["id"];
+            this.fullName = data["fullName"];
+            this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
+            if (data["emails"] && data["emails"].constructor === Array) {
+                this.emails = [];
+                for (let item of data["emails"])
+                    this.emails.push(ContactEmailDto.fromJS(item));
+            }
+            if (data["phones"] && data["phones"].constructor === Array) {
+                this.phones = [];
+                for (let item of data["phones"])
+                    this.phones.push(ContactPhoneDto.fromJS(item));
+            }
+            if (data["addresses"] && data["addresses"].constructor === Array) {
+                this.addresses = [];
+                for (let item of data["addresses"])
+                    this.addresses.push(ContactAddressDto.fromJS(item));
+            }
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(ContactLinkDto.fromJS(item));
+            }
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationContactInfoDto {
+        let result = new OrganizationContactInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
+        data["id"] = this.id;
+        data["fullName"] = this.fullName;
+        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
+        if (this.emails && this.emails.constructor === Array) {
+            data["emails"] = [];
+            for (let item of this.emails)
+                data["emails"].push(item.toJSON());
+        }
+        if (this.phones && this.phones.constructor === Array) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item.toJSON());
+        }
+        if (this.addresses && this.addresses.constructor === Array) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IOrganizationContactInfoDto {
+    organization: OrganizationInfoDto;
+    id: number;
+    fullName: string;
+    photo: ContactPhotoDto;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+    comment: string;
+}
+
+export class OrganizationInfoDto implements IOrganizationInfoDto {
+    industry: string;
+    type: string;
+    contactPerson: PersonKeyInfoDto;
+
+    constructor(data?: IOrganizationInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.industry = data["industry"];
+            this.type = data["type"];
+            this.contactPerson = data["contactPerson"] ? PersonKeyInfoDto.fromJS(data["contactPerson"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): OrganizationInfoDto {
+        let result = new OrganizationInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["industry"] = this.industry;
+        data["type"] = this.type;
+        data["contactPerson"] = this.contactPerson ? this.contactPerson.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IOrganizationInfoDto {
+    industry: string;
+    type: string;
+    contactPerson: PersonKeyInfoDto;
+}
+
 export class PersonKeyInfoDto implements IPersonKeyInfoDto {
     contactId: number;
     firstName: string;
@@ -24251,12 +24600,108 @@ export interface IPersonKeyInfoDto {
     lastName: string;
 }
 
+export class ContactInfoDto implements IContactInfoDto {
+    id: number;
+    fullName: string;
+    photo: ContactPhotoDto;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+    comment: string;
+
+    constructor(data?: IContactInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.fullName = data["fullName"];
+            this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
+            if (data["emails"] && data["emails"].constructor === Array) {
+                this.emails = [];
+                for (let item of data["emails"])
+                    this.emails.push(ContactEmailDto.fromJS(item));
+            }
+            if (data["phones"] && data["phones"].constructor === Array) {
+                this.phones = [];
+                for (let item of data["phones"])
+                    this.phones.push(ContactPhoneDto.fromJS(item));
+            }
+            if (data["addresses"] && data["addresses"].constructor === Array) {
+                this.addresses = [];
+                for (let item of data["addresses"])
+                    this.addresses.push(ContactAddressDto.fromJS(item));
+            }
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(ContactLinkDto.fromJS(item));
+            }
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): ContactInfoDto {
+        let result = new ContactInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["fullName"] = this.fullName;
+        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
+        if (this.emails && this.emails.constructor === Array) {
+            data["emails"] = [];
+            for (let item of this.emails)
+                data["emails"].push(item.toJSON());
+        }
+        if (this.phones && this.phones.constructor === Array) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item.toJSON());
+        }
+        if (this.addresses && this.addresses.constructor === Array) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IContactInfoDto {
+    id: number;
+    fullName: string;
+    photo: ContactPhotoDto;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+    comment: string;
+}
+
 export class CustomerInfoDto implements ICustomerInfoDto {
     name: string;
     status: string;
     score: number;
-    primaryContactInfo: ContactInfoDto;
-    contacts: ContactShortInfoDto[];
+    primaryContactInfo: PersonContactInfoDto;
+    organizationContactInfo: OrganizationContactInfoDto;
+    contactPersons: PersonContactInfoDto[];
     creationDate: moment.Moment;
     userContextOrderId: number;
     userContextOrderType: string;
@@ -24275,11 +24720,12 @@ export class CustomerInfoDto implements ICustomerInfoDto {
             this.name = data["name"];
             this.status = data["status"];
             this.score = data["score"];
-            this.primaryContactInfo = data["primaryContactInfo"] ? ContactInfoDto.fromJS(data["primaryContactInfo"]) : <any>undefined;
-            if (data["contacts"] && data["contacts"].constructor === Array) {
-                this.contacts = [];
-                for (let item of data["contacts"])
-                    this.contacts.push(ContactShortInfoDto.fromJS(item));
+            this.primaryContactInfo = data["primaryContactInfo"] ? PersonContactInfoDto.fromJS(data["primaryContactInfo"]) : <any>undefined;
+            this.organizationContactInfo = data["organizationContactInfo"] ? OrganizationContactInfoDto.fromJS(data["organizationContactInfo"]) : <any>undefined;
+            if (data["contactPersons"] && data["contactPersons"].constructor === Array) {
+                this.contactPersons = [];
+                for (let item of data["contactPersons"])
+                    this.contactPersons.push(PersonContactInfoDto.fromJS(item));
             }
             this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
             this.userContextOrderId = data["userContextOrderId"];
@@ -24299,10 +24745,11 @@ export class CustomerInfoDto implements ICustomerInfoDto {
         data["status"] = this.status;
         data["score"] = this.score;
         data["primaryContactInfo"] = this.primaryContactInfo ? this.primaryContactInfo.toJSON() : <any>undefined;
-        if (this.contacts && this.contacts.constructor === Array) {
-            data["contacts"] = [];
-            for (let item of this.contacts)
-                data["contacts"].push(item.toJSON());
+        data["organizationContactInfo"] = this.organizationContactInfo ? this.organizationContactInfo.toJSON() : <any>undefined;
+        if (this.contactPersons && this.contactPersons.constructor === Array) {
+            data["contactPersons"] = [];
+            for (let item of this.contactPersons)
+                data["contactPersons"].push(item.toJSON());
         }
         data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
         data["userContextOrderId"] = this.userContextOrderId;
@@ -24315,54 +24762,12 @@ export interface ICustomerInfoDto {
     name: string;
     status: string;
     score: number;
-    primaryContactInfo: ContactInfoDto;
-    contacts: ContactShortInfoDto[];
+    primaryContactInfo: PersonContactInfoDto;
+    organizationContactInfo: OrganizationContactInfoDto;
+    contactPersons: PersonContactInfoDto[];
     creationDate: moment.Moment;
     userContextOrderId: number;
     userContextOrderType: string;
-}
-
-export class ContactShortInfoDto implements IContactShortInfoDto {
-    id: number;
-    name: string;
-    type: string;
-
-    constructor(data?: IContactShortInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.type = data["type"];
-        }
-    }
-
-    static fromJS(data: any): ContactShortInfoDto {
-        let result = new ContactShortInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["type"] = this.type;
-        return data; 
-    }
-}
-
-export interface IContactShortInfoDto {
-    id: number;
-    name: string;
-    type: string;
 }
 
 export class CreateCustomerInput implements ICreateCustomerInput {
@@ -26607,6 +27012,7 @@ export interface ICheckDatabaseOutput {
 
 export class GetStatusOutput implements IGetStatusOutput {
     status: GetStatusOutputStatus;
+    userId: number;
     hasSyncAccounts: boolean;
     hasTransactions: boolean;
 
@@ -26622,6 +27028,7 @@ export class GetStatusOutput implements IGetStatusOutput {
     init(data?: any) {
         if (data) {
             this.status = data["status"];
+            this.userId = data["userId"];
             this.hasSyncAccounts = data["hasSyncAccounts"];
             this.hasTransactions = data["hasTransactions"];
         }
@@ -26636,6 +27043,7 @@ export class GetStatusOutput implements IGetStatusOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["status"] = this.status;
+        data["userId"] = this.userId;
         data["hasSyncAccounts"] = this.hasSyncAccounts;
         data["hasTransactions"] = this.hasTransactions;
         return data; 
@@ -26644,6 +27052,7 @@ export class GetStatusOutput implements IGetStatusOutput {
 
 export interface IGetStatusOutput {
     status: GetStatusOutputStatus;
+    userId: number;
     hasSyncAccounts: boolean;
     hasTransactions: boolean;
 }
@@ -26681,6 +27090,41 @@ export class SetupOutput implements ISetupOutput {
 
 export interface ISetupOutput {
     alreadyInitialized: boolean;
+}
+
+export class SetupInput implements ISetupInput {
+    userId: number;
+
+    constructor(data?: ISetupInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+        }
+    }
+
+    static fromJS(data: any): SetupInput {
+        let result = new SetupInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        return data; 
+    }
+}
+
+export interface ISetupInput {
+    userId: number;
 }
 
 export class GetUserInstanceInfoOutput implements IGetUserInstanceInfoOutput {
@@ -28366,6 +28810,9 @@ export interface ILeadBusinessTeamContactInput {
 
 export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     leadRequestXref: string;
+    shortName: string;
+    companyName: string;
+    primaryContactPerson: string;
     errorMessage: string;
 
     constructor(data?: ILeadBusinessInfoOutput) {
@@ -28380,6 +28827,9 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     init(data?: any) {
         if (data) {
             this.leadRequestXref = data["leadRequestXref"];
+            this.shortName = data["shortName"];
+            this.companyName = data["companyName"];
+            this.primaryContactPerson = data["primaryContactPerson"];
             this.errorMessage = data["errorMessage"];
         }
     }
@@ -28393,6 +28843,9 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["leadRequestXref"] = this.leadRequestXref;
+        data["shortName"] = this.shortName;
+        data["companyName"] = this.companyName;
+        data["primaryContactPerson"] = this.primaryContactPerson;
         data["errorMessage"] = this.errorMessage;
         return data; 
     }
@@ -28400,6 +28853,9 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
 
 export interface ILeadBusinessInfoOutput {
     leadRequestXref: string;
+    shortName: string;
+    companyName: string;
+    primaryContactPerson: string;
     errorMessage: string;
 }
 
@@ -33343,6 +33799,57 @@ export interface IBaseCommercePaymentSettings {
     sandBox: boolean;
 }
 
+export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrationInput {
+    leadRequestXref: string;
+    tenantName: string;
+    tenancyName: string;
+    adminEmailAddress: string;
+    adminPassword: string;
+
+    constructor(data?: ICompleteTenantRegistrationInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadRequestXref = data["leadRequestXref"];
+            this.tenantName = data["tenantName"];
+            this.tenancyName = data["tenancyName"];
+            this.adminEmailAddress = data["adminEmailAddress"];
+            this.adminPassword = data["adminPassword"];
+        }
+    }
+
+    static fromJS(data: any): CompleteTenantRegistrationInput {
+        let result = new CompleteTenantRegistrationInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadRequestXref"] = this.leadRequestXref;
+        data["tenantName"] = this.tenantName;
+        data["tenancyName"] = this.tenancyName;
+        data["adminEmailAddress"] = this.adminEmailAddress;
+        data["adminPassword"] = this.adminPassword;
+        return data; 
+    }
+}
+
+export interface ICompleteTenantRegistrationInput {
+    leadRequestXref: string;
+    tenantName: string;
+    tenancyName: string;
+    adminEmailAddress: string;
+    adminPassword: string;
+}
+
 export class RegisterTenantInput implements IRegisterTenantInput {
     tenancyName: string;
     name: string;
@@ -34504,8 +35011,6 @@ export interface IExternalAuthenticateResultModel {
 export class FiltersInitialData implements IFiltersInitialData {
     banks: BankDto[];
     cashflowTypes: FilterElementDtoOfString[];
-    categories: FilterElementDtoOfString[];
-    types: FilterElementDtoOfString[];
     currencies: FilterElementDtoOfString[];
     businessEntities: FilterElementDtoOfInt32[];
 
@@ -34529,16 +35034,6 @@ export class FiltersInitialData implements IFiltersInitialData {
                 this.cashflowTypes = [];
                 for (let item of data["cashflowTypes"])
                     this.cashflowTypes.push(FilterElementDtoOfString.fromJS(item));
-            }
-            if (data["categories"] && data["categories"].constructor === Array) {
-                this.categories = [];
-                for (let item of data["categories"])
-                    this.categories.push(FilterElementDtoOfString.fromJS(item));
-            }
-            if (data["types"] && data["types"].constructor === Array) {
-                this.types = [];
-                for (let item of data["types"])
-                    this.types.push(FilterElementDtoOfString.fromJS(item));
             }
             if (data["currencies"] && data["currencies"].constructor === Array) {
                 this.currencies = [];
@@ -34571,16 +35066,6 @@ export class FiltersInitialData implements IFiltersInitialData {
             for (let item of this.cashflowTypes)
                 data["cashflowTypes"].push(item.toJSON());
         }
-        if (this.categories && this.categories.constructor === Array) {
-            data["categories"] = [];
-            for (let item of this.categories)
-                data["categories"].push(item.toJSON());
-        }
-        if (this.types && this.types.constructor === Array) {
-            data["types"] = [];
-            for (let item of this.types)
-                data["types"].push(item.toJSON());
-        }
         if (this.currencies && this.currencies.constructor === Array) {
             data["currencies"] = [];
             for (let item of this.currencies)
@@ -34598,8 +35083,6 @@ export class FiltersInitialData implements IFiltersInitialData {
 export interface IFiltersInitialData {
     banks: BankDto[];
     cashflowTypes: FilterElementDtoOfString[];
-    categories: FilterElementDtoOfString[];
-    types: FilterElementDtoOfString[];
     currencies: FilterElementDtoOfString[];
     businessEntities: FilterElementDtoOfInt32[];
 }
@@ -35253,6 +35736,76 @@ export class UiCustomizationFooterSettingsEditDto implements IUiCustomizationFoo
 
 export interface IUiCustomizationFooterSettingsEditDto {
     fixedFooter: boolean;
+}
+
+export class ActivateUserForContactInput implements IActivateUserForContactInput {
+    contactId: number;
+
+    constructor(data?: IActivateUserForContactInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+        }
+    }
+
+    static fromJS(data: any): ActivateUserForContactInput {
+        let result = new ActivateUserForContactInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        return data; 
+    }
+}
+
+export interface IActivateUserForContactInput {
+    contactId: number;
+}
+
+export class ActivateUserForContactOutput implements IActivateUserForContactOutput {
+    userId: number;
+
+    constructor(data?: IActivateUserForContactOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+        }
+    }
+
+    static fromJS(data: any): ActivateUserForContactOutput {
+        let result = new ActivateUserForContactOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        return data; 
+    }
+}
+
+export interface IActivateUserForContactOutput {
+    userId: number;
 }
 
 export class PagedResultDtoOfUserListDto implements IPagedResultDtoOfUserListDto {
@@ -36637,8 +37190,8 @@ export enum CreateRuleDtoApplyOption {
 
 export enum ConditionDtoCashFlowAmountFormat {
     Unspecified = <any>"Unspecified", 
-    Credits = <any>"Credits", 
     Debits = <any>"Debits", 
+    Credits = <any>"Credits", 
 }
 
 export enum ConditionAttributeDtoConditionTypeId {
@@ -36661,8 +37214,8 @@ export enum MoveRuleDtoApplyOption {
 }
 
 export enum TransactionCommonDetailsDtoAmountFormat {
-    Credits = <any>"Credits", 
     Debits = <any>"Debits", 
+    Credits = <any>"Credits", 
 }
 
 export enum AccountDtoState {

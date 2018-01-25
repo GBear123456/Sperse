@@ -8,6 +8,7 @@
   </div>
 
   <div class="page-content-wrapper">
+    <contact-info-panel *ngIf="appService.showContactInfoPanel" [data]="appService.contactInfo"></contact-info-panel>
     <app-toolbar *ngIf="appService.toolbarConfig"
         [config]="appService.toolbarConfig"
         [adaptive]="appService.toolbarIsAdaptive"

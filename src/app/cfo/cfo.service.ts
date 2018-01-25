@@ -1,6 +1,6 @@
 import { Injectable, Input } from "@angular/core";
 import { AppService } from "app/app.service";
-import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus } from "shared/service-proxies/service-proxies";
+import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, CustomersServiceProxy } from "shared/service-proxies/service-proxies";
 import { ActivatedRoute } from "@angular/router";
 
 @Injectable()
@@ -12,8 +12,9 @@ export class CFOService {
     constructor(
         protected _route: ActivatedRoute,
         private _appService: AppService,
-        private _instanceServiceProxy: InstanceServiceProxy) {
-
+        private _instanceServiceProxy: InstanceServiceProxy,
+        private _customerService: CustomersServiceProxy
+    ) {
         _appService.subscribeModuleChange((config) => {
             this.instanceId = undefined;
             this.instanceType = undefined;
@@ -30,8 +31,18 @@ export class CFOService {
         });
     }
 
+    initContactInfo(userId) {
+        this._customerService.getContactInfoByUser(userId).subscribe(response => {
+            this._appService.contactInfo = response;
+        });
+    }
+
     instanceChangeProcess(callback: any = null) {
+        if (this.instanceId != null)
+            this._appService.setContactInfoVisibility(true);
         this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
+            if (this.instanceId && data.userId)
+                this.initContactInfo(data.userId);
             this.initialized = (data.status == GetStatusOutputStatus.Active) && data.hasSyncAccounts;
             let hasTransactions = this.initialized && data.hasTransactions;            
             this._appService.topMenu.items

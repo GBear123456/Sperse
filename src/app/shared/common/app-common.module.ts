@@ -7,8 +7,11 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { AbpModule } from '@abp/abp.module';
 import { CommonModule } from '@shared/common/common.module';
 
+import { MatProgressBarModule } from '@angular/material';
+
 import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule, DxMenuModule } from 'devextreme-angular';
 
+import { ContactInfoPanelComponent } from './contact-info-panel/contact-info-panel.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
 import { HeadLineComponent } from './headline/headline.component';
 import { TimeZoneComboComponent } from './timing/timezone-combo.component';
@@ -35,6 +38,8 @@ import { PaginatorModule } from 'primeng/primeng';
         DataTableModule,
         PaginatorModule,
 
+        MatProgressBarModule,
+
         DxListModule,
         DxButtonModule,
         DxToolbarModule,
@@ -48,7 +53,8 @@ import { PaginatorModule } from 'primeng/primeng';
         DateRangePickerComponent,
         DatePickerDirective,
         ToolBarComponent,
-        HeadLineComponent
+        HeadLineComponent,
+        ContactInfoPanelComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -57,7 +63,8 @@ import { PaginatorModule } from 'primeng/primeng';
         DateRangePickerComponent,
         DatePickerDirective,
         HeadLineComponent,
-        ToolBarComponent
+        ToolBarComponent,
+        ContactInfoPanelComponent
     ],
     providers: [
         DateTimeService,

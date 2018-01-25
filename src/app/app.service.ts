@@ -10,6 +10,13 @@ export class AppService extends AppServiceBase {
     public toolbarIsAdaptive = false;
     public toolbarIsHidden  = false;
 
+    public showPlatformSelectMenu = true;
+    public showNotificationsButton = true;
+    public showChatButton = true;
+    public showUserProfileMenu = true;
+    public showContactInfoPanel = false;
+    public contactInfo: any;
+
     constructor() {
         super(
             'CRM',
@@ -33,5 +40,10 @@ export class AppService extends AppServiceBase {
                 cfo: require('./cfo/module.config.json')
             },
         )
+    }
+
+    setContactInfoVisibility(value: boolean) {
+        this.showContactInfoPanel = value;
+        this.showPlatformSelectMenu = this.showNotificationsButton = this.showChatButton = this.showUserProfileMenu = !value;
     }
 }
