@@ -1,118 +1,125 @@
 :host {
-  header {
-      height: 82px;
-      background: #f3f7fa;
-      display: flex;
-      border-bottom: 1px solid #e5e9ec;
-      box-shadow: -2px 0px 6px 0 rgba(0, 0, 0, 0.1);
+    header {
+        height: 82px;
+        background: #f3f7fa;
+        display: flex;
+        border-bottom: 1px solid #e5e9ec;
+        box-shadow: -2px 0px 6px 0 rgba(0, 0, 0, 0.1);
+        align-items: center;
 
-      mat-progress-spinner {
-        width: 44px;
-        height: 44px;
-        margin: 5px 0px 5px 0px;
-      
-        /deep/ path {
-          stroke: #00aeef;
+        mat-progress-spinner {
+            width: 44px;
+            height: 44px;
+            margin: 5px 0px 5px 0px;
+
+            /deep/ path {
+                stroke: #00aeef;
+            }
         }
-      }
-  }
-
-  .full_name h1 {
-      margin-top: -2px;
-      font-weight: 400;
-      font-family: Montserrat;
-      font-size: 28px!important;
-      line-height: 1;
-      color: #202b35;
-  }
-
-  .avatar {
-      position: absolute;
-      margin: 24px 24px;
-      z-index: 1;
-  }
-
-  .avatar img {
-      border-radius: 50%;
-      height: 115px;
-      width: 115px;
-      background-color: #fff;
-  }
-
-  .avatar .active {
-      background: #37d749;
-      border-radius: 50%;
-      border: 2px solid #f3f7fa;
-      width: 14px;
-      height: 14px;
-      position: absolute;
-      top: 10px;
-      right: 10px;
-  }
-
-  mat-progress-bar {
-    width: 100px;
-    height: 3px;
-  }
-
-  /deep/ .mat-progress-bar-fill:after {
-    background-color: #00aeef;    
-  }
-
-  .personal_info {
-    margin: 28px 200px 0 150px;
-
-    .rating {
-      display: flex;
-      bottom: 6px;
-      align-items: center;
-      position: relative;
-      justify-content: flex-start;
-
-      & > * {
-        max-width: 50%;
-      }
-      mat-progress-bar {
-        margin-right: 10px;
-      }
     }
-  }
 
-  .header_financial_info {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-  }
+    .full_name h1 {
+        margin-top: -2px;
+        font-weight: 400;
+        font-family: Montserrat;
+        font-size: 28px !important;
+        line-height: 1;
+        color: #202b35;
+    }
 
-  .header_financial_info > div {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-  }
+    .avatar {
+        position: absolute;
+        margin: 42px 24px 24px 24px;
+        z-index: 1;
+    }
 
-  .header_financial_info > div > *{
-      max-width: 50%;
-      margin-top: 0;
-      margin-bottom: 0;
-  }
+    .avatar img {
+        border-radius: 50%;
+        height: 115px;
+        width: 115px;
+        background-color: #fff;
+    }
 
-  .header_financial_info h3.lab {
-      display: inline-block;
-  }
+    .avatar .active {
+        background: #37d749;
+        border-radius: 50%;
+        border: 2px solid #f3f7fa;
+        width: 14px;
+        height: 14px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
 
-  .header_financial_info .approved {
-      margin-right: 30px;
-  }
+    mat-progress-bar {
+        width: 100px;
+        height: 3px;
+    }
 
-  .header_financial_info .lab {
-      margin-right: 20px;
-  }
+    /deep/ .mat-progress-bar-fill:after {
+        background-color: #00aeef;
+    }
 
-  .header_financial_info span {
-      font-weight: 600;
-  }
+    .personal_info {
+        margin: 28px 200px 0 150px;
 
-  .header_financial_info .approved span {
-      color: #00aeef;
-  }
+        .rating {
+            display: flex;
+            bottom: 6px;
+            align-items: center;
+            position: relative;
+            justify-content: flex-start;
+
+            & > * {
+                max-width: 50%;
+            }
+
+            mat-progress-bar {
+                margin-right: 10px;
+            }
+        }
+    }
+
+    .header_financial_info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .header_financial_info > div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .header_financial_info > div > * {
+        max-width: 50%;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .header_financial_info h3.lab {
+        display: inline-block;
+    }
+
+    .header_financial_info .approved {
+        margin-right: 30px;
+    }
+
+    .header_financial_info .lab {
+        margin-right: 20px;
+    }
+
+    .header_financial_info span {
+        font-weight: 600;
+    }
+
+    .header_financial_info .approved span {
+        color: #00aeef;
+    }
+
+    .header_buttons {
+        margin-left: auto;
+        margin-right: 60px;
+    }
 }

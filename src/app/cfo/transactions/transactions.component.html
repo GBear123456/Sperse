@@ -6,8 +6,9 @@
                 <div class="categories" (mouseover)="categoriesShowed = true">
                     <categorization 
                         [width]="'340px'"
-                        [height]="'calc(100vh - 250px)'"
+                        [height]="'calc(100vh - 270px)'"
                         [showTitle]="true"
+                        [showClearSelection]="true"
                         [dragMode]="dragInProgress"
                         (close)="categoriesShowed = false"                          
                         [instanceType]="instanceType"

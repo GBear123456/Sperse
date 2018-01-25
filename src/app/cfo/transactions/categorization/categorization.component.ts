@@ -23,11 +23,12 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     @Output() onTransactionDrop: EventEmitter<any> = new EventEmitter();
 
     @Input() instanceId: number;
-    @Input() instanceType: string;    
+    @Input() instanceType: string;
 
     @Input() width: string;
     @Input() height: string;
     @Input() showTitle: boolean;
+    @Input() showClearSelection: boolean;
     @Input() categoryId: number;
     @Input('dragMode')
     set dragMode(value: boolean) {
@@ -66,11 +67,11 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         $event.element.find('tr[aria-level="2"]')
             .off('dragenter').off('dragover').off('dragleave').off('drop')
             .on('dragenter', (e) => {
-                e.originalEvent.preventDefault(); 
+                e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
                 if (dragEnterTarget && dragEnterTarget != e.currentTarget)
-                    dragEnterTarget.classList.remove('drag-hover');    
+                    dragEnterTarget.classList.remove('drag-hover');
 
                 dragEnterTarget = e.currentTarget;
                 e.currentTarget.classList.add('drag-hover');
@@ -84,7 +85,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 if (dragEnterTarget != e.currentTarget)
                     e.currentTarget.classList.remove('drag-hover');
             }).on('drop', (e) => {
-                e.originalEvent.preventDefault(); 
+                e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
                 this.onTransactionDrop.emit({
@@ -248,5 +249,9 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             $event.component.editRow($event.rowIndex);
         }
         this._prevClickDate = nowDate;
+    }
+
+    clearSelection(e) {
+        this.categoryList.instance.deselectAll();
     }
 }
