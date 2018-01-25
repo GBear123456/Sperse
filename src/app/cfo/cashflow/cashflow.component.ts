@@ -989,8 +989,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** Move the year to the years array if it is unique */
             let date = cashflowItem.initialDate;
             let transactionYear = date.year();
+            let formatedDate = date.format('YYYY-MM-DD');
             if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
-            if (existingDates.indexOf(date) === -1) existingDates.push(date.format('YYYY-MM-DD'));
+            if (existingDates.indexOf(formatedDate) === -1) existingDates.push(formatedDate);
             if (!minDate || cashflowItem.date < minDate)
                 minDate = date;
             if (!maxDate || cashflowItem.date > maxDate)
@@ -1018,7 +1019,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             [this.categorization[0]]: firstAccountId
                         },
                         'accountId': firstAccountId,
-                        'date': date.add(new Date().getTimezoneOffset(), 'minutes'),
+                        'date': date.add(date.toDate().getTimezoneOffset(), 'minutes'),
                         'initialDate': date
                     })
                 );
