@@ -11,6 +11,7 @@ import { TransactionsComponent } from './transactions/transactions.component';
 import { CategorizationComponent } from './transactions/categorization/categorization.component';
 import { SetupStepComponent } from './shared/common/setup-steps/setup-steps.component';
 import { SynchProgressComponent } from './shared/common/synch-progress/synch-progress.component';
+import { AccountsSynchStatusComponent } from './start/dashboard/accounts-synch-status/accounts-synch-status.component';
 
 import { ModalModule } from 'ngx-bootstrap';
 
@@ -120,7 +121,8 @@ import {CategorizationStatusComponent} from '@app/cfo/start/dashboard/categoriza
         CFOModalDialogComponent,
         TrendByPeriodComponent,
         AccountsComponent,
-        CategorizationStatusComponent
+        CategorizationStatusComponent,
+        AccountsSynchStatusComponent
     ],
     entryComponents: [
         RuleDialogComponent,

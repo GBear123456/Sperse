@@ -8,9 +8,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 export class ContactInfoPanelComponent extends AppComponentBase implements OnInit {
   @Input()
-  data: { 
-    name?: string;
-  };
+  data: any;
 
   person = {
     id: 1,
