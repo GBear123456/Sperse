@@ -792,6 +792,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
             }
         });
+
         /** for all accounts that are absent add stub empty transactions to show
          *  the empty accounts anyway */
         allAccountsIds.filter(accountId => accountId).forEach(accountId => {
@@ -859,7 +860,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         const data = transactions.reduce((result, transactionObj) => {
             transactionObj.categorization = {};
             transactionObj.initialDate = moment(transactionObj.date);
-            transactionObj.date.add(new Date().getTimezoneOffset(), 'minutes');
+            transactionObj.date.add(transactionObj.date.toDate().getTimezoneOffset(), 'minutes');
             /** change the second level for started balance and reconciliations for the account id */
             if (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation) {
                 if (transactionObj.cashflowTypeId === StartedBalance) {
@@ -986,25 +987,31 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         cashflowData.forEach(cashflowItem => {
             /** Move the year to the years array if it is unique */
-            let transactionYear = cashflowItem.date.year();
-            let date = cashflowItem.initialDate.format('DD.MM.YYYY');
+            let date = cashflowItem.initialDate;
+            let transactionYear = date.year();
+            let formatedDate = date.format('YYYY-MM-DD');
             if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
-            if (existingDates.indexOf(date) === -1) existingDates.push(date);
-            if (!minDate || cashflowItem.initialDate < minDate)
-                minDate = moment(cashflowItem.initialDate);
-            if (!maxDate || cashflowItem.initialDate > maxDate)
-                maxDate = moment(cashflowItem.initialDate);
+            if (existingDates.indexOf(formatedDate) === -1) existingDates.push(formatedDate);
+            if (!minDate || cashflowItem.date < minDate)
+                minDate = date;
+            if (!maxDate || cashflowItem.date > maxDate)
+                maxDate = date;
             if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
         });
         allYears = allYears.sort();
 
-        if (this.requestFilter.startDate && this.requestFilter.startDate < minDate) minDate = moment(this.requestFilter.startDate);
-        if (this.requestFilter.endDate && this.requestFilter.endDate > maxDate) maxDate = moment(this.requestFilter.endDate);
+        if (this.requestFilter.startDate && this.requestFilter.startDate < minDate) minDate = this.requestFilter.startDate;
+        if (this.requestFilter.endDate && this.requestFilter.endDate > maxDate) maxDate = this.requestFilter.endDate;
 
         /** cycle from started date to ended date */
         /** added fake data for each date that is not already exists in cashflow data */
-        for (let date = moment(minDate); date <= maxDate; date.add(1, 'days') ) {
-            if (existingDates.indexOf(date.format('DD.MM.YYYY')) === -1) {
+  
+        let startDate = new Date(moment.utc(minDate).format("YYYY-MM-DD"));
+        let endDate = new Date(moment.utc(maxDate).format("YYYY-MM-DD"));
+
+        while(startDate <= endDate){
+            let date = moment.utc(startDate, "YYYY-MM-DD");
+            if (existingDates.indexOf(date.format('YYYY-MM-DD')) === -1) {
                 stubCashflowData.push(
                     this.createStubTransaction({
                         'cashflowTypeId': StartedBalance,
@@ -1012,11 +1019,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             [this.categorization[0]]: firstAccountId
                         },
                         'accountId': firstAccountId,
-                        'date': moment(date).add(new Date().getTimezoneOffset(), 'minutes'),
+                        'date': date.add(date.toDate().getTimezoneOffset(), 'minutes'),
                         'initialDate': date
                     })
                 );
             }
+            startDate = new Date(startDate.setDate(startDate.getDate() + 1));
         }
 
         /** Add stub for current period */
@@ -1038,6 +1046,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 })
             );
         }
+
         return stubCashflowData;
     }
 

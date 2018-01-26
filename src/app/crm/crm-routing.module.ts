@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { ClientsComponent } from './clients/clients.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
@@ -27,18 +27,5 @@ import { EditionsComponent } from './editions/editions.component';
     ]
 })
 export class CrmRoutingModule {
-
-  constructor(private router: Router) {
-    router.events.subscribe(() => {
-      this.hideOpenJTableDropdownMenus();
-    });
-  }
-
-  hideOpenJTableDropdownMenus(): void {
-    let $dropdownMenus = $('.dropdown-menu.tether-element');
-    $dropdownMenus.css({
-      'display': 'none'
-    });
-  }
-
+  constructor() { }
 }

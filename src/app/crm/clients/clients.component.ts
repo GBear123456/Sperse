@@ -14,7 +14,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateOrEditClientModalComponent } from './create-or-edit-client-modal.component';
 
 import { AppService } from '@app/app.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -65,7 +64,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     };
 
     constructor(injector: Injector,
-        private _permissionChecker: PermissionCheckerService,
         private _router: Router,
         private _appService: AppService,
         private _filtersService: FiltersService,
@@ -93,7 +91,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     private checkCFOClientAccessPermission() {
-        return this._permissionChecker.isGranted('Pages.CFO.ClientAccess');
+        return this.isGranted('Pages.CFO.ClientAccess');
     }
 
     showColumnChooser() {

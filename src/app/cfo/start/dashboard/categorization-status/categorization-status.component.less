@@ -5,14 +5,6 @@
         align-items: center;
         justify-content: space-between;
         
-        .title {
-            color: #212C36;
-            font-size: 18px;
-            font-weight: 500;
-            line-height: 24px;
-            margin-bottom: 0;
-        }
-        
         .view-more {
             color: #00AEEF;
             font-size: 12px;
@@ -31,10 +23,13 @@
         outline: none;
         border: none;
         height: 26px;
-        padding: 2px 15px 3px;
+        padding: 3px 15px 2px;
         color: #fff !important;
         cursor: pointer;
+        width: 175px;
         transition: .25s;
+        display: inline-block;
+        text-align: center;
         &:hover {
             background: lighten(#00aeef, 5%);
         }
@@ -62,10 +57,19 @@
         align-self: center;
     }
     
+    .title {
+        color: #212C36;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 24px;
+        margin-bottom: 0;
+    }
+
     .category-synch-list {
         list-style-type: none;
-        padding-left: 20px;
+        padding-left: 0;
         margin-bottom: 0;
+        
         .category-synch-item {
             padding: 10px 0;
             
@@ -91,6 +95,8 @@
                 letter-spacing: 0.2px;
                 line-height: 17px;
                 font-weight: 500;
+                width: 195px;
+                display: inline-block;
             }
             .synch-status {
                 float: right;

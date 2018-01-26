@@ -1,0 +1,15 @@
+<header>
+        <div class="avatar">
+            <div class="active"></div>
+            <img src="{{ data?.photo ? 'data:image/png;base64,' + data.photo.thumbnail: person.person_photo_url }}" alt="Person Photo">
+        </div>
+        <div class="personal_info">
+            <div class="full_name">
+                <h1 *ngIf="data && data?.fullName">{{ data?.fullName }}</h1>
+            </div>
+            <div class="rating">
+              <mat-progress-bar color="#2fb8f0" value="{{ person.rating * 10}}"></mat-progress-bar>
+              <span class="rating_int">{{person.rating}}/10</span>
+            </div>
+        </div>
+</header>

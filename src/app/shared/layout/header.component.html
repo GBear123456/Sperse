@@ -1,6 +1,6 @@
 <div class="page-header navbar navbar-fixed-top md-shadow-zero-light">
     <div class="page-header-inner">
-        <div class="page-logo">
+        <div class="page-logo" *ngIf="!_appService.showContactInfoPanel">
             <a routerLink="/" target="_blank">
                 <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/common/images/sperse-logo.png" alt="logo" class="logo-layout" />
                 <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" class="logo-layout" />			
@@ -30,16 +30,16 @@
                                     </ul>
                                 </li>
 
-                                <li headerNotifications class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width" data-dropdown-toggle="click" data-dropdown-persistent="true" id="header_notification_bar"></li>
+                                <li *ngIf="_appService.showNotificationsButton" headerNotifications class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width" data-dropdown-toggle="click" data-dropdown-persistent="true" id="header_notification_bar"></li>
 
-                                <li *ngIf="chatEnabled && !chatConnected" class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width">
+                                <li *ngIf="chatEnabled && !chatConnected && _appService.showChatButton" class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width">
                                     <a href="javascript:;" class="m-nav__link">
                                         <span class="m-nav__link-icon">
                                             <img *ngIf="!chatConnected" src="./assets/common/images/loading.gif" style="width: 23px;" tooltip="{{l('ChatIsConnecting')}}" placement="left" />
                                         </span>
                                     </a>
                                 </li>
-                                <li [hidden]="!chatEnabled || !chatConnected" id="m_quick_sidebar_toggle" class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width">
+                                <li [hidden]="!chatEnabled || !chatConnected || !_appService.showChatButton" id="m_quick_sidebar_toggle" class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width">
                                     <a href="javascript:;" class="m-nav__link m-dropdown__toggle">
                                         <span class="m-nav__link-icon">
                                             <img src="./assets/common/icons/feedback.svg">
@@ -47,7 +47,7 @@
                                         <span class="m-badge m-badge--danger" [ngClass]="{'d-none': !unreadChatMessageCount}" id="UnreadChatMessageCount">{{unreadChatMessageCount}}</span>
                                     </a>
                                 </li>
-                                <li class="m-nav__item m-topbar__user-profile m-topbar__user-profile--img  m-dropdown m-dropdown--medium m-dropdown--arrow m-dropdown--header-bg-fill m-dropdown--align-right m-dropdown--mobile-full-width m-dropdown--skin-light" data-dropdown-toggle="click">
+                                <li *ngIf="_appService.showUserProfileMenu" class="m-nav__item m-topbar__user-profile m-topbar__user-profile--img  m-dropdown m-dropdown--medium m-dropdown--arrow m-dropdown--header-bg-fill m-dropdown--align-right m-dropdown--mobile-full-width m-dropdown--skin-light" data-dropdown-toggle="click">
                                     <a href="javascript:;" class="m-nav__link m-dropdown__toggle">
                                         <!-- span class="m-topbar__username m--font-primary">
                                             <i *ngIf="isImpersonatedLogin" class="fa fa-reply m--font-danger"></i>

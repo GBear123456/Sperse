@@ -3,7 +3,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { SetupStepComponent } from '../../shared/setup-steps/setup-steps.component';
+import { SetupStepComponent } from '../../shared/common/setup-steps/setup-steps.component';
 import { Router } from '@angular/router';
 import { InstanceServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { AppService } from 'app/app.service';
@@ -27,6 +27,11 @@ export class SetupComponent extends CFOComponentBase implements OnInit {
         super(injector);
     }
 
+    private finishSetup() {
+        this._cfoService.instanceChangeProcess();
+        this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
+}
+
     ngOnInit(): void {
         super.ngOnInit();
 
@@ -39,9 +44,11 @@ export class SetupComponent extends CFOComponentBase implements OnInit {
 
     onStart(): void {
         this.isDisabled = true;
-        this._instanceServiceProxy.setup(InstanceType[this.instanceType]).subscribe((data) => {
-            this._cfoService.instanceChangeProcess();
-            this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
-        });
+        if (this._cfoService.instanceId != null)
+            this.finishSetup();
+        else
+            this._instanceServiceProxy.setup(InstanceType[this.instanceType]).subscribe((data) => {
+                this.finishSetup();
+            });
     }
 }

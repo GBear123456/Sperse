@@ -53,7 +53,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private cashFlowCategoryFilter = [];
 
     public dragInProgress = false;
-    public categoriesShowed = false;
     public selectedCashflowCategoryKey: any;
 
     public accountCount: number;
@@ -78,6 +77,20 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         buttons: []
     };
 
+    private _categoriesShowed = true;
+    public set categoriesShowed(value: boolean) {        
+        if (this._categoriesShowed = value) {
+            this.filtersService.fixed = false;
+            this.filtersService.disable();
+            this.initToolbarConfig();
+        }
+    }
+
+    public get categoriesShowed(): boolean {
+        return this._categoriesShowed;
+    }
+
+
     initToolbarConfig() {
         this._appService.toolbarConfig = [
             {
@@ -97,10 +110,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             },
                             mouseover: (event) => {
                                 this.filtersService.enable();
+                                this.categoriesShowed = false;
                             },
                             mouseout: (event) => {
-                                if (!this.filtersService.fixed)
+                                if (!this.filtersService.fixed) {
                                     this.filtersService.disable();
+                                    this.categoriesShowed = true;
+                                }
                             }
                         },
                         attr: {
@@ -580,11 +596,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.selectedCashflowCategoryKey = key;
     }
 
-    onSelectionChanged($event) {
+    onSelectionChanged($event, initial = false) {
         let img = new Image(),
             transactionKeys = this.dataGrid.instance.getSelectedRowKeys();
         img.src = 'assets/common/images/transactions.png';
-        this.categoriesShowed = Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length);
+        if (!initial && (Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length)))
+            this.categoriesShowed = true;
         $event.element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend')
             .filter('.dx-selection').attr('draggable', true).on('dragstart', (e) => {
                 this.dragInProgress = true;
@@ -606,7 +623,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onContentReady($event) {
-        this.onSelectionChanged($event);
+        this.onSelectionChanged($event, true);
     }
 
     openCategorizationWindow($event) {

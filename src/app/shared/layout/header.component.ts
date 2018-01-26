@@ -29,6 +29,7 @@ import { SubscriptionStartType, EditionPaymentType } from '@shared/AppEnums';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { AppService } from 'app/app.service';
 
 @Component({
     templateUrl: './header.component.html',
@@ -76,7 +77,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         private _linkedAccountService: LinkedAccountService,
         private _userNotificationHelper: UserNotificationHelper,
         private _sessionService: SessionServiceProxy,
-        private _appSessionService: AppSessionService
+        private _appSessionService: AppSessionService,
+        public _appService: AppService
     ) {
         super(injector);
     }

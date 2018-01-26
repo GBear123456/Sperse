@@ -135,6 +135,33 @@
                 font-weight: 400;
                 outline: none;
             }
+            .close {
+                top: 8px;
+                right: -10px;
+                width: 20px;
+                height: 20px;
+                float: right;
+                cursor: pointer;
+                position: relative;
+
+                &:after, &:before {
+                    position: absolute;
+                    top: 0px;
+                    left: 8px;
+                    content: ' ';
+                    height: 20px;
+                    width: 2px;
+                    background-color: #1b1b1b;
+                }
+
+                &:before {
+                    transform: rotate(45deg);
+                }
+
+                &:after {
+                    transform: rotate(-45deg);
+                }
+            }
 
             /deep/ .dx-button {
                 width: 104px;
@@ -274,7 +301,7 @@
 
     .sidebar-filters {
         position: absolute;
-        top: -70px;
+        top: -130px;
         left: 340px;
         width: 20vw;
         min-width: 435px;
@@ -289,7 +316,8 @@
             width: 42px;
             height: 40px;
             top: 15px;
-            left: -42px;
+            right: -42px;
+            transform: rotate(180deg);
             cursor: pointer;
             border-radius: 5px 0px 0px 5px;
             border-right: none;

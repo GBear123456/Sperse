@@ -1,4 +1,5 @@
 <dx-drop-down-box
+  *ngIf="_appService.showPlatformSelectMenu"
   width="700px"
   [value]="module"
   [dataSource]="modules"
