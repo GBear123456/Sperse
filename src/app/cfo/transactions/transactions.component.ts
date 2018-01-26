@@ -101,8 +101,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            this.categoriesShowed = 
-                                this.filtersService.fixed;
                             this.filtersService.fixed =
                                 !this.filtersService.fixed;
                         },
@@ -112,6 +110,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             },
                             mouseover: (event) => {
                                 this.filtersService.enable();
+                                this.categoriesShowed = false;
                             },
                             mouseout: (event) => {
                                 if (!this.filtersService.fixed) {
