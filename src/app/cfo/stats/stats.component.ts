@@ -66,11 +66,18 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         'startingBalance',
         'income',
         'expenses',
+        'netChange',
         'endingBalance',
         'forecastStartingBalance',
         'forecastIncome',
         'forecastExpenses',
+        'forecastNetChange',
         'forecastEndingBalance'
+    ];
+    leftSideBarItems = [
+        'leftSideBarMonthlyTrendCharts',
+        'leftSideBarDailyTrendCharts',
+        'leftKeyMetricsKPI'
     ];
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
@@ -250,7 +257,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     calculateChartsSize() {
         let chartsHeight = window.innerHeight - 410;
         this.chartsHeight =  chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
-        this.chartsWidth = window.innerWidth;
+        this.chartsWidth = window.innerWidth - 371;
     }
 
     /** Calculates the height of the charts scrollable height after resizing */
@@ -538,12 +545,20 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         };
     }
 
+    /** @todo move to service and refactor */
     getTooltipInfoHtml(pointInfo) {
         let html = '';
         let pointDataObject = this.statsData.find(item => item.date.toDate().toString() == pointInfo.argument);
         this.barChartTooltipFieldsNames.forEach(fieldName => {
             if (pointDataObject[fieldName] !== null && pointDataObject[fieldName] !== undefined) {
-                html += `${this.l('Stats_' + fieldName)} : ${pointDataObject[fieldName]}<br>`;
+                html += `${this.l('Stats_' + fieldName)} : <span style="float: right; font-family: Lato; margin-left: 10px">${pointDataObject[fieldName].toLocaleString('en-EN', {style: 'currency',  currency: 'USD' })}</span>`;
+                if (fieldName === 'startingBalance' ||
+                    fieldName === 'forecastStartingBalance' ||
+                    fieldName === 'netChange' ||
+                    fieldName === 'forecastNetChange')
+                    html += '<hr style="margin: 5px 0"/>';
+                else
+                    html += '<br>';
             }
         });
         return html;

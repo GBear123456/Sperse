@@ -1,19 +1,20 @@
 <header>
     <div class="left-section">
         <h2 class="title">{{ls('CFO', 'TrendByPeriod_Title')}}</h2>
-        <a [routerLink]="moreStatisticLink" class="view-stats">{{ls('CFO', 'TrendByPeriod_ViewStats')}}</a>
-        <p>Lorem ipsum dolor stl amet adlplscing consectetur fo elit</p>
     </div>
     <div class="right-section">
-        <mat-tab-group [selectedIndex]="selectedPeriodIndex" (selectedIndexChange)="onSelectChange($event)">
-            <mat-tab [label]="ls('Platform', 'Periods_Day')"></mat-tab>
-            <mat-tab [label]="ls('Platform', 'Periods_Week')"></mat-tab>
-            <mat-tab [label]="ls('Platform', 'Periods_Month')"></mat-tab>
-        </mat-tab-group>
+        <dx-select-box
+            [dataSource]="periods"
+            valueExpr="key"
+            displayExpr="text"
+            [value]="selectedPeriod.key"
+            (onValueChanged)="onSelectChange($event)">
+        </dx-select-box>
     </div>
 </header>
-<div class="row">
+<div>
     <dx-chart
+        [hidden]="!trendData || !trendData.length"
         id="bar"
         [dataSource]="trendData"
         defaultPane="bottomPane"
@@ -34,10 +35,24 @@
             [customizeTooltip]="customizeBarTooltip">
         </dxo-tooltip>
 
-        <dxi-series [color]="historicalIncomeColor" valueField="income" name="historical"></dxi-series>
-        <dxi-series [color]="historicalExpensesColor" valueField="expenses" name="historicalExpenses"></dxi-series>
+        <dxi-series [color]="historicalIncomeColor" valueField="income" name="{{ls('CFO', 'Stats_income')}}"></dxi-series>
+        <dxi-series [color]="historicalExpensesColor" valueField="expenses" name="{{ls('CFO', 'Stats_expenses')}}"></dxi-series>
         <dxi-series [color]="forecastIncomeColor" valueField="forecastIncome" [showInLegend]="false" name="forecast"></dxi-series>
         <dxi-series [color]="forecastExpensesColor" valueField="forecastExpenses" [showInLegend]="false" name="forecastExpenses"></dxi-series>
+        <dxi-series
+            type="line"
+            [color]="historicalNetChangeColor"
+            valueField="netChange"
+            name="netChange"
+            [showInLegend]="false">
+        </dxi-series>
+        <dxi-series
+            type="line"
+            [color]="forecastNetChangeColor"
+            valueField="forecastNetChange"
+            name="forecastNetChange"
+            [showInLegend]="false">
+        </dxi-series>
 
         <!-- Bottom axis -->
         <dxo-argument-axis
@@ -48,7 +63,13 @@
             <!--<dxo-tick-interval months="1"></dxo-tick-interval>-->
         </dxo-argument-axis>
 
-        <dxo-legend [visible]="true"></dxo-legend>
+        <dxo-legend
+            [visible]="true"
+            itemsAlignment="right"
+            itemTextPosition="right"
+            orientation="horizontal"
+            position="inside">
+        </dxo-legend>
 
         <!-- Left axis -->
         <dxi-value-axis>
@@ -71,4 +92,5 @@
             </dxo-strip-style>
         </dxo-common-axis-settings>
     </dx-chart>
+    <app-no-data [hidden]="loading || (trendData && trendData.length)"></app-no-data>
 </div>

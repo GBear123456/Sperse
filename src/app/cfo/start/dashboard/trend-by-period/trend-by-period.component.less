@@ -1,4 +1,5 @@
 :host {
+    height: 479px;
     border: 1px solid #E5E9EC;
     background-color: #FFFFFF;
     border-radius: 4px;
@@ -10,67 +11,93 @@
         justify-content: space-between;
         font-weight: 500;
         .left-section {
+            margin-bottom: 15px;
             .title {
                 font-size: 18px;
                 font-weight: 700;
-                letter-spacing: normal;
                 color: #212c36;
-                float: left;
+                margin: 0;
+                height: 100%;
+                line-height: 34px;
             }
-            .view-stats {
-                float: right;
-                font-size: 12px;
-                letter-spacing: 0.2px;
-                color: #00aeef;
-                position: relative;
-                padding-right: 14px;
-                &:after {
-                    content: '';
-                    background: url('../../../../../assets/common/icons/arrow-right-trend-by.svg');
-                    width: 6px;
-                    height: 10px;
-                    right: 0;
-                }
-            }
-            p {
-                font-size: 14px;
-                letter-spacing: 0.3px;
-                color: #677380;
-                clear: both;
-            }
+            //.view-stats {
+            //    float: right;
+            //    font-size: 12px;
+            //    letter-spacing: 0.2px;
+            //    color: #00aeef;
+            //    position: relative;
+            //    padding-right: 14px;
+            //    &:after {
+            //        content: '';
+            //        background: url('../../../../../assets/common/icons/arrow-right-trend-by.svg');
+            //        width: 6px;
+            //        height: 10px;
+            //        right: 0;
+            //    }
+            //}
+            //p {
+            //    font-size: 14px;
+            //    letter-spacing: 0.3px;
+            //    color: #677380;
+            //    clear: both;
+            //}
         }
         .right-section {
-            /deep/ mat-tab-header {
-                border-bottom: none;
-                .mat-tab-label {
-                    font-size: 14px;
-                    letter-spacing: 0.3px;
-                    color: #677380;
-                    padding: 0;
-                    min-width: 0;
-                    margin: 0 12px;
-                    &.mat-tab-label-active {
-                        color: #212c36;
-                        font-weight: 700;
-                    }
-                    &:first-of-type,
-                    &:last-of-type{
-                        margin: 0;
-                    }
-                    &:first-of-type {
-                        margin-right: 12px;
-                    }
-                    &:last-of-type {
-                        margin-left: 12px;
-                    }
-                    .mat-ripple-element {
-                        background-color: initial
-                    }
-                }
-                .mat-ink-bar {
-                    background-color: #32bef2;
-                }
+            ///deep/ mat-tab-header {
+            //    border-bottom: none;
+            //    .mat-tab-label {
+            //        font-size: 14px;
+            //        letter-spacing: 0.3px;
+            //        color: #677380;
+            //        padding: 0;
+            //        padding-bottom: 10px;
+            //        height: 25px;
+            //        min-width: 0;
+            //        margin: 0 12px;
+            //        &.mat-tab-label-active {
+            //            color: #212c36;
+            //            font-weight: 700;
+            //        }
+            //        &:first-of-type,
+            //        &:last-of-type{
+            //            margin: 0;
+            //        }
+            //        &:first-of-type {
+            //            margin-right: 12px;
+            //        }
+            //        &:last-of-type {
+            //            margin-left: 12px;
+            //        }
+            //        .mat-ripple-element {
+            //            background-color: initial
+            //        }
+            //    }
+            //    .mat-ink-bar {
+            //        background-color: #32bef2;
+            //    }
+            //}
+            /deep/ dx-select-box {
+                //.dx-texteditor-input {
+                //    padding: 0;
+                //    padding-right: 34px;
+                //}
             }
+        }
+    }
+    app-no-data {
+        padding-top: 87px;
+    }
+    dx-chart {
+        position: relative;
+        color: red;
+        font-size: 36.9px;
+        color: rgba(99, 107, 114, .08);
+        font-weight: 700;
+        @media screen and (max-width: 1024px) {
+            font-size: 30px
+        }
+        .yearArgument {
+            font-size: 10px;
         }
     }
 }
