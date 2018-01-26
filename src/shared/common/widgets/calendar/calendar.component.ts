@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, OnDestroy, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '../../app-component-base';
+import * as moment from 'moment';
 
 let JQCalendarInit = require('jquery-calendar');
 
@@ -29,6 +30,9 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
 
     constructor(injector: Injector) {
         super(injector);
+
+        moment.tz.setDefault();
+        (window as any).moment.tz.setDefault();
     }
 
     private setDateRageValues() {
@@ -62,5 +66,8 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
         this.calendar.off('datepicker-change');
         this.calendar.off('datepicker-first-date-selected');
         this.calendar.data('dateRangePicker').destroy();
+
+        moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
+        (window as any).moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
     }
 }

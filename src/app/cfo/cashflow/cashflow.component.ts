@@ -860,7 +860,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         const data = transactions.reduce((result, transactionObj) => {
             transactionObj.categorization = {};
             transactionObj.initialDate = moment(transactionObj.date);
-            transactionObj.date.add(new Date().getTimezoneOffset(), 'minutes');
+            transactionObj.date.add(transactionObj.date.toDate().getTimezoneOffset(), 'minutes');
             /** change the second level for started balance and reconciliations for the account id */
             if (transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation) {
                 if (transactionObj.cashflowTypeId === StartedBalance) {
