@@ -9,8 +9,9 @@ import { DashboardComponent } from './start/dashboard/dashboard.component';
 import { BankAccountsComponent } from './bank-accounts/bank-accounts.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { CategorizationComponent } from './transactions/categorization/categorization.component';
-import { SetupStepComponent } from './shared/setup-steps/setup-steps.component';
-import { SynchProgressComponent } from './shared/synch-progress/synch-progress.component';
+import { SetupStepComponent } from './shared/common/setup-steps/setup-steps.component';
+import { SynchProgressComponent } from './shared/common/synch-progress/synch-progress.component';
+import { AccountsSynchStatusComponent } from './start/dashboard/accounts-synch-status/accounts-synch-status.component';
 
 import { ModalModule } from 'ngx-bootstrap';
 
@@ -26,7 +27,6 @@ import { CFOModalDialogComponent } from './shared/common/dialogs/modal/cfo-modal
 import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
-import { DashboardModule } from './shared/dashboard/dashboard.module';
 
 import { MatTabsModule, MatDialogModule } from '@angular/material';
 
@@ -62,6 +62,8 @@ import {
     DxTabsModule
 } from 'devextreme-angular';
 import { TrendByPeriodComponent } from './start/dashboard/trend-by-period/trend-by-period.component';
+import {AccountsComponent} from '@app/cfo/start/dashboard/accounts/accounts.component';
+import {CategorizationStatusComponent} from '@app/cfo/start/dashboard/categorization-status/categorization-status.component';
 
 @NgModule({
     imports: [
@@ -95,7 +97,6 @@ import { TrendByPeriodComponent } from './start/dashboard/trend-by-period/trend-
         DxChartModule,
         MatTabsModule,
         MatDialogModule,
-        DashboardModule,
         RoundProgressModule
     ],
     declarations: [
@@ -118,7 +119,10 @@ import { TrendByPeriodComponent } from './start/dashboard/trend-by-period/trend-
         SortingComponent,
         NoDataComponent,
         CFOModalDialogComponent,
-        TrendByPeriodComponent
+        TrendByPeriodComponent,
+        AccountsComponent,
+        CategorizationStatusComponent,
+        AccountsSynchStatusComponent
     ],
     entryComponents: [
         RuleDialogComponent,

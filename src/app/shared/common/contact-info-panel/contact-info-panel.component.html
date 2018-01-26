@@ -5,7 +5,7 @@
         </div>
         <div class="personal_info">
             <div class="full_name">
-                <h1 *ngIf="data && data?.fullName; else loading">{{ data?.fullName }}</h1>
+                <h1 *ngIf="data && data?.fullName">{{ data?.fullName }}</h1>
             </div>
             <div class="rating">
               <mat-progress-bar color="#2fb8f0" value="{{ person.rating * 10}}"></mat-progress-bar>

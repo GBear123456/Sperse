@@ -1,7 +1,7 @@
 <div *ngIf="!completed && synchData" class="synch-progress-wrapper">
     <div id="synchProgressContainer" class="synch-container" (mouseenter)="toggleTooltip()">
         <dx-load-indicator class="load-indicator"></dx-load-indicator>
-        <h3>{{ls('Platform', 'Sync status:')}}</h3>
+        <h3>{{l('Sync_status')}}</h3>
         <dx-progress-bar #progressBar
                          id="progress-bar-status"
                          width="162"
@@ -18,7 +18,7 @@
                 [(visible)]="tooltipVisible">
         <div *dxTemplate="let data = data of 'content'">
             <div class="tooltip-container">
-                <h3>{{l('Accounts synchronization status')}}:</h3>
+                <h3>{{l('Accounts_synchronization_status')}}:</h3>
                 <dx-scroll-view [showScrollbar]="onHover" [height]="calculateChartsScrolableHeight()">
                     <div class="row">
                         <div class="col-4">

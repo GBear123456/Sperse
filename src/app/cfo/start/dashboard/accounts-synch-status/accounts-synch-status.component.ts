@@ -1,5 +1,6 @@
 import {Component, Injector, OnInit} from '@angular/core';
-import {CFOComponentBase} from '@app/cfo/shared/common/cfo-component-base';
+import {CFOComponentBase} from 'app/cfo/shared/common/cfo-component-base';
+import {AppConsts} from "@shared/AppConsts";
 
 @Component({
     selector: 'app-accounts-synch-status',
@@ -12,9 +13,10 @@ export class AccountsSynchStatusComponent extends CFOComponentBase implements On
         {accName: 'Merrill Lynch', progress: 68, isDone: false},
         {accName: 'City Bank', progress: 23, isDone: false}
     ];
-    
+
     constructor(injector: Injector) {
         super(injector);
+        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit() {

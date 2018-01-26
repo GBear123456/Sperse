@@ -19,7 +19,7 @@ export class PlatformSelectComponent extends AppComponentBase {
     private _dropDown: any;
 
     constructor(injector: Injector,
-                private _appService: AppService,
+                public _appService: AppService,
                 private _router: Router) {
         super(injector);
         
