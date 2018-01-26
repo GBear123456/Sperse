@@ -144,6 +144,26 @@
         border-radius:0;
     }
 
+    .day.toMonth.valid.real-today.tmp {
+        &.checked, &.hovering {
+            background-color: #e7f7ff!important;
+            position: relative;
+            z-index: 1;
+            &:before {
+                content: '';
+                width: 43px;
+                height: 43px;
+                display: block;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                background: rgb(255, 230, 132);
+                z-index: -1;
+                border-radius: 50%;
+            }
+        }
+    }
+
     table .caption {
       height: 41px;
       border-radius: 2px;
