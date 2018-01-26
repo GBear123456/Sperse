@@ -31,8 +31,8 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
     constructor(injector: Injector) {
         super(injector);
 
-        moment.tz.setDefault();
-        (window as any).moment.tz.setDefault();
+        moment.tz.setDefault(undefined);
+        (window as any).moment.tz.setDefault(undefined);
     }
 
     private setDateRageValues() {
