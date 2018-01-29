@@ -34,7 +34,7 @@ import { SortingComponent } from '@app/cfo/shared/common/sorting/sorting.compone
 
 import { CFOService } from './cfo.service';
 import { InstanceServiceProxy, CustomersServiceProxy } from '@shared/service-proxies/service-proxies';
-import {RoundProgressModule} from 'angular-svg-round-progressbar';
+import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import {
     DxButtonModule,

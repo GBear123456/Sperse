@@ -764,9 +764,10 @@ export class BankAccountsServiceProxy {
      * @accounts (optional) 
      * @startDate (optional) 
      * @endDate (optional) 
+     * @maxCount (optional) 
      * @return Success
      */
-    getStats(instanceType: InstanceType2, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
+    getStats(instanceType: InstanceType2, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -784,6 +785,8 @@ export class BankAccountsServiceProxy {
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (maxCount !== undefined)
+            url_ += "MaxCount=" + encodeURIComponent("" + maxCount) + "&"; 
         if (groupBy === undefined || groupBy === null)
             throw new Error("The parameter 'groupBy' must be defined and cannot be null.");
         else
@@ -3331,6 +3334,58 @@ export class ClassificationServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    changeCategoryForRules(instanceType: InstanceType42, instanceId: number, input: ChangeCategoryForRulesInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/ChangeCategoryForRules?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processChangeCategoryForRules(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processChangeCategoryForRules(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processChangeCategoryForRules(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -3349,7 +3404,7 @@ export class CommentServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getComments(instanceType: InstanceType42, instanceId: number, threadId: number): Observable<CommentDto[]> {
+    getComments(instanceType: InstanceType43, instanceId: number, threadId: number): Observable<CommentDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/GetComments?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3410,7 +3465,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createComment(instanceType: InstanceType43, instanceId: number, input: CreateCommentInput): Observable<CreateCommentOutput> {
+    createComment(instanceType: InstanceType44, instanceId: number, input: CreateCommentInput): Observable<CreateCommentOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3466,7 +3521,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateComment(instanceType: InstanceType44, instanceId: number, input: UpdateCommentInput): Observable<void> {
+    updateComment(instanceType: InstanceType45, instanceId: number, input: UpdateCommentInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/UpdateComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3517,7 +3572,7 @@ export class CommentServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteComment(instanceType: InstanceType45, instanceId: number, commentId: number): Observable<void> {
+    deleteComment(instanceType: InstanceType46, instanceId: number, commentId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/DeleteComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3570,7 +3625,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createTransactionCommentThread(instanceType: InstanceType46, instanceId: number, input: CreateTransactionCommentThreadInput): Observable<CreateTransactionCommentThreadOutput> {
+    createTransactionCommentThread(instanceType: InstanceType47, instanceId: number, input: CreateTransactionCommentThreadInput): Observable<CreateTransactionCommentThreadOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateTransactionCommentThread?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3626,7 +3681,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createCashFlowCommentThread(instanceType: InstanceType47, instanceId: number, input: CreateCashFlowCommentThreadInput): Observable<CreateCashFlowCommentThreadOutput> {
+    createCashFlowCommentThread(instanceType: InstanceType48, instanceId: number, input: CreateCashFlowCommentThreadInput): Observable<CreateCashFlowCommentThreadOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateCashFlowCommentThread?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3682,7 +3737,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    setResolved(instanceType: InstanceType48, instanceId: number, input: SetResolvedInput): Observable<void> {
+    setResolved(instanceType: InstanceType49, instanceId: number, input: SetResolvedInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/SetResolved?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -5983,7 +6038,7 @@ export class DashboardServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getAccountTotals(instanceType: InstanceType49, instanceId: number): Observable<AccountTotals> {
+    getAccountTotals(instanceType: InstanceType50, instanceId: number): Observable<AccountTotals> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetAccountTotals?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6035,7 +6090,7 @@ export class DashboardServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getCategorizationStatus(instanceType: InstanceType50, instanceId: number): Observable<CategorizationStatus> {
+    getCategorizationStatus(instanceType: InstanceType51, instanceId: number): Observable<CategorizationStatus> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetCategorizationStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6679,7 +6734,7 @@ export class FinancialInformationServiceProxy {
      * @errorPage (optional) 
      * @return Success
      */
-    getSetupAccountsLink(instanceType: InstanceType51, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
+    getSetupAccountsLink(instanceType: InstanceType52, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSetupAccountsLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6735,7 +6790,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType52, instanceId: number, syncHistory: boolean): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType53, instanceId: number, syncHistory: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6791,7 +6846,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType53, instanceId: number): Observable<SyncProgressOutput> {
+    getSyncProgress(instanceType: InstanceType54, instanceId: number): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7587,7 +7642,7 @@ export class InstanceServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType54, instanceId: number): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType55, instanceId: number): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7637,7 +7692,7 @@ export class InstanceServiceProxy {
     /**
      * @return Success
      */
-    setup(instanceType: InstanceType55): Observable<SetupOutput> {
+    setup(instanceType: InstanceType56): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType === undefined || instanceType === null)
             throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
@@ -8615,8 +8670,8 @@ export class LeadServiceProxy {
      * @leadBusinessRequests (optional) 
      * @return Success
      */
-    submitLeadRequests(leadBusinessRequests: LeadBusinessInfoInput[]): Observable<LeadBusinessInfoOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitLeadRequests";
+    submitLeadBusinessRequests(leadBusinessRequests: LeadBusinessInfoInput[]): Observable<LeadBusinessInfoOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitLeadBusinessRequests";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(leadBusinessRequests);
@@ -8631,11 +8686,11 @@ export class LeadServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSubmitLeadRequests(response_);
+            return this.processSubmitLeadBusinessRequests(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processSubmitLeadRequests(response_);
+                    return this.processSubmitLeadBusinessRequests(response_);
                 } catch (e) {
                     return <Observable<LeadBusinessInfoOutput[]>><any>Observable.throw(e);
                 }
@@ -8644,7 +8699,7 @@ export class LeadServiceProxy {
         });
     }
 
-    protected processSubmitLeadRequests(response: Response): Observable<LeadBusinessInfoOutput[]> {
+    protected processSubmitLeadBusinessRequests(response: Response): Observable<LeadBusinessInfoOutput[]> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -12860,7 +12915,7 @@ export class TenantRegistrationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    completeTenantRegistration(input: CompleteTenantRegistrationInput): Observable<number> {
+    completeTenantRegistration(input: CompleteTenantRegistrationInput): Observable<CompleteTenantRegistrationOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/TenantRegistration/CompleteTenantRegistration";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -12882,14 +12937,14 @@ export class TenantRegistrationServiceProxy {
                 try {
                     return this.processCompleteTenantRegistration(response_);
                 } catch (e) {
-                    return <Observable<number>><any>Observable.throw(e);
+                    return <Observable<CompleteTenantRegistrationOutput>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<number>><any>Observable.throw(response_);
+                return <Observable<CompleteTenantRegistrationOutput>><any>Observable.throw(response_);
         });
     }
 
-    protected processCompleteTenantRegistration(response: Response): Observable<number> {
+    protected processCompleteTenantRegistration(response: Response): Observable<CompleteTenantRegistrationOutput> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -12897,13 +12952,13 @@ export class TenantRegistrationServiceProxy {
             const _responseText = response.text();
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? CompleteTenantRegistrationOutput.fromJS(resultData200) : new CompleteTenantRegistrationOutput();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<number>(<any>null);
+        return Observable.of<CompleteTenantRegistrationOutput>(<any>null);
     }
 
     /**
@@ -14194,7 +14249,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType56, instanceId: number): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType57, instanceId: number): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14246,7 +14301,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType57, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType58, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14298,7 +14353,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType58, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType59, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -19412,6 +19467,57 @@ export class AutoClassifyDto implements IAutoClassifyDto {
 
 export interface IAutoClassifyDto {
     bankAccountIds: number[];
+}
+
+export class ChangeCategoryForRulesInput implements IChangeCategoryForRulesInput {
+    ruleIds: number[];
+    categotyId: number;
+    reclassifyTransactions: boolean = false;
+
+    constructor(data?: IChangeCategoryForRulesInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["ruleIds"] && data["ruleIds"].constructor === Array) {
+                this.ruleIds = [];
+                for (let item of data["ruleIds"])
+                    this.ruleIds.push(item);
+            }
+            this.categotyId = data["categotyId"];
+            this.reclassifyTransactions = data["reclassifyTransactions"] !== undefined ? data["reclassifyTransactions"] : false;
+        }
+    }
+
+    static fromJS(data: any): ChangeCategoryForRulesInput {
+        let result = new ChangeCategoryForRulesInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.ruleIds && this.ruleIds.constructor === Array) {
+            data["ruleIds"] = [];
+            for (let item of this.ruleIds)
+                data["ruleIds"].push(item);
+        }
+        data["categotyId"] = this.categotyId;
+        data["reclassifyTransactions"] = this.reclassifyTransactions;
+        return data; 
+    }
+}
+
+export interface IChangeCategoryForRulesInput {
+    ruleIds: number[];
+    categotyId: number;
+    reclassifyTransactions: boolean;
 }
 
 export class CommentDto implements ICommentDto {
@@ -28190,13 +28296,13 @@ export interface IKeyValuePairOfInt32AndString {
 }
 
 export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput {
+    website: string;
     tenancyName: string;
     firstName: string;
     lastName: string;
     email: string;
     phone: string;
     phoneExt: string;
-    website: string;
     comments: string;
     sourceCode: string;
 
@@ -28211,13 +28317,13 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
 
     init(data?: any) {
         if (data) {
+            this.website = data["website"];
             this.tenancyName = data["tenancyName"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
             this.email = data["email"];
             this.phone = data["phone"];
             this.phoneExt = data["phoneExt"];
-            this.website = data["website"];
             this.comments = data["comments"];
             this.sourceCode = data["sourceCode"];
         }
@@ -28231,13 +28337,13 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["website"] = this.website;
         data["tenancyName"] = this.tenancyName;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
         data["phone"] = this.phone;
         data["phoneExt"] = this.phoneExt;
-        data["website"] = this.website;
         data["comments"] = this.comments;
         data["sourceCode"] = this.sourceCode;
         return data; 
@@ -28245,18 +28351,19 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
 }
 
 export interface ISubmitContactUsRequestInput {
+    website: string;
     tenancyName: string;
     firstName: string;
     lastName: string;
     email: string;
     phone: string;
     phoneExt: string;
-    website: string;
     comments: string;
     sourceCode: string;
 }
 
 export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRequestInput {
+    companyName: string;
     editionId: number;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
     leadInterests: LeadInterestDto[] = [];
@@ -28266,7 +28373,6 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
     email: string;
     phone: string;
     phoneExt: string;
-    website: string;
     comments: string;
     sourceCode: string;
 
@@ -28281,6 +28387,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 
     init(data?: any) {
         if (data) {
+            this.companyName = data["companyName"];
             this.editionId = data["editionId"];
             this.paymentPeriodType = data["paymentPeriodType"];
             if (data["leadInterests"] && data["leadInterests"].constructor === Array) {
@@ -28294,7 +28401,6 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
             this.email = data["email"];
             this.phone = data["phone"];
             this.phoneExt = data["phoneExt"];
-            this.website = data["website"];
             this.comments = data["comments"];
             this.sourceCode = data["sourceCode"];
         }
@@ -28308,6 +28414,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["companyName"] = this.companyName;
         data["editionId"] = this.editionId;
         data["paymentPeriodType"] = this.paymentPeriodType;
         if (this.leadInterests && this.leadInterests.constructor === Array) {
@@ -28321,7 +28428,6 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
         data["email"] = this.email;
         data["phone"] = this.phone;
         data["phoneExt"] = this.phoneExt;
-        data["website"] = this.website;
         data["comments"] = this.comments;
         data["sourceCode"] = this.sourceCode;
         return data; 
@@ -28329,6 +28435,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 }
 
 export interface ISubmitTenantCreationRequestInput {
+    companyName: string;
     editionId: number;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
     leadInterests: LeadInterestDto[];
@@ -28338,7 +28445,6 @@ export interface ISubmitTenantCreationRequestInput {
     email: string;
     phone: string;
     phoneExt: string;
-    website: string;
     comments: string;
     sourceCode: string;
 }
@@ -33850,6 +33956,61 @@ export interface ICompleteTenantRegistrationInput {
     adminPassword: string;
 }
 
+export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistrationOutput {
+    tenantId: number;
+    tenancyName: string;
+    name: string;
+    userName: string;
+    emailAddress: string;
+    isEmailConfirmationRequired: boolean;
+
+    constructor(data?: ICompleteTenantRegistrationOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
+            this.userName = data["userName"];
+            this.emailAddress = data["emailAddress"];
+            this.isEmailConfirmationRequired = data["isEmailConfirmationRequired"];
+        }
+    }
+
+    static fromJS(data: any): CompleteTenantRegistrationOutput {
+        let result = new CompleteTenantRegistrationOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
+        data["userName"] = this.userName;
+        data["emailAddress"] = this.emailAddress;
+        data["isEmailConfirmationRequired"] = this.isEmailConfirmationRequired;
+        return data; 
+    }
+}
+
+export interface ICompleteTenantRegistrationOutput {
+    tenantId: number;
+    tenancyName: string;
+    name: string;
+    userName: string;
+    emailAddress: string;
+    isEmailConfirmationRequired: boolean;
+}
+
 export class RegisterTenantInput implements IRegisterTenantInput {
     tenancyName: string;
     name: string;
@@ -37030,6 +37191,11 @@ export enum InstanceType53 {
     Business = <any>"Business", 
 }
 
+export enum InstanceType54 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
 export enum IncomeStatisticsDateInterval {
     _1 = 1, 
     _2 = 2, 
@@ -37042,12 +37208,12 @@ export enum IncomeStatisticsDateInterval2 {
     _3 = 3, 
 }
 
-export enum InstanceType54 {
+export enum InstanceType55 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
 
-export enum InstanceType55 {
+export enum InstanceType56 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
@@ -37088,17 +37254,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType56 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
-}
-
 export enum InstanceType57 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
 
 export enum InstanceType58 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType59 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }

@@ -5,7 +5,8 @@ import {
     BankAccountsServiceProxy,
     BankAccountDailyStatDto,
     GroupBy,
-    InstanceType
+    InstanceType,
+    CashFlowForecastServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { TrendByPeriodModel } from './trend-by-period.model';
 import { Observable } from 'rxjs/Observable';
@@ -13,11 +14,12 @@ import { asap } from 'rxjs/scheduler/asap';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/take';
+import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 
 @Component({
     selector: 'app-trend-by-period',
     templateUrl: './trend-by-period.component.html',
-    providers: [ BankAccountsServiceProxy ],
+    providers: [ BankAccountsServiceProxy, StatsService, CashFlowForecastServiceProxy ],
     styleUrls: ['./trend-by-period.component.less']
 })
 export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
@@ -30,20 +32,45 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     forecastExpensesColor = '#fec6b3';
     historicalNetChangeColor = '#fab800';
     forecastNetChangeColor = '#a82aba';
-    barChartTooltipFieldsNames = [
-        'startingBalance',
-        'income',
-        'expenses',
-        'netChange',
-        'endingBalance',
-        'forecastStartingBalance',
-        'forecastIncome',
-        'forecastExpenses',
-        'forecastNetChange',
-        'forecastEndingBalance'
+    barChartTooltipFields = [
+        {
+            'name': 'startingBalance',
+            'label': this.l('Stats_startingBalance')
+        },
+        {
+            'name': 'income',
+            'label': this.l('Stats_income')
+        },
+        {
+            'name': 'expenses',
+            'label': this.l('Stats_expenses')
+        },
+        {
+            'name': 'netChange',
+            'label': this.l('Stats_netChange')
+        },
+        {
+            'name': 'endingBalance',
+            'label': this.l('Stats_endingBalance')
+        },
+        {
+            'name': 'forecastIncome',
+            'label': this.l('Stats_forecastIncome')
+        },
+        {
+            'name': 'forecastExpenses',
+            'label': this.l('Stats_forecastExpenses')
+        },
+        {
+            'name': 'forecastNetChange',
+            'label': this.l('Stats_forecastNetChange')
+        },
+        {
+            'name': 'forecastEndingBalance',
+            'label': this.l('Stats_forecastEndingBalance')
+        }
     ];
-    /** @todo check what forecast id get */
-    selectedForecastModelId = 52;
+    selectedForecastModelId = 1;
     periods: TrendByPeriodModel[] = [
         // {
         //     key: 0,
@@ -65,20 +92,29 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         }
     ];
     selectedPeriod: TrendByPeriodModel = this.periods.find(period => period.name === 'month');
-    loading = false;
+    loading = true;
     constructor(injector: Injector,
-                private _bankAccountService: BankAccountsServiceProxy) {
+                private _bankAccountService: BankAccountsServiceProxy,
+                private _statsService: StatsService,
+                private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy) {
         super(injector);
     }
 
     ngOnInit() {
-        this.loadStatsData();
-        this.chartWidth = this.getElementRef().nativeElement.clientWidth - 60;
+        this._cashFlowForecastServiceProxy
+            .getModels(InstanceType[this.instanceType], this.instanceId)
+            .subscribe(data => {
+                if (data && data.length) {
+                    this.selectedForecastModelId = data[0].id;
+                }
+                this.loadStatsData();
+                this.chartWidth = this.getElementRef().nativeElement.clientWidth - 60;
+            });
     }
 
     /** Replace minus for the brackets */
     customizeAxisValues = (arg: any) => {
-        return arg.value < 0 ? this.replaceMinusWithBrackets(arg.valueText) : arg.valueText;
+        return arg.value < 0 ? this._statsService.replaceMinusWithBrackets(arg.valueText) : arg.valueText;
     }
 
     customizeBottomAxis = (elem) => {
@@ -102,56 +138,23 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         return `${elem.value.getDate()}.${elem.value.getMonth() + 1}`;
     }
 
-    /** @todo move to helper */
-    /**
-     * Replace string negative value like '$-1000' for the string '$(1000)' (with brackets)
-     * @param {string} value
-     * @return {string}
-     */
-    replaceMinusWithBrackets(value: string) {
-        return value.replace(/\B(?=(\d{3})+\b)/g, ',').replace(/-(.*)/, '($1)');
-    }
-
     customizeBarTooltip = (pointInfo) => {
         return {
-            html: this.getTooltipInfoHtml(pointInfo)
+            html: this._statsService.getTooltipInfoHtml(this.trendData, this.barChartTooltipFields, pointInfo)
         };
-    }
-
-    /** @todo move to stats service (but create it first) */
-    getTooltipInfoHtml(pointInfo) {
-        let html = '';
-        let pointDataObject = this.trendData.find(item => item.date.toDate().toString() == pointInfo.argument);
-        this.barChartTooltipFieldsNames.forEach(fieldName => {
-            if (pointDataObject[fieldName] !== null && pointDataObject[fieldName] !== undefined) {
-                html += `${this.l('Stats_' + fieldName)} : <span style="float: right; font-family: Lato; margin-left: 10px">${pointDataObject[fieldName].toLocaleString('en-EN', {style: 'currency',  currency: 'USD' })}</span>`;
-                if (fieldName === 'startingBalance' ||
-                    fieldName === 'forecastStartingBalance' ||
-                    fieldName === 'netChange' ||
-                    fieldName === 'forecastNetChange')
-                    html += '<hr style="margin: 5px 0"/>';
-                else
-                    html += '<br>';
-            }
-        });
-        return html;
     }
 
     loadStatsData() {
         this.startLoading();
-        /** change Monthly string to months and others periods to provide moment add and subtract with proper param */
-        let modifyingArguments = [this.selectedPeriod.amount, this.selectedPeriod.name + 's'];
-        let startDate = moment().subtract(...modifyingArguments),
-            endDate = moment().add(...modifyingArguments),
-            accountIds = [];
         this._bankAccountService.getStats(
             InstanceType[this.instanceType],
             this.instanceId,
             'USD',
             this.selectedForecastModelId,
-            accountIds,
-            startDate,
-            endDate,
+            [],
+            undefined,
+            undefined,
+            this.selectedPeriod.amount * 2,
             this.selectedPeriod.key
         ).subscribe(result => {
                 if (result) {
