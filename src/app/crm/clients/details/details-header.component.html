@@ -20,7 +20,7 @@
     </div>
 
     <div class="header_buttons">
-        <ng-container *ngIf="isGranted('Pages.CRM.CreateUserForContact')">
+        <ng-container *ngIf="canSendVerificationRequest">
             <button class="btn btn-layout" (click)="requestVerification()">{{l('ClientDetails_RequestVerification')}}</button>
         </ng-container>
     </div>
