@@ -16,6 +16,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import { DxChartComponent } from 'devextreme-angular';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
+import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 
 import {
     StatsFilter,
@@ -29,7 +30,7 @@ import {
 
 @Component({
     'selector': 'app-stats',
-    'providers': [ CashflowServiceProxy, BankAccountsServiceProxy, CashFlowForecastServiceProxy, CacheService],
+    'providers': [ CashflowServiceProxy, BankAccountsServiceProxy, CashFlowForecastServiceProxy, CacheService, StatsService],
     'templateUrl': './stats.component.html',
     'styleUrls': ['./stats.component.less']
 })
@@ -62,15 +63,48 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     loadingFinished = false;
     chartsHeight = 400;
     chartsWidth;
-    barChartTooltipFieldsNames = [
-        'startingBalance',
-        'income',
-        'expenses',
-        'endingBalance',
-        'forecastStartingBalance',
-        'forecastIncome',
-        'forecastExpenses',
-        'forecastEndingBalance'
+    barChartTooltipFields = [
+        {
+            'name': 'startingBalance',
+            'label': this.l('Stats_startingBalance')
+        },
+        {
+            'name': 'income',
+            'label': this.l('Stats_income')
+        },
+        {
+            'name': 'expenses',
+            'label': this.l('Stats_expenses')
+        },
+        {
+            'name': 'netChange',
+            'label': this.l('Stats_netChange')
+        },
+        {
+            'name': 'endingBalance',
+            'label': this.l('Stats_endingBalance')
+        },
+        {
+            'name': 'forecastIncome',
+            'label': this.l('Stats_forecastIncome')
+        },
+        {
+            'name': 'forecastExpenses',
+            'label': this.l('Stats_forecastExpenses')
+        },
+        {
+            'name': 'forecastNetChange',
+            'label': this.l('Stats_forecastNetChange')
+        },
+        {
+            'name': 'forecastEndingBalance',
+            'label': this.l('Stats_forecastEndingBalance')
+        }
+    ];
+    leftSideBarItems = [
+        'leftSideBarMonthlyTrendCharts',
+        'leftSideBarDailyTrendCharts',
+        'leftKeyMetricsKPI'
     ];
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
@@ -82,7 +116,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private _cashflowService: CashflowServiceProxy,
         private _bankAccountService: BankAccountsServiceProxy,
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
-        private _cacheService: CacheService
+        private _cacheService: CacheService,
+        private _statsService: StatsService
     ) {
         super(injector);
 
@@ -273,7 +308,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     calculateChartsSize() {
         let chartsHeight = window.innerHeight - 410;
         this.chartsHeight =  chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
-        this.chartsWidth = window.innerWidth;
+        this.chartsWidth = window.innerWidth - 371;
     }
 
     /** Calculates the height of the charts scrollable height after resizing */
@@ -351,8 +386,15 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         abp.ui.setBusy();
         let { startDate, endDate, accountIds = [] } = this.requestFilter;
         this._bankAccountService.getStats(
-            InstanceType[this.instanceType], this.instanceId,
-            'USD', this.selectedForecastModel.id, accountIds, startDate, endDate, GroupBy.Monthly
+            InstanceType[this.instanceType],
+            this.instanceId,
+            'USD',
+            this.selectedForecastModel.id,
+            accountIds,
+            startDate,
+            endDate,
+            undefined,
+            GroupBy.Monthly
         ).subscribe(result => {
             if (result) {
                 let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
@@ -427,7 +469,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 backgroundColor: this.labelNegativeBackgroundColor,
                 visible: this.maxLabelCount >= this.statsData.length,
                 customizeText: (e: any) => {
-                    return this.replaceMinusWithBrackets(e.valueText);
+                    return this._statsService.replaceMinusWithBrackets(e.valueText);
                 }
             };
         }
@@ -435,7 +477,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** Replace minus for the brackets */
     customizeAxisValues = (arg: any) => {
-        return arg.value < 0 ? this.replaceMinusWithBrackets(arg.valueText) : arg.valueText;
+        return arg.value < 0 ? this._statsService.replaceMinusWithBrackets(arg.valueText) : arg.valueText;
     }
 
     customizePoint = (arg: any) => {
@@ -450,16 +492,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 }
             };
         }
-    }
-
-    /** @todo move to helper */
-    /**
-     * Replace string negative value like '$-1000' for the string '$(1000)' (with brackets)
-     * @param {string} value
-     * @return {string}
-     */
-    replaceMinusWithBrackets(value: string) {
-        return value.replace(/\B(?=(\d{3})+\b)/g, ',').replace(/-(.*)/, '($1)');
     }
 
     onDone(event) {
@@ -557,19 +589,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     customizeBarTooltip = (pointInfo) => {
         return {
-            html: this.getTooltipInfoHtml(pointInfo)
+            html: this._statsService.getTooltipInfoHtml(this.statsData, this.barChartTooltipFields, pointInfo)
         };
-    }
-
-    getTooltipInfoHtml(pointInfo) {
-        let html = '';
-        let pointDataObject = this.statsData.find(item => item.date.toDate().toString() == pointInfo.argument);
-        this.barChartTooltipFieldsNames.forEach(fieldName => {
-            if (pointDataObject[fieldName] !== null && pointDataObject[fieldName] !== undefined) {
-                html += `${this.l('Stats_' + fieldName)} : ${pointDataObject[fieldName]}<br>`;
-            }
-        });
-        return html;
     }
 
 }

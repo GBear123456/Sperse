@@ -46,6 +46,7 @@ export abstract class AppComponentBase {
     httpConfig: httpConfiguration;
     primengDatatableHelper: PrimengDatatableHelper;
     ui: AppUiCustomizationService;
+    loading: boolean;
 
     public searchValue: string;
     public searchColumns: string[];
@@ -236,5 +237,15 @@ export abstract class AppComponentBase {
             return 'assets/common/images/no-photo-' + gender + '.png';
 
         return 'assets/common/images/no-photo.png';
+    }
+
+    startLoading() {
+        this.loading = true;
+        abp.ui.setBusy(this.getElementRef().nativeElement);
+    }
+
+    finishLoading() {
+        abp.ui.clearBusy(this.getElementRef().nativeElement);
+        this.loading = false;
     }
 }

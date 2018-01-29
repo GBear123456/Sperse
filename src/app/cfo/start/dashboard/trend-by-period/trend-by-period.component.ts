@@ -5,13 +5,21 @@ import {
     BankAccountsServiceProxy,
     BankAccountDailyStatDto,
     GroupBy,
-    InstanceType
+    InstanceType,
+    CashFlowForecastServiceProxy
 } from '@shared/service-proxies/service-proxies';
+import { TrendByPeriodModel } from './trend-by-period.model';
+import { Observable } from 'rxjs/Observable';
+import { asap } from 'rxjs/scheduler/asap';
+import 'rxjs/add/observable/from';
+import 'rxjs/add/observable/merge';
+import 'rxjs/add/operator/take';
+import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 
 @Component({
     selector: 'app-trend-by-period',
     templateUrl: './trend-by-period.component.html',
-    providers: [ BankAccountsServiceProxy ],
+    providers: [ BankAccountsServiceProxy, StatsService, CashFlowForecastServiceProxy ],
     styleUrls: ['./trend-by-period.component.less']
 })
 export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
@@ -22,103 +30,141 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     historicalExpensesColor = '#f05b2a';
     forecastIncomeColor = '#a9e3f9';
     forecastExpensesColor = '#fec6b3';
-    barChartTooltipFieldsNames = [
-        'startingBalance',
-        'income',
-        'expenses',
-        'endingBalance',
-        'forecastStartingBalance',
-        'forecastIncome',
-        'forecastExpenses',
-        'forecastEndingBalance'
+    historicalNetChangeColor = '#fab800';
+    forecastNetChangeColor = '#a82aba';
+    barChartTooltipFields = [
+        {
+            'name': 'startingBalance',
+            'label': this.l('Stats_startingBalance')
+        },
+        {
+            'name': 'income',
+            'label': this.l('Stats_income')
+        },
+        {
+            'name': 'expenses',
+            'label': this.l('Stats_expenses')
+        },
+        {
+            'name': 'netChange',
+            'label': this.l('Stats_netChange')
+        },
+        {
+            'name': 'endingBalance',
+            'label': this.l('Stats_endingBalance')
+        },
+        {
+            'name': 'forecastIncome',
+            'label': this.l('Stats_forecastIncome')
+        },
+        {
+            'name': 'forecastExpenses',
+            'label': this.l('Stats_forecastExpenses')
+        },
+        {
+            'name': 'forecastNetChange',
+            'label': this.l('Stats_forecastNetChange')
+        },
+        {
+            'name': 'forecastEndingBalance',
+            'label': this.l('Stats_forecastEndingBalance')
+        }
     ];
-    /** @todo check what forecast id get */
     selectedForecastModelId = 1;
-    moreStatisticLink = '../stats';
-    selectedPeriod: any = String(GroupBy['Monthly']).toLowerCase();
-    selectedPeriodIndex: number = Object.keys(GroupBy).indexOf('Monthly');
+    periods: TrendByPeriodModel[] = [
+        // {
+        //     key: 0,
+        //     name: 'day',
+        //     text: `30 ${this.ls('Platform', 'Periods_Day_plural')}`,
+        //     amount: 30
+        // },
+        // {
+        //     key: 1,
+        //     name: 'week',
+        //     text: `15 ${this.ls('Platform', 'Periods_Week_plural')}`,
+        //     amount: 15
+        // },
+        {
+            key: 2,
+            name: 'month',
+            text: `12 ${this.ls('Platform', 'Periods_Month_plural')}`,
+            amount: 12
+        }
+    ];
+    selectedPeriod: TrendByPeriodModel = this.periods.find(period => period.name === 'month');
+    loading = true;
     constructor(injector: Injector,
-                private _bankAccountService: BankAccountsServiceProxy) {
+                private _bankAccountService: BankAccountsServiceProxy,
+                private _statsService: StatsService,
+                private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy) {
         super(injector);
     }
 
     ngOnInit() {
-        this.loadStatsData();
-        this.chartWidth = this.getElementRef().nativeElement.clientWidth - 60;
+        this._cashFlowForecastServiceProxy
+            .getModels(InstanceType[this.instanceType], this.instanceId)
+            .subscribe(data => {
+                if (data && data.length) {
+                    this.selectedForecastModelId = data[0].id;
+                }
+                this.loadStatsData();
+                this.chartWidth = this.getElementRef().nativeElement.clientWidth - 60;
+            });
     }
 
     /** Replace minus for the brackets */
     customizeAxisValues = (arg: any) => {
-        return arg.value < 0 ? this.replaceMinusWithBrackets(arg.valueText) : arg.valueText;
+        return arg.value < 0 ? this._statsService.replaceMinusWithBrackets(arg.valueText) : arg.valueText;
     }
 
     customizeBottomAxis = (elem) => {
-        return this.getPeriodBottomAxisCustomizer(this.selectedPeriod)(elem);
+        return this.getPeriodBottomAxisCustomizer(this.selectedPeriod.name)(elem);
     }
 
     /** Factory for method that customize axis */
-    getPeriodBottomAxisCustomizer(period: GroupBy) {
+    getPeriodBottomAxisCustomizer(period: string) {
         return this[`get${this.capitalize(period)}BottomAxisCustomizer`];
     }
 
-    getMonthlyBottomAxisCustomizer(elem) {
+    getMonthBottomAxisCustomizer(elem) {
         return `${elem.valueText.substring(0, 3).toUpperCase()}<br/><div class="yearArgument">${elem.value.getFullYear().toString().substr(-2)}</div>`;
     }
 
-    getWeeklyBottomAxisCustomizer(elem) {
-        return `${elem.value.getDate()}.${elem.value.getMonth() + 1}.${elem.value.getFullYear()}`;
+    getWeekBottomAxisCustomizer(elem) {
+        return `${elem.value.getDate()}.${elem.value.getMonth() + 1}`;
     }
 
-    getDailyBottomAxisCustomizer(elem) {
-        return `${elem.value.getDate()}.${elem.value.getMonth() + 1}.${elem.value.getFullYear()}`;
-    }
-
-    /** @todo move to helper */
-    /**
-     * Replace string negative value like '$-1000' for the string '$(1000)' (with brackets)
-     * @param {string} value
-     * @return {string}
-     */
-    replaceMinusWithBrackets(value: string) {
-        return value.replace(/\B(?=(\d{3})+\b)/g, ',').replace(/-(.*)/, '($1)');
+    getDayBottomAxisCustomizer(elem) {
+        return `${elem.value.getDate()}.${elem.value.getMonth() + 1}`;
     }
 
     customizeBarTooltip = (pointInfo) => {
         return {
-            html: this.getTooltipInfoHtml(pointInfo)
+            html: this._statsService.getTooltipInfoHtml(this.trendData, this.barChartTooltipFields, pointInfo)
         };
     }
 
-    getTooltipInfoHtml(pointInfo) {
-        let html = '';
-        let pointDataObject = this.trendData.find(item => item.date.toDate().toString() == pointInfo.argument);
-        this.barChartTooltipFieldsNames.forEach(fieldName => {
-            if (pointDataObject[fieldName] !== null && pointDataObject[fieldName] !== undefined) {
-                html += `${this.l('Stats_' + fieldName)} : ${pointDataObject[fieldName]}<br>`;
-            }
-        });
-        return html;
-    }
-
     loadStatsData() {
-        /** change Monthly string to months and others periods to provide moment add and subtract with proper param */
-        let selectedPeriodString = this.selectedPeriod === 'daily' ? 'days' : this.selectedPeriod.slice(0, -2) + 's',
-            modifyingArguments = [12, selectedPeriodString];
-        let startDate = moment().subtract(...modifyingArguments),
-            endDate = moment().add(...modifyingArguments),
-            accountIds = [];
+        this.startLoading();
         this._bankAccountService.getStats(
-            InstanceType[this.instanceType], this.instanceId,
-            'USD', this.selectedForecastModelId, accountIds, startDate, endDate, this.selectedPeriod
+            InstanceType[this.instanceType],
+            this.instanceId,
+            'USD',
+            this.selectedForecastModelId,
+            [],
+            undefined,
+            undefined,
+            this.selectedPeriod.amount * 2,
+            this.selectedPeriod.key
         ).subscribe(result => {
                 if (result) {
-                    let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
-                        minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
-                    this.trendData = result.map(statsItem => {
-                        Object.defineProperties(statsItem, {
-                            'netChange': { value: statsItem.income + statsItem.expenses, enumerable: true },
-                            'minRange': { value: minRange, enumerable: true }
-                        });
+                    let historical = [], forecast = [];
+                    result.forEach(statsItem => {
+                        Object.defineProperty(
+                            statsItem,
+                            'netChange',
+                            { value: statsItem.income + statsItem.expenses, enumerable: true }
+                        );
                         if (statsItem.isForecast) {
                             for (let prop in statsItem) {
                                 if (statsItem.hasOwnProperty(prop) && prop !== 'date' && prop !== 'isForecast') {
@@ -126,18 +172,39 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                                     delete statsItem[prop];
                                 }
                             }
+                            forecast.push(statsItem);
+                        } else {
+                            historical.push(statsItem);
                         }
-                        return statsItem;
                     });
+                    this.mergeHistoricalAndForecast(historical, forecast)
+                        .subscribe(res => { this.trendData = <any>res; this.finishLoading(); });
                 } else {
                     console.log('No daily stats');
+                    this.finishLoading();
                 }
             },
-            error => console.log('Error: ' + error));
+            error => { console.log('Error: ' + error); this.finishLoading(); }
+        );
+    }
+
+    /**
+     * Merge historical and forecast data concurrently from both arrays
+     * @param historical
+     * @param forecast
+     */
+    mergeHistoricalAndForecast(historical, forecast) {
+        return Observable.merge(
+                    Observable.from(forecast, asap),
+                    /** Get last values closer to the current date */
+                    Observable.from(historical.slice(-this.selectedPeriod.amount), asap)
+               )
+            .take(this.selectedPeriod.amount)
+            .toArray();
     }
 
     onSelectChange(event) {
-        this.selectedPeriod = GroupBy[Object.keys(GroupBy)[event]].toLowerCase();
+        this.selectedPeriod = this.periods.find(period => period.key === event.value);
         this.loadStatsData();
     }
 

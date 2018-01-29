@@ -10,7 +10,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 export class SetupStepComponent extends AppComponentBase implements OnInit {
 
     @Input() SelectedStepIndex: number;
-    public readonly SetupSteps = [
+    @Input() SetupSteps = [
         'FinancialAccounts',
         'BusinessEntity',
         'Chart',
