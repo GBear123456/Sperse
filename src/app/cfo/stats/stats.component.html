@@ -3,7 +3,6 @@
 </app-headline>
 
 <div [hidden]="!statsData || !statsData.length">
-    <app-toolbar [(config)]="toolbarConfig"></app-toolbar>
     <div class="mainStatsView">
         <source-data [ngClass]="{'showen': showSourceData}"
                      (onClose)="hideSourceDataWidget()"

@@ -2,6 +2,7 @@ import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
+import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -39,7 +40,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
     selectedForecastModel;
-    toolbarConfig = [];
     headlineConfig: any;
     axisDateFormat = 'month';
     currency = 'USD';
@@ -77,6 +77,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private requestFilter: StatsFilter;
     constructor(
         injector: Injector,
+        private _appService: AppService,
         private _filtersService: FiltersService,
         private _cashflowService: CashflowServiceProxy,
         private _bankAccountService: BankAccountsServiceProxy,
@@ -90,14 +91,36 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null }) {
-        this.toolbarConfig = <any>[
+        this._appService.toolbarConfig = <any>[
             {
                 location: 'before',
                 items: [
-                    {
-                        name: 'filters',
-                        action: this._filtersService.toggle.bind(this._filtersService)
-                    }
+                    { 
+                        name: 'filters', 
+                        action: (event) => {                            
+                            setTimeout(() => {
+                                this.linearChart.instance.render();
+                                this.barChart.instance.render();
+                            }, 1000);
+                            this._filtersService.fixed = 
+                                !this._filtersService.fixed;
+                        },
+                        options: {
+                            checkPressed: () => {
+                                return this._filtersService.fixed;
+                            },
+                            mouseover: (event) => {
+                                this._filtersService.enable();
+                            },
+                            mouseout: (event) => {
+                                if (!this._filtersService.fixed)
+                                    this._filtersService.disable();
+                            } 
+                        },
+                        attr: { 
+                            'filter-selected': this._filtersService.hasFilterSelected
+                        } 
+                    } 
                 ]
             },
             {
@@ -367,9 +390,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngOnDestroy() {
+        this._appService.toolbarConfig = null;
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
-        this._filtersService.enabled = false;
         this.rootComponent.overflowHidden();
         super.ngOnDestroy();
     }
