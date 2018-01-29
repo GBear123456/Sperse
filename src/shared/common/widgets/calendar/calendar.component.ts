@@ -38,10 +38,12 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
     private setDateRageValues() {
         if (this.calendar) {
             let dateRange = this.calendar.data('dateRangePicker');
-            if (this._values.from.value || this._values.to.value)
-                dateRange.setDateRange(this._values.from.value || this._values.to.value,
-                    this._values.to.value || this._values.from.value
+            if (this._values.from.value || this._values.to.value) {
+                dateRange.setDateRange(
+                    new Date((this._values.from.value || this._values.to.value).getTime()),
+                    new Date((this._values.to.value || this._values.to.value).getTime())
                 );
+            }
         }
     }
 
@@ -50,13 +52,13 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
             '.calendar#' + this.UID, true, this._options);
         this.calendar.on('datepicker-first-date-selected',
             (event, obj) => {
-                this._values.from.value = obj.date1;
+                this._values.from.value = new Date(obj.date1.getTime());
                 this._values.to.value = null;
             }
         ).on('datepicker-change',
             (event, obj) => {
-                this._values.from.value = obj.date1;
-                this._values.to.value = obj.date2;
+                this._values.from.value = new Date(obj.date1.getTime());
+                this._values.to.value = new Date(obj.date2.getTime());
             }
             );
         this.setDateRageValues();
