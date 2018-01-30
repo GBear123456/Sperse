@@ -125,12 +125,11 @@
                         color: #333 !important;
                     }
                 }
-            }
-
-            .dx-total,
-            .dx-data-header,
-            .dx-column-header {
-                background: @totalDataCellBackgroundColor;
+                &.dx-total,
+                &.dx-data-header,
+                &.dx-column-header {
+                    background: @totalDataCellBackgroundColor;
+                }
             }
 
             .dx-texteditor {
@@ -451,6 +450,9 @@
                         }
                         &.lowestOpenedCurrent:not(.mtdCell) {
                             background-color: @currentPeriodCellBackgroundColor;
+                        }
+                        .dx-texteditor-input {
+                            text-align: right;
                         }
                     }
 

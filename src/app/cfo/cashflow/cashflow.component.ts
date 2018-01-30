@@ -13,12 +13,16 @@ import {
     GetCategoriesOutput,
     CashFlowGridSettingsDto,
     InstanceType,
-    InstanceType18
+    InstanceType10,
+    InstanceType18,
+    UpdateForecastInput,
+    AddForecastInput
 } from '@shared/service-proxies/service-proxies';
+
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
-import { DxPivotGridComponent, DxDataGridComponent } from 'devextreme-angular';
+import { DxPivotGridComponent, DxDataGridComponent, DxTextBoxComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
 import * as underscore from 'underscore';
 import * as moment from 'moment';
@@ -34,6 +38,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { MatDialog } from '@angular/material';
 import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
 import * as ModelEnums from './models/setting-enums';
+import * as $ from 'jquery';
 
 import { CacheService } from 'ng2-cache-service';
 import { Observable } from 'rxjs/Observable';
@@ -60,6 +65,12 @@ const StartedBalance = 'B',
       NetChange      = 'NC',
       Total          = 'T',
       GrandTotal     = 'GT';
+
+enum Periods {
+    Historical,
+    Current,
+    Forecast
+}
 
 @Component({
     selector: 'app-cashflow',
@@ -395,6 +406,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     filteredLoad = false;
     contentReady = false;
     adjustmentsList = [];
+    modifyingCelltextBox;
+    currentCellOperationType: string;
+    oldCellPadding: string;
+    clickedRowResult;
+    clickedRow: Array<string>;
+    clickedColumn: Array<string>;
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -1005,12 +1022,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** cycle from started date to ended date */
         /** added fake data for each date that is not already exists in cashflow data */
-  
-        let startDate = new Date(moment.utc(minDate).format("YYYY-MM-DD"));
-        let endDate = new Date(moment.utc(maxDate).format("YYYY-MM-DD"));
 
-        while(startDate <= endDate){
-            let date = moment.utc(startDate, "YYYY-MM-DD");
+        let startDate = new Date(moment.utc(minDate).format('YYYY-MM-DD'));
+        let endDate = new Date(moment.utc(maxDate).format('YYYY-MM-DD'));
+
+        while (startDate <= endDate) {
+            let date = moment.utc(startDate, 'YYYY-MM-DD');
             if (existingDates.indexOf(date.format('YYYY-MM-DD')) === -1) {
                 stubCashflowData.push(
                     this.createStubTransaction({
@@ -1312,11 +1329,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return data => {
             let currentYear = new Date().getFullYear(),
                 itemYear = new Date(data.date).getFullYear(),
-                result = 0;
+                result = Periods.Historical;
             if (currentYear < itemYear) {
-                result = 2;
+                result = Periods.Forecast;
             } else if (currentYear === itemYear) {
-                result = 1;
+                result = Periods.Current;
             }
             return result;
         };
@@ -1864,11 +1881,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** @todo refactor */
     getCellType(cellObj) {
         let cellType;
-        for (let type in this.cellTypesCheckMethods) {
-            let method = <any>this.cellTypesCheckMethods[type];
-            if (method(cellObj)) {
-                cellType = type;
-                break;
+        if (this.cellTypesCheckMethods) {
+            for (let type in this.cellTypesCheckMethods) {
+                let method = <any>this.cellTypesCheckMethods[type];
+                if (method(cellObj)) {
+                    cellType = type;
+                    break;
+                }
             }
         }
         return cellType;
@@ -2034,24 +2053,60 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 businessEntityIds: this.requestFilter.businessEntityIds || []
             });
 
-            // check on double click
-            let component = cellObj.component;
-            if (!component.clickCount) component.clickCount = 1;
-            else component.clickCount = component.clickCount + 1;
-            if (component.clickCount == 1) {
-                component.lastClickTime = new Date();
-                setTimeout(function () {
-                    component.lastClickTime = 0;
-                    component.clickCount = 0;
-                }, 350);
-            } else if (component.clickCount == 2) {
-                if (((+new Date()) - component.lastClickTime) < 300) {
-                    this.getStatsDetails(this.statsDetailFilter);
-                    document.getSelection().removeAllRanges();
-                }
-                component.clickCount = 0;
-                component.lastClickTime = 0;
-            }
+            this.handleDoubleSingleClick(cellObj, null, (cellObj) => {
+                this._cashflowServiceProxy
+                    .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
+                    .subscribe(result => {
+                        /**
+                         * If the cell is not historical
+                         * If cell is current - if amount of results is 0 - add, 1 and it is forecast - update, >1 - show details
+                         * If cell is forecast - if amount of results is 0 - add, 1 - update, >1 - show details
+                         */
+                        if (
+                            cellObj.cell.columnPath[0] !== Periods.Historical &&
+                                /** @todo Check while isForecast will be implemented on server and uncomment it*/
+                            (result.length === 0 || (result.length === 1 /*&& result[0].isForecast*/))
+                        ) {
+                            this.currentCellOperationType = result.length === 0 ? 'add' : 'update';
+                            if (this.modifyingCelltextBox) {
+                                let parent = this.modifyingCelltextBox.element().parent();
+                                this.modifyingCelltextBox.element().remove();
+                                this.modifyingCelltextBox = null;
+                                parent.children().show();
+                                parent.css('padding', cellObj.cellElement.css('padding'));
+                            }
+                            if (!cellObj.cellElement.find('span').length)
+                                cellObj.cellElement.wrapInner('<span></span>');
+                            cellObj.cellElement.children().hide();
+                            this.oldCellPadding = cellObj.cellElement.css('padding');
+                            cellObj.cellElement.css('padding', 0);
+                            if (result.length === 1) {
+                                this.clickedRowResult = result.length;
+                            }
+                            this.clickedRow = cellObj.cell.rowPath;
+                            this.clickedColumn = cellObj.cell.columnPath;
+                            this.modifyingCelltextBox = $('<div>')
+                                .appendTo(cellObj.cellElement)
+                                .on('click', function(ev) {
+                                    ev.stopPropagation();
+                                })
+                                .dxTextBox({
+                                    value: cellObj.cell.value,
+                                    height: cellObj.cellElement.height(),
+                                    onEnterKey: this.saveForecast.bind(this) ,
+                                    onFocusOut: this.saveForecast.bind(this)
+                                })
+                                .dxTextBox('instance')
+                                .focus();
+                            document.getSelection().removeAllRanges();
+                        } else {
+                            this.statsDetailResult = result.map(detail => {
+                                detail.date = this.removeLocalTimezoneOffset(detail.date);
+                                return detail;
+                            });
+                        }
+                    });
+            });
         }
 
         /** If month cell has only one child (mtd or projected) - then click on it
@@ -2060,6 +2115,90 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (cellObj.rowIndex === cellObj.columnFields.filter(field => field.groupInterval === 'month')[0].areaIndex && !this.monthHasForecast(cellObj) && !cellObj.cell.expanded) {
                 this.addFieldToClicking(cellObj.cell.path);
             }
+        }
+    }
+
+    saveForecast = (arg: any): void  => {
+        let newValue = arg.component.option('value');
+        let cellData = {
+            row: this.clickedRow,
+            col: this.clickedColumn
+        };
+        let parent = arg.component.element().parent();
+        arg.component.element().remove();
+        this.modifyingCelltextBox = null;
+        parent.css('padding', this.oldCellPadding);
+        parent.children().show();
+        let oldValue = parent.children().text();
+        if (newValue !== oldValue) {
+            /** Send request to the server with adding or updating the cell */
+            let cellObjDate = this.getDateByPath(this.clickedColumn, this.getColumnFields());
+            let forecastModel;
+            let cashflowTypeId = this.clickedRow[this.apiTableFields.find(item => item.dataField === 'cashflowTypeId')['areaIndex']];
+            //Send newValue and cellData to your data service and update data according to your requirements
+            if (this.currentCellOperationType === 'add') {
+                let categoryIdDataIndex = this.apiTableFields.find(item => item.dataField === `categorization.${this.categorization[1]}`)['areaIndex'];
+                let categoryId = this.clickedRow[categoryIdDataIndex] ? +this.clickedRow[categoryIdDataIndex] : undefined;
+                forecastModel = new AddForecastInput({
+                    forecastModelId: this.selectedForecastModel.id,
+                    bankAccountId: this.bankAccounts[0].id,
+                    date: cellObjDate,
+                    startDate: cellObjDate,
+                    endDate: cellObjDate,
+                    cashFlowTypeId: cashflowTypeId,
+                    categoryId: categoryId,
+                    currencyId: this.currencyId,
+                    amount: newValue
+                });
+            } else {
+                /** @todo whait results from server and change forecastId*/
+                forecastModel = new UpdateForecastInput({
+                    id: 1,
+                    amount: newValue
+                });
+            }
+
+            this._cashFlowForecastServiceProxy[`${this.currentCellOperationType}Forecast`](
+                InstanceType10[this.instanceType],
+                this.instanceId,
+                forecastModel
+            ).subscribe(
+                res => {
+                    /** Update data locally*/
+                    if (this.currentCellOperationType === 'add') {
+                        this.cashflowData.push({
+                            accountId: this.bankAccounts[0].id,
+                            adjustmentType: null,
+                            amount: newValue,
+                            cashflowTypeId: cashflowTypeId,
+                            categorization: this.categorization.map((v, i) => ({[v]: this.clickedRow[i]})),
+                            comment: null,
+                            count: 1,
+                            currencyId: this.currencyId,
+                            date: cellObjDate,
+                            initialDate: cellObjDate
+                        });
+                        if (cashflowTypeId === Income || cashflowTypeId === Expense) {
+                            this.cashflowData.push({
+                                accountId: this.bankAccounts[0].id,
+                                adjustmentType: null,
+                                amount: newValue,
+                                cashflowTypeId: Total,
+                                categorization: this.categorization.map((v, i) => ({[v]: this.clickedRow[i]})),
+                                comment: null,
+                                count: 1,
+                                currencyId: this.currencyId,
+                                date: cellObjDate,
+                                initialDate: cellObjDate
+                            });
+                        }
+                    } else {
+                        /** Find an item and its total and edit it */
+                        //this.cashflowData.find(item => item => );
+                    }
+                    this.getApiDataSource();
+                    this.pivotGrid.instance.getDataSource().reload();
+                });
         }
     }
 
@@ -2082,7 +2221,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param columnFields
      * @return {any}
      */
-    getDateByPath(path, columnFields, lowestInterval) {
+    getDateByPath(path, columnFields, lowestInterval ?: string) {
         lowestInterval = lowestInterval || this.getLowestIntervalFromPath(path, columnFields);
         let date = moment.unix(0);
         let dateFields = [];
@@ -2501,17 +2640,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                summaryCell.field('row').dataField === `categorization.${this.categorization[0]}` &&
                summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === Total &&
                Number.isInteger(summaryCell.value(summaryCell.field('row')));
-    }
-
-    getStatsDetails(params): void {
-        this._cashflowServiceProxy
-            .getStatsDetails(InstanceType[this.instanceType], this.instanceId, params)
-            .subscribe(result => {
-                this.statsDetailResult = result.map(detail => {
-                    detail.date = this.removeLocalTimezoneOffset(detail.date);
-                    return detail;
-                });
-            });
     }
 
     /**
