@@ -11,7 +11,7 @@
         &.expanded {
             .categories {
                 width: 340px;
-                border-right: 1px solid #dfdfdf!important;
+                border-right: 1px solid #dfdfdf !important;
             }
 
             .transactions {
@@ -40,7 +40,6 @@
                     left: 5px;
                 }
             }
-
         }
 
         .transactions {
@@ -95,13 +94,16 @@
 
     /deep/ #gridContainer {
         .dx-datagrid-header-panel {
+            .dx-toolbar .dx-toolbar-center {                
+                 margin: 0 !important; 
+            }
+
             .dx-toolbar-items-container {
                 height: 72px;
                 margin-bottom: 0;
 
                 .dx-toolbar-after {
                     display: flex;
-                    width: 60%;
                     height: 100%;
                     justify-content: flex-end;
                     align-items: stretch;
