@@ -23,7 +23,6 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
     ) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-
         if (state && UrlHelper.isInstallUrl(state.url)) {
             return true;
         }
@@ -52,7 +51,6 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
     }
 
     selectBestRoute(): string {
-
         if (!this._sessionService.user) {
             return '/account/login';
         }
