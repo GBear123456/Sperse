@@ -71,6 +71,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public transactionTotal: number = 0;
     public transactionTotalCent: number = 0;
 
+    public adjustmentTotal: number = 0;
+    public adjustmentStartingBalanceTotal: number = 0;
+    public adjustmentStartingBalanceTotalCent: number = 0;
+
     public headlineConfig = {
         names: [this.l('Transactions')],
         iconSrc: 'assets/common/icons/credit-card-icon.svg',
@@ -200,11 +204,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         e.toolbarOptions.items.unshift({
             location: 'after',
             template: 'accountTotal'
-        },
-            {
+        },{
             location: 'after',
             template: 'portfolioTotal'
-        },{
+            }, {
+        }, {
+            location: 'after',
+            template: 'startBalanceTotal'
+        }, {
             location: 'after',
             template: 'debitTotal'
         }, {
@@ -228,6 +235,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             let debitTotal = this.debitTransactionTotal = 0;
             let debitCount = this.debitTransactionCount = 0;
             let debitClassifiedCount = this.debitClassifiedTransactionCount = 0;
+
+            this.adjustmentStartingBalanceTotal = 0;
+            this.adjustmentTotal = 0;
 
             let portfolios = [];
             let accounts = [];
@@ -276,7 +286,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.portfolioCount = totals[0].portfolioCount;
             this.accountCount = totals[0].accountCount;
 
-            this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal;
+            this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal;
+            this.adjustmentTotal = totals[0].adjustmentTotal;
+
+            this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal + this.adjustmentTotal + this.adjustmentStartingBalanceTotal;
             this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
         }
         else {
@@ -291,8 +304,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
             this.transactionTotal = 0;
             this.transactionCount = 0;
+
+            this.adjustmentStartingBalanceTotal = 0;
+            this.adjustmentTotal = 0;
         }
 
+        this.adjustmentStartingBalanceTotalCent = this.getFloatPart(this.adjustmentStartingBalanceTotal);
+        this.adjustmentStartingBalanceTotal = Math.trunc(this.adjustmentStartingBalanceTotal);
         this.creditTransactionTotalCent = this.getFloatPart(this.creditTransactionTotal);
         this.creditTransactionTotal = Math.trunc(this.creditTransactionTotal);
         this.debitTransactionTotalCent = this.getFloatPart(this.debitTransactionTotal);

@@ -109,13 +109,21 @@
                                 <span class="name">Subaccounts</span>
                             </div>
                         </div>
+                        <div *dxTemplate="let data of 'startBalanceTotal'">
+                            <div class="informer">
+                                <h2 class="count">${{adjustmentStartingBalanceTotal | number:'1.0-0'}}<span class="cent">.{{adjustmentStartingBalanceTotalCent | number:'2.0-0'}}</span></h2>
+                                <span class="name">
+                                    Starting Balance
+                                </span>
+                            </div>
+                        </div>
                         <div *dxTemplate="let data of 'creditTotal'">
                             <div class="informer">
                                 <h2 class="count">${{creditTransactionTotal | number:'1.0-0'}}<span class="cent">.{{creditTransactionTotalCent | number:'2.0-0'}}</span></h2>
                                 <span class="name" (click)="toggleCreditDefault()">
                                     Credits ({{creditTransactionCount | number}}) <i id="creditDetails" class="arrow down"></i>
                                 </span>
-                                
+
                                 <dx-tooltip target="#creditDetails"
                                             [(visible)]="defaultCreditTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
