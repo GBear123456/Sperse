@@ -16,6 +16,7 @@ import { ValidateTwoFactorCodeComponent } from './login/validate-two-factor-code
 import { SelectTenantComponent } from './login/select-tenant.component';
 import { AccountComponent } from './account.component';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
+import { CompleteTenantRegistrationComponent } from './register/complete-tenant-registration.component';
 
 @NgModule({
     imports: [
@@ -38,7 +39,8 @@ import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customizatio
                     { path: 'send-code', component: SendTwoFactorCodeComponent },
                     { path: 'verify-code', component: ValidateTwoFactorCodeComponent },
                     { path: 'select-tenant', component: SelectTenantComponent },
-                    { path: 'select-edition', component: SelectEditionComponent }
+                    { path: 'select-edition', component: SelectEditionComponent },
+                    { path: 'complete-tenant-registration', component: CompleteTenantRegistrationComponent }
                 ]
             }
         ])

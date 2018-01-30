@@ -64,6 +64,7 @@ import {
 import { TrendByPeriodComponent } from './start/dashboard/trend-by-period/trend-by-period.component';
 import {AccountsComponent} from '@app/cfo/start/dashboard/accounts/accounts.component';
 import {CategorizationStatusComponent} from '@app/cfo/start/dashboard/categorization-status/categorization-status.component';
+import {TotalsByPeriodComponent} from '@app/cfo/start/dashboard/totals-by-period/totals-by-period.component';
 
 @NgModule({
     imports: [
@@ -120,6 +121,7 @@ import {CategorizationStatusComponent} from '@app/cfo/start/dashboard/categoriza
         NoDataComponent,
         CFOModalDialogComponent,
         TrendByPeriodComponent,
+        TotalsByPeriodComponent,
         AccountsComponent,
         CategorizationStatusComponent,
         AccountsSynchStatusComponent

@@ -188,6 +188,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
 
+        if (filtersService.fixed)
+            this._categoriesShowed = false;
         this.initToolbarConfig();
 
         this.searchColumns = ['Description', 'CashflowCategoryGroupName', 'CashflowCategoryName'];

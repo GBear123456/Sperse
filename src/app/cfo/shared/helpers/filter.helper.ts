@@ -56,8 +56,9 @@ export class FilterHelpers {
         for (let key of keys) {
             let item = filter.items[key];
             if (item && item.value) {
-                item.value.setTime(item.value.getTime() - (item.value.getTimezoneOffset() * 60 * 1000));
-                requestFilter[(key == 'to' ? 'end': 'start') + 'Date'] = item.value;
+                let date = new Date(item.value.getTime());
+                date.setTime(date.getTime() - (date.getTimezoneOffset() * 60 * 1000));
+                requestFilter[(key == 'to' ? 'end': 'start') + 'Date'] = date;
             }
         }
     }

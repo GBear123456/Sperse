@@ -3,7 +3,6 @@
 </app-headline>
 
 <div [hidden]="!statsData || !statsData.length">
-    <app-toolbar [(config)]="toolbarConfig"></app-toolbar>
     <div class="mainStatsView">
         <setup-steps [SetupSteps]="leftSideBarItems" SelectedStepIndex="0"></setup-steps>
         <source-data [ngClass]="{'showen': showSourceData}"

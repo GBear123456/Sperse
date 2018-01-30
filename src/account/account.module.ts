@@ -21,6 +21,7 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { RegisterTenantComponent } from './register/register-tenant.component';
 import { RegisterTenantResultComponent } from './register/register-tenant-result.component';
+import { CompleteTenantRegistrationComponent } from './register/complete-tenant-registration.component';
 import { SelectEditionComponent } from './register/select-edition.component';
 import { TenantRegistrationHelperService } from './register/tenant-registration-helper.service';
 import { ForgotPasswordComponent } from './password/forgot-password.component';
@@ -76,7 +77,8 @@ import { PayPalComponent } from './payment/paypal/paypal.component';
         BuyComponent,
         UpgradeOrExtendComponent,
         PaymentGatewaysComponent,
-        PayPalComponent
+        PayPalComponent,
+        CompleteTenantRegistrationComponent
     ],
     providers: [
         LoginService,
