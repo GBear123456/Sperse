@@ -118,7 +118,6 @@
         "../node_modules/signalr/jquery.signalR.js",
 
         "../node_modules/morris.js/morris.min.js",
-        "../node_modules/raphael/raphael.min.js",
         "../node_modules/jquery.uniform/dist/js/jquery.uniform.standalone.js",
         "../node_modules/jquery-form/src/jquery.form.js",
         "../node_modules/localforage/dist/localforage.js",
