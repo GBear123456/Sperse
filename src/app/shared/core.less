@@ -43,9 +43,17 @@ body.page-md {
         border: 5px solid #E7F9F9;
         box-shadow: 0 0 20px 20px #F4FCFC;
         animation: none !important;
+        &:before {
+            content: '!';
+            font-family: serif;
+            font-size: 60px;
+            color: #8CD4F5;
+            position: relative;
+            top: -5px;
+        }
         .swal-icon--warning__body,
         .swal-icon--warning__dot {
-            background: #8CD4F5;
+            display: none;
         }
     }
     .swal-title {
