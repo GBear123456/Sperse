@@ -48,7 +48,7 @@
                                     horizontalAlignment="left">
                         </dxo-legend>
 
-                        <dxi-series [color]="netChangeColor"
+                        <dxi-series [color]="totalData[0].income - totalData[0].expenses > 0 ? netChangeColor : '#f05b2a'"
                                     valueField="netChange"
                                     name="{{l('Net_Change')}}"></dxi-series>
                         <dxi-series [color]="expensesColor"
@@ -70,7 +70,7 @@
         <div class="row summary" *ngIf="totalData?.length > 0">
             <ng-container *ngFor="let item of totalData">
                 <div class="col-7 name">{{l('Net_Change')}}</div>
-                <div class="col-5 text-right value" [ngClass]="item.netChange >= 0 ? ' positive' : 'negative'">{{item.netChange | currency: 'USD' : 'symbol' : '1.0-0'}}</div>
+                <div class="col-5 text-right value" [ngClass]="item.income - item.expenses >= 0 ? ' positive' : 'negative'">{{item.netChange | currency: 'USD' : 'symbol' : '1.0-0'}}</div>
             </ng-container>
         </div>
     </div>
