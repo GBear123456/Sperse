@@ -67,12 +67,54 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                     );
                 });
                 this.totalData = result;
+                console.log(this.totalData);
                 abp.ui.clearBusy('app-totals-by-period');
             });
     }
 
     onValueChanged($event): void {
-        console.log($event);
+        let period;
+        let groupBy;
+
+        switch ($event.value) {
+            case 'Today':
+                period = 'day';
+                groupBy = 'Daily';
+                break;
+            case 'Yesterday':
+                period = 'day';
+                groupBy = 'Daily';
+                break;
+            case 'This_Week':
+                period = 'week';
+                groupBy = 'Weekly';
+                break;
+            case 'This_Month':
+                period = 'month';
+                groupBy = 'Monthly';
+                break;
+            case 'Last_Month':
+                period = 'month';
+                groupBy = 'Monthly';
+                break;
+            case 'This_Year':
+                period = 'year';
+                groupBy = 'Yearly';
+                break;
+            case 'Last_Year':
+                period = 'year';
+                groupBy = 'Yearly';
+                break;
+            default:
+                period = 'month';
+                groupBy = 'Monthly';
+                break;
+        }
+
+        this.startDate = moment().utc().startOf(period);
+        this.endDate = moment().utc().endOf(period);
+        this.selectedPeriod = String(GroupBy[groupBy]).toLowerCase();
+        this.loadStatsData();
     }
 
 }

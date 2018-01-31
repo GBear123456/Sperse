@@ -11,48 +11,56 @@
     <div class="content-wrap">
         <div class="row">
             <div class="col-12">
-                <dx-chart
-                    id="totalsByPeriod"
-                    [dataSource]="totalData"
-                    [equalBarWidth]=true
-                    barWidth=0.7
-                    [rotated]=true
-                    [size]="{height: 160}"
-                    palette="soft">
+                <ng-container *ngIf="totalData?.length > 0; else noDataBlock">
+                    <dx-chart
+                        id="totalsByPeriod"
+                        [dataSource]="totalData"
+                        [equalBarWidth]=true
+                        [barWidth]=0.7
+                        [rotated]=true
+                        [size]="{height: 160}"
+                        [rtlEnabled]=true
+                        [palette]="soft">
 
-                    <dxo-common-series-settings argumentField="date"
-                                                type="bar">
-                    </dxo-common-series-settings>
+                        <dxo-common-series-settings argumentField="date"
+                                                    type="bar">
+                        </dxo-common-series-settings>
 
-                    <dxo-argument-axis>
-                        <dxo-label [visible]="false"></dxo-label>
-                    </dxo-argument-axis>
+                        <dxo-argument-axis>
+                            <dxo-label [visible]="false"></dxo-label>
+                        </dxo-argument-axis>
 
-                    <dxi-value-axis>
-                        <dxo-label [format]="'currency'"></dxo-label>
-                    </dxi-value-axis>
+                        <dxi-value-axis>
+                            <dxo-label [format]="'currency'"></dxo-label>
+                        </dxi-value-axis>
 
-                    <dxo-tooltip enabled="true"
-                                 zIndex="1"
-                                 [format]="'currency'">
-                    </dxo-tooltip>
+                        <dxo-tooltip enabled="true"
+                                     zIndex="1"
+                                     [format]="'currency'">
+                        </dxo-tooltip>
 
-                    <dxo-legend itemsAlignment="left"></dxo-legend>
+                        <dxo-legend verticalAlignment="top"
+                                    horizontalAlignment="left">
+                        </dxo-legend>
 
-                    <dxi-series [color]="netChangeColor"
-                                valueField="netChange"
-                                name="{{l('Net_Change')}}"></dxi-series>
-                    <dxi-series [color]="expensesColor"
-                                valueField="expenses"
-                                name="{{l('Cash_Outflows')}}"></dxi-series>
-                    <dxi-series [color]="incomeColor"
-                                valueField="income"
-                                name="{{l('Cash_Inflows')}}"></dxi-series>
-                </dx-chart>
+                        <dxi-series [color]="netChangeColor"
+                                    valueField="netChange"
+                                    name="{{l('Net_Change')}}"></dxi-series>
+                        <dxi-series [color]="expensesColor"
+                                    valueField="expenses"
+                                    name="{{l('Cash_Outflows')}}"></dxi-series>
+                        <dxi-series [color]="incomeColor"
+                                    valueField="income"
+                                    name="{{l('Cash_Inflows')}}"></dxi-series>
+                    </dx-chart>
+                </ng-container>
+                <ng-template #noDataBlock>
+                    {{l('No_Data_For_This_Period')}}
+                </ng-template>
             </div>
         </div>
 
-        <div class="row summary">
+        <div class="row summary" *ngIf="totalData?.length > 0">
             <ng-container *ngFor="let item of totalData">
                 <div class="col-7 name">{{l('Net_Change')}}</div>
                 <div class="col-5 text-right value" [ngClass]="item.netChange >= 0 ? ' positive' : 'negative'">{{item.netChange | currency: 'USD' : 'symbol' : '1.0-0'}}</div>
