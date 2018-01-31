@@ -69,13 +69,16 @@
         }
         .synch-status .synch-section-wrap .links {
             width: 32%;
+            align-self: center;
+            height: 100%;
         }
         .synch-status .synch-section-wrap .list-of-links {
             list-style-type: none;
             padding-left: 0;
+            margin-bottom: 0;
         }
         .synch-status .synch-section-wrap .link-item {
-            padding: 5px 0;
+            padding: 10px 5px;
             border-bottom: 1px solid  #E5E9EC;
         }
 
@@ -85,6 +88,12 @@
             letter-spacing: 0.2px;
             line-height: 24px;
             font-weight: 500;
+            text-decoration: none;
+            transition: .2s;
+            
+            &:hover {
+                color: lighten(#00AEEF, 20%);
+            }
         }
 
         .synch-status .synch-section-wrap .synch-item {

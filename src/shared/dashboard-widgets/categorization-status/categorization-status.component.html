@@ -25,14 +25,16 @@
             <ul class="category-synch-list">
                 <li class="category-synch-item">
                     <span class="category-type">{{l('Classified_Transactions')}}</span>
-                    <span class="synch-status"><strong>{{categorySynchData?.classifiedTransactionCount | number : '1.0-2'}}</strong> {{categorySynchData?.classifiedTransactionPercent}}%</span>
+                    <span class="synch-status count"><strong>{{categorySynchData?.classifiedTransactionCount | number : '1.0-2'}}</strong></span>
+                    <span class="synch-status percent">{{categorySynchData?.classifiedTransactionPercent}}%</span>
                     <a (click)="reset();" class="small-button btn-layout">
-                        {{l('Reset_classifications')}}
+                        {{l('Unclassified_Transactions')}}
                     </a>
                 </li>
                 <li class="category-synch-item">
                     <span class="category-type">{{l('Unclassified_Transactions')}}</span>
-                    <span class="synch-status"><strong>{{categorySynchData?.unclassifiedTransactionCount | number : '1.0-2'}}</strong> {{categorySynchData?.unclassifiedTransactionPercent}}%</span>
+                    <span class="synch-status count"><strong>{{categorySynchData?.unclassifiedTransactionCount | number : '1.0-2'}}</strong></span>
+                    <span class="synch-status percent">{{categorySynchData?.unclassifiedTransactionPercent}}%</span>
                     <a (click)="autoClassify();" class="small-button btn-layout">
                         {{l('Auto_classify')}}
                     </a>
