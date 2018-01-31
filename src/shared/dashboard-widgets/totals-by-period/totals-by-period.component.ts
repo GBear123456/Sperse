@@ -67,7 +67,6 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                     );
                 });
                 this.totalData = result;
-                console.log(this.totalData);
                 abp.ui.clearBusy('app-totals-by-period');
             });
     }

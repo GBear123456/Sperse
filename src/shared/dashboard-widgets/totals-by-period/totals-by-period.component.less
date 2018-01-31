@@ -1,0 +1,77 @@
+:host {
+    border: 1px solid #E5E9EC;
+    background-color: #FFFFFF;
+    border-radius: 4px;
+    position: relative;
+    padding: 30px;
+    display: block;
+
+    header {
+        display: inline-block;
+        width: 100%;
+    }
+
+    .title {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: normal;
+        color: #212c36;
+        float: left;
+        margin-bottom: 0;
+    }
+
+    .select-box-wrap {
+        float: right;
+        width: 110px;
+
+        /deep/ dx-select-box {
+            border-radius: 0;
+            background-color: transparent;
+
+            .dx-texteditor-input, input.form-control {
+                color: #677380;
+                font-size: 14px;
+                font-weight: 300;
+                letter-spacing: 0.2px;
+                line-height: 24px;
+                padding: 0 16px 0 0 ;
+                background-color: transparent;
+                min-height: 24px;
+                border: 0;
+            }
+
+            .dx-dropdowneditor-button {
+                width: 10px;
+                padding: 0;
+                border-radius: 0;
+
+                .dx-dropdowneditor-icon {
+                    background-color: transparent !important;
+
+                    &::before {
+                        content: '\f107';
+                        font-family: FontAwesome !important;
+                    }
+                }
+            }
+        }
+    }
+
+    .positive {
+        color: #35c8a8;
+    }
+    .negative {
+        color: #f05b2a;
+    }
+
+    .summary {
+        padding-top: 20px;
+        font-weight: 500;
+        .name {
+        }
+    }
+
+    .dxc-legend {
+        transform: translate(0, 50%) !important;
+    }
+}
