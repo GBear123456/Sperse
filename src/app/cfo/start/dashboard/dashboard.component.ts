@@ -14,6 +14,11 @@ import { Router } from '@angular/router';
 export class DashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
     public headlineConfig;
     private rootComponent: any;
+    linksTo = [
+        {name: 'View_Cash_Flow_Report', route: 'cashflow'},
+        {name: 'View_Transaction_Details', route: 'transactions'},
+        {name: 'View_Financial_Statistics', route: 'stats'},
+    ];
 
     constructor(
         injector: Injector,
@@ -27,9 +32,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     ngOnInit(): void {
         super.ngOnInit();
-      
         this.rootComponent.overflowHidden(true);
-
         this.headlineConfig = {
             names: [this.l('Dashboard_Title')],
             iconSrc: 'assets/common/icons/pie-chart.svg',

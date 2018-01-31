@@ -4,7 +4,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        
+
         .view-more {
             color: #00AEEF;
             font-size: 12px;
@@ -13,7 +13,7 @@
             cursor: pointer;
         }
     }
-    
+
     .small-button {
         border-radius: 13px!important;
         font-size: 13px!important;
@@ -34,7 +34,7 @@
             background: lighten(#00aeef, 5%);
         }
     }
-    
+
     .total-synch-progress {
         color: #424C56;
         font-size: 24px;
@@ -44,7 +44,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
     }
-    
+
     .progress-wrap {
         max-width: 180px;
         width: 100%;
@@ -52,11 +52,11 @@
         margin: 0 auto;
         position: relative;
     }
-    
+
     .col-8 {
         align-self: center;
     }
-    
+
     .title {
         color: #212C36;
         font-size: 18px;
@@ -69,10 +69,10 @@
         list-style-type: none;
         padding-left: 0;
         margin-bottom: 0;
-        
+
         .category-synch-item {
             padding: 10px 0;
-            
+
             &::before {
                 content: '';
                 display: inline-block;
@@ -82,13 +82,17 @@
                 border-radius: 50%;
                 margin-right: 16px;
             }
-    
+
             &:nth-child(1) {
                 &::before {
-                    background-color: #32BEF2;
+                    height: 20px;
+                    width: 20px;
+                    background: transparent url('../../../assets/common/icons/completed-icon.svg') 4px 50% no-repeat;
+                    position: relative;
+                    top: 4px;
                 }
             }
-            
+
             .category-type {
                 color: #212C36;
                 font-size: 14px;
