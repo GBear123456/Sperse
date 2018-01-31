@@ -579,7 +579,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 field['CashFlowTypeId'] = new FilterItemModel(data.key);
             else if (!parseInt(data.key.split('').reverse().join('')))
                 field['accountingTypeId'] = new FilterItemModel(parseInt(data.key));
-            else if (!parseInt(data.parent.split('').reverse().join('')))
+            else if (data.parent.split && !parseInt(data.parent.split('').reverse().join('')))
                 field['CashflowCategoryId'] = new FilterItemModel(parseInt(data.key));
             else
                 field['CashflowSubCategoryId'] = new FilterItemModel(parseInt(data.key));
@@ -597,7 +597,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.processFilterInternal();
         }
 
-        this.selectedCashflowCategoryKey = key;
+        this.selectedCashflowCategoryKey = data.key;
     }
 
     onSelectionChanged($event, initial = false) {
