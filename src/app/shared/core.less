@@ -39,6 +39,15 @@ body.page-md {
             }
         }
     }
+    .swal-icon.swal-icon--warning {
+        border: 5px solid #E7F9F9;
+        box-shadow: 0 0 20px 20px #F4FCFC;
+        animation: none !important;
+        .swal-icon--warning__body,
+        .swal-icon--warning__dot {
+            background: #8CD4F5;
+        }
+    }
     .swal-title {
         color: #8CD4F5;
         font-size: 18px;
@@ -50,8 +59,18 @@ body.page-md {
         border-radius: 21px;
         padding: 10px 35px;
         box-shadow: none;
+        transition: .2s;
+        
         &:hover {
             background: lighten(#00aeef, 15%);
+        }
+        
+        &.swal-button--cancel {
+            color: #555;
+            background-color: #efefef;
+            &:hover {
+                background: #d7d7d7;
+            }
         }
     }
 }
