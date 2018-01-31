@@ -16,7 +16,6 @@ export class AccountsSynchStatusComponent extends CFOComponentBase implements On
 
     constructor(injector: Injector) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit() {

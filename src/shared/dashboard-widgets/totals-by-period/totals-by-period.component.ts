@@ -37,7 +37,6 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         private _bankAccountService: BankAccountsServiceProxy
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit() {
@@ -45,7 +44,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     loadStatsData() {
-        abp.ui.setBusy('app-totals-by-period');
+        abp.ui.setBusy('.totalByPeriod');
         this._bankAccountService.getStats(
             InstanceType[this.instanceType],
             this.instanceId,
@@ -67,13 +66,15 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                     );
                 });
                 this.totalData = result;
-                abp.ui.clearBusy('app-totals-by-period');
+                abp.ui.clearBusy('.totalByPeriod');
             });
     }
 
     onValueChanged($event): void {
         let period;
         let groupBy;
+        let startDate = moment().utc();
+        let endDate = moment().utc();
 
         switch ($event.value) {
             case 'Today':
@@ -83,26 +84,32 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
             case 'Yesterday':
                 period = 'day';
                 groupBy = 'Daily';
+                startDate.subtract(1, 'day');
+                endDate.subtract(1, 'day');
                 break;
-            case 'This_Week':
+            case 'This Week':
                 period = 'week';
                 groupBy = 'Weekly';
                 break;
-            case 'This_Month':
+            case 'This Month':
                 period = 'month';
                 groupBy = 'Monthly';
                 break;
-            case 'Last_Month':
+            case 'Last Month':
                 period = 'month';
                 groupBy = 'Monthly';
+                startDate.subtract(1, 'month');
+                endDate.subtract(1, 'month');
                 break;
-            case 'This_Year':
+            case 'This Year':
                 period = 'year';
                 groupBy = 'Yearly';
                 break;
-            case 'Last_Year':
+            case 'Last Year':
                 period = 'year';
                 groupBy = 'Yearly';
+                startDate.subtract(1, 'year');
+                endDate.subtract(1, 'year');
                 break;
             default:
                 period = 'month';
@@ -110,8 +117,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 break;
         }
 
-        this.startDate = moment().utc().startOf(period);
-        this.endDate = moment().utc().endOf(period);
+        this.startDate = startDate.startOf(period);
+        this.endDate = endDate.endOf(period);
         this.selectedPeriod = String(GroupBy[groupBy]).toLowerCase();
         this.loadStatsData();
     }

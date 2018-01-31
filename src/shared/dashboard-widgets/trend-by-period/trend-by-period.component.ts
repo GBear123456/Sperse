@@ -87,7 +87,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         {
             key: 2,
             name: 'month',
-            text: `12 ${this.ls('Platform', 'Periods_Month_plural')}`,
+            text: `12 ${this.l('Periods_Month_plural')}`,
             amount: 12
         }
     ];

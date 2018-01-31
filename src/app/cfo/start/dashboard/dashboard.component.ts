@@ -25,8 +25,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         private _router: Router
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-
         this.rootComponent = this.getRootComponent();
     }
 

@@ -19,7 +19,6 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         private _router: Router
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit() {

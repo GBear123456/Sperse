@@ -1,11 +1,33 @@
 :host {
     display: block;
 
+    .categorization-status {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
     header {
         display: inline-block;
         width: 100%;
     }
-
+    
+    .content-wrap {
+        flex: 1 auto;
+        display: flex;
+        flex-direction: column;
+        padding-top: 30px;
+        justify-content: space-between;
+    }
+    
+    .labels {
+        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
+        height: 235px;
+        padding: 40px 0;
+    }
+    
     .title {
         font-size: 18px;
         font-weight: 700;
@@ -13,11 +35,13 @@
         color: #212c36;
         float: left;
         margin-bottom: 0;
+        line-height: 34px;
     }
 
     .select-box-wrap {
         float: right;
         width: 110px;
+        margin-top: 5px;
 
         /deep/ dx-select-box {
             border-radius: 0;
@@ -61,12 +85,13 @@
 
     .summary {
         padding-top: 20px;
+        padding-bottom: 10px;
         font-weight: 500;
-        .name {
-        }
     }
 
-    .dxc-legend {
-        transform: translate(0, 50%) !important;
+    .no-data {
+        padding-top: 20px;
+        padding-bottom: 10px;
+        font-weight: 500;
     }
 }
