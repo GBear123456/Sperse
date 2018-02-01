@@ -3,7 +3,7 @@
         <h2 class="title">{{l('Totals_by_period')}}</h2>
         <div class="select-box-wrap">
             <dx-select-box [items]="availablePeriods"
-                           [value]="availablePeriods[3]"
+                           [value]="availablePeriods[6]"
                            (onValueChanged)="onValueChanged($event)">
             </dx-select-box>
         </div>
@@ -21,9 +21,9 @@
                         id="totalsByPeriod"
                         [dataSource]="totalData"
                         [equalBarWidth]=true
-                        [barWidth]=0.5
+                        [barWidth]=0.62
                         [rotated]=true
-                        [size]="{height: 260}"
+                        [size]="{height: 185}"
                         [palette]="soft">
 
                         <dxo-common-series-settings argumentField="date"
@@ -36,12 +36,7 @@
 
                         <dxi-value-axis>
                             <dxo-label [format]="'currency'"></dxo-label>
-                        </dxi-value-axis>
-
-                        <dxo-tooltip enabled="true"
-                                     zIndex="1"
-                                     [format]="'currency'">
-                        </dxo-tooltip>
+                       </dxi-value-axis>
 
                         <dxo-legend verticalAlignment="top"
                                     [visible]="false"
@@ -49,14 +44,33 @@
                         </dxo-legend>
 
                         <dxi-series [color]="totalData[0].income - totalData[0].expenses > 0 ? netChangeColor : '#f05b2a'"
+                                    [class]="totalData[0].income - totalData[0].expenses > 0 ? positive : negative"
                                     valueField="netChange"
-                                    name="{{l('Net_Change')}}"></dxi-series>
+                                    name="{{l('Net_Change')}}">
+                            <dxo-label
+                                [visible]="true"
+                                [customizeText]="customizeText"
+                                [format]="'currency'">
+                            </dxo-label>
+                        </dxi-series>
                         <dxi-series [color]="expensesColor"
                                     valueField="expenses"
-                                    name="{{l('Cash_Outflows')}}"></dxi-series>
+                                    name="{{l('Cash_Outflows')}}">
+                            <dxo-label
+                                [visible]="true"
+                                [format]="'currency'">
+
+                            </dxo-label>
+                        </dxi-series>
                         <dxi-series [color]="incomeColor"
                                     valueField="income"
-                                    name="{{l('Cash_Inflows')}}"></dxi-series>
+                                    name="{{l('Cash_Inflows')}}">
+                            <dxo-label
+                                [visible]="true"
+                                [format]="'currency'">
+
+                            </dxo-label>
+                        </dxi-series>
                     </dx-chart>
                 </div>
             </ng-container>

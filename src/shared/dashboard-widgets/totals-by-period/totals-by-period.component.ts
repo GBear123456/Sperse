@@ -25,9 +25,9 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         this.l('Last_Year')
     ];
     totalData: any;
-    selectedPeriod: any = String(GroupBy['Monthly']).toLowerCase();
-    startDate = moment().startOf('month');
-    endDate = moment().endOf('month');
+    selectedPeriod: any = String(GroupBy['Yearly']).toLowerCase();
+    startDate = moment().utc().subtract(1, 'year').startOf('year');
+    endDate = moment().utc().subtract(1, 'year').endOf('year');
     incomeColor = '#32bef2';
     expensesColor = '#f9b74b';
     netChangeColor = '#35c8a8';
@@ -112,8 +112,10 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 endDate.subtract(1, 'year');
                 break;
             default:
-                period = 'month';
-                groupBy = 'Monthly';
+                period = 'year';
+                groupBy = 'Yearly';
+                startDate.subtract(1, 'year');
+                endDate.subtract(1, 'year');
                 break;
         }
 
@@ -123,4 +125,11 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         this.loadStatsData();
     }
 
+    customizeText = (pointInfo: any) => {
+        if (this.totalData[0].income - this.totalData[0].expenses < 0) {
+            return '-' + pointInfo.valueText;
+        } else {
+            return pointInfo.valueText;
+        }
+    }
 }

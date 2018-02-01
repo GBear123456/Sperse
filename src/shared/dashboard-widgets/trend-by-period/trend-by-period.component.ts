@@ -15,6 +15,7 @@ import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/take';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
+import {AppConsts} from "@shared/AppConsts";
 
 @Component({
     selector: 'app-trend-by-period',
@@ -39,15 +40,15 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         },
         {
             'name': 'income',
-            'label': this.l('Stats_income')
+            'label': this.l('Stats_Inflows')
         },
         {
             'name': 'expenses',
-            'label': this.l('Stats_expenses')
+            'label': this.l('Stats_Outflows')
         },
         {
             'name': 'netChange',
-            'label': this.l('Stats_netChange')
+            'label': this.l('Net_Change')
         },
         {
             'name': 'endingBalance',
