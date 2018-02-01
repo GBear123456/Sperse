@@ -127,9 +127,11 @@
                                 <dx-tooltip target="#creditDetails"
                                             [(visible)]="defaultCreditTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
-                                        <span class="name">Uncategorized ({{creditTransactionCount - creditClassifiedTransactionCount | number}})</span>
-                                        <br />
-                                        <span class="name">Categorized ({{creditClassifiedTransactionCount | number}})</span>
+                                        <div class="tooltip-wrap">
+                                            <span class="name" (click)="applyTotalFilters(false, true, false)">Uncategorized ({{creditTransactionCount - creditClassifiedTransactionCount | number}})</span>
+                                            <br />
+                                            <span class="name" (click)="applyTotalFilters(true, true, false)">Categorized ({{creditClassifiedTransactionCount | number}})</span>
+                                        </div>                                        
                                     </div>
                                 </dx-tooltip>
                             </div>
@@ -143,9 +145,11 @@
                                 <dx-tooltip target="#debitDetails"
                                             [(visible)]="defaultDebitTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
-                                        <span class="name">Uncategorized ({{debitTransactionCount - debitClassifiedTransactionCount | number}})</span>
-                                        <br />
-                                        <span class="name">Categorized ({{debitClassifiedTransactionCount | number}})</span>
+                                        <div class="tooltip-wrap">
+                                            <span class="name" (click)="applyTotalFilters(false, false, true)">Uncategorized ({{debitTransactionCount - debitClassifiedTransactionCount | number}})</span>
+                                            <br />
+                                            <span class="name" (click)="applyTotalFilters(true, false, true)">Categorized ({{debitClassifiedTransactionCount | number}})</span>
+                                        </div>
                                     </div>
                                 </dx-tooltip>
                             </div>
@@ -159,9 +163,11 @@
                                 <dx-tooltip target="#totalDetails"
                                             [(visible)]="defaultTotalTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
-                                        <span class="name">Uncategorized ({{transactionCount - (debitClassifiedTransactionCount + creditClassifiedTransactionCount) | number}})</span>
-                                        <br />
-                                        <span class="name">Categorized ({{debitClassifiedTransactionCount + creditClassifiedTransactionCount | number}})</span>
+                                        <div class="tooltip-wrap">
+                                            <span class="name" (click)="applyTotalFilters(false, false, false)">Uncategorized ({{transactionCount - (debitClassifiedTransactionCount + creditClassifiedTransactionCount) | number}})</span>
+                                            <br />
+                                            <span class="name" (click)="applyTotalFilters(true, false, false)">Categorized ({{debitClassifiedTransactionCount + creditClassifiedTransactionCount | number}})</span>
+                                        </div>
                                     </div>
                                 </dx-tooltip>
                             </div>

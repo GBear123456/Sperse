@@ -94,8 +94,8 @@
 
     /deep/ #gridContainer {
         .dx-datagrid-header-panel {
-            .dx-toolbar .dx-toolbar-center {                
-                 margin: 0 !important; 
+            .dx-toolbar .dx-toolbar-center {
+                margin: 0 !important;
             }
 
             .dx-toolbar-items-container {
@@ -155,6 +155,26 @@
                     }
                 }
             }
+        }
+    }
+}
+
+.tooltip-wrap {
+    text-align: left;
+
+    .name {
+        cursor: pointer;
+        transition: .2s;
+        font-size: 13px;
+        display: block;
+
+        + .name {
+            margin-top: 3px;
+        }
+
+        &:hover {
+            color: darken(#333, 50%);
+            text-decoration: underline;
         }
     }
 }

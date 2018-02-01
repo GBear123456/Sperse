@@ -327,7 +327,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return float_part;
     }
 
-    showColumnChooser() {
+    showColumnChooser() {            
         this.dataGrid.instance.showColumnChooser();
     }
 
@@ -350,6 +350,34 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
     toggleTotalDefault() {
         this.defaultTotalTooltipVisible = !this.defaultTotalTooltipVisible;
+    }
+    applyTotalFilters(classified: boolean, credit: boolean, debit: boolean) {
+        var classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
+        var amountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'Amount'; });
+
+        if (classified) {
+            classifiedFilter.items['yes'].setValue(true, classifiedFilter);
+            classifiedFilter.items['no'].setValue(false, classifiedFilter);
+        } else {
+            classifiedFilter.items['yes'].setValue(false, classifiedFilter);
+            classifiedFilter.items['no'].setValue(true, classifiedFilter);
+        } 
+
+        if (credit) {
+            amountFilter.items['from'].setValue('0', amountFilter);
+            amountFilter.items['to'].setValue('', amountFilter);
+            this.defaultCreditTooltipVisible = false;
+        } else if (debit) {
+            amountFilter.items['to'].setValue('0', amountFilter);
+            amountFilter.items['from'].setValue('', amountFilter);
+            this.defaultDebitTooltipVisible = false; 
+        } else {
+            amountFilter.items['to'].setValue('', amountFilter);
+            amountFilter.items['from'].setValue('', amountFilter);
+            this.defaultTotalTooltipVisible = false;
+        }
+
+        this.filtersService.change(classifiedFilter);
     }
 
     ngOnInit(): void {
