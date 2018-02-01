@@ -59,7 +59,6 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 result.forEach(statsItem => {
                     statsItem.income = Math.abs(statsItem.income);
                     statsItem.expenses = Math.abs(statsItem.expenses);
-                    console.log(statsItem.expenses);
                     Object.defineProperty(
                         statsItem,
                         'netChange',
@@ -67,7 +66,6 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                     );
                 });
                 this.totalData = result;
-                console.log(this.totalData);
                 abp.ui.clearBusy('.totalByPeriod');
             });
     }
