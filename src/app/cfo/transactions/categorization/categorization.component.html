@@ -20,7 +20,8 @@
                   (onRowUpdated)="onCategoryUpdated($event)"
                   (onRowInserted)="onCategoryInserted($event)"
                   (onRowRemoving)="onCategoryRemoving($event)">
-        <dxi-column [allowSorting]="true" [sortIndex]="0"
+        <!-- dxi-column [allowSorting]="true" dataField="coAID"></dxi-column -->
+        <dxi-column [allowSorting]="true" [sortIndex]="1"
                     [sortingMethod]="sortItem" [sortOrder]="'asc'" dataField="name"></dxi-column>
     </dx-tree-list>
 </div>
