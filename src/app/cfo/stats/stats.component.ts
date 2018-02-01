@@ -130,14 +130,14 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             {
                 location: 'before',
                 items: [
-                    { 
-                        name: 'filters', 
-                        action: (event) => {                            
+                    {
+                        name: 'filters',
+                        action: (event) => {
                             setTimeout(() => {
                                 this.linearChart.instance.render();
                                 this.barChart.instance.render();
                             }, 1000);
-                            this._filtersService.fixed = 
+                            this._filtersService.fixed =
                                 !this._filtersService.fixed;
                         },
                         options: {
@@ -150,12 +150,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             mouseout: (event) => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
-                            } 
+                            }
                         },
-                        attr: { 
+                        attr: {
                             'filter-selected': this._filtersService.hasFilterSelected
-                        } 
-                    } 
+                        }
+                    }
                 ]
             },
             {
