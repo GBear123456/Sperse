@@ -130,15 +130,14 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             {
                 location: 'before',
                 items: [
-                    { 
-                        name: 'filters', 
-                        action: (event) => {                            
+                    {
+                        name: 'filters',
+                        action: (event) => {
                             setTimeout(() => {
                                 this.linearChart.instance.render();
                                 this.barChart.instance.render();
                             }, 1000);
-                            this._filtersService.fixed = 
-                                !this._filtersService.fixed;
+                            this._filtersService.fixed = !this._filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
@@ -150,20 +149,20 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             mouseout: (event) => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
-                            } 
+                            }
                         },
-                        attr: { 
+                        attr: {
                             'filter-selected': this._filtersService.hasFilterSelected
-                        } 
-                    } 
+                        }
+                    }
                 ]
             },
-            {
-                location: 'before',
-                items: [
-                    { name: 'back' }
-                ]
-            },
+            // {
+            //     location: 'before',
+            //     items: [
+            //         { name: 'back' }
+            //     ]
+            // },
             {
                 location: 'before',
                 items: [
@@ -177,7 +176,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             items: forecastModelsObj.items,
                             selectedIndex: forecastModelsObj.selectedItemIndex,
                             height: 39,
-                            width: 200,
+                            width: 243,
                             onSelectionChanged: (e) => {
                                 if (e) {
                                     this.changeSelectedForecastModel(e);
