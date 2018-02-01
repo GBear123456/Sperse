@@ -239,7 +239,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         let account = this.bankAccounts.find(account => {
                             return account.id == key;
                         });
-                        value = account ? key + ' ' + (account.accountName || account.accountNumber) : cellInfo.valueText;
+                        value = account ? (account.accountName || account.accountNumber) : cellInfo.valueText;
                     } else {
                         let namesSource = this.getNamesSourceLink(prefix);
                         return namesSource && namesSource[key]['name'] ?
