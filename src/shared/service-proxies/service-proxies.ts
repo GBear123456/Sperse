@@ -6782,7 +6782,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType53, instanceId: number, syncHistory: boolean): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType53, instanceId: number, syncHistory: boolean, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6792,6 +6792,10 @@ export class FinancialInformationServiceProxy {
             throw new Error("The parameter 'syncHistory' must be defined and cannot be null.");
         else
             url_ += "syncHistory=" + encodeURIComponent("" + syncHistory) + "&"; 
+        if (forcedSync === undefined || forcedSync === null)
+            throw new Error("The parameter 'forcedSync' must be defined and cannot be null.");
+        else
+            url_ += "forcedSync=" + encodeURIComponent("" + forcedSync) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {

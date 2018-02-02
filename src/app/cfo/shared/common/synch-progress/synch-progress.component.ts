@@ -32,11 +32,12 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         this.requestSync();
     }
 
-    public requestSync() {
+    public requestSync(forcedSync: boolean = false) {
         this._financialInformationServiceProxy.syncAllAccounts(
             InstanceType[this.instanceType],
             this.instanceId,
-            true)
+            true,
+            forcedSync)
             .subscribe((result) => {
                 this.getSynchProgress();
             });
