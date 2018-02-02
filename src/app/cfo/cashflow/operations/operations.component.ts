@@ -131,57 +131,57 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                     }
                 ]
             },
-            {
-                location: 'after',
-                items: [
-                    {
-                        name: 'flag',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            width: 62,
-                            hint: this.l('Flags'),
-                            items: [{
-                                action: Function(),
-                                text: 'Item one'
-                            }, {
-                                action: Function(),
-                                text: 'Item two'
-                            }]
-                        }
-                    },
-                    {
-                        name: 'pen',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            width: 62,
-                            hint: this.l('Tags'),
-                            items: [{
-                                action: Function(),
-                                text: 'Item one'
-                            }, {
-                                action: Function(),
-                                text: 'Item two'
-                            }]
-                        }
-                    },
-                    {
-                        name: 'more',
-                        widget: 'dxDropDownMenu',
-                        text: this.l('More'),
-                        options: {
-                            width: 66,
-                            hint: this.l('More'),
-                            items: [{
-                                action: Function(),
-                                text: 'Item one'
-                            }, {
-                                action: Function(),
-                                text: 'Item two'
-                            }]
-                        }
-                    }
-                ]
-            },
+            // {
+            //     location: 'after',
+            //     items: [
+            //         {
+            //             name: 'flag',
+            //             widget: 'dxDropDownMenu',
+            //             options: {
+            //                 width: 62,
+            //                 hint: this.l('Flags'),
+            //                 items: [{
+            //                     action: Function(),
+            //                     text: 'Item one'
+            //                 }, {
+            //                     action: Function(),
+            //                     text: 'Item two'
+            //                 }]
+            //             }
+            //         },
+            //         {
+            //             name: 'pen',
+            //             widget: 'dxDropDownMenu',
+            //             options: {
+            //                 width: 62,
+            //                 hint: this.l('Tags'),
+            //                 items: [{
+            //                     action: Function(),
+            //                     text: 'Item one'
+            //                 }, {
+            //                     action: Function(),
+            //                     text: 'Item two'
+            //                 }]
+            //             }
+            //         },
+            //         {
+            //             name: 'more',
+            //             widget: 'dxDropDownMenu',
+            //             text: this.l('More'),
+            //             options: {
+            //                 width: 66,
+            //                 hint: this.l('More'),
+            //                 items: [{
+            //                     action: Function(),
+            //                     text: 'Item one'
+            //                 }, {
+            //                     action: Function(),
+            //                     text: 'Item two'
+            //                 }]
+            //             }
+            //         }
+            //     ]
+            // },
             {
                 location: 'after',
                 items: [

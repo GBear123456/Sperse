@@ -104,7 +104,6 @@
         "../node_modules/jquery-migrate/dist/jquery-migrate.min.js",
         "../node_modules/jqueryui/jquery-ui.min.js",
         "../node_modules/js-cookie/src/js.cookie.js",
-        "../node_modules/jstree/dist/jstree.min.js",
 
         "../node_modules/popper.js/dist/umd/popper.min.js",
         "../node_modules/bootstrap/dist/js/bootstrap.min.js",
@@ -115,15 +114,10 @@
         "../node_modules/tether/dist/js/tether.min.js",
 
         "../node_modules/lodash/lodash.min.js",
-        "../node_modules/moment/min/moment-with-locales.min.js",
-        "../node_modules/moment-timezone/builds/moment-timezone-with-data.min.js",
 
         "../node_modules/signalr/jquery.signalR.js",
 
-        "../src/assets/Jcrop/js/Jcrop.js",
         "../node_modules/morris.js/morris.min.js",
-        "../node_modules/raphael/raphael.min.js",
-        "../node_modules/jquery-sparkline/jquery.sparkline.min.js",
         "../node_modules/jquery.uniform/dist/js/jquery.uniform.standalone.js",
         "../node_modules/jquery-form/src/jquery.form.js",
         "../node_modules/localforage/dist/localforage.js",
@@ -132,9 +126,6 @@
         "../node_modules/jquery-sparkline/jquery.sparkline.js",
         "../node_modules/jstree/dist/jstree.js",
 
-        "../node_modules/toastr/toastr.js",
-        "../node_modules/sweetalert/dist/sweetalert.min.js",
-        "../node_modules/block-ui/jquery.blockUI.js",
         "../node_modules/spin.js/spin.min.js",
 
         "../node_modules/spin.js/jquery.spin.js",
@@ -145,10 +136,7 @@
         "../node_modules/moment-timezone/builds/moment-timezone-with-data.js",
         "../node_modules/bootstrap-daterangepicker/daterangepicker.js",
 
-        "../node_modules/jquery-slimscroll/jquery.slimscroll.min.js",
         "../node_modules/timeago/jquery.timeago.js",
-        "../node_modules/localforage/dist/localforage.min.js",
-        "../node_modules/bootstrap-switch/dist/js/bootstrap-switch.min.js",
         "../node_modules/push.js/bin/push.min.js",
         "../node_modules/mustache/mustache.js",
         "../node_modules/js-url/url.js",

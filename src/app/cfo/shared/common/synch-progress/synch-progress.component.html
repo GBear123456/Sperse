@@ -37,14 +37,14 @@
                                     [animation]="'easeInOutQuart'"
                                     [animationDelay]="0">
                                 </round-progress>
-                                <span class="total-synch-progress">{{currentProgress}}%</span>
+                                <span class="total-synch-progress">{{currentProgress | number : '1.0-0'}}%</span>
                             </div>
                         </div>
                         <div class="col-8">
                             <ul class="list-of-synch-accounts">
                                 <li *ngFor="let acc of synchData.accountProgresses" [class.completed]="acc.progressStatus =='Completed'" class="clearfix">
                                     <span class="name">{{ acc.accountName }}:</span>
-                                    <span class="percent">{{acc.progressPercent}}%</span>
+                                    <span class="percent">{{acc.progressPercent | number : '1.0-0'}}%</span>
                                 </li>
                             </ul>
                         </div>

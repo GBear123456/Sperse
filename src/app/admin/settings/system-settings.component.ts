@@ -67,7 +67,7 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
             });
     }
 
-    deleteCertificate(row, event) {
+    deleteCertificate(row) {
         abp.message.confirm('', this.l('DeleteConfiramtion'), result => {
             if (result) {
                 this._tenantSslCertificateService.deleteTenantSslCertificate(row.data.id)
@@ -79,7 +79,7 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
         });
     }
 
-    deleteSSLBinding(row, event) {
+    deleteSSLBinding(row) {
         abp.message.confirm('', this.l('DeleteConfiramtion'), result => {
             if (result) {
                 this._tenantHostService.deleteSslBinding(row.data.hostType)

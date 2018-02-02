@@ -41,8 +41,8 @@
                                     [allowResizing]="false"
                                     [allowReordering]="false"
                                     cellTemplate="isCategorizedTemplate"></dxi-column>
-                        <dxi-column dataField="Id" cssClass="tabular" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="1"></dxi-column>
-                        <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" sortOrder="desc" sortIndex="0" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="Id" cssClass="tabular" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="0"></dxi-column>
+                        <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell"></dxi-column>
                         <dxi-column dataField="BankAccountNumber" cssClass="tabular" caption="{{l('Transactions_BankAccountNumber')}}"></dxi-column>
                         <dxi-column dataField="CashFlowTypeName" caption="{{l('Transactions_CashFlowType')}}"></dxi-column>
                         <dxi-column dataField="CashflowCategoryGroupName" caption="{{l('Transactions_CashflowCategoryGroupName')}}"></dxi-column>
@@ -109,19 +109,29 @@
                                 <span class="name">Subaccounts</span>
                             </div>
                         </div>
+                        <div *dxTemplate="let data of 'startBalanceTotal'">
+                            <div class="informer">
+                                <h2 class="count">${{adjustmentStartingBalanceTotal | number:'1.0-0'}}<span class="cent">.{{adjustmentStartingBalanceTotalCent | number:'2.0-0'}}</span></h2>
+                                <span class="name">
+                                    Starting Balance
+                                </span>
+                            </div>
+                        </div>
                         <div *dxTemplate="let data of 'creditTotal'">
                             <div class="informer">
                                 <h2 class="count">${{creditTransactionTotal | number:'1.0-0'}}<span class="cent">.{{creditTransactionTotalCent | number:'2.0-0'}}</span></h2>
                                 <span class="name" (click)="toggleCreditDefault()">
                                     Credits ({{creditTransactionCount | number}}) <i id="creditDetails" class="arrow down"></i>
                                 </span>
-                                
+
                                 <dx-tooltip target="#creditDetails"
                                             [(visible)]="defaultCreditTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
-                                        <span class="name">Uncategorized ({{creditTransactionCount - creditClassifiedTransactionCount | number}})</span>
-                                        <br />
-                                        <span class="name">Categorized ({{creditClassifiedTransactionCount | number}})</span>
+                                        <div class="tooltip-wrap">
+                                            <span class="name" (click)="applyTotalFilters(false, true, false)">Uncategorized ({{creditTransactionCount - creditClassifiedTransactionCount | number}})</span>
+                                            <br />
+                                            <span class="name" (click)="applyTotalFilters(true, true, false)">Categorized ({{creditClassifiedTransactionCount | number}})</span>
+                                        </div>                                        
                                     </div>
                                 </dx-tooltip>
                             </div>
@@ -135,9 +145,11 @@
                                 <dx-tooltip target="#debitDetails"
                                             [(visible)]="defaultDebitTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
-                                        <span class="name">Uncategorized ({{debitTransactionCount - debitClassifiedTransactionCount | number}})</span>
-                                        <br />
-                                        <span class="name">Categorized ({{debitClassifiedTransactionCount | number}})</span>
+                                        <div class="tooltip-wrap">
+                                            <span class="name" (click)="applyTotalFilters(false, false, true)">Uncategorized ({{debitTransactionCount - debitClassifiedTransactionCount | number}})</span>
+                                            <br />
+                                            <span class="name" (click)="applyTotalFilters(true, false, true)">Categorized ({{debitClassifiedTransactionCount | number}})</span>
+                                        </div>
                                     </div>
                                 </dx-tooltip>
                             </div>
@@ -151,9 +163,11 @@
                                 <dx-tooltip target="#totalDetails"
                                             [(visible)]="defaultTotalTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
-                                        <span class="name">Uncategorized ({{transactionCount - (debitClassifiedTransactionCount + creditClassifiedTransactionCount) | number}})</span>
-                                        <br />
-                                        <span class="name">Categorized ({{debitClassifiedTransactionCount + creditClassifiedTransactionCount | number}})</span>
+                                        <div class="tooltip-wrap">
+                                            <span class="name" (click)="applyTotalFilters(false, false, false)">Uncategorized ({{transactionCount - (debitClassifiedTransactionCount + creditClassifiedTransactionCount) | number}})</span>
+                                            <br />
+                                            <span class="name" (click)="applyTotalFilters(true, false, false)">Categorized ({{debitClassifiedTransactionCount + creditClassifiedTransactionCount | number}})</span>
+                                        </div>
                                     </div>
                                 </dx-tooltip>
                             </div>

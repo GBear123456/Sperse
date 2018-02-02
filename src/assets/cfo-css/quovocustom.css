@@ -74,6 +74,7 @@ body {
     text-align: left;
     position: relative;
     border-radius: 4px;
+    float: right;
 }
 #client-details .banner.row .col-xs-12.col-sm-4::before {
     content: '';
@@ -86,8 +87,13 @@ body {
     top: 50%;
     transform: translateY(-50%);
 }
+#client-details .banner.row .col-xs-12.col-sm-4:first-child {
+    margin-left: 1.5%;
+}
 #client-details .banner.row .col-xs-12.col-sm-4:last-child {
     padding-left: 128px;
+    float: left;
+    margin-left: 0;
 }
 #client-details .banner.row .col-xs-12.col-sm-4:last-child::before {
     left: 85px;

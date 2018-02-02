@@ -17,7 +17,8 @@ import { CalendarComponent } from './widgets/calendar/calendar.component';
 import { DxCheckBoxModule, DxTextBoxModule, DxScrollViewModule } from 'devextreme-angular';
 
 import { AppUiCustomizationService } from './ui/app-ui-customization.service';
-
+import { AppAuthService } from './auth/app-auth.service';
+import { AppRouteGuard } from './auth/auth-route-guard';
 
 @NgModule({
     declarations: [
@@ -48,6 +49,8 @@ export class CommonModule {
         return {
             ngModule: CommonModule,
             providers: [
+                AppAuthService,
+                AppRouteGuard,
                 AppSessionService,
                 AppUrlService,
                 ExportService,

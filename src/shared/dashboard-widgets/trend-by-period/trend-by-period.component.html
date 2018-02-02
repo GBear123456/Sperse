@@ -1,6 +1,12 @@
 <header>
     <div class="left-section">
-        <h2 class="title">{{ls('CFO', 'TrendByPeriod_Title')}}</h2>
+        <h2 class="title">{{l('TrendByPeriod_Title')}}</h2>
+
+        <ul class="legend">
+            <li class="legend-item inflow">{{l('Stats_Inflows')}}</li>
+            <li class="legend-item outflows">{{l('Stats_Outflows')}}</li>
+            <li class="legend-item net-change">{{l('Net_Change')}}</li>
+        </ul>
     </div>
     <div class="right-section">
         <dx-select-box
@@ -20,6 +26,7 @@
         defaultPane="bottomPane"
         animation="{easing: 'easeOutCubic',duration: 2000}"
         [barWidth]="0.5"
+        [size]="{height: 240}"
         #barChart>
         <dxo-size height="356" [width]="chartWidth"></dxo-size>
         <!-- common settings for charts -->
@@ -35,15 +42,15 @@
             [customizeTooltip]="customizeBarTooltip">
         </dxo-tooltip>
 
-        <dxi-series [color]="historicalIncomeColor" valueField="income" name="{{ls('CFO', 'Stats_income')}}"></dxi-series>
-        <dxi-series [color]="historicalExpensesColor" valueField="expenses" name="{{ls('CFO', 'Stats_expenses')}}"></dxi-series>
+        <dxi-series [color]="historicalIncomeColor" valueField="income" name="{{l('Stats_Inflows')}}"></dxi-series>
+        <dxi-series [color]="historicalExpensesColor" valueField="expenses" name="{{l('Stats_Outflows')}}"></dxi-series>
         <dxi-series [color]="forecastIncomeColor" valueField="forecastIncome" [showInLegend]="false" name="forecast"></dxi-series>
         <dxi-series [color]="forecastExpensesColor" valueField="forecastExpenses" [showInLegend]="false" name="forecastExpenses"></dxi-series>
         <dxi-series
             type="line"
             [color]="historicalNetChangeColor"
             valueField="netChange"
-            name="netChange"
+            name="{{l('Net_Change')}}"
             [showInLegend]="false">
         </dxi-series>
         <dxi-series
@@ -64,11 +71,11 @@
         </dxo-argument-axis>
 
         <dxo-legend
-            [visible]="true"
-            itemsAlignment="right"
+            [visible]="false"
+            itemsAlignment="center"
             itemTextPosition="right"
             orientation="horizontal"
-            position="inside">
+            position="outside">
         </dxo-legend>
 
         <!-- Left axis -->
@@ -92,5 +99,5 @@
             </dxo-strip-style>
         </dxo-common-axis-settings>
     </dx-chart>
-    <app-no-data [hidden]="loading || (trendData && trendData.length)"></app-no-data>
+    <app-dashboard-no-data [hidden]="loading || (trendData && trendData.length)"></app-dashboard-no-data>
 </div>

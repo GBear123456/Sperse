@@ -11,7 +11,6 @@ import { TransactionsComponent } from './transactions/transactions.component';
 import { CategorizationComponent } from './transactions/categorization/categorization.component';
 import { SetupStepComponent } from './shared/common/setup-steps/setup-steps.component';
 import { SynchProgressComponent } from './shared/common/synch-progress/synch-progress.component';
-import { AccountsSynchStatusComponent } from './start/dashboard/accounts-synch-status/accounts-synch-status.component';
 
 import { ModalModule } from 'ngx-bootstrap';
 
@@ -22,7 +21,7 @@ import { CategoryDeleteDialogComponent } from './transactions/categorization/cat
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
 import { NoDataComponent } from './shared/common/no-data/no-data.component';
-import { CFOModalDialogComponent } from './shared/common/dialogs/modal/cfo-modal-dialog.component'
+import { CFOModalDialogComponent } from './shared/common/dialogs/modal/cfo-modal-dialog.component';
 
 import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
@@ -61,10 +60,7 @@ import {
     DxProgressBarModule,
     DxTabsModule
 } from 'devextreme-angular';
-import { TrendByPeriodComponent } from './start/dashboard/trend-by-period/trend-by-period.component';
-import {AccountsComponent} from '@app/cfo/start/dashboard/accounts/accounts.component';
-import {CategorizationStatusComponent} from '@app/cfo/start/dashboard/categorization-status/categorization-status.component';
-import {TotalsByPeriodComponent} from '@app/cfo/start/dashboard/totals-by-period/totals-by-period.component';
+import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widgets.module';
 
 @NgModule({
     imports: [
@@ -98,7 +94,8 @@ import {TotalsByPeriodComponent} from '@app/cfo/start/dashboard/totals-by-period
         DxChartModule,
         MatTabsModule,
         MatDialogModule,
-        RoundProgressModule
+        RoundProgressModule,
+        DashboardWidgetsModule
     ],
     declarations: [
         StartComponent,
@@ -119,12 +116,7 @@ import {TotalsByPeriodComponent} from '@app/cfo/start/dashboard/totals-by-period
         RulesComponent,
         SortingComponent,
         NoDataComponent,
-        CFOModalDialogComponent,
-        TrendByPeriodComponent,
-        TotalsByPeriodComponent,
-        AccountsComponent,
-        CategorizationStatusComponent,
-        AccountsSynchStatusComponent
+        CFOModalDialogComponent
     ],
     entryComponents: [
         RuleDialogComponent,

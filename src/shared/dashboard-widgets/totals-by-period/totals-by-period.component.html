@@ -1,0 +1,91 @@
+<section class="categorization-status">
+    <header>
+        <h2 class="title">{{l('Totals_by_period')}}</h2>
+        <div class="select-box-wrap">
+            <dx-select-box [items]="availablePeriods"
+                           [value]="availablePeriods[6]"
+                           (onValueChanged)="onValueChanged($event)">
+            </dx-select-box>
+        </div>
+    </header>
+    <div class="content-wrap">
+        <div class="row">
+            <ng-container *ngIf="totalData?.length > 0; else noDataBlock">
+                <div class="col-4 text-right labels">
+                    <div>{{l('Cash_Inflows')}}</div>
+                    <div>{{l('Cash_Outflows')}}</div>
+                    <div>{{l('Net_Change')}}</div>
+                </div>
+                <div class="col-8">
+                    <dx-chart
+                        id="totalsByPeriod"
+                        [dataSource]="totalData"
+                        [equalBarWidth]=true
+                        [barWidth]=0.62
+                        [rotated]=true
+                        [size]="{height: 185}"
+                        [palette]="soft">
+
+                        <dxo-common-series-settings argumentField="date"
+                                                    type="bar">
+                        </dxo-common-series-settings>
+
+                        <dxo-argument-axis>
+                            <dxo-label [visible]="false"></dxo-label>
+                        </dxo-argument-axis>
+
+                        <dxi-value-axis>
+                            <dxo-label [format]="'currency'"></dxo-label>
+                       </dxi-value-axis>
+
+                        <dxo-legend verticalAlignment="top"
+                                    [visible]="false"
+                                    horizontalAlignment="left">
+                        </dxo-legend>
+
+                        <dxi-series [color]="totalData[0].income - totalData[0].expenses > 0 ? netChangeColor : '#f05b2a'"
+                                    [class]="totalData[0].income - totalData[0].expenses > 0 ? positive : negative"
+                                    valueField="netChange"
+                                    name="{{l('Net_Change')}}">
+                            <dxo-label
+                                [visible]="true"
+                                [customizeText]="customizeText"
+                                [format]="'currency'">
+                            </dxo-label>
+                        </dxi-series>
+                        <dxi-series [color]="expensesColor"
+                                    valueField="expenses"
+                                    name="{{l('Cash_Outflows')}}">
+                            <dxo-label
+                                [visible]="true"
+                                [format]="'currency'">
+
+                            </dxo-label>
+                        </dxi-series>
+                        <dxi-series [color]="incomeColor"
+                                    valueField="income"
+                                    name="{{l('Cash_Inflows')}}">
+                            <dxo-label
+                                [visible]="true"
+                                [format]="'currency'">
+
+                            </dxo-label>
+                        </dxi-series>
+                    </dx-chart>
+                </div>
+            </ng-container>
+            <ng-template #noDataBlock>
+                <div class="col-12 text-center">
+                    <h4 class="no-data">{{l('No_Data_For_This_Period')}}</h4>
+                </div>
+            </ng-template>
+        </div>
+
+        <div class="row summary" *ngIf="totalData?.length > 0">
+            <ng-container *ngFor="let item of totalData">
+                <div class="col-7 name">{{l('Net_Change')}}</div>
+                <div class="col-5 text-right value" [ngClass]="item.income - item.expenses >= 0 ? ' positive' : 'negative'">{{item.netChange | currency: 'USD' : 'symbol' : '1.0-0'}}</div>
+            </ng-container>
+        </div>
+    </div>
+</section>

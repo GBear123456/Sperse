@@ -103,7 +103,6 @@ ABP_HTTP_PROVIDER.deps = [XHRBackend, RequestOptions, httpConfiguration];
         BrowserModule,
         BrowserAnimationsModule,
         MobileModule,
-        AppModule,
         CommonModule.forRoot(),
         AbpModule,
         ServiceProxyModule,

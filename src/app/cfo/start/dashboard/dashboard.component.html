@@ -10,38 +10,37 @@
                 <section class="accounts-info">
                     <header>
                         <h2 class="dashboard-title">
-                            {{l('Accounts')}}
+                            {{l('Accounts_Summary')}}
                         </h2>
                         <a (click)="navigateTo()" class="dashboard-link">+ {{l('Add_account')}}</a>
                     </header>
-
                     <app-accounts></app-accounts>
                 </section>
-
+                <section class="analytics">
+                    <div class="analytics-wrap">
+                        <div class="totalByPeriod">
+                            <app-totals-by-period></app-totals-by-period>
+                        </div>
+                        <div class="trendByPeriod">
+                            <app-trend-by-period></app-trend-by-period>
+                        </div>
+                    </div>
+                </section>
                 <section class="synch-status">
-                    <header>
-                        <a href="javascript:;" class="dashboard-link">{{l('View_transactions')}}</a>
-                    </header>
                     <div class="synch-section-wrap">
+                        <div class="links">
+                            <ul class="list-of-links">
+                                <li *ngFor="let link of linksTo" class="link-item">
+                                    <a class="link" [routerLink]="link.route">{{l(link.name)}}</a>
+                                </li>
+                            </ul>
+                        </div>
                         <div class="synch-item">
                             <app-categorization-status></app-categorization-status>
                         </div>
                     </div>
                 </section>
-                <section class="analytics">
-                    <header>
-                        <h2 class="dashboard-title">{{l('Dashboard_AnalyticsTitle')}}</h2>
-                        <a href="javascript:;" class="dashboard-link">{{l('View_Cash_Flow_Report')}}</a>
-                    </header>
-                    <div class="analytics-wrap">
-                        <div class="trendByPeriod">
-                            <app-trend-by-period></app-trend-by-period>
-                        </div>
-                        <div class="totalByPeriod">
-                            <app-totals-by-period></app-totals-by-period>
-                        </div>
-                    </div>
-                </section>
+
             </div>
         </dx-scroll-view>
     </div>

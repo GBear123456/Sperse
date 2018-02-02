@@ -5,10 +5,10 @@
                 <round-progress
                     [current]="categorySynchData?.classifiedTransactionPercent"
                     [max]="100"
-                    [color]="'#32BEF2'"
+                    [color]="'#8BD553'"
                     [background]="'#F9B74B'"
-                    [radius]="73"
-                    [stroke]="18"
+                    [radius]="65"
+                    [stroke]="10"
                     [rounded]="false"
                     [clockwise]="true"
                     [responsive]="true"
@@ -21,20 +21,22 @@
         </div>
 
         <div class="col-8">
-            <h2 class="title">{{l('Categorization_status')}}</h2>
+            <h2 class="title">{{l('Transaction_Categorization_Status')}}</h2>
             <ul class="category-synch-list">
                 <li class="category-synch-item">
                     <span class="category-type">{{l('Classified_Transactions')}}</span>
-                    <span class="synch-status"><strong>{{categorySynchData?.classifiedTransactionCount | number : '1.0-2'}}</strong> ({{categorySynchData?.classifiedTransactionPercent}}%)</span>
+                    <span class="synch-status count"><strong>{{categorySynchData?.classifiedTransactionCount | number : '1.0-2'}}</strong></span>
+                    <span class="synch-status percent">{{categorySynchData?.classifiedTransactionPercent | number : '1.0-0'}}%</span>
                     <a (click)="reset();" class="small-button btn-layout">
-                        {{l('Reset_classifications')}}
+                        {{l('Reset_Сlassifications')}}
                     </a>
                 </li>
                 <li class="category-synch-item">
                     <span class="category-type">{{l('Unclassified_Transactions')}}</span>
-                    <span class="synch-status"><strong>{{categorySynchData?.unclassifiedTransactionCount | number : '1.0-2'}}</strong> ({{categorySynchData?.unclassifiedTransactionPercent}}%)</span>
+                    <span class="synch-status count"><strong>{{categorySynchData?.unclassifiedTransactionCount | number : '1.0-2'}}</strong></span>
+                    <span class="synch-status percent">{{categorySynchData?.unclassifiedTransactionPercent | number : '1.0-0'}}%</span>
                     <a (click)="autoClassify();" class="small-button btn-layout">
-                        {{l('Auto_classify')}}
+                        {{l('Auto_Сlassify')}}
                     </a>
                 </li>
             </ul>

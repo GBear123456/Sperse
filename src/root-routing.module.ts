@@ -1,15 +1,30 @@
 import { NgModule, ApplicationRef, Injector, AfterViewInit } from '@angular/core';
 import { Routes, RouterModule, Router, NavigationEnd } from '@angular/router';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
+import { AppConsts } from '@shared/AppConsts';
+import { AppRootComponent } from 'root.components';
 
-const routes: Routes = [
-    {path: '', redirectTo: '/app/main/start', pathMatch: 'full' },
-    {
-        path: 'account',
-        loadChildren: 'account/account.module#AccountModule', //Lazy load account module
-        data: {preload: true}
-    }
-];
+const routes: Routes = [{
+    path: '',
+    component: AppRootComponent,
+    children: [        
+        {
+            path: 'account',
+            loadChildren: 'account/account.module#AccountModule', //Lazy load account module
+            data: {preload: true}
+        },
+        {
+            path: 'mobile',
+            loadChildren: 'mobile/mobile.module#MobileModule', //Lazy load mobile module
+            data: {preload: true}
+        },
+        {
+            path: 'desktop',
+            loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
+            data: {preload: true}
+        }    
+    ]
+}];
 
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
@@ -19,7 +34,26 @@ const routes: Routes = [
 export class RootRoutingModule implements AfterViewInit {
     constructor(private _router: Router,
                 private _injector: Injector,
-                private _applicationRef: ApplicationRef) { }
+                private _applicationRef: ApplicationRef
+    ) { 
+        _router.config[0].children.push(           
+           { 
+               path: '', 
+               redirectTo: AppConsts.isMobile 
+                   ? '/app/cfo/personal/start'
+                   : '/app/main/start', 
+               pathMatch: 'full' 
+           },
+           {
+               path: 'app',
+               loadChildren: AppConsts.isMobile
+                   ? 'mobile/mobile.module#MobileModule' //Lazy load mobile module    
+                   : 'app/app.module#AppModule',         //Lazy load desktop module
+               data: {preload: true}
+           }
+        );
+        _router.resetConfig(_router.config);
+    }
 
     ngAfterViewInit() {
         this._router.events.subscribe((event: NavigationEnd) => {

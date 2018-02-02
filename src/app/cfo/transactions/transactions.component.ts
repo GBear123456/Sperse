@@ -12,13 +12,14 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
+import { FilterCBoxesComponent } from '@shared/filters/cboxes/filter-cboxes.component';
 
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { DxDataGridComponent, DxPopoverModule } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular';
 import { MatDialog } from '@angular/material';
 
 import { Observable } from 'rxjs/Observable';
@@ -70,6 +71,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public transactionCount: number = 0;
     public transactionTotal: number = 0;
     public transactionTotalCent: number = 0;
+
+    public adjustmentTotal: number = 0;
+    public adjustmentStartingBalanceTotal: number = 0;
+    public adjustmentStartingBalanceTotalCent: number = 0;
 
     public headlineConfig = {
         names: [this.l('Transactions')],
@@ -200,11 +205,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         e.toolbarOptions.items.unshift({
             location: 'after',
             template: 'accountTotal'
-        },
-            {
+        },{
             location: 'after',
             template: 'portfolioTotal'
-        },{
+            }, {
+        }, {
+            location: 'after',
+            template: 'startBalanceTotal'
+        }, {
             location: 'after',
             template: 'debitTotal'
         }, {
@@ -228,6 +236,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             let debitTotal = this.debitTransactionTotal = 0;
             let debitCount = this.debitTransactionCount = 0;
             let debitClassifiedCount = this.debitClassifiedTransactionCount = 0;
+
+            this.adjustmentStartingBalanceTotal = 0;
+            this.adjustmentTotal = 0;
 
             let portfolios = [];
             let accounts = [];
@@ -276,7 +287,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.portfolioCount = totals[0].portfolioCount;
             this.accountCount = totals[0].accountCount;
 
-            this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal;
+            this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal;
+            this.adjustmentTotal = totals[0].adjustmentTotal;
+
+            this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal + this.adjustmentTotal + this.adjustmentStartingBalanceTotal;
             this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
         }
         else {
@@ -291,8 +305,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
             this.transactionTotal = 0;
             this.transactionCount = 0;
+
+            this.adjustmentStartingBalanceTotal = 0;
+            this.adjustmentTotal = 0;
         }
 
+        this.adjustmentStartingBalanceTotalCent = this.getFloatPart(this.adjustmentStartingBalanceTotal);
+        this.adjustmentStartingBalanceTotal = Math.trunc(this.adjustmentStartingBalanceTotal);
         this.creditTransactionTotalCent = this.getFloatPart(this.creditTransactionTotal);
         this.creditTransactionTotal = Math.trunc(this.creditTransactionTotal);
         this.debitTransactionTotalCent = this.getFloatPart(this.debitTransactionTotal);
@@ -308,7 +327,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return float_part;
     }
 
-    showColumnChooser() {
+    showColumnChooser() {            
         this.dataGrid.instance.showColumnChooser();
     }
 
@@ -331,6 +350,34 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
     toggleTotalDefault() {
         this.defaultTotalTooltipVisible = !this.defaultTotalTooltipVisible;
+    }
+    applyTotalFilters(classified: boolean, credit: boolean, debit: boolean) {
+        var classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
+        var amountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'Amount'; });
+
+        if (classified) {
+            classifiedFilter.items['yes'].setValue(true, classifiedFilter);
+            classifiedFilter.items['no'].setValue(false, classifiedFilter);
+        } else {
+            classifiedFilter.items['yes'].setValue(false, classifiedFilter);
+            classifiedFilter.items['no'].setValue(true, classifiedFilter);
+        } 
+
+        if (credit) {
+            amountFilter.items['from'].setValue('0', amountFilter);
+            amountFilter.items['to'].setValue('', amountFilter);
+            this.defaultCreditTooltipVisible = false;
+        } else if (debit) {
+            amountFilter.items['to'].setValue('0', amountFilter);
+            amountFilter.items['from'].setValue('', amountFilter);
+            this.defaultDebitTooltipVisible = false; 
+        } else {
+            amountFilter.items['to'].setValue('', amountFilter);
+            amountFilter.items['from'].setValue('', amountFilter);
+            this.defaultTotalTooltipVisible = false;
+        }
+
+        this.filtersService.change(classifiedFilter);
     }
 
     ngOnInit(): void {
@@ -426,6 +473,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         }
                     }),
                     new FilterModel({
+                        component: FilterCBoxesComponent,
+                        caption: 'classified',
+                        field: 'CashflowCategoryId',
+                        items: { yes: new FilterItemModel(), no: new FilterItemModel() }
+                    }),
+                    new FilterModel({
                         component: FilterCheckBoxesComponent,
                         field: 'CurrencyId',
                         caption: 'Currency',
@@ -488,6 +541,22 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         );
         this.totalDataSource['_store']['_url'] = this.getODataURL(this.totalDataSourceURI, filterQuery);
         this.totalDataSource.load();
+    }
+
+    filterByClassified(filter: FilterModel) {
+        let isYes = filter.items.yes.value;
+        let isNo = filter.items.no.value;
+
+        if (isYes ^ isNo) {
+            let obj = {};
+            obj[filter.field] = {};
+            if (isYes) {
+                obj[filter.field]['ne'] = null;
+            } else {
+                obj[filter.field] = null;
+            }
+            return obj;
+        }
     }
 
     filterByDate(filter) {

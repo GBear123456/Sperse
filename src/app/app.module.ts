@@ -1,5 +1,5 @@
+import * as ngCommon from '@angular/common';
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 
 import { LayoutModule } from './shared/layout/layout.module';
 import { AppCommonModule } from './shared/common/app-common.module';
@@ -18,7 +18,7 @@ import { AppConsts } from '@shared/AppConsts';
     imports: [
         LayoutModule,
         AppCommonModule.forRoot(),
-        BrowserModule,
+        ngCommon.CommonModule,
         AppRoutingModule
     ],
     providers: [

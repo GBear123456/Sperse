@@ -1,0 +1,100 @@
+:host {
+    display: block;
+
+    .categorization-status {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    header {
+        display: inline-block;
+        width: 100%;
+    }
+    
+    .content-wrap {
+        flex: 1 auto;
+        display: flex;
+        flex-direction: column;
+        padding-top: 20px;
+        justify-content: space-between;
+    }
+    
+    .labels {
+        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
+        height: 162px;
+        padding: 26px 0 28px;
+    }
+    
+    .title {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: normal;
+        color: #212c36;
+        float: left;
+        margin-bottom: 0;
+        line-height: 34px;
+    }
+
+    .select-box-wrap {
+        float: right;
+        width: 110px;
+        margin-top: 5px;
+
+        /deep/ dx-select-box {
+            border-radius: 0;
+            background-color: transparent;
+
+            .dx-texteditor-input, input.form-control {
+                color: #677380;
+                font-size: 14px;
+                font-weight: 300;
+                letter-spacing: 0.2px;
+                line-height: 24px;
+                padding: 0 16px 0 0 ;
+                background-color: transparent;
+                min-height: 24px;
+                border: 0;
+            }
+
+            .dx-dropdowneditor-button {
+                width: 10px;
+                padding: 0;
+                border-radius: 0;
+
+                .dx-dropdowneditor-icon {
+                    background-color: transparent !important;
+
+                    &::before {
+                        content: '\f107';
+                        font-family: FontAwesome !important;
+                    }
+                }
+            }
+        }
+    }
+
+    .positive {
+        color: #35c8a8;
+    }
+    .negative {
+        color: #f05b2a;
+        &::before {
+            content: '-';
+        }
+    }
+
+    .summary {
+        padding-top: 20px;
+        padding-bottom: 10px;
+        font-weight: 500;
+    }
+
+    .no-data {
+        padding-top: 20px;
+        padding-bottom: 10px;
+        font-weight: 500;
+    }
+}

@@ -20,6 +20,10 @@
             content: none;
         }
     }
+    
+    app-totals-by-period {
+        height: 100%;
+    }
 
     .dashboard-wrapper {
         background-color: #fff;
@@ -27,12 +31,17 @@
         padding: 0 48px 40px;
 
         section {
+            margin-bottom: 20px;
             header {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                margin: 20px 0 10px;
+                padding: 20px 0 10px;
             }
+        }
+        
+        .synch-status {
+            margin-bottom: 0;
         }
 
         .dashboard-title {
@@ -56,32 +65,68 @@
         }
 
         .synch-status .synch-section-wrap,
-        .analytics .analytics-wrap{
+        .analytics .analytics-wrap {
             display: flex;
             flex-flow: row wrap;
             justify-content: space-between;
             align-items: flex-start;
         }
+        .synch-status .synch-section-wrap .links {
+            width: 32%;
+            align-self: center;
+            height: 100%;
+        }
+        .synch-status .synch-section-wrap .list-of-links {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        .synch-status .synch-section-wrap .link-item {
+            padding: 10px 5px;
+            border-bottom: 1px solid  #E5E9EC;
+        }
+
+        .synch-status .synch-section-wrap .link {
+            color: #00AEEF;
+            font-size: 16px;
+            letter-spacing: 0.2px;
+            line-height: 24px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: .2s;
+            
+            &:hover {
+                color: lighten(#00AEEF, 20%);
+            }
+        }
 
         .synch-status .synch-section-wrap .synch-item {
             max-width: 66%;
-            // min-height: 300px;
             width: 100%;
-            // border: 1px solid #E5E9EC;
             background-color: #FFFFFF;
             border-radius: 4px;
             position: relative;
-            padding: 30px 30px 30px 0;
+            padding: 20px 30px 20px 0;
         }
 
         .analytics .analytics-wrap {
+            align-items: stretch;
+
             .trendByPeriod {
                 width: 66%;
             }
+
             .totalByPeriod {
                 width: 32%;
+                border: 1px solid #E5E9EC;
+                background-color: #FFFFFF;
+                border-radius: 4px;
+                position: relative;
+                padding: 30px;
             }
         }
-
+    }
+    /deep/ .dx-scrollable-content {
+        background: #FFF;
     }
 }

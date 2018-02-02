@@ -137,8 +137,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                 this.linearChart.instance.render();
                                 this.barChart.instance.render();
                             }, 1000);
-                            this._filtersService.fixed =
-                                !this._filtersService.fixed;
+                            this._filtersService.fixed = !this._filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
@@ -158,16 +157,16 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                     }
                 ]
             },
+            // {
+            //     location: 'before',
+            //     items: [
+            //         { name: 'back' }
+            //     ]
+            // },
             {
                 location: 'before',
                 items: [
-                    { name: 'back' }
-                ]
-            },
             {
-                location: 'before',
-                items: [
-                    {
                         name: 'select-box',
                         text: '',
                         widget: 'dxDropDownMenu',
@@ -177,7 +176,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             items: forecastModelsObj.items,
                             selectedIndex: forecastModelsObj.selectedItemIndex,
                             height: 39,
-                            width: 200,
+                            width: 243,
                             onSelectionChanged: (e) => {
                                 if (e) {
                                     this.changeSelectedForecastModel(e);

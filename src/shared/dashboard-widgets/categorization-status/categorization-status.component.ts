@@ -21,7 +21,6 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
         private _router: Router
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit() {

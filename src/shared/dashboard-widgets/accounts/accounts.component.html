@@ -1,0 +1,15 @@
+<div class="accounts-list">
+    <div class="account-item networth">
+        <div class="value">{{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</div>
+        <div class="name">{{l('Total_Balance')}}</div>
+    </div>
+    <div class="account-item totalportfolios">
+        <div class="value">{{accountsData?.bankAccountCount}}</div>
+        <div class="name">{{l('Total_Subaccounts')}}</div>
+    </div>
+    <div class="account-item totalaccounts">
+        <a (click)="navigateTo()" class="view-details">{{l('View_details')}}</a>
+        <div class="value">{{accountsData?.syncAccountCount}}</div>
+        <div class="name">{{l('Total_Accounts')}}</div>
+    </div>
+</div>
