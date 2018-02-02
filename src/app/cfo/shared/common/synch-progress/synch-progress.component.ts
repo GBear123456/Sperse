@@ -74,7 +74,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     }
 
     format(value) {
-        return value * 100 + '%';
+        return (value * 100).toFixed() + '%';
     }
 
     calculateChartsScrolableHeight() {
