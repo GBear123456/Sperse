@@ -3,8 +3,7 @@ import { Component, Input, Output, EventEmitter, Injector, OnInit, ViewChild, Ho
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
-import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput,
-    UpdateCategoryGroupInput, CreateCategoryGroupInput, CreateCategoryInput  } from '@shared/service-proxies/service-proxies';
+import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput  } from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 import { MatDialog } from '@angular/material';
 
