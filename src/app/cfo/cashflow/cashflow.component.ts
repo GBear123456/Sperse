@@ -2270,6 +2270,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     endDate: cellObjDate,
                     cashFlowTypeId: cashflowTypeId,
                     categoryId: categoryId,
+                    transactionDescriptor: null,
                     currencyId: this.currencyId,
                     amount: newValue
                 });
