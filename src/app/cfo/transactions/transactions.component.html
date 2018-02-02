@@ -45,8 +45,9 @@
                         <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell"></dxi-column>
                         <dxi-column dataField="BankAccountNumber" cssClass="tabular" caption="{{l('Transactions_BankAccountNumber')}}"></dxi-column>
                         <dxi-column dataField="CashFlowTypeName" caption="{{l('Transactions_CashFlowType')}}"></dxi-column>
-                        <dxi-column dataField="CashflowCategoryGroupName" caption="{{l('Transactions_CashflowCategoryGroupName')}}"></dxi-column>
+                        <dxi-column dataField="AccountingTypeName" caption="{{l('Transactions_AccountingTypeName')}}"></dxi-column>
                         <dxi-column dataField="CashflowCategoryName" caption="{{l('Transactions_CashflowCategoryName')}}"></dxi-column>
+                        <dxi-column dataField="CashflowSubCategoryName" caption="{{l('Transactions_CashflowSubCategoryName')}}"></dxi-column>
                         <dxi-column dataField="Amount" cssClass="tabular" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate"></dxi-column>
                         <dxi-column dataField="Amount" cssClass="tabular" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate"></dxi-column>
                         <dxi-column dataField="EndingBalance" cssClass="tabular" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate"></dxi-column>
@@ -131,7 +132,7 @@
                                             <span class="name" (click)="applyTotalFilters(false, true, false)">Uncategorized ({{creditTransactionCount - creditClassifiedTransactionCount | number}})</span>
                                             <br />
                                             <span class="name" (click)="applyTotalFilters(true, true, false)">Categorized ({{creditClassifiedTransactionCount | number}})</span>
-                                        </div>                                        
+                                        </div>
                                     </div>
                                 </dx-tooltip>
                             </div>
