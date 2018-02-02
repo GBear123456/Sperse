@@ -5,12 +5,16 @@
         <div class="api-into portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
                 <div>
-                    <p class="sperse-api">Sperse <span class="green">API</span></p>
-                    <div>
-                        <img class="logo-api" alt="API Logo" src="/assets/common/icons/api.png" />
-                    </div>
+                    <p class="sperse-api">
+                        <img class="logo-api" alt="API Logo" src="/assets/common/icons/api.svg" /><span>API</span>
+                    </p>
                     <p class="welcome-api">{{ l('API_Intro_Welcome') }}</p>
-                    <button class="btn btn-layout">{{ l('API_Intro_GenerateKey') }}</button>
+                    <div class="input-group code-container">
+                        <input type="text" class="form-control code-input" placeholder="XXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX">
+                        <div class="input-group-append">
+                            <button class="btn btn-layout btn-outline-secondary">{{ l('API_Intro_GenerateKey') }}</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
