@@ -46,7 +46,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     defaultCreditTooltipVisible = false;
     defaultDebitTooltipVisible = false;
     defaultTotalTooltipVisible = false;
-    private isCompactRowsHeight = false;
     private readonly dataSourceURI = 'Transaction';
     private readonly totalDataSourceURI = 'TransactionTotal';
     private filters: FilterModel[];
@@ -83,7 +82,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     };
 
     private _categoriesShowed = true;
-    public set categoriesShowed(value: boolean) {        
+    public set categoriesShowed(value: boolean) {
         if (this._categoriesShowed = value) {
             this.filtersService.fixed = false;
             this.filtersService.disable();
@@ -327,7 +326,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return float_part;
     }
 
-    showColumnChooser() {            
+    showColumnChooser() {
         this.dataGrid.instance.showColumnChooser();
     }
 
@@ -361,7 +360,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         } else {
             classifiedFilter.items['yes'].setValue(false, classifiedFilter);
             classifiedFilter.items['no'].setValue(true, classifiedFilter);
-        } 
+        }
 
         if (credit) {
             amountFilter.items['from'].setValue('0', amountFilter);
@@ -370,7 +369,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         } else if (debit) {
             amountFilter.items['to'].setValue('0', amountFilter);
             amountFilter.items['from'].setValue('', amountFilter);
-            this.defaultDebitTooltipVisible = false; 
+            this.defaultDebitTooltipVisible = false;
         } else {
             amountFilter.items['to'].setValue('', amountFilter);
             amountFilter.items['from'].setValue('', amountFilter);
@@ -525,8 +524,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     showCompactRowsHeight() {
-        this.dataGrid.instance.element()[this.isCompactRowsHeight ? 'removeClass' : 'addClass']('grid-compact-view');
-        this.isCompactRowsHeight = !this.isCompactRowsHeight;
+        this.dataGrid.instance.element()[0].classList.toggle('grid-compact-view');
     }
 
     processFilterInternal() {
