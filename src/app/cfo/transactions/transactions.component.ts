@@ -197,7 +197,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this._categoriesShowed = false;
         this.initToolbarConfig();
 
-        this.searchColumns = ['Description', 'CashflowCategoryGroupName', 'CashflowCategoryName'];
+        this.searchColumns = ['Description', 'CashflowSubCategoryName', 'CashflowCategoryName', 'Descriptor'];
         this.searchValue = '';
     }
 
