@@ -9,7 +9,7 @@ import { CommonModule } from '@shared/common/common.module';
 
 import { MatProgressBarModule } from '@angular/material';
 
-import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule, DxMenuModule } from 'devextreme-angular';
+import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule, DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule } from 'devextreme-angular';
 
 import { ContactInfoPanelComponent } from './contact-info-panel/contact-info-panel.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
@@ -19,6 +19,7 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { JqPluginDirective } from './libs/jq-plugin.directive';
 import { CommonLookupModalComponent } from './lookup/common-lookup-modal.component';
 import { DateRangePickerComponent } from './timing/date-range-picker.component';
+import { InplaceEditComponent } from './inplace-edit/inplace-edit.component';
 import { DatePickerDirective } from './timing/date-picker.component';
 import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
 import { DateTimeService } from './timing/date-time.service';
@@ -26,6 +27,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppNavigationService } from '@app/shared/layout/nav/app-navigation.service';
 import { DataTableModule } from 'primeng/primeng';
 import { PaginatorModule } from 'primeng/primeng';
+import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
 
 @NgModule({
     imports: [
@@ -44,7 +46,11 @@ import { PaginatorModule } from 'primeng/primeng';
         DxButtonModule,
         DxToolbarModule,
         DxDropDownBoxModule,
-        DxMenuModule
+        DxMenuModule,
+        DxTextBoxModule,
+        DxValidationGroupModule, 
+        DxValidatorModule,
+        DxiValidationRuleModule
     ],
     declarations: [
         TimeZoneComboComponent,
@@ -54,7 +60,8 @@ import { PaginatorModule } from 'primeng/primeng';
         DatePickerDirective,
         ToolBarComponent,
         HeadLineComponent,
-        ContactInfoPanelComponent
+        ContactInfoPanelComponent,
+        InplaceEditComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -64,7 +71,8 @@ import { PaginatorModule } from 'primeng/primeng';
         DatePickerDirective,
         HeadLineComponent,
         ToolBarComponent,
-        ContactInfoPanelComponent
+        ContactInfoPanelComponent,
+        InplaceEditComponent
     ],
     providers: [
         DateTimeService,

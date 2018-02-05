@@ -15,6 +15,16 @@
             <span class="rating_int">{{person.rating}}/10</span>
         </div>
     </div>
+    <div *ngIf="data?.organizationContactInfo" class="organization_info">
+        <div class="delimiter"></div>
+        <div class="organization_logo">
+            <img src="{{ data?.organizationContactInfo.photo ? 'data:image/png;base64,' + data.organizationContactInfo.photo.thumbnail : person.org_photo_url }}" alt="Organization Logo">
+        </div>
+        <h2>{{ data?.organizationContactInfo?.fullName }}</h2>
+        <div class="info-icon" (click)="showOrganizationDetails($event)">
+            <img src="../../../../assets/common/icons/info-icon.svg" alt="Organization Details">
+        </div>
+    </div>
     <div class="header_financial_info">
 
     </div>

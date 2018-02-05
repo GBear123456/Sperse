@@ -24515,6 +24515,8 @@ export interface IOrganizationContactInfoDto {
 }
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {
+    formedDate: moment.Moment;
+    formedCountry: CountryDto;
     industry: string;
     type: string;
     contactPerson: PersonKeyInfoDto;
@@ -24530,6 +24532,8 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     init(data?: any) {
         if (data) {
+            this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
+            this.formedCountry = data["formedCountry"] ? CountryDto.fromJS(data["formedCountry"]) : <any>undefined;
             this.industry = data["industry"];
             this.type = data["type"];
             this.contactPerson = data["contactPerson"] ? PersonKeyInfoDto.fromJS(data["contactPerson"]) : <any>undefined;
@@ -24544,6 +24548,8 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
+        data["formedCountry"] = this.formedCountry ? this.formedCountry.toJSON() : <any>undefined;
         data["industry"] = this.industry;
         data["type"] = this.type;
         data["contactPerson"] = this.contactPerson ? this.contactPerson.toJSON() : <any>undefined;
@@ -24552,6 +24558,8 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 }
 
 export interface IOrganizationInfoDto {
+    formedDate: moment.Moment;
+    formedCountry: CountryDto;
     industry: string;
     type: string;
     contactPerson: PersonKeyInfoDto;

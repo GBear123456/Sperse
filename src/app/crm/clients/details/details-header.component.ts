@@ -1,7 +1,9 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
+import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 
 @Component({
     selector: 'details-header',
@@ -24,10 +26,12 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         requested_sum_max: '245000',
         profile_created: '6/6/2016',
         lead_owner_photo_url: 'http://absorbmarketing.com/wp-content/uploads/2015/01/Picture-of-person.png',
-        lead_owner_name: 'R.Hibbert'
+        lead_owner_name: 'R.Hibbert',
+        org_photo_url: 'http://absorbmarketing.com/wp-content/uploads/2015/01/Picture-of-person.png'
     };
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         private userServiceProxy: UserServiceProxy
     ) {
         super(injector);
@@ -51,5 +55,35 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                 }
             }
         );
+    }
+
+    getDialogPossition(event) {
+        let shift = 304, parent =
+          event.target.closest('div');
+    
+        if (parent) {
+          let rect = parent.getBoundingClientRect();
+          return {
+            top: (rect.top + rect.height + 8) + 'px',
+            left: (rect.left + rect.width / 2 - shift) + 'px'
+          };
+        } else
+          return {
+            top: event.clientY + 'px',
+            left: event.clientX - shift  + 'px'
+          };
+    }
+    
+    showOrganizationDetails(event) {
+        var dialogData = this.data.organizationContactInfo;
+        this.dialog.closeAll();
+        this.dialog.open(OrganizationDialogComponent, {
+          data: dialogData,
+          hasBackdrop: false,
+          position: this.getDialogPossition(event)
+        }).afterClosed().subscribe(result => {
+          // some logic
+        });
+        event.stopPropagation();
     }
 }

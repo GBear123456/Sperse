@@ -1,0 +1,42 @@
+<mat-dialog-content>
+    <div class="logo">
+        <img src="{{ data?.photo ? 'data:image/png;base64,' + data.photo.source : org.logo_big }}" alt="Organization Logo">
+    </div>
+
+    <hr/>
+
+    <div class="short-info container-fluid form-wrapper">
+        <div class="row">
+            <div class="col-sm-6 col-xs-12">
+                <div class="org-edit-label">{{l('FOUNDED IN:')}}</div>
+                <inplace-edit [data]="getDatePropData(data?.organization?.formedDate, 'formedDate')" (valueChanged)="updateValue($event, 'formedDate')" ></inplace-edit>
+            </div>
+            <div class="col-sm-6 col-xs-12">
+                <div class="org-edit-label">{{l('INDUSTRY:')}}</div>
+                <inplace-edit [data]="getPropData(data?.organization?.industry, 'industry')" (valueChanged)="updateValue($event, 'industry')" ></inplace-edit>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-xs-12">
+                <div class="org-edit-label">{{l('COUNTRY:')}}</div>
+                <inplace-edit [data]="getPropData(data?.organization?.formedCountry?.name, 'formedCountry')" (valueChanged)="updateValue($event, 'formedCountry')" ></inplace-edit>
+            </div>
+            <div class="col-sm-6 col-xs-12">
+                <div class="org-edit-label">{{l('COMPANY TYPE:')}}</div>
+                <inplace-edit [data]="getPropData(data?.organization?.type, 'type')" (valueChanged)="updateValue($event, 'type')" ></inplace-edit>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-xs-12">
+                <div class="org-edit-label">{{l('STATE:')}}</div>
+                <inplace-edit [data]="getPropData(data?.organization?.formedState?.name, 'formedState')" (valueChanged)="updateValue($event, 'formedCountry')" ></inplace-edit>
+            </div>
+        </div>
+    </div>
+
+    <hr/>
+
+    <div class="description">
+        <inplace-edit [data]="getPropData(data?.comment, 'comment')" (valueChanged)="updateValue($event, 'comment')"></inplace-edit>
+    </div>
+</mat-dialog-content>
