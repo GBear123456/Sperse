@@ -1,11 +1,25 @@
 :host {
     border-right: 1px solid #dfdfdf;
+
     .setup-steps {
         width: 321px;
         height: calc(~"100vh - 150px");
         background-color: #fff;
-        padding: 45px 25px 25px 25px;
+        padding: 35px 25px 25px 25px;
         float: left;
+    }
+
+    .title {
+        font-size: 17px;
+        padding-left: 14px;
+        padding-bottom: 33px;
+        font-weight: 400;
+        letter-spacing: 1px;
+
+        a {
+            text-decoration: none;
+            color: rgb(103, 115, 128);
+        }
     }
 
     .steps-progress {
@@ -30,6 +44,10 @@
         &-item {
             position: relative;
             font-weight: 500;
+
+            .link {
+                cursor: pointer;
+            }
 
             &:not(:last-child) {
                 padding-bottom: 63px;

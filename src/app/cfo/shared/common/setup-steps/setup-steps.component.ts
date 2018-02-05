@@ -1,29 +1,40 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
+import { Router } from '@angular/router';
 
 @Component({
     templateUrl: './setup-steps.component.html',
     styleUrls: ['./setup-steps.component.less'],
     selector: 'setup-steps',
 })
-export class SetupStepComponent extends AppComponentBase implements OnInit {
+export class SetupStepComponent extends CFOComponentBase implements OnInit {
 
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
-        'FinancialAccounts',
-        'BusinessEntity',
-        'Chart',
-        'Rules'
+        { caption: 'FinancialAccounts', component: '/linkaccounts' },
+        { caption: 'BusinessEntity', component: '' },
+        { caption: 'Chart', component: '' },
+        { caption: 'Rules', component: '/rules' }
     ];
 
-    constructor(injector: Injector) {
+    public headerTitle: string;
+    public headerLink: string;
+
+    constructor(injector: Injector,
+        private _router: Router) {
         super(injector);
 
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
+        this.headerTitle = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
+        this.headerLink = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';
     }
 
     ngOnInit(): void {
+    }
+
+    onClick(index: number) {
+        if (this._cfoService.hasTransactions)
+            this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + this.SetupSteps[index].component]);
     }
 
     getItemClass(index: number) {

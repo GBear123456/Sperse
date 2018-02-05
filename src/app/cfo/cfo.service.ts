@@ -44,7 +44,7 @@ export class CFOService extends CFOServiceBase {
             if (this.instanceId && data.userId)
                 this.initContactInfo(data.userId);
             this.initialized = (data.status == GetStatusOutputStatus.Active) && data.hasSyncAccounts;
-            let hasTransactions = this.initialized && data.hasTransactions;
+            this.hasTransactions = this.initialized && data.hasTransactions;
             this._appService.topMenu.items
                 .forEach((item, i) => {
                     if (i == 0) {
@@ -56,12 +56,12 @@ export class CFOService extends CFOServiceBase {
                         }
                         else {
                             if (i !== this._appService.topMenu.items.length - 1) {
-                                item.disabled = !hasTransactions;
+                                item.disabled = !this.hasTransactions;
                             }
                         }
                     }
                 });
-            callback && callback.call(this, hasTransactions);
+            callback && callback.call(this, this.hasTransactions);
         });
     }
 }
