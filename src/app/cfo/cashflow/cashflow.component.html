@@ -10,6 +10,7 @@
     (onToggleRows)="togglePivotGridRows($event)"
     (download)="downloadData($event)"
     (showPreferencesDialog)="showPreferencesDialog()"
+    (onSearchValueChange)="searchValueChange($event)"
 ></cashflow-operations>
 
 <div class="cashflow" *ngIf="cashflowData && cashflowData.length">
@@ -46,6 +47,7 @@
     <div *ngIf="statsDetailResult !== undefined" class="cashflow-wrap">
         <dx-button icon="close" (onClick)="closeTransactionsDetail()" class="close-btn"></dx-button>
         <dx-button class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!cashFlowGrid || !cashFlowGrid.instance.getSelectedRowKeys().length" (onClick)="reclassifyTransactions($event)"></dx-button>
+        <dx-button class="showall-btn" [text]="l('Show all')" [disabled]="showAllDisabled" (onClick)="showAll($event)"></dx-button>
         <dx-data-grid id="cashflowGridContainer"
                       [rowAlternationEnabled]="true"
                       [dataSource]="statsDetailResult"

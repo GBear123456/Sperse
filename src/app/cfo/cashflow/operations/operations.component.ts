@@ -24,6 +24,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     @Output() handleFullscreen: EventEmitter<any> = new EventEmitter();
     @Output() download: EventEmitter<any> = new EventEmitter();
     @Output() showPreferencesDialog: EventEmitter<any> = new EventEmitter();
+    @Output() onSearchValueChange: EventEmitter<any> = new EventEmitter();
 
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number} = { 'items' : [], 'selectedItemIndex': null}) {
         this._appService.toolbarIsAdaptive = true;
@@ -68,7 +69,8 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                             width: '279',
                             mode: 'search',
                             placeholder: this.l('Search') + ' '
-                                + this.l('Transaction').toLowerCase()
+                            + this.l('Transaction').toLowerCase(),
+                            onValueChanged: this.searchValueChange.bind(this)
                         }
                     }
                 ]
@@ -259,6 +261,10 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
 
     preferencesDialog() {
         this.showPreferencesDialog.emit();
+    }
+
+    searchValueChange(event) {
+        this.onSearchValueChange.emit(event);
     }
 
     ngOnDestroy() {

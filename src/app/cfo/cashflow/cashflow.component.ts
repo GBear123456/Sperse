@@ -99,6 +99,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
 
+    showAllDisabled: boolean = true;
     headlineConfig: any;
     categoryTree: GetCategoryTreeOutput;
     cashflowData: any;
@@ -2165,8 +2166,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 currencyId: this.currencyId,
                 bankIds: this.requestFilter.bankIds || [],
                 accountIds: accountsIds,
-                businessEntityIds: this.requestFilter.businessEntityIds || []
+                businessEntityIds: this.requestFilter.businessEntityIds || [],
+                searchTerm: this.searchValue
             };
+            if (this.searchValue)
+                this.showAllDisabled = false;
 
             cellObj.cell.rowPath.forEach(item => {
                 if (item) {
@@ -2409,6 +2413,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     closeTransactionsDetail() {
         this.statsDetailResult = undefined;
+        this.showAllDisabled = true;
     }
 
     reclassifyTransactions($event) {
@@ -2808,5 +2813,47 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     finishLoading() {
         abp.ui.clearBusy();
         $('.pivot-grid').removeClass('invisible');
+    }
+
+    searchValueChange(e) {
+        this.searchValue = e['value'];
+
+        if (this.searchValue) {
+            this.showAllDisabled = true;
+            let filterParams = {
+                startDate: this.requestFilter.startDate,
+                endDate: this.requestFilter.endDate,
+                currencyId: this.currencyId,
+                bankIds: this.requestFilter.bankIds || [],
+                accountIds: this.requestFilter.accountIds || [],
+                businessEntityIds: this.requestFilter.businessEntityIds || [],
+                searchTerm: this.searchValue
+            };
+            this.statsDetailFilter = StatsDetailFilter.fromJS(filterParams);
+            this._cashflowServiceProxy
+                .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
+                .subscribe(result => {
+                    this.statsDetailResult = result.map(detail => {
+                        detail.date = this.removeLocalTimezoneOffset(detail.date);
+                        return detail;
+                    });
+                });
+        } else {
+            this.statsDetailResult = null;
+            this.closeTransactionsDetail();
+        }
+    }
+
+    showAll(e) {
+        this.showAllDisabled = true;
+        this.statsDetailFilter.searchTerm = '';
+        this._cashflowServiceProxy
+            .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
+            .subscribe(result => {
+                this.statsDetailResult = result.map(detail => {
+                    detail.date = this.removeLocalTimezoneOffset(detail.date);
+                    return detail;
+                });
+            });
     }
 }
