@@ -280,7 +280,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     getAttributes() {
         let attributes = {};
-        let list = this.attributesAndKeywords.filter((item) => {
+        let list = this.attributeList.dataSource.filter((item) => {
             return (item['attributeTypeId'] != 'keyword');
         }).forEach((v) => attributes[v['attributeTypeId']] = ConditionAttributeDto.fromJS(v));
 
@@ -409,7 +409,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         if ($event.key.attributeTypeId != 'keyword' && $event.key.conditionTypeId == 'Exist')
             $event.key.conditionValue = '';
 
-        this.keywords = this.attributesAndKeywords.filter((item) => {
+        this.keywords = this.attributeList.dataSource.filter((item) => {
             return (item['attributeTypeId'] == 'keyword');
         }).map((item, i) => {
             return {
