@@ -67,14 +67,17 @@
                     }
 
                     .col-xs-1 {
-                        width: 13%;
+                        width: 17%;
                         text-align: center;
+
+                        &.small-col {
+                            width: 11%;
+                        }
                     }
 
                     & > div.col-xs-4 {
                         width: 29%;
                     }
-
                 }
 
                 .dx-field-label {
@@ -104,30 +107,47 @@
             + .section {
                 margin-top: 45px;
             }
-        }
-    }
 
-    /deep/ .dx-checkbox {
-        .dx-checkbox-icon {
-            width: 20px;
-            height: 20px;
-            background-color: #FFF;
-            border: 1px solid #DADEE1 !important;
-            border-radius: 4px;
-        }
+            /deep/ .dx-checkbox {
+                .dx-checkbox-icon {
+                    width: 21px;
+                    height: 21px;
+                    background-color: #FFF;
+                    border: 1px solid #DADEE1 !important;
+                    border-radius: 4px;
+                }
 
-        &.dx-checkbox-checked {
-            .dx-checkbox-icon {
-                color: #FFF;
-                font-size: 8px;
-                font-weight: bold;
-                background-color: #00AEEF;
-                border-color: #00AEEF !important;
+                &.dx-checkbox-checked {
+                    .dx-checkbox-icon {
+                        color: #FFF;
+                        font-size: 8px;
+                        font-weight: bold;
+                        background-color: #00AEEF;
+                        border-color: #00AEEF !important;
+                    }
+                }
+
+                .dx-checkbox-text {
+                    white-space: nowrap;
+                }
             }
-        }
 
-        .dx-checkbox-text {
-            white-space: nowrap;
+            /deep/ .dx-radiogroup {
+                width: 70%;
+
+                .dx-radiobutton {
+                    width: 16%;
+                    margin-right: 0;
+
+                    .dx-radio-value-container {
+                        padding-right: 0;
+
+                        .dx-radiobutton-icon {
+                            margin: 0 auto;
+                        }
+                    }
+                }
+            }
         }
     }
 
