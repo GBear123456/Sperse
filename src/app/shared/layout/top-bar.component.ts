@@ -36,7 +36,7 @@ export class TopBarComponent extends AppComponentBase {
             if (event instanceof NavigationEnd) {
                 setTimeout(() => {
                     this.menu.items.forEach((item, i) => {
-                        if (this.router.url == item.route)
+                        if (this.router.url.split('?')[0] == item.route)
                             this.selectedIndex = i;
                     });
                     this.toogleNavMenu();

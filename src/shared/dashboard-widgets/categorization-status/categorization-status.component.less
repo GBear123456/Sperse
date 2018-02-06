@@ -15,9 +15,9 @@
     }
 
     .small-button {
-        border-radius: 13px!important;
-        font-size: 13px!important;
-        text-transform: initial!important;
+        border-radius: 13px !important;
+        font-size: 13px !important;
+        text-transform: initial !important;
         letter-spacing: 0.3px;
         margin: 0 0 0 30px;
         outline: none;
@@ -32,6 +32,7 @@
         text-align: left;
         float: right;
         background: transparent;
+
         &:hover {
             background: lighten(#00aeef, 5%);
             border-color: lighten(#00aeef, 5%);
@@ -109,21 +110,32 @@
                 width: 170px;
                 display: inline-block;
             }
+
             .synch-status {
                 font-size: 13px;
                 letter-spacing: 0.2px;
                 line-height: 17px;
+
                 &.count {
                     width: 50px;
                     display: inline-block;
                     text-align: right;
                     padding-right: 15px;
                 }
+
                 &.percent {
                     width: 35px;
                     display: inline-block;
                     text-align: right;
                     padding-right: 5px;
+                }
+
+                a {
+                    cursor: pointer;
+                    line-height: 1.4;
+                    font-weight: 600;
+                    display: inline-block;
+                    border-bottom: 1px solid #8bd553;
                 }
             }
         }
