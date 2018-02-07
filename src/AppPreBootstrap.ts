@@ -21,7 +21,6 @@ export class AppPreBootstrap {
             }
 
             const queryStringObj = UrlHelper.getQueryParameters();
-
             if (queryStringObj.redirect && queryStringObj.redirect === 'TenantRegistration') {
                 if (queryStringObj.forceNewRegistration) {
                     new AppAuthService().logout();
@@ -32,10 +31,10 @@ export class AppPreBootstrap {
                 AppPreBootstrap.impersonatedAuthenticate(queryStringObj.impersonationToken, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
             } else if (queryStringObj.switchAccountToken) {
                 AppPreBootstrap.linkedAccountAuthenticate(queryStringObj.switchAccountToken, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
-            } else {                            
+            } else {
                 if (queryStringObj.hasOwnProperty('tenantId'))
-                  abp.multiTenancy.setTenantIdCookie(queryStringObj.tenantId);
-                
+                    abp.multiTenancy.setTenantIdCookie(queryStringObj.tenantId);
+
                 AppPreBootstrap.getUserConfiguration(callback);
             }
         });
@@ -59,8 +58,7 @@ export class AppPreBootstrap {
             AppConsts.subscriptionExpireNootifyDayCount = result.subscriptionExpireNootifyDayCount;
             AppConsts.appBaseUrl = window.location.protocol + "//" + window.location.host;
 
-            if (result.appBaseUrl !== AppConsts.appBaseUrl)
-            {
+            if (result.appBaseUrl !== AppConsts.appBaseUrl) {
                 abp.ajax({
                     url: result.remoteServiceBaseUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=' + encodeURIComponent("" + AppConsts.tenantHostType),
                     method: 'GET',
@@ -69,7 +67,7 @@ export class AppPreBootstrap {
                     }
                 }).done((tenantApiHostOutput: TenantApiHostOutput) => {
                     var apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
-    
+
                     if (tenantApiHostOutput.apiHostName !== null) {
                         AppConsts.remoteServiceBaseUrl = apiProtocolUrl.protocol + "//" + tenantApiHostOutput.apiHostName;
                     }
@@ -80,8 +78,7 @@ export class AppPreBootstrap {
                     callback();
                 });
             }
-            else
-            {
+            else {
                 AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
                 callback();
             }
@@ -115,7 +112,9 @@ export class AppPreBootstrap {
             AppPreBootstrap.setEncryptedTokenCookie(result.encryptedAccessToken);
             location.search = '';
             callback();
-        });
+        }).fail(result => {
+            location.href = AppConsts.appBaseUrl + '/account/login';
+        });;
     }
 
     private static linkedAccountAuthenticate(switchAccountToken: string, tenantId: number, callback: () => void): JQueryPromise<any> {
@@ -144,11 +143,11 @@ export class AppPreBootstrap {
             '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),
             'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
         };
-        
+
         if (token) {
             requestHeaders['Authorization'] = 'Bearer ' + token;
         }
-        
+
         return abp.ajax({
             url: AppConsts.remoteServiceBaseUrl + '/AbpUserConfiguration/GetAll',
             method: 'GET',
