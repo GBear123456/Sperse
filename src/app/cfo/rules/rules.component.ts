@@ -220,6 +220,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngOnDestroy() {
+        this._appService.toolbarConfig = null;
         this.rootComponent.overflowHidden();
         this.filtersService.localizationSourceName
             = AppConsts.localization.defaultLocalizationSourceName;

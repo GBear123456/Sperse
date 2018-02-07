@@ -26,10 +26,10 @@ import { NotificationSettingsModalComponent } from '@app/shared/layout/notificat
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from '@shared/AppConsts';
 import { SubscriptionStartType, EditionPaymentType } from '@shared/AppEnums';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import { AppService } from 'app/app.service';
 
 @Component({
     templateUrl: './header.component.html',
@@ -78,7 +78,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         private _userNotificationHelper: UserNotificationHelper,
         private _sessionService: SessionServiceProxy,
         private _appSessionService: AppSessionService,
-        public _appService: AppService
+        private _layoutService: LayoutService
     ) {
         super(injector);
     }

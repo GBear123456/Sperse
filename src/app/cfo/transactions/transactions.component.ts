@@ -3,6 +3,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 
 import { AppService } from '@app/app.service';
+import { ActivatedRoute } from '@angular/router';
 
 import { TransactionsServiceProxy, BankAccountDto, InstanceType } from '@shared/service-proxies/service-proxies';
 
@@ -185,6 +186,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     constructor(injector: Injector,
         public dialog: MatDialog,
         private _appService: AppService,
+        private _activatedRoute: ActivatedRoute,
         private _TransactionsServiceProxy: TransactionsServiceProxy,
         public filtersService: FiltersService
     ) {
@@ -513,7 +515,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         caption: 'Reference',
                         //items: { BusinessEntity: '' }
                     })
-                ]
+                ], this._activatedRoute.snapshot.queryParams
             );
         });
 

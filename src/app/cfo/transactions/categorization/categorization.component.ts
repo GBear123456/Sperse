@@ -105,6 +105,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                         categories.push({
                             key: key,
                             parent: 0,
+                            coAID: null,
                             name: item.name
                         });
                     });
@@ -113,6 +114,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                         categories.push({
                             key: key + item.typeId,
                             parent: item.typeId,
+                            coAID: null,
                             name: item.name
                         });
                     });
@@ -123,6 +125,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                                 key: key,
                                 parent: item.parentId || (item.accountingTypeId +
                                     data.accountingTypes[item.accountingTypeId].typeId),
+                                coAID: item.coAID,
                                 name: item.name
                             });
                     });
@@ -142,12 +145,15 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     onCategoryUpdated($event) {
+        let category = this.categorization.categories[$event.key];
         this._classificationServiceProxy.updateCategory(
             InstanceType[this.instanceType], this.instanceId,
             UpdateCategoryInput.fromJS({
-                id: parseInt($event.key),
-                coAID: this.categorization.categories[$event.key].coAID,
-                name: $event.data.name
+                id: $event.key,
+                coAID: $event.data.hasOwnProperty('coAID') ? 
+                    $event.data.coAID || undefined : category.coAID,
+                name: $event.data.hasOwnProperty('name') ? 
+                    $event.data.name || undefined : category.name
             })
         ).subscribe((id) => {
             this.refreshCategories(false);
@@ -166,7 +172,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 accountingTypeId: hasParentCategory ? this.categorization
                     .categories[parentId].accountingTypeId : parseInt(parentId),
                 parentId: hasParentCategory ? parentId: null,
-                coAID: null,
+                coAID: $event.data.coAID,
                 name: $event.data.name
             })
         ).subscribe((id) => {

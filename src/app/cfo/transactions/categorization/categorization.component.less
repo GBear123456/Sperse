@@ -99,9 +99,15 @@
     }
 
     /deep/ dx-tree-list {
-        .dx-treelist-header-panel,
-        .dx-treelist-headers {
+        .dx-treelist-header-panel {
             display: none;
+        }
+        .dx-treelist-headers {
+            padding-left: 15px;
+            .dx-column-lines > td {
+                border-left: none!important;
+                border-right: none!important;
+            }
         }
 
         &[dropallowed="true"] {
@@ -167,6 +173,11 @@
                         border-bottom-left-radius: 2px;
                     }
 
+                    &:nth-child(2), &:nth-child(3) {
+                        border-right: none !important;
+                        border-left: none !important;
+                    }
+
                     &:last-child {
                         border-left: none !important;
                         border-top-right-radius: 2px;
@@ -209,7 +220,7 @@
                     }
 
                     .dx-treelist-text-content {
-                        width: 300px !important;
+                        position: absolute;
                         overflow: visible !important;
                         font-size: 14px;
                         letter-spacing: 0.3px;

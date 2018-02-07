@@ -1,8 +1,8 @@
-import {Component, Injector, OnInit} from '@angular/core';
-import {CFOComponentBase} from 'app/cfo/shared/common/cfo-component-base';
-import {DashboardServiceProxy, ClassificationServiceProxy, InstanceType, AutoClassifyDto, ResetClassificationDto} from 'shared/service-proxies/service-proxies';
-import {Router} from '@angular/router';
-import {AppConsts} from "@shared/AppConsts";
+import { Component, Injector, OnInit } from '@angular/core';
+import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
+import { DashboardServiceProxy, ClassificationServiceProxy, InstanceType, AutoClassifyDto, ResetClassificationDto } from 'shared/service-proxies/service-proxies';
+import { Router } from '@angular/router';
+import { AppConsts } from "@shared/AppConsts";
 
 @Component({
     selector: 'app-categorization-status',
@@ -58,7 +58,20 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
             });
     }
 
-    navigateTo() {
-        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/transactions']);
+    filterTransactions(classified: boolean) {
+        let filter = {
+            classified: {
+                yes: undefined,
+                no: undefined
+            }
+        };
+        if (classified)
+            filter.classified.yes = true;
+        else
+            filter.classified.no = true;
+
+        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/transactions'], { queryParams: { filters: encodeURIComponent(JSON.stringify(filter)) } });
     }
+
+
 }
