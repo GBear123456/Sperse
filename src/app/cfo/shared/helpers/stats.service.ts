@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as moment from 'moment';
 
 @Injectable()
 export class StatsService {
@@ -17,19 +18,26 @@ export class StatsService {
     getTooltipInfoHtml(data, fields, pointInfo) {
         let html = '';
         let pointDataObject = data.find(item => item.date.toDate().toString() == pointInfo.argument);
+        html += `<header class="tooltip-header">${moment(pointInfo.argument).format('MMM YYYY')}</header>`;
         fields.forEach(field => {
             if (pointDataObject[field.name] !== null && pointDataObject[field.name] !== undefined) {
-                html += `${field.label} : <span style="float: right; font-family: Lato; margin-left: 10px">${pointDataObject[field.name].toLocaleString('en-EN', {
-                    style: 'currency',
-                    currency: 'USD'
-                })}</span>`;
-                if (field.name === 'startingBalance' ||
-                    field.name === 'forecastStartingBalance' ||
+                if (field.label == 'Starting Balance') {
+                    html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span style="float: right; font-family: Lato; margin-left: 10px">
+                            ${(pointDataObject[field.name] - pointDataObject['startingBalanceAdjustments']).toLocaleString('en-EN', {
+                                style: 'currency',
+                                currency: 'USD'
+                            })}</span></div>`;
+                } else {
+                    html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span style="float: right; font-family: Lato; margin-left: 10px">${pointDataObject[field.name].toLocaleString('en-EN', {
+                        style: 'currency',
+                        currency: 'USD'
+                    })}</span></div>`;
+                }
+                if (field.name === 'forecastStartingBalance' ||
                     field.name === 'netChange' ||
+                    field.name === 'startingBalanceAdjustments' ||
                     field.name === 'forecastNetChange')
                     html += '<hr style="margin: 5px 0"/>';
-                else
-                    html += '<br>';
             }
         });
         return html;

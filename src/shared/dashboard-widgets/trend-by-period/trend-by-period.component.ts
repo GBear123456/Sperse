@@ -39,6 +39,10 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             'label': this.l('Stats_startingBalance')
         },
         {
+            'name': 'startingBalanceAdjustments',
+            'label': this.l('Stats_Starting_Balance_Adjustments')
+        },
+        {
             'name': 'income',
             'label': this.l('Stats_Inflows')
         },
