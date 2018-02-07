@@ -2207,10 +2207,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             .on('click', function(ev) {
                 ev.stopPropagation();
             })
-            .dxTextBox({
+            .dxNumberBox({
                 value: cellObj.cell.value,
                 height: cellObj.cellElement.height(),
-                onEnterKey: this.saveForecast.bind(this) ,
+                onEnterKey: this.saveForecast.bind(this),
                 onFocusOut: this.saveForecast.bind(this)
             })
             .dxTextBox('instance')
@@ -2238,7 +2238,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let categoryId = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.Category);
             let subCategoryId = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
             let transactionDescriptor = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
-            // Send newValue and cellData to your data service and update data according to your requirements
             if (this.currentCellOperationType === 'add') {
                 let forecastedDate = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment();
                 forecastModel = new AddForecastInput({
