@@ -1,9 +1,11 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig"></app-headline>
+    <app-headline [config]="headlineConfig">
+        <synch-progress class="synch-progress"></synch-progress>
+    </app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
 
-            <dx-tree-list 
+            <dx-tree-list
                 height="calc(100vh - 210px)"
                 [hoverStateEnabled]="true"
                 [dataSource]="ruleTreeListDataSource"
