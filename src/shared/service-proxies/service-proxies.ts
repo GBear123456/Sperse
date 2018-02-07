@@ -17190,6 +17190,10 @@ export interface IStatsDetailFilter {
 export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     id: number;
     date: moment.Moment;
+    cashflowTypeId: string;
+    bankName: string;
+    accountName: string;
+    accountNumber: string;
     currencyId: string;
     credit: number;
     debit: number;
@@ -17197,6 +17201,8 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     comment: string;
     commentThreadId: number;
     forecastId: number;
+    forecastDate: moment.Moment;
+    status: CashFlowStatsDetailDtoStatus;
 
     constructor(data?: ICashFlowStatsDetailDto) {
         if (data) {
@@ -17211,6 +17217,10 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         if (data) {
             this.id = data["id"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.cashflowTypeId = data["cashflowTypeId"];
+            this.bankName = data["bankName"];
+            this.accountName = data["accountName"];
+            this.accountNumber = data["accountNumber"];
             this.currencyId = data["currencyId"];
             this.credit = data["credit"];
             this.debit = data["debit"];
@@ -17218,6 +17228,8 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
             this.comment = data["comment"];
             this.commentThreadId = data["commentThreadId"];
             this.forecastId = data["forecastId"];
+            this.forecastDate = data["forecastDate"] ? moment(data["forecastDate"].toString()) : <any>undefined;
+            this.status = data["status"];
         }
     }
 
@@ -17231,6 +17243,10 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["cashflowTypeId"] = this.cashflowTypeId;
+        data["bankName"] = this.bankName;
+        data["accountName"] = this.accountName;
+        data["accountNumber"] = this.accountNumber;
         data["currencyId"] = this.currencyId;
         data["credit"] = this.credit;
         data["debit"] = this.debit;
@@ -17238,6 +17254,8 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data["comment"] = this.comment;
         data["commentThreadId"] = this.commentThreadId;
         data["forecastId"] = this.forecastId;
+        data["forecastDate"] = this.forecastDate ? this.forecastDate.toISOString() : <any>undefined;
+        data["status"] = this.status;
         return data; 
     }
 }
@@ -17245,6 +17263,10 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
 export interface ICashFlowStatsDetailDto {
     id: number;
     date: moment.Moment;
+    cashflowTypeId: string;
+    bankName: string;
+    accountName: string;
+    accountNumber: string;
     currencyId: string;
     credit: number;
     debit: number;
@@ -17252,6 +17274,8 @@ export interface ICashFlowStatsDetailDto {
     comment: string;
     commentThreadId: number;
     forecastId: number;
+    forecastDate: moment.Moment;
+    status: CashFlowStatsDetailDtoStatus;
 }
 
 export class CashFlowGridSettingsDto implements ICashFlowGridSettingsDto {
@@ -25878,9 +25902,9 @@ export interface ISyncProgressOutput {
 
 export class SyncProgressDto implements ISyncProgressDto {
     accountName: string;
-    accountStatus: string;
     progressStatus: string;
     progressPercent: number;
+    syncStatus: SyncProgressDtoSyncStatus;
 
     constructor(data?: ISyncProgressDto) {
         if (data) {
@@ -25894,9 +25918,9 @@ export class SyncProgressDto implements ISyncProgressDto {
     init(data?: any) {
         if (data) {
             this.accountName = data["accountName"];
-            this.accountStatus = data["accountStatus"];
             this.progressStatus = data["progressStatus"];
             this.progressPercent = data["progressPercent"];
+            this.syncStatus = data["syncStatus"];
         }
     }
 
@@ -25909,18 +25933,18 @@ export class SyncProgressDto implements ISyncProgressDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["accountName"] = this.accountName;
-        data["accountStatus"] = this.accountStatus;
         data["progressStatus"] = this.progressStatus;
         data["progressPercent"] = this.progressPercent;
+        data["syncStatus"] = this.syncStatus;
         return data; 
     }
 }
 
 export interface ISyncProgressDto {
     accountName: string;
-    accountStatus: string;
     progressStatus: string;
     progressPercent: number;
+    syncStatus: SyncProgressDtoSyncStatus;
 }
 
 export class CreateFriendshipRequestInput implements ICreateFriendshipRequestInput {
@@ -37440,6 +37464,13 @@ export enum TransactionStatsDtoAdjustmentType {
     _1 = 1, 
 }
 
+export enum CashFlowStatsDetailDtoStatus {
+    Historical = <any>"Historical", 
+    Partial = <any>"Partial", 
+    Incomplete = <any>"Incomplete", 
+    Completed = <any>"Completed", 
+}
+
 export enum CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity {
     Days = <any>"Days", 
     Weeks = <any>"Weeks", 
@@ -37581,6 +37612,12 @@ export enum ScoreSimulatorInfoDtoAccessStatus {
     KbaIsNotPassed = <any>"KbaIsNotPassed", 
     UnsupportedPackage = <any>"UnsupportedPackage", 
     NoPayment = <any>"NoPayment", 
+}
+
+export enum SyncProgressDtoSyncStatus {
+    InProgress = <any>"InProgress", 
+    Completed = <any>"Completed", 
+    Failed = <any>"Failed", 
 }
 
 export enum GetStatusOutputStatus {
