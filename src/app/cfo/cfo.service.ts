@@ -1,5 +1,6 @@
 import { Injectable, Input } from "@angular/core";
-import { AppService } from "app/app.service";
+import { AppService } from "@app/app.service";
+import { LayoutService } from "@app/shared/layout/layout.service";
 import { CFOServiceBase } from "shared/cfo/cfo-service-base";
 import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, CustomersServiceProxy } from "shared/service-proxies/service-proxies";
 import { ActivatedRoute } from "@angular/router";
@@ -10,6 +11,7 @@ export class CFOService extends CFOServiceBase {
     constructor(
         protected _route: ActivatedRoute,
         private _appService: AppService,
+        private _layoutService: LayoutService,
         private _instanceServiceProxy: InstanceServiceProxy,
         private _customerService: CustomersServiceProxy
     ) {
@@ -38,8 +40,10 @@ export class CFOService extends CFOServiceBase {
     }
     
     instanceChangeProcess(callback: any = null) {
-        if (this.instanceId != null)
+        if (this.instanceId != null) {
             this._appService.setContactInfoVisibility(true);
+            this._layoutService.hideDefaultPageHeader();
+        }
         this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
             if (this.instanceId && data.userId)
                 this.initContactInfo(data.userId);
