@@ -103,3 +103,24 @@
     left: -17px;
     padding: 8px 17px;
 }
+.tooltip-item.inflows::before,
+.tooltip-item.outflows::before,
+.tooltip-item.net::before,
+.tooltip-item.forecast.inflows::before,
+.tooltip-item.forecast.outflows::before,
+.tooltip-item.forecast.net::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #00aeef;
+    display: inline-block;
+    margin-right: 5px;
+}
+.tooltip-item.forecast.outflows::before,
+.tooltip-item.outflows::before {
+    background: #f05b2a;
+}
+.tooltip-item.forecast.net::before,
+.tooltip-item.net::before {
+    background: #fab800;
+}

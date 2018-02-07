@@ -69,16 +69,20 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             'label': this.l('Stats_startingBalance')
         },
         {
+            'name': 'startingBalanceAdjustments',
+            'label': this.l('Stats_Starting_Balance_Adjustments')
+        },
+        {
             'name': 'income',
-            'label': this.l('Stats_income')
+            'label': this.ls('Platform', 'Stats_Inflows')
         },
         {
             'name': 'expenses',
-            'label': this.l('Stats_expenses')
+            'label': this.ls('Platform', 'Stats_Outflows')
         },
         {
             'name': 'netChange',
-            'label': this.l('Stats_netChange')
+            'label': this.ls('Platform', 'Net_Change')
         },
         {
             'name': 'endingBalance',
@@ -86,19 +90,19 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         },
         {
             'name': 'forecastIncome',
-            'label': this.l('Stats_forecastIncome')
+            'label': this.l('Stats_Forecast_Inflows')
         },
         {
             'name': 'forecastExpenses',
-            'label': this.l('Stats_forecastExpenses')
+            'label': this.l('Stats_Forecast_Outflows')
         },
         {
             'name': 'forecastNetChange',
-            'label': this.l('Stats_forecastNetChange')
+            'label': this.l('Stats_Forecast_Net_Change')
         },
         {
             'name': 'forecastEndingBalance',
-            'label': this.l('Stats_forecastEndingBalance')
+            'label': this.l('Stats_endingBalance')
         }
     ];
     leftSideBarItems = [

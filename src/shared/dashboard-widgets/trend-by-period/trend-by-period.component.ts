@@ -60,19 +60,19 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         },
         {
             'name': 'forecastIncome',
-            'label': this.l('Stats_forecastIncome')
+            'label': this.l('Stats_Forecast_Inflows')
         },
         {
             'name': 'forecastExpenses',
-            'label': this.l('Stats_forecastExpenses')
+            'label': this.l('Stats_Forecast_Outflows')
         },
         {
             'name': 'forecastNetChange',
-            'label': this.l('Stats_forecastNetChange')
+            'label': this.l('Stats_Forecast_Net_Change')
         },
         {
             'name': 'forecastEndingBalance',
-            'label': this.l('Stats_forecastEndingBalance')
+            'label': this.l('Stats_endingBalance')
         }
     ];
     selectedForecastModelId = 1;
