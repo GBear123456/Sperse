@@ -99,7 +99,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
 
-    showAllDisabled: boolean = true;
+    showAllDisabled = true;
     headlineConfig: any;
     categoryTree: GetCategoryTreeOutput;
     cashflowData: any;
@@ -271,7 +271,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         namesSource[key]['name'] :
                         cellInfo.value.value;
                 } else {
-                    return this.l('Cashflow_Unclassified');
+                    return this.l('Cashflow_NoDescriptor');
                 }
             }
         },
@@ -292,7 +292,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                            namesSource[key]['name'] :
                            cellInfo.value.value;
                 } else {
-                    return this.l('Cashflow_Unclassified');
+                    return this.l('Cashflow_NoDescriptor');
                 }
             }
         },
@@ -309,7 +309,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (cellInfo.value) {
                     return cellInfo.value && cellInfo.value.value ? cellInfo.value.value : this.l('Cashflow_emptyDescriptor');
                 } else {
-                    return this.l('Cashflow_Unclassified');
+                    return this.l('Cashflow_NoDescriptor');
                 }
             }
         },
@@ -502,8 +502,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     currentCellOperationType: string;
     oldCellPadding: string;
     clickedRowResult;
-    clickedRow: Array<string>;
-    clickedColumn: Array<string>;
+    clickedCellObj;
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -931,30 +930,27 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param stubObj - the object with own custom data for stub transaction
      * @return {TransactionStatsDto & any}
      */
-    createStubTransaction(stubObj) {
+    createStubTransaction(stubObj, path = []) {
         let stubTransaction = {
             'adjustmentType': null,
-            'cashflowTypeId': null,
             'accountId': null,
-            'currencyId': 'USD',
+            'currencyId': this.currencyId,
             'amount': 0,
             'comment': null,
             'date': null,
             'initialDate': null,
             'forecastId': null
         };
-        return Object.assign(stubTransaction, this.addCategorizationLevels(stubObj));
-    }
-
-    /**
-     * For every categorization item create object with the categorization as properties
-     */
-    createCategorizationObject(categorization: Array<string>): { [key: string]: string; } {
-        let categorizationObject = {};
-        categorization.forEach(category => {
-            categorizationObject[category] = null;
-        });
-        return categorizationObject;
+        if (path && path.length) {
+            path.forEach(pathItem => {
+                if (pathItem) {
+                    let [ key, prefix ] = [ pathItem.slice(2), pathItem.slice(0, 2) ];
+                    let categoryParams = this.getCategoryParams(prefix);
+                    stubTransaction[categoryParams['statsKeyName']] = key;
+                }
+            });
+        }
+        return this.addCategorizationLevels(Object.assign(stubTransaction, stubObj));
     }
 
     /**
@@ -1068,6 +1064,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let clonedTransaction = this.createStubTransaction({
                     'cashflowTypeId': Total,
                     'amount': cashflowDataItem.amount,
+                    'forecastId': cashflowDataItem.forecastId,
                     'accountId': cashflowDataItem.accountId,
                     'date': cashflowDataItem.date,
                     'initialDate': cashflowDataItem.initialDate
@@ -1082,6 +1079,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             'amount': cashflowDataItem.amount,
                             'accountId': cashflowDataItem.accountId,
                             'date': cashflowDataItem.date,
+                            'forecastId': cashflowDataItem.forecastId,
                             'initialDate': cashflowDataItem.initialDate
                         })
                     );
@@ -1187,40 +1185,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return stubCashflowData;
     }
 
-    /**
-     * @todo move to some helper
-     * Build the nested object from array as the properties
-     * @param base - the object to create
-     * @param names - the array with nested keys
-     */
-    createNestedObject(base, names) {
-        for (let i = 0; i < names.length; i++) {
-            base = base[names[i]] = base[names[i]] || {};
-        }
-    }
-
     /** @todo move to some helper */
     getDescendantPropValue(obj, path) {
         return path.split('.').reduce((acc, part) => acc && acc[part], obj);
-    }
-
-    /**
-     * Build the tree from cashflow data
-     * @param data
-     * @param fields
-     * @return {{}}
-     */
-    getCashflowDataTree(data, fields) {
-        let cashflowDataTree = {};
-        data.forEach( cashflowItem => {
-            let chainingArr = [];
-            fields.forEach( field => {
-                let value = this.getDescendantPropValue(cashflowItem, field['dataField']);
-                chainingArr.push(value);
-            });
-            this.createNestedObject(cashflowDataTree, chainingArr);
-        });
-        return cashflowDataTree;
     }
 
     refreshDataGrid() {
@@ -1431,14 +1398,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     getPrevGroupInterval(groupInterval) {
         let currentIndex = this.groupbyItems.map(item => item.groupInterval).indexOf(groupInterval);
         return currentIndex > 0 ? this.groupbyItems[currentIndex - 1].groupInterval : null;
-    }
-
-    /**
-     * Return the index of next interval that leads for the interval in argument
-     */
-    getNextGroupInterval(groupInterval) {
-        let currentIndex = this.groupbyItems.map(item => item.groupInterval).indexOf(groupInterval);
-        return this.groupbyItems[currentIndex + 1].groupInterval;
     }
 
     getHistoricalCustomizer() {
@@ -2160,14 +2119,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                               [cellObj.cell.rowPath[1].slice(2)] :
                               this.requestFilter.accountIds || [];
 
+            let startDate = this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate;
+            let endDate = this.requestFilter.endDate && this.requestFilter.endDate < datePeriod.endDate ? this.requestFilter.endDate : datePeriod.endDate;
             let filterParams = {
-                startDate: this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate,
-                endDate: this.requestFilter.endDate && this.requestFilter.endDate < datePeriod.endDate ? this.requestFilter.endDate : datePeriod.endDate,
+                startDate: startDate,
+                endDate: endDate,
                 currencyId: this.currencyId,
                 bankIds: this.requestFilter.bankIds || [],
                 accountIds: accountsIds,
                 businessEntityIds: this.requestFilter.businessEntityIds || [],
-                searchTerm: this.searchValue
+                searchTerm: this.searchValue,
+                forecastModelId: this.selectedForecastModel ? this.selectedForecastModel.id : undefined
             };
             if (this.searchValue)
                 this.showAllDisabled = false;
@@ -2177,6 +2139,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     let [ key, prefix ] = [ item.slice(2), item.slice(0, 2) ];
                     let property = this.getCategoryParams(prefix)['statsKeyName'];
                     filterParams[property] = key;
+                } else {
+                    filterParams['categoryId'] = -1;
                 }
             });
             this.statsDetailFilter = StatsDetailFilter.fromJS(filterParams);
@@ -2189,48 +2153,23 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                          * If cell is current - if amount of results is 0 - add, 1 and it is forecast - update, >1 - show details
                          * If cell is forecast - if amount of results is 0 - add, 1 - update, >1 - show details
                          */
+                        let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
                         if (
+                            /** disallow adding or editing historical periods */
                             cellObj.cell.columnPath[0] !== Periods.Historical &&
-                                /** @todo Check while isForecast will be implemented on server and uncomment it*/
-                            (result.length === 0 || (result.length === 1 /*&& result[0].isForecast*/))
+                            /** allow adding for empty cells or the cells that has only one transaction and this is
+                             * forecast transaction */
+                            (result.length === 0 || (result.length === 1 && result[0].forecastId)) &&
+                            /** disallow adding or editing unclassified category, but allow change or add (no descriptor) */
+                            (clickedCellPrefix || cellObj.cell.rowPath.length !== 2) &&
+                            /** disallow adding or editing of these levels */
+                            clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
+                            clickedCellPrefix !== CategorizationPrefixes.AccountType &&
+                            clickedCellPrefix !== CategorizationPrefixes.AccountName
                         ) {
-                            this.currentCellOperationType = result.length === 0 ? 'add' : 'update';
-                            if (this.modifyingCelltextBox) {
-                                let parent = this.modifyingCelltextBox.element().parent();
-                                this.modifyingCelltextBox.element().remove();
-                                this.modifyingCelltextBox = null;
-                                parent.children().show();
-                                parent.css('padding', cellObj.cellElement.css('padding'));
-                            }
-                            if (!cellObj.cellElement.find('span').length)
-                                cellObj.cellElement.wrapInner('<span></span>');
-                            cellObj.cellElement.children().hide();
-                            this.oldCellPadding = cellObj.cellElement.css('padding');
-                            cellObj.cellElement.css('padding', 0);
-                            if (result.length === 1) {
-                                this.clickedRowResult = result.length;
-                            }
-                            this.clickedRow = cellObj.cell.rowPath;
-                            this.clickedColumn = cellObj.cell.columnPath;
-                            this.modifyingCelltextBox = $('<div>')
-                                .appendTo(cellObj.cellElement)
-                                .on('click', function(ev) {
-                                    ev.stopPropagation();
-                                })
-                                .dxTextBox({
-                                    value: cellObj.cell.value,
-                                    height: cellObj.cellElement.height(),
-                                    onEnterKey: this.saveForecast.bind(this) ,
-                                    onFocusOut: this.saveForecast.bind(this)
-                                })
-                                .dxTextBox('instance')
-                                .focus();
-                            document.getSelection().removeAllRanges();
+                            this.handleAddOrEdit(cellObj, result);
                         } else {
-                            this.statsDetailResult = result.map(detail => {
-                                detail.date = this.removeLocalTimezoneOffset(detail.date);
-                                return detail;
-                            });
+                            this.showTransactionDetail(result);
                         }
                     });
             });
@@ -2245,45 +2184,82 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
+    handleAddOrEdit(cellObj, details) {
+        this.currentCellOperationType = details.length === 0 ? 'add' : 'update';
+        if (this.modifyingCelltextBox) {
+            let parent = this.modifyingCelltextBox.element().parent();
+            this.modifyingCelltextBox.element().remove();
+            this.modifyingCelltextBox = null;
+            parent.children().show();
+            parent.css('padding', cellObj.cellElement.css('padding'));
+        }
+        if (!cellObj.cellElement.find('span').length)
+            cellObj.cellElement.wrapInner('<span></span>');
+        cellObj.cellElement.children().hide();
+        this.oldCellPadding = cellObj.cellElement.css('padding');
+        cellObj.cellElement.css('padding', 0);
+        if (details.length === 1) {
+            this.clickedRowResult = details[0];
+        }
+        this.clickedCellObj = cellObj;
+        this.modifyingCelltextBox = $('<div>')
+            .appendTo(cellObj.cellElement)
+            .on('click', function(ev) {
+                ev.stopPropagation();
+            })
+            .dxTextBox({
+                value: cellObj.cell.value,
+                height: cellObj.cellElement.height(),
+                onEnterKey: this.saveForecast.bind(this) ,
+                onFocusOut: this.saveForecast.bind(this)
+            })
+            .dxTextBox('instance')
+            .focus();
+        document.getSelection().removeAllRanges();
+    }
+
+    showTransactionDetail(details) {
+        this.statsDetailResult = details.map(detail => {
+            detail.date = this.removeLocalTimezoneOffset(detail.date);
+            return detail;
+        });
+    }
+
     saveForecast = (arg: any): void  => {
         let newValue = arg.component.option('value');
-        let cellData = {
-            row: this.clickedRow,
-            col: this.clickedColumn
-        };
         let parent = arg.component.element().parent();
         arg.component.element().remove();
         this.modifyingCelltextBox = null;
         parent.css('padding', this.oldCellPadding);
         parent.children().show();
-        let oldValue = parent.children().text();
-        if (newValue !== oldValue) {
-            /** Send request to the server with adding or updating the cell */
-            let cellObjDate = this.getDateByPath(this.clickedColumn, this.getColumnFields());
+        if (+newValue !== this.clickedCellObj.cell.value) {
             let forecastModel;
-            let cashflowTypeId = this.clickedRow[this.apiTableFields.find(item => item.dataField === 'cashflowTypeId')['areaIndex']];
-            //Send newValue and cellData to your data service and update data according to your requirements
+            let cashflowTypeId = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.CashflowType);
+            let categoryId = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.Category);
+            let subCategoryId = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
+            let transactionDescriptor = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
+            // Send newValue and cellData to your data service and update data according to your requirements
             if (this.currentCellOperationType === 'add') {
-                let categoryIdDataIndex = this.apiTableFields.find(item => item.dataField === `categorization.${this.categorization[1]}`)['areaIndex'];
-                let categoryId = this.clickedRow[categoryIdDataIndex] ? +this.clickedRow[categoryIdDataIndex] : undefined;
+                let forecastedDate = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment();
                 forecastModel = new AddForecastInput({
                     forecastModelId: this.selectedForecastModel.id,
                     bankAccountId: this.bankAccounts[0].id,
-                    date: cellObjDate,
-                    startDate: cellObjDate,
-                    endDate: cellObjDate,
+                    date: forecastedDate,
+                    startDate: this.statsDetailFilter.startDate,
+                    endDate: this.statsDetailFilter.endDate,
                     cashFlowTypeId: cashflowTypeId,
-                    categoryId: categoryId,
-                    transactionDescriptor: null,
+                    categoryId: subCategoryId || categoryId || -1,
+                    transactionDescriptor: transactionDescriptor,
                     currencyId: this.currencyId,
                     amount: newValue
                 });
             } else {
-                /** @todo whait results from server and change forecastId*/
-                forecastModel = new UpdateForecastInput({
-                    id: 1,
-                    amount: newValue
-                });
+                if (this.clickedRowResult && this.clickedRowResult.forecastId) {
+                    forecastModel = new UpdateForecastInput({
+                        id: this.clickedRowResult.forecastId,
+                        amount: newValue
+                    });
+                }
             }
 
             this._cashFlowForecastServiceProxy[`${this.currentCellOperationType}Forecast`](
@@ -2292,42 +2268,56 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 forecastModel
             ).subscribe(
                 res => {
-                    /** Update data locally*/
+                    let date = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment().add(new Date().getTimezoneOffset());
+                    let initialDate = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment();
+                    /** Update data locally */
                     if (this.currentCellOperationType === 'add') {
-                        this.cashflowData.push({
+                        this.cashflowData.push(this.createStubTransaction({
                             accountId: this.bankAccounts[0].id,
-                            adjustmentType: null,
-                            amount: newValue,
-                            cashflowTypeId: cashflowTypeId,
-                            categorization: this.categorization.map((v, i) => ({[v.statsKeyName]: this.clickedRow[i] })),
-                            comment: null,
                             count: 1,
-                            currencyId: this.currencyId,
-                            date: cellObjDate,
-                            initialDate: cellObjDate
-                        });
+                            amount: newValue,
+                            date: date,
+                            initialDate: initialDate,
+                            forecastId: res
+                        }, this.clickedCellObj.cell.rowPath));
                         if (cashflowTypeId === Income || cashflowTypeId === Expense) {
-                            this.cashflowData.push({
+                            let totalAdditionalObject = this.createStubTransaction({
                                 accountId: this.bankAccounts[0].id,
-                                adjustmentType: null,
                                 amount: newValue,
                                 cashflowTypeId: Total,
-                                categorization: this.categorization.map((v, i) => ({[v.statsKeyName]: this.clickedRow[i]})),
-                                comment: null,
                                 count: 1,
-                                currencyId: this.currencyId,
-                                date: cellObjDate,
-                                initialDate: cellObjDate
-                            });
+                                date: date,
+                                initialDate: initialDate,
+                                forecastId: res
+                            }, this.clickedCellObj.cell.rowPath);
+                            this.cashflowData.push(totalAdditionalObject);
                         }
                     } else {
                         /** Find an item and its total and edit it */
-                        //this.cashflowData.find(item => item => );
+                        this.cashflowData.forEach(item => {
+                            if (item.forecastId === this.clickedRowResult.forecastId) {
+                                item.amount = newValue;
+                            }
+                        });
                     }
                     this.getApiDataSource();
                     this.pivotGrid.instance.getDataSource().reload();
                 });
         }
+    }
+
+    getCategoryValueByPrefix(path, prefix: CategorizationPrefixes) {
+        let value;
+        path.some(pathItem => {
+            if (pathItem) {
+                if (pathItem.slice(0, 2) === prefix) {
+                    value = pathItem.slice(2);
+                    return true;
+                }
+            }
+            return false;
+        });
+        return value;
     }
 
     addFieldToClicking(path) {
@@ -2418,11 +2408,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     reclassifyTransactions($event) {
         let transactions = this.cashFlowGrid.instance.getSelectedRowKeys();
-        transactions.length && this.dialog.open(RuleDialogComponent, {
-            panelClass: 'slider', data: {
-                instanceId: this.instanceId,
-                instanceType: this.instanceType,
-                transactions: transactions.map((obj) => {
+        if (transactions.length) {
+            this.dialog.open(RuleDialogComponent, {
+                panelClass: 'slider', data: {
+                    instanceId: this.instanceId,
+                    instanceType: this.instanceType,
+                    transactions: transactions.map((obj) => {
                         return {
                             Date: obj.date,
                             Description: obj.description,
@@ -2430,13 +2421,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             Amount: obj.credit || -obj.debit
                         };
                     }),
-                transactionIds: transactions
-                    .map((obj) => {
-                        return obj.id;
-                    }),
-                refershParent: this.refreshDataGrid.bind(this)
-            }
-        }).afterClosed().subscribe(result => { });
+                    transactionIds: transactions
+                        .map((obj) => {
+                            return obj.id;
+                        }),
+                    refershParent: this.refreshDataGrid.bind(this)
+                }
+            }).afterClosed().subscribe(result => { });
+        }
     }
 
     /**

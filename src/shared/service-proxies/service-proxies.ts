@@ -2969,8 +2969,8 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    accountingTypesCategoriesBulkImport(instanceType: InstanceType35, instanceId: number, input: AccountingCategoriesImportEntity[]): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/AccountingTypesCategoriesBulkImport?";
+    importAccountingTree(instanceType: InstanceType35, instanceId: number, input: AccountingCategoryDto[]): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/ImportAccountingTree?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -2988,11 +2988,11 @@ export class ClassificationServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processAccountingTypesCategoriesBulkImport(response_);
+            return this.processImportAccountingTree(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processAccountingTypesCategoriesBulkImport(response_);
+                    return this.processImportAccountingTree(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -3001,7 +3001,7 @@ export class ClassificationServiceProxy {
         });
     }
 
-    protected processAccountingTypesCategoriesBulkImport(response: Response): Observable<void> {
+    protected processImportAccountingTree(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -16728,7 +16728,9 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
     endDate: moment.Moment;
     currencyId: string;
     cashFlowTypeId: string;
+    accountingTypeId: number;
     categoryId: number;
+    subCategoryId: number;
     transactionDescriptor: string;
     accountId: number;
     categorization: { [key: string] : string; };
@@ -16749,7 +16751,9 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
             this.cashFlowTypeId = data["cashFlowTypeId"];
+            this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
+            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.accountId = data["accountId"];
             if (data["categorization"]) {
@@ -16775,7 +16779,9 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
+        data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
+        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["accountId"] = this.accountId;
         if (this.categorization) {
@@ -16795,7 +16801,9 @@ export interface ICashFlowCommentThreadDto {
     endDate: moment.Moment;
     currencyId: string;
     cashFlowTypeId: string;
+    accountingTypeId: number;
     categoryId: number;
+    subCategoryId: number;
     transactionDescriptor: string;
     accountId: number;
     categorization: { [key: string] : string; };
@@ -17075,7 +17083,7 @@ export interface IBankAccountDto {
 export class StatsDetailFilter implements IStatsDetailFilter {
     searchTerm: string;
     forecastModelId: number;
-    cashFlowTypeId: string;
+    cashflowTypeId: string;
     accountingTypeId: number;
     categoryId: number;
     subCategoryId: number;
@@ -17100,7 +17108,7 @@ export class StatsDetailFilter implements IStatsDetailFilter {
         if (data) {
             this.searchTerm = data["searchTerm"];
             this.forecastModelId = data["forecastModelId"];
-            this.cashFlowTypeId = data["cashFlowTypeId"];
+            this.cashflowTypeId = data["cashflowTypeId"];
             this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
             this.subCategoryId = data["subCategoryId"];
@@ -17136,7 +17144,7 @@ export class StatsDetailFilter implements IStatsDetailFilter {
         data = typeof data === 'object' ? data : {};
         data["searchTerm"] = this.searchTerm;
         data["forecastModelId"] = this.forecastModelId;
-        data["cashFlowTypeId"] = this.cashFlowTypeId;
+        data["cashflowTypeId"] = this.cashflowTypeId;
         data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
         data["subCategoryId"] = this.subCategoryId;
@@ -17166,7 +17174,7 @@ export class StatsDetailFilter implements IStatsDetailFilter {
 export interface IStatsDetailFilter {
     searchTerm: string;
     forecastModelId: number;
-    cashFlowTypeId: string;
+    cashflowTypeId: string;
     accountingTypeId: number;
     categoryId: number;
     subCategoryId: number;
@@ -19026,14 +19034,14 @@ export interface IRecategorizeInput {
     ruleId: number;
 }
 
-export class AccountingCategoriesImportEntity implements IAccountingCategoriesImportEntity {
+export class AccountingCategoryDto implements IAccountingCategoryDto {
     coAID: number;
     cashType: string;
     accountingType: string;
     category: string;
     subCategory: string;
 
-    constructor(data?: IAccountingCategoriesImportEntity) {
+    constructor(data?: IAccountingCategoryDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -19052,8 +19060,8 @@ export class AccountingCategoriesImportEntity implements IAccountingCategoriesIm
         }
     }
 
-    static fromJS(data: any): AccountingCategoriesImportEntity {
-        let result = new AccountingCategoriesImportEntity();
+    static fromJS(data: any): AccountingCategoryDto {
+        let result = new AccountingCategoryDto();
         result.init(data);
         return result;
     }
@@ -19069,7 +19077,7 @@ export class AccountingCategoriesImportEntity implements IAccountingCategoriesIm
     }
 }
 
-export interface IAccountingCategoriesImportEntity {
+export interface IAccountingCategoryDto {
     coAID: number;
     cashType: string;
     accountingType: string;
@@ -19227,7 +19235,7 @@ export interface IUpdateTransactionsCategoryWithFilterInput {
 }
 
 export class StatsDetailFilterBase implements IStatsDetailFilterBase {
-    cashFlowTypeId: string;
+    cashflowTypeId: string;
     accountingTypeId: number;
     categoryId: number;
     subCategoryId: number;
@@ -19250,7 +19258,7 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
 
     init(data?: any) {
         if (data) {
-            this.cashFlowTypeId = data["cashFlowTypeId"];
+            this.cashflowTypeId = data["cashflowTypeId"];
             this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
             this.subCategoryId = data["subCategoryId"];
@@ -19284,7 +19292,7 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["cashFlowTypeId"] = this.cashFlowTypeId;
+        data["cashflowTypeId"] = this.cashflowTypeId;
         data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
         data["subCategoryId"] = this.subCategoryId;
@@ -19312,7 +19320,7 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
 }
 
 export interface IStatsDetailFilterBase {
-    cashFlowTypeId: string;
+    cashflowTypeId: string;
     accountingTypeId: number;
     categoryId: number;
     subCategoryId: number;
@@ -19880,7 +19888,7 @@ export interface ICreateTransactionCommentThreadOutput {
 export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentThreadInput {
     accountId: number;
     comment: string;
-    cashFlowTypeId: string;
+    cashflowTypeId: string;
     accountingTypeId: number;
     categoryId: number;
     subCategoryId: number;
@@ -19905,7 +19913,7 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
         if (data) {
             this.accountId = data["accountId"];
             this.comment = data["comment"];
-            this.cashFlowTypeId = data["cashFlowTypeId"];
+            this.cashflowTypeId = data["cashflowTypeId"];
             this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
             this.subCategoryId = data["subCategoryId"];
@@ -19941,7 +19949,7 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
         data = typeof data === 'object' ? data : {};
         data["accountId"] = this.accountId;
         data["comment"] = this.comment;
-        data["cashFlowTypeId"] = this.cashFlowTypeId;
+        data["cashflowTypeId"] = this.cashflowTypeId;
         data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
         data["subCategoryId"] = this.subCategoryId;
@@ -19971,7 +19979,7 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
 export interface ICreateCashFlowCommentThreadInput {
     accountId: number;
     comment: string;
-    cashFlowTypeId: string;
+    cashflowTypeId: string;
     accountingTypeId: number;
     categoryId: number;
     subCategoryId: number;
