@@ -2631,7 +2631,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let targetPeriodAccountCashedValue;
         const accountId = summaryCell.value(summaryCell.field('row'), true).slice(2),
               targetPeriodCell = summaryCell.parent('row') ? summaryCell.parent('row').slice(0, CategorizationPrefixes.CashflowType + target) : null,
-              targetPeriodAccountCell = targetPeriodCell ? targetPeriodCell.child('row', accountId) : null,
+              targetPeriodAccountCell = targetPeriodCell ? targetPeriodCell.child('row', CategorizationPrefixes.AccountName + accountId) : null,
               cellData = this.getCellData(summaryCell, accountId, target),
               isCalculatedValue = underscore.contains([StartedBalance, Reconciliation], target) ? true : false;
 
