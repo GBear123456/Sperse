@@ -10,7 +10,7 @@
                   parentIdExpr="parent"
                   [hoverStateEnabled]="true"
                   [(dataSource)]="categories"
-                  [editing]="{allowAdding: true, allowUpdating: true, allowDeleting: true}"
+                  [editing]="{allowUpdating: true, allowDeleting: true}"
                   [selection]="{allowSelectAll: false, mode: 'single'}"
                   [rootValue]="0"
                   [autoExpandAll]="autoExpand"
@@ -20,6 +20,7 @@
                   (onRowUpdated)="onCategoryUpdated($event)"
                   (onRowInserted)="onCategoryInserted($event)"
                   (onRowRemoving)="onCategoryRemoving($event)">
+        <dxo-search-panel [visible]="true"></dxo-search-panel>
         <dxi-column [width]="45" [allowEditing]="false"></dxi-column>
         <dxi-column [allowSorting]="true" [sortIndex]="0" [width]="60" dataField="coAID" [caption]="'CoAID'"></dxi-column>
         <dxi-column [allowSorting]="true" [sortIndex]="1" [sortingMethod]="sortItem" [sortOrder]="'asc'" dataField="name"></dxi-column>
