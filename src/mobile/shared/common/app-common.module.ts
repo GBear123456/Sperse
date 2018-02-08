@@ -7,8 +7,6 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { AbpModule } from '@abp/abp.module';
 import { CommonModule } from '@shared/common/common.module';
 
-import { AppAuthService } from '@shared/common/auth/app-auth.service';
-import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @NgModule({
@@ -28,10 +26,7 @@ export class AppCommonModule {
     static forRoot(): ModuleWithProviders {
         return {
             ngModule: AppCommonModule,
-            providers: [
-                AppAuthService,
-                AppRouteGuard
-            ]
+            providers: []
         };
     }
 }

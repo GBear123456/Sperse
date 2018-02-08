@@ -21,9 +21,9 @@
     }
 
     .mainStatsView {
+        display: flex;
         background: #fff;
         border-top: 1px solid #dfdfdf;
-        padding: 14px;
         position: relative;
         height: calc(100% + 62px);
         /deep/ .dxc-labels {
@@ -39,27 +39,9 @@
                 letter-spacing: 0.2px;
             }
         }
-        /deep/ .mat-tab-group {
-            .mat-tab-header {
-                margin-bottom: 20px;
-                border-bottom: none;
-                .mat-tab-label {
-                    font-weight: 300;
-                    border-bottom: none;
-                    padding: 30px 20px;
-                    font-size: 22px;
-                    color: rgba(33, 44, 54, .4);
-                    background: initial;
-                    &.mat-tab-label-active {
-                        font-weight: 600;
-                        background-color: initial;
-                        color: #212c36;
-                    }
-                }
-                .mat-ink-bar {
-                    display: none;
-                }
-            }
+
+        .charts {
+            padding: 25px 25px 0;
             dx-chart {
                 position: relative;
                 color: red;

@@ -1,6 +1,7 @@
 import { Component, Injector, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppService } from '@app/app.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { Router } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -19,7 +20,8 @@ export class PlatformSelectComponent extends AppComponentBase {
     private _dropDown: any;
 
     constructor(injector: Injector,
-                private _appService: AppService,
+                public _appService: AppService,
+                public _layoutService: LayoutService,
                 private _router: Router) {
         super(injector);
         

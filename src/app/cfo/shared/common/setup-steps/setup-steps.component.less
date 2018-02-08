@@ -1,0 +1,108 @@
+:host {
+    border-right: 1px solid #dfdfdf;
+
+    .setup-steps {
+        width: 321px;
+        height: calc(~"100vh - 150px");
+        background-color: #fff;
+        padding: 35px 25px 25px 25px;
+        float: left;
+    }
+
+    .title {
+        font-size: 17px;
+        padding-left: 14px;
+        padding-bottom: 33px;
+        font-weight: 400;
+        letter-spacing: 1px;
+
+        a {
+            text-decoration: none;
+            color: rgb(103, 115, 128);
+        }
+    }
+
+    .steps-progress {
+        position: relative;
+        padding-left: 45px;
+        list-style: none;
+        line-height: 1;
+        color: #677380;
+        letter-spacing: 0.3px;
+
+        &::before {
+            display: inline-block;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 15px;
+            width: 10px;
+            height: 100%;
+            border-left: 3px solid #F7F8F9;
+        }
+
+        &-item {
+            position: relative;
+            font-weight: 500;
+
+            .link {
+                cursor: pointer;
+            }
+
+            &:not(:last-child) {
+                padding-bottom: 63px;
+            }
+
+            &.current {
+                color: #000;
+                font-weight: 600;
+
+                .img-BusinessEntity {
+                    background-image: url("../../../../../assets/common/icons/person-blue.svg");
+                }
+
+                .img-Chart {
+                    background-image: url("../../../../../assets/common/icons/setup-chart-blue.svg");
+                }
+
+                .img-FinancialAccounts {
+                    background-image: url("../../../../../assets/common/icons/document-blue.svg");
+                }
+
+                .img-Rules {
+                    background-image: url("../../../../../assets/common/icons/setup-blue.svg");
+                }
+            }
+
+            .img {
+                background-repeat: no-repeat;
+                width: 45px;
+                height: 45px;
+                margin: 0;
+                padding: 0;
+                background-position: center;
+                position: absolute;
+                left: -52px;
+                top: -17px;
+                background-color: white;
+                background-position: center;
+            }
+
+            .img-BusinessEntity {
+                background-image: url("../../../../../assets/common/icons/person.svg");
+            }
+
+            .img-Chart {
+                background-image: url("../../../../../assets/common/icons/setup-chart.svg");
+            }
+
+            .img-FinancialAccounts {
+                background-image: url("../../../../../assets/common/icons/document.svg");
+            }
+
+            .img-Rules {
+                background-image: url("../../../../../assets/common/icons/setup.svg");
+            }
+        }
+    }
+}

@@ -23,5 +23,7 @@ export class IntroductionComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
+        var input: any = $('.code-input');
+        input.inputmask("AAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAA");
     }
 }

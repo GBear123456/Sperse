@@ -120,9 +120,9 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         });
     }
 
-    getEnumKeys(parameter: any): any {
+    getEnumKeys(parameter: any, slice: boolean = true): any {
         let keys = Object.keys(parameter);
-        return keys.slice(keys.length / 2);
+        return slice ? keys.slice(keys.length / 2) : keys;
     }
 
     save(): void {

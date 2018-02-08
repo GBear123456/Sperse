@@ -84,10 +84,7 @@ export class AppCommonModule {
     static forRoot(): ModuleWithProviders {
         return {
             ngModule: AppCommonModule,
-            providers: [
-                AppAuthService,
-                AppRouteGuard
-            ]
+            providers: []
         };
     }
 }

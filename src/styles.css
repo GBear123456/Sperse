@@ -89,3 +89,45 @@
 .swal-footer {
     text-align: center;
 }
+
+/* tooltip on chart */
+.tooltip-header {
+    background: #F4F7FA;
+    color: #212C36;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    width: calc(100% + 36px);
+    position: relative;
+    top: -14px;
+    left: -17px;
+    padding: 8px 17px;
+}
+.tooltip-item.inflows::before,
+.tooltip-item.outflows::before,
+.tooltip-item.net::before,
+.tooltip-item.forecast.inflows::before,
+.tooltip-item.forecast.outflows::before,
+.tooltip-item.forecast.net::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #00aeef;
+    display: inline-block;
+    margin-right: 5px;
+}
+.tooltip-item.outflows::before {
+    background: #f05b2a;
+}
+.tooltip-item.net::before {
+    background: #fab800;
+}
+.tooltip-item.forecast.inflows::before {
+    background: #a9e3f9;
+}
+.tooltip-item.forecast.outflows::before {
+    background: #fec6b3;
+}
+.tooltip-item.forecast.net::before {
+    background: #a82aba;
+}

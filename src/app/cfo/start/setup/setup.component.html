@@ -5,10 +5,11 @@
         <div class="cashflow-setup portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
                 <div>
-                    <p class="sperse-cfo">Sperse CFO</p>
                     <div>
                         <img class="logo-cfo" alt="CFO Logo" src="/assets/common/icons/cfo.png" />
+                        <span class="sperse-cfo big-gray-text">CFO</span>
                     </div>
+                    <p class="outlook big-gray-text">{{ l('Setup_Outlook') }}</p>
                     <p class="welcome-cfo">{{ l('Setup_Welcome') }}</p>
                     <p class="text-cfo">{{ l('Setup_BodyText') }}</p>
                     <button (click)="onStart()" class="btn btn-layout" [disabled]="isDisabled">{{ l('Setup_GetStarted') }}</button>

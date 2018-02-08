@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, OnDestroy, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '../../app-component-base';
+import * as moment from 'moment';
 
 let JQCalendarInit = require('jquery-calendar');
 
@@ -29,15 +30,20 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
 
     constructor(injector: Injector) {
         super(injector);
+
+        moment.tz.setDefault(undefined);
+        (window as any).moment.tz.setDefault(undefined);
     }
 
     private setDateRageValues() {
         if (this.calendar) {
             let dateRange = this.calendar.data('dateRangePicker');
-            if (this._values.from.value || this._values.to.value)
-                dateRange.setDateRange(this._values.from.value || this._values.to.value,
-                    this._values.to.value || this._values.from.value
+            if (this._values.from.value || this._values.to.value) {
+                dateRange.setDateRange(
+                    new Date((this._values.from.value || this._values.to.value).getTime()),
+                    new Date((this._values.to.value || this._values.to.value).getTime())
                 );
+            }
         }
     }
 
@@ -46,13 +52,13 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
             '.calendar#' + this.UID, true, this._options);
         this.calendar.on('datepicker-first-date-selected',
             (event, obj) => {
-                this._values.from.value = obj.date1;
+                this._values.from.value = new Date(obj.date1.getTime());
                 this._values.to.value = null;
             }
         ).on('datepicker-change',
             (event, obj) => {
-                this._values.from.value = obj.date1;
-                this._values.to.value = obj.date2;
+                this._values.from.value = new Date(obj.date1.getTime());
+                this._values.to.value = new Date(obj.date2.getTime());
             }
             );
         this.setDateRageValues();
@@ -62,5 +68,8 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
         this.calendar.off('datepicker-change');
         this.calendar.off('datepicker-first-date-selected');
         this.calendar.data('dateRangePicker').destroy();
+
+        moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
+        (window as any).moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
     }
 }

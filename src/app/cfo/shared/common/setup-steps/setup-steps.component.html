@@ -1,0 +1,11 @@
+<div class="setup-steps">
+    <p class="title"><a [routerLink]="headerLink">{{headerTitle}}</a></p>
+    <ul class="steps-progress">
+        <ng-template ngFor let-step [ngForOf]="SetupSteps" let-i="index">
+            <li class="steps-progress-item {{getItemClass(i)}}">
+                <div class="img {{'img-' + step.caption}}"></div>
+                <span [ngClass]="{'link': _cfoService.hasTransactions}" (click)="onClick(i)">{{l('SetupStep_' + step.caption)}}</span>
+            </li>
+        </ng-template>
+    </ul>
+</div>

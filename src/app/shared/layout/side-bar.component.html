@@ -2,6 +2,7 @@
     <dx-scroll-view [showScrollbar]="onHover">
         <div class="filter-title">
             <h3>{{ls('Platform', 'Filters')}}</h3>
+            <span class="close" (click)="closeFilters($event)"></span>
             <button class="clear-all" (click)="clearAllFilters()">
                 {{ls('Platform', 'ClearAll')}}
             </button>

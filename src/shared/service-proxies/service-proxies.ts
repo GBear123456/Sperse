@@ -764,9 +764,10 @@ export class BankAccountsServiceProxy {
      * @accounts (optional) 
      * @startDate (optional) 
      * @endDate (optional) 
+     * @maxCount (optional) 
      * @return Success
      */
-    getStats(instanceType: InstanceType2, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
+    getStats(instanceType: InstanceType2, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -784,6 +785,8 @@ export class BankAccountsServiceProxy {
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (maxCount !== undefined)
+            url_ += "MaxCount=" + encodeURIComponent("" + maxCount) + "&"; 
         if (groupBy === undefined || groupBy === null)
             throw new Error("The parameter 'groupBy' must be defined and cannot be null.");
         else
@@ -2160,8 +2163,8 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getCategories(instanceType: InstanceType20, instanceId: number): Observable<GetCategoriesOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/GetCategories?";
+    getCategoryTree(instanceType: InstanceType20, instanceId: number): Observable<GetCategoryTreeOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/GetCategoryTree?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -2177,20 +2180,20 @@ export class ClassificationServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGetCategories(response_);
+            return this.processGetCategoryTree(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processGetCategories(response_);
+                    return this.processGetCategoryTree(response_);
                 } catch (e) {
-                    return <Observable<GetCategoriesOutput>><any>Observable.throw(e);
+                    return <Observable<GetCategoryTreeOutput>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<GetCategoriesOutput>><any>Observable.throw(response_);
+                return <Observable<GetCategoryTreeOutput>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetCategories(response: Response): Observable<GetCategoriesOutput> {
+    protected processGetCategoryTree(response: Response): Observable<GetCategoryTreeOutput> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -2198,13 +2201,13 @@ export class ClassificationServiceProxy {
             const _responseText = response.text();
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetCategoriesOutput.fromJS(resultData200) : new GetCategoriesOutput();
+            result200 = resultData200 ? GetCategoryTreeOutput.fromJS(resultData200) : new GetCategoryTreeOutput();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<GetCategoriesOutput>(<any>null);
+        return Observable.of<GetCategoryTreeOutput>(<any>null);
     }
 
     /**
@@ -2647,167 +2650,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createCategoryGroup(instanceType: InstanceType29, instanceId: number, input: CreateCategoryGroupInput): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateCategoryGroup?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processCreateCategoryGroup(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processCreateCategoryGroup(response_);
-                } catch (e) {
-                    return <Observable<number>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<number>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processCreateCategoryGroup(response: Response): Observable<number> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<number>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @input (optional) 
-     * @return Success
-     */
-    updateCategoryGroup(instanceType: InstanceType30, instanceId: number, input: UpdateCategoryGroupInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategoryGroup?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            method: "put",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processUpdateCategoryGroup(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processUpdateCategoryGroup(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processUpdateCategoryGroup(response: Response): Observable<void> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @return Success
-     */
-    deleteCategoryGroup(instanceType: InstanceType31, instanceId: number, id: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteCategoryGroup?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined and cannot be null.");
-        else
-            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "delete",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processDeleteCategoryGroup(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processDeleteCategoryGroup(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processDeleteCategoryGroup(response: Response): Observable<void> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @input (optional) 
-     * @return Success
-     */
-    createCategory(instanceType: InstanceType32, instanceId: number, input: CreateCategoryInput): Observable<number> {
+    createCategory(instanceType: InstanceType29, instanceId: number, input: CreateCategoryInput): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateCategory?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2863,7 +2706,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateCategory(instanceType: InstanceType33, instanceId: number, input: UpdateCategoryInput): Observable<void> {
+    updateCategory(instanceType: InstanceType30, instanceId: number, input: UpdateCategoryInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategory?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2912,10 +2755,62 @@ export class ClassificationServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    updateCategoryStatus(instanceType: InstanceType31, instanceId: number, input: UpdateCategoryStatusInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategoryStatus?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdateCategoryStatus(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateCategoryStatus(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateCategoryStatus(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @moveToCategoryId (optional) 
      * @return Success
      */
-    deleteCategory(instanceType: InstanceType34, instanceId: number, moveToCategoryId: number, deleteAllReferences: boolean, id: number): Observable<void> {
+    deleteCategory(instanceType: InstanceType32, instanceId: number, moveToCategoryId: number, deleteAllReferences: boolean, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteCategory?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2974,7 +2869,7 @@ export class ClassificationServiceProxy {
      * @recategorizeInput (optional) 
      * @return Success
      */
-    reclassify(instanceType: InstanceType35, instanceId: number, recategorizeInput: RecategorizeInput): Observable<void> {
+    reclassify(instanceType: InstanceType33, instanceId: number, recategorizeInput: RecategorizeInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/Reclassify?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3025,7 +2920,7 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    resetToDefaults(instanceType: InstanceType36, instanceId: number): Observable<void> {
+    resetToDefaults(instanceType: InstanceType34, instanceId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/ResetToDefaults?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3074,7 +2969,59 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    reset(instanceType: InstanceType37, instanceId: number, input: ResetClassificationDto): Observable<void> {
+    importAccountingTree(instanceType: InstanceType35, instanceId: number, input: AccountingCategoryDto[]): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/ImportAccountingTree?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processImportAccountingTree(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processImportAccountingTree(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processImportAccountingTree(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    reset(instanceType: InstanceType36, instanceId: number, input: ResetClassificationDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/Reset?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3126,7 +3073,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateTransactionsCategory(instanceType: InstanceType38, instanceId: number, input: UpdateTransactionsCategoryInput): Observable<void> {
+    updateTransactionsCategory(instanceType: InstanceType37, instanceId: number, input: UpdateTransactionsCategoryInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategory?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3178,7 +3125,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateTransactionsCategoryWithFilter(instanceType: InstanceType39, instanceId: number, input: UpdateTransactionsCategoryWithFilterInput): Observable<void> {
+    updateTransactionsCategoryWithFilter(instanceType: InstanceType38, instanceId: number, input: UpdateTransactionsCategoryWithFilterInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategoryWithFilter?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3230,7 +3177,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    getTransactionCommonDetails(instanceType: InstanceType40, instanceId: number, input: GetTransactionCommonDetailsInput): Observable<TransactionCommonDetailsDto> {
+    getTransactionCommonDetails(instanceType: InstanceType39, instanceId: number, input: GetTransactionCommonDetailsInput): Observable<TransactionCommonDetailsDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetTransactionCommonDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3286,7 +3233,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    autoClassify(instanceType: InstanceType41, instanceId: number, input: AutoClassifyDto): Observable<void> {
+    autoClassify(instanceType: InstanceType40, instanceId: number, input: AutoClassifyDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/AutoClassify?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3319,6 +3266,58 @@ export class ClassificationServiceProxy {
     }
 
     protected processAutoClassify(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    changeCategoryForRules(instanceType: InstanceType41, instanceId: number, input: ChangeCategoryForRulesInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/ChangeCategoryForRules?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processChangeCategoryForRules(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processChangeCategoryForRules(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processChangeCategoryForRules(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -6647,7 +6646,55 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType52, instanceId: number, syncHistory: boolean): Observable<SyncAllAccountsOutput> {
+    syncAccountsWithQuovo(instanceType: InstanceType52, instanceId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAccountsWithQuovo?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processSyncAccountsWithQuovo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSyncAccountsWithQuovo(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSyncAccountsWithQuovo(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    syncAllAccounts(instanceType: InstanceType53, instanceId: number, syncHistory: boolean, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6657,6 +6704,10 @@ export class FinancialInformationServiceProxy {
             throw new Error("The parameter 'syncHistory' must be defined and cannot be null.");
         else
             url_ += "syncHistory=" + encodeURIComponent("" + syncHistory) + "&"; 
+        if (forcedSync === undefined || forcedSync === null)
+            throw new Error("The parameter 'forcedSync' must be defined and cannot be null.");
+        else
+            url_ += "forcedSync=" + encodeURIComponent("" + forcedSync) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -6703,7 +6754,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType53, instanceId: number): Observable<SyncProgressOutput> {
+    getSyncProgress(instanceType: InstanceType54, instanceId: number): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7499,7 +7550,7 @@ export class InstanceServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType54, instanceId: number): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType55, instanceId: number): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7549,7 +7600,7 @@ export class InstanceServiceProxy {
     /**
      * @return Success
      */
-    setup(instanceType: InstanceType55): Observable<SetupOutput> {
+    setup(instanceType: InstanceType56): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType === undefined || instanceType === null)
             throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
@@ -8527,8 +8578,8 @@ export class LeadServiceProxy {
      * @leadBusinessRequests (optional) 
      * @return Success
      */
-    submitLeadRequests(leadBusinessRequests: LeadBusinessInfoInput[]): Observable<LeadBusinessInfoOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitLeadRequests";
+    submitLeadBusinessRequests(leadBusinessRequests: LeadBusinessInfoInput[]): Observable<LeadBusinessInfoOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitLeadBusinessRequests";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(leadBusinessRequests);
@@ -8543,11 +8594,11 @@ export class LeadServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSubmitLeadRequests(response_);
+            return this.processSubmitLeadBusinessRequests(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processSubmitLeadRequests(response_);
+                    return this.processSubmitLeadBusinessRequests(response_);
                 } catch (e) {
                     return <Observable<LeadBusinessInfoOutput[]>><any>Observable.throw(e);
                 }
@@ -8556,7 +8607,7 @@ export class LeadServiceProxy {
         });
     }
 
-    protected processSubmitLeadRequests(response: Response): Observable<LeadBusinessInfoOutput[]> {
+    protected processSubmitLeadBusinessRequests(response: Response): Observable<LeadBusinessInfoOutput[]> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -12996,7 +13047,7 @@ export class TenantRegistrationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    completeTenantRegistration(input: CompleteTenantRegistrationInput): Observable<number> {
+    completeTenantRegistration(input: CompleteTenantRegistrationInput): Observable<CompleteTenantRegistrationOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/TenantRegistration/CompleteTenantRegistration";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -13018,14 +13069,14 @@ export class TenantRegistrationServiceProxy {
                 try {
                     return this.processCompleteTenantRegistration(response_);
                 } catch (e) {
-                    return <Observable<number>><any>Observable.throw(e);
+                    return <Observable<CompleteTenantRegistrationOutput>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<number>><any>Observable.throw(response_);
+                return <Observable<CompleteTenantRegistrationOutput>><any>Observable.throw(response_);
         });
     }
 
-    protected processCompleteTenantRegistration(response: Response): Observable<number> {
+    protected processCompleteTenantRegistration(response: Response): Observable<CompleteTenantRegistrationOutput> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -13033,13 +13084,13 @@ export class TenantRegistrationServiceProxy {
             const _responseText = response.text();
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? CompleteTenantRegistrationOutput.fromJS(resultData200) : new CompleteTenantRegistrationOutput();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<number>(<any>null);
+        return Observable.of<CompleteTenantRegistrationOutput>(<any>null);
     }
 
     /**
@@ -14330,7 +14381,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType56, instanceId: number): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType57, instanceId: number): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14382,7 +14433,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType57, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType58, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14434,7 +14485,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType58, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType59, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -16727,7 +16778,9 @@ export interface ICashFlowStatsDto {
 export class TransactionStatsDto implements ITransactionStatsDto {
     adjustmentType: TransactionStatsDtoAdjustmentType;
     cashflowTypeId: string;
+    accountingTypeId: number;
     categoryId: number;
+    subCategoryId: number;
     transactionDescriptor: string;
     accountId: number;
     currencyId: string;
@@ -16750,7 +16803,9 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         if (data) {
             this.adjustmentType = data["adjustmentType"];
             this.cashflowTypeId = data["cashflowTypeId"];
+            this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
+            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.accountId = data["accountId"];
             this.currencyId = data["currencyId"];
@@ -16772,7 +16827,9 @@ export class TransactionStatsDto implements ITransactionStatsDto {
         data = typeof data === 'object' ? data : {};
         data["adjustmentType"] = this.adjustmentType;
         data["cashflowTypeId"] = this.cashflowTypeId;
+        data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
+        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["accountId"] = this.accountId;
         data["currencyId"] = this.currencyId;
@@ -16788,7 +16845,9 @@ export class TransactionStatsDto implements ITransactionStatsDto {
 export interface ITransactionStatsDto {
     adjustmentType: TransactionStatsDtoAdjustmentType;
     cashflowTypeId: string;
+    accountingTypeId: number;
     categoryId: number;
+    subCategoryId: number;
     transactionDescriptor: string;
     accountId: number;
     currencyId: string;
@@ -16805,8 +16864,9 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
     endDate: moment.Moment;
     currencyId: string;
     cashFlowTypeId: string;
-    categoryGroupId: number;
+    accountingTypeId: number;
     categoryId: number;
+    subCategoryId: number;
     transactionDescriptor: string;
     accountId: number;
     categorization: { [key: string] : string; };
@@ -16827,8 +16887,9 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
             this.cashFlowTypeId = data["cashFlowTypeId"];
-            this.categoryGroupId = data["categoryGroupId"];
+            this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
+            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.accountId = data["accountId"];
             if (data["categorization"]) {
@@ -16854,8 +16915,9 @@ export class CashFlowCommentThreadDto implements ICashFlowCommentThreadDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
-        data["categoryGroupId"] = this.categoryGroupId;
+        data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
+        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["accountId"] = this.accountId;
         if (this.categorization) {
@@ -16875,8 +16937,9 @@ export interface ICashFlowCommentThreadDto {
     endDate: moment.Moment;
     currencyId: string;
     cashFlowTypeId: string;
-    categoryGroupId: number;
+    accountingTypeId: number;
     categoryId: number;
+    subCategoryId: number;
     transactionDescriptor: string;
     accountId: number;
     categorization: { [key: string] : string; };
@@ -17155,9 +17218,11 @@ export interface IBankAccountDto {
 
 export class StatsDetailFilter implements IStatsDetailFilter {
     searchTerm: string;
-    cashFlowTypeId: string;
-    categoryGroupId: number;
+    forecastModelId: number;
+    cashflowTypeId: string;
+    accountingTypeId: number;
     categoryId: number;
+    subCategoryId: number;
     transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -17178,9 +17243,11 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     init(data?: any) {
         if (data) {
             this.searchTerm = data["searchTerm"];
-            this.cashFlowTypeId = data["cashFlowTypeId"];
-            this.categoryGroupId = data["categoryGroupId"];
+            this.forecastModelId = data["forecastModelId"];
+            this.cashflowTypeId = data["cashflowTypeId"];
+            this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
+            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
@@ -17212,9 +17279,11 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["searchTerm"] = this.searchTerm;
-        data["cashFlowTypeId"] = this.cashFlowTypeId;
-        data["categoryGroupId"] = this.categoryGroupId;
+        data["forecastModelId"] = this.forecastModelId;
+        data["cashflowTypeId"] = this.cashflowTypeId;
+        data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
+        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -17240,9 +17309,11 @@ export class StatsDetailFilter implements IStatsDetailFilter {
 
 export interface IStatsDetailFilter {
     searchTerm: string;
-    cashFlowTypeId: string;
-    categoryGroupId: number;
+    forecastModelId: number;
+    cashflowTypeId: string;
+    accountingTypeId: number;
     categoryId: number;
+    subCategoryId: number;
     transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -17255,12 +17326,19 @@ export interface IStatsDetailFilter {
 export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     id: number;
     date: moment.Moment;
+    cashflowTypeId: string;
+    bankName: string;
+    accountName: string;
+    accountNumber: string;
     currencyId: string;
     credit: number;
     debit: number;
     description: string;
     comment: string;
     commentThreadId: number;
+    forecastId: number;
+    forecastDate: moment.Moment;
+    status: CashFlowStatsDetailDtoStatus;
 
     constructor(data?: ICashFlowStatsDetailDto) {
         if (data) {
@@ -17275,12 +17353,19 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         if (data) {
             this.id = data["id"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.cashflowTypeId = data["cashflowTypeId"];
+            this.bankName = data["bankName"];
+            this.accountName = data["accountName"];
+            this.accountNumber = data["accountNumber"];
             this.currencyId = data["currencyId"];
             this.credit = data["credit"];
             this.debit = data["debit"];
             this.description = data["description"];
             this.comment = data["comment"];
             this.commentThreadId = data["commentThreadId"];
+            this.forecastId = data["forecastId"];
+            this.forecastDate = data["forecastDate"] ? moment(data["forecastDate"].toString()) : <any>undefined;
+            this.status = data["status"];
         }
     }
 
@@ -17294,12 +17379,19 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["cashflowTypeId"] = this.cashflowTypeId;
+        data["bankName"] = this.bankName;
+        data["accountName"] = this.accountName;
+        data["accountNumber"] = this.accountNumber;
         data["currencyId"] = this.currencyId;
         data["credit"] = this.credit;
         data["debit"] = this.debit;
         data["description"] = this.description;
         data["comment"] = this.comment;
         data["commentThreadId"] = this.commentThreadId;
+        data["forecastId"] = this.forecastId;
+        data["forecastDate"] = this.forecastDate ? this.forecastDate.toISOString() : <any>undefined;
+        data["status"] = this.status;
         return data; 
     }
 }
@@ -17307,12 +17399,19 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
 export interface ICashFlowStatsDetailDto {
     id: number;
     date: moment.Moment;
+    cashflowTypeId: string;
+    bankName: string;
+    accountName: string;
+    accountNumber: string;
     currencyId: string;
     credit: number;
     debit: number;
     description: string;
     comment: string;
     commentThreadId: number;
+    forecastId: number;
+    forecastDate: moment.Moment;
+    status: CashFlowStatsDetailDtoStatus;
 }
 
 export class CashFlowGridSettingsDto implements ICashFlowGridSettingsDto {
@@ -17534,6 +17633,7 @@ export class AddForecastInput implements IAddForecastInput {
     endDate: moment.Moment;
     cashFlowTypeId: string;
     categoryId: number;
+    transactionDescriptor: string;
     currencyId: string;
     amount: number;
 
@@ -17555,6 +17655,7 @@ export class AddForecastInput implements IAddForecastInput {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.cashFlowTypeId = data["cashFlowTypeId"];
             this.categoryId = data["categoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
             this.currencyId = data["currencyId"];
             this.amount = data["amount"];
         }
@@ -17575,6 +17676,7 @@ export class AddForecastInput implements IAddForecastInput {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
         data["categoryId"] = this.categoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
         data["currencyId"] = this.currencyId;
         data["amount"] = this.amount;
         return data; 
@@ -17589,6 +17691,7 @@ export interface IAddForecastInput {
     endDate: moment.Moment;
     cashFlowTypeId: string;
     categoryId: number;
+    transactionDescriptor: string;
     currencyId: string;
     amount: number;
 }
@@ -17635,6 +17738,7 @@ export interface IUpdateForecastInput {
 export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {
     bankAccountId: number;
     categoryId: number;
+    transactionDescriptor: string;
     forecastModelIds: number[] = [];
     startDate: moment.Moment;
     frequencyId: string;
@@ -17660,6 +17764,7 @@ export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {
         if (data) {
             this.bankAccountId = data["bankAccountId"];
             this.categoryId = data["categoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
             if (data["forecastModelIds"] && data["forecastModelIds"].constructor === Array) {
                 this.forecastModelIds = [];
                 for (let item of data["forecastModelIds"])
@@ -17688,6 +17793,7 @@ export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {
         data = typeof data === 'object' ? data : {};
         data["bankAccountId"] = this.bankAccountId;
         data["categoryId"] = this.categoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
         if (this.forecastModelIds && this.forecastModelIds.constructor === Array) {
             data["forecastModelIds"] = [];
             for (let item of this.forecastModelIds)
@@ -17710,6 +17816,7 @@ export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {
 export interface ICreateForecastScheduleDto {
     bankAccountId: number;
     categoryId: number;
+    transactionDescriptor: string;
     forecastModelIds: number[];
     startDate: moment.Moment;
     frequencyId: string;
@@ -17727,6 +17834,7 @@ export class UpdateForecastScheduleInput implements IUpdateForecastScheduleInput
     id: number;
     bankAccountId: number;
     categoryId: number;
+    transactionDescriptor: string;
     forecastModelIds: number[] = [];
     startDate: moment.Moment;
     frequencyId: string;
@@ -17753,6 +17861,7 @@ export class UpdateForecastScheduleInput implements IUpdateForecastScheduleInput
             this.id = data["id"];
             this.bankAccountId = data["bankAccountId"];
             this.categoryId = data["categoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
             if (data["forecastModelIds"] && data["forecastModelIds"].constructor === Array) {
                 this.forecastModelIds = [];
                 for (let item of data["forecastModelIds"])
@@ -17782,6 +17891,7 @@ export class UpdateForecastScheduleInput implements IUpdateForecastScheduleInput
         data["id"] = this.id;
         data["bankAccountId"] = this.bankAccountId;
         data["categoryId"] = this.categoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
         if (this.forecastModelIds && this.forecastModelIds.constructor === Array) {
             data["forecastModelIds"] = [];
             for (let item of this.forecastModelIds)
@@ -17805,6 +17915,7 @@ export interface IUpdateForecastScheduleInput {
     id: number;
     bankAccountId: number;
     categoryId: number;
+    transactionDescriptor: string;
     forecastModelIds: number[];
     startDate: moment.Moment;
     frequencyId: string;
@@ -18250,12 +18361,12 @@ export interface IMarkAllUnreadMessagesOfUserAsReadInput {
     userId: number;
 }
 
-export class GetCategoriesOutput implements IGetCategoriesOutput {
-    items: { [key: string] : CategoryDto; };
-    groups: { [key: string] : CategoryGroupDto; };
+export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
     types: { [key: string] : TypeDto; };
+    accountingTypes: { [key: string] : AccountingTypeDto; };
+    categories: { [key: string] : CategoryDto; };
 
-    constructor(data?: IGetCategoriesOutput) {
+    constructor(data?: IGetCategoryTreeOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -18266,20 +18377,6 @@ export class GetCategoriesOutput implements IGetCategoriesOutput {
 
     init(data?: any) {
         if (data) {
-            if (data["items"]) {
-                this.items = {};
-                for (let key in data["items"]) {
-                    if (data["items"].hasOwnProperty(key))
-                        this.items[key] = data["items"][key] ? CategoryDto.fromJS(data["items"][key]) : new CategoryDto();
-                }
-            }
-            if (data["groups"]) {
-                this.groups = {};
-                for (let key in data["groups"]) {
-                    if (data["groups"].hasOwnProperty(key))
-                        this.groups[key] = data["groups"][key] ? CategoryGroupDto.fromJS(data["groups"][key]) : new CategoryGroupDto();
-                }
-            }
             if (data["types"]) {
                 this.types = {};
                 for (let key in data["types"]) {
@@ -18287,31 +18384,31 @@ export class GetCategoriesOutput implements IGetCategoriesOutput {
                         this.types[key] = data["types"][key] ? TypeDto.fromJS(data["types"][key]) : new TypeDto();
                 }
             }
+            if (data["accountingTypes"]) {
+                this.accountingTypes = {};
+                for (let key in data["accountingTypes"]) {
+                    if (data["accountingTypes"].hasOwnProperty(key))
+                        this.accountingTypes[key] = data["accountingTypes"][key] ? AccountingTypeDto.fromJS(data["accountingTypes"][key]) : new AccountingTypeDto();
+                }
+            }
+            if (data["categories"]) {
+                this.categories = {};
+                for (let key in data["categories"]) {
+                    if (data["categories"].hasOwnProperty(key))
+                        this.categories[key] = data["categories"][key] ? CategoryDto.fromJS(data["categories"][key]) : new CategoryDto();
+                }
+            }
         }
     }
 
-    static fromJS(data: any): GetCategoriesOutput {
-        let result = new GetCategoriesOutput();
+    static fromJS(data: any): GetCategoryTreeOutput {
+        let result = new GetCategoryTreeOutput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.items) {
-            data["items"] = {};
-            for (let key in this.items) {
-                if (this.items.hasOwnProperty(key))
-                    data["items"][key] = this.items[key];
-            }
-        }
-        if (this.groups) {
-            data["groups"] = {};
-            for (let key in this.groups) {
-                if (this.groups.hasOwnProperty(key))
-                    data["groups"][key] = this.groups[key];
-            }
-        }
         if (this.types) {
             data["types"] = {};
             for (let key in this.types) {
@@ -18319,92 +18416,28 @@ export class GetCategoriesOutput implements IGetCategoriesOutput {
                     data["types"][key] = this.types[key];
             }
         }
+        if (this.accountingTypes) {
+            data["accountingTypes"] = {};
+            for (let key in this.accountingTypes) {
+                if (this.accountingTypes.hasOwnProperty(key))
+                    data["accountingTypes"][key] = this.accountingTypes[key];
+            }
+        }
+        if (this.categories) {
+            data["categories"] = {};
+            for (let key in this.categories) {
+                if (this.categories.hasOwnProperty(key))
+                    data["categories"][key] = this.categories[key];
+            }
+        }
         return data; 
     }
 }
 
-export interface IGetCategoriesOutput {
-    items: { [key: string] : CategoryDto; };
-    groups: { [key: string] : CategoryGroupDto; };
+export interface IGetCategoryTreeOutput {
     types: { [key: string] : TypeDto; };
-}
-
-export class CategoryDto implements ICategoryDto {
-    name: string;
-    groupId: number;
-
-    constructor(data?: ICategoryDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            this.groupId = data["groupId"];
-        }
-    }
-
-    static fromJS(data: any): CategoryDto {
-        let result = new CategoryDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["groupId"] = this.groupId;
-        return data; 
-    }
-}
-
-export interface ICategoryDto {
-    name: string;
-    groupId: number;
-}
-
-export class CategoryGroupDto implements ICategoryGroupDto {
-    name: string;
-    typeId: string;
-
-    constructor(data?: ICategoryGroupDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            this.typeId = data["typeId"];
-        }
-    }
-
-    static fromJS(data: any): CategoryGroupDto {
-        let result = new CategoryGroupDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["typeId"] = this.typeId;
-        return data; 
-    }
-}
-
-export interface ICategoryGroupDto {
-    name: string;
-    typeId: string;
+    accountingTypes: { [key: string] : AccountingTypeDto; };
+    categories: { [key: string] : CategoryDto; };
 }
 
 export class TypeDto implements ITypeDto {
@@ -18440,6 +18473,100 @@ export class TypeDto implements ITypeDto {
 
 export interface ITypeDto {
     name: string;
+}
+
+export class AccountingTypeDto implements IAccountingTypeDto {
+    typeId: string;
+    name: string;
+    isSystem: boolean;
+
+    constructor(data?: IAccountingTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.typeId = data["typeId"];
+            this.name = data["name"];
+            this.isSystem = data["isSystem"];
+        }
+    }
+
+    static fromJS(data: any): AccountingTypeDto {
+        let result = new AccountingTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["typeId"] = this.typeId;
+        data["name"] = this.name;
+        data["isSystem"] = this.isSystem;
+        return data; 
+    }
+}
+
+export interface IAccountingTypeDto {
+    typeId: string;
+    name: string;
+    isSystem: boolean;
+}
+
+export class CategoryDto implements ICategoryDto {
+    accountingTypeId: number;
+    parentId: number;
+    coAID: number;
+    name: string;
+    isActive: boolean;
+
+    constructor(data?: ICategoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accountingTypeId = data["accountingTypeId"];
+            this.parentId = data["parentId"];
+            this.coAID = data["coAID"];
+            this.name = data["name"];
+            this.isActive = data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): CategoryDto {
+        let result = new CategoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accountingTypeId"] = this.accountingTypeId;
+        data["parentId"] = this.parentId;
+        data["coAID"] = this.coAID;
+        data["name"] = this.name;
+        data["isActive"] = this.isActive;
+        return data; 
+    }
+}
+
+export interface ICategoryDto {
+    accountingTypeId: number;
+    parentId: number;
+    coAID: number;
+    name: string;
+    isActive: boolean;
 }
 
 export class RuleDto implements IRuleDto {
@@ -18879,87 +19006,11 @@ export interface IAddMappingDto {
     newName: string;
 }
 
-export class CreateCategoryGroupInput implements ICreateCategoryGroupInput {
-    cashFlowTypeId: string;
-    name: string;
-
-    constructor(data?: ICreateCategoryGroupInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.cashFlowTypeId = data["cashFlowTypeId"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CreateCategoryGroupInput {
-        let result = new CreateCategoryGroupInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["cashFlowTypeId"] = this.cashFlowTypeId;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICreateCategoryGroupInput {
-    cashFlowTypeId: string;
-    name: string;
-}
-
-export class UpdateCategoryGroupInput implements IUpdateCategoryGroupInput {
-    id: number;
-    name: string;
-
-    constructor(data?: IUpdateCategoryGroupInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): UpdateCategoryGroupInput {
-        let result = new UpdateCategoryGroupInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IUpdateCategoryGroupInput {
-    id: number;
-    name: string;
-}
-
 export class CreateCategoryInput implements ICreateCategoryInput {
+    accountingTypeId: number;
+    parentId: number;
+    coAID: number;
     name: string;
-    groupId: number;
 
     constructor(data?: ICreateCategoryInput) {
         if (data) {
@@ -18972,8 +19023,10 @@ export class CreateCategoryInput implements ICreateCategoryInput {
 
     init(data?: any) {
         if (data) {
+            this.accountingTypeId = data["accountingTypeId"];
+            this.parentId = data["parentId"];
+            this.coAID = data["coAID"];
             this.name = data["name"];
-            this.groupId = data["groupId"];
         }
     }
 
@@ -18985,21 +19038,25 @@ export class CreateCategoryInput implements ICreateCategoryInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["accountingTypeId"] = this.accountingTypeId;
+        data["parentId"] = this.parentId;
+        data["coAID"] = this.coAID;
         data["name"] = this.name;
-        data["groupId"] = this.groupId;
         return data; 
     }
 }
 
 export interface ICreateCategoryInput {
+    accountingTypeId: number;
+    parentId: number;
+    coAID: number;
     name: string;
-    groupId: number;
 }
 
 export class UpdateCategoryInput implements IUpdateCategoryInput {
     id: number;
+    coAID: number;
     name: string;
-    groupId: number;
 
     constructor(data?: IUpdateCategoryInput) {
         if (data) {
@@ -19013,8 +19070,8 @@ export class UpdateCategoryInput implements IUpdateCategoryInput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.coAID = data["coAID"];
             this.name = data["name"];
-            this.groupId = data["groupId"];
         }
     }
 
@@ -19027,16 +19084,55 @@ export class UpdateCategoryInput implements IUpdateCategoryInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["coAID"] = this.coAID;
         data["name"] = this.name;
-        data["groupId"] = this.groupId;
         return data; 
     }
 }
 
 export interface IUpdateCategoryInput {
     id: number;
+    coAID: number;
     name: string;
-    groupId: number;
+}
+
+export class UpdateCategoryStatusInput implements IUpdateCategoryStatusInput {
+    id: number;
+    isActive: boolean;
+
+    constructor(data?: IUpdateCategoryStatusInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.isActive = data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCategoryStatusInput {
+        let result = new UpdateCategoryStatusInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["isActive"] = this.isActive;
+        return data; 
+    }
+}
+
+export interface IUpdateCategoryStatusInput {
+    id: number;
+    isActive: boolean;
 }
 
 export class RecategorizeInput implements IRecategorizeInput {
@@ -19096,6 +19192,57 @@ export interface IRecategorizeInput {
     startDate: moment.Moment;
     endDate: moment.Moment;
     ruleId: number;
+}
+
+export class AccountingCategoryDto implements IAccountingCategoryDto {
+    coAID: number;
+    cashType: string;
+    accountingType: string;
+    category: string;
+    subCategory: string;
+
+    constructor(data?: IAccountingCategoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.coAID = data["coAID"];
+            this.cashType = data["cashType"];
+            this.accountingType = data["accountingType"];
+            this.category = data["category"];
+            this.subCategory = data["subCategory"];
+        }
+    }
+
+    static fromJS(data: any): AccountingCategoryDto {
+        let result = new AccountingCategoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["coAID"] = this.coAID;
+        data["cashType"] = this.cashType;
+        data["accountingType"] = this.accountingType;
+        data["category"] = this.category;
+        data["subCategory"] = this.subCategory;
+        return data; 
+    }
+}
+
+export interface IAccountingCategoryDto {
+    coAID: number;
+    cashType: string;
+    accountingType: string;
+    category: string;
+    subCategory: string;
 }
 
 export class ResetClassificationDto implements IResetClassificationDto {
@@ -19248,9 +19395,10 @@ export interface IUpdateTransactionsCategoryWithFilterInput {
 }
 
 export class StatsDetailFilterBase implements IStatsDetailFilterBase {
-    cashFlowTypeId: string;
-    categoryGroupId: number;
+    cashflowTypeId: string;
+    accountingTypeId: number;
     categoryId: number;
+    subCategoryId: number;
     transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -19270,9 +19418,10 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
 
     init(data?: any) {
         if (data) {
-            this.cashFlowTypeId = data["cashFlowTypeId"];
-            this.categoryGroupId = data["categoryGroupId"];
+            this.cashflowTypeId = data["cashflowTypeId"];
+            this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
+            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
@@ -19303,9 +19452,10 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["cashFlowTypeId"] = this.cashFlowTypeId;
-        data["categoryGroupId"] = this.categoryGroupId;
+        data["cashflowTypeId"] = this.cashflowTypeId;
+        data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
+        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -19330,9 +19480,10 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
 }
 
 export interface IStatsDetailFilterBase {
-    cashFlowTypeId: string;
-    categoryGroupId: number;
+    cashflowTypeId: string;
+    accountingTypeId: number;
     categoryId: number;
+    subCategoryId: number;
     transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -19548,6 +19699,57 @@ export class AutoClassifyDto implements IAutoClassifyDto {
 
 export interface IAutoClassifyDto {
     bankAccountIds: number[];
+}
+
+export class ChangeCategoryForRulesInput implements IChangeCategoryForRulesInput {
+    ruleIds: number[];
+    categotyId: number;
+    reclassifyTransactions: boolean = false;
+
+    constructor(data?: IChangeCategoryForRulesInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["ruleIds"] && data["ruleIds"].constructor === Array) {
+                this.ruleIds = [];
+                for (let item of data["ruleIds"])
+                    this.ruleIds.push(item);
+            }
+            this.categotyId = data["categotyId"];
+            this.reclassifyTransactions = data["reclassifyTransactions"] !== undefined ? data["reclassifyTransactions"] : false;
+        }
+    }
+
+    static fromJS(data: any): ChangeCategoryForRulesInput {
+        let result = new ChangeCategoryForRulesInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.ruleIds && this.ruleIds.constructor === Array) {
+            data["ruleIds"] = [];
+            for (let item of this.ruleIds)
+                data["ruleIds"].push(item);
+        }
+        data["categotyId"] = this.categotyId;
+        data["reclassifyTransactions"] = this.reclassifyTransactions;
+        return data; 
+    }
+}
+
+export interface IChangeCategoryForRulesInput {
+    ruleIds: number[];
+    categotyId: number;
+    reclassifyTransactions: boolean;
 }
 
 export class CommentDto implements ICommentDto {
@@ -19846,9 +20048,10 @@ export interface ICreateTransactionCommentThreadOutput {
 export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentThreadInput {
     accountId: number;
     comment: string;
-    cashFlowTypeId: string;
-    categoryGroupId: number;
+    cashflowTypeId: string;
+    accountingTypeId: number;
     categoryId: number;
+    subCategoryId: number;
     transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -19870,9 +20073,10 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
         if (data) {
             this.accountId = data["accountId"];
             this.comment = data["comment"];
-            this.cashFlowTypeId = data["cashFlowTypeId"];
-            this.categoryGroupId = data["categoryGroupId"];
+            this.cashflowTypeId = data["cashflowTypeId"];
+            this.accountingTypeId = data["accountingTypeId"];
             this.categoryId = data["categoryId"];
+            this.subCategoryId = data["subCategoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
@@ -19905,9 +20109,10 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
         data = typeof data === 'object' ? data : {};
         data["accountId"] = this.accountId;
         data["comment"] = this.comment;
-        data["cashFlowTypeId"] = this.cashFlowTypeId;
-        data["categoryGroupId"] = this.categoryGroupId;
+        data["cashflowTypeId"] = this.cashflowTypeId;
+        data["accountingTypeId"] = this.accountingTypeId;
         data["categoryId"] = this.categoryId;
+        data["subCategoryId"] = this.subCategoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -19934,9 +20139,10 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
 export interface ICreateCashFlowCommentThreadInput {
     accountId: number;
     comment: string;
-    cashFlowTypeId: string;
-    categoryGroupId: number;
+    cashflowTypeId: string;
+    accountingTypeId: number;
     categoryId: number;
+    subCategoryId: number;
     transactionDescriptor: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -25842,6 +26048,7 @@ export class SyncProgressDto implements ISyncProgressDto {
     accountName: string;
     progressStatus: string;
     progressPercent: number;
+    syncStatus: SyncProgressDtoSyncStatus;
 
     constructor(data?: ISyncProgressDto) {
         if (data) {
@@ -25857,6 +26064,7 @@ export class SyncProgressDto implements ISyncProgressDto {
             this.accountName = data["accountName"];
             this.progressStatus = data["progressStatus"];
             this.progressPercent = data["progressPercent"];
+            this.syncStatus = data["syncStatus"];
         }
     }
 
@@ -25871,6 +26079,7 @@ export class SyncProgressDto implements ISyncProgressDto {
         data["accountName"] = this.accountName;
         data["progressStatus"] = this.progressStatus;
         data["progressPercent"] = this.progressPercent;
+        data["syncStatus"] = this.syncStatus;
         return data; 
     }
 }
@@ -25879,6 +26088,7 @@ export interface ISyncProgressDto {
     accountName: string;
     progressStatus: string;
     progressPercent: number;
+    syncStatus: SyncProgressDtoSyncStatus;
 }
 
 export class CreateFriendshipRequestInput implements ICreateFriendshipRequestInput {
@@ -28334,13 +28544,13 @@ export interface IKeyValuePairOfInt32AndString {
 }
 
 export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput {
+    website: string;
     tenancyName: string;
     firstName: string;
     lastName: string;
     email: string;
     phone: string;
     phoneExt: string;
-    website: string;
     comments: string;
     sourceCode: string;
 
@@ -28355,13 +28565,13 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
 
     init(data?: any) {
         if (data) {
+            this.website = data["website"];
             this.tenancyName = data["tenancyName"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
             this.email = data["email"];
             this.phone = data["phone"];
             this.phoneExt = data["phoneExt"];
-            this.website = data["website"];
             this.comments = data["comments"];
             this.sourceCode = data["sourceCode"];
         }
@@ -28375,13 +28585,13 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["website"] = this.website;
         data["tenancyName"] = this.tenancyName;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
         data["phone"] = this.phone;
         data["phoneExt"] = this.phoneExt;
-        data["website"] = this.website;
         data["comments"] = this.comments;
         data["sourceCode"] = this.sourceCode;
         return data; 
@@ -28389,18 +28599,19 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
 }
 
 export interface ISubmitContactUsRequestInput {
+    website: string;
     tenancyName: string;
     firstName: string;
     lastName: string;
     email: string;
     phone: string;
     phoneExt: string;
-    website: string;
     comments: string;
     sourceCode: string;
 }
 
 export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRequestInput {
+    companyName: string;
     editionId: number;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
     leadInterests: LeadInterestDto[] = [];
@@ -28410,7 +28621,6 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
     email: string;
     phone: string;
     phoneExt: string;
-    website: string;
     comments: string;
     sourceCode: string;
 
@@ -28425,6 +28635,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 
     init(data?: any) {
         if (data) {
+            this.companyName = data["companyName"];
             this.editionId = data["editionId"];
             this.paymentPeriodType = data["paymentPeriodType"];
             if (data["leadInterests"] && data["leadInterests"].constructor === Array) {
@@ -28438,7 +28649,6 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
             this.email = data["email"];
             this.phone = data["phone"];
             this.phoneExt = data["phoneExt"];
-            this.website = data["website"];
             this.comments = data["comments"];
             this.sourceCode = data["sourceCode"];
         }
@@ -28452,6 +28662,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["companyName"] = this.companyName;
         data["editionId"] = this.editionId;
         data["paymentPeriodType"] = this.paymentPeriodType;
         if (this.leadInterests && this.leadInterests.constructor === Array) {
@@ -28465,7 +28676,6 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
         data["email"] = this.email;
         data["phone"] = this.phone;
         data["phoneExt"] = this.phoneExt;
-        data["website"] = this.website;
         data["comments"] = this.comments;
         data["sourceCode"] = this.sourceCode;
         return data; 
@@ -28473,6 +28683,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 }
 
 export interface ISubmitTenantCreationRequestInput {
+    companyName: string;
     editionId: number;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
     leadInterests: LeadInterestDto[];
@@ -28482,7 +28693,6 @@ export interface ISubmitTenantCreationRequestInput {
     email: string;
     phone: string;
     phoneExt: string;
-    website: string;
     comments: string;
     sourceCode: string;
 }
@@ -28586,29 +28796,46 @@ export class LeadBusinessInfoInput implements ILeadBusinessInfoInput {
     city: string;
     state: string;
     zip: string;
+    website: string;
     industry: string;
     relationship: string;
     categories: string;
     primaryFundingType: string;
     referralType: string;
-    yearsInBusiness: number;
     founded: moment.Moment;
-    companySize: string;
+    companySizeFrom: number;
+    companySizeTo: number;
     type: string;
     ticker: string;
     refID: string;
-    logo: string;
+    logoUrl: string;
     rating: number;
     ucc: number;
-    primaryContactPrefix: string;
-    primaryContactPerson: string;
+    network: string;
+    offerID: string;
+    threeMonthEPC: string;
+    sevenDayEPC: string;
+    payout: string;
+    fundingAmountLow: number;
+    fundingAmountHigh: number;
+    creditScoreMin: number;
+    creditScoreDesired: number;
+    apr: number;
+    featuresAndBenefits: string;
+    countriesServed: string;
+    description: string;
+    keywordTags: string;
+    primaryContactNamePrefix: string;
+    primaryContactFirstName: string;
+    primaryContactMiddleName: string;
+    primaryContactLastName: string;
     primaryContactTitle: string;
     primaryContactEmail: string;
     primaryContactPhone1: string;
     primaryContactPhone1Ext: string;
     primaryContactPhone2: string;
     primaryContactDOB: moment.Moment;
-    primaryContactCollege: string;
+    primaryContactEducation: string;
     primaryContactCityState: string;
     primaryContactPersonalProfile: string;
     primaryContactPersonalLinkedIn: string;
@@ -28636,29 +28863,46 @@ export class LeadBusinessInfoInput implements ILeadBusinessInfoInput {
             this.city = data["city"];
             this.state = data["state"];
             this.zip = data["zip"];
+            this.website = data["website"];
             this.industry = data["industry"];
             this.relationship = data["relationship"];
             this.categories = data["categories"];
             this.primaryFundingType = data["primaryFundingType"];
             this.referralType = data["referralType"];
-            this.yearsInBusiness = data["yearsInBusiness"];
             this.founded = data["founded"] ? moment(data["founded"].toString()) : <any>undefined;
-            this.companySize = data["companySize"];
+            this.companySizeFrom = data["companySizeFrom"];
+            this.companySizeTo = data["companySizeTo"];
             this.type = data["type"];
             this.ticker = data["ticker"];
             this.refID = data["refID"];
-            this.logo = data["logo"];
+            this.logoUrl = data["logoUrl"];
             this.rating = data["rating"];
             this.ucc = data["ucc"];
-            this.primaryContactPrefix = data["primaryContactPrefix"];
-            this.primaryContactPerson = data["primaryContactPerson"];
+            this.network = data["network"];
+            this.offerID = data["offerID"];
+            this.threeMonthEPC = data["threeMonthEPC"];
+            this.sevenDayEPC = data["sevenDayEPC"];
+            this.payout = data["payout"];
+            this.fundingAmountLow = data["fundingAmountLow"];
+            this.fundingAmountHigh = data["fundingAmountHigh"];
+            this.creditScoreMin = data["creditScoreMin"];
+            this.creditScoreDesired = data["creditScoreDesired"];
+            this.apr = data["apr"];
+            this.featuresAndBenefits = data["featuresAndBenefits"];
+            this.countriesServed = data["countriesServed"];
+            this.description = data["description"];
+            this.keywordTags = data["keywordTags"];
+            this.primaryContactNamePrefix = data["primaryContactNamePrefix"];
+            this.primaryContactFirstName = data["primaryContactFirstName"];
+            this.primaryContactMiddleName = data["primaryContactMiddleName"];
+            this.primaryContactLastName = data["primaryContactLastName"];
             this.primaryContactTitle = data["primaryContactTitle"];
             this.primaryContactEmail = data["primaryContactEmail"];
             this.primaryContactPhone1 = data["primaryContactPhone1"];
             this.primaryContactPhone1Ext = data["primaryContactPhone1Ext"];
             this.primaryContactPhone2 = data["primaryContactPhone2"];
             this.primaryContactDOB = data["primaryContactDOB"] ? moment(data["primaryContactDOB"].toString()) : <any>undefined;
-            this.primaryContactCollege = data["primaryContactCollege"];
+            this.primaryContactEducation = data["primaryContactEducation"];
             this.primaryContactCityState = data["primaryContactCityState"];
             this.primaryContactPersonalProfile = data["primaryContactPersonalProfile"];
             this.primaryContactPersonalLinkedIn = data["primaryContactPersonalLinkedIn"];
@@ -28701,29 +28945,46 @@ export class LeadBusinessInfoInput implements ILeadBusinessInfoInput {
         data["city"] = this.city;
         data["state"] = this.state;
         data["zip"] = this.zip;
+        data["website"] = this.website;
         data["industry"] = this.industry;
         data["relationship"] = this.relationship;
         data["categories"] = this.categories;
         data["primaryFundingType"] = this.primaryFundingType;
         data["referralType"] = this.referralType;
-        data["yearsInBusiness"] = this.yearsInBusiness;
         data["founded"] = this.founded ? this.founded.toISOString() : <any>undefined;
-        data["companySize"] = this.companySize;
+        data["companySizeFrom"] = this.companySizeFrom;
+        data["companySizeTo"] = this.companySizeTo;
         data["type"] = this.type;
         data["ticker"] = this.ticker;
         data["refID"] = this.refID;
-        data["logo"] = this.logo;
+        data["logoUrl"] = this.logoUrl;
         data["rating"] = this.rating;
         data["ucc"] = this.ucc;
-        data["primaryContactPrefix"] = this.primaryContactPrefix;
-        data["primaryContactPerson"] = this.primaryContactPerson;
+        data["network"] = this.network;
+        data["offerID"] = this.offerID;
+        data["threeMonthEPC"] = this.threeMonthEPC;
+        data["sevenDayEPC"] = this.sevenDayEPC;
+        data["payout"] = this.payout;
+        data["fundingAmountLow"] = this.fundingAmountLow;
+        data["fundingAmountHigh"] = this.fundingAmountHigh;
+        data["creditScoreMin"] = this.creditScoreMin;
+        data["creditScoreDesired"] = this.creditScoreDesired;
+        data["apr"] = this.apr;
+        data["featuresAndBenefits"] = this.featuresAndBenefits;
+        data["countriesServed"] = this.countriesServed;
+        data["description"] = this.description;
+        data["keywordTags"] = this.keywordTags;
+        data["primaryContactNamePrefix"] = this.primaryContactNamePrefix;
+        data["primaryContactFirstName"] = this.primaryContactFirstName;
+        data["primaryContactMiddleName"] = this.primaryContactMiddleName;
+        data["primaryContactLastName"] = this.primaryContactLastName;
         data["primaryContactTitle"] = this.primaryContactTitle;
         data["primaryContactEmail"] = this.primaryContactEmail;
         data["primaryContactPhone1"] = this.primaryContactPhone1;
         data["primaryContactPhone1Ext"] = this.primaryContactPhone1Ext;
         data["primaryContactPhone2"] = this.primaryContactPhone2;
         data["primaryContactDOB"] = this.primaryContactDOB ? this.primaryContactDOB.toISOString() : <any>undefined;
-        data["primaryContactCollege"] = this.primaryContactCollege;
+        data["primaryContactEducation"] = this.primaryContactEducation;
         data["primaryContactCityState"] = this.primaryContactCityState;
         data["primaryContactPersonalProfile"] = this.primaryContactPersonalProfile;
         data["primaryContactPersonalLinkedIn"] = this.primaryContactPersonalLinkedIn;
@@ -28760,29 +29021,46 @@ export interface ILeadBusinessInfoInput {
     city: string;
     state: string;
     zip: string;
+    website: string;
     industry: string;
     relationship: string;
     categories: string;
     primaryFundingType: string;
     referralType: string;
-    yearsInBusiness: number;
     founded: moment.Moment;
-    companySize: string;
+    companySizeFrom: number;
+    companySizeTo: number;
     type: string;
     ticker: string;
     refID: string;
-    logo: string;
+    logoUrl: string;
     rating: number;
     ucc: number;
-    primaryContactPrefix: string;
-    primaryContactPerson: string;
+    network: string;
+    offerID: string;
+    threeMonthEPC: string;
+    sevenDayEPC: string;
+    payout: string;
+    fundingAmountLow: number;
+    fundingAmountHigh: number;
+    creditScoreMin: number;
+    creditScoreDesired: number;
+    apr: number;
+    featuresAndBenefits: string;
+    countriesServed: string;
+    description: string;
+    keywordTags: string;
+    primaryContactNamePrefix: string;
+    primaryContactFirstName: string;
+    primaryContactMiddleName: string;
+    primaryContactLastName: string;
     primaryContactTitle: string;
     primaryContactEmail: string;
     primaryContactPhone1: string;
     primaryContactPhone1Ext: string;
     primaryContactPhone2: string;
     primaryContactDOB: moment.Moment;
-    primaryContactCollege: string;
+    primaryContactEducation: string;
     primaryContactCityState: string;
     primaryContactPersonalProfile: string;
     primaryContactPersonalLinkedIn: string;
@@ -28903,7 +29181,9 @@ export interface ILeadBusinessAliasInput {
 
 export class LeadBusinessTeamContactInput implements ILeadBusinessTeamContactInput {
     prefix: string;
-    fullName: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
     title: string;
     emailAddress: string;
     phoneNumber: string;
@@ -28920,7 +29200,9 @@ export class LeadBusinessTeamContactInput implements ILeadBusinessTeamContactInp
     init(data?: any) {
         if (data) {
             this.prefix = data["prefix"];
-            this.fullName = data["fullName"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
             this.title = data["title"];
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
@@ -28936,7 +29218,9 @@ export class LeadBusinessTeamContactInput implements ILeadBusinessTeamContactInp
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["prefix"] = this.prefix;
-        data["fullName"] = this.fullName;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
         data["title"] = this.title;
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
@@ -28946,7 +29230,9 @@ export class LeadBusinessTeamContactInput implements ILeadBusinessTeamContactInp
 
 export interface ILeadBusinessTeamContactInput {
     prefix: string;
-    fullName: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
     title: string;
     emailAddress: string;
     phoneNumber: string;
@@ -28956,7 +29242,6 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     leadRequestXref: string;
     shortName: string;
     companyName: string;
-    primaryContactPerson: string;
     errorMessage: string;
 
     constructor(data?: ILeadBusinessInfoOutput) {
@@ -28973,7 +29258,6 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
             this.leadRequestXref = data["leadRequestXref"];
             this.shortName = data["shortName"];
             this.companyName = data["companyName"];
-            this.primaryContactPerson = data["primaryContactPerson"];
             this.errorMessage = data["errorMessage"];
         }
     }
@@ -28989,7 +29273,6 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
         data["leadRequestXref"] = this.leadRequestXref;
         data["shortName"] = this.shortName;
         data["companyName"] = this.companyName;
-        data["primaryContactPerson"] = this.primaryContactPerson;
         data["errorMessage"] = this.errorMessage;
         return data; 
     }
@@ -28999,7 +29282,6 @@ export interface ILeadBusinessInfoOutput {
     leadRequestXref: string;
     shortName: string;
     companyName: string;
-    primaryContactPerson: string;
     errorMessage: string;
 }
 
@@ -33994,6 +34276,61 @@ export interface ICompleteTenantRegistrationInput {
     adminPassword: string;
 }
 
+export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistrationOutput {
+    tenantId: number;
+    tenancyName: string;
+    name: string;
+    userName: string;
+    emailAddress: string;
+    isEmailConfirmationRequired: boolean;
+
+    constructor(data?: ICompleteTenantRegistrationOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
+            this.userName = data["userName"];
+            this.emailAddress = data["emailAddress"];
+            this.isEmailConfirmationRequired = data["isEmailConfirmationRequired"];
+        }
+    }
+
+    static fromJS(data: any): CompleteTenantRegistrationOutput {
+        let result = new CompleteTenantRegistrationOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
+        data["userName"] = this.userName;
+        data["emailAddress"] = this.emailAddress;
+        data["isEmailConfirmationRequired"] = this.isEmailConfirmationRequired;
+        return data; 
+    }
+}
+
+export interface ICompleteTenantRegistrationOutput {
+    tenantId: number;
+    tenancyName: string;
+    name: string;
+    userName: string;
+    emailAddress: string;
+    isEmailConfirmationRequired: boolean;
+}
+
 export class RegisterTenantInput implements IRegisterTenantInput {
     tenancyName: string;
     name: string;
@@ -37174,6 +37511,11 @@ export enum InstanceType53 {
     Business = <any>"Business", 
 }
 
+export enum InstanceType54 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
 export enum IncomeStatisticsDateInterval {
     _1 = 1, 
     _2 = 2, 
@@ -37186,12 +37528,12 @@ export enum IncomeStatisticsDateInterval2 {
     _3 = 3, 
 }
 
-export enum InstanceType54 {
+export enum InstanceType55 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
 
-export enum InstanceType55 {
+export enum InstanceType56 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
@@ -37232,17 +37574,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType56 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
-}
-
 export enum InstanceType57 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
 
 export enum InstanceType58 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType59 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
@@ -37264,6 +37606,13 @@ export enum BankAccountDailyStatDtoPeriod {
 export enum TransactionStatsDtoAdjustmentType {
     _0 = 0, 
     _1 = 1, 
+}
+
+export enum CashFlowStatsDetailDtoStatus {
+    Historical = <any>"Historical", 
+    Partial = <any>"Partial", 
+    Incomplete = <any>"Incomplete", 
+    Completed = <any>"Completed", 
 }
 
 export enum CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity {
@@ -37407,6 +37756,12 @@ export enum ScoreSimulatorInfoDtoAccessStatus {
     KbaIsNotPassed = <any>"KbaIsNotPassed", 
     UnsupportedPackage = <any>"UnsupportedPackage", 
     NoPayment = <any>"NoPayment", 
+}
+
+export enum SyncProgressDtoSyncStatus {
+    InProgress = <any>"InProgress", 
+    Completed = <any>"Completed", 
+    Failed = <any>"Failed", 
 }
 
 export enum GetStatusOutputStatus {

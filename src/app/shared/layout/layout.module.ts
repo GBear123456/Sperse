@@ -53,6 +53,7 @@ import {
 } from 'devextreme-angular';
 
 import { MatTabsModule } from '@angular/material';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 let COMPONENTS = [
     PlatformSelectComponent,
@@ -111,7 +112,8 @@ let COMPONENTS = [
         LinkedAccountService,
         UserNotificationHelper,
         ChatSignalrService,
-        QuickSideBarChat
+        QuickSideBarChat,
+        LayoutService
     ]
 })
 export class LayoutModule {}

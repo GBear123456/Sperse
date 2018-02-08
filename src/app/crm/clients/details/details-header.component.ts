@@ -1,7 +1,7 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput } from '@shared/service-proxies/service-proxies';
+import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, InstanceServiceProxy, SetupInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 
@@ -9,11 +9,12 @@ import { OrganizationDialogComponent } from './organization-dialog/organization-
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [UserServiceProxy]
+    providers: [UserServiceProxy, InstanceServiceProxy]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @Input()
     data: CustomerInfoDto;
+    canSendVerificationRequest: boolean = false;
 
     person = {
         id: 1,
@@ -32,9 +33,12 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private userServiceProxy: UserServiceProxy
+        private userServiceProxy: UserServiceProxy,
+        private instanceServiceProxy: InstanceServiceProxy
     ) {
         super(injector);
+
+        this.canSendVerificationRequest = this.feature.isEnabled('CFO.Partner') && this.isGranted('Pages.CRM.ActivateUserForContact') && this.isGranted('Pages.CFO.ClientActivation');
     }
 
     ngOnInit(): void {
@@ -50,7 +54,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                     let request = new ActivateUserForContactInput();
                     request.contactId = this.data.primaryContactInfo.id;
                     this.userServiceProxy.activateUserForContact(request).subscribe(result => {
-                        abp.notify.info('User was activated and email sent successfully');
+                        let setupInput = new SetupInput({ userId: result.userId });
+                        this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(result => {
+                            abp.notify.info('User was activated and email sent successfully');
+                        });
                     });
                 }
             }

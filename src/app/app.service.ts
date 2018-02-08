@@ -10,10 +10,6 @@ export class AppService extends AppServiceBase {
     public toolbarIsAdaptive = false;
     public toolbarIsHidden  = false;
 
-    public showPlatformSelectMenu = true;
-    public showNotificationsButton = true;
-    public showChatButton = true;
-    public showUserProfileMenu = true;
     public showContactInfoPanel = false;
     public contactInfo: any;
 
@@ -44,6 +40,5 @@ export class AppService extends AppServiceBase {
 
     setContactInfoVisibility(value: boolean) {
         this.showContactInfoPanel = value;
-        this.showPlatformSelectMenu = this.showNotificationsButton = this.showChatButton = this.showUserProfileMenu = !value;
     }
 }

@@ -1,0 +1,113 @@
+<header>
+    <div class="left-section">
+        <h2 class="title">{{l('TrendByPeriod_Title')}}</h2>
+        <div class="legend" [hidden]="!trendData || !trendData.length">
+            <ul class="legend-list">
+                <li class="label legend-item">{{l('Historical')}}:</li>
+                <li class="legend-item inflow">{{l('Stats_Inflows')}}</li>
+                <li class="legend-item outflows">{{l('Stats_Outflows')}}</li>
+                <li class="legend-item net-change">{{l('Net_Change')}}</li>
+            </ul>
+            <ng-container *ngIf="isForecast">
+                <ul class="legend-list">
+                    <li class="label legend-item">{{l('Forecast')}}:</li>
+                    <li class="legend-item forecast inflow">{{l('Stats_Inflows')}}</li>
+                    <li class="legend-item forecast outflows">{{l('Stats_Outflows')}}</li>
+                    <li class="legend-item forecast net-change">{{l('Net_Change')}}</li>
+                </ul>
+            </ng-container>
+        </div>
+    </div>
+    <div class="right-section">
+        <dx-select-box
+            [dataSource]="periods"
+            valueExpr="key"
+            displayExpr="text"
+            [value]="selectedPeriod.key"
+            (onValueChanged)="onSelectChange($event)">
+        </dx-select-box>
+    </div>
+</header>
+<div>
+    <dx-chart
+        [hidden]="!trendData || !trendData.length"
+        id="bar"
+        [dataSource]="trendData"
+        defaultPane="bottomPane"
+        animation="{easing: 'easeOutCubic',duration: 2000}"
+        [barWidth]="0.5"
+        [size]="{height: 240}"
+        #barChart>
+        <dxo-size height="356" [width]="chartWidth"></dxo-size>
+        <!-- common settings for charts -->
+        <dxo-common-series-settings
+            argumentField="date"
+            type="stackedBar"
+            ignoreEmptyPoints="true">
+        </dxo-common-series-settings>
+
+        <dxo-tooltip
+            enabled="true"
+            zIndex="1"
+            [customizeTooltip]="customizeBarTooltip">
+        </dxo-tooltip>
+
+        <dxi-series [color]="historicalIncomeColor" valueField="income" name="{{l('Stats_Inflows')}}"></dxi-series>
+        <dxi-series [color]="historicalExpensesColor" valueField="expenses" name="{{l('Stats_Outflows')}}"></dxi-series>
+        <dxi-series [color]="forecastIncomeColor" valueField="forecastIncome" [showInLegend]="false" name="forecast"></dxi-series>
+        <dxi-series [color]="forecastExpensesColor" valueField="forecastExpenses" [showInLegend]="false" name="forecastExpenses"></dxi-series>
+        <dxi-series
+            type="line"
+            [color]="historicalNetChangeColor"
+            valueField="netChange"
+            name="{{l('Net_Change')}}"
+            [showInLegend]="false">
+        </dxi-series>
+        <dxi-series
+            type="line"
+            [color]="forecastNetChangeColor"
+            valueField="forecastNetChange"
+            name="forecastNetChange"
+            [showInLegend]="false">
+        </dxi-series>
+
+        <!-- Bottom axis -->
+        <dxo-argument-axis
+            argumentType="datetime"
+            visible="true"
+            type="discrete">
+            <dxo-label [customizeText]="customizeBottomAxis"></dxo-label>
+            <!--<dxo-tick-interval months="1"></dxo-tick-interval>-->
+        </dxo-argument-axis>
+
+        <dxo-legend
+            [visible]="false"
+            itemsAlignment="center"
+            itemTextPosition="right"
+            orientation="horizontal"
+            position="outside">
+        </dxo-legend>
+
+        <!-- Left axis -->
+        <dxi-value-axis>
+            <dxo-label [customizeText]="customizeAxisValues">
+                <dxo-format
+                    type="currency largeNumber"
+                    [currency]="currency">
+                </dxo-format>
+            </dxo-label>
+            <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>
+        </dxi-value-axis>
+
+        <!-- Common settings for axis -->
+        <dxo-common-axis-settings allowDecimals="false">
+            <dxo-label alignment="center">
+                <dxo-font weight="300" color="#677380" size="12px"></dxo-font>
+            </dxo-label>
+            <dxo-strip-style>
+                <dxo-label horizontal-allignment="center"></dxo-label>
+            </dxo-strip-style>
+        </dxo-common-axis-settings>
+    </dx-chart>
+    <app-dashboard-no-data [hidden]="loading || (trendData && trendData.length)"></app-dashboard-no-data>
+</div>

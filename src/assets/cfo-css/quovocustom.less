@@ -80,6 +80,7 @@ body {
             text-align: left;
             position: relative;
             border-radius: 4px;
+            float: right;
             
             &::before {
                 content: '';
@@ -93,8 +94,14 @@ body {
                 transform: translateY(-50%);
             }
             
+            &:first-child {
+                margin-left: 1.5%;
+            }
+            
             &:last-child {
                 padding-left: 128px;
+                float: left;
+                margin-left: 0;
                 &::before {
                     left: 85px;
                 }

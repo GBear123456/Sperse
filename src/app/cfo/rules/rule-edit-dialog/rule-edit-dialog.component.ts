@@ -6,7 +6,7 @@ import { DxTreeListComponent, DxDataGridComponent, DxTreeViewComponent } from 'd
 
 import {
     CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto, GetTransactionCommonDetailsInput,
-    CreateCategoryGroupInput, CreateCategoryInput, UpdateCategoryGroupInput, UpdateCategoryInput,
+    CreateCategoryInput, UpdateCategoryInput,
     CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput, 
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
     CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType, TransactionTypesAndCategoriesDto, TransactionAttributeDto } from '@shared/service-proxies/service-proxies';
@@ -280,9 +280,9 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     getAttributes() {
         let attributes = {};
-        let list = this.attributeList.instance.getVisibleRows().filter((item) => {
-            return (item.data['attributeTypeId'] != 'keyword');
-        }).forEach((v) => attributes[v.data['attributeTypeId']] = ConditionAttributeDto.fromJS(v.data));
+        let list = this.attributeList.dataSource.filter((item) => {
+            return (item['attributeTypeId'] != 'keyword');
+        }).forEach((v) => attributes[v['attributeTypeId']] = ConditionAttributeDto.fromJS(v));
 
         return attributes;
     }
@@ -406,12 +406,15 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     updateKeywordList($event) {
-        this.keywords = this.attributeList.instance.getVisibleRows().filter((item) => {
-            return (item.data['attributeTypeId'] == 'keyword');
+        if ($event.key.attributeTypeId != 'keyword' && $event.key.conditionTypeId == 'Exist')
+            $event.key.conditionValue = '';
+
+        this.keywords = this.attributeList.dataSource.filter((item) => {
+            return (item['attributeTypeId'] == 'keyword');
         }).map((item, i) => {
             return {
                 caption: 'Keyword #' + i,
-                keyword: item.data['conditionValue']
+                keyword: item['conditionValue']
             };        
         });
     }

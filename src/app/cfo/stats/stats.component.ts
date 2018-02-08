@@ -2,6 +2,7 @@ import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
+import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -15,6 +16,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import { DxChartComponent } from 'devextreme-angular';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
+import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 
 import {
     StatsFilter,
@@ -28,7 +30,7 @@ import {
 
 @Component({
     'selector': 'app-stats',
-    'providers': [ CashflowServiceProxy, BankAccountsServiceProxy, CashFlowForecastServiceProxy, CacheService],
+    'providers': [ CashflowServiceProxy, BankAccountsServiceProxy, CashFlowForecastServiceProxy, CacheService, StatsService],
     'templateUrl': './stats.component.html',
     'styleUrls': ['./stats.component.less']
 })
@@ -39,7 +41,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
     selectedForecastModel;
-    toolbarConfig = [];
     headlineConfig: any;
     axisDateFormat = 'month';
     currency = 'USD';
@@ -62,26 +63,65 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     loadingFinished = false;
     chartsHeight = 400;
     chartsWidth;
-    barChartTooltipFieldsNames = [
-        'startingBalance',
-        'income',
-        'expenses',
-        'endingBalance',
-        'forecastStartingBalance',
-        'forecastIncome',
-        'forecastExpenses',
-        'forecastEndingBalance'
+    barChartTooltipFields = [
+        {
+            'name': 'startingBalance',
+            'label': this.l('Stats_startingBalance')
+        },
+        {
+            'name': 'startingBalanceAdjustments',
+            'label': this.l('Stats_Starting_Balance_Adjustments')
+        },
+        {
+            'name': 'income',
+            'label': this.ls('Platform', 'Stats_Inflows')
+        },
+        {
+            'name': 'expenses',
+            'label': this.ls('Platform', 'Stats_Outflows')
+        },
+        {
+            'name': 'netChange',
+            'label': this.ls('Platform', 'Net_Change')
+        },
+        {
+            'name': 'endingBalance',
+            'label': this.l('Stats_endingBalance')
+        },
+        {
+            'name': 'forecastIncome',
+            'label': this.l('Stats_Forecast_Inflows')
+        },
+        {
+            'name': 'forecastExpenses',
+            'label': this.l('Stats_Forecast_Outflows')
+        },
+        {
+            'name': 'forecastNetChange',
+            'label': this.l('Stats_Forecast_Net_Change')
+        },
+        {
+            'name': 'forecastEndingBalance',
+            'label': this.l('Stats_endingBalance')
+        }
+    ];
+    leftSideBarItems = [
+        'leftSideBarMonthlyTrendCharts',
+        'leftSideBarDailyTrendCharts',
+        'leftKeyMetricsKPI'
     ];
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
     constructor(
         injector: Injector,
+        private _appService: AppService,
         private _filtersService: FiltersService,
         private _cashflowService: CashflowServiceProxy,
         private _bankAccountService: BankAccountsServiceProxy,
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
-        private _cacheService: CacheService
+        private _cacheService: CacheService,
+        private _statsService: StatsService
     ) {
         super(injector);
 
@@ -90,26 +130,47 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null }) {
-        this.toolbarConfig = <any>[
+        this._appService.toolbarConfig = <any>[
             {
                 location: 'before',
                 items: [
                     {
                         name: 'filters',
-                        action: this._filtersService.toggle.bind(this._filtersService)
+                        action: (event) => {
+                            setTimeout(() => {
+                                this.linearChart.instance.render();
+                                this.barChart.instance.render();
+                            }, 1000);
+                            this._filtersService.fixed = !this._filtersService.fixed;
+                        },
+                        options: {
+                            checkPressed: () => {
+                                return this._filtersService.fixed;
+                            },
+                            mouseover: (event) => {
+                                this._filtersService.enable();
+                            },
+                            mouseout: (event) => {
+                                if (!this._filtersService.fixed)
+                                    this._filtersService.disable();
+                            }
+                        },
+                        attr: {
+                            'filter-selected': this._filtersService.hasFilterSelected
+                        }
                     }
                 ]
             },
+            // {
+            //     location: 'before',
+            //     items: [
+            //         { name: 'back' }
+            //     ]
+            // },
             {
                 location: 'before',
                 items: [
-                    { name: 'back' }
-                ]
-            },
             {
-                location: 'before',
-                items: [
-                    {
                         name: 'select-box',
                         text: '',
                         widget: 'dxDropDownMenu',
@@ -119,7 +180,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             items: forecastModelsObj.items,
                             selectedIndex: forecastModelsObj.selectedItemIndex,
                             height: 39,
-                            width: 200,
+                            width: 243,
                             onSelectionChanged: (e) => {
                                 if (e) {
                                     this.changeSelectedForecastModel(e);
@@ -250,7 +311,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     calculateChartsSize() {
         let chartsHeight = window.innerHeight - 410;
         this.chartsHeight =  chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
-        this.chartsWidth = window.innerWidth;
+        this.chartsWidth = window.innerWidth - 371;
     }
 
     /** Calculates the height of the charts scrollable height after resizing */
@@ -328,8 +389,15 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         abp.ui.setBusy();
         let { startDate, endDate, accountIds = [] } = this.requestFilter;
         this._bankAccountService.getStats(
-            InstanceType[this.instanceType], this.instanceId,
-            'USD', this.selectedForecastModel.id, accountIds, startDate, endDate, GroupBy.Monthly
+            InstanceType[this.instanceType],
+            this.instanceId,
+            'USD',
+            this.selectedForecastModel.id,
+            accountIds,
+            startDate,
+            endDate,
+            undefined,
+            GroupBy.Monthly
         ).subscribe(result => {
             if (result) {
                 let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
@@ -367,9 +435,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngOnDestroy() {
+        this._appService.toolbarConfig = null;
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
-        this._filtersService.enabled = false;
         this.rootComponent.overflowHidden();
         super.ngOnDestroy();
     }
@@ -404,7 +472,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 backgroundColor: this.labelNegativeBackgroundColor,
                 visible: this.maxLabelCount >= this.statsData.length,
                 customizeText: (e: any) => {
-                    return this.replaceMinusWithBrackets(e.valueText);
+                    return this._statsService.replaceMinusWithBrackets(e.valueText);
                 }
             };
         }
@@ -412,7 +480,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** Replace minus for the brackets */
     customizeAxisValues = (arg: any) => {
-        return arg.value < 0 ? this.replaceMinusWithBrackets(arg.valueText) : arg.valueText;
+        return arg.value < 0 ? this._statsService.replaceMinusWithBrackets(arg.valueText) : arg.valueText;
     }
 
     customizePoint = (arg: any) => {
@@ -427,16 +495,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 }
             };
         }
-    }
-
-    /** @todo move to helper */
-    /**
-     * Replace string negative value like '$-1000' for the string '$(1000)' (with brackets)
-     * @param {string} value
-     * @return {string}
-     */
-    replaceMinusWithBrackets(value: string) {
-        return value.replace(/\B(?=(\d{3})+\b)/g, ',').replace(/-(.*)/, '($1)');
     }
 
     onDone(event) {
@@ -534,19 +592,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     customizeBarTooltip = (pointInfo) => {
         return {
-            html: this.getTooltipInfoHtml(pointInfo)
+            html: this._statsService.getTooltipInfoHtml(this.statsData, this.barChartTooltipFields, pointInfo)
         };
-    }
-
-    getTooltipInfoHtml(pointInfo) {
-        let html = '';
-        let pointDataObject = this.statsData.find(item => item.date.toDate().toString() == pointInfo.argument);
-        this.barChartTooltipFieldsNames.forEach(fieldName => {
-            if (pointDataObject[fieldName] !== null && pointDataObject[fieldName] !== undefined) {
-                html += `${this.l('Stats_' + fieldName)} : ${pointDataObject[fieldName]}<br>`;
-            }
-        });
-        return html;
     }
 
 }

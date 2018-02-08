@@ -6,10 +6,10 @@ import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
 import { AppConsts } from '@shared/AppConsts';
 
 @NgModule({
-    imports: AppConsts.isMobile ? [
+    imports: [
         RouterModule.forChild([
             {
-                path: 'app',
+                path: '',
                 component: AppComponent,
                 canActivate: [AppRouteGuard],
                 canActivateChild: [AppRouteGuard],
@@ -22,11 +22,11 @@ import { AppConsts } from '@shared/AppConsts';
                 ]
             }
         ])
-    ]: [],
+    ],
     exports: [RouterModule]
 })
 
-export class AppRoutingModule {
+export class MobileRoutingModule {
     constructor(
         private router: Router
     ) {

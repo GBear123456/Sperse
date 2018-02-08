@@ -4,44 +4,44 @@
     </app-headline>
 
     <div class="content">
-        <setup-steps SelectedStepIndex="0"></setup-steps>
-        <div class="dashboard-wrapper">
-            <section class="accounts-info">
-                <header>
-                    <h2 class="dashboard-title">
-                        {{ls('CFO', 'Accounts')}}
-                    </h2>
-                    <a (click)="navigateTo()" class="dashboard-link">+ {{ls('CFO', 'Add account')}}</a>
-                </header>
-
-                <app-accounts></app-accounts>
-            </section>
-
-            <section class="synch-status">
-                <header>
-                    <a href="javascript:;" class="dashboard-link">{{ls('CFO', 'View transactions')}}</a>
-                </header>
-                <div class="synch-section-wrap">
-                    <div class="synch-item">
-                        <app-categorization-status></app-categorization-status>
+        <setup-steps></setup-steps>
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="dashboard-wrapper">
+                <section class="accounts-info">
+                    <header>
+                        <h2 class="dashboard-title">
+                            {{l('Accounts_Summary')}}
+                        </h2>
+                        <a (click)="navigateTo()" class="dashboard-link">+ {{l('Add_account')}}</a>
+                    </header>
+                    <app-accounts></app-accounts>
+                </section>
+                <section class="analytics">
+                    <div class="analytics-wrap">
+                        <div class="totalByPeriod">
+                            <app-totals-by-period></app-totals-by-period>
+                        </div>
+                        <div class="trendByPeriod">
+                            <app-trend-by-period></app-trend-by-period>
+                        </div>
                     </div>
-                </div>
-            </section>
-            <section class="analytics">
-                <header>
-                    <h2 class="dashboard-title">{{ls('CFO', 'Dashboard_AnalyticsTitle')}}</h2>
-                    <a href="javascript:;" class="dashboard-link">{{ls('CFO', 'View Cash Flow Report')}}</a>
-                </header>
-                <div class="analytics-wrap">
-                    <div class="trendByPeriod">
-                        <app-trend-by-period></app-trend-by-period>
+                </section>
+                <section class="synch-status">
+                    <div class="synch-section-wrap">
+                        <div class="links">
+                            <ul class="list-of-links">
+                                <li *ngFor="let link of linksTo" class="link-item">
+                                    <a class="link" [routerLink]="link.route">{{l(link.name)}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="synch-item">
+                            <app-categorization-status></app-categorization-status>
+                        </div>
                     </div>
-                    <div class="totalByPeriod">
+                </section>
 
-                    </div>
-                </div>
-            </section>
-        </div>
-
+            </div>
+        </dx-scroll-view>
     </div>
 </div>

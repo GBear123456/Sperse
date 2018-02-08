@@ -4,44 +4,7 @@
 
     .content {
         display: flex;
-    }
-
-    .cashflow-setup {
-        flex: 1;
-        text-align: center;
         height: calc(~"100vh - 150px");
-        border: none;
-
-        .sperse-cfo {
-            margin: 10px 0 0 0 !important;
-            color: #f3f6fa;
-            font-size: 120px;
-            font-weight: 600;
-        }
-
-        .logo-cfo {
-            height: 141px;
-            width: 141px;
-            margin-top: -68px;
-            margin-bottom: 63px;
-        }
-
-        .welcome-cfo {
-            color: #202B35;
-            font-family: Montserrat;
-            font-size: 32px;
-            font-weight: 600;
-        }
-
-        .text-cfo {
-            color: #677380;
-            font-family: Montserrat;
-            font-size: 15px;
-            font-weight: 500;
-            line-height: 22px;
-            max-width: 650px;
-            margin: 27px auto 44px;
-        }
     }
 
     .btn-layout {
@@ -57,19 +20,32 @@
             content: none;
         }
     }
+    
+    app-totals-by-period {
+        height: 100%;
+    }
+    
+    /deep/ .blockUI.blockOverlay {
+        background: #fff !important;
+    }
 
     .dashboard-wrapper {
         background-color: #fff;
+        width: calc(~"100vw - 322px");
         padding: 0 48px 40px;
-        width: 100%;
 
         section {
+            margin-bottom: 20px;
             header {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                margin: 40px 0 15px;
+                padding: 20px 0 10px;
             }
+        }
+        
+        .synch-status {
+            margin-bottom: 0;
         }
 
         .dashboard-title {
@@ -90,37 +66,77 @@
             line-height: 24px;
             font-weight: 500;
             margin-left: auto;
+            cursor: pointer;
+            transition: .2s;
+    
+            &:hover {
+                color: lighten(#00AEEF, 20%);
+            }
         }
 
         .synch-status .synch-section-wrap,
-        .analytics .analytics-wrap{
+        .analytics .analytics-wrap {
             display: flex;
             flex-flow: row wrap;
             justify-content: space-between;
             align-items: flex-start;
         }
+        .synch-status .synch-section-wrap .links {
+            width: 32%;
+            align-self: center;
+            height: 100%;
+        }
+        .synch-status .synch-section-wrap .list-of-links {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        .synch-status .synch-section-wrap .link-item {
+            padding: 10px 5px;
+            border-bottom: 1px solid  #E5E9EC;
+        }
+
+        .synch-status .synch-section-wrap .link {
+            color: #00AEEF;
+            font-size: 16px;
+            letter-spacing: 0.2px;
+            line-height: 24px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: .2s;
+            
+            &:hover {
+                color: lighten(#00AEEF, 20%);
+            }
+        }
 
         .synch-status .synch-section-wrap .synch-item {
             max-width: 66%;
-            // min-height: 300px;
             width: 100%;
-            // border: 1px solid #E5E9EC;
             background-color: #FFFFFF;
             border-radius: 4px;
             position: relative;
-            padding: 30px 30px 30px 0;
+            padding: 20px 30px 20px 0;
         }
 
         .analytics .analytics-wrap {
+            align-items: stretch;
+
             .trendByPeriod {
                 width: 66%;
-                height: 357px;
             }
+
             .totalByPeriod {
                 width: 32%;
-                height: 356px;
+                border: 1px solid #E5E9EC;
+                background-color: #FFFFFF;
+                border-radius: 4px;
+                position: relative;
+                padding: 30px;
             }
         }
-
+    }
+    /deep/ .dx-scrollable-content {
+        background: #FFF;
     }
 }

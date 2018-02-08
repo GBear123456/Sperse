@@ -11,6 +11,7 @@
         &.expanded {
             .categories {
                 width: 340px;
+                border-right: 1px solid #dfdfdf !important;
             }
 
             .transactions {
@@ -19,10 +20,10 @@
         }
 
         .categories {
-            width: 10px;
+            width: 0px;
             transition: 1s;
             overflow: hidden;
-            border-right: 1px solid #dfdfdf;
+            border-right: 0px;
 
             /deep/ .dx-selection td:first-child {
                 position: relative;
@@ -38,10 +39,6 @@
                     top: 14px;
                     left: 5px;
                 }
-            }
-
-            /deep/ .dx-treelist .dx-column-lines > td:first-child {
-                padding-left: 16px;
             }
         }
 
@@ -97,13 +94,16 @@
 
     /deep/ #gridContainer {
         .dx-datagrid-header-panel {
+            .dx-toolbar .dx-toolbar-center {
+                margin: 0 !important;
+            }
+
             .dx-toolbar-items-container {
                 height: 72px;
                 margin-bottom: 0;
 
                 .dx-toolbar-after {
                     display: flex;
-                    width: 60%;
                     height: 100%;
                     justify-content: flex-end;
                     align-items: stretch;
@@ -155,6 +155,26 @@
                     }
                 }
             }
+        }
+    }
+}
+
+.tooltip-wrap {
+    text-align: left;
+
+    .name {
+        cursor: pointer;
+        transition: .2s;
+        font-size: 13px;
+        display: block;
+
+        + .name {
+            margin-top: 3px;
+        }
+
+        &:hover {
+            color: darken(#333, 50%);
+            text-decoration: underline;
         }
     }
 }

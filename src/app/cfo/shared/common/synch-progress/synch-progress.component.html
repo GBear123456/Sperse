@@ -1,0 +1,56 @@
+<div *ngIf="!completed && synchData" class="synch-progress-wrapper">
+    <div id="synchProgressContainer" class="synch-container" (mouseenter)="toggleTooltip()">
+        <dx-load-indicator class="load-indicator"></dx-load-indicator>
+        <h3>{{l('Sync_status')}}</h3>
+        <dx-progress-bar #progressBar
+                         id="progress-bar-status"
+                         width="162"
+                         [class.complete]="progressBar.value == maxValue"
+                         [min]="0"
+                         [max]="100"
+                         [statusFormat]="format"
+                         [value]="currentProgress">
+        </dx-progress-bar>
+    </div>
+
+
+    <dx-tooltip target="#synchProgressContainer"
+                [(visible)]="tooltipVisible">
+        <div *dxTemplate="let data = data of 'content'">
+            <div class="tooltip-container">
+                <h3>{{l('Accounts_synchronization_status')}}:</h3>
+                <dx-scroll-view [showScrollbar]="onHover" [height]="calculateChartsScrolableHeight()">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="progress-wrap">
+                                <round-progress
+                                    [current]="currentProgress"
+                                    [max]="100"
+                                    [color]="'#35C8A8'"
+                                    [background]="'#ECF0F3'"
+                                    [radius]="64"
+                                    [stroke]="8"
+                                    [rounded]="false"
+                                    [clockwise]="true"
+                                    [responsive]="true"
+                                    [duration]="800"
+                                    [animation]="'easeInOutQuart'"
+                                    [animationDelay]="0">
+                                </round-progress>
+                                <span class="total-synch-progress">{{currentProgress | number : '1.0-0'}}%</span>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <ul class="list-of-synch-accounts">
+                                <li *ngFor="let acc of synchData.accountProgresses" [class.completed]="acc.progressStatus =='Completed'" class="clearfix">
+                                    <span class="name">{{ acc.accountName }}:</span>
+                                    <span class="percent">{{acc.progressPercent | number : '1.0-0'}}%</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </div>
+        </div>
+    </dx-tooltip>
+</div>
