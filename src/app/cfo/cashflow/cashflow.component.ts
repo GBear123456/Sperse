@@ -2213,7 +2213,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 onEnterKey: this.saveForecast.bind(this),
                 onFocusOut: this.saveForecast.bind(this)
             })
-            .dxTextBox('instance')
+            .dxNumberBox('instance')
             .focus();
         document.getSelection().removeAllRanges();
     }
