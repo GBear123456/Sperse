@@ -2847,4 +2847,26 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 });
             });
     }
+
+    onDetailsReady(e) {
+        console.log('Details ready', e);
+        Observable.fromEvent(e.element.find('.gridcell'), 'click')
+            .subscribe(event => console.log(event));
+    }
+
+    detailsCellIsEditable(e) {
+        return e.data && e.data.forecastId && ['date', 'description', 'debit', 'credit'].indexOf(e.column.dataField) !== -1;
+    }
+
+    onDetailsCellPrepared(e) {
+        if (this.detailsCellIsEditable(e)) {
+           e.cellElement.addClass('editable');
+        }
+    }
+
+    onDetailsCellClick(e) {
+        if (this.detailsCellIsEditable(e)) {
+
+        }
+    }
 }

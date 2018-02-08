@@ -51,13 +51,21 @@
         <dx-data-grid id="cashflowGridContainer"
                       [rowAlternationEnabled]="true"
                       [dataSource]="statsDetailResult"
-                      (onDataErrorOccurred)="httpConfig.handleError($event.error)">
+                      (onDataErrorOccurred)="httpConfig.handleError($event.error)"
+                      (onContentReady)="onDetailsReady($event)"
+                      (onCellPrepared)="onDetailsCellPrepared($event)"
+                      (onCellClick)="onDetailsCellClick($event)">
             <dxo-header-filter [visible]="true"></dxo-header-filter>
             <dxo-selection selectAllMode="page"
                            showCheckBoxesMode="always"
                            mode="multiple">
             </dxo-selection>
-            <dxi-column dataField="date" width="130" cellTemplate="dateCell" [alignment]="left"></dxi-column>
+            <dxi-column
+                        dataField="date"
+                        width="130"
+                        cellTemplate="dateCell"
+                        [alignment]="left">
+            </dxi-column>
             <dxi-column dataField="description">
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
             </dxi-column>
