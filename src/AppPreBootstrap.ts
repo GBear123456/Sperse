@@ -15,7 +15,7 @@ export class AppPreBootstrap {
     static run(callback: () => void, resolve: any, reject: any): void {
         AppPreBootstrap.getApplicationConfig(() => {
             if (UrlHelper.isInstallUrl(location.href)) {
-                LocalizedResourcesHelper.loadMetronicStyles("");
+                LocalizedResourcesHelper.loadMetronicStyles('');
                 callback();
                 return;
             }
@@ -55,30 +55,29 @@ export class AppPreBootstrap {
             AppConsts.appBaseUrlFormat = result.appBaseUrl;
             AppConsts.remoteServiceBaseUrlFormat = result.remoteServiceBaseUrl;
             AppConsts.recaptchaSiteKey = result.recaptchaSiteKey;
+            AppConsts.googleSheetClientId = result.googleSheetClientId;
             AppConsts.subscriptionExpireNootifyDayCount = result.subscriptionExpireNootifyDayCount;
-            AppConsts.appBaseUrl = window.location.protocol + "//" + window.location.host;
+            AppConsts.appBaseUrl = window.location.protocol + '//' + window.location.host;
 
             if (result.appBaseUrl !== AppConsts.appBaseUrl) {
                 abp.ajax({
                     url: result.remoteServiceBaseUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=' + encodeURIComponent("" + AppConsts.tenantHostType),
                     method: 'GET',
                     headers: {
-                        'Accept-Language': abp.utils.getCookieValue("Abp.Localization.CultureName")
+                        'Accept-Language': abp.utils.getCookieValue('Abp.Localization.CultureName')
                     }
                 }).done((tenantApiHostOutput: TenantApiHostOutput) => {
-                    var apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
+                    let apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
 
                     if (tenantApiHostOutput.apiHostName !== null) {
-                        AppConsts.remoteServiceBaseUrl = apiProtocolUrl.protocol + "//" + tenantApiHostOutput.apiHostName;
-                    }
-                    else {
+                        AppConsts.remoteServiceBaseUrl = apiProtocolUrl.protocol + '//' + tenantApiHostOutput.apiHostName;
+                    } else {
                         AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
                     }
 
                     callback();
                 });
-            }
-            else {
+            } else {
                 AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
                 callback();
             }
@@ -114,7 +113,7 @@ export class AppPreBootstrap {
             callback();
         }).fail(result => {
             location.href = AppConsts.appBaseUrl + '/account/login';
-        });;
+        });
     }
 
     private static linkedAccountAuthenticate(switchAccountToken: string, tenantId: number, callback: () => void): JQueryPromise<any> {
@@ -139,7 +138,7 @@ export class AppPreBootstrap {
         const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
         const token = abp.auth.getToken();
 
-        var requestHeaders = {
+        let requestHeaders = {
             '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),
             'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
         };

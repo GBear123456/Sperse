@@ -10,7 +10,8 @@ export class AppConsts {
     static appBaseUrl: string;
     static appBaseUrlFormat: string;
     static recaptchaSiteKey: string;
-    static subscriptionExpireNootifyDayCount: number;    
+    static googleSheetClientId: string;
+    static subscriptionExpireNootifyDayCount: number;
 
     static localeMappings: any = [];
 
