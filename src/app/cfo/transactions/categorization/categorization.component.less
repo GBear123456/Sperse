@@ -15,7 +15,7 @@
             font-weight: 400;
             text-align: right;
             cursor: pointer;
-            float:right;
+            float: right;
             margin-right: 15px;
             margin-top: 3px;
         }
@@ -49,10 +49,6 @@
     }
 
     /deep/ .dx-widget {
-        .dx-placeholder {
-            display: none !important;
-        }
-
         tr.dx-edit-row .dx-texteditor-input {
             font-weight: 400;
             border-bottom: none !important;
@@ -99,14 +95,34 @@
     }
 
     /deep/ dx-tree-list {
-        .dx-treelist-header-panel {
-            display: none;
-        }
         .dx-treelist-headers {
             padding-left: 15px;
+
             .dx-column-lines > td {
-                border-left: none!important;
-                border-right: none!important;
+                border-left: none !important;
+                border-right: none !important;
+            }
+        }
+
+        .dx-toolbar .dx-toolbar-after {
+            width: 100%;
+            padding-left: 0;
+
+            .dx-treelist-addrow-button {
+                display: none;
+            }
+
+            .dx-treelist-search-panel {
+                width: 100% !important;
+                margin-left: 0;
+
+                .dx-placeholder {
+                    font-size: 14px;
+                }
+            }
+
+            .dx-state-focused .dx-placeholder {
+                font-size: 11px;
             }
         }
 
@@ -189,14 +205,15 @@
                     &[aria-level="0"], &[aria-level="3"] {
                         .dx-command-edit {
                             .dx-link-add {
-                                display: none!important;
+                                display: none !important;
                             }
                         }
                     }
+
                     &[aria-level="0"], &[aria-level="1"] {
                         .dx-command-edit {
                             .dx-link-delete, .dx-link-edit {
-                                display: none!important;
+                                display: none !important;
                             }
                         }
                     }

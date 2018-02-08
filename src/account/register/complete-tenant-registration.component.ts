@@ -66,10 +66,9 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
     }
 
     generatePassword(): string {
-        var number = Math.random();
-        var result = number.toString(36).substring(6);
+        let number = Math.random();
+        let result = number.toString(36).substring(6);
         
-        console.log(result);
         return result;
     }
 }

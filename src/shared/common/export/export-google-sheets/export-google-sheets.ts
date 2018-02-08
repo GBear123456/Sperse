@@ -3,7 +3,7 @@ import { AppConsts } from '@shared/AppConsts';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 import { capitalize } from 'underscore.string';
-import * as moment from "moment";
+import * as moment from 'moment';
 import * as _ from 'underscore';
 
 
@@ -16,21 +16,20 @@ export class ExportGoogleSheetService {
             gapi.load('client:auth2',
                 () => {
                     gapi.client.init({
-                        clientId: '670309857988-388fn9i7a1j300j0aic08h7dfvnat1if.apps.googleusercontent.com',
+                        clientId: AppConsts.googleSheetClientId,
                         scope: 'https://www.googleapis.com/auth/spreadsheets',
                         discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4']
                     });
                 });
         });
     }
-    
+
     export(dataGrid: DxDataGridComponent, sheetName: string, exportAllData: boolean) {
         let auth = gapi.auth2.getAuthInstance();
         if (auth.isSignedIn.get()) {
 
             this.createSheet(dataGrid, sheetName, exportAllData);
-        } 
-        else {
+        } else {
             let exportService = this;
             auth.signIn().then(function () {
                 exportService.createSheet(dataGrid, sheetName, exportAllData);
@@ -60,7 +59,7 @@ export class ExportGoogleSheetService {
             rowData.push(row);
         });
 
-        var spreadsheetBody = {
+        let spreadsheetBody = {
             properties: {
                 title: sheetName
             },
@@ -81,7 +80,7 @@ export class ExportGoogleSheetService {
             ]
         };
 
-        var request = gapi.client.sheets.spreadsheets.create({}, spreadsheetBody);
+        let request = gapi.client.sheets.spreadsheets.create({}, spreadsheetBody);
         request.then(function (response) {
             window.open(response.result.spreadsheetUrl, '_blank');
         }, function (reason) {
@@ -90,7 +89,7 @@ export class ExportGoogleSheetService {
     }
 
     getSerial(date: Date) {
-        var returnDateTime = 25569.0 + ((date.getTime() - (date.getTimezoneOffset() * 60 * 1000)) / (1000 * 60 * 60 * 24));
+        let returnDateTime = 25569.0 + ((date.getTime() - (date.getTimezoneOffset() * 60 * 1000)) / (1000 * 60 * 60 * 24));
         return returnDateTime;
     }
 
@@ -127,18 +126,15 @@ export class ExportGoogleSheetService {
             },
             userEnteredValue: {}
         };
-        
+
         if (typeof (value) == 'number') {
             cellData.userEnteredValue['numberValue'] = value;
-        }
-        else if (typeof (value) == 'boolean') {
+        } else if (typeof (value) == 'boolean') {
             cellData.userEnteredValue['boolValue'] = value;
-        }
-        else if (value instanceof Date) {
+        } else if (value instanceof Date) {
             cellData.userEnteredValue['numberValue'] = this.getSerial(value);
             cellData.userEnteredFormat.numberFormat['type'] = 'DATE_TIME';
-        }
-        else {
+        } else {
             cellData.userEnteredValue['stringValue'] = value;
         }
         return cellData;
