@@ -1,12 +1,22 @@
-<header>
+<header [hidden]="!trendData || !trendData.length">
     <div class="left-section">
         <h2 class="title">{{l('TrendByPeriod_Title')}}</h2>
-
-        <ul class="legend">
-            <li class="legend-item inflow">{{l('Stats_Inflows')}}</li>
-            <li class="legend-item outflows">{{l('Stats_Outflows')}}</li>
-            <li class="legend-item net-change">{{l('Net_Change')}}</li>
-        </ul>
+        <div class="legend">
+            <ul class="legend-list">
+                <li class="label legend-item">{{l('Historical')}}:</li>
+                <li class="legend-item inflow">{{l('Stats_Inflows')}}</li>
+                <li class="legend-item outflows">{{l('Stats_Outflows')}}</li>
+                <li class="legend-item net-change">{{l('Net_Change')}}</li>
+            </ul>
+            <ng-container *ngIf="isForecast">
+                <ul class="legend-list">
+                    <li class="label legend-item">{{l('Forecast')}}:</li>
+                    <li class="legend-item forecast inflow">{{l('Stats_Inflows')}}</li>
+                    <li class="legend-item forecast outflows">{{l('Stats_Outflows')}}</li>
+                    <li class="legend-item forecast net-change">{{l('Net_Change')}}</li>
+                </ul>
+            </ng-container>
+        </div>
     </div>
     <div class="right-section">
         <dx-select-box

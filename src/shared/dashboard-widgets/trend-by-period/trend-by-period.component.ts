@@ -27,6 +27,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     trendData: Array<BankAccountDailyStatDto>;
     chartWidth = 650;
     currency = 'USD';
+    isForecast = false;
     historicalIncomeColor = '#00aeef';
     historicalExpensesColor = '#f05b2a';
     forecastIncomeColor = '#a9e3f9';
@@ -171,6 +172,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                             { value: statsItem.income + statsItem.expenses, enumerable: true }
                         );
                         if (statsItem.isForecast) {
+                            this.isForecast = true;
                             for (let prop in statsItem) {
                                 if (statsItem.hasOwnProperty(prop) && prop !== 'date' && prop !== 'isForecast') {
                                     statsItem['forecast' + this.capitalize(prop)] = statsItem[prop];
