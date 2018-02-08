@@ -1,16 +1,18 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig"></app-headline>
+    <app-headline [config]="headlineConfig">
+        <synch-progress class="synch-progress"></synch-progress>
+    </app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div class="main-wrapper" [ngClass]="{'expanded': categoriesShowed}">
                 <div class="categories">
-                    <categorization 
+                    <categorization
                         [width]="'340px'"
                         [height]="'calc(100vh - 270px)'"
                         [showTitle]="true"
                         [showClearSelection]="true"
                         [dragMode]="dragInProgress"
-                        (close)="categoriesShowed = false"                          
+                        (close)="categoriesShowed = false"
                         [instanceType]="instanceType"
                         [instanceId]="instanceId"
                                     (onTransactionDrop)="openCategorizationWindow($event)"
