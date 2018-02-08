@@ -1,7 +1,7 @@
-<header [hidden]="!trendData || !trendData.length">
+<header>
     <div class="left-section">
         <h2 class="title">{{l('TrendByPeriod_Title')}}</h2>
-        <div class="legend">
+        <div class="legend" [hidden]="!trendData || !trendData.length">
             <ul class="legend-list">
                 <li class="label legend-item">{{l('Historical')}}:</li>
                 <li class="legend-item inflow">{{l('Stats_Inflows')}}</li>
