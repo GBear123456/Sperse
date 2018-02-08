@@ -31,6 +31,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     incomeColor = '#32bef2';
     expensesColor = '#f9b74b';
     netChangeColor = '#35c8a8';
+    loading = true;
 
     constructor(
         injector: Injector,
@@ -44,7 +45,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     loadStatsData() {
-        abp.ui.setBusy('.totalByPeriod');
+        this.startLoading();
         this._bankAccountService.getStats(
             InstanceType[this.instanceType],
             this.instanceId,
@@ -66,7 +67,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                     );
                 });
                 this.totalData = result;
-                abp.ui.clearBusy('.totalByPeriod');
+                this.finishLoading();
             });
     }
 
