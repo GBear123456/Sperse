@@ -19,6 +19,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @Output() close: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
+    @Output() onFilterSelected: EventEmitter<any> = new EventEmitter();
     @Output() onTransactionDrop: EventEmitter<any> = new EventEmitter();
 
     @Input() instanceId: number;
@@ -28,6 +29,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     @Input() height: string;
     @Input() showTitle: boolean;
     @Input() showClearSelection: boolean;
+    @Input() showFilterIcon: boolean;
     @Input() categoryId: number;
     @Input('dragMode')
     set dragMode(value: boolean) {
@@ -137,6 +139,26 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             );
     }
 
+    onCellPrepared($event) {
+        if (this.showFilterIcon) {
+            if ($event.rowType === "data" && $event.column.command === "edit") {
+                $('<a>')
+                    .text("Filter")
+                    .addClass("dx-link link-filter")
+                    .on("click", (args) => {
+                        this.clearFilteredCategory();
+                        $event.cellElement.parent().addClass('filtered-category');
+                        this.onFilterSelected.emit($event.data);
+                    })
+                    .appendTo($event.cellElement);
+            }
+        }
+    }
+
+    clearFilteredCategory() {
+        $('.filtered-category').removeClass('filtered-category');
+    }
+
     onCategoryUpdated($event) {
         let category = this.categorization.categories[$event.key];
         this._classificationServiceProxy.updateCategory(
@@ -211,7 +233,6 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             let prefix = '';
             if (data.typeId == 'I')
                 prefix = (<any>this).sortOrder == 'asc' ? "aaa" : "zzz";
-            console.log(prefix + data.name);
             return prefix + data.name;
         }
         return data.name;
@@ -232,7 +253,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     private _prevClickDate = new Date();
     onRowClick($event) {
-        if ($event.level < 2)
+        if ($event.level < 1)
             return;
 
         let nowDate = new Date();
@@ -247,5 +268,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     clearSelection(e) {
         this.categoryList.instance.deselectAll();
+        this.clearFilteredCategory();
+        this.onFilterSelected.emit(null);
     }
 }

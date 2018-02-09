@@ -11,12 +11,13 @@
                         [height]="'calc(100vh - 270px)'"
                         [showTitle]="true"
                         [showClearSelection]="true"
+                        [showFilterIcon]="true"
                         [dragMode]="dragInProgress"
                         (close)="categoriesShowed = false"
                         [instanceType]="instanceType"
                         [instanceId]="instanceId"
-                                    (onTransactionDrop)="openCategorizationWindow($event)"
-                                    (onSelectionChanged)="filterByCashflowCategory($event)">
+                        (onTransactionDrop)="openCategorizationWindow($event)"
+                        (onFilterSelected)="filterByCashflowCategory($event)">
                     </categorization>
                 </div>
                 <div class="transactions">

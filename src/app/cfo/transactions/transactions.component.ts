@@ -661,8 +661,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return data;
     }
 
-    filterByCashflowCategory($event) {
-        let data = $event.selectedRowsData.pop();
+    filterByCashflowCategory(data) {
         if (data && data.key) {
             let field = {};
             if (!parseInt(data.key))
