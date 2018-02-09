@@ -100,6 +100,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
 
     showAllDisabled = true;
+    noRefreshedAfterSync: boolean;
     headlineConfig: any;
     categoryTree: GetCategoryTreeOutput;
     cashflowData: any;
@@ -563,7 +564,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.headlineConfig = {
             names: [this.l('Cash Flow Statement and Forecast')],
             iconSrc: 'assets/common/icons/chart-icon.svg',
-            buttons: []
+            buttons: [
+                {
+                    enabled: this.noRefreshedAfterSync,
+                    action: this.refreshDataGrid.bind(this),
+                    lable: this.l('Refresh'),
+                    icon: 'refresh',
+                    class: 'btn-default back-button'
+                }
+            ]
         };
     }
 
@@ -1197,8 +1206,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return path.split('.').reduce((acc, part) => acc && acc[part], obj);
     }
 
+    showRefreshButton() {
+        this.noRefreshedAfterSync = true;
+        this.initHeadlineConfig();
+    }
+
     refreshDataGrid() {
         this.expandedIncomeExpense = false;
+
+        this.noRefreshedAfterSync = false;
+        this.initHeadlineConfig();
+
         this.closeTransactionsDetail();
         this.loadGridDataSource();
     }

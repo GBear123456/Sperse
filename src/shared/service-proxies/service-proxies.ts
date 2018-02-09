@@ -3330,6 +3330,65 @@ export class ClassificationServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @transactionIds (optional) 
+     * @return Success
+     */
+    getKeyAttributeValues(instanceType: InstanceType42, instanceId: number, transactionIds: number[]): Observable<AttributeValuesDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/GetKeyAttributeValues?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (transactionIds !== undefined)
+            transactionIds && transactionIds.forEach(item => { url_ += "TransactionIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetKeyAttributeValues(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetKeyAttributeValues(response_);
+                } catch (e) {
+                    return <Observable<AttributeValuesDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<AttributeValuesDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetKeyAttributeValues(response: Response): Observable<AttributeValuesDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(AttributeValuesDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<AttributeValuesDto[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -3348,7 +3407,7 @@ export class CommentServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getComments(instanceType: InstanceType42, instanceId: number, threadId: number): Observable<CommentDto[]> {
+    getComments(instanceType: InstanceType43, instanceId: number, threadId: number): Observable<CommentDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/GetComments?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3409,7 +3468,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createComment(instanceType: InstanceType43, instanceId: number, input: CreateCommentInput): Observable<CreateCommentOutput> {
+    createComment(instanceType: InstanceType44, instanceId: number, input: CreateCommentInput): Observable<CreateCommentOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3465,7 +3524,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateComment(instanceType: InstanceType44, instanceId: number, input: UpdateCommentInput): Observable<void> {
+    updateComment(instanceType: InstanceType45, instanceId: number, input: UpdateCommentInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/UpdateComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3516,7 +3575,7 @@ export class CommentServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteComment(instanceType: InstanceType45, instanceId: number, commentId: number): Observable<void> {
+    deleteComment(instanceType: InstanceType46, instanceId: number, commentId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/DeleteComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3569,7 +3628,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createTransactionCommentThread(instanceType: InstanceType46, instanceId: number, input: CreateTransactionCommentThreadInput): Observable<CreateTransactionCommentThreadOutput> {
+    createTransactionCommentThread(instanceType: InstanceType47, instanceId: number, input: CreateTransactionCommentThreadInput): Observable<CreateTransactionCommentThreadOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateTransactionCommentThread?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3625,7 +3684,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createCashFlowCommentThread(instanceType: InstanceType47, instanceId: number, input: CreateCashFlowCommentThreadInput): Observable<CreateCashFlowCommentThreadOutput> {
+    createCashFlowCommentThread(instanceType: InstanceType48, instanceId: number, input: CreateCashFlowCommentThreadInput): Observable<CreateCashFlowCommentThreadOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateCashFlowCommentThread?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3681,7 +3740,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    setResolved(instanceType: InstanceType48, instanceId: number, input: SetResolvedInput): Observable<void> {
+    setResolved(instanceType: InstanceType49, instanceId: number, input: SetResolvedInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/SetResolved?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -5982,7 +6041,7 @@ export class DashboardServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getAccountTotals(instanceType: InstanceType49, instanceId: number): Observable<AccountTotals> {
+    getAccountTotals(instanceType: InstanceType50, instanceId: number): Observable<AccountTotals> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetAccountTotals?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6034,7 +6093,7 @@ export class DashboardServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getCategorizationStatus(instanceType: InstanceType50, instanceId: number): Observable<CategorizationStatus> {
+    getCategorizationStatus(instanceType: InstanceType51, instanceId: number): Observable<CategorizationStatus> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetCategorizationStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6678,7 +6737,7 @@ export class FinancialInformationServiceProxy {
      * @errorPage (optional) 
      * @return Success
      */
-    getSetupAccountsLink(instanceType: InstanceType51, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
+    getSetupAccountsLink(instanceType: InstanceType52, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSetupAccountsLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6734,7 +6793,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAccountsWithQuovo(instanceType: InstanceType52, instanceId: number): Observable<void> {
+    syncAccountsWithQuovo(instanceType: InstanceType53, instanceId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAccountsWithQuovo?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6782,7 +6841,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType53, instanceId: number, syncHistory: boolean, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType54, instanceId: number, syncHistory: boolean, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6842,7 +6901,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType54, instanceId: number): Observable<SyncProgressOutput> {
+    getSyncProgress(instanceType: InstanceType55, instanceId: number): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7638,7 +7697,7 @@ export class InstanceServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType55, instanceId: number): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType56, instanceId: number): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7688,7 +7747,7 @@ export class InstanceServiceProxy {
     /**
      * @return Success
      */
-    setup(instanceType: InstanceType56): Observable<SetupOutput> {
+    setup(instanceType: InstanceType57): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType === undefined || instanceType === null)
             throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
@@ -14245,7 +14304,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType57, instanceId: number): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType58, instanceId: number): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14297,7 +14356,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType58, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType59, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14349,7 +14408,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType59, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType60, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -19616,6 +19675,53 @@ export interface IChangeCategoryForRulesInput {
     reclassifyTransactions: boolean;
 }
 
+export class AttributeValuesDto implements IAttributeValuesDto {
+    attributeTypeId: string;
+    attributeValues: string[];
+
+    constructor(data?: IAttributeValuesDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.attributeTypeId = data["attributeTypeId"];
+            if (data["attributeValues"] && data["attributeValues"].constructor === Array) {
+                this.attributeValues = [];
+                for (let item of data["attributeValues"])
+                    this.attributeValues.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): AttributeValuesDto {
+        let result = new AttributeValuesDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["attributeTypeId"] = this.attributeTypeId;
+        if (this.attributeValues && this.attributeValues.constructor === Array) {
+            data["attributeValues"] = [];
+            for (let item of this.attributeValues)
+                data["attributeValues"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IAttributeValuesDto {
+    attributeTypeId: string;
+    attributeValues: string[];
+}
+
 export class CommentDto implements ICommentDto {
     threadId: number;
     comment: string;
@@ -20862,11 +20968,25 @@ export interface IContactBusinessInfo {
 export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     name: string;
     typeName: string;
-    countryId: string;
-    stateId: string;
-    city: string;
-    streetAddress: string;
-    zip: string;
+    categories: string;
+    shortname: string;
+    companyName: string;
+    emailAddress1: string;
+    emailAddress2: string;
+    typeId: number;
+    industry: string;
+    relationship: string;
+    primaryFundingType: string;
+    referralType: string;
+    ticker: string;
+    refID: string;
+    rating: number;
+    ucc: number;
+    sizeFrom: number;
+    sizeTo: number;
+    countriesServed: string;
+    description: string;
+    keywordTags: string;
     ein: string;
     formedCountryId: string;
     formedStateId: string;
@@ -20876,8 +20996,16 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     annualVolumesOnCards: number;
     productServicesSold: number;
     businessSicCode: number;
+    organizationAliases: OrganizationAliasInfo[];
+    organizationPhones: OrganizationPhoneInfo[];
+    organizationTeamContacts: OrganizationTeamContactInfo[];
+    contactId: number;
+    emailAddress: string;
     phoneNumber: string;
     phoneExtension: string;
+    address: AddressInfo;
+    userId: number;
+    contactLinks: ContactLinkInfo[];
 
     constructor(data?: IOrganizationBusinessInfo) {
         if (data) {
@@ -20892,11 +21020,25 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         if (data) {
             this.name = data["name"];
             this.typeName = data["typeName"];
-            this.countryId = data["countryId"];
-            this.stateId = data["stateId"];
-            this.city = data["city"];
-            this.streetAddress = data["streetAddress"];
-            this.zip = data["zip"];
+            this.categories = data["categories"];
+            this.shortname = data["shortname"];
+            this.companyName = data["companyName"];
+            this.emailAddress1 = data["emailAddress1"];
+            this.emailAddress2 = data["emailAddress2"];
+            this.typeId = data["typeId"];
+            this.industry = data["industry"];
+            this.relationship = data["relationship"];
+            this.primaryFundingType = data["primaryFundingType"];
+            this.referralType = data["referralType"];
+            this.ticker = data["ticker"];
+            this.refID = data["refID"];
+            this.rating = data["rating"];
+            this.ucc = data["ucc"];
+            this.sizeFrom = data["sizeFrom"];
+            this.sizeTo = data["sizeTo"];
+            this.countriesServed = data["countriesServed"];
+            this.description = data["description"];
+            this.keywordTags = data["keywordTags"];
             this.ein = data["ein"];
             this.formedCountryId = data["formedCountryId"];
             this.formedStateId = data["formedStateId"];
@@ -20906,8 +21048,32 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.annualVolumesOnCards = data["annualVolumesOnCards"];
             this.productServicesSold = data["productServicesSold"];
             this.businessSicCode = data["businessSicCode"];
+            if (data["organizationAliases"] && data["organizationAliases"].constructor === Array) {
+                this.organizationAliases = [];
+                for (let item of data["organizationAliases"])
+                    this.organizationAliases.push(OrganizationAliasInfo.fromJS(item));
+            }
+            if (data["organizationPhones"] && data["organizationPhones"].constructor === Array) {
+                this.organizationPhones = [];
+                for (let item of data["organizationPhones"])
+                    this.organizationPhones.push(OrganizationPhoneInfo.fromJS(item));
+            }
+            if (data["organizationTeamContacts"] && data["organizationTeamContacts"].constructor === Array) {
+                this.organizationTeamContacts = [];
+                for (let item of data["organizationTeamContacts"])
+                    this.organizationTeamContacts.push(OrganizationTeamContactInfo.fromJS(item));
+            }
+            this.contactId = data["contactId"];
+            this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
+            this.address = data["address"] ? AddressInfo.fromJS(data["address"]) : <any>undefined;
+            this.userId = data["userId"];
+            if (data["contactLinks"] && data["contactLinks"].constructor === Array) {
+                this.contactLinks = [];
+                for (let item of data["contactLinks"])
+                    this.contactLinks.push(ContactLinkInfo.fromJS(item));
+            }
         }
     }
 
@@ -20921,11 +21087,25 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["typeName"] = this.typeName;
-        data["countryId"] = this.countryId;
-        data["stateId"] = this.stateId;
-        data["city"] = this.city;
-        data["streetAddress"] = this.streetAddress;
-        data["zip"] = this.zip;
+        data["categories"] = this.categories;
+        data["shortname"] = this.shortname;
+        data["companyName"] = this.companyName;
+        data["emailAddress1"] = this.emailAddress1;
+        data["emailAddress2"] = this.emailAddress2;
+        data["typeId"] = this.typeId;
+        data["industry"] = this.industry;
+        data["relationship"] = this.relationship;
+        data["primaryFundingType"] = this.primaryFundingType;
+        data["referralType"] = this.referralType;
+        data["ticker"] = this.ticker;
+        data["refID"] = this.refID;
+        data["rating"] = this.rating;
+        data["ucc"] = this.ucc;
+        data["sizeFrom"] = this.sizeFrom;
+        data["sizeTo"] = this.sizeTo;
+        data["countriesServed"] = this.countriesServed;
+        data["description"] = this.description;
+        data["keywordTags"] = this.keywordTags;
         data["ein"] = this.ein;
         data["formedCountryId"] = this.formedCountryId;
         data["formedStateId"] = this.formedStateId;
@@ -20935,8 +21115,32 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["annualVolumesOnCards"] = this.annualVolumesOnCards;
         data["productServicesSold"] = this.productServicesSold;
         data["businessSicCode"] = this.businessSicCode;
+        if (this.organizationAliases && this.organizationAliases.constructor === Array) {
+            data["organizationAliases"] = [];
+            for (let item of this.organizationAliases)
+                data["organizationAliases"].push(item.toJSON());
+        }
+        if (this.organizationPhones && this.organizationPhones.constructor === Array) {
+            data["organizationPhones"] = [];
+            for (let item of this.organizationPhones)
+                data["organizationPhones"].push(item.toJSON());
+        }
+        if (this.organizationTeamContacts && this.organizationTeamContacts.constructor === Array) {
+            data["organizationTeamContacts"] = [];
+            for (let item of this.organizationTeamContacts)
+                data["organizationTeamContacts"].push(item.toJSON());
+        }
+        data["contactId"] = this.contactId;
+        data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["userId"] = this.userId;
+        if (this.contactLinks && this.contactLinks.constructor === Array) {
+            data["contactLinks"] = [];
+            for (let item of this.contactLinks)
+                data["contactLinks"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -20944,11 +21148,25 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
 export interface IOrganizationBusinessInfo {
     name: string;
     typeName: string;
-    countryId: string;
-    stateId: string;
-    city: string;
-    streetAddress: string;
-    zip: string;
+    categories: string;
+    shortname: string;
+    companyName: string;
+    emailAddress1: string;
+    emailAddress2: string;
+    typeId: number;
+    industry: string;
+    relationship: string;
+    primaryFundingType: string;
+    referralType: string;
+    ticker: string;
+    refID: string;
+    rating: number;
+    ucc: number;
+    sizeFrom: number;
+    sizeTo: number;
+    countriesServed: string;
+    description: string;
+    keywordTags: string;
     ein: string;
     formedCountryId: string;
     formedStateId: string;
@@ -20958,8 +21176,243 @@ export interface IOrganizationBusinessInfo {
     annualVolumesOnCards: number;
     productServicesSold: number;
     businessSicCode: number;
+    organizationAliases: OrganizationAliasInfo[];
+    organizationPhones: OrganizationPhoneInfo[];
+    organizationTeamContacts: OrganizationTeamContactInfo[];
+    contactId: number;
+    emailAddress: string;
     phoneNumber: string;
     phoneExtension: string;
+    address: AddressInfo;
+    userId: number;
+    contactLinks: ContactLinkInfo[];
+}
+
+export class OrganizationAliasInfo implements IOrganizationAliasInfo {
+    alias: string;
+
+    constructor(data?: IOrganizationAliasInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.alias = data["alias"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationAliasInfo {
+        let result = new OrganizationAliasInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["alias"] = this.alias;
+        return data; 
+    }
+}
+
+export interface IOrganizationAliasInfo {
+    alias: string;
+}
+
+export class OrganizationPhoneInfo implements IOrganizationPhoneInfo {
+    phoneNumber: string;
+
+    constructor(data?: IOrganizationPhoneInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.phoneNumber = data["phoneNumber"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationPhoneInfo {
+        let result = new OrganizationPhoneInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["phoneNumber"] = this.phoneNumber;
+        return data; 
+    }
+}
+
+export interface IOrganizationPhoneInfo {
+    phoneNumber: string;
+}
+
+export class OrganizationTeamContactInfo implements IOrganizationTeamContactInfo {
+    prefix: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    title: string;
+    emailAddress: string;
+    phoneNumber: string;
+
+    constructor(data?: IOrganizationTeamContactInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.prefix = data["prefix"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
+            this.title = data["title"];
+            this.emailAddress = data["emailAddress"];
+            this.phoneNumber = data["phoneNumber"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationTeamContactInfo {
+        let result = new OrganizationTeamContactInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["prefix"] = this.prefix;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
+        data["title"] = this.title;
+        data["emailAddress"] = this.emailAddress;
+        data["phoneNumber"] = this.phoneNumber;
+        return data; 
+    }
+}
+
+export interface IOrganizationTeamContactInfo {
+    prefix: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    title: string;
+    emailAddress: string;
+    phoneNumber: string;
+}
+
+export class AddressInfo implements IAddressInfo {
+    streetAddress: string;
+    city: string;
+    stateId: string;
+    state: string;
+    zip: string;
+    countryId: string;
+    country: string;
+
+    constructor(data?: IAddressInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.stateId = data["stateId"];
+            this.state = data["state"];
+            this.zip = data["zip"];
+            this.countryId = data["countryId"];
+            this.country = data["country"];
+        }
+    }
+
+    static fromJS(data: any): AddressInfo {
+        let result = new AddressInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["stateId"] = this.stateId;
+        data["state"] = this.state;
+        data["zip"] = this.zip;
+        data["countryId"] = this.countryId;
+        data["country"] = this.country;
+        return data; 
+    }
+}
+
+export interface IAddressInfo {
+    streetAddress: string;
+    city: string;
+    stateId: string;
+    state: string;
+    zip: string;
+    countryId: string;
+    country: string;
+}
+
+export class ContactLinkInfo implements IContactLinkInfo {
+    linkType: string;
+    link: string;
+
+    constructor(data?: IContactLinkInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.linkType = data["linkType"];
+            this.link = data["link"];
+        }
+    }
+
+    static fromJS(data: any): ContactLinkInfo {
+        let result = new ContactLinkInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["linkType"] = this.linkType;
+        data["link"] = this.link;
+        return data; 
+    }
+}
+
+export interface IContactLinkInfo {
+    linkType: string;
+    link: string;
 }
 
 export class CreateContactBusinessInput implements ICreateContactBusinessInput {
@@ -25902,7 +26355,7 @@ export interface ISyncProgressOutput {
 
 export class SyncProgressDto implements ISyncProgressDto {
     accountName: string;
-    progressStatus: string;
+    syncStatusMessage: string;
     progressPercent: number;
     syncStatus: SyncProgressDtoSyncStatus;
 
@@ -25918,7 +26371,7 @@ export class SyncProgressDto implements ISyncProgressDto {
     init(data?: any) {
         if (data) {
             this.accountName = data["accountName"];
-            this.progressStatus = data["progressStatus"];
+            this.syncStatusMessage = data["syncStatusMessage"];
             this.progressPercent = data["progressPercent"];
             this.syncStatus = data["syncStatus"];
         }
@@ -25933,7 +26386,7 @@ export class SyncProgressDto implements ISyncProgressDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["accountName"] = this.accountName;
-        data["progressStatus"] = this.progressStatus;
+        data["syncStatusMessage"] = this.syncStatusMessage;
         data["progressPercent"] = this.progressPercent;
         data["syncStatus"] = this.syncStatus;
         return data; 
@@ -25942,7 +26395,7 @@ export class SyncProgressDto implements ISyncProgressDto {
 
 export interface ISyncProgressDto {
     accountName: string;
-    progressStatus: string;
+    syncStatusMessage: string;
     progressPercent: number;
     syncStatus: SyncProgressDtoSyncStatus;
 }
@@ -37372,6 +37825,11 @@ export enum InstanceType54 {
     Business = <any>"Business", 
 }
 
+export enum InstanceType55 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
 export enum IncomeStatisticsDateInterval {
     _1 = 1, 
     _2 = 2, 
@@ -37384,12 +37842,12 @@ export enum IncomeStatisticsDateInterval2 {
     _3 = 3, 
 }
 
-export enum InstanceType55 {
+export enum InstanceType56 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
 
-export enum InstanceType56 {
+export enum InstanceType57 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
@@ -37430,17 +37888,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType57 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
-}
-
 export enum InstanceType58 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
 
 export enum InstanceType59 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType60 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
