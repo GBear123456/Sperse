@@ -852,9 +852,14 @@
                         font-weight: 600;
                         line-height: 24px;
                         color: @generalColor;
-
+                        vertical-align: middle;
                         &[aria-sort='none'] {
                             color: @middleGrayColor;
+                        }
+                        .firstLine {
+                            text-transform: capitalize;
+                            line-height: 11px;
+                            font-weight: 300;
                         }
                     }
                 }
@@ -875,6 +880,49 @@
                     padding: 11px 20px;
                     &.editable {
                         cursor: cell;
+                    }
+                    &.dx-editor-cell {
+                        padding: 0px;
+                        line-height: initial;
+                        input {
+                            height:46px;
+                            display:inline-block;
+                            position:relative;
+                            background-color: #fbf3e4 !important;
+                        }
+                    }
+                    &.incomplete {
+                        color: #fe871a;
+                    }
+                    &.completed {
+                        color: #a6d7a9;
+                    }
+                    &.inflows {
+                        color: #4dcb5a;
+                    }
+                    &.outflows {
+                        color: #fe871a;
+                    }
+                }
+
+                &.forecastRow,
+                &.adjustmentRow {
+                    td {
+                        &:first-child {
+                            pointer-events: none;
+                            .dx-select-checkbox {
+                                display: none;
+                            }
+                        }
+                    }
+
+                    &.dx-selection td {
+                        background-color: initial;
+                        border: none;
+                    }
+                    &.dx-selection.dx-row-alt td{
+                        background-color: #f3f7fa;
+                        border: none;
                     }
                 }
             }
@@ -902,6 +950,10 @@
             .dx-column-lines > td {
                 border-right: 0;
                 border-left: 0;
+            }
+
+            .dx-datagrid-focus-overlay {
+                border: 2px solid #f9b83a !important;
             }
         }
     }
