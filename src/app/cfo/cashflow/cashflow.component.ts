@@ -1771,6 +1771,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** disable expanding and hide the plus button of the elements that has no children */
         if (e.area === 'row' && e.cell.path && e.cell.path.length !== e.component.getDataSource().getAreaFields('row').length) {
             if (!this.hasChildsByPath(e.cell.path)) {
+                this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', e.cell.path);
                 e.cellElement.addClass('emptyChildren');
                 e.cellElement.click(function (event) {
                     event.stopImmediatePropagation();
