@@ -3,17 +3,17 @@ import { Component, Input, Output, EventEmitter, Injector, OnInit, ViewChild, Ho
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
-import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput  } from '@shared/service-proxies/service-proxies';
+import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput } from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 import { MatDialog } from '@angular/material';
 
 import * as _ from 'underscore';
 
 @Component({
-  selector: 'categorization',
-  templateUrl: 'categorization.component.html',
-  styleUrls: ['categorization.component.less'],
-  providers: [ClassificationServiceProxy]
+    selector: 'categorization',
+    templateUrl: 'categorization.component.html',
+    styleUrls: ['categorization.component.less'],
+    providers: [ClassificationServiceProxy]
 })
 export class CategorizationComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
@@ -40,7 +40,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     set isValid(value: boolean) {
         setTimeout(() => {
             this.categoryList.instance.option(
-                'elementAttr', {invalid: !value});
+                'elementAttr', { invalid: !value });
         }, 0);
     }
 
@@ -63,7 +63,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     initDragAndDropEvents($event) {
         let dragEnterTarget;
-        $event.element.find('tr[aria-level="2"], tr[aria-level="3"]')
+        $event.element.find('tr[aria-level="1"], tr[aria-level="2"]')
             .off('dragenter').off('dragover').off('dragleave').off('drop')
             .on('dragenter', (e) => {
                 e.originalEvent.preventDefault();
@@ -89,7 +89,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
                 this.onTransactionDrop.emit({
                     categoryId: this.categoryList.instance
-                      .getKeyByRowIndex($(e.currentTarget).index())
+                        .getKeyByRowIndex($(e.currentTarget).index())
                 });
             });
     }
@@ -100,26 +100,19 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
                 let categories = [];
                 this.categorization = data;
-                if (data.types)
-                    _.mapObject(data.types, (item, key) => {
-                        categories.push({
-                            key: key,
-                            parent: 0,
-                            coAID: null,
-                            name: item.name
-                        });
-                    });
-                if (data.accountingTypes)
-                     _.mapObject(data.accountingTypes, (item, key) => {
+                if (data.accountingTypes) {
+                    _.mapObject(data.accountingTypes, (item, key) => {
                         categories.push({
                             key: key + item.typeId,
-                            parent: item.typeId,
+                            parent: 0,
                             coAID: null,
-                            name: item.name
+                            name: item.name,
+                            typeId: item.typeId
                         });
                     });
+                }
                 if (data.categories)
-                     _.mapObject(data.categories, (item, key) => {
+                    _.mapObject(data.categories, (item, key) => {
                         if (data.accountingTypes[item.accountingTypeId])
                             categories.push({
                                 key: key,
@@ -141,7 +134,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                     }, 0);
                 }
             }
-        );
+            );
     }
 
     onCategoryUpdated($event) {
@@ -150,9 +143,9 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             InstanceType[this.instanceType], this.instanceId,
             UpdateCategoryInput.fromJS({
                 id: $event.key,
-                coAID: $event.data.hasOwnProperty('coAID') ? 
+                coAID: $event.data.hasOwnProperty('coAID') ?
                     $event.data.coAID || undefined : category.coAID,
-                name: $event.data.hasOwnProperty('name') ? 
+                name: $event.data.hasOwnProperty('name') ?
                     $event.data.name || undefined : category.name
             })
         ).subscribe((id) => {
@@ -171,7 +164,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             CreateCategoryInput.fromJS({
                 accountingTypeId: hasParentCategory ? this.categorization
                     .categories[parentId].accountingTypeId : parseInt(parentId),
-                parentId: hasParentCategory ? parentId: null,
+                parentId: hasParentCategory ? parentId : null,
                 coAID: $event.data.coAID,
                 name: $event.data.name
             })
@@ -201,11 +194,11 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                     InstanceType[this.instanceType],
                     this.instanceId,
                     dialogData.categoryId, dialogData.deleteAllReferences, itemId)
-                        .subscribe((id) => {
-                            this.refreshCategories(false);
-                        }, (error) => {
-                            this.refreshCategories(false);
-                        });
+                    .subscribe((id) => {
+                        this.refreshCategories(false);
+                    }, (error) => {
+                        this.refreshCategories(false);
+                    });
         });
     }
 
@@ -213,19 +206,29 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         return val1.localeCompare(val2);
     }
 
-/*
-    onKeyDown($event) {
-        if ($event.jQueryEvent.keyCode == 13) {
-            $event.jQueryEvent.originalEvent.preventDefault();
-            $event.jQueryEvent.originalEvent.stopPropagation();
-
-            $event.component.saveEditData();
-            $event.component.closeEditCell();
-
-            $event.handled = true;
+    calculateSortValue(data) {
+        if (data.typeId) {
+            let prefix = '';
+            if (data.typeId == 'I')
+                prefix = (<any>this).sortOrder == 'asc' ? "aaa" : "zzz";
+            console.log(prefix + data.name);
+            return prefix + data.name;
         }
+        return data.name;
     }
-*/
+    /*
+        onKeyDown($event) {
+            if ($event.jQueryEvent.keyCode == 13) {
+                $event.jQueryEvent.originalEvent.preventDefault();
+                $event.jQueryEvent.originalEvent.stopPropagation();
+    
+                $event.component.saveEditData();
+                $event.component.closeEditCell();
+    
+                $event.handled = true;
+            }
+        }
+    */
 
     private _prevClickDate = new Date();
     onRowClick($event) {

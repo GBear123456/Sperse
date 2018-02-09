@@ -23,6 +23,6 @@
         <dxo-search-panel [visible]="true"></dxo-search-panel>
         <dxi-column [width]="45" [allowEditing]="false"></dxi-column>
         <dxi-column [allowSorting]="true" [sortIndex]="0" [width]="60" dataField="coAID" [caption]="'CoAID'"></dxi-column>
-        <dxi-column [allowSorting]="true" [sortIndex]="1" [sortingMethod]="sortItem" [sortOrder]="'asc'" dataField="name"></dxi-column>
+        <dxi-column [allowSorting]="true" [sortIndex]="1" [sortingMethod]="sortItem" [calculateSortValue]="calculateSortValue" [sortOrder]="'asc'" dataField="name"></dxi-column>
     </dx-tree-list>
 </div>

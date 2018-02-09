@@ -127,7 +127,7 @@
         }
 
         &[dropallowed="true"] {
-            tr[aria-level="2"], tr[aria-level="3"] {
+            tr[aria-level="1"], tr[aria-level="2"] {
                 td {
                     border: 1px dashed #dfdfdf;
 
@@ -202,7 +202,7 @@
                 }
 
                 tr.dx-data-row {
-                    &[aria-level="0"], &[aria-level="3"] {
+                    &[aria-level="2"] {
                         .dx-command-edit {
                             .dx-link-add {
                                 display: none !important;
@@ -210,7 +210,7 @@
                         }
                     }
 
-                    &[aria-level="0"], &[aria-level="1"] {
+                    &[aria-level="0"] {
                         .dx-command-edit {
                             .dx-link-delete, .dx-link-edit {
                                 display: none !important;
@@ -245,7 +245,7 @@
                         color: #424c56;
                     }
 
-                    &[aria-level="2"], &[aria-level="3"] {
+                    &[aria-level="1"], &[aria-level="2"] {
                         .dx-treelist-text-content {
                             font-weight: 300;
                         }
