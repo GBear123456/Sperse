@@ -42,7 +42,8 @@ import DataSource from 'devextreme/data/data_source';
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-
+    
+    noRefreshedAfterSync: boolean;
     items: any;
     defaultCreditTooltipVisible = false;
     defaultDebitTooltipVisible = false;
@@ -75,12 +76,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public adjustmentTotal: number = 0;
     public adjustmentStartingBalanceTotal: number = 0;
     public adjustmentStartingBalanceTotalCent: number = 0;
-
-    public headlineConfig = {
-        names: [this.l('Transactions')],
-        iconSrc: 'assets/common/icons/credit-card-icon.svg',
-        buttons: []
-    };
+    headlineConfig: any;
 
     private _categoriesShowed = true;
     public set categoriesShowed(value: boolean) {
@@ -95,6 +91,21 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return this._categoriesShowed;
     }
 
+    initHeadlineConfig() {
+        this.headlineConfig = {
+            names: [this.l('Transactions')],
+            iconSrc: 'assets/common/icons/credit-card-icon.svg',
+            buttons: [
+                {
+                    enabled: this.noRefreshedAfterSync,
+                    action: this.refreshDataGrid.bind(this),
+                    lable: this.l('Refresh'),
+                    icon: 'refresh',
+                    class: 'btn-default back-button'
+                }
+            ]
+        };
+    }
 
     initToolbarConfig() {
         this._appService.toolbarConfig = [
@@ -332,7 +343,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.dataGrid.instance.showColumnChooser();
     }
 
+    showRefreshButton() {
+        this.noRefreshedAfterSync = true;
+        this.initHeadlineConfig();
+    }
+
     refreshDataGrid() {
+        this.noRefreshedAfterSync = false;
+        this.initHeadlineConfig();
+
         this.dataGrid.instance.refresh();
     }
 
@@ -383,6 +402,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     ngOnInit(): void {
         super.ngOnInit();
+
+        this.initHeadlineConfig();
 
         this.dataSource = {
             store: {
@@ -640,8 +661,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return data;
     }
 
-    filterByCashflowCategory($event) {
-        let data = $event.selectedRowsData.pop();
+    filterByCashflowCategory(data) {
         if (data && data.key) {
             let field = {};
             if (!parseInt(data.key))

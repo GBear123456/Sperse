@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, EventEmitter, Output, OnDestroy } from '@angular/core';
+import {Component, OnInit, Injector, EventEmitter, Output, OnDestroy, ViewChild} from '@angular/core';
 import { FinancialInformationServiceProxy, SyncProgressOutput, InstanceType } from 'shared/service-proxies/service-proxies';
 import { AppConsts } from 'shared/AppConsts';
 import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
@@ -14,6 +14,8 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     @Output() completed = true;
     synchData: SyncProgressOutput;
     currentProgress: any;
+    isFailed = false;
+    Failed = <any>'Failed';
 
     statusCheckCompleted = false;
     tooltipVisible: boolean;
@@ -49,9 +51,13 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
             this.instanceId)
             .subscribe((result) => {
                 this.currentProgress = result.totalProgress.progressPercent;
+                
                 if (this.currentProgress != 100) {
                     this.completed = false;
                     this.synchData = result;
+                    if ( result.totalProgress.syncStatus == this.Failed) {
+                        this.isFailed = true;
+                    }
                     this.timeoutHandler = setTimeout(
                         () => this.getSynchProgress(), 10 * 1000
                     );
@@ -81,13 +87,15 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     calculateChartsScrolableHeight() {
         let contentHeight = $('.list-of-synch-accounts').height();
         if (contentHeight < 230) {
+            return 200;
+        } else if (contentHeight < 300) {
             return 230;
-        } else if (contentHeight < 350) {
-            return 350;
-        } else if (contentHeight < 450) {
-            return 450;
+        } else if (contentHeight < 400) {
+            return 330;
+        } else if (contentHeight < 500) {
+            return 430;
         } else {
-            return 600;
+            return 550;
         }
     }
 

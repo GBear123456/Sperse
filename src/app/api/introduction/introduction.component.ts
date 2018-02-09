@@ -12,7 +12,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 export class IntroductionComponent extends AppComponentBase implements OnInit {
     public headlineConfig = {
         names: [this.l("Interactive API Documentation")],
-        icon: 'magic-wand',
+        iconSrc: 'assets/common/icons/api-icon.svg',
         buttons: []
     };
 

@@ -11,10 +11,11 @@ export class SetupStepComponent extends AppComponentBase implements OnInit {
 
     @Input() SelectedStepIndex: number;
     public readonly SetupSteps = [
-        'BusinessEntity',
-        'Chart',
-        'FinancialAccounts',
-        'Rules'
+        'API_Platform',
+        'API_CRM',
+        'API_CFO',
+        'API_CreditReports',
+        'API_Tenant'
     ];
 
     constructor(injector: Injector) {
