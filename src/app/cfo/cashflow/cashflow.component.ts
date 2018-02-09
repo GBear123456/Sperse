@@ -587,15 +587,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     addHeaderExpandClickHandling() {
         window['onHeaderExpanderClick'] = function ($event) {
-            let rect = $event.target.getBoundingClientRect();
-            if (Math.abs($event.clientX - rect.x) < (rect.width * 0.1) &&
-                Math.abs($event.clientY - rect.y) < rect.height
-            ) $event.stopPropagation();
-            $($event.target).closest('tr').children().each(function () {
-                if ($(this).hasClass('dx-pivotgrid-expanded')) {
-                    $(this).find('div.head-cell-expand').toggleClass('closed');
+            let clickedElement = $($event.target);
+            if (clickedElement.closest('td').hasClass('dx-pivotgrid-expanded')) {
+                if (
+                    !clickedElement.hasClass('closed-head-cell') &&
+                    !clickedElement.hasClass('totals') &&
+                    /** year or quarter values*/
+                    !clickedElement.is('span')
+                ) {
+                    $event.stopPropagation();
                 }
-            });
+                $(clickedElement).closest('tr').children().each(function () {
+                    if ($(this).hasClass('dx-pivotgrid-expanded')) {
+                        $(this).find('div.head-cell-expand').toggleClass('closed');
+                    }
+                });
+            }
         };
     }
 
@@ -1197,7 +1204,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     repaintDataGrid() {
-        this.pivotGrid.instance.repaint();
+        this.pivotGrid.instance.updateDimensions();
     }
 
     refreshDataGridWithPreferences(options) {

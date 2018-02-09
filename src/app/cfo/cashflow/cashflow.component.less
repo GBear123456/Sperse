@@ -64,7 +64,9 @@
 
                         .head-cell-expand {
                             position: relative;
-
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
                             &:after {
                                 content: '';
                                 display: block;
@@ -72,14 +74,24 @@
                                 position: absolute;
                                 visibility: visible;
                                 left: -7px;
-                                top: -1px;
+                                top: 2px;
                                 width: 12px;
                                 height: 7px;
                             }
 
+                            .main-head-cell:hover {
+                                .totals {
+                                    text-decoration: underline;
+                                }
+                            }
+
                             &.closed {
                                 visibility: hidden;
-                                height: 5px;
+                                height: 10px;
+
+                                .main-head-cell {
+                                    display: none;
+                                }
 
                                 .closed-head-cell {
                                     display: block;
@@ -94,19 +106,19 @@
 
                     .closed-head-cell {
                         top: -2px;
-                        position: absolute;
                         line-height: 10px;
                         visibility: visible;
                         font-size: 10px;
                         color: @historicalTextColor;
                         font-weight: 400;
-                        left: 0;
-                        right: 0;
                         margin: 0 auto;
                         display: none;
-                        padding-left: 6px;
+                        padding: 0 6px;
                         overflow: hidden;
                         text-overflow: ellipsis;
+                        &:hover {
+                            text-decoration: underline;
+                        }
                     }
                 }
             }
@@ -200,7 +212,7 @@
                         }
 
                         .dx-expand-icon-container {
-                            visibility: hidden;
+                            display: none;
                         }
 
                         &.year {
