@@ -1,5 +1,5 @@
 <app-headline [config]="headlineConfig" *ngIf="!isFullscreenMode">
-    <synch-progress class="synch-progress" (onComplete)="refreshDataGrid()"></synch-progress>
+    <synch-progress class="synch-progress" (onComplete)="showRefreshButton()"></synch-progress>
 </app-headline>
 
 <cashflow-operations
@@ -52,46 +52,98 @@
                       [rowAlternationEnabled]="true"
                       [dataSource]="statsDetailResult"
                       (onDataErrorOccurred)="httpConfig.handleError($event.error)"
-                      (onContentReady)="onDetailsReady($event)"
                       (onCellPrepared)="onDetailsCellPrepared($event)"
-                      (onCellClick)="onDetailsCellClick($event)">
+                      (onCellClick)="onDetailsCellClick($event)"
+                      (onEditingStart)="onDetailsEditingStart($event)"
+                      (onRowPrepared)="onDetailsRowPrepared($event)"
+                      (onRowUpdating)="onDetailsRowUpdating($event)">
+
+            <dxo-editing mode="cell" [allowUpdating]="true"></dxo-editing>
+
             <dxo-header-filter [visible]="true"></dxo-header-filter>
             <dxo-selection selectAllMode="page"
                            showCheckBoxesMode="always"
                            mode="multiple">
             </dxo-selection>
-            <dxi-column
-                        dataField="date"
+            <dxi-column dataField="forecastDate"
+                        dataType="date"
                         width="130"
                         cellTemplate="dateCell"
-                        [alignment]="left">
+                        headerCellTemplate="twoRowsHeaderCellTemplate"
+                        alignment="left"
+                        [caption]="this.l('DetailsHeaders_ForecastDate')">
+                <dxi-validation-rule type="required"></dxi-validation-rule>
+                <dxi-validation-rule type="custom" [validationCallback]="validateForecastDate"></dxi-validation-rule>
             </dxi-column>
-            <dxi-column dataField="description">
+            <dxi-column
+                        dataField="date"
+                        dataType="date"
+                        width="130"
+                        cellTemplate="dateCell"
+                        headerCellTemplate="twoRowsHeaderCellTemplate"
+                        alignment="left"
+                        [caption]="this.l('DetailsHeaders_ActualDate')"
+                        [allowEditing]="false">
+            </dxi-column>
+            <dxi-column
+                        dataField="status"
+                        width="130"
+                        headerCellTemplate="twoRowsHeaderCellTemplate"
+                        alignment="left"
+                        [caption]="this.l('DetailsHeaders_CurrentStatus')"
+                        [allowEditing]="false">
+            </dxi-column>
+            <dxi-column dataField="description" width="300" [caption]="this.l('DetailsHeaders_Description')">
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
             </dxi-column>
             <dxi-column dataField="debit"
+                        [caption]="this.l('DetailsHeaders_Debit')"
                         width="140"
                         [format]="customCurrency"
                         [allowSorting]="false"
                         [allowFiltering]="false"
-                        [alignment]="'right'">
+                        alignment="'right'">
+                <dxi-validation-rule type="numeric"></dxi-validation-rule>
             </dxi-column>
             <dxi-column dataField="credit"
+                        [caption]="this.l('DetailsHeaders_Credit')"
                         width="140"
                         [format]="customCurrency"
                         [allowSorting]="false"
                         [allowFiltering]="false"
-                        [alignment]="'right'">
+                        alignment="'right'">
+                <dxi-validation-rule type="numeric"></dxi-validation-rule>
             </dxi-column>
-            <dxi-column caption="Comments"
+            <dxi-column [caption]="this.l('DetailsHeaders_Account')"
+                        dataField="accountNumber"
+                        width="120"
+                        [allowSorting]="false"
+                        [allowFiltering]="false"
+                        [allowEditing]="false">
+            </dxi-column>
+            <dxi-column [caption]="this.l('DetailsHeaders_Type')"
+                        dataField="cashflowTypeId"
+                        width="120"
+                        [allowSorting]="false"
+                        [allowFiltering]="false"
+                        [allowEditing]="false"
+                        cellTemplate="typeCell">
+            </dxi-column>
+            <dxi-column [caption]="this.l('DetailsHeaders_Comments')"
                         dataField="comment"
                         [allowSorting]="false"
-                        [allowFiltering]="false">
+                        [allowFiltering]="false"
+                        [allowEditing]="false">
             </dxi-column>
+
             <dxo-load-panel [enabled]="true"></dxo-load-panel>
             <dxo-scrolling mode="virtual"></dxo-scrolling>
-            <div *dxTemplate="let cellData of 'dateCell'">
-                {{cellData.value | date: 'MM/dd/yyyy'}}
+
+            <div *dxTemplate="let cellData of 'dateCell'">{{cellData.value | date: 'MM/dd/yyyy'}}</div>
+            <div *dxTemplate="let cellData of 'typeCell'">{{this.cashflowTypes[cellData.value]}}</div>
+            <div *dxTemplate="let headerCellData of 'twoRowsHeaderCellTemplate'">
+                <div class="firstLine">{{headerCellData.column.caption.slice(0, headerCellData.column.caption.indexOf(' '))}}</div>
+                <div>{{headerCellData.column.caption.slice(headerCellData.column.caption.indexOf(' ') + 1)}}</div>
             </div>
         </dx-data-grid>
     </div>

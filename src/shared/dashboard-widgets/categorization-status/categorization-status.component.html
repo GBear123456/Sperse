@@ -25,7 +25,7 @@
                     <span class="category-type">{{l('Classified_Transactions')}}</span>
                     <span class="synch-status count"><a (click)="filterTransactions(true)">{{categorySynchData?.classifiedTransactionCount | number : '1.0-2'}}</a></span>
                     <span class="synch-status percent">{{categorySynchData?.classifiedTransactionPercent | number : '1.0-0'}}%</span>
-                    <a (click)="reset();" class="small-button btn-layout">
+                    <a (click)="openDialog();" class="small-button btn-layout">
                         {{l('Reset_Сlassifications')}}
                     </a>
                 </li>

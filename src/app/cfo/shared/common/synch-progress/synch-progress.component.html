@@ -1,6 +1,6 @@
 <div *ngIf="!completed && synchData" class="synch-progress-wrapper">
     <div id="synchProgressContainer" class="synch-container" (mouseenter)="toggleTooltip()">
-        <dx-load-indicator class="load-indicator"></dx-load-indicator>
+        <dx-load-indicator class="load-indicator" [class.error]="isFailed"></dx-load-indicator>
         <h3>{{l('Sync_status')}}</h3>
         <dx-progress-bar #progressBar
                          id="progress-bar-status"
@@ -12,7 +12,6 @@
                          [value]="currentProgress">
         </dx-progress-bar>
     </div>
-
 
     <dx-tooltip target="#synchProgressContainer"
                 [(visible)]="tooltipVisible">
@@ -42,7 +41,9 @@
                         </div>
                         <div class="col-8">
                             <ul class="list-of-synch-accounts">
-                                <li *ngFor="let acc of synchData.accountProgresses" [class.completed]="acc.progressStatus =='Completed'" class="clearfix">
+                                <li *ngFor="let acc of synchData.accountProgresses"
+                                    [class]="'clearfix ' + acc.syncStatus | lowercase"
+                                    [attr.data-errormsg]="acc.syncStatusMessage">
                                     <span class="name">{{ acc.accountName }}:</span>
                                     <span class="percent">{{acc.progressPercent | number : '1.0-0'}}%</span>
                                 </li>

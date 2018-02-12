@@ -4,24 +4,30 @@
         <span class="close" (click)="close.emit(null)"></span>
         <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection($event)">{{'Clear'}}</span>
     </h3>
+    <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
     <dx-tree-list width="{{width}}"
                   height="{{height}}"
                   keyExpr="key"
                   parentIdExpr="parent"
                   [hoverStateEnabled]="true"
                   [(dataSource)]="categories"
-                  [editing]="{allowAdding: true, allowUpdating: true, allowDeleting: true}"
                   [selection]="{allowSelectAll: false, mode: 'single'}"
-                  [rootValue]="0"
+                  [rootValue]="'root'"
                   [autoExpandAll]="autoExpand"
+                  (onCellPrepared)="onCellPrepared($event)"
                   (onRowClick)="onRowClick($event)"
                   (onContentReady)="initDragAndDropEvents($event)"
                   (onSelectionChanged)="onSelectionChanged.emit($event)"
                   (onRowUpdated)="onCategoryUpdated($event)"
                   (onRowInserted)="onCategoryInserted($event)"
                   (onRowRemoving)="onCategoryRemoving($event)">
+        <dxo-editing mode="row"
+                     [allowUpdating]="true"
+                     [allowDeleting]="true"
+                     [allowAdding]="true">
+        </dxo-editing>
         <dxi-column [width]="45" [allowEditing]="false"></dxi-column>
-        <dxi-column [allowSorting]="true" [sortIndex]="0" [width]="60" dataField="coAID" [caption]="'coAID'"></dxi-column>
-        <dxi-column [allowSorting]="true" [sortIndex]="1" [sortingMethod]="sortItem" [sortOrder]="'asc'" dataField="name"></dxi-column>
+        <dxi-column [allowSorting]="true" [sortIndex]="0" [width]="60" dataField="coAID" [caption]="'ID'"></dxi-column>
+        <dxi-column [allowSorting]="true" [sortIndex]="1" [sortingMethod]="sortItem" [calculateSortValue]="calculateSortValue" [sortOrder]="'asc'" dataField="name"></dxi-column>
     </dx-tree-list>
 </div>

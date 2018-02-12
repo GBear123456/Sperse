@@ -33,26 +33,43 @@
                 padding-bottom: 56px;
             }
 
-            &::before {
-                display: inline-block;
-                content: '';
-                position: absolute;
-                left: -30px;
-                height: 100%;
-                width: 10px;
+            &.current {
+                color: #000;
+                font-weight: 600;
             }
 
-            &::after {
-                content: '';
-                display: inline-block;
+            .img {
+                background-repeat: no-repeat;
+                width: 45px;
+                height: 45px;
+                margin: 0;
+                padding: 0;
+                background-position: center;
                 position: absolute;
-                top: 0;
-                left: -37px;
-                width: 17px;
-                height: 17px;
-                border: 2px solid #00aeef;
-                border-radius: 50%;
-                background-color: #00aeef;
+                left: -52px;
+                top: -17px;
+                background-color: white;
+                background-position: center;
+            }
+
+            .img-API_Platform {
+                background-image: url("../../../../assets/common/icons/arrow-two-side.svg");
+            }
+
+            .img-API_CRM {
+                background-image: url("../../../../assets/common/icons/people.svg");
+            }
+
+            .img-API_CFO {
+                background-image: url("../../../../assets/common/icons/statistics.svg");
+            }
+
+            .img-API_CreditReports {
+                background-image: url("../../../../assets/common/icons/document.svg");
+            }
+
+            .img-API_Tenant {
+                background-image: url("../../../../assets/common/icons/person.svg");
             }
         }
     }
