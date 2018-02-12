@@ -7,7 +7,7 @@ import { DxTreeListComponent, DxDataGridComponent, DxTreeViewComponent } from 'd
 import {
     CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto, GetTransactionCommonDetailsInput,
     CreateCategoryInput, UpdateCategoryInput,
-    CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput, 
+    CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
     CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType, TransactionTypesAndCategoriesDto, TransactionAttributeDto } from '@shared/service-proxies/service-proxies';
 
@@ -42,8 +42,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     categorization: any;
     attributesAndKeywords: any = [];
     keyAttributeValues: any = [];
-    descriptorList: string = [];
-    
+    descriptorList: Array<string> = [];
     private transactionAttributeTypes: any;
 
     transactionTypesAndCategoriesData: TransactionTypesAndCategoriesDto;
@@ -77,7 +76,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
         _transactionsServiceProxy.getTransactionAttributeTypes(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
             let types = [];
-            
+
             this.transactionAttributeTypes = data.transactionAttributeTypes;
             _.mapObject(data.transactionAttributeTypes, (val, key) => {
                 types.push({
@@ -106,7 +105,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                                 key: i,
                                 name: val
                             });
-                        })
+                        });
                     });
                 }
             );
@@ -167,7 +166,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 attributeTypeId: v.typeId,
                 conditionTypeId: v.value ? ConditionAttributeDtoConditionTypeId.Equal : ConditionAttributeDtoConditionTypeId.Exist,
                 conditionValue: v.value
-            }
+            };
         }).filter((attr) => attr.attributeTypeId == 'DS' || attr.attributeTypeId == 'PR');
     }
 
@@ -198,13 +197,13 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     updateDataHandler(error) {
-        if (error) 
+        if (error)
             this.notify.error(error);
         else {
             this.notify.info(this.l('SavedSuccessfully'));
             this.data.refershParent && this.data.refershParent();
             this.close(true);
-        }            
+        }
     }
 
     ngOnInit() {
@@ -217,12 +216,12 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             class: 'primary',
             action: () => {
                 if (this.validate()) {
-                    if (this.data.id) 
+                    if (this.data.id)
                         this._classificationServiceProxy.editRule(
-                            InstanceType[this.instanceType], this.instanceId, 
+                            InstanceType[this.instanceType], this.instanceId,
                             EditRuleDto.fromJS(this.getDataObject()))
                         .subscribe(this.updateDataHandler.bind(this));
-                    else 
+                    else
                         this._classificationServiceProxy.createRule(
                             InstanceType[this.instanceType],
                             this.instanceId,
@@ -275,7 +274,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     getAtributesAndKeywords() {
-        var array: any[] =  this.attributes.concat(this.keywords.map((item) => {
+        let array: any[] =  this.attributes.concat(this.keywords.map((item) => {
             return {
                 attributeTypeId: 'keyword',
                 conditionTypeId: ConditionAttributeDtoConditionTypeId.Equal,
@@ -295,7 +294,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
         return attributes;
     }
-    
+
     onBankChanged($event) {
         if (!this.banks) return;
 
@@ -360,9 +359,9 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 .map((v) => v.categories);
             categories = _.uniq(_.flatten(categories));
             setTimeout(() => this.transactionCategories = this.transactionTypesAndCategoriesData.categories.filter((c) => categories.some(x => x == c.id)), 0);
-        }
-        else
+        } else {
             this.transactionCategories = this.transactionTypesAndCategoriesData.categories;
+        }
 
         this.syncTreeViewSelection(e);
     }
@@ -372,7 +371,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     syncTreeViewSelection(e) {
-        var component = (e && e.component) || (this.transactionTypesList && this.transactionTypesList.instance);
+        let component = (e && e.component) || (this.transactionTypesList && this.transactionTypesList.instance);
 
         if (!component) return;
 
@@ -387,16 +386,16 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     addAttributeRow() {
         this.attributeList.instance.addRow();
-    }   
+    }
 
     onAttributeRowPrepared($event) {
-        if ($event.cells[0].value == "keyword")
+        if ($event.cells[0].value == 'keyword')
             setTimeout(() => {
                 $event.cells[1].cellElement.hide();
                 $event.cells[2].cellElement.attr('colspan', '2');
             }, 0);
-        
-        if ($event.cells[1].value == "Exist" && $event.cells[0].value != "keyword")
+
+        if ($event.cells[1].value == 'Exist' && $event.cells[0].value != 'keyword')
             setTimeout(() => {
                 $event.cells[2].value = '-';
                 $event.cells[2].cellElement.hide();
@@ -424,13 +423,13 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             return {
                 caption: 'Keyword #' + i,
                 keyword: item['conditionValue']
-            };        
+            };
         });
     }
 
     setCellValue(newData, value) {
         this['defaultSetCellValue'](newData, value);
-    }      
+    }
 
     onDescriptorChanged($event) {
         if (!this.data.title && $event.value) {
@@ -452,7 +451,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onEditorPreparing ($event) {
-        if ($event.dataField == "conditionValue")
+        if ($event.dataField == 'conditionValue')
             $event.editorOptions.placeholder = 'Enter Value';
     }
 
