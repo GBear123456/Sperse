@@ -42,7 +42,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     categorization: any;
     attributesAndKeywords: any = [];
     keyAttributeValues: any = [];
-    descriptorList: string = [];
+    descriptorList: any = [];
     
     private transactionAttributeTypes: any;
 

@@ -50,6 +50,70 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     categories: any;
     categorization: any;
 
+    toolbarConfig = [
+            {
+                location: 'before', items: [
+                    { 
+                        name: 'find', 
+                        action: Function() 
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    { name: 'sort', action: Function() },
+                    { 
+                      name: 'expandTree', 
+                      widget: 'dxDropDownMenu',
+                      options: {
+                          hint: this.l('Expand'),
+                          items: [{
+                              action: () => {                                  
+                                  _.mapObject(this.categorization.accountingTypes, (item, key) => {                                  
+                                      this.categoryList.instance.expandRow(key + item.typeId);
+                                  });
+                              },
+                              text: this.l('Expand 1st level')
+                          }, {
+                              action: () => {
+                                  _.mapObject(this.categorization.categories, (item, key) => {
+                                      if (!item.parentId)
+                                          this.categoryList.instance.expandRow(key);
+                                  });
+                              },
+                              text: this.l('Expand 2st level')
+                          }, {
+                              action: () => {
+                                  _.mapObject(this.categorization.categories, (item, key) => {
+                                      if (!item.parentId)
+                                          this.categoryList.instance.expandRow(key);
+                                  });
+                                  _.mapObject(this.categorization.accountingTypes, (item, key) => {                                  
+                                      this.categoryList.instance.expandRow(key + item.typeId);
+                                  });
+                                  
+                              },
+                              text: this.l('Expand all')
+                          }, {
+                              action: () => {
+                                  _.mapObject(this.categorization.categories, (item, key) => {
+                                      if (!item.parentId)
+                                          this.categoryList.instance.collapseRow(key);
+                                  });
+                                  _.mapObject(this.categorization.accountingTypes, (item, key) => {                                  
+                                      this.categoryList.instance.collapseRow(key + item.typeId);
+                                  });
+                              },
+                              text: this.l('Collapse all'),
+                          }]
+                      }
+
+                    },
+                    { name: 'follow', action: Function() }
+                ]
+            }
+    ]
+
     constructor(
         injector: Injector,
         public dialog: MatDialog,
@@ -106,7 +170,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                     _.mapObject(data.accountingTypes, (item, key) => {
                         categories.push({
                             key: key + item.typeId,
-                            parent: 0,
+                            parent: 'root',
                             coAID: null,
                             name: item.name,
                             typeId: item.typeId
@@ -115,7 +179,8 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 }
                 if (data.categories)
                     _.mapObject(data.categories, (item, key) => {
-                        if (data.accountingTypes[item.accountingTypeId])
+                        if (data.accountingTypes[item.accountingTypeId] && 
+                          (!item.parentId || data.categories[item.parentId]))
                             categories.push({
                                 key: key,
                                 parent: item.parentId || (item.accountingTypeId +
@@ -129,7 +194,6 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 if (this.categoryId) {
                     this.categoryList.instance.focus();
                     let category = data.categories[this.categoryId];
-                    this.categoryList.instance.expandRow(data.accountingTypes[category.accountingTypeId].typeId);
                     this.categoryList.instance.expandRow(category.accountingTypeId + data.accountingTypes[category.accountingTypeId].typeId);
                     setTimeout(() => {
                         this.categoryList.instance.selectRows([this.categoryId], true);
