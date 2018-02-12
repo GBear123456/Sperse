@@ -138,10 +138,11 @@ export class LoginService {
         if (authenticateResult.shouldResetPassword) {
             //Password reset
 
+            let tenantId = authenticateResult.detectedTenancies[0].id;
             this._router.navigate(['account/reset-password'], {
                 queryParams: {
                     userId: authenticateResult.userId,
-                    tenantId: abp.session.tenantId,
+                    tenantId: tenantId,
                     resetCode: authenticateResult.passwordResetCode
                 }
             });
