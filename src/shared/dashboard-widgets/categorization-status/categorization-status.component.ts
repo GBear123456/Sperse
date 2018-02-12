@@ -2,7 +2,8 @@ import { Component, Injector, OnInit } from '@angular/core';
 import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
 import { DashboardServiceProxy, ClassificationServiceProxy, InstanceType, AutoClassifyDto, ResetClassificationDto } from 'shared/service-proxies/service-proxies';
 import { Router } from '@angular/router';
-import { AppConsts } from "@shared/AppConsts";
+import {MatDialog} from '@angular/material';
+import {ChooseResetRulesComponent} from './choose-reset-rules/choose-reset-rules.component';
 
 @Component({
     selector: 'app-categorization-status',
@@ -13,20 +14,18 @@ import { AppConsts } from "@shared/AppConsts";
 export class CategorizationStatusComponent extends CFOComponentBase implements OnInit {
     categorySynchData: any;
     private autoClassifyData = new AutoClassifyDto();
-    private resetRules = new ResetClassificationDto();
+    resetRules = new ResetClassificationDto();
     constructor(
         injector: Injector,
         private _dashboardService: DashboardServiceProxy,
         private _classificationService: ClassificationServiceProxy,
+        public dialog: MatDialog,
         private _router: Router
     ) {
         super(injector);
     }
 
     ngOnInit() {
-        this.resetRules.removeRules = true;
-        this.resetRules.removeForecasts = true;
-        this.resetRules.removeCategoryTree = true; // todo: temporarily, modal window will be added with the possibility to select the rule, this will be removed
         this.getCategorizationStatus();
     }
 
@@ -56,6 +55,21 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
                 this.notify.info('Reset process has ended');
                 return result;
             });
+    }
+
+    openDialog(): void {
+        let dialogRef = this.dialog.open(ChooseResetRulesComponent, {
+            width: '450px'
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            console.log('From component');
+            console.log(result);
+            if (result) {
+                this.resetRules = result;
+                this.reset();
+            }
+        });
     }
 
     filterTransactions(classified: boolean) {

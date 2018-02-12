@@ -41,6 +41,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     conditionTypes: any;
     categorization: any;
     attributesAndKeywords: any = [];
+    keyAttributeValues: any = [];
+    descriptorList: string = [];
     
     private transactionAttributeTypes: any;
 
@@ -90,17 +92,34 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 id: 'keyword',
                 name: 'Keyword'
             });
+
+            _classificationServiceProxy.getKeyAttributeValues(
+                InstanceType[this.instanceType], this.instanceId, this.data.transactionIds)
+                .subscribe((attrValues) => {
+                    attrValues.forEach((attrValue) => {
+                        this.keyAttributeValues.push({
+                            key: attrValue.attributeTypeId,
+                            name: _.findWhere(this.attributeTypes, {id: attrValue.attributeTypeId}).name
+                        });
+                        attrValue.attributeValues.forEach((val, i) => {
+                            this.keyAttributeValues.push({
+                                key: i,
+                                name: val
+                            });
+                        })
+                    });
+                }
+            );
         });
 
         _cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
             this.banks = data.banks;
-            if (this.bankId)
-                this.onBankChanged({ value: this.bankId });
         });
 
         if (this.data.id)
             _classificationServiceProxy.getRuleForEdit(InstanceType[this.instanceType], this.instanceId, this.data.id).subscribe((rule) => {
-                this.descriptor = rule.transactionDescriptorAttributeTypeId || rule.transactionDescriptor;
+                if (this.descriptor = rule.transactionDescriptorAttributeTypeId || rule.transactionDescriptor)
+                    this.onDescriptorChanged({value: this.descriptor});
                 this.data.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
                 this.data.title = rule.name;
                 if (rule.condition) {
@@ -120,15 +139,11 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             _classificationServiceProxy.getTransactionCommonDetails(InstanceType[this.instanceType], this.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data))
                 .subscribe((data) => {
                     this.bankId = data.bankId;
-                    //this.accountId = data.bankAccountId;
-                    //if (data.amountFormat)
-                    //    this.amountFormat = ConditionDtoCashFlowAmountFormat[data.amountFormat.toString()];
-                    this.descriptor = data.standardDescriptor;
+                    if (this.descriptor = data.standardDescriptor)
+                        this.data.title = this.descriptor;
                     this.keywords = this.getKeywordsFromString(data.descriptionPhrases.join(','));
                     this.attributes = this.getAttributesFromCommonDetails(data.attributes);
                     this.attributesAndKeywords = this.getAtributesAndKeywords();
-                    //this.selectedTransactionCategory = data.transactionCategoryId;
-                    //this.selectedTransactionTypes = data.transactionTypeId ? [data.transactionTypeId]: [];
                     this.showOverwriteWarning = data.sourceTransactionsAreMatchingExistingRules;
                 });
 
@@ -187,7 +202,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             this.notify.error(error);
         else {
             this.notify.info(this.l('SavedSuccessfully'));
-            this.data.refershParent();
+            this.data.refershParent && this.data.refershParent();
             this.close(true);
         }            
     }
@@ -231,13 +246,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                                 standardDescriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
                                 descriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
                             })
-                        ).subscribe((error) => {
-                            if (!error) {
-                                this.notify.info(this.l('SavedSuccessfully'));
-                                this.data.refershParent();
-                                this.close(true);
-                            }
-                        });
+                        ).subscribe(this.updateDataHandler.bind(this));
                     else
                         this.close(true);
                 }
@@ -424,8 +433,10 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }      
 
     onDescriptorChanged($event) {
-        if (!this.data.title && $event.value)
-            this.data.title = $event.value;
+        if (!this.data.title && $event.value) {
+            let attrType = this.transactionAttributeTypes[$event.value];
+            this.data.title = attrType && attrType.name || $event.value;
+        }
     }
 
     onAttributeInitNewRow($event) {
@@ -433,7 +444,16 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         $event.data.conditionTypeId = 'Equal';
         this.attributeList.instance
             .option('elementAttr', { invalid: false });
-        $event.data.id = this.attributesAndKeywords.length + 1;
+        $event.data.id = this.attributesAndKeywords.length;
+    }
+
+    customizeAttributeValue($event) {
+        return $event.value;
+    }
+
+    onEditorPreparing ($event) {
+        if ($event.dataField == "conditionValue")
+            $event.editorOptions.placeholder = 'Enter Value';
     }
 
     onCustomItemCreating($event) {

@@ -58,7 +58,8 @@ import {
     DxTreeListModule,
     DxTreeViewModule,
     DxProgressBarModule,
-    DxTabsModule
+    DxTabsModule,
+    DxTagBoxModule
 } from 'devextreme-angular';
 import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widgets.module';
 
@@ -90,6 +91,7 @@ import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widget
         DxProgressBarModule,
         DxRadioGroupModule,
         DxTabsModule,
+        DxTagBoxModule,
         ModalModule.forRoot(),
         DxChartModule,
         MatTabsModule,
