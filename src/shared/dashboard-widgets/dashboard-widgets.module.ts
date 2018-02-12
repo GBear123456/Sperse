@@ -12,18 +12,23 @@ import {RouterModule} from '@angular/router';
 
 import {
     DxSelectBoxModule,
+    DxCheckBoxModule,
     DxTooltipModule,
     DxChartModule
 } from 'devextreme-angular';
+import { MatDialogModule } from '@angular/material';
+import {ChooseResetRulesComponent} from './categorization-status/choose-reset-rules/choose-reset-rules.component';
 
 @NgModule({
     imports: [
         CommonModule,
         RoundProgressModule,
         DxSelectBoxModule,
+        DxCheckBoxModule,
         DxTooltipModule,
         DxChartModule,
-        RouterModule
+        RouterModule,
+        MatDialogModule
     ],
     declarations: [
         AccountsComponent,
@@ -31,7 +36,11 @@ import {
         AccountsSynchStatusComponent,
         TotalsByPeriodComponent,
         TrendByPeriodComponent,
-        DashboardNoDataComponent
+        DashboardNoDataComponent,
+        ChooseResetRulesComponent
+    ],
+    entryComponents: [
+        ChooseResetRulesComponent
     ],
     exports: [
         AccountsComponent,
@@ -39,7 +48,8 @@ import {
         AccountsSynchStatusComponent,
         TotalsByPeriodComponent,
         TrendByPeriodComponent,
-        DashboardNoDataComponent
+        DashboardNoDataComponent,
+        ChooseResetRulesComponent
     ]
 })
 export class DashboardWidgetsModule {

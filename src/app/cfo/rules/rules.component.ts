@@ -143,7 +143,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
             panelClass: 'slider', data: _.extend(data, {
                 instanceId: this.instanceId,
                 instanceType: this.instanceType,
-                refershParent: this.ngOnInit.bind(this)
+                refershParent: this.refreshList.bind(this)
             })
         }).afterClosed().subscribe(result => { });
     }

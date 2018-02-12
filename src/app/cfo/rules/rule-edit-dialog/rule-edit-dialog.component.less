@@ -225,6 +225,10 @@
                     font-weight: 400;
                     border-bottom: none !important;
                 }
+                
+                tr:hover td.dx-command-edit a.dx-link {
+                    display: inline-block;
+                }
 
                 td.dx-command-edit {
                     text-overflow: unset;
@@ -232,8 +236,8 @@
 
                     a.dx-link {
                         width: 25px;
-                        display: inline-block;
-                        color: transparent !important;
+                        display: none;
+                        color: transparent !important;                         
 
                         &.dx-link-add {
                             background: url('../../../../assets/common/icons/add.svg') no-repeat center;
@@ -348,13 +352,13 @@
                         color: #424c56;
                     }
 
-                    .dx-data-row:not(:first-child) td:first-child {
+                    .dx-data-row:not(:nth-last-child(2)) td:first-child {
                         &:before {
                             content: 'and';
                             position: absolute;
                             color: #dfdfdf;
                             font-size: 10px;
-                            left: 4px;
+                            left: -18px;
                             margin-top: 3px;
                         }
                     }
@@ -381,6 +385,12 @@
 
                         .dx-datagrid-content {
                             padding: 10px 24px;
+                            .dx-datagrid-table {
+                                transform: rotate(180deg);
+                                tr {
+                                    transform: rotate(180deg);
+                                }
+                            }
 
                             .dx-datagrid-focus-overlay {
                                 height: 35px !important;
