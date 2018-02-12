@@ -9,7 +9,9 @@ import { CommonModule } from '@shared/common/common.module';
 
 import { MatProgressBarModule } from '@angular/material';
 
-import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule, DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule } from 'devextreme-angular';
+import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule, 
+    DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
+    DxSelectBoxModule } from 'devextreme-angular';
 
 import { ContactInfoPanelComponent } from './contact-info-panel/contact-info-panel.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
@@ -28,6 +30,7 @@ import { AppNavigationService } from '@app/shared/layout/nav/app-navigation.serv
 import { DataTableModule } from 'primeng/primeng';
 import { PaginatorModule } from 'primeng/primeng';
 import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
+import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box/inplace-select-box.component';
 
 @NgModule({
     imports: [
@@ -50,7 +53,8 @@ import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation
         DxTextBoxModule,
         DxValidationGroupModule, 
         DxValidatorModule,
-        DxiValidationRuleModule
+        DxiValidationRuleModule,
+        DxSelectBoxModule
     ],
     declarations: [
         TimeZoneComboComponent,
@@ -61,7 +65,8 @@ import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation
         ToolBarComponent,
         HeadLineComponent,
         ContactInfoPanelComponent,
-        InplaceEditComponent
+        InplaceEditComponent,
+        InplaceSelectBoxComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -72,7 +77,8 @@ import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation
         HeadLineComponent,
         ToolBarComponent,
         ContactInfoPanelComponent,
-        InplaceEditComponent
+        InplaceEditComponent,
+        InplaceSelectBoxComponent
     ],
     providers: [
         DateTimeService,

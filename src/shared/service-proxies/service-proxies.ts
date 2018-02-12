@@ -9248,6 +9248,52 @@ export class OrganizationContactServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateOrganizationInfo(input: UpdateOrganizationInfoInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/UpdateOrganizationInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdateOrganizationInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateOrganizationInfo(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateOrganizationInfo(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getContactInfoByUser(userId: number): Observable<ContactInfoBaseDto> {
@@ -9295,6 +9341,68 @@ export class OrganizationContactServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<ContactInfoBaseDto>(<any>null);
+    }
+}
+
+@Injectable()
+export class OrganizationTypeServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getOrganizationTypes(): Observable<OrganizationTypeDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrganizationType/GetOrganizationTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetOrganizationTypes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetOrganizationTypes(response_);
+                } catch (e) {
+                    return <Observable<OrganizationTypeDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<OrganizationTypeDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetOrganizationTypes(response: Response): Observable<OrganizationTypeDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(OrganizationTypeDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<OrganizationTypeDto[]>(<any>null);
     }
 }
 
@@ -21495,11 +21603,25 @@ export interface IContactBusinessInfo {
 export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     name: string;
     typeName: string;
-    countryId: string;
-    stateId: string;
-    city: string;
-    streetAddress: string;
-    zip: string;
+    categories: string;
+    shortname: string;
+    companyName: string;
+    emailAddress1: string;
+    emailAddress2: string;
+    typeId: number;
+    industry: string;
+    relationship: string;
+    primaryFundingType: string;
+    referralType: string;
+    ticker: string;
+    refID: string;
+    rating: number;
+    ucc: number;
+    sizeFrom: number;
+    sizeTo: number;
+    countriesServed: string;
+    description: string;
+    keywordTags: string;
     ein: string;
     formedCountryId: string;
     formedStateId: string;
@@ -21509,8 +21631,16 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     annualVolumesOnCards: number;
     productServicesSold: number;
     businessSicCode: number;
+    organizationAliases: OrganizationAliasInfo[];
+    organizationPhones: OrganizationPhoneInfo[];
+    organizationTeamContacts: OrganizationTeamContactInfo[];
+    contactId: number;
+    emailAddress: string;
     phoneNumber: string;
     phoneExtension: string;
+    address: AddressInfo;
+    userId: number;
+    contactLinks: ContactLinkInfo[];
 
     constructor(data?: IOrganizationBusinessInfo) {
         if (data) {
@@ -21525,11 +21655,25 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         if (data) {
             this.name = data["name"];
             this.typeName = data["typeName"];
-            this.countryId = data["countryId"];
-            this.stateId = data["stateId"];
-            this.city = data["city"];
-            this.streetAddress = data["streetAddress"];
-            this.zip = data["zip"];
+            this.categories = data["categories"];
+            this.shortname = data["shortname"];
+            this.companyName = data["companyName"];
+            this.emailAddress1 = data["emailAddress1"];
+            this.emailAddress2 = data["emailAddress2"];
+            this.typeId = data["typeId"];
+            this.industry = data["industry"];
+            this.relationship = data["relationship"];
+            this.primaryFundingType = data["primaryFundingType"];
+            this.referralType = data["referralType"];
+            this.ticker = data["ticker"];
+            this.refID = data["refID"];
+            this.rating = data["rating"];
+            this.ucc = data["ucc"];
+            this.sizeFrom = data["sizeFrom"];
+            this.sizeTo = data["sizeTo"];
+            this.countriesServed = data["countriesServed"];
+            this.description = data["description"];
+            this.keywordTags = data["keywordTags"];
             this.ein = data["ein"];
             this.formedCountryId = data["formedCountryId"];
             this.formedStateId = data["formedStateId"];
@@ -21539,8 +21683,32 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.annualVolumesOnCards = data["annualVolumesOnCards"];
             this.productServicesSold = data["productServicesSold"];
             this.businessSicCode = data["businessSicCode"];
+            if (data["organizationAliases"] && data["organizationAliases"].constructor === Array) {
+                this.organizationAliases = [];
+                for (let item of data["organizationAliases"])
+                    this.organizationAliases.push(OrganizationAliasInfo.fromJS(item));
+            }
+            if (data["organizationPhones"] && data["organizationPhones"].constructor === Array) {
+                this.organizationPhones = [];
+                for (let item of data["organizationPhones"])
+                    this.organizationPhones.push(OrganizationPhoneInfo.fromJS(item));
+            }
+            if (data["organizationTeamContacts"] && data["organizationTeamContacts"].constructor === Array) {
+                this.organizationTeamContacts = [];
+                for (let item of data["organizationTeamContacts"])
+                    this.organizationTeamContacts.push(OrganizationTeamContactInfo.fromJS(item));
+            }
+            this.contactId = data["contactId"];
+            this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
+            this.address = data["address"] ? AddressInfo.fromJS(data["address"]) : <any>undefined;
+            this.userId = data["userId"];
+            if (data["contactLinks"] && data["contactLinks"].constructor === Array) {
+                this.contactLinks = [];
+                for (let item of data["contactLinks"])
+                    this.contactLinks.push(ContactLinkInfo.fromJS(item));
+            }
         }
     }
 
@@ -21554,11 +21722,25 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["typeName"] = this.typeName;
-        data["countryId"] = this.countryId;
-        data["stateId"] = this.stateId;
-        data["city"] = this.city;
-        data["streetAddress"] = this.streetAddress;
-        data["zip"] = this.zip;
+        data["categories"] = this.categories;
+        data["shortname"] = this.shortname;
+        data["companyName"] = this.companyName;
+        data["emailAddress1"] = this.emailAddress1;
+        data["emailAddress2"] = this.emailAddress2;
+        data["typeId"] = this.typeId;
+        data["industry"] = this.industry;
+        data["relationship"] = this.relationship;
+        data["primaryFundingType"] = this.primaryFundingType;
+        data["referralType"] = this.referralType;
+        data["ticker"] = this.ticker;
+        data["refID"] = this.refID;
+        data["rating"] = this.rating;
+        data["ucc"] = this.ucc;
+        data["sizeFrom"] = this.sizeFrom;
+        data["sizeTo"] = this.sizeTo;
+        data["countriesServed"] = this.countriesServed;
+        data["description"] = this.description;
+        data["keywordTags"] = this.keywordTags;
         data["ein"] = this.ein;
         data["formedCountryId"] = this.formedCountryId;
         data["formedStateId"] = this.formedStateId;
@@ -21568,8 +21750,32 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["annualVolumesOnCards"] = this.annualVolumesOnCards;
         data["productServicesSold"] = this.productServicesSold;
         data["businessSicCode"] = this.businessSicCode;
+        if (this.organizationAliases && this.organizationAliases.constructor === Array) {
+            data["organizationAliases"] = [];
+            for (let item of this.organizationAliases)
+                data["organizationAliases"].push(item.toJSON());
+        }
+        if (this.organizationPhones && this.organizationPhones.constructor === Array) {
+            data["organizationPhones"] = [];
+            for (let item of this.organizationPhones)
+                data["organizationPhones"].push(item.toJSON());
+        }
+        if (this.organizationTeamContacts && this.organizationTeamContacts.constructor === Array) {
+            data["organizationTeamContacts"] = [];
+            for (let item of this.organizationTeamContacts)
+                data["organizationTeamContacts"].push(item.toJSON());
+        }
+        data["contactId"] = this.contactId;
+        data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["userId"] = this.userId;
+        if (this.contactLinks && this.contactLinks.constructor === Array) {
+            data["contactLinks"] = [];
+            for (let item of this.contactLinks)
+                data["contactLinks"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -21577,11 +21783,25 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
 export interface IOrganizationBusinessInfo {
     name: string;
     typeName: string;
-    countryId: string;
-    stateId: string;
-    city: string;
-    streetAddress: string;
-    zip: string;
+    categories: string;
+    shortname: string;
+    companyName: string;
+    emailAddress1: string;
+    emailAddress2: string;
+    typeId: number;
+    industry: string;
+    relationship: string;
+    primaryFundingType: string;
+    referralType: string;
+    ticker: string;
+    refID: string;
+    rating: number;
+    ucc: number;
+    sizeFrom: number;
+    sizeTo: number;
+    countriesServed: string;
+    description: string;
+    keywordTags: string;
     ein: string;
     formedCountryId: string;
     formedStateId: string;
@@ -21591,8 +21811,243 @@ export interface IOrganizationBusinessInfo {
     annualVolumesOnCards: number;
     productServicesSold: number;
     businessSicCode: number;
+    organizationAliases: OrganizationAliasInfo[];
+    organizationPhones: OrganizationPhoneInfo[];
+    organizationTeamContacts: OrganizationTeamContactInfo[];
+    contactId: number;
+    emailAddress: string;
     phoneNumber: string;
     phoneExtension: string;
+    address: AddressInfo;
+    userId: number;
+    contactLinks: ContactLinkInfo[];
+}
+
+export class OrganizationAliasInfo implements IOrganizationAliasInfo {
+    alias: string;
+
+    constructor(data?: IOrganizationAliasInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.alias = data["alias"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationAliasInfo {
+        let result = new OrganizationAliasInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["alias"] = this.alias;
+        return data; 
+    }
+}
+
+export interface IOrganizationAliasInfo {
+    alias: string;
+}
+
+export class OrganizationPhoneInfo implements IOrganizationPhoneInfo {
+    phoneNumber: string;
+
+    constructor(data?: IOrganizationPhoneInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.phoneNumber = data["phoneNumber"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationPhoneInfo {
+        let result = new OrganizationPhoneInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["phoneNumber"] = this.phoneNumber;
+        return data; 
+    }
+}
+
+export interface IOrganizationPhoneInfo {
+    phoneNumber: string;
+}
+
+export class OrganizationTeamContactInfo implements IOrganizationTeamContactInfo {
+    prefix: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    title: string;
+    emailAddress: string;
+    phoneNumber: string;
+
+    constructor(data?: IOrganizationTeamContactInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.prefix = data["prefix"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
+            this.title = data["title"];
+            this.emailAddress = data["emailAddress"];
+            this.phoneNumber = data["phoneNumber"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationTeamContactInfo {
+        let result = new OrganizationTeamContactInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["prefix"] = this.prefix;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
+        data["title"] = this.title;
+        data["emailAddress"] = this.emailAddress;
+        data["phoneNumber"] = this.phoneNumber;
+        return data; 
+    }
+}
+
+export interface IOrganizationTeamContactInfo {
+    prefix: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    title: string;
+    emailAddress: string;
+    phoneNumber: string;
+}
+
+export class AddressInfo implements IAddressInfo {
+    streetAddress: string;
+    city: string;
+    stateId: string;
+    state: string;
+    zip: string;
+    countryId: string;
+    country: string;
+
+    constructor(data?: IAddressInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.stateId = data["stateId"];
+            this.state = data["state"];
+            this.zip = data["zip"];
+            this.countryId = data["countryId"];
+            this.country = data["country"];
+        }
+    }
+
+    static fromJS(data: any): AddressInfo {
+        let result = new AddressInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["stateId"] = this.stateId;
+        data["state"] = this.state;
+        data["zip"] = this.zip;
+        data["countryId"] = this.countryId;
+        data["country"] = this.country;
+        return data; 
+    }
+}
+
+export interface IAddressInfo {
+    streetAddress: string;
+    city: string;
+    stateId: string;
+    state: string;
+    zip: string;
+    countryId: string;
+    country: string;
+}
+
+export class ContactLinkInfo implements IContactLinkInfo {
+    linkType: string;
+    link: string;
+
+    constructor(data?: IContactLinkInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.linkType = data["linkType"];
+            this.link = data["link"];
+        }
+    }
+
+    static fromJS(data: any): ContactLinkInfo {
+        let result = new ContactLinkInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["linkType"] = this.linkType;
+        data["link"] = this.link;
+        return data; 
+    }
+}
+
+export interface IContactLinkInfo {
+    linkType: string;
+    link: string;
 }
 
 export class CreateContactBusinessInput implements ICreateContactBusinessInput {
@@ -25027,10 +25482,12 @@ export interface IPersonInfoDto {
 }
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {
-    formedDate: moment.Moment;
-    formedCountry: CountryDto;
+    typeId: number;
     industry: string;
-    type: string;
+    primaryFundingType: string;
+    formedCountryId: string;
+    formedStateId: string;
+    formedDate: moment.Moment;
     contactPerson: PersonKeyInfoDto;
 
     constructor(data?: IOrganizationInfoDto) {
@@ -25044,10 +25501,12 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
-            this.formedCountry = data["formedCountry"] ? CountryDto.fromJS(data["formedCountry"]) : <any>undefined;
+            this.typeId = data["typeId"];
             this.industry = data["industry"];
-            this.type = data["type"];
+            this.primaryFundingType = data["primaryFundingType"];
+            this.formedCountryId = data["formedCountryId"];
+            this.formedStateId = data["formedStateId"];
+            this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
             this.contactPerson = data["contactPerson"] ? PersonKeyInfoDto.fromJS(data["contactPerson"]) : <any>undefined;
         }
     }
@@ -25060,20 +25519,24 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
-        data["formedCountry"] = this.formedCountry ? this.formedCountry.toJSON() : <any>undefined;
+        data["typeId"] = this.typeId;
         data["industry"] = this.industry;
-        data["type"] = this.type;
+        data["primaryFundingType"] = this.primaryFundingType;
+        data["formedCountryId"] = this.formedCountryId;
+        data["formedStateId"] = this.formedStateId;
+        data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
         data["contactPerson"] = this.contactPerson ? this.contactPerson.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IOrganizationInfoDto {
-    formedDate: moment.Moment;
-    formedCountry: CountryDto;
+    typeId: number;
     industry: string;
-    type: string;
+    primaryFundingType: string;
+    formedCountryId: string;
+    formedStateId: string;
+    formedDate: moment.Moment;
     contactPerson: PersonKeyInfoDto;
 }
 
@@ -30500,6 +30963,104 @@ export interface IActionDto {
     name: string;
     sysId: string;
     targetStageId: number;
+}
+
+export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput {
+    id: number;
+    typeId: number;
+    industry: string;
+    primaryFundingType: string;
+    formedCountryId: string;
+    formedStateId: string;
+    formedDate: moment.Moment;
+
+    constructor(data?: IUpdateOrganizationInfoInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.typeId = data["typeId"];
+            this.industry = data["industry"];
+            this.primaryFundingType = data["primaryFundingType"];
+            this.formedCountryId = data["formedCountryId"];
+            this.formedStateId = data["formedStateId"];
+            this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UpdateOrganizationInfoInput {
+        let result = new UpdateOrganizationInfoInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["typeId"] = this.typeId;
+        data["industry"] = this.industry;
+        data["primaryFundingType"] = this.primaryFundingType;
+        data["formedCountryId"] = this.formedCountryId;
+        data["formedStateId"] = this.formedStateId;
+        data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IUpdateOrganizationInfoInput {
+    id: number;
+    typeId: number;
+    industry: string;
+    primaryFundingType: string;
+    formedCountryId: string;
+    formedStateId: string;
+    formedDate: moment.Moment;
+}
+
+export class OrganizationTypeDto implements IOrganizationTypeDto {
+    id: number;
+    name: string;
+
+    constructor(data?: IOrganizationTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationTypeDto {
+        let result = new OrganizationTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IOrganizationTypeDto {
+    id: number;
+    name: string;
 }
 
 export class ListResultDtoOfOrganizationUnitDto implements IListResultDtoOfOrganizationUnitDto {

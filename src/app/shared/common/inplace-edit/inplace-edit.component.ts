@@ -46,10 +46,10 @@ export class InplaceEditComponent extends AppComponentBase {
         event.stopPropagation();      
     }
 
-    updateItem(event) {
-        if(event.validationGroup.validate().isValid) {
-            if (this.data.value != this._valueOriginal && this.valueChanged)
-                this.valueChanged.emit(this.data.value);
+    updateItem(event, newValue) {
+        if(!event.validationGroup || event.validationGroup.validate().isValid) {
+            if (newValue != this._valueOriginal && this.valueChanged)
+                this.valueChanged.emit(newValue);
             this.isEditModeEnabled = false;
         }      
     }

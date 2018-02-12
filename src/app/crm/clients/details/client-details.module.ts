@@ -32,7 +32,8 @@ import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
 
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
-  ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy } from '@shared/service-proxies/service-proxies';
+  ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
+  OrganizationTypeServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import { PhoneFormatPipe } from './phone-format.pipe';
 
@@ -98,7 +99,9 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     ContactPhoneServiceProxy,
     ContactLinkServiceProxy,
     CustomersServiceProxy,
-    MemberServiceProxy
+    MemberServiceProxy,
+    OrganizationContactServiceProxy,
+    OrganizationTypeServiceProxy
   ]
 })
 export class ClientDetailsModule { }

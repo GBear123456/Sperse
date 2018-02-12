@@ -19,17 +19,21 @@
         <div class="row">
             <div class="col-sm-6 col-xs-12">
                 <div class="org-edit-label">{{l('COUNTRY:')}}</div>
-                <inplace-edit [data]="getPropData(data?.organization?.formedCountry?.name, 'formedCountry')" (valueChanged)="updateValue($event, 'formedCountry')" ></inplace-edit>
+                <inplace-select [data]="countries" (valueChanged)="countryChanged($event)" ></inplace-select>
             </div>
             <div class="col-sm-6 col-xs-12">
                 <div class="org-edit-label">{{l('COMPANY TYPE:')}}</div>
-                <inplace-edit [data]="getPropData(data?.organization?.type, 'type')" (valueChanged)="updateValue($event, 'type')" ></inplace-edit>
+                <inplace-select [data]="orgTypes" (valueChanged)="orgTypeChanged($event)" ></inplace-select>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-6 col-xs-12">
                 <div class="org-edit-label">{{l('STATE:')}}</div>
-                <inplace-edit [data]="getPropData(data?.organization?.formedState?.name, 'formedState')" (valueChanged)="updateValue($event, 'formedCountry')" ></inplace-edit>
+                <inplace-select [data]="states" (valueChanged)="stateChanged($event)" ></inplace-select>
+            </div>
+            <div class="col-sm-6 col-xs-12">
+                <div class="org-edit-label">{{l('FUNDING TYPE:')}}</div>
+                <inplace-edit [data]="getPropData(data?.organization?.primaryFundingType, 'primaryFundingType')" (valueChanged)="updateValue($event, 'primaryFundingType')" ></inplace-edit>
             </div>
         </div>
     </div>
@@ -37,6 +41,6 @@
     <hr/>
 
     <div class="description">
-        <inplace-edit [data]="getPropData(data?.comment, 'comment')" (valueChanged)="updateValue($event, 'comment')"></inplace-edit>
+        <inplace-edit [data]="getPropData(data?.organization?.description, 'description')" (valueChanged)="updateValue($event, 'description')"></inplace-edit>
     </div>
 </mat-dialog-content>
