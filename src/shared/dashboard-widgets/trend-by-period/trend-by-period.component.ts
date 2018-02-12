@@ -204,8 +204,12 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         return Observable.merge(
                     Observable.from(forecast, asap),
                     /** Get last values closer to the current date */
-                    Observable.from(historical.slice(-this.selectedPeriod.amount), asap)
-               )
+                    Observable.from(
+                        historical.slice(-this.selectedPeriod.amount)
+                                  .sort((item1, item2) => item1.date < item2.date ? 1 : -1),
+                        asap
+                    )
+                )
             .take(this.selectedPeriod.amount)
             .toArray();
     }

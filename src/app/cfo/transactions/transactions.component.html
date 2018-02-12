@@ -1,6 +1,6 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig">
-        <synch-progress class="synch-progress"></synch-progress>
+        <synch-progress class="synch-progress" (onComplete)="showRefreshButton()"></synch-progress>
     </app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
@@ -11,12 +11,13 @@
                         [height]="'calc(100vh - 270px)'"
                         [showTitle]="true"
                         [showClearSelection]="true"
+                        [showFilterIcon]="true"
                         [dragMode]="dragInProgress"
                         (close)="categoriesShowed = false"
                         [instanceType]="instanceType"
                         [instanceId]="instanceId"
-                                    (onTransactionDrop)="openCategorizationWindow($event)"
-                                    (onSelectionChanged)="filterByCashflowCategory($event)">
+                        (onTransactionDrop)="openCategorizationWindow($event)"
+                        (onFilterSelected)="filterByCashflowCategory($event)">
                     </categorization>
                 </div>
                 <div class="transactions">

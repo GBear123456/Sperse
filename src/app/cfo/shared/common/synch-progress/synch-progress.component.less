@@ -60,6 +60,17 @@
         }
     }
     
+    /deep/ .load-indicator.error {
+        .dx-loadindicator-icon {
+            display: none;
+        }
+        
+        .dx-loadindicator-content {
+            background: transparent url(../../../../../assets/common/icons/error-icon.svg) 50% 50% no-repeat;
+            background-size: 50%;
+        }
+    }
+
     /deep/ .dx-progressbar-wrapper {
         display: flex;
         
@@ -161,25 +172,6 @@
                 border-bottom: 1px solid #e5e9ec;
             }
             
-            &.completed {
-                background: transparent url('../../../../../assets/common/icons/completed-icon.svg') 4px 50% no-repeat;
-                &::before {
-                    content: none;
-                }
-            }
-            
-            &::before {
-                content: '';
-                width: 10px;
-                height: 10px;
-                background-color: #f9b74b;
-                border-radius: 50%;
-                display: block;
-                position: absolute;
-                left: 5px;
-                top: 10px;
-            }
-            
             .name {
                 width: 79%;
                 display: block;
@@ -188,7 +180,51 @@
                 white-space: nowrap;
                 overflow: hidden;
                 padding-right: 5px;
+    
+                &::before {
+                    content: '';
+                    width: 10px;
+                    height: 10px;
+                    background-color: #f9b74b;
+                    border-radius: 50%;
+                    display: block;
+                    position: absolute;
+                    left: 7px;
+                    top: 10px;
+                }
             }
+    
+            &.completed {
+                background: transparent url('../../../../../assets/common/icons/completed-icon.svg') 4px 50% no-repeat;
+                .name::before {
+                    content: none;
+                }
+            }
+    
+            &.failed {
+                .name::before {
+                    background-color: #f05b2a;
+                }
+                &:hover {
+                    &::before {
+                        content: attr(data-errormsg);
+                        background: #fff;
+                        display: block;
+                        width: auto;
+                        height: auto;
+                        padding: 8px;
+                        font-size: 13px;
+                        color: red;
+                        border-radius: 3px;
+                        border: 1px solid #ddd;
+                        position: absolute;
+                        top: 25px;
+                        left: 0;
+                        z-index: 10;
+                    }
+                }
+            }
+            
             .percent {
                 width: 20%;
                 display: block;
@@ -196,6 +232,7 @@
                 text-align: right;
                 padding-right: 5px;
             }
+            
         }
     }
 }
