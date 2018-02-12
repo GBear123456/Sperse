@@ -714,7 +714,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     .map((obj) => {
                         return obj.Id;
                     }),
-                refershParent: Function()
+                refershParent: this.refreshDataGrid.bind(this)
             }
         }).afterClosed().subscribe(result => { });
     }
