@@ -16,6 +16,7 @@ import {
     InstanceType10,
     InstanceType18,
     UpdateForecastInput,
+    CashFlowStatsDetailDtoStatus,
     AddForecastInput,
     BankAccountDto
 } from '@shared/service-proxies/service-proxies';
@@ -2281,7 +2282,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 });
             } else {
                 if (this.clickedRowResult && this.clickedRowResult.forecastId) {
-                    forecastModel = new UpdateForecastInput({
+                    forecastModel = UpdateForecastInput.fromJS({
                         id: this.clickedRowResult.forecastId,
                         amount: newValue
                     });
@@ -2891,7 +2892,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             if (e.column.dataField === 'status') {
-                e.cellElement.addClass(e.data.status.toLowerCase());
+                e.cellElement.addClass(`statusField ${e.data.status.toLowerCase()}`);
             }
 
             if (e.column.dataField === 'cashflowTypeId') {
@@ -2913,8 +2914,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    customizeCashflowColumnData = (cellInfo) => this.cashflowTypes[cellInfo.value];
-
     /**
      * Editing only for forecasts
      * @param e
@@ -2925,6 +2924,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
+    /** If date is lower then the current date - return false */
     validateForecastDate(e) {
         return e.value.toLocaleDateString() >= new Date().toLocaleDateString();
     }
@@ -2934,13 +2934,56 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.rowElement.addClass('forecastRow');
         }
 
+        if (e.rowType === 'data' && e.data.status === CashFlowStatsDetailDtoStatus.Incomplete) {
+            e.rowElement.addClass('incomplete');
+        }
+
         if (e.rowType === 'data' && e.data.cashflowTypeId === StartedBalance) {
             e.rowElement.addClass('adjustmentRow');
         }
     }
 
-    onDetailsRowUpdated(e) {
-        console.log(e);
+    onDetailsRowUpdating(e) {
+        /** Send request for updating the row */
+        let paramName = Object.keys(e.newData)[0];
+        /** add minus sign for debit values */
+        let paramValue = paramName === 'debit' ? -e.newData[paramName] : e.newData[paramName];
+        if (e.newData[paramName] !== null) {
+            let paramNameForUpdateInput = this.mapParamNameToUpdateParam(paramName);
+            let data = {
+                id: e.key.id,
+                [paramNameForUpdateInput]: paramValue
+            };
+            this._cashFlowForecastServiceProxy
+                .updateForecast(
+                    InstanceType10[this.instanceType],
+                    this.instanceId,
+                    UpdateForecastInput.fromJS(data)
+                )
+                .subscribe();
+
+            /** Remove opposite cell */
+            if (paramName === 'debit' || paramName === 'credit') {
+                let oppositeParamName = paramName === 'debit' ? 'credit' : 'debit';
+                if (e.oldData[oppositeParamName] !== null) {
+                    let rowKey = this.cashFlowGrid.instance.getRowIndexByKey(e.key);
+                    /** remove the value of opposite cell */
+                    this.cashFlowGrid.instance.cellValue(rowKey, oppositeParamName, null);
+                }
+            }
+        }
     }
+
+    mapParamNameToUpdateParam(paramName) {
+        let detailsParamsToUpdateParams = {
+            'forecastDate': 'date',
+            'credit': 'amount',
+            'debit': 'amount',
+            'description': 'transactionDescriptor'
+        };
+
+        return detailsParamsToUpdateParams[paramName];
+    }
+
 
 }

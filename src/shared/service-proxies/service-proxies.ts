@@ -17621,7 +17621,11 @@ export interface IAddForecastInput {
 
 export class UpdateForecastInput implements IUpdateForecastInput {
     id: number;
+    date: moment.Moment;
     amount: number;
+    bankAccountId: number;
+    categoryId: number;
+    transactionDescriptor: string;
 
     constructor(data?: IUpdateForecastInput) {
         if (data) {
@@ -17635,7 +17639,11 @@ export class UpdateForecastInput implements IUpdateForecastInput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.amount = data["amount"];
+            this.bankAccountId = data["bankAccountId"];
+            this.categoryId = data["categoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
         }
     }
 
@@ -17648,14 +17656,22 @@ export class UpdateForecastInput implements IUpdateForecastInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["amount"] = this.amount;
+        data["bankAccountId"] = this.bankAccountId;
+        data["categoryId"] = this.categoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
         return data; 
     }
 }
 
 export interface IUpdateForecastInput {
     id: number;
+    date: moment.Moment;
     amount: number;
+    bankAccountId: number;
+    categoryId: number;
+    transactionDescriptor: string;
 }
 
 export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {

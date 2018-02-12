@@ -849,9 +849,9 @@
                         padding: 20px;
                         text-transform: uppercase;
                         font-size: 13px;
-                        font-weight: 600;
+                        font-weight: 700;
                         line-height: 24px;
-                        color: @generalColor;
+                        color: #686f76;
                         vertical-align: middle;
                         &[aria-sort='none'] {
                             color: @middleGrayColor;
@@ -859,7 +859,13 @@
                         .firstLine {
                             text-transform: capitalize;
                             line-height: 11px;
-                            font-weight: 300;
+                            font-weight: 500;
+                            & + div {
+                                color: @generalColor;
+                            }
+                        }
+                        &.dx-command-select {
+                            padding: 20px 0;
                         }
                     }
                 }
@@ -885,23 +891,60 @@
                         padding: 0px;
                         line-height: initial;
                         input {
-                            height:46px;
+                            height: 36px;
                             display:inline-block;
                             position:relative;
-                            background-color: #fbf3e4 !important;
+                            background-color: initial;
+                            border: solid 1px #e5e9ec;
                         }
                     }
-                    &.incomplete {
-                        color: #fe871a;
+                    &.statusField {
+                        position: relative;
+                        &:before {
+                            content: '';
+                            position: absolute;
+                            width: 7px;
+                            border-radius: 50%;
+                            height: 7px;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            margin: auto;
+                        }
+                        &.incomplete {
+                            color: #fe871a;
+                            &:before {
+                                background-color: #fe871a;
+                            }
+                        }
+                        &.completed {
+                            color: #a6d7a9;
+                            &:before {
+                                background-color: #a6d7a9;
+                            }
+                        }
                     }
-                    &.completed {
-                        color: #a6d7a9;
+
+                    &.inflows div {
+                        color: #61c670;
+                        background-color: rgba(97, 198, 112, 0.1);
                     }
-                    &.inflows {
-                        color: #4dcb5a;
+                    &.outflows div {
+                        color: #e7326a;
+                        background-color: rgba(231, 50, 106, 0.1);
                     }
+                    &.inflows,
                     &.outflows {
-                        color: #fe871a;
+                        div {
+                            border-radius: 11px;
+                            text-align: center;
+                        }
+                    }
+                }
+
+                &.dx-selection {
+                    td {
+                        background-color: rgba(0, 174, 239, 0.05);
                     }
                 }
 
@@ -912,6 +955,22 @@
                             pointer-events: none;
                             .dx-select-checkbox {
                                 display: none;
+                            }
+                        }
+                    }
+
+                    &.incomplete {
+                        /** If nth child is forecast date, else - change it */
+                        td:nth-child(2) {
+                            position: relative;
+                            &:before {
+                                position: absolute;
+                                content: '!';
+                                left: 0;
+                                display: block;
+                                color: #f89800;
+                                font-weight: 800;
+                                font-size: 18px;
                             }
                         }
                     }
@@ -953,7 +1012,7 @@
             }
 
             .dx-datagrid-focus-overlay {
-                border: 2px solid #f9b83a !important;
+                border: none;
             }
         }
     }
