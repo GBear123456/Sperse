@@ -16,6 +16,7 @@ import {
     InstanceType10,
     InstanceType18,
     UpdateForecastInput,
+    CashFlowStatsDetailDtoStatus,
     AddForecastInput,
     BankAccountDto
 } from '@shared/service-proxies/service-proxies';
@@ -2891,7 +2892,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             if (e.column.dataField === 'status') {
-                e.cellElement.addClass(e.data.status.toLowerCase());
+                e.cellElement.addClass(`statusField ${e.data.status.toLowerCase()}`);
             }
 
             if (e.column.dataField === 'cashflowTypeId') {
@@ -2913,8 +2914,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    customizeCashflowColumnData = (cellInfo) => this.cashflowTypes[cellInfo.value];
-
     /**
      * Editing only for forecasts
      * @param e
@@ -2933,6 +2932,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onDetailsRowPrepared(e) {
         if (e.rowType === 'data' && !e.data.date) {
             e.rowElement.addClass('forecastRow');
+        }
+
+        if (e.rowType === 'data' && e.data.status === CashFlowStatsDetailDtoStatus.Incomplete) {
+            e.rowElement.addClass('incomplete');
         }
 
         if (e.rowType === 'data' && e.data.cashflowTypeId === StartedBalance) {
