@@ -337,37 +337,35 @@ button {
     .dx-datagrid-pager {
         height: 60px;
         padding-left: 10px;
-        //border-top: 1px solid #ddd;
+        .dx-pages,
+        .dx-page-sizes {
+            margin-top: 4px;
+            
+            .dx-selection,
+            .dx-selection {
+                width: auto;
+                border-radius: 3px;
+                background-color: #E2F7FD;
+                border: solid 1px #80cfed;
+                font-size: 15px;
+                text-align: center;
+                color: #212c36 !important;
+                font-weight: 600 !important;
+                padding: 4px 10px 5px;
+            }
+        }
         
-        /*
-				/deep/ * {
-					font-size: @font-size;
-					color: #202b35;
-					font-weight: 600;
-				}
-		
-				.dx-selection {
-					background-color: #33e504;
-					color: #FFF;
-				}
-		
-				.dx-pages {
-					float: left;
-					padding-left: 20px;
-					width: calc(~'100% - 140px');
-					text-align: center;
-		
-					.dx-info {
-						float: left;
-						margin-top: 10px;
-						opacity: 1;
-					}
-				}
-				.dx-page-sizes {
-					float: right;
-					padding-right: 10px;
-				}
-		*/
+        .dx-pages .dx-info {
+            color: #677380;
+            font-weight: 500;
+        }
+        
+        .dx-page-sizes .dx-page-size,
+        .dx-pages .dx-page {
+            padding: 4px 10px 5px;
+            font-weight: 500;
+            color: #677380;
+        }
     }
     
     .dx-datagrid-headers {
@@ -588,6 +586,7 @@ button {
             background-color: #00aeef;
         }
     }
+    
     .dx-datagrid-content {
         .dx-datagrid-table {
             .dx-row {

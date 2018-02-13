@@ -715,6 +715,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.getTotalValues();
     }
 
+    onCellPrepared($event) {
+        if ($event.rowType === 'data') {
+            if ($event.column.dataField == 'CashflowCategoryName' && !$event.data.CashflowCategoryName) {
+                $event.cellElement.parent().addClass(`uncategorized`);
+            }
+        }
+    }
+
     onContentReady($event) {
         this.onSelectionChanged($event, true);
     }
