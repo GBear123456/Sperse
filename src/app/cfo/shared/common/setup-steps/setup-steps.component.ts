@@ -26,7 +26,6 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
-        console.log(this.HeaderTitle);
     }
 
     onClick(index: number, elem) {
