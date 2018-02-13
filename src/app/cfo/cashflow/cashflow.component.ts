@@ -2506,7 +2506,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             /** if cell is ending cash position account summary cell */
             if (prevWithParent !== null && this.isEndingBalanceAccountCell(summaryCell)) {
-                return this.modifyEndingBalanceAccountCell(summaryCell);
+                return this.modifyEndingBalanceAccountCell(summaryCell, prevWithParent);
             }
 
             /** if the value is a balance value -
@@ -2624,11 +2624,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param prevWithParent
      * @return {number}
      */
-    modifyEndingBalanceAccountCell(summaryCell) {
-        let startedBalanceAccountValue = this.getCellValue(summaryCell, StartedBalance),
+    modifyEndingBalanceAccountCell(summaryCell, prevWithParent) {
+        let prevEndingAccountValue = this.getCellValue(prevWithParent, Total, true),
             currentCellValue = summaryCell.value() || 0,
             reconciliationTotal = this.getCellValue(summaryCell, Reconciliation);
-        return currentCellValue + startedBalanceAccountValue + reconciliationTotal;
+        return currentCellValue + prevEndingAccountValue + reconciliationTotal;
     }
 
     /**
@@ -2650,14 +2650,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * cellData - summaryCell object of devextreme
      * target - StartedBalance | Total | Reconciliation
      */
-    getCellValue(summaryCell, target) {
+    getCellValue(summaryCell, target, isCalculatedValue = underscore.contains([StartedBalance, Reconciliation], target)) {
 
         let targetPeriodAccountCashedValue;
         const accountId = summaryCell.value(summaryCell.field('row'), true).slice(2),
               targetPeriodCell = summaryCell.parent('row') ? summaryCell.parent('row').slice(0, CategorizationPrefixes.CashflowType + target) : null,
               targetPeriodAccountCell = targetPeriodCell ? targetPeriodCell.child('row', CategorizationPrefixes.AccountName + accountId) : null,
-              cellData = this.getCellData(summaryCell, accountId, target),
-              isCalculatedValue = underscore.contains([StartedBalance, Reconciliation], target) ? true : false;
+              cellData = this.getCellData(summaryCell, accountId, target);
 
             /** if we haven't found the value from the another period -
              *  then it hasn't been expanded and we should find out whether the value is in cash */
