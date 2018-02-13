@@ -25,6 +25,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     @Output() download: EventEmitter<any> = new EventEmitter();
     @Output() showPreferencesDialog: EventEmitter<any> = new EventEmitter();
     @Output() onSearchValueChange: EventEmitter<any> = new EventEmitter();
+    @Output() onRefresh: EventEmitter<any> = new EventEmitter();
 
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number} = { 'items' : [], 'selectedItemIndex': null}) {
         this._appService.toolbarIsAdaptive = true;
@@ -187,6 +188,10 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 location: 'after',
                 items: [
                     {
+                        name: 'refresh',
+                        action: this.refresh.bind(this)
+                    },
+                    {
                         name: 'download',
                         widget: 'dxDropDownMenu',
                         options: {
@@ -264,6 +269,10 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
 
     searchValueChange(event) {
         this.onSearchValueChange.emit(event);
+    }
+
+    refresh() {
+        this.onRefresh.emit();
     }
 
     ngOnDestroy() {
