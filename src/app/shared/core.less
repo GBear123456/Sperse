@@ -561,25 +561,7 @@ button {
                 }
             }
         }
-        .dx-datagrid-checkbox-size {
-            .dx-checkbox-icon {
-                width: 20px;
-                height: 20px;
-                background: transparent;
-                border-color: #ddd;
-                font-size: 14px;
-                font-weight: normal;
-                &::before {
-                    color: #00aeef;
-                    font-size: 12px;
-                }
-            }
-            &.dx-checkbox-checked {
-                .dx-checkbox-icon {
-                    border-color: rgba(104, 111, 118, .5);
-                }
-            }
-        }
+        
         .dx-checkbox-indeterminate .dx-checkbox-icon::before {
             left: 6px;
             top: 6px;
@@ -802,4 +784,48 @@ button {
 .mat-tab-nav-bar.mat-primary .mat-tab-label:focus,
 .mat-tab-nav-bar.mat-primary .mat-tab-link:focus {
     background: #fff;
+}
+
+// checkboxes styles
+.dx-checkbox {
+    .dx-checkbox-icon {
+        width: 20px;
+        height: 20px;
+        background: #fff !important;
+        border-color: #DADEE1 !important;
+        font-size: 14px;
+        font-weight: normal;
+        &::before {
+            content: none !important;
+        }
+    }
+    
+    &.dx-state-hover,
+    &.dx-state-focused {
+        .dx-checkbox-icon {
+            border-color: #00AEEF !important;
+        }
+    }
+    
+    &.dx-checkbox-checked {
+        .dx-checkbox-icon {
+            border-color: #00AEEF !important;
+            background: #00AEEF url("../../assets/common/icons/check-tik-icon.svg") 49% 50% no-repeat !important;
+        }
+    }
+    
+    &.dx-checkbox-indeterminate {
+        .dx-checkbox-icon {
+            border-color: #00AEEF !important;
+            &::before {
+                content: '' !important;
+            }
+        }
+    }
+}
+
+// update for selection row on grids
+.dx-selection.dx-row td,
+.dx-state-hover.dx-row td {
+    background: #EFFAFE !important;
 }
