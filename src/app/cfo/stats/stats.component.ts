@@ -106,9 +106,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         }
     ];
     leftSideBarItems = [
-        'leftSideBarMonthlyTrendCharts',
-        'leftSideBarDailyTrendCharts',
-        'leftKeyMetricsKPI'
+        { caption: 'leftSideBarMonthlyTrendCharts' },
+        { caption: 'leftSideBarDailyTrendCharts' },
+        { caption: 'leftKeyMetricsKPI' }
     ];
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
