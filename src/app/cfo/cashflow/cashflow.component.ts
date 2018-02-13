@@ -209,18 +209,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortingMethod: (firstItem, secondItem) => {
                 return this.leftMenuOrder.indexOf(firstItem.value.slice(2)) > this.leftMenuOrder.indexOf(secondItem.value.slice(2));
             },
-            customizeText: cellInfo => {
-                /** Get key without categorization prefix */
-                let key = cellInfo.value.slice(2);
-                let cashflowTypeName = this.cashflowTypes[key];
-                if (key === Income || key === Expense) {
-                    cashflowTypeName  = this.l('Total') + ' ' + cashflowTypeName;
-                }
-                if (key === NetChange) {
-                    cashflowTypeName = this.l('Net Change');
-                }
-                return cashflowTypeName ? cashflowTypeName.toUpperCase() : cellInfo.valueText;
-            }
+            customizeText: this.customizeFieldText.bind(this)
         },
         {
             caption: 'Account Type',
@@ -233,27 +222,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             expanded: false,
             showTotals: true,
             resortable: true,
-            customizeText: cellInfo => {
-                if (cellInfo.value) {
-                    let [ key, prefix ] = [ cellInfo.value.slice(2), cellInfo.value.slice(0, 2) ];
-                    let value;
-                    /** If the cell is int - then we have bank account as second level */
-                    if (prefix === CategorizationPrefixes.AccountName) {
-                        let account = this.bankAccounts.find(account => {
-                            return account.id == key;
-                        });
-                        value = account ? (account.accountName || account.accountNumber) : cellInfo.valueText;
-                    } else {
-                        let namesSource = this.getNamesSourceLink(prefix);
-                        return namesSource && namesSource[key]['name'] ?
-                            namesSource[key]['name'] :
-                            cellInfo.value.value;
-                    }
-                    return value ? value.toUpperCase() : cellInfo.valueText;
-                } else {
-                    return this.l('Cashflow_Unclassified');
-                }
-            },
+            customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.l('Cashflow_Unclassified'))(),
             rowHeaderLayout: 'tree'
         },
         {
@@ -265,17 +234,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortOrder: 'asc',
             resortable: true,
             dataField: 'level2',
-            customizeText: cellInfo => {
-                if (cellInfo.value) {
-                    let [ key, prefix ] = [ cellInfo.value.slice(2), cellInfo.value.slice(0, 2) ];
-                    let namesSource = this.getNamesSourceLink(prefix);
-                    return namesSource && namesSource[key]['name'] ?
-                        namesSource[key]['name'] :
-                        cellInfo.value.value;
-                } else {
-                    return this.l('Cashflow_NoDescriptor');
-                }
-            }
+            customizeText: this.customizeFieldText.bind(this)
         },
         {
             caption: 'Sub Category',
@@ -286,17 +245,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortOrder: 'asc',
             resortable: true,
             dataField: 'level3',
-            customizeText: cellInfo => {
-                if (cellInfo.value) {
-                    let [ key, prefix ] = [ cellInfo.value.slice(2), cellInfo.value.slice(0, 2) ];
-                    let namesSource = this.getNamesSourceLink(prefix);
-                    return namesSource && namesSource[key]['name'] ?
-                           namesSource[key]['name'] :
-                           cellInfo.value.value;
-                } else {
-                    return this.l('Cashflow_NoDescriptor');
-                }
-            }
+            customizeText: this.customizeFieldText.bind(this)
         },
         {
             caption: 'Descriptor',
@@ -307,13 +256,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             resortable: true,
             areaIndex: 3,
             dataField: 'level4',
-            customizeText: cellInfo => {
-                if (cellInfo.value) {
-                    return cellInfo.value && cellInfo.value.value ? cellInfo.value.value : this.l('Cashflow_emptyDescriptor');
-                } else {
-                    return this.l('Cashflow_NoDescriptor');
-                }
-            }
+            customizeText: this.customizeFieldText.bind(this)
         },
         {
             caption: 'Amount',
@@ -552,6 +495,44 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.addHeaderExpandClickHandling();
     }
 
+    customizeFieldText(cellInfo, emptyText = this.l('Cashflow_NoDescriptor')) {
+
+        let text;
+        if (cellInfo.value) {
+            let [ key, prefix ] = [ cellInfo.value.slice(2), cellInfo.value.slice(0, 2) ];
+
+            /** General text customizing handling */
+            let namesSource = this.getNamesSourceLink(prefix);
+                text = namesSource && namesSource[key] && namesSource[key]['name'] ?
+                       namesSource[key]['name'] :
+                       cellInfo.value;
+
+            /** Text customizing for cashflow types */
+            if (prefix === CategorizationPrefixes.CashflowType) {
+                text = this.cashflowTypes[key];
+                if (key === Income || key === Expense) {
+                    text  = `${this.l('Total')} ${text}`;
+                }
+                text = text.toUpperCase();
+            }
+
+            /** Text customizing for acounts names  */
+            if (prefix === CategorizationPrefixes.AccountName) {
+                let account = this.bankAccounts.find(account => account.id == key );
+                text = account ? (account.accountName || account.accountNumber) : cellInfo.valueText;
+            }
+
+            /** Text customizing for transactions descriptor */
+            if (prefix === CategorizationPrefixes.TransactionDescriptor) {
+                text = key;
+            }
+
+        } else {
+            return emptyText;
+        }
+        return text;
+    }
+
     getNamesSourceLink(prefix: CategorizationPrefixes) {
         let category = this.getCategoryParams(prefix);
         return category && category['namesSource'] ? this.getDescendantPropValue(this, category.namesSource) : undefined;
@@ -623,6 +604,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     handleCashFlowInitialResult(initialDataResult) {
         this.initialData = initialDataResult;
         this.cashflowTypes = this.initialData.cashflowTypes;
+        this.cashflowTypes[NetChange] = this.l('Net Change');
         this.bankAccounts = this.initialData.banks.map(x => x.bankAccounts).reduce((x, y) => x.concat(y));
         this._filtersService.setup(
             this.filters = [
