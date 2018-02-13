@@ -98,17 +98,22 @@
         }
     }
 
-    /deep/ dx-tree-list {
-        .dx-treelist-header-panel {
-            display: none;
+    .tree-header {
+        &:after {
+            content: '';
+            width: 282px;
+            height: 0px;
+            border-top: 1px solid #ddd;
+            position: relative;
+            bottom: 0px;
+            left: 20px;
+            display: block;
         }
-        .dx-treelist-headers {
-            padding-left: 15px;
-            border-top: 3px double #ddd;
-            .dx-column-lines > td {
-                border-left: none !important;
-                border-right: none !important;
-            }
+    }
+
+    /deep/ dx-tree-list {
+        .dx-treelist-headers, .dx-treelist-header-panel {
+            display: none;
         }
 
         .dx-toolbar .dx-toolbar-after {
@@ -135,30 +140,15 @@
 
         &[dropallowed="true"] {
             tr[aria-level="1"], tr[aria-level="2"] {
-                td {
+                .category-hover {
                     border: 1px dashed #dfdfdf;
-
-                    &:first-child {
-                        border-right: none !important;
-                        border-left: 1px dashed #dfdfdf;
-                    }
-
-                    &:last-child {
-                        border-left: none !important;
-                    }
                 }
             }
 
             tr.drag-hover td {
-                border: 1px solid #FFE8BF !important;
-                background-color: #FFFBF3 !important;
-
-                &:first-child {
-                    border-right: none !important;
-                }
-
-                &:last-child {
-                    border-left: none !important;
+                .category-hover {
+                    border: 1px solid #FFE8BF;
+                    background-color: #FFFBF3;
                 }
             }
         }
@@ -187,29 +177,59 @@
                 td {
                     overflow: visible !important;
                     text-overflow: initial !important;
-                    border: 1px solid #fff;
-                    background-color: #fff;
-
-                    &:first-child {
-                        border-right: none !important;
-                        border-top-left-radius: 2px;
-                        border-bottom-left-radius: 2px;
-                    }
-
-                    &:nth-child(2), &:nth-child(3) {
-                        border-right: none !important;
-                        border-left: none !important;
-                    }
-
-                    &:last-child {
-                        border-left: none !important;
-                        border-top-right-radius: 2px;
-                        border-bottom-right-radius: 2px;
-                    }
+                    border: none!important;
+                    background-color: transaparent!important;
                 }
 
                 tr.dx-data-row {
+                    &.inflows {
+                        .dx-treelist-expanded,
+                        .dx-treelist-collapsed {
+                            color: #61c670;
+                        }            
+                        &[aria-level="2"] {
+                            td:first-child {
+                                &:before {
+                                    background-color: #61c670;
+                                }
+                            }
+                        }  
+                    }
+                    &.outflows {
+                        .dx-treelist-expanded, 
+                        .dx-treelist-collapsed {
+                            color: #e7326a;
+                        }
+                        &[aria-level="2"] {
+                            td:first-child {
+                                &:before {
+                                    background-color: #e7326a;
+                                }
+                            }
+                        }  
+                    }
                     &[aria-level="2"] {
+                        td:first-child {
+                            &:before {
+                                content: '';
+                                display: block;
+                                height: 38px;
+                                width: 2px;
+                                margin-top: -10px;
+                                position: absolute;
+                                left: 25px;
+                            }
+                        }
+
+                        td .category-hover {
+                            width: calc(~"100% - 46px");
+                        }
+
+                        .dx-treelist-text-content span {
+                            font-size: 14px!important;
+                            font-weight: 300!important;
+                        }
+
                         .dx-command-edit {
                             .dx-link-add {
                                 display: none !important;
@@ -217,7 +237,17 @@
                         }
                     }
 
+                    &[aria-level="1"] {
+                        td .category-hover {
+                            width: calc(~"100% - 33px");
+                        }
+                    }
+
                     &[aria-level="0"] {
+                        td .category-hover {
+                            width: calc(~"100% - 18px");
+                        }
+
                         .dx-command-edit {
                             .dx-link-delete, .dx-link-edit {
                                 display: none !important;
@@ -225,18 +255,51 @@
                         }
                     }
 
-                    td.dx-command-edit a {
-                        visibility: hidden;
+                    &.filtered-category td {
+                        .category-hover {
+                            border: 1px solid #00ef7e!important;
+                            background-color: #f0fef1!important;
+                        }
+                    }
+
+                    td {
+                        &:nth-child(2) {
+                            position: absolute;
+                            right: 0px;
+                        }
+                        .category-hover {
+                            position: absolute;
+                            height: 32px;
+                            margin-top: -7px;
+                            right: 0px;
+                            z-index: -1;
+                        }                        
+                        &.dx-command-edit a {
+                            visibility: hidden;
+                        }
+                    }
+
+                    &.dx-edit-row {
+                        td:nth-child(2) {
+                            visibility: visible!important;
+                        }
                     }
 
                     &.dx-state-hover, &.dx-selection, &.dx-edit-row {
                         cursor: pointer;
 
                         td {
-                            border: solid 1px #00aeef;
-                            background-color: #F0FAFE !important;
                             color: #424c56;
-
+                            border: none!important;
+                            background-color: transparent!important; 
+                            &:nth-child(2) {
+                                position: static;
+                                visibility: hidden;
+                            }
+                            .category-hover {
+                                border: solid 1px #00aeef;
+                                background-color: #F0FAFE;
+                            }
                             &.dx-command-edit a {
                                 visibility: visible;
                             }
@@ -244,17 +307,17 @@
                     }
 
                     .dx-treelist-text-content {
-                        position: absolute;
                         overflow: visible !important;
-                        font-size: 14px;
+                        font-size: 15px;
+                        font-style: normal;
+                        font-stretch: normal;
                         letter-spacing: 0.3px;
-                        font-weight: 400;
                         color: #424c56;
                     }
 
                     &[aria-level="1"], &[aria-level="2"] {
                         .dx-treelist-text-content {
-                            font-weight: 300;
+                            font-weight: normal;
                         }
                     }
                 }

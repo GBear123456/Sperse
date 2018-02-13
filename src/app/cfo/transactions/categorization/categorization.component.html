@@ -1,10 +1,12 @@
 <div>
-    <h3 *ngIf="showTitle">
-        {{l('Categorize transactions')}}
-        <span class="close" (click)="close.emit(null)"></span>
-        <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection($event)">{{'Clear'}}</span>
-    </h3>
-    <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
+    <div class="tree-header" *ngIf="showTitle">
+        <h3>
+            {{l('Categorize transactions')}}
+            <span class="close" (click)="close.emit(null)"></span>
+            <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection($event)">{{'Clear'}}</span>
+        </h3>
+        <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
+    </div>
     <dx-tree-list width="{{width}}"
                   height="{{height}}"
                   keyExpr="key"
@@ -20,14 +22,30 @@
                   (onSelectionChanged)="onSelectionChanged.emit($event)"
                   (onRowUpdated)="onCategoryUpdated($event)"
                   (onRowInserted)="onCategoryInserted($event)"
-                  (onRowRemoving)="onCategoryRemoving($event)">
+                  (onRowRemoving)="onCategoryRemoving($event)"
+                  (onRowPrepared)="onRowPrepared($event)">
         <dxo-editing mode="row"
                      [allowUpdating]="true"
                      [allowDeleting]="true"
                      [allowAdding]="true">
         </dxo-editing>
-        <dxi-column [width]="45" [allowEditing]="false"></dxi-column>
-        <dxi-column [allowSorting]="true" [sortIndex]="0" [width]="60" dataField="coAID" [caption]="'ID'"></dxi-column>
-        <dxi-column [allowSorting]="true" [sortIndex]="1" [sortingMethod]="sortItem" [calculateSortValue]="calculateSortValue" [sortOrder]="'asc'" dataField="name"></dxi-column>
+        <!-- dxi-column [width]="25" [allowEditing]="false"></dxi-column -->
+        <dxi-column 
+            [cellTemplate]="'categoryTemplate'"
+            [allowSorting]="true" 
+            [sortIndex]="0" 
+            [sortingMethod]="sortItem" 
+            [calculateSortValue]="calculateSortValue" 
+            [sortOrder]="'asc'" dataField="name">
+        </dxi-column>
+        <dxi-column [allowSorting]="true" [sortIndex]="1" [width]="45" dataField="coAID" [dataType]="number" [caption]="'ID'"></dxi-column>
+
+        <div *dxTemplate="let cell of 'categoryTemplate'">
+            <ng-container>
+                <div class="category-hover"></div>
+                <span> {{ cell.text }} </span>
+            </ng-container>
+        </div>
+
     </dx-tree-list>
 </div>
