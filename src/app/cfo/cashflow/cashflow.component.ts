@@ -677,6 +677,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 location: 'before',
                 items: [
                     {
+                        name: 'refresh',
+                        action: this.refreshDataGrid.bind(this)
+                    },
+                    {
                         name: 'amount',
                         text: '1 of 9'
                     },
@@ -1770,7 +1774,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (!this.hasChildsByPath(e.cell.path)) {
                 this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', e.cell.path);
                 e.cellElement.addClass('emptyChildren');
-                e.cellElement.click(function (event) {
+                e.cellElement.find('.dx-expand-icon-container').remove();
+                e.cellElement.click(function(event) {
                     event.stopImmediatePropagation();
                 });
             }
@@ -1789,9 +1794,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** hide long text for row headers and show '...' instead with the hover and long text*/
-        if (e.area === 'row' && e.cell.path && e.cell.path.length !== 1 && e.cell.text.length > this.maxCategoriesWidth) {
+        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.path.length !== 1 && e.cell.text.length > this.maxCategoriesWidth) {
             e.cellElement.attr('title', e.cell.text);
-            e.cellElement.text(_.prune(e.cell.text, this.maxCategoriesWidth));
+            e.cellElement.find('> span').text(_.prune(e.cell.text, this.maxCategoriesWidth));
         }
 
         /** Apply user preferences to the data showing */
