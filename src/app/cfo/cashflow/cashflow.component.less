@@ -335,7 +335,6 @@
                         }
 
                         &.netChange {
-                            cursor: default;
                             text-align: left;
                         }
 
@@ -401,10 +400,13 @@
                         }
                     }
 
-                    &.startedBalance {
-                        td {
-                            background: @startedBalanceBackgroundColor;
-                        }
+                    &.startedBalance td {
+                        background: @startedBalanceBackgroundColor;
+                    }
+
+
+                    &.netChangeRow td {
+                        background: transparent;
                     }
 
                     &.endingCashPosition {
@@ -485,6 +487,10 @@
 
                         &.expenses {
                             background: @expensesDataCellBackgroundColor;
+                        }
+
+                        &.netChange {
+                            background: transparent;
                         }
 
                         &.lowestOpenedCurrent:not(.mtdCell) {

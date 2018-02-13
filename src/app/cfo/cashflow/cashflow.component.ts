@@ -46,6 +46,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/observable/fromEventPattern';
 import 'rxjs/add/observable/forkJoin';
+import 'rxjs/add/operator/pluck';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
@@ -847,10 +848,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** @todo refactor - completely rewrite to using rxjs operators */
         this._cashflowServiceProxy
             .getStats(InstanceType[this.instanceType], this.instanceId, this.requestFilter)
-            .subscribe(result => {
+            .pluck('transactionStats')
+            .subscribe((transactions: any) => {
                 this.startDataLoading = true;
-                if (result.transactionStats.length) {
-                    let transactions = result.transactionStats;
+                if (transactions && transactions.length) {
                     /** categories - object with categories */
                     this.cashflowData = this.getCashflowDataFromTransactions(transactions);
                     /** Make a copy of cashflow data to display it in custom total group on the top level */
@@ -997,7 +998,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let levelNumber = 0;
         let isAccountTransaction = transactionObj.cashflowTypeId === StartedBalance ||
                                    transactionObj.cashflowTypeId === Total ||
-                                   transactionObj.cashflowTypeId === Reconciliation;
+                                   transactionObj.cashflowTypeId === Reconciliation ||
+                                   transactionObj.cashflowTypeId === NetChange;
         let key, parentKey = null;
         this.categorization.every((level) => {
             if (transactionObj[level.statsKeyName]) {
@@ -1589,9 +1591,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param cellObj - the object that pivot grid passes to the onCellPrepared event
      * return {boolean}
      */
-    isNetChangeCell(cellObj) {
-        return (cellObj.area === 'row' && cellObj.cell.path && cellObj.cell.path[0] === (CategorizationPrefixes.CashflowType + NetChange)) ||
-               (cellObj.area === 'data' && cellObj.cell.rowPath !== undefined && cellObj.cell.rowPath[0] === (CategorizationPrefixes.CashflowType + NetChange));
+    isNetChangeTotalCell(cellObj) {
+        let pathProperty = cellObj.area === 'row' ? 'path' : 'rowPath';
+        return cellObj.cell[pathProperty] && !cellObj.cell.isWhiteSpace && cellObj.cell[pathProperty].length === 1 && cellObj.cell[pathProperty][0] === (CategorizationPrefixes.CashflowType + NetChange);
     }
 
     /**
@@ -1736,12 +1738,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
 
-        if (this.isNetChangeCell(e)) {
+        if (this.isNetChangeTotalCell(e)) {
             e.cellElement.addClass('netChange');
             e.cellElement.parent().addClass('netChangeRow');
-            e.cellElement.click(function (event) {
-                event.stopImmediatePropagation();
-            });
         }
 
         /** headers manipulation (adding css classes and appending 'Totals text') */
