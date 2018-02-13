@@ -17,24 +17,21 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
         { caption: 'Chart', component: '' },
         { caption: 'Rules', component: '/rules' }
     ];
-
-    public headerTitle: string;
-    public headerLink: string;
+    @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
+    @Input() headerLink: string = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';
 
     constructor(injector: Injector,
         private _router: Router) {
         super(injector);
-
-        this.headerTitle = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
-        this.headerLink = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';
     }
 
     ngOnInit(): void {
+        console.log(this.HeaderTitle);
     }
 
-    onClick(index: number) {
-        if (this._cfoService.hasTransactions)
-            this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + this.SetupSteps[index].component]);
+    onClick(index: number, elem) {
+        if (this._cfoService.hasTransactions && elem.component)
+            this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + elem.component]);
     }
 
     getItemClass(index: number) {
