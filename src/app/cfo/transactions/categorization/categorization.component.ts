@@ -335,4 +335,14 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         this.clearFilteredCategory();
         this.onFilterSelected.emit(null);
     }
+
+    onRowPrepared($event) {
+        if ($event.rowType != 'data')
+            return ;
+
+        let typeId = this.categorization.accountingTypes[
+            $event.key >= 0 ? this.categorization.categories[$event.key]  
+                .accountingTypeId: parseInt($event.key)].typeId;
+        $event.rowElement.addClass(typeId == 'I' ? 'inflows': 'outflows');
+    }
 }
