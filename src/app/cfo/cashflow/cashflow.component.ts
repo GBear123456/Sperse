@@ -2038,7 +2038,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     addCurrentPeriodsClasses(cellObj) {
         this.getColumnFields().every( (field, index) => {
-            if (field.dataType === 'date' && field.groupInterval !== 'day') {
+            if (field.dataType === 'date') {
                 let currentDate = moment(),
                     fieldInterval = field.groupInterval,
                     method = fieldInterval === 'day' ? 'date' : fieldInterval,
