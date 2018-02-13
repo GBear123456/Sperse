@@ -11,6 +11,7 @@
     (download)="downloadData($event)"
     (showPreferencesDialog)="showPreferencesDialog()"
     (onSearchValueChange)="searchValueChange($event)"
+    (onRefresh)="refreshDataGrid()"
 ></cashflow-operations>
 
 <div class="cashflow" *ngIf="cashflowData && cashflowData.length">
