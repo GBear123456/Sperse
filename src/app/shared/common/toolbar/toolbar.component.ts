@@ -11,6 +11,7 @@ import * as _ from 'underscore';
 })
 export class ToolBarComponent extends AppComponentBase {
     @Input('adaptive') adaptive = false;
+    @Input('compact') compact = false;
     private _config: ToolbarGroupModel[];
     @Input()
     set config(config: ToolbarGroupModel[]) {
@@ -30,6 +31,23 @@ export class ToolBarComponent extends AppComponentBase {
         filters: {
             hint: this.l('Filters'),
             accessKey: 'filters'
+        },
+        expandTree: {
+            text: this.l('Expand'),
+            iconSrc: this.getImgURI('expand-tree-icon')
+        },
+        find: {
+            hint: this.l('Find'),
+            text: this.l('Find'),
+            iconSrc: this.getImgURI('find-icon')
+        },
+        sort: {
+            hint: this.l('Sort'),
+            text: this.l('Sort'),
+            iconSrc: this.getImgURI('sort-icon-down')
+        },
+        follow: {
+            iconSrc: this.getImgURI('follow-icon')
         },
         back: {
             hint: this.l('Back'),
@@ -209,31 +227,37 @@ export class ToolBarComponent extends AppComponentBase {
             this.display = 'flex';
     }
 
+    initDropDownMenu(item) {
+        if (item.widget == 'dxDropDownMenu') {
+            item.options['accessKey'] = item.name;
+            item.options['items'].forEach(link => {
+                link.html = this.getDropDownItemTemplate(
+                    link, item.options['width']);
+                link.onClick = (event) => {
+                    if (item.name == 'select-box')
+                        $('.dx-dropdownmenu-button[select-caption^="' + item.text + '"]')
+                            .attr('select-value', event.itemData.text);
+                    /** if each item has its own click handler - call it */
+                    (link.action && link.action.call(this, this.getOptions() || event)) ||
+                    /** if all items use general select handler - call general */
+                    (item.options.onSelectionChanged && item.options.onSelectionChanged.call(this, this.getOptions() || event));
+                };
+            });
+        }
+    }
+
     initToolbarItems() {
         let items = [];
         let responsiveItems = [];
         this._config.forEach((group) => {
             let count = group.items.length;
             group.items.forEach((item, index) => {
+                this.initDropDownMenu(item);
+
                 let isLast = count == index + 1;
-                if (item.widget == 'dxDropDownMenu') {
-                    item.options['accessKey'] = item.name;
-                    item.options['items'].forEach(link => {
-                        link.html = this.getDropDownItemTemplate(
-                            link, item.options['width']);
-                        link.onClick = (event) => {
-                            if (item.name == 'select-box')
-                                $('.dx-dropdownmenu-button[select-caption^="' + item.text + '"]')
-                                    .attr('select-value', event.itemData.text);
-                            /** if each item has its own click handler - call it */
-                            (link.action && link.action.call(this, this.getOptions() || event)) ||
-                            /** if all items use general select handler - call general */
-                            (item.options.onSelectionChanged && item.options.onSelectionChanged.call(this, this.getOptions() || event));
-                        };
-                    });
-                }
                 let internalConfig = this.supportedButtons[item.name];
                 let mergedConfig = _.extend(internalConfig || {}, item.options);
+
                 if (item.adaptive === false || !this.showAdaptiveToolbar) {
                     items.push({
                         location: group.location,
