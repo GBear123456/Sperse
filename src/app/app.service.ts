@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { AppServiceBase } from '@shared/common/app-service-base'
 import { PanelMenu } from 'app/shared/layout/panel-menu';
 
@@ -13,8 +13,9 @@ export class AppService extends AppServiceBase {
     public showContactInfoPanel = false;
     public contactInfo: any;
 
-    constructor() {
+    constructor(injector: Injector) {
         super(
+            injector,
             'CRM',
             [
                 'Admin',
