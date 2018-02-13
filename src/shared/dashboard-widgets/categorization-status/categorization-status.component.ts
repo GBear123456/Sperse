@@ -63,8 +63,6 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            console.log('From component');
-            console.log(result);
             if (result) {
                 this.resetRules = result;
                 this.reset();

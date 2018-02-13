@@ -20,7 +20,7 @@
         }
 
         .categories {
-            width: 0px;
+            width: 0;
             transition: 1s;
             overflow: hidden;
             border-right: 0px;
@@ -34,17 +34,77 @@
                 tr.dx-selection {
                     cursor: grab;
                 }
-
-                .dx-data-row td .uncategorized {
-                    &:before {
-                        content: "\2022";
-                        color: red;
-                        font-weight: 600;
-                        display: inline-block;
-                        font-size: 28px;
-                        line-height: 0;
+                
+                .dx-header-row {
+                    td[role="columnheader"] {
+                        text-align: left !important;
+                        .dx-column-indicators {
+                            float: none !important;
+                        }
+                        .dx-datagrid-text-content {
+                            float: left !important;
+                        }
+                    }
+                }
+                
+                .dx-header-row td,
+                .dx-data-row td {
+    
+                    padding: 7px 15px;
+                    &.dx-command-select {
+                        padding: 7px 5px;
+                        width: 22px !important;
+                        min-width: 22px !important;
+                    }
+                    
+                    &.cashflow-type {
+                        text-align: center;
+                        padding-right: 15px;
+                        padding-left: 15px;
+                        
+                        .outflows,
+                        .inflows {
+                            font-size: 13px;
+                            font-weight: 500;
+                            letter-spacing: 0.3px;
+                            text-align: center;
+                            color: #61c670;
+                            line-height: 26px;
+                            border-radius: 13px;
+                            padding: 0 15px;
+                            background-color: #EDF7E8;
+                        }
+                        .outflows {
+                            color: #e7326a;
+                            background-color: #FFF5F7;
+                        }
+                    }
+                }
+                
+                .dx-header-row td {
+                    &.category {
+                        padding-left: 15px;
+                    }
+                }
+                
+                .dx-data-row td {
+                    &.category {
+                        padding-left: 15px;
                         position: relative;
-                        top: 4px;
+                    }
+                    .uncategorized {
+                        &:before {
+                            content: "";
+                            background: #f8a126;
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 50%;
+                            display: block;
+                            position: absolute;
+                            left: 0;
+                            top: 50%;
+                            transform: translateY(-50%);
+                        }
                     }
                 }
             }
@@ -53,7 +113,7 @@
         /deep/ #gridContainer .dx-datagrid-rowsview {
             .dx-datagrid-content tr td.tabular,
             .dx-datagrid-content tr td.tabular * {
-                font-family: Lato !important;
+                font-family: 'Lato' !important;
             }
         }
     }
@@ -138,6 +198,27 @@
                         }
                     }
                 }
+            }
+        }
+    
+        .dx-datagrid-rowsview {
+            .dx-column-lines {
+                td {
+                    font-weight: 500;
+                }
+            }
+        }
+        
+        .uncategorized {
+            td {
+                background-color: #FFFBF5;
+                color: #757B7F;
+            }
+        }
+        
+        .dx-pointer-events-target {
+            * {
+                background-color: transparent;
             }
         }
     }

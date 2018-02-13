@@ -1,6 +1,7 @@
 {
   "name": "CRM",
   "search": false,
+  "requiredFeature":  "CRM",
   "navigation": [
     ["Dashboard", "", "icon-home", "/app/main/dashboard"],
     ["Leads", "Pages.CRM.Leads", "icon-globe", "/app/crm/leads"],
