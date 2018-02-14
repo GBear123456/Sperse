@@ -216,11 +216,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     onToolbarPreparing(e) {
         e.toolbarOptions.items.unshift({
             location: 'after',
-            template: 'accountTotal'
-        },{
-            location: 'after',
             template: 'portfolioTotal'
-            }, {
         }, {
             location: 'after',
             template: 'startBalanceTotal'
@@ -230,7 +226,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }, {
             location: 'after',
             template: 'creditTotal'
-        },{
+        }, {
             location: 'after',
             template: 'transactionTotal'
         });

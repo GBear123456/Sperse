@@ -51,6 +51,9 @@
                 .dx-data-row td {
     
                     padding: 7px 15px;
+                    &.id-column {
+                        min-width: 30px;
+                    }
                     &.dx-command-select {
                         padding: 7px 5px;
                         width: 22px !important;
@@ -154,38 +157,56 @@
                     margin: 0 !important;
 
                     .dx-toolbar-item {
-                        padding: 12px 10px 0;
                         max-width: 22%;
-                        text-align: left;
-                        border-left: 1px solid #ddd;
-
+                        text-align: center;
+                        display: flex;
+                        align-items: center;
+                        
+                        .informer {
+                            padding: 0 30px;
+                            border-left: 1px solid #ddd;
+                        }
+                        
                         .name {
-                            font-size: 15px;
+                            font-size: 11px;
+                            font-weight: 400;
+                            line-height: 2.18;
+                            letter-spacing: 0.2px;
+                            color: #677380;
 
                             i {
-                                border: solid #A9A9A9;
-                                border-width: 0 2px 2px 0;
+                                border-left: 4px solid transparent;
+                                border-right: 4px solid transparent;
+                                border-top: 4px solid #00aeef;
+                                
                                 display: inline-block;
-                                padding: 2px;
                                 margin: 2px;
                                 align-self: flex-end;
                             }
-
-                            .down {
-                                transform: rotate(45deg);
-                                -webkit-transform: rotate(45deg);
+                            
+                            .name-count {
+                                color: #00aeef;
                             }
                         }
 
                         .count {
                             font-size: 17px;
+                            font-weight: 600;
+                            line-height: 1.41;
+                            letter-spacing: 0.3px;
+                            color: #3f4448;
+                            margin-bottom: 0;
 
                             .cent {
-                                color: silver;
-                                font-size: 12px;
-                                vertical-align: text-top;
-                                padding: 5px 3px 0;
-                                margin-top: 5px;
+                                font-size: 10px;
+                                line-height: 2.4;
+                                letter-spacing: 0.2px;
+                                font-weight: 600;
+                                color: #3f4448;
+                                vertical-align: top;
+                                display: inline-block;
+                                margin-top: -1px;
+                                margin-left: -3px;
                             }
                         }
 
@@ -216,11 +237,11 @@
             }
         }
         
-        .dx-pointer-events-target {
+        /*.dx-pointer-events-target {
             * {
                 background-color: transparent;
             }
-        }
+        }*/
     }
 }
 
