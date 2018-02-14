@@ -449,6 +449,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     oldCellPadding: string;
     clickedRowResult;
     clickedCellObj;
+    quarterHeadersAreCollapsed = false;
+    yearHeadersAreCollapsed = false;
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -578,9 +580,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Add the handling of the click on the date header cells in pivot grid
      */
     addHeaderExpandClickHandling() {
-        window['onHeaderExpanderClick'] = function ($event) {
+        window['onHeaderExpanderClick'] = $event => {
             let clickedElement = $($event.target);
             if (clickedElement.closest('td').hasClass('dx-pivotgrid-expanded')) {
+
+                let fieldPeriod = clickedElement.closest('td').hasClass('year') ? 'year' : 'quarter';
+                let defaultClick = true;
+                /** Click for decreasing the height of the header */
                 if (
                     !clickedElement.hasClass('closed-head-cell') &&
                     !clickedElement.hasClass('totals') &&
@@ -588,10 +594,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     !clickedElement.is('span')
                 ) {
                     $event.stopPropagation();
+                    defaultClick = false;
                 }
-                $(clickedElement).closest('tr').children().each(function () {
+
+                let cashflowComponent = this;
+                clickedElement.closest('tr').children().each(function() {
                     if ($(this).hasClass('dx-pivotgrid-expanded')) {
-                        $(this).find('div.head-cell-expand').toggleClass('closed');
+                        let headCellExpandElement = $(this).find('div.head-cell-expand');
+                        headCellExpandElement.toggleClass('closed');
+                        cashflowComponent[`${fieldPeriod}HeadersAreCollapsed`] = headCellExpandElement.hasClass('closed') || defaultClick;
                     }
                 });
             }
@@ -1997,8 +2008,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 fieldName = fieldObj.groupInterval;
                 /** Added 'Total' text to the year and quarter headers */
                 if (fieldName === 'year' || fieldName === 'quarter') {
-                    let hideHead = cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
-                        (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length >= 6);
+                    let hideHead = (cellObj.cellElement.hasClass('dx-pivotgrid-expanded') &&
+                        (fieldName === 'quarter' || cellObj.cellElement.parent().parent().children().length >= 6)) ||
+                        (fieldName === 'quarter' && this.quarterHeadersAreCollapsed) ||
+                        (fieldName === 'year' && this.yearHeadersAreCollapsed);
                     cellObj.cellElement.attr('onclick', 'onHeaderExpanderClick(event)');
                     cellObj.cellElement.html(this.getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName));
                 }
