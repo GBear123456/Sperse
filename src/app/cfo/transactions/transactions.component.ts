@@ -83,7 +83,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (this._categoriesShowed = value) {
             this.filtersService.fixed = false;
             this.filtersService.disable();
-            this.initToolbarConfig();
         }
     }
 
@@ -353,8 +352,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     searchValueChange(e: object) {
         this.searchValue = e['value'];
-
-        this.initToolbarConfig();
+        
         this.processFilterInternal();
     }
 
