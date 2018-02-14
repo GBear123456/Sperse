@@ -61,10 +61,14 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
         }
 
         if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
-            if (this._permissionChecker.isGranted('Pages.CRM') && this._permissionChecker.isGranted('Pages.CFO.BaseAccess') && this._feature.isEnabled('CFO.Partner'))  
-                return '/app/cfo/personal/';
-            else if (this._permissionChecker.isGranted('Pages.CFO.BusinessAccess') /*&& this._feature.isEnabled('CFO.Module')*/)
-                return '/app/cfo/business/';
+            if (this._permissionChecker.isGranted('Pages.CFO.BaseAccess') && this._feature.isEnabled('CFO')) {
+
+                if (this._permissionChecker.isGranted('Pages.CFO.BusinessAccess'))
+                    return '/app/cfo/business/';
+
+                if (this._feature.isEnabled('CFO.Partner'))
+                    return '/app/cfo/personal/';
+            }            
         }           
 
         if (this._permissionChecker.isGranted('Pages.Administration.Host.Dashboard')) {
