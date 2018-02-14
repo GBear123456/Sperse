@@ -32,15 +32,11 @@ export class PlatformSelectComponent extends AppComponentBase {
                     name: module
                 });
             } else {
-                //this.modules.push({
-                //    code: module,
-                //    name: 'CFO Personal',
-                //    uri: 'personal',
-                //});
+                let cfoPersonalEnable = (!abp.session.tenantId || this.feature.isEnabled('CFO.Partner')) && !this.permission.isGranted('Pages.CFO.BusinessAccess');
                 this.modules.push({
                     code: module,
                     name: 'CFO',
-                    uri: 'business',
+                    uri: cfoPersonalEnable ? 'personal' : 'business',
                 });
             }
 
