@@ -30,6 +30,10 @@ export class AppSessionService {
         return this._tenant;
     }
 
+    get tenantName(): string {
+        return this._tenant ? this.tenant.name : '';
+    }
+
     get tenancyName(): string {
         return this._tenant ? this.tenant.tenancyName : '';
     }

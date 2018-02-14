@@ -27,10 +27,6 @@ export abstract class AppComponentBase {
     @HostListener('document:webkitfullscreenchange', ['$event'])
     @HostListener('document:mozfullscreenchange', ['$event'])
     @HostListener('document:fullscreenchange', ['$event'])
-    onWebkitFullscreenChange($event) {
-        this.isFullscreenMode = document['fullScreen']
-            || document['mozFullScreen'] || document.webkitIsFullScreen;
-    }
 
     dataGrid: any;
     dataSource: any;
@@ -75,6 +71,11 @@ export abstract class AppComponentBase {
         this._applicationRef = _injector.get(ApplicationRef);
         this._exportService = _injector.get(ExportService);
         this.primengDatatableHelper = new PrimengDatatableHelper();
+    }
+
+    onWebkitFullscreenChange($event) {
+        this.isFullscreenMode = document['fullScreen']
+            || document['mozFullScreen'] || document.webkitIsFullScreen;
     }
 
     getRootComponent() {
@@ -247,5 +248,10 @@ export abstract class AppComponentBase {
     finishLoading() {
         abp.ui.clearBusy(this.getElementRef().nativeElement);
         this.loading = false;
+    }
+
+    protected setTitle(moduleName: string) {
+        let rootComponent: any = this.getRootComponent();
+        rootComponent.setTitle(this.appSession.tenantName, moduleName);
     }
 }

@@ -1,6 +1,5 @@
 import { Component, Inject, ElementRef, AfterViewInit, OnInit } from '@angular/core';
-import { DOCUMENT } from '@angular/platform-browser';
-
+import { DOCUMENT, Title } from '@angular/platform-browser';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
@@ -17,7 +16,8 @@ import * as _ from 'underscore';
 export class RootComponent implements AfterViewInit {
     constructor(@Inject(DOCUMENT) private document,
                 private hostElement: ElementRef,
-                private _uiCustomizationService: AppUiCustomizationService) { }
+                private _uiCustomizationService: AppUiCustomizationService,
+                private title: Title) { }
 
     public checkSetClasses(loggedUser) {
         let classList = this.hostElement.nativeElement.classList,
@@ -54,6 +54,11 @@ export class RootComponent implements AfterViewInit {
         this.document.head.append(link);
     }
 
+    public setTitle(tenantName: string, moduleName: string) {
+        let newTitle = (tenantName === '' ? 'Sperse' : tenantName) + ': ' + moduleName;
+        this.title.setTitle(newTitle);
+    }
+
     ngAfterViewInit() {
         this.checkSetClasses(abp.session.userId);
     }
@@ -75,7 +80,8 @@ export class AppRootComponent implements OnInit {
             this.parent.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
 
         //tenant specific custom css
-        this.SS.tenant && this.SS.tenant.customCssId && this.parent.addStyleSheet('TenantCustomCss',
-            AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + this.SS.tenant.customCssId);
+        if (this.SS.tenant && this.SS.tenant.customCssId) {
+            this.parent.addStyleSheet('TenantCustomCss', AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + this.SS.tenant.customCssId);
+        }
     }
 }
