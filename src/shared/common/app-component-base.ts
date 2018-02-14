@@ -184,6 +184,10 @@ export abstract class AppComponentBase {
         return keywords;
     }
 
+    isFeatureEnable(featureName: string): boolean {
+        return !abp.session.tenantId || !featureName || this.feature.isEnabled(featureName);
+    }
+
     isGranted(permissionName: string): boolean {
         return this.permission.isGranted(permissionName);
     }
