@@ -32,7 +32,7 @@ export class StatsService {
                                 style: 'currency',
                                 currency: 'USD'
                             })}</span></div>`;
-                } else {
+                } else if (field.name != 'startingBalanceAdjustments' || pointDataObject[field.name]) {
                     html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span style="float: right; font-family: Lato; margin-left: 10px">${pointDataObject[field.name].toLocaleString('en-EN', {
                         style: 'currency',
                         currency: 'USD'
