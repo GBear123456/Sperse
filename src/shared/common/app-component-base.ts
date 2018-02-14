@@ -36,8 +36,8 @@ export abstract class AppComponentBase {
     dataSource: any;
     totalDataSource: any;
     localization: LocalizationService;
-    permission: PermissionCheckerService;
-    feature: FeatureCheckerService;
+    protected permission: PermissionCheckerService;
+    protected feature: FeatureCheckerService;
     notify: NotifyService;
     setting: SettingService;
     message: MessageService;
