@@ -28,20 +28,21 @@ export class StatsService {
             if (pointDataObject[field.name] !== null && pointDataObject[field.name] !== undefined) {
                 if (field.label == 'Starting Balance') {
                     html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span style="float: right; font-family: Lato; margin-left: 10px">
-                            ${(pointDataObject[field.name] - pointDataObject['startingBalanceAdjustments']).toLocaleString('en-EN', {
+                            ${(pointDataObject[field.name] - pointDataObject[field.name + 'Adjustments']).toLocaleString('en-EN', {
                                 style: 'currency',
                                 currency: 'USD'
                             })}</span></div>`;
-                } else {
+                } else if ((field.name.indexOf('BalanceAdjustments') < 0) || pointDataObject[field.name]) {
                     html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span style="float: right; font-family: Lato; margin-left: 10px">${pointDataObject[field.name].toLocaleString('en-EN', {
                         style: 'currency',
                         currency: 'USD'
                     })}</span></div>`;
                 }
-                if (field.name === 'forecastStartingBalance' ||
+                if (field.name === 'forecastStartingBalanceAdjustments' ||
                     field.name === 'netChange' ||
                     field.name === 'startingBalanceAdjustments' ||
-                    field.name === 'forecastNetChange')
+                    field.name === 'forecastNetChange'
+                )
                     html += '<hr style="margin: 5px 0"/>';
             }
         });

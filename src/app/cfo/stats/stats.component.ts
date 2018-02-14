@@ -89,6 +89,14 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             'label': this.l('Stats_endingBalance')
         },
         {
+            'name': 'forecastStartingBalance',
+            'label': this.l('Stats_startingBalance')
+        },
+        {
+            'name': 'forecastStartingBalanceAdjustments',
+            'label': this.l('Stats_Starting_Balance_Adjustments')
+        },
+        {
             'name': 'forecastIncome',
             'label': this.l('Stats_Forecast_Inflows')
         },

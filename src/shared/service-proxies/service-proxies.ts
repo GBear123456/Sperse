@@ -14042,13 +14042,13 @@ export class TokenAuthServiceProxy {
     }
 
     /**
-     * @impersonationToken (optional) 
+     * @secureId (optional) 
      * @return Success
      */
-    impersonatedAuthenticate(impersonationToken: string): Observable<ImpersonatedAuthenticateResultModel> {
+    impersonatedAuthenticate(secureId: string): Observable<ImpersonatedAuthenticateResultModel> {
         let url_ = this.baseUrl + "/api/TokenAuth/ImpersonatedAuthenticate?";
-        if (impersonationToken !== undefined)
-            url_ += "impersonationToken=" + encodeURIComponent("" + impersonationToken) + "&"; 
+        if (secureId !== undefined)
+            url_ += "secureId=" + encodeURIComponent("" + secureId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -17676,6 +17676,7 @@ export interface IUpdateForecastInput {
 
 export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {
     bankAccountId: number;
+    cashflowTypeId: string;
     categoryId: number;
     transactionDescriptor: string;
     forecastModelIds: number[] = [];
@@ -17702,6 +17703,7 @@ export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {
     init(data?: any) {
         if (data) {
             this.bankAccountId = data["bankAccountId"];
+            this.cashflowTypeId = data["cashflowTypeId"];
             this.categoryId = data["categoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             if (data["forecastModelIds"] && data["forecastModelIds"].constructor === Array) {
@@ -17731,6 +17733,7 @@ export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["bankAccountId"] = this.bankAccountId;
+        data["cashflowTypeId"] = this.cashflowTypeId;
         data["categoryId"] = this.categoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         if (this.forecastModelIds && this.forecastModelIds.constructor === Array) {
@@ -17754,6 +17757,7 @@ export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {
 
 export interface ICreateForecastScheduleDto {
     bankAccountId: number;
+    cashflowTypeId: string;
     categoryId: number;
     transactionDescriptor: string;
     forecastModelIds: number[];
@@ -17772,6 +17776,7 @@ export interface ICreateForecastScheduleDto {
 export class UpdateForecastScheduleInput implements IUpdateForecastScheduleInput {
     id: number;
     bankAccountId: number;
+    cashflowTypeId: string;
     categoryId: number;
     transactionDescriptor: string;
     forecastModelIds: number[] = [];
@@ -17799,6 +17804,7 @@ export class UpdateForecastScheduleInput implements IUpdateForecastScheduleInput
         if (data) {
             this.id = data["id"];
             this.bankAccountId = data["bankAccountId"];
+            this.cashflowTypeId = data["cashflowTypeId"];
             this.categoryId = data["categoryId"];
             this.transactionDescriptor = data["transactionDescriptor"];
             if (data["forecastModelIds"] && data["forecastModelIds"].constructor === Array) {
@@ -17829,6 +17835,7 @@ export class UpdateForecastScheduleInput implements IUpdateForecastScheduleInput
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["bankAccountId"] = this.bankAccountId;
+        data["cashflowTypeId"] = this.cashflowTypeId;
         data["categoryId"] = this.categoryId;
         data["transactionDescriptor"] = this.transactionDescriptor;
         if (this.forecastModelIds && this.forecastModelIds.constructor === Array) {
@@ -17853,6 +17860,7 @@ export class UpdateForecastScheduleInput implements IUpdateForecastScheduleInput
 export interface IUpdateForecastScheduleInput {
     id: number;
     bankAccountId: number;
+    cashflowTypeId: string;
     categoryId: number;
     transactionDescriptor: string;
     forecastModelIds: number[];
@@ -19139,6 +19147,7 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
     accountingType: string;
     category: string;
     subCategory: string;
+    sortId: number;
 
     constructor(data?: IAccountingCategoryDto) {
         if (data) {
@@ -19156,6 +19165,7 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
             this.accountingType = data["accountingType"];
             this.category = data["category"];
             this.subCategory = data["subCategory"];
+            this.sortId = data["sortId"];
         }
     }
 
@@ -19172,6 +19182,7 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
         data["accountingType"] = this.accountingType;
         data["category"] = this.category;
         data["subCategory"] = this.subCategory;
+        data["sortId"] = this.sortId;
         return data; 
     }
 }
@@ -19182,6 +19193,7 @@ export interface IAccountingCategoryDto {
     accountingType: string;
     category: string;
     subCategory: string;
+    sortId: number;
 }
 
 export class ResetClassificationDto implements IResetClassificationDto {
@@ -20989,7 +21001,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     companyName: string;
     emailAddress1: string;
     emailAddress2: string;
-    typeId: number;
     industry: string;
     relationship: string;
     primaryFundingType: string;
@@ -21003,6 +21014,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     countriesServed: string;
     description: string;
     keywordTags: string;
+    logoUrl: string;
     ein: string;
     formedCountryId: string;
     formedStateId: string;
@@ -21041,7 +21053,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.companyName = data["companyName"];
             this.emailAddress1 = data["emailAddress1"];
             this.emailAddress2 = data["emailAddress2"];
-            this.typeId = data["typeId"];
             this.industry = data["industry"];
             this.relationship = data["relationship"];
             this.primaryFundingType = data["primaryFundingType"];
@@ -21055,6 +21066,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.countriesServed = data["countriesServed"];
             this.description = data["description"];
             this.keywordTags = data["keywordTags"];
+            this.logoUrl = data["logoUrl"];
             this.ein = data["ein"];
             this.formedCountryId = data["formedCountryId"];
             this.formedStateId = data["formedStateId"];
@@ -21108,7 +21120,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["companyName"] = this.companyName;
         data["emailAddress1"] = this.emailAddress1;
         data["emailAddress2"] = this.emailAddress2;
-        data["typeId"] = this.typeId;
         data["industry"] = this.industry;
         data["relationship"] = this.relationship;
         data["primaryFundingType"] = this.primaryFundingType;
@@ -21122,6 +21133,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["countriesServed"] = this.countriesServed;
         data["description"] = this.description;
         data["keywordTags"] = this.keywordTags;
+        data["logoUrl"] = this.logoUrl;
         data["ein"] = this.ein;
         data["formedCountryId"] = this.formedCountryId;
         data["formedStateId"] = this.formedStateId;
@@ -21169,7 +21181,6 @@ export interface IOrganizationBusinessInfo {
     companyName: string;
     emailAddress1: string;
     emailAddress2: string;
-    typeId: number;
     industry: string;
     relationship: string;
     primaryFundingType: string;
@@ -21183,6 +21194,7 @@ export interface IOrganizationBusinessInfo {
     countriesServed: string;
     description: string;
     keywordTags: string;
+    logoUrl: string;
     ein: string;
     formedCountryId: string;
     formedStateId: string;
@@ -34556,6 +34568,9 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
     tenancyName: string;
     adminEmailAddress: string;
     adminPassword: string;
+    editionId: number;
+    paymentPeriodType: CompleteTenantRegistrationInputPaymentPeriodType;
+    leadInterests: LeadInterestDto[];
 
     constructor(data?: ICompleteTenantRegistrationInput) {
         if (data) {
@@ -34573,6 +34588,13 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
             this.tenancyName = data["tenancyName"];
             this.adminEmailAddress = data["adminEmailAddress"];
             this.adminPassword = data["adminPassword"];
+            this.editionId = data["editionId"];
+            this.paymentPeriodType = data["paymentPeriodType"];
+            if (data["leadInterests"] && data["leadInterests"].constructor === Array) {
+                this.leadInterests = [];
+                for (let item of data["leadInterests"])
+                    this.leadInterests.push(LeadInterestDto.fromJS(item));
+            }
         }
     }
 
@@ -34589,6 +34611,13 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
         data["tenancyName"] = this.tenancyName;
         data["adminEmailAddress"] = this.adminEmailAddress;
         data["adminPassword"] = this.adminPassword;
+        data["editionId"] = this.editionId;
+        data["paymentPeriodType"] = this.paymentPeriodType;
+        if (this.leadInterests && this.leadInterests.constructor === Array) {
+            data["leadInterests"] = [];
+            for (let item of this.leadInterests)
+                data["leadInterests"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -34599,6 +34628,9 @@ export interface ICompleteTenantRegistrationInput {
     tenancyName: string;
     adminEmailAddress: string;
     adminPassword: string;
+    editionId: number;
+    paymentPeriodType: CompleteTenantRegistrationInputPaymentPeriodType;
+    leadInterests: LeadInterestDto[];
 }
 
 export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistrationOutput {
@@ -38251,6 +38283,11 @@ export enum UpdateSslBindingIsActiveInputTenantHostType {
     _0 = 0, 
     _1 = 1, 
     _2 = 2, 
+}
+
+export enum CompleteTenantRegistrationInputPaymentPeriodType {
+    _30 = 30, 
+    _365 = 365, 
 }
 
 export enum RegisterTenantInputSubscriptionStartType {
