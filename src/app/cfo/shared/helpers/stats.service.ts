@@ -18,7 +18,12 @@ export class StatsService {
     getTooltipInfoHtml(data, fields, pointInfo) {
         let html = '';
         let pointDataObject = data.find(item => item.date.toDate().toString() == pointInfo.argument);
-        html += `<header class="tooltip-header">${moment(pointInfo.argument).utc().format('MMM YYYY')}</header>`;
+
+        moment.tz.setDefault(undefined);
+        let date = moment(pointInfo.argument);
+        moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
+
+        html += `<header class="tooltip-header">${date.format('MMM YYYY')}</header>`;
         fields.forEach(field => {
             if (pointDataObject[field.name] !== null && pointDataObject[field.name] !== undefined) {
                 if (field.label == 'Starting Balance') {
