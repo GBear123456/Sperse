@@ -7,6 +7,8 @@ import {
     InstanceType
 } from '@shared/service-proxies/service-proxies';
 import * as moment from 'moment';
+import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/scan';
 
 @Component({
     selector: 'app-totals-by-period',
@@ -22,12 +24,13 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         this.l('This_Month'),
         this.l('Last_Month'),
         this.l('This_Year'),
-        this.l('Last_Year')
+        this.l('Last_Year'),
+        this.l('All_Periods')
     ];
     totalData: any;
     selectedPeriod: any = String(GroupBy['Yearly']).toLowerCase();
-    startDate = moment().utc().subtract(1, 'year').startOf('year');
-    endDate = moment().utc().subtract(1, 'year').endOf('year');
+    startDate;
+    endDate;
     incomeColor = '#32bef2';
     expensesColor = '#f9b74b';
     netChangeColor = '#35c8a8';
@@ -56,19 +59,23 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
             this.endDate,
             undefined,
             this.selectedPeriod
-        ).subscribe(result => {
-                result.forEach(statsItem => {
-                    statsItem.income = Math.abs(statsItem.income);
-                    statsItem.expenses = Math.abs(statsItem.expenses);
-                    Object.defineProperty(
-                        statsItem,
-                        'netChange',
-                        { value: Math.abs(statsItem.income - statsItem.expenses) }
-                    );
-                });
-                this.totalData = result;
-                this.finishLoading();
-            });
+        )
+            .mergeMap(x => x)
+            .scan((prevStatsItem, currentStatsItem) => {
+                let income = Math.abs(currentStatsItem.income) + prevStatsItem.income;
+                let expenses = Math.abs(currentStatsItem.expenses) + prevStatsItem.expenses;
+                return {
+                    'income': income,
+                    'expenses': expenses,
+                    'netChange': Math.abs(income - expenses),
+                    'date': currentStatsItem.date
+                };
+            }, { 'income': 0, 'expenses': 0, 'netChange': 0 })
+            .subscribe(
+                result => this.totalData = [result],
+                e => { this.finishLoading(); console.log(e); },
+                () => this.finishLoading()
+            );
     }
 
     onValueChanged($event): void {
@@ -76,41 +83,44 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         let groupBy;
         let startDate = moment().utc();
         let endDate = moment().utc();
-
         switch ($event.value) {
-            case 'Today':
+            case this.l('Today'):
                 period = 'day';
                 groupBy = 'Daily';
                 break;
-            case 'Yesterday':
+            case this.l('Yesterday'):
                 period = 'day';
                 groupBy = 'Daily';
                 startDate.subtract(1, 'day');
                 endDate.subtract(1, 'day');
                 break;
-            case 'This Week':
+            case this.l('This_Week'):
                 period = 'week';
                 groupBy = 'Weekly';
                 break;
-            case 'This Month':
+            case this.l('This_Month'):
                 period = 'month';
                 groupBy = 'Monthly';
                 break;
-            case 'Last Month':
+            case this.l('Last_Month'):
                 period = 'month';
                 groupBy = 'Monthly';
                 startDate.subtract(1, 'month');
                 endDate.subtract(1, 'month');
                 break;
-            case 'This Year':
+            case this.l('This_Year'):
                 period = 'year';
                 groupBy = 'Yearly';
                 break;
-            case 'Last Year':
+            case this.l('Last_Year'):
                 period = 'year';
                 groupBy = 'Yearly';
                 startDate.subtract(1, 'year');
                 endDate.subtract(1, 'year');
+                break;
+            case this.l('All_Periods'):
+                period = 'all';
+                groupBy = 'Yearly';
                 break;
             default:
                 period = 'year';
@@ -120,8 +130,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 break;
         }
 
-        this.startDate = startDate.startOf(period);
-        this.endDate = endDate.endOf(period);
+        this.startDate = period !== 'all' ? startDate.startOf(period) : undefined;
+        this.endDate = period !== 'all' ? endDate.endOf(period) : undefined;
         this.selectedPeriod = String(GroupBy[groupBy]).toLowerCase();
         this.loadStatsData();
     }

@@ -3,7 +3,7 @@
         <h2 class="title">{{l('Totals_by_period')}}</h2>
         <div class="select-box-wrap">
             <dx-select-box [items]="availablePeriods"
-                           [value]="availablePeriods[6]"
+                           [value]="availablePeriods[availablePeriods.length - 1]"
                            (onValueChanged)="onValueChanged($event)">
             </dx-select-box>
         </div>
