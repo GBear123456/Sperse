@@ -543,7 +543,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                     'styles': {
                         'left': left + '%',
                         'top': y + 'px',
-                        'position': 'absolute'
+                        'position': 'absolute',
+                        'pointer-events': 'none'
                     }
                 }));
                 let elementTextWidth = $(`.${period}Label`).width(),
