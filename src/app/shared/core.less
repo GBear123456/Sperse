@@ -823,7 +823,23 @@ button {
 }
 
 // update for selection row on grids
-.dx-selection.dx-row td,
-.dx-state-hover.dx-row td {
+.dx-datagrid-content .dx-selection.dx-data-row td,
+.dx-datagrid-content .dx-state-hover.dx-data-row td {
     background: #EFFAFE !important;
+}
+
+// toolbar .dx-datagrid-group-panel .dx-group-panel-message
+.dx-datagrid-group-panel .dx-group-panel-message {
+    max-width: 98%;
+    background-color: #F9FBFC;
+    border: 1px solid transparent;
+    border-image: url("../../assets/common/icons/border-img.png") 1 round;
+    padding: 9px 10px 8px;
+    
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.8;
+    letter-spacing: 0.3px;
+    text-align: left;
+    color: #677380;
 }

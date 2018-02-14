@@ -11,7 +11,7 @@ import { AppConsts } from '@shared/AppConsts';
     selector: 'platform-select'
 })
 export class PlatformSelectComponent extends AppComponentBase {
-  	@HostBinding('class') public cssClass = '';
+    @HostBinding('class') public cssClass = '';
     hoverModule = '';
     module = '';
     uri = '';
@@ -24,7 +24,7 @@ export class PlatformSelectComponent extends AppComponentBase {
                 public _layoutService: LayoutService,
                 private _router: Router) {
         super(injector);
-        
+
         _appService.getModules().forEach((module) => {
             if (module !== 'CFO') {
                 this.modules.push({
@@ -46,6 +46,7 @@ export class PlatformSelectComponent extends AppComponentBase {
             this.uri = _appService.params.instance;
             this.cssClass = this.module.toLowerCase();
             this.hoverModule = this.module;
+            this.setTitle(config['name']);
         });
     }
 
