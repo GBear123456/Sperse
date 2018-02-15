@@ -805,35 +805,20 @@
         background: #fff;
         z-index: 2;
 
-        .close-btn {
-            border: 0;
-            padding: 0;
+        .detailsButtons {
             position: absolute;
+            z-index: 100;
             right: 5px;
             top: 15px;
-            z-index: 100;
-
-            &:hover {
+            .close-btn:hover {
                 background: transparent !important;
             }
-        }
-
-        .reclassify-btn {
-            border: 0;
-            padding: 0;
-            position: absolute;
-            right: 40px;
-            top: 15px;
-            z-index: 100;
-        }
-
-        .showall-btn {
-            border: 0;
-            padding: 0;
-            position: absolute;
-            right: 160px;
-            top: 15px;
-            z-index: 100;
+            .reclassify-btn,
+            .showall-btn,
+            .close-btn {
+                border: 0;
+                padding: 0;
+            }
         }
     }
 
@@ -864,6 +849,28 @@
                         }
                         &.dx-command-select {
                             padding: 20px 0;
+                        }
+
+                        &:hover,
+                        &:not([aria-sort="none"]) {
+                            .dx-column-indicators {
+                                display: block;
+                            }
+                        }
+
+                        .dx-column-indicators {
+                            display: none;
+                            .dx-sort {
+                                color: rgba(103, 115, 128, .5);
+                                font-weight: bold;
+                                font-size: 16px;
+                                position: relative;
+                                top: 1px;
+                            }
+
+                            .dx-header-filter {
+                                color: rgba(103, 115, 128, .5);
+                            }
                         }
                     }
                 }
@@ -986,20 +993,6 @@
         }
 
         .dx-datagrid {
-            .dx-column-indicators {
-                .dx-sort {
-                    color: rgba(103, 115, 128, .5);
-                    font-weight: bold;
-                    font-size: 16px;
-                    position: relative;
-                    top: 1px;
-                }
-
-                .dx-header-filter {
-                    color: rgba(103, 115, 128, .5);
-                }
-            }
-
             .dx-row-alt > td {
                 background: #f3f7fa;
             }
