@@ -17,7 +17,8 @@
                         [instanceType]="instanceType"
                         [instanceId]="instanceId"
                         (onTransactionDrop)="openCategorizationWindow($event)"
-                        (onFilterSelected)="filterByCashflowCategory($event)">
+                        (onFilterSelected)="filterByCashflowCategory($event)"
+                        (onCategoriesChanged)="refreshDataGrid()">
                     </categorization>
                 </div>
                 <div class="transactions">
@@ -75,7 +76,7 @@
 
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit'))">
-                                <span [ngClass]="{'red': cell.value < 0}"> {{ cell.text | number:'1.2-2' }} </span>
+                                <span [ngClass]="cell.value < 0 ? 'negative-values' : 'positive-values'"> {{ cell.text | number:'1.2-2' }} </span>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'isPendingTemplate'">
@@ -125,7 +126,7 @@
                         </div>
 
                         <div *dxTemplate="let data of 'startBalanceTotal'">
-                            <div class="informer">
+                            <div class="informer starting-balance">
                                 <h2 class="count">
                                     ${{adjustmentStartingBalanceTotal | number:'1.0-0'}}
                                     <span class="cent">.{{adjustmentStartingBalanceTotalCent | number:'2.0-0'}}</span>
@@ -136,7 +137,7 @@
 
                         <div *dxTemplate="let data of 'creditTotal'">
                             <div class="informer">
-                                <h2 class="count">
+                                <h2 class="count positive-values">
                                     ${{creditTransactionTotal | number:'1.0-0'}}
                                     <span class="cent">.{{creditTransactionTotalCent | number:'2.0-0'}}</span>
                                 </h2>
@@ -162,7 +163,7 @@
 
                         <div *dxTemplate="let data of 'debitTotal'">
                             <div class="informer">
-                                <h2 class="count">
+                                <h2 class="count negative-values">
                                     ${{debitTransactionTotal | number:'1.0-0'}}
                                     <span class="cent">.{{debitTransactionTotalCent | number:'2.0-0'}}</span>
                                 </h2>
