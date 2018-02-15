@@ -1,9 +1,9 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Input, Output, EventEmitter, Injector, OnInit, ViewChild, HostBinding } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
-import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput } from '@shared/service-proxies/service-proxies';
+import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput, GetCategoryTreeOutput } from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 import { MatDialog } from '@angular/material';
 
@@ -15,7 +15,7 @@ import * as _ from 'underscore';
     styleUrls: ['categorization.component.less'],
     providers: [ClassificationServiceProxy]
 })
-export class CategorizationComponent extends AppComponentBase implements OnInit {
+export class CategorizationComponent extends CFOComponentBase implements OnInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @Output() close: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
@@ -49,7 +49,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     autoExpand = true;
     categories: any;
-    categorization: any;
+    categorization: GetCategoryTreeOutput;
 
     toolbarConfig = [
         {
@@ -142,7 +142,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             .on('dragstart', (e) => {
                 sourceCategory = {};
                 sourceCategory.element = e.currentTarget;
-                let elementKey = this.categoryList.instance.getKeyByRowIndex($(e.currentTarget).index())
+                let elementKey = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex)
                 e.originalEvent.dataTransfer.setData('Text', elementKey);
                 e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
                 e.originalEvent.dropEffect = 'move';
@@ -181,7 +181,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
                 if (sourceCategory) {
                     let source = e.originalEvent.dataTransfer.getData('Text');
-                    let target = this.categoryList.instance.getKeyByRowIndex($(e.currentTarget).index())
+                    let target = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex)
 
                     this.handleCategoryDrop(source, target);
                 }
@@ -234,7 +234,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             }
 
             if (!sourceCategory.parentId && targetCategory.parentId && _.some(this.categorization.categories, (x) => x.parentId == sourceId)) {
-                abp.message.warn('Can not merge category witch has subcategories');
+                abp.message.warn(this.l('MoveMergeCategoryWithChildsToChild'));
                 return;
             }
 
@@ -246,7 +246,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         }
         
         if (isMerge) {
-            abp.message.confirm("Do you want to move all transactions to the \"" + targetName + "\" category?", "Category merge", (result) => {
+            abp.message.confirm(this.l('CategoryMergeConfirmation', targetName), this.l('CategoryMergeConfirmationTitle'), (result) => {
                 if (result) {
                     this._classificationServiceProxy.deleteCategory(
                         InstanceType[this.instanceType],
@@ -254,17 +254,33 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                         moveToId, false, sourceId)
                         .subscribe((id) => {
                             this.refreshCategories(false);
+                            this.onCategoriesChanged.emit();
                         }, (error) => {
                             this.refreshCategories(false);
                         });
-                    this.onCategoriesChanged.emit();
                 }
             });
         }
         else {
-            abp.message.confirm("Do you want to move category \"" + sourceCategory.name + "\" to \"" + targetName + "\"?", "Category move", (result) => {
-                if (result)
-                    abp.message.warn("Not implemented");
+            abp.message.confirm(this.l('CategoryMoveConfirmation', sourceCategory.name, targetName), this.l('CategoryMoveConfirmationTitle'), (result) => {
+                if (result) {
+                    this._classificationServiceProxy.updateCategory(
+                        InstanceType[this.instanceType],
+                        this.instanceId,
+                        new UpdateCategoryInput({
+                            id: sourceId,
+                            parentId: targetCategory ? targetId : targetAccountingType ? null : sourceCategory.parentId,
+                            accountingTypeId: targetAccountingType ? targetAccountingTypeId : sourceCategory.accountingTypeId,
+                            name: sourceCategory.name,
+                            coAID: sourceCategory.coAID,
+                        })
+                    ).subscribe((result) => {
+                        this.refreshCategories(false);
+                        this.onCategoriesChanged.emit();
+                    });
+
+                    this.onCategoriesChanged.emit();
+                }
             });
         }
     }
@@ -356,7 +372,9 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 coAID: $event.data.hasOwnProperty('coAID') ?
                     $event.data.coAID || undefined : category.coAID,
                 name: $event.data.hasOwnProperty('name') ?
-                    $event.data.name || undefined : category.name
+                    $event.data.name || undefined : category.name,
+                accountingTypeId: category.accountingTypeId,
+                parentId: category.parentId
             })
         ).subscribe((id) => {
             this.refreshCategories(false);
