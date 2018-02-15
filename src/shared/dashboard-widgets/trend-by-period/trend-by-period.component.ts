@@ -195,7 +195,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                     this.mergeHistoricalAndForecast(historical, forecast)
                         .subscribe(res => { 
                             this.trendData = <any>res.map((obj) => {
-                                obj.date.add(obj.date.toDate().getTimezoneOffset(), 'minutes');
+                                obj['date'].add(obj['date'].toDate().getTimezoneOffset(), 'minutes');
                                 return obj;
                             }); 
                             this.finishLoading(); 
