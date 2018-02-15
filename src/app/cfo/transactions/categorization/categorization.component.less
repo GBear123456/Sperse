@@ -264,8 +264,23 @@
 
                     &.filtered-category td {
                         .category-hover {
-                            border: 1px solid #00ef7e !important;
+                            border: 1px solid #d8f9ea !important;
                             background-color: #f0fef1 !important;
+                        }
+
+                        &:nth-child(2) {
+                            position: static;
+                            visibility: hidden;
+                        }
+
+                        &.dx-command-edit {
+                            a.dx-link-filter {
+                                visibility: visible;
+                                display: inline-block;
+                            }
+                            a.dx-link-delete, a.dx-link-edit, a.dx-link-add {
+                                display: none;
+                            }
                         }
                     }
 
@@ -347,7 +362,7 @@
                             }
 
                             .category-hover {
-                                border: solid 1px #00aeef !important;
+                                border: solid 1px #b8e9fb !important;
                                 background-color: #F0FAFE;
                             }
                         }

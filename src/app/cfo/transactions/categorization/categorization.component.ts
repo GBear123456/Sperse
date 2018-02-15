@@ -53,15 +53,11 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     toolbarConfig = [
         {
-            location: 'before', items: [
+            location: 'center', items: [
                 {
                     name: 'find',
                     action: Function()
-                }
-            ]
-        },
-        {
-            location: 'after', items: [
+                },
                 { name: 'sort', action: Function() },
                 {
                     name: 'expandTree',
@@ -330,18 +326,25 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 this.addActionButton('delete', $event.cellElement, (event) => {
                     this.categoryList.instance.deleteRow(
                         this.categoryList.instance.getRowIndexByKey($event.data.key));
+                    this.categoryList.instance.deleteRow(
+                        this.categoryList.instance.getRowIndexByKey(parseInt($event.data.key)));
                 });
             if (this.showFilterIcon) 
                 this.addActionButton('filter', $event.cellElement, (event) => {
                     let wrapper = $event.cellElement.parent();
-                    if (wrapper.hasClass('filtered-category')) {
+                    if (wrapper.hasClass('filtered-category'))
                         this.clearSelection(null);
-                    } else {
+                    else {
+                        this.deselectFilteredCategory();
                         wrapper.addClass('filtered-category');
                         this.onFilterSelected.emit($event.data);
                     }
             });
         }
+    }
+
+    deselectFilteredCategory() {
+        $('.filtered-category').removeClass('filtered-category');
     }
 
     onCategoryUpdated($event) {
@@ -438,8 +441,8 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     private _prevClickDate = new Date();
     private _selectedKeys = [];
     onRowClick($event) {
-        if (this._selectedKeys.indexOf($event.key) >= 0)
-            this.categoryList.instance.deselectAll();
+        if (this._selectedKeys.indexOf($event.key.toString()) >= 0)
+            this.categoryList.instance.deselectRows([$event.key]);
         this._selectedKeys = this.categoryList.instance.getSelectedRowKeys();
         if ($event.level > 0) {
             let nowDate = new Date();
@@ -455,7 +458,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     clearSelection(e) {
         this.categoryList.instance.deselectAll();
-        $('.filtered-category').removeClass('filtered-category');
+        this.deselectFilteredCategory();
         this.onFilterSelected.emit(null);
     }
 
