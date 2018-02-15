@@ -13,7 +13,15 @@
         <div class="charts">
             <dx-scroll-view showScrollbar="onHover" [height]="calculateChartsScrolableHeight()">
                 <!-- Top linear chart -->
-                <div class="header">{{l('Stats_Header_Trends')}}</div>
+                <div class="header">
+                    <h2>{{l('Stats_Header_Trends')}}</h2>
+                    <div class="btn-setion">
+                        <p class="title">{{l('Monthly_Ending_Balances')}}</p>
+                        <button>
+                            <i class="fa fa-angle-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
                 <dx-chart id="chart"
                           [dataSource]="statsData"
                           animation="{easing: 'easeOutCubic',duration: 2000}"
@@ -95,7 +103,9 @@
                         </dxo-strip-style>
                     </dxo-common-axis-settings>
                 </dx-chart>
-                <div class="header">{{l('Stats_Header_Inflows_Outflows')}}</div>
+                <div class="header">
+                    <h2>{{l('Stats_Header_Inflows_Outflows')}}</h2>
+                </div>
                 <dx-chart id="bar"
                           [dataSource]="statsData"
                           defaultPane="bottomPane"

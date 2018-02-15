@@ -46,9 +46,11 @@
         </div>
     </dx-scroll-view>
     <div *ngIf="statsDetailResult !== undefined" class="cashflow-wrap">
-        <dx-button icon="close" (onClick)="closeTransactionsDetail()" class="close-btn"></dx-button>
-        <dx-button class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!cashFlowGrid || !cashFlowGrid.instance.getSelectedRowKeys().length" (onClick)="reclassifyTransactions($event)"></dx-button>
-        <dx-button class="showall-btn" [text]="l('Show all')" [disabled]="showAllDisabled" (onClick)="showAll($event)"></dx-button>
+        <div class="detailsButtons">
+            <dx-button class="showall-btn" [text]="l('Show all')" [disabled]="showAllDisabled" (onClick)="showAll($event)"></dx-button>
+            <dx-button class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!cashFlowGrid || !cashFlowGrid.instance.getSelectedRowKeys().length" (onClick)="reclassifyTransactions($event)"></dx-button>
+            <dx-button icon="close" (onClick)="closeTransactionsDetail()" class="close-btn"></dx-button>
+        </div>
         <dx-data-grid id="cashflowGridContainer"
                       [rowAlternationEnabled]="true"
                       [dataSource]="statsDetailResult"
@@ -68,7 +70,6 @@
             </dxo-selection>
             <dxi-column dataField="forecastDate"
                         dataType="date"
-                        width="130"
                         cellTemplate="dateCell"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
                         alignment="left"
@@ -79,7 +80,6 @@
             <dxi-column
                         dataField="date"
                         dataType="date"
-                        width="130"
                         cellTemplate="dateCell"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
                         alignment="left"
@@ -88,7 +88,6 @@
             </dxi-column>
             <dxi-column
                         dataField="status"
-                        width="130"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
                         alignment="left"
                         [caption]="this.l('DetailsHeaders_CurrentStatus')"
@@ -99,7 +98,6 @@
             </dxi-column>
             <dxi-column dataField="debit"
                         [caption]="this.l('DetailsHeaders_Debit')"
-                        width="140"
                         [format]="customCurrency"
                         [allowSorting]="false"
                         [allowFiltering]="false"
@@ -108,7 +106,6 @@
             </dxi-column>
             <dxi-column dataField="credit"
                         [caption]="this.l('DetailsHeaders_Credit')"
-                        width="140"
                         [format]="customCurrency"
                         [allowSorting]="false"
                         [allowFiltering]="false"
@@ -117,14 +114,12 @@
             </dxi-column>
             <dxi-column [caption]="this.l('DetailsHeaders_Account')"
                         dataField="accountNumber"
-                        width="120"
                         [allowSorting]="false"
                         [allowFiltering]="false"
                         [allowEditing]="false">
             </dxi-column>
             <dxi-column [caption]="this.l('DetailsHeaders_Type')"
                         dataField="cashflowTypeId"
-                        width="120"
                         [allowSorting]="false"
                         [allowFiltering]="false"
                         [allowEditing]="false"
@@ -132,6 +127,7 @@
             </dxi-column>
             <dxi-column [caption]="this.l('DetailsHeaders_Comments')"
                         dataField="comment"
+                        width="350"
                         [allowSorting]="false"
                         [allowFiltering]="false"
                         [allowEditing]="false">
