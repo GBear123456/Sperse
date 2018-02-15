@@ -2979,5 +2979,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return detailsParamsToUpdateParams[paramName];
     }
 
+    detailsDescriptionColumnWidth() {
+        return window.innerWidth > 1600 ? '30%' : '20%';
+    }
+
+    detailsCommentsColumnWidth() {
+        const buttonsWidthWithCommentsTitle = 340;
+        let commentsWidth = window.innerWidth * 0.23;
+        return commentsWidth > buttonsWidthWithCommentsTitle ? window.innerWidth > 1600 ? '33%' : '23%' : buttonsWidthWithCommentsTitle;
+    }
 
 }
