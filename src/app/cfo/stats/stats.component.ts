@@ -411,6 +411,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
                 minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
                 this.statsData = result.map(statsItem => {
+                    statsItem.date.add(statsItem.date.toDate().getTimezoneOffset(), 'minutes');
                     Object.defineProperties(statsItem, {
                         'netChange': { value: statsItem.income + statsItem.expenses, enumerable: true },
                         'minRange': { value: minRange, enumerable: true }
