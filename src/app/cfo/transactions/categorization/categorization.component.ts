@@ -316,24 +316,32 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             );
     }
 
-    onCellPrepared($event) {
-        if (this.showFilterIcon) {
-            if ($event.rowType === "data" && $event.column.command === "edit") {
-                $('<a>')
-                    .text("Filter")
-                    .addClass("dx-link link-filter")
-                    .on("click", (args) => {
-                        this.clearFilteredCategory();
-                        $event.cellElement.parent().addClass('filtered-category');
-                        this.onFilterSelected.emit($event.data);
-                    })
-                    .appendTo($event.cellElement);
-            }
-        }
+    addActionButton(name, container, callback) {
+        $('<a>')
+            .text(this.l(this.capitalize(name)))
+            .addClass("dx-link dx-link-" + name)
+            .on("click", callback)
+            .appendTo(container);
     }
 
-    clearFilteredCategory() {
-        $('.filtered-category').removeClass('filtered-category');
+    onCellPrepared($event) {
+        if ($event.rowType === "data" && $event.column.command === "edit") {            
+            if ($event.data.key)
+                this.addActionButton('delete', $event.cellElement, (event) => {
+                    this.categoryList.instance.deleteRow(
+                        this.categoryList.instance.getRowIndexByKey($event.data.key));
+                });
+            if (this.showFilterIcon) 
+                this.addActionButton('filter', $event.cellElement, (event) => {
+                    let wrapper = $event.cellElement.parent();
+                    if (wrapper.hasClass('filtered-category')) {
+                        this.clearSelection(null);
+                    } else {
+                        wrapper.addClass('filtered-category');
+                        this.onFilterSelected.emit($event.data);
+                    }
+            });
+        }
     }
 
     onCategoryUpdated($event) {
@@ -428,23 +436,26 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     */
 
     private _prevClickDate = new Date();
+    private _selectedKeys = [];
     onRowClick($event) {
-        if ($event.level < 1)
-            return;
+        if (this._selectedKeys.indexOf($event.key) >= 0)
+            this.categoryList.instance.deselectAll();
+        this._selectedKeys = this.categoryList.instance.getSelectedRowKeys();
+        if ($event.level > 0) {
+            let nowDate = new Date();
+            if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
+                $event.jQueryEvent.originalEvent.preventDefault();
+                $event.jQueryEvent.originalEvent.stopPropagation();
 
-        let nowDate = new Date();
-        if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
-            $event.jQueryEvent.originalEvent.preventDefault();
-            $event.jQueryEvent.originalEvent.stopPropagation();
-
-            $event.component.editRow($event.rowIndex);
+                $event.component.editRow($event.rowIndex);
+            }
+            this._prevClickDate = nowDate;
         }
-        this._prevClickDate = nowDate;
     }
 
     clearSelection(e) {
         this.categoryList.instance.deselectAll();
-        this.clearFilteredCategory();
+        $('.filtered-category').removeClass('filtered-category');
         this.onFilterSelected.emit(null);
     }
 
