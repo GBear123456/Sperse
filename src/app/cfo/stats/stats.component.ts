@@ -317,7 +317,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
     calculateChartsSize() {
-        let chartsHeight = window.innerHeight - 410;
+        let chartsHeight = window.innerHeight - 370;
         this.chartsHeight =  chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
         this.chartsWidth = window.innerWidth - 371;
     }
@@ -436,6 +436,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             abp.ui.clearBusy();
         },
         error => console.log('Error: ' + error));
+    }
+
+    getUpdatedDataSource() {
+        this.loadStatsData();
     }
 
     ngAfterViewInit(): void {

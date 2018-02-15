@@ -1,9 +1,9 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Input, Output, EventEmitter, Injector, OnInit, ViewChild, HostBinding } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
-import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput } from '@shared/service-proxies/service-proxies';
+import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput, GetCategoryTreeOutput } from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 import { MatDialog } from '@angular/material';
 
@@ -15,7 +15,7 @@ import * as _ from 'underscore';
     styleUrls: ['categorization.component.less'],
     providers: [ClassificationServiceProxy]
 })
-export class CategorizationComponent extends AppComponentBase implements OnInit {
+export class CategorizationComponent extends CFOComponentBase implements OnInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @Output() close: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
@@ -49,19 +49,15 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     autoExpand = true;
     categories: any;
-    categorization: any;
+    categorization: GetCategoryTreeOutput;
 
     toolbarConfig = [
         {
-            location: 'before', items: [
+            location: 'center', items: [
                 {
                     name: 'find',
                     action: Function()
-                }
-            ]
-        },
-        {
-            location: 'after', items: [
+                },
                 { name: 'sort', action: Function() },
                 {
                     name: 'expandTree',
@@ -146,7 +142,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             .on('dragstart', (e) => {
                 sourceCategory = {};
                 sourceCategory.element = e.currentTarget;
-                let elementKey = this.categoryList.instance.getKeyByRowIndex($(e.currentTarget).index())
+                let elementKey = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex)
                 e.originalEvent.dataTransfer.setData('Text', elementKey);
                 e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
                 e.originalEvent.dropEffect = 'move';
@@ -185,7 +181,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
                 if (sourceCategory) {
                     let source = e.originalEvent.dataTransfer.getData('Text');
-                    let target = this.categoryList.instance.getKeyByRowIndex($(e.currentTarget).index())
+                    let target = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex)
 
                     this.handleCategoryDrop(source, target);
                 }
@@ -238,7 +234,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             }
 
             if (!sourceCategory.parentId && targetCategory.parentId && _.some(this.categorization.categories, (x) => x.parentId == sourceId)) {
-                abp.message.warn('Can not merge category witch has subcategories');
+                abp.message.warn(this.l('MoveMergeCategoryWithChildsToChild'));
                 return;
             }
 
@@ -250,7 +246,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         }
         
         if (isMerge) {
-            abp.message.confirm("Do you want to move all transactions to the \"" + targetName + "\" category?", "Category merge", (result) => {
+            abp.message.confirm(this.l('CategoryMergeConfirmation', targetName), this.l('CategoryMergeConfirmationTitle'), (result) => {
                 if (result) {
                     this._classificationServiceProxy.deleteCategory(
                         InstanceType[this.instanceType],
@@ -258,17 +254,33 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                         moveToId, false, sourceId)
                         .subscribe((id) => {
                             this.refreshCategories(false);
+                            this.onCategoriesChanged.emit();
                         }, (error) => {
                             this.refreshCategories(false);
                         });
-                    this.onCategoriesChanged.emit();
                 }
             });
         }
         else {
-            abp.message.confirm("Do you want to move category \"" + sourceCategory.name + "\" to \"" + targetName + "\"?", "Category move", (result) => {
-                if (result)
-                    abp.message.warn("Not implemented");
+            abp.message.confirm(this.l('CategoryMoveConfirmation', sourceCategory.name, targetName), this.l('CategoryMoveConfirmationTitle'), (result) => {
+                if (result) {
+                    this._classificationServiceProxy.updateCategory(
+                        InstanceType[this.instanceType],
+                        this.instanceId,
+                        new UpdateCategoryInput({
+                            id: sourceId,
+                            parentId: targetCategory ? targetId : targetAccountingType ? null : sourceCategory.parentId,
+                            accountingTypeId: targetAccountingType ? targetAccountingTypeId : sourceCategory.accountingTypeId,
+                            name: sourceCategory.name,
+                            coAID: sourceCategory.coAID,
+                        })
+                    ).subscribe((result) => {
+                        this.refreshCategories(false);
+                        this.onCategoriesChanged.emit();
+                    });
+
+                    this.onCategoriesChanged.emit();
+                }
             });
         }
     }
@@ -316,23 +328,38 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             );
     }
 
+    addActionButton(name, container, callback) {
+        $('<a>')
+            .text(this.l(this.capitalize(name)))
+            .addClass("dx-link dx-link-" + name)
+            .on("click", callback)
+            .appendTo(container);
+    }
+
     onCellPrepared($event) {
-        if (this.showFilterIcon) {
-            if ($event.rowType === "data" && $event.column.command === "edit") {
-                $('<a>')
-                    .text("Filter")
-                    .addClass("dx-link link-filter")
-                    .on("click", (args) => {
-                        this.clearFilteredCategory();
-                        $event.cellElement.parent().addClass('filtered-category');
+        if ($event.rowType === "data" && $event.column.command === "edit") {            
+            if ($event.data.key)
+                this.addActionButton('delete', $event.cellElement, (event) => {
+                    this.categoryList.instance.deleteRow(
+                        this.categoryList.instance.getRowIndexByKey($event.data.key));
+                    this.categoryList.instance.deleteRow(
+                        this.categoryList.instance.getRowIndexByKey(parseInt($event.data.key)));
+                });
+            if (this.showFilterIcon) 
+                this.addActionButton('filter', $event.cellElement, (event) => {
+                    let wrapper = $event.cellElement.parent();
+                    if (wrapper.hasClass('filtered-category'))
+                        this.clearSelection(null);
+                    else {
+                        this.deselectFilteredCategory();
+                        wrapper.addClass('filtered-category');
                         this.onFilterSelected.emit($event.data);
-                    })
-                    .appendTo($event.cellElement);
-            }
+                    }
+            });
         }
     }
 
-    clearFilteredCategory() {
+    deselectFilteredCategory() {
         $('.filtered-category').removeClass('filtered-category');
     }
 
@@ -345,7 +372,9 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 coAID: $event.data.hasOwnProperty('coAID') ?
                     $event.data.coAID || undefined : category.coAID,
                 name: $event.data.hasOwnProperty('name') ?
-                    $event.data.name || undefined : category.name
+                    $event.data.name || undefined : category.name,
+                accountingTypeId: category.accountingTypeId,
+                parentId: category.parentId
             })
         ).subscribe((id) => {
             this.refreshCategories(false);
@@ -428,23 +457,26 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     */
 
     private _prevClickDate = new Date();
+    private _selectedKeys = [];
     onRowClick($event) {
-        if ($event.level < 1)
-            return;
+        if (this._selectedKeys.indexOf($event.key.toString()) >= 0)
+            this.categoryList.instance.deselectRows([$event.key]);
+        this._selectedKeys = this.categoryList.instance.getSelectedRowKeys();
+        if ($event.level > 0) {
+            let nowDate = new Date();
+            if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
+                $event.jQueryEvent.originalEvent.preventDefault();
+                $event.jQueryEvent.originalEvent.stopPropagation();
 
-        let nowDate = new Date();
-        if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
-            $event.jQueryEvent.originalEvent.preventDefault();
-            $event.jQueryEvent.originalEvent.stopPropagation();
-
-            $event.component.editRow($event.rowIndex);
+                $event.component.editRow($event.rowIndex);
+            }
+            this._prevClickDate = nowDate;
         }
-        this._prevClickDate = nowDate;
     }
 
     clearSelection(e) {
         this.categoryList.instance.deselectAll();
-        this.clearFilteredCategory();
+        this.deselectFilteredCategory();
         this.onFilterSelected.emit(null);
     }
 

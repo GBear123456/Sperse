@@ -689,10 +689,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 location: 'before',
                 items: [
                     {
-                        name: 'refresh',
-                        action: this.refreshDataGrid.bind(this)
-                    },
-                    {
                         name: 'amount',
                         text: '1 of 9'
                     },

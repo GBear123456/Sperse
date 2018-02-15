@@ -53,6 +53,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     shownLoginNameTitle = '';
     shownLoginName = '';
     profilePicture = '/assets/common/images/default-profile-picture.png';
+    helpLink: string = AppConsts.helpLink;
 
     recentlyLinkedUsers: LinkedUserDto[];
     unreadChatMessageCount = 0;
@@ -64,7 +65,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
     subscriptionStartType = SubscriptionStartType;
     editionPaymentType: typeof EditionPaymentType = EditionPaymentType;
-    
+
     constructor(
         injector: Injector,
         private _abpSessionService: AbpSessionService,
