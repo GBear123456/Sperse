@@ -324,7 +324,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** Calculates the height of the charts scrollable height after resizing */
     calculateChartsScrolableHeight() {
-        return window.innerHeight - 360;
+        return window.innerHeight - 270;
     }
 
     handleCashFlowInitialResult(result) {

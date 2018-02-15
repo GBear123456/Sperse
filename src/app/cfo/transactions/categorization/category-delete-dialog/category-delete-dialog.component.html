@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>{{l('Category remove confirmation')}}</h2>
 <mat-dialog-content>
-    <dx-check-box [(value)]="data.deleteAllReferences" [text]="l('Delete all references')"></dx-check-box>
+    <dx-check-box [(value)]="data.deleteAllReferences" [text]="l('Delete all references')" [width]="300"></dx-check-box>
 
     <div *ngIf="!data.deleteAllReferences">
         <h3>{{l('Move transaction(s) to the following account')}}</h3>
@@ -12,7 +12,7 @@
             [hoverStateEnabled]="true"
             [(dataSource)]="data.categories"
             [selection]="{allowSelectAll: false, mode: 'single'}"
-            [rootValue]="0">
+            [rootValue]="'root'">
             <dxi-column dataField="name"></dxi-column>
         </dx-tree-list>
     </div>

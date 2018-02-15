@@ -243,8 +243,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     onCategoryInserted($event) {
         let parentId = $event.data.parent,
-            hasParentCategory = Boolean(parseInt(
-                parentId.split('').reverse().join('')));
+            hasParentCategory = (parseInt(parentId) == parentId);
         this._classificationServiceProxy.createCategory(
             InstanceType[this.instanceType], this.instanceId,
             CreateCategoryInput.fromJS({
@@ -268,7 +267,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 deleteAllReferences: true,
                 categorizations: this.categorization.categories,
                 categories: _.filter(this.categories, (obj) => {
-                    return !obj['parent'] || (obj['key'] != itemId && obj['parent'] != itemId);
+                    return (obj['key'] != itemId && obj['parent'] != itemId);
                 }),
                 categoryId: undefined
             };
@@ -337,12 +336,13 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     onRowPrepared($event) {
-        if ($event.rowType != 'data')
+        if ($event.rowType != 'data' || $event.key.rowIndex)
             return ;
 
-        let typeId = this.categorization.accountingTypes[
+        let accounting = this.categorization.accountingTypes[
             $event.key >= 0 ? this.categorization.categories[$event.key]  
-                .accountingTypeId: parseInt($event.key)].typeId;
-        $event.rowElement.addClass(typeId == 'I' ? 'inflows': 'outflows');
+                .accountingTypeId: parseInt($event.key)];
+        if (accounting)
+            $event.rowElement.addClass(accounting.typeId == 'I' ? 'inflows': 'outflows');
     }
 }
