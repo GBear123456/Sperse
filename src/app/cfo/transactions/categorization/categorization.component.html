@@ -25,6 +25,7 @@
                   (onRowRemoving)="onCategoryRemoving($event)"
                   (onRowPrepared)="onRowPrepared($event)">
         <dxo-editing mode="row"
+                     [texts]="{confirmDeleteMessage: ''}"
                      [allowUpdating]="true"
                      [allowDeleting]="true"
                      [allowAdding]="true">
