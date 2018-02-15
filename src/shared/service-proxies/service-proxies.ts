@@ -19004,6 +19004,8 @@ export class UpdateCategoryInput implements IUpdateCategoryInput {
     id: number;
     coAID: number;
     name: string;
+    accountingTypeId: number;
+    parentId: number;
 
     constructor(data?: IUpdateCategoryInput) {
         if (data) {
@@ -19019,6 +19021,8 @@ export class UpdateCategoryInput implements IUpdateCategoryInput {
             this.id = data["id"];
             this.coAID = data["coAID"];
             this.name = data["name"];
+            this.accountingTypeId = data["accountingTypeId"];
+            this.parentId = data["parentId"];
         }
     }
 
@@ -19033,6 +19037,8 @@ export class UpdateCategoryInput implements IUpdateCategoryInput {
         data["id"] = this.id;
         data["coAID"] = this.coAID;
         data["name"] = this.name;
+        data["accountingTypeId"] = this.accountingTypeId;
+        data["parentId"] = this.parentId;
         return data; 
     }
 }
@@ -19041,6 +19047,8 @@ export interface IUpdateCategoryInput {
     id: number;
     coAID: number;
     name: string;
+    accountingTypeId: number;
+    parentId: number;
 }
 
 export class UpdateCategoryStatusInput implements IUpdateCategoryStatusInput {
