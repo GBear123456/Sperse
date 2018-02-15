@@ -21,6 +21,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() onFilterSelected: EventEmitter<any> = new EventEmitter();
     @Output() onTransactionDrop: EventEmitter<any> = new EventEmitter();
+    @Output() onCategoriesChanged: EventEmitter<any> = new EventEmitter();
 
     @Input() instanceId: number;
     @Input() instanceType: string;
@@ -145,7 +146,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             .on('dragstart', (e) => {
                 sourceCategory = {};
                 sourceCategory.element = e.currentTarget;
-                let elementKey = e.currentTarget.getAttribute('aria-data-key');
+                let elementKey = this.categoryList.instance.getKeyByRowIndex($(e.currentTarget).index())
                 e.originalEvent.dataTransfer.setData('Text', elementKey);
                 e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
                 e.originalEvent.dropEffect = 'move';
@@ -184,7 +185,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
                 if (sourceCategory) {
                     let source = e.originalEvent.dataTransfer.getData('Text');
-                    let target = e.currentTarget.getAttribute('aria-data-key');
+                    let target = this.categoryList.instance.getKeyByRowIndex($(e.currentTarget).index())
 
                     this.handleCategoryDrop(source, target);
                 }
@@ -247,7 +248,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         else {
             targetName = targetAccountingType.name;
         }
-
+        
         if (isMerge) {
             abp.message.confirm("Do you want to move all transactions to the \"" + targetName + "\" category?", "Category merge", (result) => {
                 if (result) {
@@ -260,6 +261,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                         }, (error) => {
                             this.refreshCategories(false);
                         });
+                    this.onCategoriesChanged.emit();
                 }
             });
         }
@@ -455,7 +457,6 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 .accountingTypeId: parseInt($event.key)];
         if (accounting)
             $event.rowElement.addClass(accounting.typeId == 'I' ? 'inflows': 'outflows');
-        $event.rowElement.attr('aria-data-key', $event.key);
         if ($event.level > 0) {
             $event.rowElement.attr('draggable', true);
         }

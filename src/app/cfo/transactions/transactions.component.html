@@ -17,7 +17,8 @@
                         [instanceType]="instanceType"
                         [instanceId]="instanceId"
                         (onTransactionDrop)="openCategorizationWindow($event)"
-                        (onFilterSelected)="filterByCashflowCategory($event)">
+                        (onFilterSelected)="filterByCashflowCategory($event)"
+                        (onCategoriesChanged)="refreshDataGrid()">
                     </categorization>
                 </div>
                 <div class="transactions">
