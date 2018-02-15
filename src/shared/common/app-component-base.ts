@@ -24,10 +24,6 @@ import * as _ from 'underscore';
 
 export abstract class AppComponentBase {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
-    @HostListener('document:webkitfullscreenchange', ['$event'])
-    @HostListener('document:mozfullscreenchange', ['$event'])
-    @HostListener('document:fullscreenchange', ['$event'])
-
     dataGrid: any;
     dataSource: any;
     totalDataSource: any;
@@ -73,6 +69,9 @@ export abstract class AppComponentBase {
         this.primengDatatableHelper = new PrimengDatatableHelper();
     }
 
+    @HostListener('document:webkitfullscreenchange', ['$event'])
+    @HostListener('document:mozfullscreenchange', ['$event'])
+    @HostListener('document:fullscreenchange', ['$event'])
     onWebkitFullscreenChange($event) {
         this.isFullscreenMode = document['fullScreen']
             || document['mozFullScreen'] || document.webkitIsFullScreen;
