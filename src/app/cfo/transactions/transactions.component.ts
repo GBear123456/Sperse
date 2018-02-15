@@ -686,7 +686,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     onSelectionChanged($event, initial = false) {
         let img = new Image(),
             transactionKeys = this.dataGrid.instance.getSelectedRowKeys();
-        img.src = 'assets/common/images/transactions.png';
+        img.src = 'assets/common/icons/drag-icon.svg';
         if (!initial && (Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length)))
             this.categoriesShowed = true;
         $event.element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend')
