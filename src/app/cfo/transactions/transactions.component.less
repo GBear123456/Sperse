@@ -165,6 +165,12 @@
                         .informer {
                             padding: 0 30px;
                             border-left: 1px solid #ddd;
+                            
+                            &.starting-balance {
+                                > .count {
+                                    font-weight: 400;
+                                }
+                            }
                         }
                         
                         .name {
@@ -263,4 +269,13 @@
             text-decoration: underline;
         }
     }
+}
+
+.positive-values,
+.positive-values * {
+    color: #61c670 !important;
+}
+.negative-values,
+.negative-values * {
+    color: #e7326a !important;
 }
