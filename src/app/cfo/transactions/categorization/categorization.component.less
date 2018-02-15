@@ -144,12 +144,18 @@
                     border: 1px dashed #dfdfdf;
                 }
             }
+        }
 
-            tr.drag-hover td {
-                .category-hover {
-                    background-color: #FFFBF5;
-                    border: solid 1px #ffe9bc;
-                }
+        tr.drag-hover td {
+            .category-hover {
+                background-color: #FFFBF5;
+                border: solid 1px #ffe9bc;
+            }
+        }
+
+        .droppable {
+            .category-hover {
+                border: 1px dashed #dfdfdf;
             }
         }
 
@@ -177,7 +183,7 @@
                 td {
                     overflow: visible !important;
                     text-overflow: initial !important;
-                    border: none!important;
+                    border: none !important;
                     background-color: transaparent !important;
                 }
 
@@ -187,6 +193,7 @@
                         .dx-treelist-collapsed {
                             color: #61c670;
                         }
+
                         &[aria-level="2"] {
                             td:first-child {
                                 &:before {
@@ -195,11 +202,13 @@
                             }
                         }
                     }
+
                     &.outflows {
                         .dx-treelist-expanded,
                         .dx-treelist-collapsed {
                             color: #e7326a;
                         }
+
                         &[aria-level="2"] {
                             td:first-child {
                                 &:before {
@@ -208,6 +217,7 @@
                             }
                         }
                     }
+
                     &[aria-level="2"] {
                         td:first-child {
                             &:before {
@@ -226,8 +236,8 @@
                         }
 
                         .dx-treelist-text-content span {
-                            font-size: 14px!important;
-                            font-weight: 300!important;
+                            font-size: 14px !important;
+                            font-weight: 300 !important;
                         }
 
                         .dx-command-edit {
@@ -257,8 +267,8 @@
 
                     &.filtered-category td {
                         .category-hover {
-                            border: 1px solid #00ef7e!important;
-                            background-color: #f0fef1!important;
+                            border: 1px solid #00ef7e !important;
+                            background-color: #f0fef1 !important;
                         }
                     }
 
@@ -267,6 +277,7 @@
                             position: absolute;
                             right: 0px;
                         }
+
                         .category-hover {
                             position: absolute;
                             height: 32px;
@@ -274,6 +285,7 @@
                             right: 0px;
                             z-index: -1;
                         }
+
                         &.dx-command-edit a {
                             visibility: hidden;
                         }
@@ -281,7 +293,7 @@
 
                     &.dx-edit-row {
                         td:nth-child(2) {
-                            visibility: visible!important;
+                            visibility: visible !important;
                         }
                     }
 
@@ -290,16 +302,19 @@
 
                         td {
                             color: #424c56;
-                            border: none!important;
-                            background-color: transparent!important;
+                            border: none !important;
+                            background-color: transparent !important;
+
                             &:nth-child(2) {
                                 position: static;
                                 visibility: hidden;
                             }
+
                             .category-hover {
                                 border: solid 1px #00aeef !important;
                                 background-color: #F0FAFE;
                             }
+
                             &.dx-command-edit a {
                                 visibility: visible;
                             }

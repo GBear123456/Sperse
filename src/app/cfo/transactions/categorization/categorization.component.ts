@@ -21,6 +21,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() onFilterSelected: EventEmitter<any> = new EventEmitter();
     @Output() onTransactionDrop: EventEmitter<any> = new EventEmitter();
+    @Output() onCategoriesChanged: EventEmitter<any> = new EventEmitter();
 
     @Input() instanceId: number;
     @Input() instanceType: string;
@@ -51,67 +52,67 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     categorization: any;
 
     toolbarConfig = [
-            {
-                location: 'before', items: [
-                    { 
-                        name: 'find', 
-                        action: Function() 
-                    }
-                ]
-            },
-            {
-                location: 'after', items: [
-                    { name: 'sort', action: Function() },
-                    { 
-                      name: 'expandTree', 
-                      widget: 'dxDropDownMenu',
-                      options: {
-                          hint: this.l('Expand'),
-                          items: [{
-                              action: () => {                                  
-                                  _.mapObject(this.categorization.accountingTypes, (item, key) => {                                  
-                                      this.categoryList.instance.expandRow(key + item.typeId);
-                                  });
-                              },
-                              text: this.l('Expand 1st level')
-                          }, {
-                              action: () => {
-                                  _.mapObject(this.categorization.categories, (item, key) => {
-                                      if (!item.parentId)
-                                          this.categoryList.instance.expandRow(key);
-                                  });
-                              },
-                              text: this.l('Expand 2st level')
-                          }, {
-                              action: () => {
-                                  _.mapObject(this.categorization.categories, (item, key) => {
-                                      if (!item.parentId)
-                                          this.categoryList.instance.expandRow(key);
-                                  });
-                                  _.mapObject(this.categorization.accountingTypes, (item, key) => {                                  
-                                      this.categoryList.instance.expandRow(key + item.typeId);
-                                  });
-                                  
-                              },
-                              text: this.l('Expand all')
-                          }, {
-                              action: () => {
-                                  _.mapObject(this.categorization.categories, (item, key) => {
-                                      if (!item.parentId)
-                                          this.categoryList.instance.collapseRow(key);
-                                  });
-                                  _.mapObject(this.categorization.accountingTypes, (item, key) => {                                  
-                                      this.categoryList.instance.collapseRow(key + item.typeId);
-                                  });
-                              },
-                              text: this.l('Collapse all'),
-                          }]
-                      }
+        {
+            location: 'before', items: [
+                {
+                    name: 'find',
+                    action: Function()
+                }
+            ]
+        },
+        {
+            location: 'after', items: [
+                { name: 'sort', action: Function() },
+                {
+                    name: 'expandTree',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Expand'),
+                        items: [{
+                            action: () => {
+                                _.mapObject(this.categorization.accountingTypes, (item, key) => {
+                                    this.categoryList.instance.expandRow(key + item.typeId);
+                                });
+                            },
+                            text: this.l('Expand 1st level')
+                        }, {
+                            action: () => {
+                                _.mapObject(this.categorization.categories, (item, key) => {
+                                    if (!item.parentId)
+                                        this.categoryList.instance.expandRow(key);
+                                });
+                            },
+                            text: this.l('Expand 2st level')
+                        }, {
+                            action: () => {
+                                _.mapObject(this.categorization.categories, (item, key) => {
+                                    if (!item.parentId)
+                                        this.categoryList.instance.expandRow(key);
+                                });
+                                _.mapObject(this.categorization.accountingTypes, (item, key) => {
+                                    this.categoryList.instance.expandRow(key + item.typeId);
+                                });
 
-                    },
-                    { name: 'follow', action: Function() }
-                ]
-            }
+                            },
+                            text: this.l('Expand all')
+                        }, {
+                            action: () => {
+                                _.mapObject(this.categorization.categories, (item, key) => {
+                                    if (!item.parentId)
+                                        this.categoryList.instance.collapseRow(key);
+                                });
+                                _.mapObject(this.categorization.accountingTypes, (item, key) => {
+                                    this.categoryList.instance.collapseRow(key + item.typeId);
+                                });
+                            },
+                            text: this.l('Collapse all'),
+                        }]
+                    }
+
+                },
+                { name: 'follow', action: Function() }
+            ]
+        }
     ]
 
     constructor(
@@ -129,8 +130,31 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     initDragAndDropEvents($event) {
         let dragEnterTarget;
-        $event.element.find('tr[aria-level="1"], tr[aria-level="2"]')
-            .off('dragenter').off('dragover').off('dragleave').off('drop')
+        let img = new Image();
+        img.src = 'assets/common/icons/drag-icon.svg';
+
+        let sourceCategory = null;
+
+        let clearDragAndDrop = () => {
+            sourceCategory = null;
+            $('.drag-hover').removeClass('drag-hover');
+            $('dx-tree-list .dx-data-row').removeClass('droppable');
+        };
+
+        $event.element.find('.dx-data-row')
+            .off('dragstart').off('dragenter').off('dragover').off('dragleave').off('drop').off('dragend')
+            .on('dragstart', (e) => {
+                sourceCategory = {};
+                sourceCategory.element = e.currentTarget;
+                let elementKey = this.categoryList.instance.getKeyByRowIndex($(e.currentTarget).index())
+                e.originalEvent.dataTransfer.setData('Text', elementKey);
+                e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
+                e.originalEvent.dropEffect = 'move';
+
+                sourceCategory.cashType = sourceCategory.element.classList.contains('inflows') ? 'inflows' : 'outflows';
+                let droppableQuery = 'dx-tree-list .dx-data-row.' + sourceCategory.cashType;
+                $(droppableQuery).addClass('droppable');
+            })
             .on('dragenter', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
@@ -139,10 +163,16 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                     dragEnterTarget.classList.remove('drag-hover');
 
                 dragEnterTarget = e.currentTarget;
+                if (!this.checkCanDrop(e.currentTarget, sourceCategory))
+                    return;
+
                 e.currentTarget.classList.add('drag-hover');
             }).on('dragover', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
+
+                if (!this.checkCanDrop(e.currentTarget, sourceCategory))
+                    e.originalEvent.dataTransfer.dropEffect = "none";
             }).on('dragleave', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
@@ -153,11 +183,94 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
-                this.onTransactionDrop.emit({
-                    categoryId: this.categoryList.instance
-                        .getKeyByRowIndex($(e.currentTarget).index())
-                });
+                if (sourceCategory) {
+                    let source = e.originalEvent.dataTransfer.getData('Text');
+                    let target = this.categoryList.instance.getKeyByRowIndex($(e.currentTarget).index())
+
+                    this.handleCategoryDrop(source, target);
+                }
+                else {
+                    this.onTransactionDrop.emit({
+                        categoryId: this.categoryList.instance
+                            .getKeyByRowIndex($(e.currentTarget).index())
+                    });
+                }
+
+                clearDragAndDrop();
+            }).on('dragend', (e) => {
+                clearDragAndDrop();
             });
+    }
+
+    checkCanDrop(targetElement, sourceCategory): boolean {
+        if (sourceCategory) {
+            let targetCashType = targetElement.classList.contains('inflows') ? 'inflows' : 'outflows';
+            if (sourceCategory.element == targetElement ||
+                sourceCategory.cashType != targetCashType)
+                return false;
+        }
+        else {
+            if (targetElement.getAttribute('aria-level') == '0')
+                return false;
+        }
+
+        return true;
+    }
+
+    handleCategoryDrop(sourceId, targetId) {
+        let sourceCategory = this.categorization.categories[sourceId];
+        let targetCategory = this.categorization.categories[targetId];
+
+        let targetAccountingTypeId = parseInt(targetId);
+        let targetAccountingType = this.categorization.accountingTypes[targetAccountingTypeId];
+        let isMerge: boolean = false;
+
+        let moveToId: number;
+        let targetName: string;
+
+        if (targetCategory) {
+            if (sourceCategory.parentId && targetCategory.parentId || //subcategory -> subcategory
+                sourceCategory.parentId && sourceCategory.parentId == targetId || //subcategory -> own parent
+                !sourceCategory.parentId && !targetCategory.parentId || //category -> category
+                !sourceCategory.parentId && targetCategory.parentId) //category -> subcategory
+            {
+                isMerge = true;
+            }
+
+            if (!sourceCategory.parentId && targetCategory.parentId && _.some(this.categorization.categories, (x) => x.parentId == sourceId)) {
+                abp.message.warn('Can not merge category witch has subcategories');
+                return;
+            }
+
+            moveToId = targetId;
+            targetName = targetCategory.name;
+        }
+        else {
+            targetName = targetAccountingType.name;
+        }
+        
+        if (isMerge) {
+            abp.message.confirm("Do you want to move all transactions to the \"" + targetName + "\" category?", "Category merge", (result) => {
+                if (result) {
+                    this._classificationServiceProxy.deleteCategory(
+                        InstanceType[this.instanceType],
+                        this.instanceId,
+                        moveToId, false, sourceId)
+                        .subscribe((id) => {
+                            this.refreshCategories(false);
+                        }, (error) => {
+                            this.refreshCategories(false);
+                        });
+                    this.onCategoriesChanged.emit();
+                }
+            });
+        }
+        else {
+            abp.message.confirm("Do you want to move category \"" + sourceCategory.name + "\" to \"" + targetName + "\"?", "Category move", (result) => {
+                if (result)
+                    abp.message.warn("Not implemented");
+            });
+        }
     }
 
     refreshCategories(autoExpand: boolean = true) {
@@ -179,8 +292,8 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 }
                 if (data.categories)
                     _.mapObject(data.categories, (item, key) => {
-                        if (data.accountingTypes[item.accountingTypeId] && 
-                          (!item.parentId || data.categories[item.parentId]))
+                        if (data.accountingTypes[item.accountingTypeId] &&
+                            (!item.parentId || data.categories[item.parentId]))
                             categories.push({
                                 key: key,
                                 parent: item.parentId || (item.accountingTypeId +
@@ -243,8 +356,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     onCategoryInserted($event) {
         let parentId = $event.data.parent,
-            hasParentCategory = Boolean(parseInt(
-                parentId.split('').reverse().join('')));
+            hasParentCategory = (parseInt(parentId) == parentId);
         this._classificationServiceProxy.createCategory(
             InstanceType[this.instanceType], this.instanceId,
             CreateCategoryInput.fromJS({
@@ -268,7 +380,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 deleteAllReferences: true,
                 categorizations: this.categorization.categories,
                 categories: _.filter(this.categories, (obj) => {
-                    return !obj['parent'] || (obj['key'] != itemId && obj['parent'] != itemId);
+                    return (obj['key'] != itemId && obj['parent'] != itemId);
                 }),
                 categoryId: undefined
             };
@@ -337,12 +449,16 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     onRowPrepared($event) {
-        if ($event.rowType != 'data')
-            return ;
+        if ($event.rowType != 'data' || $event.key.rowIndex)
+            return;
 
-        let typeId = this.categorization.accountingTypes[
-            $event.key >= 0 ? this.categorization.categories[$event.key]  
-                .accountingTypeId: parseInt($event.key)].typeId;
-        $event.rowElement.addClass(typeId == 'I' ? 'inflows': 'outflows');
+        let accounting = this.categorization.accountingTypes[
+            $event.key >= 0 ? this.categorization.categories[$event.key]
+                .accountingTypeId: parseInt($event.key)];
+        if (accounting)
+            $event.rowElement.addClass(accounting.typeId == 'I' ? 'inflows': 'outflows');
+        if ($event.level > 0) {
+            $event.rowElement.attr('draggable', true);
+        }
     }
 }

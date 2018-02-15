@@ -49,11 +49,56 @@
             padding: 25px 25px 0;
 
             .header {
-                font-size: 22px;
-                line-height: 1.09;
-                font-weight: 600;
-                color: #212c36;
-                margin-bottom: 20px;
+                
+                margin-bottom: 15px;
+                display: flex;
+                align-items: center;
+                
+                h2 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #212c36;
+                    margin: 0;
+                    line-height: 1;
+                }
+                
+                .btn-setion {
+                    margin-left: auto;
+                    display: flex;
+                    align-items: center;
+                    
+                    .title {
+                        display: inline-block;
+                        margin-bottom: 0;
+                    }
+                    
+                    button {
+                        padding: 2px 0 2px 50px;
+                        background: #71D460;
+                        border-radius: 15px;
+                        border: 0;
+                        margin-left: 10px;
+                        outline: none;
+                        display: flex;
+                        align-items: center;
+                        
+                        i {
+                            color: #71D460;
+                            background: #fff;
+                            border-radius: 50%;
+                            width: 22px;
+                            height: 22px;
+                            font-size: 22px;
+                            line-height: 21px;
+                            margin-right: 3px;
+                            
+                            &::before {
+                                position: relative;
+                                right: -1px;
+                            }
+                        }
+                    }
+                }
             }
 
             dx-chart {
