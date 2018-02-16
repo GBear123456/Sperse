@@ -5,7 +5,8 @@
   "angular-cli": {},
   "scripts": {
     "ng": "ng",
-    "prod": "ng build --prod",
+    "build": "ng build --prod --aot false",
+    "build-test": "ng build --prod -e=test --aot false ",
     "staging": "ng serve --host 0.0.0.0 --port 7200 --sourcemap=false -e=test",
     "start": "ng serve --host 0.0.0.0 --port 7200 --sourcemap=false",
     "debug": "ng serve --host 0.0.0.0 --port 7200",
