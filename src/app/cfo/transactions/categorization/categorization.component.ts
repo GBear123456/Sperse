@@ -52,6 +52,13 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     categories: any;
     categorization: GetCategoryTreeOutput;
 
+    settings = {
+        showCID: true,    /* Category ID */
+        showTC: true,     /* Transaction Count */
+        showAT: true,     /* Accounting types */
+        padding: 7        
+    };
+
     toolbarConfig = [
         {
             location: 'center', items: [
@@ -66,44 +73,18 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                     options: {
                         hint: this.l('Expand'),
                         items: [{
-                            action: () => {
-                                _.mapObject(this.categorization.accountingTypes, (item, key) => {
-                                    this.categoryList.instance.expandRow(key + item.typeId);
-                                });
-                            },
+                            action: this.processExpandTree.bind(this, true, false),
                             text: this.l('Expand 1st level')
                         }, {
-                            action: () => {
-                                _.mapObject(this.categorization.categories, (item, key) => {
-                                    if (!item.parentId)
-                                        this.categoryList.instance.expandRow(key);
-                                });
-                            },
+                            action: this.processExpandTree.bind(this, true, true),
                             text: this.l('Expand 2st level')
                         }, {
-                            action: () => {
-                                _.mapObject(this.categorization.categories, (item, key) => {
-                                    if (!item.parentId)
-                                        this.categoryList.instance.expandRow(key);
-                                });
-                                _.mapObject(this.categorization.accountingTypes, (item, key) => {
-                                    this.categoryList.instance.expandRow(key + item.typeId);
-                                });
-
-                            },
+                            action: this.processExpandTree.bind(this, true, true),
                             text: this.l('Expand all')
                         }, {
                             type: 'delimiter'
                         }, {
-                            action: () => {
-                                _.mapObject(this.categorization.categories, (item, key) => {
-                                    if (!item.parentId)
-                                        this.categoryList.instance.collapseRow(key);
-                                });
-                                _.mapObject(this.categorization.accountingTypes, (item, key) => {
-                                    this.categoryList.instance.collapseRow(key + item.typeId);
-                                });
-                            },
+                            action: this.processExpandTree.bind(this, false, false),
                             text: this.l('Collapse all'),
                         }]
                     }
@@ -178,11 +159,25 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     ) {
         super(injector);
 
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
+        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;        
     }
 
     ngOnInit() {
         this.refreshCategories();
+    }
+
+    processExpandTree(expandTypes, expandCategories) {
+        _.mapObject(this.categorization.accountingTypes, (item, key) => {
+            this.categoryList.instance[(expandTypes ? 'expand': 'collapse') + 'Row'](key + item.typeId);
+        });
+        _.mapObject(this.categorization.categories, (item, key) => {
+            if (!item.parentId) {
+                let method = this.categoryList.instance[
+                    (expandCategories ? 'expand': 'collapse') + 'Row'];
+                method(parseInt(key));
+                method(key);
+            }
+        });
     }
 
     initDragAndDropEvents($event) {
