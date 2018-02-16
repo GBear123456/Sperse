@@ -754,17 +754,19 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     this.dataGrid.instance.selectRows(gridItems, false);
                 }
 
-                this.dialog.open(RuleDialogComponent, {
-                    panelClass: 'slider',
-                    data: {
-                        instanceId: this.instanceId,
-                        instanceType: this.instanceType,
-                        categoryId: $event.categoryId,
-                        transactions: transactions,
-                        transactionIds: transactionIds,
-                        refershParent: this.refreshDataGrid.bind(this)
-                    }
-                }).afterClosed().subscribe(result => { });
+                if ($event.showRuleDialog) {
+                    this.dialog.open(RuleDialogComponent, {
+                        panelClass: 'slider',
+                        data: {
+                            instanceId: this.instanceId,
+                            instanceType: this.instanceType,
+                            categoryId: $event.categoryId,
+                            transactions: transactions,
+                            transactionIds: transactionIds,
+                            refershParent: this.refreshDataGrid.bind(this)
+                        }
+                    }).afterClosed().subscribe(result => { });
+                }
             });
         }
     }

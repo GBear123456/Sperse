@@ -185,11 +185,13 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         img.src = 'assets/common/icons/drag-icon.svg';
 
         let sourceCategory = null;
+        let dragEnterTime: number;
 
         let clearDragAndDrop = () => {
             sourceCategory = null;
             $('.drag-hover').removeClass('drag-hover');
             $('dx-tree-list .dx-data-row').removeClass('droppable');
+            dragEnterTime = null;
         };
 
         $event.element.find('.dx-data-row')
@@ -219,6 +221,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 if (!this.checkCanDrop(targetTableRow, sourceCategory))
                     return;
 
+                dragEnterTime = new Date().getTime();
                 targetTableRow.classList.add('drag-hover');
             }).on('dragover', (e) => {
                 e.originalEvent.preventDefault();
@@ -231,6 +234,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
+                dragEnterTime = null;
                 e.currentTarget.closest('tr').classList.remove('drag-hover');
             }).on('drop', (e) => {
                 e.originalEvent.preventDefault();
@@ -246,12 +250,13 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                     let categoryId = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);
                     let category = this.categorization.categories[categoryId];
                     let parentCategory = this.categorization.categories[category.parentId];
-
+                    
                     this.onTransactionDrop.emit({
                         categoryId: categoryId,
                         categoryName: category.name,
                         parentId: category.parentId,
-                        parentName: parentCategory ? parentCategory.name : null
+                        parentName: parentCategory ? parentCategory.name : null,
+                        showRuleDialog: dragEnterTime ? (new Date().getTime() - dragEnterTime) > 1000 : true
                     });
                 }
 
