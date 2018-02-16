@@ -16,6 +16,7 @@
                   [selection]="{allowSelectAll: false, mode: 'single'}"
                   [rootValue]="'root'"
                   [autoExpandAll]="autoExpand"
+                  (onKeyDown)="onKeyDown($event)"
                   (onCellPrepared)="onCellPrepared($event)"
                   (onRowClick)="onRowClick($event)"
                   (onContentReady)="initDragAndDropEvents($event)"
@@ -30,7 +31,6 @@
                      [allowDeleting]="true"
                      [allowAdding]="true">
         </dxo-editing>
-        <!-- dxi-column [width]="25" [allowEditing]="false"></dxi-column -->
         <dxi-column 
             [cellTemplate]="'categoryTemplate'"
             [allowSorting]="true" 

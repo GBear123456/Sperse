@@ -92,6 +92,8 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                             },
                             text: this.l('Expand all')
                         }, {
+                            type: 'delimiter'
+                        }, {
                             action: () => {
                                 _.mapObject(this.categorization.categories, (item, key) => {
                                     if (!item.parentId)
@@ -104,9 +106,65 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                             text: this.l('Collapse all'),
                         }]
                     }
-
                 },
-                { name: 'follow', action: Function() }
+                { 
+                    name: 'follow',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Show category info'),
+                        items: [
+                            {
+                              type: 'header',
+                              text: this.l('Show category info'),
+                              action: (event) => {
+                                  event.jQueryEvent.stopPropagation();
+                                  event.jQueryEvent.preventDefault();                                                                                    
+                              }
+                            },
+                            {          
+                              type: 'option',    
+                              name: 'categoryId',
+                              text: this.l('Category ID'),
+                              action: (event) => {
+                                  console.log(event);
+                              }
+                            },
+                            {          
+                              type: 'option',    
+                              name: 'trCount',
+                              text: this.l('Transaction Counts'),
+                              action: () => {
+                                  console.log(event);                                                  
+                              }
+                            },
+                            {          
+                              type: 'option',  
+                              name: 'accTypes',                
+                              text: this.l('Accounting types'),
+                              action: () => {     
+                                  console.log(event);
+                              }
+                            },
+                            {
+                              type: 'delimiter'
+                            },
+                            {          
+                              text: this.l('+ Increase padding'),
+                              action: (event) => {
+                                  event.jQueryEvent.stopPropagation();
+                                  event.jQueryEvent.preventDefault();                                                                                    
+                              }
+                            },
+                            {          
+                              text: this.l('- Decrease padding'),
+                              action: (event) => {
+                                  event.jQueryEvent.stopPropagation();
+                                  event.jQueryEvent.preventDefault();                                                                                    
+                              }
+                            }
+                        ]
+                    }
+                } 
             ]
         }
     ]
@@ -327,7 +385,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                     }, 0);
                 }
             }
-            );
+        );
     }
 
     addActionButton(name, container, callback) {
@@ -437,19 +495,17 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         }
         return data.name;
     }
-    /*
-        onKeyDown($event) {
-            if ($event.jQueryEvent.keyCode == 13) {
-                $event.jQueryEvent.originalEvent.preventDefault();
-                $event.jQueryEvent.originalEvent.stopPropagation();
-    
-                $event.component.saveEditData();
-                $event.component.closeEditCell();
-    
-                $event.handled = true;
-            }
+
+    onKeyDown($event) {
+        if ($event.jQueryEvent.keyCode == 13) {
+            $event.jQueryEvent.preventDefault();
+            $event.jQueryEvent.stopPropagation();
+            $event.element.find('.dx-treelist-focus-overlay').hide();
+            $event.component.focus($event.component.getCellElement(0, 0));
+            $event.component.saveEditData();
+            $event.handled = true;
         }
-    */
+    }
 
     private _prevClickDate = new Date();
     private _selectedKeys = [];
@@ -462,7 +518,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
                 $event.jQueryEvent.originalEvent.preventDefault();
                 $event.jQueryEvent.originalEvent.stopPropagation();
-
+                $event.element.find('.dx-treelist-focus-overlay').show();
                 $event.component.editRow($event.rowIndex);
             }
             this._prevClickDate = nowDate;

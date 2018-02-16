@@ -41,3 +41,4 @@ Thumbs.db
 project.lock.json
 Properties/launchSettings.json
 /Sperse.Platform.AngularUI.xproj.user
+.tern-project
