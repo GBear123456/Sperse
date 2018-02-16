@@ -1,0 +1,54 @@
+<div [@routerTransition]>
+  <app-headline [config]="headlineConfig"></app-headline>
+  <div class="content-wrap">
+    <setup-steps SelectedStepIndex="1"></setup-steps>
+    <div class="grid-wrapper">
+      <dx-data-grid id="gridContainer"
+                    [dataSource]="dataSource"
+                    [allowColumnReordering]="true"
+                    [columnAutoWidth]="true"
+                    [allowColumnResizing]="true"
+                    [hoverStateEnabled]="true"
+                    [columnResizingMode]="'widget'"
+                    (onDataErrorOccurred)="httpConfig.handleError($event.error)"
+                    (onToolbarPreparing)="onToolbarPreparing($event)"
+                    (onCellPrepared)="onCellPrepared($event)">
+        <dxo-selection selectAllMode="page"
+                    showCheckBoxesMode="always"
+                    mode="multiple"></dxo-selection>
+        <dxo-sorting mode="multiple"></dxo-sorting>
+
+        <dxi-column caption="{{l('BusinessEntities_Name')}}"
+                    dataField="Name"
+                    [width]="250"></dxi-column>
+        <dxi-column caption="{{l('BusinessEntities_Location')}}"
+                    [calculateCellValue]="locationColumn_calculateCellValue"></dxi-column>
+        <dxi-column caption="{{l('BusinessEntities_DateOpened')}}"
+                    dataField="DateOpened"
+                    cellTemplate="dateOpenedTemplate"></dxi-column>          
+        <dxi-column caption="{{l('BusinessEntities_TaxNumber')}}"
+                    dataField="TaxNumber"></dxi-column>
+        <dxi-column caption="{{l('BusinessEntities_Phone')}}"
+                    dataField="Phone"></dxi-column>
+        <dxi-column caption="{{l('BusinessEntities_Type')}}"
+                    dataField="Type"></dxi-column>
+        <dxi-column caption="{{l('BusinessEntities_Status')}}"
+                    dataField="Status"
+                    cssClass="status"
+                    alignment="center"
+                    cellTemplate="statusTemplate"
+                    ></dxi-column>
+        
+        <div *dxTemplate="let data of 'dateOpenedTemplate'">{{data.value | date: 'EEE dd, yyyy'}}</div>
+        <div *dxTemplate="let data of 'title'" class="title">{{l('BusinessEntities')}}</div>
+        <div *dxTemplate="let data of 'statusTemplate'" class="statusContent">
+          <span [ngClass]="data.value.toLowerCase()">
+            <span>
+              {{data.value.toUpperCase()}}
+            </span>
+          </span>
+        </div>
+      </dx-data-grid>
+    </div>
+  </div>
+</div>

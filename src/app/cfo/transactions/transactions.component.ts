@@ -5,7 +5,7 @@ import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { AppService } from '@app/app.service';
 import { ActivatedRoute } from '@angular/router';
 
-import { TransactionsServiceProxy, BankAccountDto, InstanceType } from '@shared/service-proxies/service-proxies';
+import { TransactionsServiceProxy, BankAccountDto, InstanceType, ClassificationServiceProxy, UpdateTransactionsCategoryInput } from '@shared/service-proxies/service-proxies';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
@@ -38,11 +38,11 @@ import DataSource from 'devextreme/data/data_source';
     templateUrl: './transactions.component.html',
     styleUrls: ['./transactions.component.less'],
     animations: [appModuleAnimation()],
-    providers: [TransactionsServiceProxy]
+    providers: [TransactionsServiceProxy, ClassificationServiceProxy]
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    
+
     noRefreshedAfterSync: boolean;
     items: any;
     defaultCreditTooltipVisible = false;
@@ -198,6 +198,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private _appService: AppService,
         private _activatedRoute: ActivatedRoute,
         private _TransactionsServiceProxy: TransactionsServiceProxy,
+        private _classificationServiceProxy: ClassificationServiceProxy,
         public filtersService: FiltersService
     ) {
         super(injector);
@@ -217,18 +218,18 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             location: 'after',
             template: 'portfolioTotal'
         }, {
-            location: 'after',
-            template: 'startBalanceTotal'
-        }, {
-            location: 'after',
-            template: 'debitTotal'
-        }, {
-            location: 'after',
-            template: 'creditTotal'
-        }, {
-            location: 'after',
-            template: 'transactionTotal'
-        });
+                location: 'after',
+                template: 'startBalanceTotal'
+            }, {
+                location: 'after',
+                template: 'debitTotal'
+            }, {
+                location: 'after',
+                template: 'creditTotal'
+            }, {
+                location: 'after',
+                template: 'transactionTotal'
+            });
     }
 
     getTotalValues() {
@@ -282,40 +283,40 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
         }
         else
-        if (totals && totals.length) {
-            this.creditTransactionTotal = totals[0].creditTotal;
-            this.creditTransactionCount = totals[0].creditCount;
-            this.creditClassifiedTransactionCount = totals[0].classifiedCreditTransactionCount;
+            if (totals && totals.length) {
+                this.creditTransactionTotal = totals[0].creditTotal;
+                this.creditTransactionCount = totals[0].creditCount;
+                this.creditClassifiedTransactionCount = totals[0].classifiedCreditTransactionCount;
 
-            this.debitTransactionTotal = totals[0].debitTotal;
-            this.debitTransactionCount = totals[0].debitCount;
-            this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
+                this.debitTransactionTotal = totals[0].debitTotal;
+                this.debitTransactionCount = totals[0].debitCount;
+                this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
 
-            this.portfolioCount = totals[0].portfolioCount;
-            this.accountCount = totals[0].accountCount;
+                this.portfolioCount = totals[0].portfolioCount;
+                this.accountCount = totals[0].accountCount;
 
-            this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal;
-            this.adjustmentTotal = totals[0].adjustmentTotal;
+                this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal;
+                this.adjustmentTotal = totals[0].adjustmentTotal;
 
-            this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal + this.adjustmentTotal + this.adjustmentStartingBalanceTotal;
-            this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
-        }
-        else {
-            this.creditTransactionTotal = 0;
-            this.creditTransactionCount = 0;
+                this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal + this.adjustmentTotal + this.adjustmentStartingBalanceTotal;
+                this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
+            }
+            else {
+                this.creditTransactionTotal = 0;
+                this.creditTransactionCount = 0;
 
-            this.debitTransactionTotal = 0;
-            this.debitTransactionCount = 0;
+                this.debitTransactionTotal = 0;
+                this.debitTransactionCount = 0;
 
-            this.portfolioCount = 0;
-            this.accountCount = 0;
+                this.portfolioCount = 0;
+                this.accountCount = 0;
 
-            this.transactionTotal = 0;
-            this.transactionCount = 0;
+                this.transactionTotal = 0;
+                this.transactionCount = 0;
 
-            this.adjustmentStartingBalanceTotal = 0;
-            this.adjustmentTotal = 0;
-        }
+                this.adjustmentStartingBalanceTotal = 0;
+                this.adjustmentTotal = 0;
+            }
 
         this.adjustmentStartingBalanceTotalCent = this.getFloatPart(this.adjustmentStartingBalanceTotal);
         this.adjustmentStartingBalanceTotal = Math.trunc(this.adjustmentStartingBalanceTotal);
@@ -352,7 +353,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     searchValueChange(e: object) {
         this.searchValue = e['value'];
-        
+
         this.processFilterInternal();
     }
 
@@ -721,24 +722,51 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.onSelectionChanged($event, true);
     }
 
-    openCategorizationWindow($event) {
+    categorizeTransactions($event) {
         let transactions = this.dataGrid
             .instance.getSelectedRowKeys();
+        let transactionIds = transactions.map(t => t.Id);
 
-        this.dialog.open(RuleDialogComponent, {
-            panelClass: 'slider',
-            data: {
-                instanceId: this.instanceId,
-                instanceType: this.instanceType,
-                categoryId: $event.categoryId,
-                transactions: transactions,
-                transactionIds: transactions
-                    .map((obj) => {
-                        return obj.Id;
-                    }),
-                refershParent: this.refreshDataGrid.bind(this)
-            }
-        }).afterClosed().subscribe(result => { });
+        if ($event.categoryId) {
+            this._classificationServiceProxy.updateTransactionsCategory(
+                InstanceType[this.instanceType],
+                this.instanceId,
+                new UpdateTransactionsCategoryInput({
+                    transactionIds: transactionIds,
+                    categoryId: $event.categoryId,
+                    standardDescriptor: null,
+                    descriptorAttributeTypeId: null,
+                })
+            ).subscribe(() => {
+                if (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey) {
+                    this.refreshDataGrid();
+                }
+                else {
+                    let gridItems = this.dataGrid.instance.getDataSource().items().filter((v) => _.some(transactionIds, x => x == v.Id));
+                    gridItems.forEach(
+                        (i) => {
+                            i.CashflowSubCategoryId = $event.parentId ? $event.categoryId : null;
+                            i.CashflowSubCategoryName = $event.parentId ? $event.categoryName : null;
+                            i.CashflowCategoryId = $event.parentId ? $event.parentId : $event.categoryId;
+                            i.CashflowCategoryName = $event.parentId ? $event.parentName : $event.categoryName;
+                        }
+                    );
+                    this.dataGrid.instance.selectRows(gridItems, false);
+                }
+
+                this.dialog.open(RuleDialogComponent, {
+                    panelClass: 'slider',
+                    data: {
+                        instanceId: this.instanceId,
+                        instanceType: this.instanceType,
+                        categoryId: $event.categoryId,
+                        transactions: transactions,
+                        transactionIds: transactionIds,
+                        refershParent: this.refreshDataGrid.bind(this)
+                    }
+                }).afterClosed().subscribe(result => { });
+            });
+        }
     }
 
     ngAfterViewInit(): void {

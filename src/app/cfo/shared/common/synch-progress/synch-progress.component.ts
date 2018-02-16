@@ -51,13 +51,18 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
             this.instanceId)
             .subscribe((result) => {
                 this.currentProgress = result.totalProgress.progressPercent;
-                
+
                 if (this.currentProgress != 100) {
                     this.completed = false;
                     this.synchData = result;
-                    if ( result.totalProgress.syncStatus == this.Failed) {
-                        this.isFailed = true;
-                    }
+                    console.log(this.synchData);
+
+                    this.synchData.accountProgresses.forEach(value => {
+                        if ( value.syncStatus == this.Failed) {
+                            this.isFailed = true;
+                        }
+                    });
+
                     this.timeoutHandler = setTimeout(
                         () => this.getSynchProgress(), 10 * 1000
                     );

@@ -7,6 +7,7 @@ import { CashflowComponent } from './cashflow/cashflow.component';
 import { StatsComponent } from './stats/stats.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { RulesComponent } from './rules/rules.component';
+import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
 
 @NgModule({
     imports: [
@@ -17,6 +18,7 @@ import { RulesComponent } from './rules/rules.component';
                 children: [
                     { path: 'start', component: StartComponent, data: { permission: '' } },
                     { path: 'linkaccounts', component: BankAccountsComponent, data: { permission: '' } },
+                    { path: 'business-entities', component: BusinessEntitiesComponent, data: { permission: '' } },
                     { path: 'cashflow', component: CashflowComponent, data: { permission: '' } },
                     { path: 'stats', component: StatsComponent, data: { permission: '' } },
                     { path: 'transactions', component: TransactionsComponent, data: { permission: '' } },
