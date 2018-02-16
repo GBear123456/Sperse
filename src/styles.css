@@ -131,3 +131,7 @@
 .tooltip-item.forecast.net::before {
     background: #a82aba;
 }
+
+.blockUI.blockOverlay {
+    background: #fff !important;
+}
