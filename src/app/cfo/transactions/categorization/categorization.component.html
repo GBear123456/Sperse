@@ -3,7 +3,7 @@
         <h3>
             {{l('Categorize transactions')}}
             <span class="close" (click)="close.emit(null)"></span>
-            <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection($event)">{{'Clear'}}</span>
+            <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection(true)">{{'Clear'}}</span>
         </h3>
         <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
     </div>

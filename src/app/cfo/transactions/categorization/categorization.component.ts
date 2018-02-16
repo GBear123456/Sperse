@@ -348,19 +348,12 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             if (this.showFilterIcon) 
                 this.addActionButton('filter', $event.cellElement, (event) => {
                     let wrapper = $event.cellElement.parent();
-                    if (wrapper.hasClass('filtered-category'))
-                        this.clearSelection(null);
-                    else {
-                        this.deselectFilteredCategory();
+                    if (!this.clearSelection(wrapper.hasClass('filtered-category'))) {
                         wrapper.addClass('filtered-category');
                         this.onFilterSelected.emit($event.data);
                     }
             });
         }
-    }
-
-    deselectFilteredCategory() {
-        $('.filtered-category').removeClass('filtered-category');
     }
 
     onCategoryUpdated($event) {
@@ -474,10 +467,12 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         }
     }
 
-    clearSelection(e) {
+    clearSelection(clearFilter) {
         this.categoryList.instance.deselectAll();
-        this.deselectFilteredCategory();
-        this.onFilterSelected.emit(null);
+        $('.filtered-category').removeClass('filtered-category');
+        if (clearFilter)
+            this.onFilterSelected.emit(null);
+        return clearFilter;
     }
 
     onRowPrepared($event) {
