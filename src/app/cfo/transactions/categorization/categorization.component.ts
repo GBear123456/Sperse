@@ -181,7 +181,6 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     initDragAndDropEvents($event) {
-        let dragEnterTarget;
         let img = new Image();
         img.src = 'assets/common/icons/drag-icon.svg';
 
@@ -194,7 +193,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         };
 
         $event.element.find('.dx-data-row')
-            .off('dragstart').off('dragenter').off('dragover').off('dragleave').off('drop').off('dragend')
+            .off('dragstart').off('dragend')
             .on('dragstart', (e) => {
                 sourceCategory = {};
                 sourceCategory.element = e.currentTarget;
@@ -206,43 +205,45 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 sourceCategory.cashType = sourceCategory.element.classList.contains('inflows') ? 'inflows' : 'outflows';
                 let droppableQuery = 'dx-tree-list .dx-data-row.' + sourceCategory.cashType;
                 $(droppableQuery).addClass('droppable');
-            })
+            }).on('dragend', (e) => {
+                clearDragAndDrop();
+            });;
+
+        $event.element.find('.category-drop-area')
+            .off('dragenter').off('dragover').off('dragleave').off('drop')
             .on('dragenter', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
-                if (dragEnterTarget && dragEnterTarget != e.currentTarget)
-                    dragEnterTarget.classList.remove('drag-hover');
-
-                dragEnterTarget = e.currentTarget;
-                if (!this.checkCanDrop(e.currentTarget, sourceCategory))
+                let targetTableRow = e.currentTarget.closest('tr');
+                if (!this.checkCanDrop(targetTableRow, sourceCategory))
                     return;
 
-                e.currentTarget.classList.add('drag-hover');
+                targetTableRow.classList.add('drag-hover');
             }).on('dragover', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
-                if (!this.checkCanDrop(e.currentTarget, sourceCategory))
+                let targetTableRow = e.currentTarget.closest('tr');
+                if (!this.checkCanDrop(targetTableRow, sourceCategory))
                     e.originalEvent.dataTransfer.dropEffect = "none";
             }).on('dragleave', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
-                if (dragEnterTarget != e.currentTarget)
-                    e.currentTarget.classList.remove('drag-hover');
+                e.currentTarget.closest('tr').classList.remove('drag-hover');
             }).on('drop', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
                 if (sourceCategory) {
                     let source = e.originalEvent.dataTransfer.getData('Text');
-                    let target = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex)
+                    let target = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);
 
                     this.handleCategoryDrop(source, target);
                 }
                 else {
-                    let categoryId = this.categoryList.instance.getKeyByRowIndex($(e.currentTarget).index());
+                    let categoryId = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);
                     let category = this.categorization.categories[categoryId];
                     let parentCategory = this.categorization.categories[category.parentId];
 
@@ -254,8 +255,6 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                     });
                 }
 
-                clearDragAndDrop();
-            }).on('dragend', (e) => {
                 clearDragAndDrop();
             });
     }

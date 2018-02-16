@@ -130,6 +130,10 @@
                 .category-hover {
                     border: 1px dashed #dfdfdf;
                 }
+
+                .category-drop-area {
+                    display: block !important;
+                }
             }
         }
 
@@ -143,6 +147,10 @@
         .droppable {
             .category-hover {
                 border: 1px dashed #dfdfdf;
+            }
+
+            .category-drop-area {
+                display: block !important;
             }
         }
 
@@ -169,7 +177,7 @@
 
                 colgroup {
                     col:last-child {
-                        width: 75px!important;
+                        width: 75px !important;
                     }
                 }
 
@@ -224,7 +232,7 @@
                             }
                         }
 
-                        td .category-hover {
+                        td .category-hover, td .category-drop-area {
                             width: calc(~"100% - 46px");
                         }
 
@@ -241,13 +249,13 @@
                     }
 
                     &[aria-level="1"] {
-                        td .category-hover {
+                        td .category-hover, td .category-drop-area {
                             width: calc(~"100% - 33px");
                         }
                     }
 
                     &[aria-level="0"] {
-                        td .category-hover {
+                        td .category-hover, td .category-drop-area {
                             width: calc(~"100% - 18px");
                         }
 
@@ -278,6 +286,7 @@
                                 visibility: visible;
                                 display: inline-block;
                             }
+
                             a.dx-link-delete, a.dx-link-edit, a.dx-link-add {
                                 display: none;
                             }
@@ -290,12 +299,18 @@
                             right: 0px;
                         }
 
-                        .category-hover {
+                        .category-hover, .category-drop-area {
                             position: absolute;
                             height: 32px;
                             margin-top: -7px;
                             right: 0px;
                             z-index: -1;
+                        }
+
+                        .category-drop-area {
+                            z-index: 1000;
+                            margin-top: -26px;
+                            display: none;
                         }
 
                         &.dx-command-edit a {
@@ -314,6 +329,7 @@
                             &.dx-command-edit a.dx-link-filter {
                                 visibility: visible;
                             }
+
                             a.dx-link-delete, a.dx-link-add, a.dx-link-edit {
                                 display: none;
                             }
@@ -327,6 +343,7 @@
                                     visibility: visible;
                                     display: inline-block;
                                 }
+
                                 a.dx-link-filter {
                                     display: none;
                                 }
@@ -334,13 +351,14 @@
                         }
                     }
 
-                    &.dx-selection {  
+                    &.dx-selection {
                         td {
                             &.dx-command-edit {
                                 a.dx-link-add, a.dx-link-filter {
                                     visibility: visible;
                                     display: inline-block;
                                 }
+
                                 a.dx-link-edit, a.dx-link-delete {
                                     display: none;
                                 }
