@@ -5,7 +5,7 @@ import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { AppService } from '@app/app.service';
 import { ActivatedRoute } from '@angular/router';
 
-import { TransactionsServiceProxy, BankAccountDto, InstanceType } from '@shared/service-proxies/service-proxies';
+import { TransactionsServiceProxy, BankAccountDto, InstanceType, ClassificationServiceProxy, UpdateTransactionsCategoryInput } from '@shared/service-proxies/service-proxies';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
@@ -38,7 +38,7 @@ import DataSource from 'devextreme/data/data_source';
     templateUrl: './transactions.component.html',
     styleUrls: ['./transactions.component.less'],
     animations: [appModuleAnimation()],
-    providers: [TransactionsServiceProxy]
+    providers: [TransactionsServiceProxy, ClassificationServiceProxy]
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -198,6 +198,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private _appService: AppService,
         private _activatedRoute: ActivatedRoute,
         private _TransactionsServiceProxy: TransactionsServiceProxy,
+        private _classificationServiceProxy: ClassificationServiceProxy,
         public filtersService: FiltersService
     ) {
         super(injector);
@@ -721,24 +722,50 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.onSelectionChanged($event, true);
     }
 
-    openCategorizationWindow($event) {
+    categorizeTransactions($event) {
         let transactions = this.dataGrid
             .instance.getSelectedRowKeys();
+        let transactionIds = transactions.map(t => t.Id);
 
-        this.dialog.open(RuleDialogComponent, {
-            panelClass: 'slider',
-            data: {
-                instanceId: this.instanceId,
-                instanceType: this.instanceType,
-                categoryId: $event.categoryId,
-                transactions: transactions,
-                transactionIds: transactions
-                    .map((obj) => {
-                        return obj.Id;
-                    }),
-                refershParent: this.refreshDataGrid.bind(this)
-            }
-        }).afterClosed().subscribe(result => { });
+        if ($event.categoryId) {
+            this._classificationServiceProxy.updateTransactionsCategory(
+                InstanceType[this.instanceType],
+                this.instanceId,
+                new UpdateTransactionsCategoryInput({
+                    transactionIds: transactionIds,
+                    categoryId: $event.categoryId,
+                    standardDescriptor: null,
+                    descriptorAttributeTypeId: null,
+                })
+            ).subscribe(() => {
+                if (false)
+                    this.refreshDataGrid();
+                else {
+                    let gridItems = this.dataGrid.instance.getDataSource().items().filter((v) => _.some(transactionIds, x => x == v.Id));
+                    gridItems.forEach(
+                        (i) => {
+                            i.CashflowSubCategoryId = $event.parentId ? $event.categoryId : null;
+                            i.CashflowSubCategoryName = $event.parentId ? $event.categoryName : null;
+                            i.CashflowCategoryId = $event.parentId ? $event.parentId : $event.categoryId;
+                            i.CashflowCategoryName = $event.parentId ? $event.parentName : $event.categoryName;
+                        }
+                    );
+                    this.dataGrid.instance.selectRows(gridItems, false);
+                }
+
+                this.dialog.open(RuleDialogComponent, {
+                    panelClass: 'slider',
+                    data: {
+                        instanceId: this.instanceId,
+                        instanceType: this.instanceType,
+                        categoryId: $event.categoryId,
+                        transactions: transactions,
+                        transactionIds: transactionIds,
+                        refershParent: this.refreshDataGrid.bind(this)
+                    }
+                }).afterClosed().subscribe(result => { });
+            });
+        }
     }
 
     ngAfterViewInit(): void {

@@ -1,6 +1,7 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Input, Output, EventEmitter, Injector, OnInit, ViewChild, HostBinding } from '@angular/core';
-import { AppComponentBase } from "shared/common/app-component-base";
+import { AppComponentBase } from '@shared/common/app-component-base';
+
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
 import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput, GetCategoryTreeOutput } from '@shared/service-proxies/service-proxies';
@@ -188,9 +189,15 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                     this.handleCategoryDrop(source, target);
                 }
                 else {
+                    let categoryId = this.categoryList.instance.getKeyByRowIndex($(e.currentTarget).index());
+                    let category = this.categorization.categories[categoryId];
+                    let parentCategory = this.categorization.categories[category.parentId];
+
                     this.onTransactionDrop.emit({
-                        categoryId: this.categoryList.instance
-                            .getKeyByRowIndex($(e.currentTarget).index())
+                        categoryId: categoryId,
+                        categoryName: category.name,
+                        parentId: category.parentId,
+                        parentName: parentCategory ? parentCategory.name : null
                     });
                 }
 
