@@ -21,7 +21,6 @@ import { BusinessEntitiesComponent } from './business-entities/business-entities
 
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
-import { NoDataComponent } from './shared/common/no-data/no-data.component';
 import { CFOModalDialogComponent } from './shared/common/dialogs/modal/cfo-modal-dialog.component';
 
 import { StatsComponent } from './stats/stats.component';
@@ -118,7 +117,6 @@ import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widget
         CategoryDeleteDialogComponent,
         RulesComponent,
         SortingComponent,
-        NoDataComponent,
         CFOModalDialogComponent,
         BusinessEntitiesComponent
     ],
