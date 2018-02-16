@@ -118,10 +118,27 @@
                                    [showInfo]="true">
                         </dxo-pager>
 
-                        <div *dxTemplate="let data of 'portfolioTotal'">
-                            <div class="informer">
-                                <h2 class="count">{{portfolioCount| number}}</h2>
-                                <span class="name">{{l('Subaccounts')}}</span>
+                        <div *dxTemplate="let data of 'bankAccountTotal'">
+                            <div class="informer" (click)="toggleSubaccountsDetails()">
+                                <h2 class="count">{{bankAccountCount| number}}</h2>
+                                <span class="name">
+                                    {{l('Subaccounts')}}
+                                    <i id="subaccountsDetails" class="arrow"></i>
+                                </span>
+
+                                <dx-tooltip target="#subaccountsDetails"
+                                            [(visible)]="defaultSubaccountTooltipVisible">
+                                    <div *dxTemplate="let data = data of 'content'">
+                                        <div class="tooltip-wrap">
+                                            <div *ngFor="let bankAccount of getBankAccounts()">
+                                                <span class="name" (click)="applyTotalBankAccountFilter(bankAccount.id)">
+                                                   {{ bankAccount.name }}
+                                                </span>
+                                                <br />                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </dx-tooltip>
                             </div>
                         </div>
 
