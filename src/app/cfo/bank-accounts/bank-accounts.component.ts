@@ -6,6 +6,10 @@ import { AppConsts } from '@shared/AppConsts';
 import { Router } from '@angular/router';
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 
+import { environment } from 'environments/environment';
+
+import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+
 @Component({
     selector: 'bank-accounts',
     templateUrl: './bank-accounts.component.html',
@@ -23,10 +27,10 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
         injector: Injector,
         private sanitizer: DomSanitizer,
         private _financialInformationServiceProxy: FinancialInformationServiceProxy,
+        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
         private _router: Router
     ) {
         super(injector);
-
     }
 
     ngOnInit() {
@@ -52,6 +56,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
                 }
             ]
         };
+
     }
     initIFrame() {
         this._financialInformationServiceProxy.getSetupAccountsLink(
@@ -78,9 +83,16 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+
+        if (environment.zenDeskEnabled)
+            setTimeout(() => {
+                this._ngxZendeskWebwidgetService.show();
+            }, 1000);
     }
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
+        if (environment.zenDeskEnabled)
+            this._ngxZendeskWebwidgetService.hide();
     }
 }
