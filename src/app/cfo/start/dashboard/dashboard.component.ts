@@ -1,9 +1,12 @@
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
-import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Injector } from '@angular/core';
 import { AppConsts } from 'shared/AppConsts';
 import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { Router } from '@angular/router';
 
+import { environment } from 'environments/environment';
+
+import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 
 @Component({
     selector: 'dashboard',
@@ -11,7 +14,7 @@ import { Router } from '@angular/router';
     styleUrls: ['./dashboard.component.less'],
     animations: [appModuleAnimation()]
 })
-export class DashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
+export class DashboardComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     public headlineConfig;
     private rootComponent: any;
     linksTo = [
@@ -22,7 +25,8 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     constructor(
         injector: Injector,
-        private _router: Router
+        private _router: Router,
+        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -38,8 +42,23 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         };
     }
 
+    ngAfterViewInit(): void {
+/*
+        _ngxZendeskWebwidgetService.identify({
+           name: 'Alison Vilela',
+           email: 'alison.vilela@live.nl'
+        });
+*/
+        if (environment.zenDeskEnabled)
+            setTimeout(() => {
+                this._ngxZendeskWebwidgetService.show();
+            }, 1000);
+    }
+
     ngOnDestroy(): void {
         this.rootComponent.overflowHidden();
+        if (environment.zenDeskEnabled)
+            this._ngxZendeskWebwidgetService.hide();
     }
 
     navigateTo() {

@@ -63,6 +63,16 @@ import {
 } from 'devextreme-angular';
 import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widgets.module';
 
+import { ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+
+export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
+  accountUrl = 'sperse.zendesk.com';
+  beforePageLoad(zE) {
+    zE.setLocale('en');
+    zE.hide();
+  }
+}
+
 @NgModule({
     imports: [
         CfoRoutingModule,
@@ -97,7 +107,8 @@ import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widget
         MatTabsModule,
         MatDialogModule,
         RoundProgressModule,
-        DashboardWidgetsModule
+        DashboardWidgetsModule,
+        ngxZendeskWebwidgetModule.forRoot(ZendeskConfig)
     ],
     declarations: [
         StartComponent,
@@ -125,7 +136,7 @@ import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widget
         CategoryDeleteDialogComponent,
         PreferencesDialogComponent
     ],
-    providers: [InstanceServiceProxy, CFOService, CustomersServiceProxy]
+    providers: [InstanceServiceProxy, CFOService, CustomersServiceProxy, ngxZendeskWebwidgetService]
 })
 
 export class CfoModule { }

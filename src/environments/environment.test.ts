@@ -1,7 +1,7 @@
-// "Hot Module Replacement" enabled environment
+// "Test" enabled environment
 
 export const environment = {
     production: false,
     zenDeskEnabled: true,
-    hmr: true
+    hmr: false
 };
