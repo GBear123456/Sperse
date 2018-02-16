@@ -93,7 +93,7 @@
                         [caption]="this.l('DetailsHeaders_CurrentStatus')"
                         [allowEditing]="false">
             </dxi-column>
-            <dxi-column dataField="description" width="300" [caption]="this.l('DetailsHeaders_Description')">
+            <dxi-column dataField="description" [width]="detailsDescriptionColumnWidth()" [caption]="this.l('DetailsHeaders_Description')">
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
             </dxi-column>
             <dxi-column dataField="debit"
@@ -127,7 +127,7 @@
             </dxi-column>
             <dxi-column [caption]="this.l('DetailsHeaders_Comments')"
                         dataField="comment"
-                        width="350"
+                        [width]="detailsCommentsColumnWidth()"
                         [allowSorting]="false"
                         [allowFiltering]="false"
                         [allowEditing]="false">

@@ -438,6 +438,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         error => console.log('Error: ' + error));
     }
 
+    getUpdatedDataSource() {
+        this.loadStatsData();
+    }
+
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);

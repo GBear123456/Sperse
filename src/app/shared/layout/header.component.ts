@@ -203,6 +203,10 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         return this.appSession.application.features['SignalR'] && (!this._abpSessionService.tenantId || this.feature.isEnabled('App.ChatFeature'));
     }
 
+    get notificationEnabled(): boolean {
+        return  (!this._abpSessionService.tenantId || this.feature.isEnabled('Notification'));
+    }
+
     subscriptionStatusBarVisible(): boolean {
         return this._appSessionService.tenantId > 0 && (this._appSessionService.tenant.isInTrialPeriod || this.subscriptionIsExpiringSoon());
     }
