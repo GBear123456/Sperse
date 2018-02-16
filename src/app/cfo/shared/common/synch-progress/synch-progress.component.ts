@@ -55,7 +55,6 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                 if (this.currentProgress != 100) {
                     this.completed = false;
                     this.synchData = result;
-                    console.log(this.synchData);
 
                     this.synchData.accountProgresses.forEach(value => {
                         if ( value.syncStatus == this.Failed) {
