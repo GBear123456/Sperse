@@ -2184,6 +2184,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
                             clickedCellPrefix !== CategorizationPrefixes.AccountType &&
                             clickedCellPrefix !== CategorizationPrefixes.AccountName
+                            // check feature
+                            && this.IsEnableForecastAdding()
                         ) {
                             this.handleAddOrEdit(cellObj, result);
                         } else {
@@ -2200,6 +2202,21 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.addFieldToClicking(cellObj.cell.path);
             }
         }
+    }
+    IsEnableForecastAdding() {
+        if (!abp.session.tenantId)
+            return true;
+
+        let futureForecastsYearCount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
+        if (!futureForecastsYearCount)
+            return false;
+
+        let possibleStartDate = moment().startOf('day');
+        let possibleEndDate = moment().add('day', -1).add('year', futureForecastsYearCount).endOf('day');
+
+        let date = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment();
+
+        return (date >= possibleStartDate && date <= possibleEndDate);
     }
 
     handleAddOrEdit(cellObj, details) {
