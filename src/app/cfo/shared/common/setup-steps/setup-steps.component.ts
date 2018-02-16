@@ -13,7 +13,7 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
         { caption: 'FinancialAccounts', component: '/linkaccounts' },
-        { caption: 'BusinessEntity', component: '' },
+        { caption: 'BusinessEntity', component: '/business-entities' },
         { caption: 'Chart', component: '' },
         { caption: 'Rules', component: '/rules' }
     ];

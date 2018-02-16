@@ -17,6 +17,7 @@ import { ModalModule } from 'ngx-bootstrap';
 import { RulesComponent } from './rules/rules.component';
 import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.component';
 import { CategoryDeleteDialogComponent } from './transactions/categorization/category-delete-dialog/category-delete-dialog.component';
+import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
 
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
@@ -118,7 +119,8 @@ import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widget
         RulesComponent,
         SortingComponent,
         NoDataComponent,
-        CFOModalDialogComponent
+        CFOModalDialogComponent,
+        BusinessEntitiesComponent
     ],
     entryComponents: [
         RuleDialogComponent,
