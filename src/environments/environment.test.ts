@@ -1,7 +1,7 @@
 // "Test" enabled environment
 
 export const environment = {
-    production: false,
+    production: true,
     zenDeskEnabled: true,
     hmr: false
 };
