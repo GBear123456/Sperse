@@ -189,7 +189,7 @@ export class ToolBarComponent extends AppComponentBase {
         return {
             item: '<div class="toolbar-dropdown-item" ' + (width ? 'style="width:' + width + 'px;"' : '') + '>' +
             (link.icon ? '<img style="margin-right: 15px; position: relative; top: -2px;" src="' + this.getImgURI(link.icon) + '">' : '') + link.text + '</div>',
-            option: '<div><input type="checkbox" id="' + link.name + '" class="dropdown-option-checkbox" checked="' + link.checked + '"><label for="' + link.name + '">' + link.text + '</label></div>',
+            option: '<div><input type="checkbox" id="' + link.name + '" class="dropdown-option-checkbox"' + (link.checked || link.checked == undefined ? ' checked': '') + '><label for="' + link.name + '">' + link.text + '</label></div>',
             downloadOptions: '<div class="toolbar-download-options" onclick="event.stopPropagation()">' +
                 '<div><input type="radio" name="export" value="all" checked><label>' + this.l('Export all data') + '</label></div>' +
                 '<div><input type="radio" name="export" value="selected"><label>' + this.l('Export selected') + '</label></div>' +
@@ -234,7 +234,8 @@ export class ToolBarComponent extends AppComponentBase {
         if (item.widget == 'dxDropDownMenu') {
             item.options['accessKey'] = item.name;
             item.options['items'].forEach(link => {                
-                link.disabled = (link.type == 'delimiter');
+                link.disabled = link.hasOwnProperty('disabled') ? 
+                    link.disabled: (link.type == 'delimiter');
                 link.html = this.getDropDownItemTemplate(
                     link, item.options['width']);
                 link.onClick = (event) => {

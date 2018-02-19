@@ -51,105 +51,18 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     autoExpand = true;
     categories: any;
     categorization: GetCategoryTreeOutput;
+    columnClassName = '';
 
-    settings = {
+    private readonly MIN_PADDING = 7;
+    private readonly MAX_PADDING = 17;
+    private settings = {
         showCID: true,    /* Category ID */
         showTC: true,     /* Transaction Count */
         showAT: true,     /* Accounting types */
-        padding: 7        
+        padding: this.MIN_PADDING
     };
 
-    toolbarConfig = [
-        {
-            location: 'center', items: [
-                {
-                    name: 'find',
-                    action: Function()
-                },
-                { name: 'sort', action: Function() },
-                {
-                    name: 'expandTree',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: this.l('Expand'),
-                        items: [{
-                            action: this.processExpandTree.bind(this, true, false),
-                            text: this.l('Expand 1st level')
-                        }, {
-                            action: this.processExpandTree.bind(this, true, true),
-                            text: this.l('Expand 2st level')
-                        }, {
-                            action: this.processExpandTree.bind(this, true, true),
-                            text: this.l('Expand all')
-                        }, {
-                            type: 'delimiter'
-                        }, {
-                            action: this.processExpandTree.bind(this, false, false),
-                            text: this.l('Collapse all'),
-                        }]
-                    }
-                },
-                { 
-                    name: 'follow',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: this.l('Show category info'),
-                        items: [
-                            {
-                              type: 'header',
-                              text: this.l('Show category info'),
-                              action: (event) => {
-                                  event.jQueryEvent.stopPropagation();
-                                  event.jQueryEvent.preventDefault();                                                                                    
-                              }
-                            },
-                            {          
-                              type: 'option',    
-                              name: 'categoryId',
-                              text: this.l('Category ID'),
-                              action: (event) => {
-                                  console.log(event);
-                              }
-                            },
-                            {          
-                              type: 'option',    
-                              name: 'trCount',
-                              text: this.l('Transaction Counts'),
-                              action: () => {
-                                  console.log(event);                                                  
-                              }
-                            },
-                            {          
-                              type: 'option',  
-                              name: 'accTypes',                
-                              text: this.l('Accounting types'),
-                              action: () => {     
-                                  console.log(event);
-                              }
-                            },
-                            {
-                              type: 'delimiter'
-                            },
-                            {          
-                              text: this.l('+ Increase padding'),
-                              action: (event) => {
-                                  event.jQueryEvent.stopPropagation();
-                                  event.jQueryEvent.preventDefault();                                                                                    
-                              }
-                            },
-                            {          
-                              text: this.l('- Decrease padding'),
-                              action: (event) => {
-                                  event.jQueryEvent.stopPropagation();
-                                  event.jQueryEvent.preventDefault();                                                                                    
-                              }
-                            }
-                        ]
-                    }
-                } 
-            ]
-        }
-    ]
+    toolbarConfig: any;
 
     constructor(
         injector: Injector,
@@ -159,11 +72,162 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     ) {
         super(injector);
 
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;        
+        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;                
     }
 
     ngOnInit() {
+        this.initSettings();
         this.refreshCategories();
+        this.initToolbarConfig();
+    }
+
+    initToolbarConfig() {
+        this.toolbarConfig = [
+            {
+                location: 'center', items: [
+                    {
+                        name: 'find',
+                        action: Function()
+                    },
+                    { name: 'sort', action: Function() },
+                    {
+                        name: 'expandTree',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Expand'),
+                            items: [{
+                                action: this.processExpandTree.bind(this, true, false),
+                                text: this.l('Expand 1st level')
+                            }, {
+                                action: this.processExpandTree.bind(this, true, true),
+                                text: this.l('Expand 2st level')
+                            }, {
+                                action: this.processExpandTree.bind(this, true, true),
+                                text: this.l('Expand all')
+                            }, {
+                                type: 'delimiter'
+                            }, {
+                                action: this.processExpandTree.bind(this, false, false),
+                                text: this.l('Collapse all'),
+                            }]
+                        }
+                    },
+                    { 
+                        name: 'follow',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Show category info'),
+                            items: [
+                                {
+                                  type: 'header',
+                                  text: this.l('Show category info'),
+                                  action: (event) => {
+                                      event.jQueryEvent.stopPropagation();
+                                      event.jQueryEvent.preventDefault();                                                                                    
+                                  }
+                                },
+                                {          
+                                  type: 'option',    
+                                  name: 'categoryId',
+                                  checked: this.settings.showCID,
+                                  text: this.l('Category ID'),
+                                  action: (event) => {
+                                      if (event.jQueryEvent.target.tagName == 'INPUT') {
+                                          this.settings.showCID = !this.settings.showCID;
+                                          this.storeSettings();
+                                      }
+                                  }
+                                },
+                                {          
+                                  type: 'option',    
+                                  name: 'trCount',
+                                  checked: this.settings.showTC,
+                                  text: this.l('Transaction Counts'),
+                                  action: (event) => {
+                                      if (event.jQueryEvent.target.tagName == 'INPUT') {
+                                          this.settings.showTC = !this.settings.showTC;
+                                          this.storeSettings();
+                                      }
+                                  }
+                                },
+                                {          
+                                  type: 'option',  
+                                  name: 'accTypes',                
+                                  checked: this.settings.showAT,
+                                  text: this.l('Accounting types'),
+                                  action: (event) => {     
+                                      if (event.jQueryEvent.target.tagName == 'INPUT') {
+                                          this.settings.showAT = !this.settings.showAT;
+                                          this.refreshCategories(false);
+                                          this.storeSettings();
+                                      }
+                                  }
+                                },
+                                {
+                                  type: 'delimiter'
+                                },
+                                {          
+                                  text: this.l('+ Increase padding'),
+                                  disabled: this.settings.padding >= this.MAX_PADDING,
+                                  action: (event) => {
+                                      this.handlePadding(event, true);
+                                  }
+                                },
+                                {          
+                                  text: this.l('- Decrease padding'),
+                                  disabled: this.settings.padding <= this.MIN_PADDING,
+                                  action: (event) => {
+                                      this.handlePadding(event, false);
+                                  }
+                                }
+                            ]
+                        }
+                    } 
+                ]
+            }
+        ];
+    }
+
+    handlePadding(event, increment) {
+        event.jQueryEvent.stopPropagation();
+        event.jQueryEvent.preventDefault();
+        
+        event.itemElement[increment ? 'next': 'prev']()
+            .removeClass('dx-state-disabled');
+        this.settings.padding += 2 * [-1, 1][Number(increment)];
+        if (this.settings.padding >= this.MAX_PADDING) {
+            this.settings.padding = this.MAX_PADDING;
+            event.itemElement.addClass('dx-state-disabled');
+        } else if (this.settings.padding <= this.MIN_PADDING) {
+            this.settings.padding = this.MIN_PADDING;
+            event.itemElement.addClass('dx-state-disabled');
+        } else
+            event.itemElement.removeClass('dx-state-disabled');
+
+        this.storeSettings();
+        this.applyPadding();
+    }
+
+    applyPadding() {
+        this.columnClassName = 'column-padding-' + this.settings.padding;
+    }
+
+    initSettings() {
+        let settings: any = localStorage.getItem(
+            this.constructor.name);
+        if (settings)
+            try {
+                settings = JSON.parse(settings);
+                for (let prt in settings) {
+                    this.settings[prt] = settings[prt];
+                }
+            } catch (e) {}
+        this.applyPadding();
+    }
+
+    storeSettings() {
+        localStorage.setItem(this.constructor.name, 
+            JSON.stringify(this.settings));
     }
 
     processExpandTree(expandTypes, expandCategories) {
@@ -353,7 +417,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
                 let categories = [];
                 this.categorization = data;
-                if (data.accountingTypes) {
+                if (this.settings.showAT && data.accountingTypes) {
                     _.mapObject(data.accountingTypes, (item, key) => {
                         categories.push({
                             key: key + item.typeId,
@@ -370,8 +434,8 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                             (!item.parentId || data.categories[item.parentId]))
                             categories.push({
                                 key: key,
-                                parent: item.parentId || (item.accountingTypeId +
-                                    data.accountingTypes[item.accountingTypeId].typeId),
+                                parent: item.parentId || (this.settings.showAT ? item.accountingTypeId +
+                                    data.accountingTypes[item.accountingTypeId].typeId: 'root'),
                                 coAID: item.coAID,
                                 name: item.name
                             });
