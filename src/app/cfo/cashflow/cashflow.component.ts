@@ -1293,6 +1293,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Collapse starting and ending balances rows */
         if (!this.expandedIncomeExpense) {
             this.expandIncomeAndExpense();
+        } else {
+            this.initCellsDragDrop(event);
         }
 
         /** Get the groupBy element and append the dx-area-description-cell with it */
@@ -1311,6 +1313,55 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Clear cache with columns activity */
         this.cashedColumnActivity.clear();
         this.applyUserPreferencesForAreas();
+    }
+
+    initCellsDragDrop(event) {
+        let img = new Image();
+        img.src = 'assets/common/icons/drag-icon.svg';
+        event.element.find('[draggable]').off('dragstart').off('dragend').off('dragenter').off('dragover').off('dragleave').off('drop')
+            .on('dragstart', e => {
+                let targetElement = e.target;
+                /** add selected class */
+                $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
+                $(targetElement).addClass('chosenFilterForCashFlow');
+                console.log('start drag');
+
+                /** set the draggable image */
+                e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
+                e.originalEvent.dropEffect = 'move';
+
+                /** find the dropable area depend on period */
+                if ($(targetElement).attr('class').indexOf('prev') !== -1) {
+                    let cellIndex = $(targetElement).index();
+                    $(`[draggable="true"]:nth-child(${cellIndex + 1}):not(.chosenFilterForCashFlow)`).addClass('droppable');
+                } else if ($(targetElement).attr('class').indexOf('next') !== -1) {
+                    $(`[draggable="true"][class*="next"]:not(.chosenFilterForCashFlow)`).addClass('droppable');
+                }
+            })
+            .on('dragend', e => {
+                $(e.target).removeClass('dragged');
+                $('.droppable').removeClass('droppable');
+            })
+            .on('dragenter', (e) => {
+                if (!$(e.target).hasClass('chosenFilterForCashFlow')) {
+                    /** Send request to update the cells */
+
+                }
+                console.log('drag enter');
+                console.log(e);
+            })
+            .on('dragover', (e) => {
+                // console.log('drag over');
+                // console.log(e);
+            })
+            .on('dragleave', (e) => {
+                console.log('drag leave');
+                console.log(e);
+            })
+            .on('drop', (e) => {
+                console.log('drop');
+                console.log(e);
+            });
     }
 
     expandIncomeAndExpense() {
@@ -1603,6 +1654,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return cellObj.cell[pathProperty] && !cellObj.cell.isWhiteSpace && cellObj.cell[pathProperty].length === 1 && cellObj.cell[pathProperty][0] === (CategorizationPrefixes.CashflowType + NetChange);
     }
 
+    cellIsDraggable(cellObj) {
+        return cellObj.area === 'data' && cellObj.cell.rowType === 'D' && (cellObj.cell.rowPath[0].slice(2) === Income || cellObj.cell.rowPath[0].slice(2) === Expense);
+    }
+
     /**
      * whether or not the cell is income or expenses data cell
      * @param cellObj - the object that pivot grid passes to the onCellPrepared event
@@ -1803,6 +1858,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.path.length !== 1 && e.cell.text.length > this.maxCategoriesWidth) {
             e.cellElement.attr('title', e.cell.text);
             e.cellElement.find('> span').text(_.prune(e.cell.text, this.maxCategoriesWidth));
+        }
+
+        /** add draggable attribute to the cells that can be dragged */
+        if (this.cellIsDraggable(e)) {
+            e.cellElement.attr('draggable', true);
         }
 
         /** Apply user preferences to the data showing */
