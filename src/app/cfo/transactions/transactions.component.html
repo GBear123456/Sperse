@@ -40,28 +40,28 @@
                         </dxo-selection>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
-                        <dxi-column dataField="Id" cssClass="tabular id-column" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="0" [visible]="false"></dxi-column>
+
                         <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}" [width]="350"></dxi-column>
+                        <dxi-column caption="{{l('Transactions_CashflowCategoryName')}}"
+                                    dataField="CashflowCategoryName"
+                                    cellTemplate="CashflowCategoryNameTemplate"
+                                    cssClass="category"></dxi-column>
+                        <dxi-column dataField="CashflowSubCategoryName" caption="{{l('Transactions_CashflowSubCategoryName')}}"></dxi-column>
+                        <dxi-column dataField="Debit" cssClass="tabular" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate"></dxi-column>
+                        <dxi-column dataField="Credit" cssClass="tabular" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate"></dxi-column>
+                        <dxi-column dataField="EndingBalance" cssClass="tabular" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate"></dxi-column>
                         <dxi-column dataField="CashFlowTypeName"
                                     cellTemplate="CashFlowTypeNameTemplate"
                                     cssClass="cashflow-type"
                                     alignment="center"
                                     caption="{{l('Transactions_CashFlowType')}}"></dxi-column>
                         <dxi-column dataField="AccountingTypeName" caption="{{l('Transactions_AccountingTypeName')}}" [visible]="false"></dxi-column>
-                        <dxi-column caption="{{l('Transactions_CashflowCategoryName')}}"
-                                    dataField="CashflowCategoryName"
-                                    cellTemplate="CashflowCategoryNameTemplate"
-                                    cssClass="category"></dxi-column>
-                        <dxi-column dataField="CashflowSubCategoryName" caption="{{l('Transactions_CashflowSubCategoryName')}}"></dxi-column>
-                        <dxi-column dataField="Descriptor" caption="{{l('Transactions_Descriptor')}}"></dxi-column>
-                        <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}" [width]="350"></dxi-column>
-
-                        <dxi-column dataField="Debit" cssClass="tabular" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate"></dxi-column>
-                        <dxi-column dataField="Credit" cssClass="tabular" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate"></dxi-column>
-                        <dxi-column dataField="EndingBalance" cssClass="tabular" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate"></dxi-column>
                         <dxi-column dataField="BankAccountNumber" cssClass="tabular" caption="{{l('Transactions_BankAccountNumber')}}"></dxi-column>
-
+                        <dxi-column dataField="Descriptor" caption="{{l('Transactions_Descriptor')}}"></dxi-column>
                         <dxi-column dataField="Comments" caption="{{l('Transactions_Comments')}}"></dxi-column>
+
+                        <dxi-column dataField="Id" cssClass="tabular id-column" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="0" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankCode" caption="{{l('Transactions_BankCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="IsPending" caption="{{l('Transactions_IsPending')}}" [visible]="false" cellTemplate="isPendingTemplate"></dxi-column>
                         <dxi-column dataField="BankAccountTypeName" caption="{{l('Transactions_BankAccountType')}}" [visible]="false"></dxi-column>
@@ -118,10 +118,27 @@
                                    [showInfo]="true">
                         </dxo-pager>
 
-                        <div *dxTemplate="let data of 'portfolioTotal'">
-                            <div class="informer">
-                                <h2 class="count">{{portfolioCount| number}}</h2>
-                                <span class="name">{{l('Subaccounts')}}</span>
+                        <div *dxTemplate="let data of 'bankAccountTotal'">
+                            <div class="informer" (click)="toggleSubaccountsDetails()">
+                                <h2 class="count">{{bankAccountCount| number}}</h2>
+                                <span class="name">
+                                    {{l('Subaccounts')}}
+                                    <i id="subaccountsDetails" class="arrow"></i>
+                                </span>
+
+                                <dx-tooltip target="#subaccountsDetails"
+                                            [(visible)]="defaultSubaccountTooltipVisible">
+                                    <div *dxTemplate="let data = data of 'content'">
+                                        <div class="tooltip-wrap">
+                                            <div *ngFor="let bankAccount of getBankAccounts()">
+                                                <span class="name" (click)="applyTotalBankAccountFilter(bankAccount.id)">
+                                                    {{ bankAccount.name }}
+                                                </span>
+                                                <br />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </dx-tooltip>
                             </div>
                         </div>
 
