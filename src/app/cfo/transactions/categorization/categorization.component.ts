@@ -14,7 +14,10 @@ import * as _ from 'underscore';
     selector: 'categorization',
     templateUrl: 'categorization.component.html',
     styleUrls: ['categorization.component.less'],
-    providers: [ClassificationServiceProxy]
+    providers: [ClassificationServiceProxy],
+    host: {
+        '(window:click)': 'toogleSearchInput($event)'
+    }
 })
 export class CategorizationComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
@@ -52,6 +55,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     categories: any;
     categorization: GetCategoryTreeOutput;
     columnClassName = '';
+    showSearch = false;
 
     private readonly MIN_PADDING = 7;
     private readonly MAX_PADDING = 17;
@@ -87,7 +91,12 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 location: 'center', items: [
                     {
                         name: 'find',
-                        action: Function()
+                        action: (event) => {
+                             event.jQueryEvent.stopPropagation();
+                             event.jQueryEvent.preventDefault();                                                                                    
+
+                            this.showSearch = !this.showSearch;
+                        }
                     },
                     { name: 'sort', action: Function() },
                     {
@@ -615,5 +624,10 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         if ($event.level > 0) {
             $event.rowElement.attr('draggable', true);
         }
+    }
+
+    toogleSearchInput(event) {
+        if (event.target.tagName != 'INPUT')
+            this.showSearch = false;        
     }
 }

@@ -99,8 +99,16 @@
     }
 
     /deep/ dx-tree-list {
-        .dx-treelist-headers, .dx-treelist-header-panel {
+        .dx-treelist-headers {
             display: none;
+        }
+
+        .dx-treelist-header-panel {
+            position: absolute;
+            width: 330px;
+            .dx-toolbar-after {
+                z-index: 3;
+            }
         }
 
         .dx-toolbar .dx-toolbar-after {
