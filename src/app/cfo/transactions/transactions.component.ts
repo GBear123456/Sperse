@@ -257,7 +257,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             _.each(selectedRows, function (row) {
                 bankAccounts.push(row.BankAccountId);
 
-                if (row.Amount > 0) {
+                if (row.Amount >= 0) {
                     creditTotal += row.Amount;
                     creditCount++;
                     if (row.CashflowCategoryId)
