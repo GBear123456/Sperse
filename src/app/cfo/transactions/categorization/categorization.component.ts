@@ -33,6 +33,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     @Input() width: string;
     @Input() height: string;
     @Input() showTitle: boolean;
+    @Input() showHeader: boolean;
     @Input() showClearSelection: boolean;
     @Input() showFilterIcon: boolean;
     @Input() categoryId: number;

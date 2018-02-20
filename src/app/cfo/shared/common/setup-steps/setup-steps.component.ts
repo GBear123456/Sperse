@@ -14,7 +14,7 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
     @Input() SetupSteps = [
         { caption: 'FinancialAccounts', component: '/linkaccounts' },
         { caption: 'BusinessEntity', component: '/business-entities' },
-        { caption: 'Chart', component: '' },
+        { caption: 'Chart', component: '/chart-of-accounts' },
         { caption: 'Rules', component: '/rules' }
     ];
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
