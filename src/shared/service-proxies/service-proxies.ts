@@ -19474,6 +19474,7 @@ export class UpdateTransactionsCategoryInput implements IUpdateTransactionsCateg
     categoryId: number;
     standardDescriptor: string;
     descriptorAttributeTypeId: string;
+    suppressCashflowMismatch: boolean = false;
 
     constructor(data?: IUpdateTransactionsCategoryInput) {
         if (data) {
@@ -19494,6 +19495,7 @@ export class UpdateTransactionsCategoryInput implements IUpdateTransactionsCateg
             this.categoryId = data["categoryId"];
             this.standardDescriptor = data["standardDescriptor"];
             this.descriptorAttributeTypeId = data["descriptorAttributeTypeId"];
+            this.suppressCashflowMismatch = data["suppressCashflowMismatch"] !== undefined ? data["suppressCashflowMismatch"] : false;
         }
     }
 
@@ -19513,6 +19515,7 @@ export class UpdateTransactionsCategoryInput implements IUpdateTransactionsCateg
         data["categoryId"] = this.categoryId;
         data["standardDescriptor"] = this.standardDescriptor;
         data["descriptorAttributeTypeId"] = this.descriptorAttributeTypeId;
+        data["suppressCashflowMismatch"] = this.suppressCashflowMismatch;
         return data; 
     }
 }
@@ -19522,6 +19525,7 @@ export interface IUpdateTransactionsCategoryInput {
     categoryId: number;
     standardDescriptor: string;
     descriptorAttributeTypeId: string;
+    suppressCashflowMismatch: boolean;
 }
 
 export class UpdateTransactionsCategoryWithFilterInput implements IUpdateTransactionsCategoryWithFilterInput {
@@ -19529,6 +19533,7 @@ export class UpdateTransactionsCategoryWithFilterInput implements IUpdateTransac
     destinationCategoryId: number;
     standardDescriptor: string;
     descriptorAttributeTypeId: string;
+    suppressCashflowMismatch: boolean = false;
 
     constructor(data?: IUpdateTransactionsCategoryWithFilterInput) {
         if (data) {
@@ -19545,6 +19550,7 @@ export class UpdateTransactionsCategoryWithFilterInput implements IUpdateTransac
             this.destinationCategoryId = data["destinationCategoryId"];
             this.standardDescriptor = data["standardDescriptor"];
             this.descriptorAttributeTypeId = data["descriptorAttributeTypeId"];
+            this.suppressCashflowMismatch = data["suppressCashflowMismatch"] !== undefined ? data["suppressCashflowMismatch"] : false;
         }
     }
 
@@ -19560,6 +19566,7 @@ export class UpdateTransactionsCategoryWithFilterInput implements IUpdateTransac
         data["destinationCategoryId"] = this.destinationCategoryId;
         data["standardDescriptor"] = this.standardDescriptor;
         data["descriptorAttributeTypeId"] = this.descriptorAttributeTypeId;
+        data["suppressCashflowMismatch"] = this.suppressCashflowMismatch;
         return data; 
     }
 }
@@ -19569,6 +19576,7 @@ export interface IUpdateTransactionsCategoryWithFilterInput {
     destinationCategoryId: number;
     standardDescriptor: string;
     descriptorAttributeTypeId: string;
+    suppressCashflowMismatch: boolean;
 }
 
 export class StatsDetailFilterBase implements IStatsDetailFilterBase {

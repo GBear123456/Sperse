@@ -373,6 +373,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                         categoryName: category.name,
                         parentId: category.parentId,
                         parentName: parentCategory ? parentCategory.name : null,
+                        categoryCashType: this.categorization.accountingTypes[category.accountingTypeId].typeId,
                         showRuleDialog: dragEnterTime ? (new Date().getTime() - dragEnterTime) > 1000 : true
                     });
                 }
@@ -603,6 +604,17 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                         this.refreshCategories(false);
                     });
         });
+    }
+
+    onSelectedCategoryChanged($event) {
+        var categoryData = $event.selectedRowsData.pop();
+        if (!isNaN(categoryData.key)) {
+            var category = this.categorization.categories[categoryData.key];
+            var cashflowTypeId = this.categorization.accountingTypes[category.accountingTypeId].typeId;
+            $event.selectedCashFlowTypeId = cashflowTypeId;
+        }
+
+        this.onSelectionChanged.emit($event)
     }
 
     sortItem(val1, val2) {
