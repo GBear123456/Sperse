@@ -478,8 +478,13 @@
                             }
                         }
 
-                        &.droppable {
+                        &[droppable='true'] {
                             background: #fffbf4 !important;
+                        }
+
+                        &.currentDroppable {
+                            background: #CBEEFF !important;
+                            cursor: pointer;
                         }
 
                         span {
