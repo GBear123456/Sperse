@@ -11,11 +11,25 @@
 
 /deep/ .dx-dropdownmenu-popup {
     .dx-item {
+        position: relative;
         &.dx-state-hover,
         &.dx-state-active,
         &.dx-state-focused {
             background-color: #FFF !important;
             color: #424c56 !important;
+        }
+        &.desc:after, &.asc:after {
+            content: '';
+            width: 15px;
+            height: 15px;
+            top: 10px;
+            right: 10px;
+            display: block;
+            position: absolute;
+            background: url('../../../../assets/common/icons/arrow-up-icon.svg') center no-repeat;
+        }
+        &.desc:after {
+            transform: rotate(180deg);
         }
         .dropdown-header {
             font-size: 13px;
@@ -316,6 +330,28 @@
                     }
 
                     background: url('../../../../assets/common/icons/download-icon.svg') no-repeat center;
+                }
+            }
+
+            &[accesskey="sort"] {
+                padding: 6px 0px;
+
+                .dx-button-content {
+                    display: none;
+                }
+
+                &::before {
+                    content: attr(title);
+                    font-weight: 300;
+                    font-size: 13px;
+                    line-height: 1.85;
+                    letter-spacing: 0.3px;
+                    color: #677380;
+                    display: inline-block;
+                    background: url('../../../../assets/common/icons/sort-icon-down.svg') left center no-repeat;
+                    padding-left: 22px;
+                    padding-right: 0px;
+                    font-family: Montserrat;
                 }
             }
             

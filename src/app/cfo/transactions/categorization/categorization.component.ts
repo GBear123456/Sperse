@@ -63,7 +63,11 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         showCID: true,    /* Category ID */
         showTC: true,     /* Transaction Count */
         showAT: true,     /* Accounting types */
-        padding: this.MIN_PADDING
+        padding: this.MIN_PADDING,
+        sorting: {
+            field: 0,
+            order: 'asc'
+        }
     };
 
     toolbarConfig: any;
@@ -98,7 +102,22 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                             this.showSearch = !this.showSearch;
                         }
                     },
-                    { name: 'sort', action: Function() },
+                    { name: 'sort', 
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Sort'),
+                            items: [{
+                                action: this.handleSorting.bind(this, 0),
+                                text: this.l('Sort by category')
+                            }, {
+                                action: this.handleSorting.bind(this, 1),
+                                text: this.l('Sort by category ID')
+                            }, {
+                                action: Function(),
+                                text: this.l('Sort by custom order')
+                            }]
+                        }
+                    },
                     {
                         name: 'expandTree',
                         widget: 'dxDropDownMenu',
@@ -178,16 +197,12 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                                 {          
                                   text: this.l('+ Increase padding'),
                                   disabled: this.settings.padding >= this.MAX_PADDING,
-                                  action: (event) => {
-                                      this.handlePadding(event, true);
-                                  }
+                                  action: this.handlePadding.bind(this, true)
                                 },
                                 {          
                                   text: this.l('- Decrease padding'),
                                   disabled: this.settings.padding <= this.MIN_PADDING,
-                                  action: (event) => {
-                                      this.handlePadding(event, false);
-                                  }
+                                  action: this.handlePadding.bind(this, false)
                                 }
                             ]
                         }
@@ -197,7 +212,35 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         ];
     }
 
-    handlePadding(event, increment) {
+    sortByColumnIndex(index: number, order: string = '') {
+        let columns = this.categoryList.instance.option('columns');
+
+        columns[index].sortIndex = 0;
+        columns[Number(!index)].sortIndex = 1;
+
+        let oldClass = columns[index].sortOrder;
+        columns[index].sortOrder = order || 
+            (oldClass == 'asc' ? 'desc': 'asc');
+
+        this.categoryList.instance.option('columns', columns);
+        this.categoryList.instance.refresh();
+        return columns[index].sortOrder;
+    }
+
+    handleSorting(index, event) {
+        event.itemElement.parent().children().each(function() {
+            this.classList.remove('asc', 'desc');
+        });        
+
+        this.settings.sorting.field = index;
+        event.itemElement.addClass(
+            this.settings.sorting.order = this.sortByColumnIndex(index)
+        );
+       
+        this.storeSettings();
+    }
+
+    handlePadding(increment, event) {
         event.jQueryEvent.stopPropagation();
         event.jQueryEvent.preventDefault();
         
@@ -446,7 +489,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                         if (data.accountingTypes[item.accountingTypeId] &&
                             (!item.parentId || data.categories[item.parentId]))
                             categories.push({
-                                key: key,
+                                key: parseInt(key),
                                 parent: item.parentId || (this.settings.showAT ? item.accountingTypeId +
                                     data.accountingTypes[item.accountingTypeId].typeId: 'root'),
                                 coAID: item.coAID,
@@ -629,5 +672,12 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     toogleSearchInput(event) {
         if (event.target.tagName != 'INPUT')
             this.showSearch = false;        
+    }
+
+    onNodesInitialized() {
+        this.sortByColumnIndex(
+            this.settings.sorting.field, 
+            this.settings.sorting.order
+        );      
     }
 }

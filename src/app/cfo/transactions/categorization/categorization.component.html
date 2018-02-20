@@ -25,7 +25,8 @@
                   (onRowUpdated)="onCategoryUpdated($event)"
                   (onRowInserted)="onCategoryInserted($event)"
                   (onRowRemoving)="onCategoryRemoving($event)"
-                  (onRowPrepared)="onRowPrepared($event)">
+                  (onRowPrepared)="onRowPrepared($event)"
+                  (onNodesInitialized)="onNodesInitialized()">
         <dxo-editing mode="row"
                      [texts]="{confirmDeleteMessage: ''}"
                      [allowUpdating]="true"
@@ -41,7 +42,7 @@
             [calculateSortValue]="calculateSortValue" 
             [sortOrder]="'asc'" dataField="name">
         </dxi-column>
-        <dxi-column [allowSorting]="true" [sortIndex]="1" [width]="65" dataField="coAID" [dataType]="number" [caption]="'ID'" [visible]="settings.showCID"></dxi-column>
+        <dxi-column [allowSorting]="true" [sortIndex]="1" [sortOrder]="'asc'" [width]="65" dataField="coAID" [dataType]="number" [caption]="'ID'" [visible]="settings.showCID"></dxi-column>
 
         <div *dxTemplate="let cell of 'categoryTemplate'">
             <ng-container>
