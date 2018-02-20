@@ -201,31 +201,31 @@
                     &.column-padding-9 {
                         padding-bottom: 9px;
                         &:before {
-                            height: 40px!important;
+                            height: 43px!important;
                         }
                     }
                     &.column-padding-11 {
                         padding-bottom: 11px;
                         &:before {
-                            height: 42px!important;
+                            height: 45px!important;
                         }
                     }
                     &.column-padding-13 {
                         padding-bottom: 13px;
                         &:before {
-                            height: 44px!important;
+                            height: 47px!important;
                         }
                     }
                     &.column-padding-15 {
                         padding-bottom: 15px;
                         &:before {
-                            height: 46px!important;
+                            height: 49px!important;
                         }
                     }
                     &.column-padding-17 {
                         padding-bottom: 17px;
                         &:before {
-                            height: 48px!important;
+                            height: 51px!important;
                         }
                     }
                 }
@@ -261,12 +261,20 @@
                         }
                     }
 
+                    &.system-type {
+                        .dx-command-edit {
+                            .dx-link-delete {
+                                display: none !important;
+                            }
+                        }
+                    }
+
                     &[aria-level="2"] {
                         td:first-child {
                             &:before {
                                 content: '';
                                 display: block;
-                                height: 38px;
+                                height: 41px;
                                 width: 2px;
                                 margin-top: -10px;
                                 position: absolute;
@@ -303,12 +311,6 @@
 
                         .dx-treelist-text-content span {
                             font-weight: bold;
-                        }
-
-                        .dx-command-edit {
-                            .dx-link-delete, .dx-link-edit {
-                                display: none !important;
-                            }
                         }
                     }
 
@@ -435,6 +437,12 @@
                         font-stretch: normal;
                         letter-spacing: 0.3px;
                         color: #424c56;
+                        span:not(.dx-treelist-search-text) {
+                            max-width: 210px;
+                            display: inline-block;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }                        
                     }
 
                     &[aria-level="1"], &[aria-level="2"] {

@@ -780,7 +780,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this._classificationServiceProxy.updateTransactionsCategory(
                 InstanceType[this.instanceType],
                 this.instanceId,
-                new UpdateTransactionsCategoryInput({
+                UpdateTransactionsCategoryInput.fromJS({
                     transactionIds: transactionIds,
                     categoryId: $event.categoryId,
                     standardDescriptor: null,

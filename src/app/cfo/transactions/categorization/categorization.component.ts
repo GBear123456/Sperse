@@ -4,7 +4,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
-import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput, GetCategoryTreeOutput } from '@shared/service-proxies/service-proxies';
+import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput, 
+    GetCategoryTreeOutput, UpdateAccountingTypeInput } from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 import { MatDialog } from '@angular/material';
 
@@ -520,13 +521,11 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     onCellPrepared($event) {
-        if ($event.rowType === "data" && $event.column.command === "edit") {            
+        if ($event.rowType === "data" && $event.column.command === "edit") {
             if ($event.data.key)
                 this.addActionButton('delete', $event.cellElement, (event) => {
                     this.categoryList.instance.deleteRow(
                         this.categoryList.instance.getRowIndexByKey($event.data.key));
-                    this.categoryList.instance.deleteRow(
-                        this.categoryList.instance.getRowIndexByKey(parseInt($event.data.key)));
                 });
             if (this.showFilterIcon) 
                 this.addActionButton('filter', $event.cellElement, (event) => {
@@ -539,18 +538,15 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         }
     }
 
-    onCategoryUpdated($event) {
-        let category = this.categorization.categories[$event.key];
-        this._classificationServiceProxy.updateCategory(
+    updateAccountingType($event) {
+        let id = parseInt($event.key);
+        this._classificationServiceProxy.updateAccountingType(
             InstanceType[this.instanceType], this.instanceId,
-            UpdateCategoryInput.fromJS({
-                id: $event.key,
-                coAID: $event.data.hasOwnProperty('coAID') ?
-                    $event.data.coAID || undefined : category.coAID,
+            UpdateAccountingTypeInput.fromJS({
+                id: id,
                 name: $event.data.hasOwnProperty('name') ?
-                    $event.data.name || undefined : category.name,
-                accountingTypeId: category.accountingTypeId,
-                parentId: category.parentId
+                    $event.data.name || undefined : category.name
+                cashflowTypeId: this.categorization.accountingTypes[id].typeId
             })
         ).subscribe((id) => {
             this.refreshCategories(false);
@@ -559,9 +555,35 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         });
     }
 
+    onCategoryUpdated($event) {
+        if (isNaN($event.key))
+            this.updateAccountingType($event);
+        else {
+            let category = this.categorization.categories[$event.key];
+            $event.element.find('.dx-treelist-focus-overlay').hide();
+            this._classificationServiceProxy.updateCategory(
+                InstanceType[this.instanceType], this.instanceId,
+                UpdateCategoryInput.fromJS({
+                    id: $event.key,
+                    coAID: $event.data.hasOwnProperty('coAID') ?
+                        $event.data.coAID || undefined : category.coAID,
+                    name: $event.data.hasOwnProperty('name') ?
+                        $event.data.name || undefined : category.name,
+                    accountingTypeId: category.accountingTypeId,
+                    parentId: category.parentId
+                })
+            ).subscribe((id) => {
+                this.refreshCategories(false);
+            }, (error) => {
+                this.refreshCategories(false);
+            });
+        }
+    }
+
     onCategoryInserted($event) {
         let parentId = $event.data.parent,
             hasParentCategory = (parseInt(parentId) == parentId);
+        $event.element.find('.dx-treelist-focus-overlay').hide();
         this._classificationServiceProxy.createCategory(
             InstanceType[this.instanceType], this.instanceId,
             CreateCategoryInput.fromJS({
@@ -580,12 +602,15 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     onCategoryRemoving($event) {
         $event.cancel = true;
-        let itemId = parseInt($event.key),
+        let itemId = $event.key, 
+            isAccountingType = isNaN(itemId),
             dialogData = {
                 deleteAllReferences: true,
-                categorizations: this.categorization.categories,
+                categorizations: this.categorization[isAccountingType ? 'accountingTypes': 'categories'],
                 categories: _.filter(this.categories, (obj) => {
-                    return (obj['key'] != itemId && obj['parent'] != itemId);
+                    return isAccountingType ? 
+                        (obj['key'] != itemId && obj['parent'] == 'root'): 
+                        (obj['key'] != itemId && obj['parent'] != itemId);
                 }),
                 categoryId: undefined
             };
@@ -593,10 +618,11 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             data: dialogData
         }).afterClosed().subscribe((result) => {
             if (result)
-                this._classificationServiceProxy.deleteCategory(
+                this._classificationServiceProxy[isAccountingType ? 'deleteAccountingType': 'deleteCategory'].call(
+                    this._classificationServiceProxy,
                     InstanceType[this.instanceType],
                     this.instanceId,
-                    dialogData.categoryId, dialogData.deleteAllReferences, itemId)
+                    dialogData.categoryId, dialogData.deleteAllReferences, parseInt(itemId))
                     .subscribe((id) => {
                         this.refreshCategories(false);
                     }, (error) => {
@@ -633,10 +659,10 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     private _prevClickDate = new Date();
     private _selectedKeys = [];
     onRowClick($event) {
-        if (this._selectedKeys.indexOf($event.key.toString()) >= 0)
+        if (this._selectedKeys.indexOf($event.key) >= 0)
             this.categoryList.instance.deselectRows([$event.key]);
         this._selectedKeys = this.categoryList.instance.getSelectedRowKeys();
-        if ($event.level > 0) {
+        if ($event.level >= 0) {
             let nowDate = new Date();
             if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
                 $event.jQueryEvent.originalEvent.preventDefault();
@@ -657,6 +683,9 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     onRowPrepared($event) {
+        $event.element.find('.dx-treelist-focus-overlay')
+            [$event.isEditing ? 'show': 'hide']();
+
         if ($event.rowType != 'data' || $event.key.rowIndex)
             return;
 
@@ -664,7 +693,9 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             $event.key >= 0 ? this.categorization.categories[$event.key]
                 .accountingTypeId: parseInt($event.key)];
         if (accounting)
-            $event.rowElement.addClass(accounting.typeId == 'I' ? 'inflows': 'outflows');
+            $event.rowElement.addClass(
+                (accounting.typeId == 'I' ? 'inflows': 'outflows') +
+                (accounting.isSystem ? ' system-type': ''));
         if ($event.level > 0) {
             $event.rowElement.attr('draggable', true);
         }

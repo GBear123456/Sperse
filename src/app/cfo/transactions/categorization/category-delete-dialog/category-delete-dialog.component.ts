@@ -27,7 +27,7 @@ export class CategoryDeleteDialogComponent extends ConfirmDialogComponent implem
     confirm($event) {
         if (!this.data.deleteAllReferences) {
             let selected = this.categoryList.instance.getSelectedRowsData(),
-                key = selected.length && selected[0].key;
+                key = selected.length && parseInt(selected[0].key);
             this.data.categoryId = this.data.categorizations[key] && key || undefined;                
             if (!this.data.categoryId)
                 return this.notify.error(this.l('Category should be selected'));
