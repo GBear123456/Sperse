@@ -777,31 +777,36 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         let transactionIds = transactions.map(t => t.Id);
         
         if ($event.categoryId) {
-            this._classificationServiceProxy.updateTransactionsCategory(
-                InstanceType[this.instanceType],
-                this.instanceId,
-                UpdateTransactionsCategoryInput.fromJS({
-                    transactionIds: transactionIds,
-                    categoryId: $event.categoryId,
-                    standardDescriptor: null,
-                    descriptorAttributeTypeId: null,
-                })
-            ).subscribe(() => {
-                if (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey) {
-                    this.refreshDataGrid();
-                }
-                else {
-                    let gridItems = this.dataGrid.instance.getDataSource().items().filter((v) => _.some(transactionIds, x => x == v.Id));
-                    gridItems.forEach(
-                        (i) => {
-                            i.CashflowSubCategoryId = $event.parentId ? $event.categoryId : null;
-                            i.CashflowSubCategoryName = $event.parentId ? $event.categoryName : null;
-                            i.CashflowCategoryId = $event.parentId ? $event.parentId : $event.categoryId;
-                            i.CashflowCategoryName = $event.parentId ? $event.parentName : $event.categoryName;
-                        }
-                    );
-                    this.dataGrid.instance.selectRows(gridItems, false);
-                }
+            let updateTransactionCategoryMethod = (suppressCashflowTypeMismatch: boolean = false) => {
+                this._classificationServiceProxy.updateTransactionsCategory(
+                    InstanceType[this.instanceType],
+                    this.instanceId,
+                    new UpdateTransactionsCategoryInput({
+                        transactionIds: transactionIds,
+                        categoryId: $event.categoryId,
+                        standardDescriptor: null,
+                        descriptorAttributeTypeId: null,
+                        suppressCashflowMismatch: suppressCashflowTypeMismatch
+                    })
+                ).subscribe(() => {
+                    if (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey) {
+                        this.refreshDataGrid();
+                    }
+                    else {
+                        let gridItems = this.dataGrid.instance.getDataSource().items().filter((v) => _.some(transactionIds, x => x == v.Id));
+                        gridItems.forEach(
+                            (i) => {
+                                i.CashflowSubCategoryId = $event.parentId ? $event.categoryId : null;
+                                i.CashflowSubCategoryName = $event.parentId ? $event.categoryName : null;
+                                i.CashflowCategoryId = $event.parentId ? $event.parentId : $event.categoryId;
+                                i.CashflowCategoryName = $event.parentId ? $event.parentName : $event.categoryName;
+                                i.CashFlowTypeId = $event.categoryCashType;
+                                i.CashFlowTypeName = $event.categoryCashType == 'I' ? 'Inflows' : 'Outflows';
+                            }
+                        );
+
+                        this.dataGrid.instance.selectRows(gridItems, false);
+                    }
 
                     if ($event.showRuleDialog) {
                         this.dialog.open(RuleDialogComponent, {
@@ -817,8 +822,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             }
                         }).afterClosed().subscribe(result => { });
                     }
-            });
-        };
+                });
+            };
             
             if (_.some(transactions, x => x.CashFlowTypeId != $event.categoryCashType)) {
                 abp.message.confirm('At least 1 transaction will reverse cashflow type after the modification.', 'Are you ok with it?',

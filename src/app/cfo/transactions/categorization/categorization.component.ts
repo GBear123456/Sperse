@@ -540,14 +540,15 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     updateAccountingType($event) {
-        let id = parseInt($event.key);
+        let id = parseInt($event.key),
+            accounting = this.categorization.accountingTypes[id];
         this._classificationServiceProxy.updateAccountingType(
             InstanceType[this.instanceType], this.instanceId,
             UpdateAccountingTypeInput.fromJS({
                 id: id,
                 name: $event.data.hasOwnProperty('name') ?
-                    $event.data.name || undefined : category.name
-                cashflowTypeId: this.categorization.accountingTypes[id].typeId
+                    $event.data.name || undefined : accounting.name,
+                cashflowTypeId: accounting.typeId
             })
         ).subscribe((id) => {
             this.refreshCategories(false);
