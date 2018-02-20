@@ -95,8 +95,8 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
             },
             {
                 location: 'after', items: [
-                    { name: 'fullscreen', action: this.fullscreen.bind(this) },
-                    { name: 'refresh', action: this.refreshList.bind(this) }
+                    { name: 'refresh', action: this.refreshList.bind(this) },
+                    { name: 'fullscreen', action: this.fullscreen.bind(this) }
                 ]
             }
         ];

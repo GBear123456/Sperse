@@ -13,6 +13,11 @@ import { TenantApiHostOutput } from '@shared/service-proxies/service-proxies';
 export class AppPreBootstrap {
 
     static run(callback: () => void, resolve: any, reject: any): void {
+        let abpAjax: any = abp.ajax;
+        if (abpAjax.defaultError) {
+            abpAjax.defaultError.details = 'No further information available.';
+        }
+
         AppPreBootstrap.getApplicationConfig(() => {
             if (UrlHelper.isInstallUrl(location.href)) {
                 LocalizedResourcesHelper.loadMetronicStyles('');

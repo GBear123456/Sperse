@@ -99,8 +99,16 @@
     }
 
     /deep/ dx-tree-list {
-        .dx-treelist-headers, .dx-treelist-header-panel {
+        .dx-treelist-headers {
             display: none;
+        }
+
+        .dx-treelist-header-panel {
+            position: absolute;
+            width: 330px;
+            .dx-toolbar-after {
+                z-index: 3;
+            }
         }
 
         .dx-toolbar .dx-toolbar-after {
@@ -186,6 +194,40 @@
                     text-overflow: initial !important;
                     border: none !important;
                     background-color: transaparent !important;
+
+                    &.column-padding-7 {
+                        padding-bottom: 7px;
+                    }
+                    &.column-padding-9 {
+                        padding-bottom: 9px;
+                        &:before {
+                            height: 40px!important;
+                        }
+                    }
+                    &.column-padding-11 {
+                        padding-bottom: 11px;
+                        &:before {
+                            height: 42px!important;
+                        }
+                    }
+                    &.column-padding-13 {
+                        padding-bottom: 13px;
+                        &:before {
+                            height: 44px!important;
+                        }
+                    }
+                    &.column-padding-15 {
+                        padding-bottom: 15px;
+                        &:before {
+                            height: 46px!important;
+                        }
+                    }
+                    &.column-padding-17 {
+                        padding-bottom: 17px;
+                        &:before {
+                            height: 48px!important;
+                        }
+                    }
                 }
 
                 tr.dx-data-row {

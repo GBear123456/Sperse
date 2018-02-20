@@ -19,6 +19,8 @@ import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.c
 import { CategoryDeleteDialogComponent } from './transactions/categorization/category-delete-dialog/category-delete-dialog.component';
 import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
 
+import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
+
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
 import { CFOModalDialogComponent } from './shared/common/dialogs/modal/cfo-modal-dialog.component';
@@ -129,7 +131,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         RulesComponent,
         SortingComponent,
         CFOModalDialogComponent,
-        BusinessEntitiesComponent
+        BusinessEntitiesComponent,
+        ChartOfAccountsComponent 
     ],
     entryComponents: [
         RuleDialogComponent,
