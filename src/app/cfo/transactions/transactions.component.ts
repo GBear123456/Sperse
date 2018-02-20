@@ -775,7 +775,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         let transactions = this.dataGrid
             .instance.getSelectedRowKeys();
         let transactionIds = transactions.map(t => t.Id);
-
+        
         if ($event.categoryId) {
             this._classificationServiceProxy.updateTransactionsCategory(
                 InstanceType[this.instanceType],
@@ -803,20 +803,34 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     this.dataGrid.instance.selectRows(gridItems, false);
                 }
 
-                if ($event.showRuleDialog) {
-                    this.dialog.open(RuleDialogComponent, {
-                        panelClass: 'slider',
-                        data: {
-                            instanceId: this.instanceId,
-                            instanceType: this.instanceType,
-                            categoryId: $event.categoryId,
-                            transactions: transactions,
-                            transactionIds: transactionIds,
-                            refershParent: this.refreshDataGrid.bind(this)
-                        }
-                    }).afterClosed().subscribe(result => { });
-                }
+                    if ($event.showRuleDialog) {
+                        this.dialog.open(RuleDialogComponent, {
+                            panelClass: 'slider',
+                            data: {
+                                instanceId: this.instanceId,
+                                instanceType: this.instanceType,
+                                categoryId: $event.categoryId,
+                                categoryCashflowTypeId: $event.categoryCashType,
+                                transactions: transactions,
+                                transactionIds: transactionIds,
+                                refershParent: this.refreshDataGrid.bind(this)
+                            }
+                        }).afterClosed().subscribe(result => { });
+                    }
             });
+        };
+            
+            if (_.some(transactions, x => x.CashFlowTypeId != $event.categoryCashType)) {
+                abp.message.confirm('At least 1 transaction will reverse cashflow type after the modification.', 'Are you ok with it?',
+                    (result) => {
+                        if (result) {
+                            updateTransactionCategoryMethod(true);
+                        }
+                });
+            }
+            else {
+                updateTransactionCategoryMethod(false);
+            }
         }
     }
 
