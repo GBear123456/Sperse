@@ -1,11 +1,11 @@
 <div>
     <div class="tree-header" *ngIf="showTitle">
-        <h3>
+        <h3 *ngIf="showHeader">
             {{l('Categorize transactions')}}
             <span class="close" (click)="close.emit(null)"></span>
             <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection(true)">{{'Clear'}}</span>
         </h3>
-        <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
+        <app-toolbar [config]="toolbarConfig" [compact]="true" ></app-toolbar>
     </div>
     <dx-tree-list width="{{width}}"
                   height="{{height}}"
