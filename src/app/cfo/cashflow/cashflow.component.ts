@@ -500,7 +500,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.addHeaderExpandClickHandling();
     }
 
-    customizeFieldText(cellInfo, emptyText = this.l('Cashflow_NoDescriptor')) {
+    customizeFieldText(cellInfo, emptyText = null) {
 
         let text;
         if (cellInfo.value) {
@@ -1641,6 +1641,23 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return cellObj.area === 'data' && (cellObj.cell.rowPath[0].slice(2) === Income || cellObj.cell.rowPath[0].slice(2) === Expense);
     }
 
+    isTransactionDetailHeader(cellObj) {
+        let result = false;
+        if (cellObj.area === 'row' && !cellObj.cell.isWhiteSpace && cellObj.cell.path) {
+            let prefix = this.getPrefixFromPath(cellObj.cell.path);
+            if (prefix && prefix === CategorizationPrefixes.TransactionDescriptor) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    getPrefixFromPath(path) {
+        /** get last row - it is opened */
+        let row = path.slice(-1);
+        return row[0] ? row[0].slice(0, 2) : undefined;
+    }
+
     cellIsDraggable(cellObj) {
         return cellObj.area === 'data' && cellObj.cell.rowType === 'D' && (cellObj.cell.rowPath[0].slice(2) === Income || cellObj.cell.rowPath[0].slice(2) === Expense);
     }
@@ -1842,7 +1859,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** hide long text for row headers and show '...' instead with the hover and long text*/
-        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.path.length !== 1 && e.cell.text.length > this.maxCategoriesWidth) {
+        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.path.length !== 1 && e.cell.text && e.cell.text.length > this.maxCategoriesWidth) {
             e.cellElement.attr('title', e.cell.text);
             e.cellElement.find('> span').text(_.prune(e.cell.text, this.maxCategoriesWidth));
         }
@@ -1855,6 +1872,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (prefix && prefix === CategorizationPrefixes.TransactionDescriptor) {
                 e.cellElement.addClass('descriptor');
             }
+        }
+
+        /** Hide the empty rows */
+        if (this.isTransactionDetailHeader(e)) {
+            e.cellElement.addClass('descriptor');
         }
 
         // /** add draggable attribute to the cells that can be dragged */
@@ -2176,7 +2198,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     reformatCell(cellObj, preference) {
         const locale = preference.sourceValue.indexOf('.') <= 3 ? 'es-BO' : 'en-EN';
         if (!cellObj.cellElement.hasClass('hideZeroActivity') &&
-            !cellObj.cellElement.hasClass('hideZeroValues')) {
+            !cellObj.cellElement.hasClass('hideZeroValues') &&
+            cellObj.cell.value) {
             cellObj.cellElement.text(cellObj.cell.value.toLocaleString(locale, {
                 style: 'currency',
                 currency: this.currencyId
@@ -2771,7 +2794,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 return this.getCurrentValueForStartingBalanceCell(summaryCell, false);
             }
 
-            return summaryCell.value() || 0;
+            /** To hide rows that has empty header (except level1) */
+            let value = summaryCell.field('row') && (summaryCell.value(summaryCell.field('row').dataField) !== undefined || summaryCell.field('row').dataField === 'level1') ?
+                        summaryCell.value() || 0 :
+                        null;
+
+            return value;
         };
     }
 
