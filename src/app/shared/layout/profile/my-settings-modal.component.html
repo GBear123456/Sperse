@@ -25,7 +25,7 @@
 
                             <div class="form-group">
                                 <label>{{l("EmailAddress")}}</label>
-                                <input type="email" name="EmailAddress" class="form-control" [(ngModel)]="user.emailAddress" required maxlength="256">
+                                <input type="email" name="EmailAddress" class="form-control" disabled [(ngModel)]="user.emailAddress" required maxlength="256">
                             </div>
                             <div *ngIf="smsEnabled && !isPhoneNumberEmpty">
                                 <div class="form-group">

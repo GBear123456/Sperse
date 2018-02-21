@@ -634,14 +634,12 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     onSelectedCategoryChanged($event) {
-        var categoryData = $event.selectedRowsData.pop();
-        if (!isNaN(categoryData.key)) {
-            var category = this.categorization.categories[categoryData.key];
-            var cashflowTypeId = this.categorization.accountingTypes[category.accountingTypeId].typeId;
-            $event.selectedCashFlowTypeId = cashflowTypeId;
-        }
+        let categoryData = $event.selectedRowsData[0];
+        if (categoryData && !isNaN(categoryData.key))
+            $event.selectedCashFlowTypeId = this.categorization.accountingTypes[
+                this.categorization.categories[categoryData.key].accountingTypeId].typeId;
 
-        this.onSelectionChanged.emit($event)
+        this.onSelectionChanged.emit($event);
     }
 
     sortItem(val1, val2) {
