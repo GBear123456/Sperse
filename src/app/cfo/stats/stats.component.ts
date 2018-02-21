@@ -17,6 +17,7 @@ import 'rxjs/add/observable/forkJoin';
 import { DxChartComponent } from 'devextreme-angular';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
+import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 
 import {
     StatsFilter,
@@ -129,7 +130,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private _bankAccountService: BankAccountsServiceProxy,
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
         private _cacheService: CacheService,
-        private _statsService: StatsService
+        private _statsService: StatsService,
+        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
     ) {
         super(injector);
 
@@ -445,6 +447,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+        CFOComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
     }
 
     ngOnDestroy() {
@@ -452,6 +455,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
+        CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
         super.ngOnDestroy();
     }
 
