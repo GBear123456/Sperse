@@ -2,6 +2,6 @@
 
 export const environment = {
     production: true,
-    zenDeskEnabled: false,
+    zenDeskEnabled: true,
     hmr: false
 };

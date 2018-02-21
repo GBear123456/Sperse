@@ -3,9 +3,6 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Injector } from '@angular/
 import { AppConsts } from 'shared/AppConsts';
 import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { Router } from '@angular/router';
-
-import { environment } from 'environments/environment';
-
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 
 @Component({
@@ -43,22 +40,12 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     ngAfterViewInit(): void {
-/*
-        _ngxZendeskWebwidgetService.identify({
-           name: 'Alison Vilela',
-           email: 'alison.vilela@live.nl'
-        });
-*/
-        if (environment.zenDeskEnabled)
-            setTimeout(() => {
-                this._ngxZendeskWebwidgetService.show();
-            }, 1000);
+        CFOComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
     }
 
     ngOnDestroy(): void {
         this.rootComponent.overflowHidden();
-        if (environment.zenDeskEnabled)
-            this._ngxZendeskWebwidgetService.hide();
+        CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
     }
 
     navigateTo() {

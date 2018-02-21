@@ -95,123 +95,122 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         this.toolbarConfig = [
             {
                 location: 'center', items: [
-                {
-                    name: 'find',
-                    action: (event) => {
-                        event.jQueryEvent.stopPropagation();
-                        event.jQueryEvent.preventDefault();
+                    {
+                        name: 'find',
+                        action: (event) => {
+                             event.jQueryEvent.stopPropagation();
+                             event.jQueryEvent.preventDefault();                                                                                    
 
-                        this.showSearch = !this.showSearch;
-                    }
-                },
-                {
-                    name: 'sort',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: this.l('Sort'),
-                        items: [{
-                            action: this.handleSorting.bind(this, 0),
-                            text: this.l('Sort by category')
-                        }, {
-                            action: this.handleSorting.bind(this, 1),
-                            text: this.l('Sort by category ID')
-                        }, {
-                            action: Function(),
-                            text: this.l('Sort by custom order')
-                        }]
-                    }
-                },
-                {
-                    name: 'expandTree',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: this.l('Expand'),
-                        items: [{
-                            action: this.processExpandTree.bind(this, true, false),
-                            text: this.l('Expand 1st level')
-                        }, {
-                            action: this.processExpandTree.bind(this, true, true),
-                            text: this.l('Expand 2st level')
-                        }, {
-                            action: this.processExpandTree.bind(this, true, true),
-                            text: this.l('Expand all')
-                        }, {
-                            type: 'delimiter'
-                        }, {
-                            action: this.processExpandTree.bind(this, false, false),
-                            text: this.l('Collapse all'),
-                        }]
-                    }
-                },
-                {
-                    name: 'follow',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: this.l('Show category info'),
-                        items: [
-                            {
-                                type: 'header',
-                                text: this.l('Show category info'),
-                                action: (event) => {
-                                    event.jQueryEvent.stopPropagation();
-                                    event.jQueryEvent.preventDefault();
-                                }
-                            },
-                            {
-                                type: 'option',
-                                name: 'categoryId',
-                                checked: this.settings.showCID,
-                                text: this.l('Category ID'),
-                                action: (event) => {
-                                    if (event.jQueryEvent.target.tagName == 'INPUT') {
-                                        this.settings.showCID = !this.settings.showCID;
-                                        this.storeSettings();
-                                    }
-                                }
-                            },
-                            {
-                                type: 'option',
-                                name: 'trCount',
-                                checked: this.settings.showTC,
-                                text: this.l('Transaction Counts'),
-                                action: (event) => {
-                                    if (event.jQueryEvent.target.tagName == 'INPUT') {
-                                        this.settings.showTC = !this.settings.showTC;
-                                        this.storeSettings();
-                                    }
-                                }
-                            },
-                            {
-                                type: 'option',
-                                name: 'accTypes',
-                                checked: this.settings.showAT,
-                                text: this.l('Accounting types'),
-                                action: (event) => {
-                                    if (event.jQueryEvent.target.tagName == 'INPUT') {
-                                        this.settings.showAT = !this.settings.showAT;
-                                        this.refreshCategories(false);
-                                        this.storeSettings();
-                                    }
-                                }
-                            },
-                            {
+                            this.showSearch = !this.showSearch;
+                        }
+                    },
+                    { name: 'sort', 
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Sort'),
+                            items: [{
+                                action: this.handleSorting.bind(this, 0),
+                                text: this.l('Sort by category')
+                            }, {
+                                action: this.handleSorting.bind(this, 1),
+                                text: this.l('Sort by category ID')
+                            }, {
+                                action: Function(),
+                                text: this.l('Sort by custom order')
+                            }]
+                        }
+                    },
+                    {
+                        name: 'expandTree',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Expand'),
+                            items: [{
+                                action: this.processExpandTree.bind(this, true, false),
+                                text: this.l('Expand 1st level')
+                            }, {
+                                action: this.processExpandTree.bind(this, true, true),
+                                text: this.l('Expand 2nd level')
+                            }, {
+                                action: this.processExpandTree.bind(this, true, true),
+                                text: this.l('Expand all')
+                            }, {
                                 type: 'delimiter'
-                            },
-                            {
-                                text: this.l('+ Increase padding'),
-                                disabled: this.settings.padding >= this.MAX_PADDING,
-                                action: this.handlePadding.bind(this, true)
-                            },
-                            {
-                                text: this.l('- Decrease padding'),
-                                disabled: this.settings.padding <= this.MIN_PADDING,
-                                action: this.handlePadding.bind(this, false)
-                            }
+                            }, {
+                                action: this.processExpandTree.bind(this, false, false),
+                                text: this.l('Collapse all'),
+                            }]
+                        }
+                    },
+                    { 
+                        name: 'follow',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Show category info'),
+                            items: [
+                                {
+                                  type: 'header',
+                                  text: this.l('Show category info'),
+                                  action: (event) => {
+                                      event.jQueryEvent.stopPropagation();
+                                      event.jQueryEvent.preventDefault();                                                                                    
+                                  }
+                                },
+                                {          
+                                  type: 'option',    
+                                  name: 'categoryId',
+                                  checked: this.settings.showCID,
+                                  text: this.l('Category ID'),
+                                  action: (event) => {
+                                      if (event.jQueryEvent.target.tagName == 'INPUT') {
+                                          this.settings.showCID = !this.settings.showCID;
+                                          this.storeSettings();
+                                      }
+                                  }
+                                },
+                                {          
+                                  type: 'option',    
+                                  name: 'trCount',
+                                  visible: false,
+                                  checked: this.settings.showTC,
+                                  text: this.l('Transaction Counts'),
+                                  action: (event) => {
+                                      if (event.jQueryEvent.target.tagName == 'INPUT') {
+                                          this.settings.showTC = !this.settings.showTC;
+                                          this.storeSettings();
+                                      }
+                                  }
+                                },
+                                {          
+                                  type: 'option',  
+                                  name: 'accTypes',                
+                                  checked: this.settings.showAT,
+                                  text: this.l('Accounting types'),
+                                  action: (event) => {     
+                                      if (event.jQueryEvent.target.tagName == 'INPUT') {
+                                          this.settings.showAT = !this.settings.showAT;
+                                          this.refreshCategories(false);
+                                          this.storeSettings();
+                                      }
+                                  }
+                                },
+                                {
+                                  type: 'delimiter'
+                                },
+                                {          
+                                  text: this.l('+ Increase padding'),
+                                  disabled: this.settings.padding >= this.MAX_PADDING,
+                                  action: this.handlePadding.bind(this, true)
+                                },
+                                {          
+                                  text: this.l('- Decrease padding'),
+                                  disabled: this.settings.padding <= this.MIN_PADDING,
+                                  action: this.handlePadding.bind(this, false)
+                                }
                         ]
                     }
                 }
-            ]
-            }
+            ]}
         ];
     }
 
@@ -486,14 +485,15 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 }
                 if (data.categories)
                     _.mapObject(data.categories, (item, key) => {
-                        if (data.accountingTypes[item.accountingTypeId] &&
-                            (!item.parentId || data.categories[item.parentId]))
+                        let accounting = data.accountingTypes[item.accountingTypeId];
+                        if (accounting && (!item.parentId || data.categories[item.parentId]))
                             categories.push({
                                 key: parseInt(key),
-                                parent: item.parentId || (this.settings.showAT ? item.accountingTypeId +
-                                    data.accountingTypes[item.accountingTypeId].typeId : 'root'),
+                                parent: item.parentId || (this.settings.showAT ?  
+                                    item.accountingTypeId + accounting.typeId: 'root'),
                                 coAID: item.coAID,
-                                name: item.name
+                                name: item.name,
+                                typeId: accounting.typeId
                             });
                     });
 
@@ -624,7 +624,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                     });
         });
     }
-
+    
     onSelectedCategoryChanged($event) {
         let categoryData = $event.selectedRowsData[0];
         if (categoryData && !isNaN(categoryData.key))
@@ -639,13 +639,14 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     calculateSortValue(data) {
-        if (data.typeId) {
-            let prefix = '';
-            if (data.typeId == 'I')
-                prefix = (<any>this).sortOrder == 'asc' ? 'aaa' : 'zzz';
-            return prefix + data.name;
-        }
-        return data.name;
+        let isNumber = (<any>this).dataType == "number",
+            fieldValue = isNumber ? Number(data.coAID): data.name;
+        if (data.parent == 'root' && data.typeId == 'I')
+            fieldValue = ((<any>this).sortOrder == 'asc' ?
+                (isNumber ? -9999999999: 'aaa') : 
+                (isNumber ? 9999999999: 'zzz')) + fieldValue;
+
+        return fieldValue;
     }
 
     onKeyDown($event) {
@@ -698,8 +699,8 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 .accountingTypeId : parseInt($event.key)];
         if (accounting)
             $event.rowElement.addClass(
-                (accounting.typeId == 'I' ? 'inflows' : 'outflows') +
-                (accounting.isSystem ? ' system-type' : ''));
+                (accounting.typeId == 'I' ? 'inflows': 'outflows') +
+                (isNaN($event.key) && accounting.isSystem ? ' system-type': ''));
         if ($event.level > 0) {
             $event.rowElement.attr('draggable', true);
         }
