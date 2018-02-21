@@ -4,8 +4,10 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
-import { ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput, 
-    GetCategoryTreeOutput, UpdateAccountingTypeInput } from '@shared/service-proxies/service-proxies';
+import {
+    ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput,
+    GetCategoryTreeOutput, UpdateAccountingTypeInput
+} from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 import { MatDialog } from '@angular/material';
 
@@ -49,7 +51,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     set isValid(value: boolean) {
         setTimeout(() => {
             this.categoryList.instance.option(
-                'elementAttr', { invalid: !value });
+                'elementAttr', {invalid: !value});
         }, 0);
     }
 
@@ -62,9 +64,9 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     private readonly MIN_PADDING = 7;
     private readonly MAX_PADDING = 17;
     private settings = {
-        showCID: true,    /* Category ID */
-        showTC: true,     /* Transaction Count */
-        showAT: true,     /* Accounting types */
+        showCID: true, /* Category ID */
+        showTC: true, /* Transaction Count */
+        showAT: true, /* Accounting types */
         padding: this.MIN_PADDING,
         sorting: {
             field: 0,
@@ -74,15 +76,13 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     toolbarConfig: any;
 
-    constructor(
-        injector: Injector,
-        public dialog: MatDialog,
-        private _filtersService: FiltersService,
-        private _classificationServiceProxy: ClassificationServiceProxy
-    ) {
+    constructor(injector: Injector,
+                public dialog: MatDialog,
+                private _filtersService: FiltersService,
+                private _classificationServiceProxy: ClassificationServiceProxy) {
         super(injector);
 
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;                
+        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit() {
@@ -130,7 +130,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                                 text: this.l('Expand 1st level')
                             }, {
                                 action: this.processExpandTree.bind(this, true, true),
-                                text: this.l('Expand 2st level')
+                                text: this.l('Expand 2nd level')
                             }, {
                                 action: this.processExpandTree.bind(this, true, true),
                                 text: this.l('Expand all')
@@ -207,11 +207,10 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                                   disabled: this.settings.padding <= this.MIN_PADDING,
                                   action: this.handlePadding.bind(this, false)
                                 }
-                            ]
-                        }
-                    } 
-                ]
-            }
+                        ]
+                    }
+                }
+            ]}
         ];
     }
 
@@ -222,8 +221,8 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         columns[Number(!index)].sortIndex = 1;
 
         let oldClass = columns[index].sortOrder;
-        columns[index].sortOrder = order || 
-            (oldClass == 'asc' ? 'desc': 'asc');
+        columns[index].sortOrder = order ||
+            (oldClass == 'asc' ? 'desc' : 'asc');
 
         this.categoryList.instance.option('columns', columns);
         this.categoryList.instance.refresh();
@@ -231,23 +230,23 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     handleSorting(index, event) {
-        event.itemElement.parent().children().each(function() {
+        event.itemElement.parent().children().each(function () {
             this.classList.remove('asc', 'desc');
-        });        
+        });
 
         this.settings.sorting.field = index;
         event.itemElement.addClass(
             this.settings.sorting.order = this.sortByColumnIndex(index)
         );
-       
+
         this.storeSettings();
     }
 
     handlePadding(increment, event) {
         event.jQueryEvent.stopPropagation();
         event.jQueryEvent.preventDefault();
-        
-        event.itemElement[increment ? 'next': 'prev']()
+
+        event.itemElement[increment ? 'next' : 'prev']()
             .removeClass('dx-state-disabled');
         this.settings.padding += 2 * [-1, 1][Number(increment)];
         if (this.settings.padding >= this.MAX_PADDING) {
@@ -281,18 +280,18 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     storeSettings() {
-        localStorage.setItem(this.constructor.name, 
+        localStorage.setItem(this.constructor.name,
             JSON.stringify(this.settings));
     }
 
     processExpandTree(expandTypes, expandCategories) {
         _.mapObject(this.categorization.accountingTypes, (item, key) => {
-            this.categoryList.instance[(expandTypes ? 'expand': 'collapse') + 'Row'](key + item.typeId);
+            this.categoryList.instance[(expandTypes ? 'expand' : 'collapse') + 'Row'](key + item.typeId);
         });
         _.mapObject(this.categorization.categories, (item, key) => {
             if (!item.parentId) {
                 let method = this.categoryList.instance[
-                    (expandCategories ? 'expand': 'collapse') + 'Row'];
+                (expandCategories ? 'expand' : 'collapse') + 'Row'];
                 method(parseInt(key));
                 method(key);
             }
@@ -318,7 +317,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             .on('dragstart', (e) => {
                 sourceCategory = {};
                 sourceCategory.element = e.currentTarget;
-                let elementKey = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex)
+                let elementKey = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
                 e.originalEvent.dataTransfer.setData('Text', elementKey);
                 e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
                 e.originalEvent.dropEffect = 'move';
@@ -327,8 +326,8 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 let droppableQuery = 'dx-tree-list .dx-data-row.' + sourceCategory.cashType;
                 $(droppableQuery).addClass('droppable');
             }).on('dragend', (e) => {
-                clearDragAndDrop();
-            });;
+            clearDragAndDrop();
+        });
 
         $event.element.find('.category-drop-area')
             .off('dragenter').off('dragover').off('dragleave').off('drop')
@@ -343,45 +342,44 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 dragEnterTime = new Date().getTime();
                 targetTableRow.classList.add('drag-hover');
             }).on('dragover', (e) => {
-                e.originalEvent.preventDefault();
-                e.originalEvent.stopPropagation();
+            e.originalEvent.preventDefault();
+            e.originalEvent.stopPropagation();
 
-                let targetTableRow = e.currentTarget.closest('tr');
-                if (!this.checkCanDrop(targetTableRow, sourceCategory))
-                    e.originalEvent.dataTransfer.dropEffect = "none";
-            }).on('dragleave', (e) => {
-                e.originalEvent.preventDefault();
-                e.originalEvent.stopPropagation();
+            let targetTableRow = e.currentTarget.closest('tr');
+            if (!this.checkCanDrop(targetTableRow, sourceCategory))
+                e.originalEvent.dataTransfer.dropEffect = 'none';
+        }).on('dragleave', (e) => {
+            e.originalEvent.preventDefault();
+            e.originalEvent.stopPropagation();
 
-                dragEnterTime = null;
-                e.currentTarget.closest('tr').classList.remove('drag-hover');
-            }).on('drop', (e) => {
-                e.originalEvent.preventDefault();
-                e.originalEvent.stopPropagation();
+            dragEnterTime = null;
+            e.currentTarget.closest('tr').classList.remove('drag-hover');
+        }).on('drop', (e) => {
+            e.originalEvent.preventDefault();
+            e.originalEvent.stopPropagation();
 
-                if (sourceCategory) {
-                    let source = e.originalEvent.dataTransfer.getData('Text');
-                    let target = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);
+            if (sourceCategory) {
+                let source = e.originalEvent.dataTransfer.getData('Text');
+                let target = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);
 
-                    this.handleCategoryDrop(source, target);
-                }
-                else {
-                    let categoryId = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);
-                    let category = this.categorization.categories[categoryId];
-                    let parentCategory = this.categorization.categories[category.parentId];
-                    
-                    this.onTransactionDrop.emit({
-                        categoryId: categoryId,
-                        categoryName: category.name,
-                        parentId: category.parentId,
-                        parentName: parentCategory ? parentCategory.name : null,
-                        categoryCashType: this.categorization.accountingTypes[category.accountingTypeId].typeId,
-                        showRuleDialog: dragEnterTime ? (new Date().getTime() - dragEnterTime) > 1000 : true
-                    });
-                }
+                this.handleCategoryDrop(source, target);
+            } else {
+                let categoryId = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);
+                let category = this.categorization.categories[categoryId];
+                let parentCategory = this.categorization.categories[category.parentId];
 
-                clearDragAndDrop();
-            });
+                this.onTransactionDrop.emit({
+                    categoryId: categoryId,
+                    categoryName: category.name,
+                    parentId: category.parentId,
+                    parentName: parentCategory ? parentCategory.name : null,
+                    categoryCashType: this.categorization.accountingTypes[category.accountingTypeId].typeId,
+                    showRuleDialog: dragEnterTime ? (new Date().getTime() - dragEnterTime) > 1000 : true
+                });
+            }
+
+            clearDragAndDrop();
+        });
     }
 
     checkCanDrop(targetElement, sourceCategory): boolean {
@@ -390,8 +388,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             if (sourceCategory.element == targetElement ||
                 sourceCategory.cashType != targetCashType)
                 return false;
-        }
-        else {
+        } else {
             if (targetElement.getAttribute('aria-level') == '0')
                 return false;
         }
@@ -405,7 +402,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
         let targetAccountingTypeId = parseInt(targetId);
         let targetAccountingType = this.categorization.accountingTypes[targetAccountingTypeId];
-        let isMerge: boolean = false;
+        let isMerge = false;
 
         let moveToId: number;
         let targetName: string;
@@ -426,11 +423,10 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
             moveToId = targetId;
             targetName = targetCategory.name;
-        }
-        else {
+        } else {
             targetName = targetAccountingType.name;
         }
-        
+
         if (isMerge) {
             abp.message.confirm(this.l('CategoryMergeConfirmation', targetName), this.l('CategoryMergeConfirmationTitle'), (result) => {
                 if (result) {
@@ -446,8 +442,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                         });
                 }
             });
-        }
-        else {
+        } else {
             abp.message.confirm(this.l('CategoryMoveConfirmation', sourceCategory.name, targetName), this.l('CategoryMoveConfirmationTitle'), (result) => {
                 if (result) {
                     this._classificationServiceProxy.updateCategory(
@@ -497,7 +492,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                                 parent: item.parentId || (this.settings.showAT ?  
                                     item.accountingTypeId + accounting.typeId: 'root'),
                                 coAID: item.coAID,
-                                name: item.name
+                                name: item.name,
                                 typeId: accounting.typeId
                             });
                     });
@@ -518,26 +513,26 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     addActionButton(name, container, callback) {
         $('<a>')
             .text(this.l(this.capitalize(name)))
-            .addClass("dx-link dx-link-" + name)
-            .on("click", callback)
+            .addClass('dx-link dx-link-' + name)
+            .on('click', callback)
             .appendTo(container);
     }
 
     onCellPrepared($event) {
-        if ($event.rowType === "data" && $event.column.command === "edit") {
+        if ($event.rowType === 'data' && $event.column.command === 'edit') {
             if ($event.data.key)
                 this.addActionButton('delete', $event.cellElement, (event) => {
                     this.categoryList.instance.deleteRow(
                         this.categoryList.instance.getRowIndexByKey($event.data.key));
                 });
-            if (this.showFilterIcon) 
+            if (this.showFilterIcon)
                 this.addActionButton('filter', $event.cellElement, (event) => {
                     let wrapper = $event.cellElement.parent();
                     if (!this.clearSelection(wrapper.hasClass('filtered-category'))) {
                         wrapper.addClass('filtered-category');
                         this.onFilterSelected.emit($event.data);
                     }
-            });
+                });
         }
     }
 
@@ -548,8 +543,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             InstanceType[this.instanceType], this.instanceId,
             UpdateAccountingTypeInput.fromJS({
                 id: id,
-                name: $event.data.hasOwnProperty('name') ?
-                    $event.data.name || undefined : accounting.name,
+                name: $event.data.hasOwnProperty('name') ? $event.data.name || undefined : accounting.name,
                 cashflowTypeId: accounting.typeId
             })
         ).subscribe((id) => {
@@ -569,10 +563,8 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 InstanceType[this.instanceType], this.instanceId,
                 UpdateCategoryInput.fromJS({
                     id: $event.key,
-                    coAID: $event.data.hasOwnProperty('coAID') ?
-                        $event.data.coAID || undefined : category.coAID,
-                    name: $event.data.hasOwnProperty('name') ?
-                        $event.data.name || undefined : category.name,
+                    coAID: $event.data.hasOwnProperty('coAID') ? $event.data.coAID || undefined : category.coAID,
+                    name: $event.data.hasOwnProperty('name') ? $event.data.name || undefined : category.name,
                     accountingTypeId: category.accountingTypeId,
                     parentId: category.parentId
                 })
@@ -606,15 +598,13 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     onCategoryRemoving($event) {
         $event.cancel = true;
-        let itemId = $event.key, 
+        let itemId = $event.key,
             isAccountingType = isNaN(itemId),
             dialogData = {
                 deleteAllReferences: true,
-                categorizations: this.categorization[isAccountingType ? 'accountingTypes': 'categories'],
+                categorizations: this.categorization[isAccountingType ? 'accountingTypes' : 'categories'],
                 categories: _.filter(this.categories, (obj) => {
-                    return isAccountingType ? 
-                        (obj['key'] != itemId && obj['parent'] == 'root'): 
-                        (obj['key'] != itemId && obj['parent'] != itemId);
+                    return isAccountingType ? (obj['key'] != itemId && obj['parent'] == 'root') : (obj['key'] != itemId && obj['parent'] != itemId);
                 }),
                 categoryId: undefined
             };
@@ -622,7 +612,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
             data: dialogData
         }).afterClosed().subscribe((result) => {
             if (result)
-                this._classificationServiceProxy[isAccountingType ? 'deleteAccountingType': 'deleteCategory'].call(
+                this._classificationServiceProxy[isAccountingType ? 'deleteAccountingType' : 'deleteCategory'].call(
                     this._classificationServiceProxy,
                     InstanceType[this.instanceType],
                     this.instanceId,
@@ -672,6 +662,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     private _prevClickDate = new Date();
     private _selectedKeys = [];
+
     onRowClick($event) {
         if (this._selectedKeys.indexOf($event.key) >= 0)
             this.categoryList.instance.deselectRows([$event.key]);
@@ -698,14 +689,14 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     onRowPrepared($event) {
         $event.element.find('.dx-treelist-focus-overlay')
-            [$event.isEditing ? 'show': 'hide']();
+            [$event.isEditing ? 'show' : 'hide']();
 
         if ($event.rowType != 'data' || $event.key.rowIndex)
             return;
 
         let accounting = this.categorization.accountingTypes[
             $event.key >= 0 ? this.categorization.categories[$event.key]
-                .accountingTypeId: parseInt($event.key)];
+                .accountingTypeId : parseInt($event.key)];
         if (accounting)
             $event.rowElement.addClass(
                 (accounting.typeId == 'I' ? 'inflows': 'outflows') +
@@ -717,13 +708,13 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     toogleSearchInput(event) {
         if (event.target.tagName != 'INPUT')
-            this.showSearch = false;        
+            this.showSearch = false;
     }
 
     onNodesInitialized() {
         this.sortByColumnIndex(
-            this.settings.sorting.field, 
+            this.settings.sorting.field,
             this.settings.sorting.order
-        );      
+        );
     }
 }
