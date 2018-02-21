@@ -33,7 +33,6 @@ export class AppPreBootstrap {
 
                 location.href = AppConsts.appBaseUrl + '/account/select-edition';
             } else if (queryStringObj.secureId) {
-                debugger;
                 AppPreBootstrap.impersonatedAuthenticate(queryStringObj.secureId, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
             } else if (queryStringObj.switchAccountToken) {
                 AppPreBootstrap.linkedAccountAuthenticate(queryStringObj.switchAccountToken, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
