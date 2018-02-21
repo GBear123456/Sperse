@@ -1,14 +1,12 @@
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import * as ngCommon from '@angular/common';
+import {CommonModule} from '../common/common.module';
 import {AccountsComponent} from './accounts/accounts.component';
 import {CategorizationStatusComponent} from './categorization-status/categorization-status.component';
 import {AccountsSynchStatusComponent} from './accounts-synch-status/accounts-synch-status.component';
 import {TotalsByPeriodComponent} from './totals-by-period/totals-by-period.component';
 import {TrendByPeriodComponent} from './trend-by-period/trend-by-period.component';
 import {RoundProgressModule} from 'angular-svg-round-progressbar';
-
-import {DashboardNoDataComponent} from './no-data/dashboard-no-data.component';
-import {RouterModule} from '@angular/router';
 
 import {
     DxSelectBoxModule,
@@ -27,8 +25,8 @@ import {ChooseResetRulesComponent} from './categorization-status/choose-reset-ru
         DxCheckBoxModule,
         DxTooltipModule,
         DxChartModule,
-        RouterModule,
-        MatDialogModule
+        MatDialogModule,
+        ngCommon.CommonModule
     ],
     declarations: [
         AccountsComponent,
@@ -36,7 +34,6 @@ import {ChooseResetRulesComponent} from './categorization-status/choose-reset-ru
         AccountsSynchStatusComponent,
         TotalsByPeriodComponent,
         TrendByPeriodComponent,
-        DashboardNoDataComponent,
         ChooseResetRulesComponent
     ],
     entryComponents: [
@@ -48,7 +45,6 @@ import {ChooseResetRulesComponent} from './categorization-status/choose-reset-ru
         AccountsSynchStatusComponent,
         TotalsByPeriodComponent,
         TrendByPeriodComponent,
-        DashboardNoDataComponent,
         ChooseResetRulesComponent
     ]
 })

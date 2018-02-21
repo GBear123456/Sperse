@@ -1,6 +1,8 @@
 {
   "name": "CFO",
+  "title": "CFO",
   "search": false,
+  "requiredFeature": "CFO",
   "navigation": [
     [ "", "", "icon-home", "/app/cfo/:instance/start" ],
     [ "Accounts", "", "icon-home", "/app/cfo/:instance/linkaccounts" ],

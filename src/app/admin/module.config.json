@@ -1,18 +1,19 @@
 {
   "name": "Admin",
+  "title": "Admin",
   "search": false,
-  "navigation": [    
-    ["Tenants", "Pages.Tenants", "icon-globe", "/app/crm/tenants"],
-    ["Roles", "Pages.Administration.Roles", "icon-briefcase", "/app/admin/roles"],
-    ["Users", "Pages.Administration.Users", "icon-people", "/app/admin/users"],
-    ["Languages", "Pages.Administration.Languages", "icon-flag", "/app/admin/languages"],
-    ["AuditLogs", "Pages.Administration.AuditLogs", "icon-lock", "/app/admin/auditLogs"],
-    ["Maintenance", "Pages.Administration.Host.Maintenance", "icon-wrench", "/app/admin/maintenance"],
-    ["Subscription", "Pages.Administration.Tenant.SubscriptionManagement", "icon-refresh", "/app/admin/subscription-management"],
-    ["Settings", "Pages.Administration.Host.Settings", "icon-settings", "/app/admin/hostSettings"],
-    ["Settings", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/tenantSettings"],
-    ["System", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/systemSettings"],
-    ["UI Customization", "", "icon-settings", "/app/admin/ui-customization"],
-    ["Subscription", "Pages.Administration.Tenant.SubscriptionManagement", "icon-settings", "/app/admin/subscription-management"]
+  "requiredFeature": "Admin",
+  "navigation": [
+    [ "Tenants", "Pages.Tenants", "icon-globe", "/app/crm/tenants", "Admin.Advanced" ],
+    [ "Roles", "Pages.Administration.Roles", "icon-briefcase", "/app/admin/roles","" ],
+    [ "Users", "Pages.Administration.Users", "icon-people", "/app/admin/users", "" ],
+    [ "Languages", "Pages.Administration.Languages", "icon-flag", "/app/admin/languages", "Admin.Advanced" ],
+    [ "AuditLogs", "Pages.Administration.AuditLogs", "icon-lock", "/app/admin/auditLogs", "" ],
+    [ "Maintenance", "Pages.Administration.Host.Maintenance", "icon-wrench", "/app/admin/maintenance", "Admin.Advanced" ],
+    [ "Subscription", "Pages.Administration.Tenant.SubscriptionManagement", "icon-refresh", "/app/admin/subscription-management", "Admin.Advanced" ],
+    [ "Settings", "Pages.Administration.Host.Settings", "icon-settings", "/app/admin/hostSettings", "Admin.Advanced" ],
+    [ "Settings", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/tenantSettings", "Admin.Advanced" ],
+    [ "System", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/systemSettings", "Admin.Advanced" ],
+    [ "UI Customization", "", "icon-settings", "/app/admin/ui-customization", "Admin.Advanced" ]
   ]
 }

@@ -20,26 +20,10 @@
         }
 
         .categories {
-            width: 0px;
+            width: 0;
             transition: 1s;
             overflow: hidden;
             border-right: 0px;
-
-            /deep/ .filtered-category td:first-child {
-                position: relative;
-
-                &:before {
-                    content: "\2022";
-                    color: red;
-                    font-weight: 600;
-                    display: inline-block;
-                    font-size: 28px;
-                    line-height: 0;
-                    position: absolute;
-                    top: 14px;
-                    left: 5px;
-                }
-            }
         }
 
         .transactions {
@@ -50,17 +34,80 @@
                 tr.dx-selection {
                     cursor: grab;
                 }
-
-                .dx-data-row td .uncategorized {
-                    &:before {
-                        content: "\2022";
-                        color: red;
-                        font-weight: 600;
-                        display: inline-block;
-                        font-size: 28px;
-                        line-height: 0;
+                
+                .dx-header-row {
+                    td[role="columnheader"] {
+                        text-align: left !important;
+                        .dx-column-indicators {
+                            float: none !important;
+                        }
+                        .dx-datagrid-text-content {
+                            float: left !important;
+                        }
+                    }
+                }
+                
+                .dx-header-row td,
+                .dx-data-row td {
+    
+                    padding: 7px 15px;
+                    &.id-column {
+                        min-width: 30px;
+                    }
+                    &.dx-command-select {
+                        padding: 7px 5px;
+                        width: 22px !important;
+                        min-width: 22px !important;
+                    }
+                    
+                    &.cashflow-type {
+                        text-align: center;
+                        padding-right: 15px;
+                        padding-left: 15px;
+                        
+                        .outflows,
+                        .inflows {
+                            font-size: 13px;
+                            font-weight: 500;
+                            letter-spacing: 0.3px;
+                            text-align: center;
+                            color: #61c670;
+                            line-height: 26px;
+                            border-radius: 13px;
+                            padding: 0 15px;
+                            background-color: #EDF7E8;
+                        }
+                        .outflows {
+                            color: #e7326a;
+                            background-color: #FFF5F7;
+                        }
+                    }
+                }
+                
+                .dx-header-row td {
+                    &.category {
+                        padding-left: 15px;
+                    }
+                }
+                
+                .dx-data-row td {
+                    &.category {
+                        padding-left: 15px;
                         position: relative;
-                        top: 4px;
+                    }
+                    .uncategorized {
+                        &:before {
+                            content: "";
+                            background: #f8a126;
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 50%;
+                            display: block;
+                            position: absolute;
+                            left: 0;
+                            top: 50%;
+                            transform: translateY(-50%);
+                        }
                     }
                 }
             }
@@ -69,7 +116,7 @@
         /deep/ #gridContainer .dx-datagrid-rowsview {
             .dx-datagrid-content tr td.tabular,
             .dx-datagrid-content tr td.tabular * {
-                font-family: Lato !important;
+                font-family: 'Lato' !important;
             }
         }
     }
@@ -110,38 +157,62 @@
                     margin: 0 !important;
 
                     .dx-toolbar-item {
-                        padding: 12px 10px 0;
                         max-width: 22%;
-                        text-align: left;
-                        border-left: 1px solid #ddd;
-
+                        text-align: center;
+                        display: flex;
+                        align-items: center;
+                        
+                        .informer {
+                            padding: 0 30px;
+                            border-left: 1px solid #ddd;
+                            
+                            &.starting-balance {
+                                > .count {
+                                    font-weight: 400;
+                                }
+                            }
+                        }
+                        
                         .name {
-                            font-size: 15px;
+                            font-size: 11px;
+                            font-weight: 400;
+                            line-height: 2.18;
+                            letter-spacing: 0.2px;
+                            color: #677380;
 
                             i {
-                                border: solid #A9A9A9;
-                                border-width: 0 2px 2px 0;
+                                border-left: 4px solid transparent;
+                                border-right: 4px solid transparent;
+                                border-top: 4px solid #00aeef;
+                                
                                 display: inline-block;
-                                padding: 2px;
                                 margin: 2px;
                                 align-self: flex-end;
                             }
-
-                            .down {
-                                transform: rotate(45deg);
-                                -webkit-transform: rotate(45deg);
+                            
+                            .name-count {
+                                color: #00aeef;
                             }
                         }
 
                         .count {
                             font-size: 17px;
+                            font-weight: 600;
+                            line-height: 1.41;
+                            letter-spacing: 0.3px;
+                            color: #3f4448;
+                            margin-bottom: 0;
 
                             .cent {
-                                color: silver;
-                                font-size: 12px;
-                                vertical-align: text-top;
-                                padding: 5px 3px 0;
-                                margin-top: 5px;
+                                font-size: 10px;
+                                line-height: 2.4;
+                                letter-spacing: 0.2px;
+                                font-weight: 600;
+                                color: #3f4448;
+                                vertical-align: top;
+                                display: inline-block;
+                                margin-top: -1px;
+                                margin-left: -3px;
                             }
                         }
 
@@ -156,11 +227,34 @@
                 }
             }
         }
+    
+        .dx-datagrid-rowsview {
+            .dx-column-lines {
+                td {
+                    font-weight: 500;
+                }
+            }
+        }
+        
+        .uncategorized {
+            td {
+                background-color: #FFFBF5;
+                color: #757B7F;
+            }
+        }
+        
+        /*.dx-pointer-events-target {
+            * {
+                background-color: transparent;
+            }
+        }*/
     }
 }
 
 .tooltip-wrap {
     text-align: left;
+    max-height: 250px;
+    overflow: auto;
 
     .name {
         cursor: pointer;
@@ -177,4 +271,13 @@
             text-decoration: underline;
         }
     }
+}
+
+.positive-values,
+.positive-values * {
+    color: #61c670 !important;
+}
+.negative-values,
+.negative-values * {
+    color: #e7326a !important;
 }

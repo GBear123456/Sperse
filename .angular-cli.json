@@ -204,7 +204,8 @@
       "environments": {
         "dev": "environments/environment.ts",
         "hmr": "environments/environment.hmr.ts",
-        "prod": "environments/environment.prod.ts"
+        "prod": "environments/environment.prod.ts",
+        "test": "environments/environment.test.ts"
       }
     }
   ],

@@ -13,6 +13,11 @@ import { TenantApiHostOutput } from '@shared/service-proxies/service-proxies';
 export class AppPreBootstrap {
 
     static run(callback: () => void, resolve: any, reject: any): void {
+        let abpAjax: any = abp.ajax;
+        if (abpAjax.defaultError) {
+            abpAjax.defaultError.details = 'No further information available.';
+        }
+
         AppPreBootstrap.getApplicationConfig(() => {
             if (UrlHelper.isInstallUrl(location.href)) {
                 LocalizedResourcesHelper.loadMetronicStyles('');
@@ -27,8 +32,8 @@ export class AppPreBootstrap {
                 }
 
                 location.href = AppConsts.appBaseUrl + '/account/select-edition';
-            } else if (queryStringObj.impersonationToken) {
-                AppPreBootstrap.impersonatedAuthenticate(queryStringObj.impersonationToken, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
+            } else if (queryStringObj.secureId) {
+                AppPreBootstrap.impersonatedAuthenticate(queryStringObj.secureId, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
             } else if (queryStringObj.switchAccountToken) {
                 AppPreBootstrap.linkedAccountAuthenticate(queryStringObj.switchAccountToken, queryStringObj.tenantId, () => { AppPreBootstrap.getUserConfiguration(callback); });
             } else {
@@ -100,7 +105,7 @@ export class AppPreBootstrap {
         abp.multiTenancy.setTenantIdCookie(tenantId);
         const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
         return abp.ajax({
-            url: AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/ImpersonatedAuthenticate?impersonationToken=' + impersonationToken,
+            url: AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/ImpersonatedAuthenticate?secureId=' + impersonationToken,
             method: 'POST',
             headers: {
                 '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),

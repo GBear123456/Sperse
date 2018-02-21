@@ -24,7 +24,7 @@ export class ImpersonationService {
             .subscribe((result: ImpersonateOutput) => {
                 this._authService.logout(false);
 
-                let targetUrl = this._appUrlService.getAppRootUrlOfTenant(result.tenancyName) + '?impersonationToken=' + result.impersonationToken;
+                let targetUrl = this._appUrlService.getAppRootUrlOfTenant(result.tenancyName) + '?secureId=' + result.impersonationToken;
                 if (input.tenantId) {
                     targetUrl = targetUrl + '&tenantId=' + input.tenantId;
                 }
@@ -38,7 +38,7 @@ export class ImpersonationService {
             .subscribe((result: ImpersonateOutput) => {
                 this._authService.logout(false);
 
-                let targetUrl = this._appUrlService.getAppRootUrlOfTenant(result.tenancyName) + '?impersonationToken=' + result.impersonationToken;
+                let targetUrl = this._appUrlService.getAppRootUrlOfTenant(result.tenancyName) + '?secureId=' + result.impersonationToken;
                 if (abp.session.impersonatorTenantId) {
                     targetUrl = targetUrl + '&tenantId=' + abp.session.impersonatorTenantId;
                 }

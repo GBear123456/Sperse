@@ -17,10 +17,12 @@ import { ModalModule } from 'ngx-bootstrap';
 import { RulesComponent } from './rules/rules.component';
 import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.component';
 import { CategoryDeleteDialogComponent } from './transactions/categorization/category-delete-dialog/category-delete-dialog.component';
+import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
+
+import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
 
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
-import { NoDataComponent } from './shared/common/no-data/no-data.component';
 import { CFOModalDialogComponent } from './shared/common/dialogs/modal/cfo-modal-dialog.component';
 
 import { StatsComponent } from './stats/stats.component';
@@ -63,6 +65,16 @@ import {
 } from 'devextreme-angular';
 import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widgets.module';
 
+import { ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+
+export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
+  accountUrl = 'sperse.zendesk.com';
+  beforePageLoad(zE) {
+    zE.setLocale('en');
+    zE.hide();
+  }
+}
+
 @NgModule({
     imports: [
         CfoRoutingModule,
@@ -97,7 +109,8 @@ import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widget
         MatTabsModule,
         MatDialogModule,
         RoundProgressModule,
-        DashboardWidgetsModule
+        DashboardWidgetsModule,
+        ngxZendeskWebwidgetModule.forRoot(ZendeskConfig)
     ],
     declarations: [
         StartComponent,
@@ -117,15 +130,16 @@ import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widget
         CategoryDeleteDialogComponent,
         RulesComponent,
         SortingComponent,
-        NoDataComponent,
-        CFOModalDialogComponent
+        CFOModalDialogComponent,
+        BusinessEntitiesComponent,
+        ChartOfAccountsComponent 
     ],
     entryComponents: [
         RuleDialogComponent,
         CategoryDeleteDialogComponent,
         PreferencesDialogComponent
     ],
-    providers: [InstanceServiceProxy, CFOService, CustomersServiceProxy]
+    providers: [InstanceServiceProxy, CFOService, CustomersServiceProxy, ngxZendeskWebwidgetService]
 })
 
 export class CfoModule { }

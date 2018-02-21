@@ -60,10 +60,10 @@ export class TopBarComponent extends AppComponentBase {
         let navList: PanelMenuItem[] = [];
         config.forEach((val) => {
             let value = val.slice(0);
-            if (val.length === 5)
+            if (val.length === 6)
                 value.push(this.initMenu(value.pop(), ++level));
             let item = new PanelMenuItem(this.l(value[0]),
-                value[1], value[2], value[3], value[4]);
+                value[1], value[2], value[3], value[4], value[5]);
             item.visible = this.showMenuItem(item);
             if (!level && item.visible)
                 this.visibleMenuItemsWidth += (item.text.length * 10 + 32);
@@ -91,8 +91,8 @@ export class TopBarComponent extends AppComponentBase {
                 return false;
         }
 
-        return (item.permissionName && this.isGranted(item.permissionName)) ||
-            (item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permissionName);
+        return this.isFeatureEnable(item.featureName) && ((item.permissionName && this.isGranted(item.permissionName)) ||
+            (item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permissionName));
     }
 
     private checkChildMenuItemPermission(menu): boolean {

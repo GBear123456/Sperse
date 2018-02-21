@@ -1,11 +1,16 @@
-import { AppComponentBase } from "shared/common/app-component-base";
-import { OnInit, OnDestroy, Injector } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { InstanceType } from "shared/service-proxies/service-proxies";
+import { AppComponentBase } from 'shared/common/app-component-base';
+import { OnInit, OnDestroy, Injector } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { InstanceType } from 'shared/service-proxies/service-proxies';
 import { CFOService } from '../../cfo.service';
-import { AppConsts } from "shared/AppConsts";
+import { AppConsts } from 'shared/AppConsts';
+import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+import { environment } from 'environments/environment';
 
 export abstract class CFOComponentBase extends AppComponentBase implements OnInit, OnDestroy {
+
+    private static isZendeskWebwidgetSetup = false;
+
     instanceId: number;
     instanceType: string;
 
@@ -39,6 +44,41 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
         });
     }
 
+    private static zendeskWebwidgetSetup(service: ngxZendeskWebwidgetService) {
+        if (CFOComponentBase.isZendeskWebwidgetSetup) {
+            return;
+        }
+
+        service.setSettings(
+            {
+                webWidget: {
+                    launcher: {
+                        label: {
+                            '*': 'Questions or feedback'
+                        }
+                    }
+                }
+            }
+        );
+
+        CFOComponentBase.isZendeskWebwidgetSetup = true;
+    }
+
+    protected static zendeskWebwidgetShow(service: ngxZendeskWebwidgetService) {
+        if (environment.zenDeskEnabled) {
+            setTimeout(() => {
+                service.show();
+                CFOComponentBase.zendeskWebwidgetSetup(service);
+            }, 1000);
+        }
+    }
+
+    protected static zendeskWebwidgetHide(service: ngxZendeskWebwidgetService) {
+        if (environment.zenDeskEnabled) {
+            service.hide();
+        }
+    }
+
     ngOnInit(): void {
     }
 
@@ -51,14 +91,14 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
         url += (url.indexOf('?') == -1 ? '?' : '&');
 
         if (this.instanceType !== undefined && InstanceType[this.instanceType] !== undefined) {
-            url += "instanceType=" + encodeURIComponent("" + InstanceType[this.instanceType]) + "&";
+            url += 'instanceType=' + encodeURIComponent('' + InstanceType[this.instanceType]) + '&';
         }
 
         if (this.instanceId !== undefined) {
-            url += "instanceId=" + encodeURIComponent("" + this.instanceId) + "&";
+            url += 'instanceId=' + encodeURIComponent('' + this.instanceId) + '&';
         }
 
-        url = url.replace(/[?&]$/, "");
+        url = url.replace(/[?&]$/, '');
 
         return url;
     }

@@ -1,10 +1,12 @@
 <div>
-    <h3 *ngIf="showTitle">
-        {{l('Categorize transactions')}}
-        <span class="close" (click)="close.emit(null)"></span>
-        <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection($event)">{{'Clear'}}</span>
-    </h3>
-    <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
+    <div class="tree-header" *ngIf="showHeader">
+        <h3 *ngIf="showTitle">
+            {{l('Categorize transactions')}}
+            <span class="close" (click)="close.emit(null)"></span>
+            <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection(true)">{{'Clear'}}</span>
+        </h3>
+        <app-toolbar [config]="toolbarConfig" [compact]="true" ></app-toolbar>
+    </div>
     <dx-tree-list width="{{width}}"
                   height="{{height}}"
                   keyExpr="key"
@@ -12,22 +14,53 @@
                   [hoverStateEnabled]="true"
                   [(dataSource)]="categories"
                   [selection]="{allowSelectAll: false, mode: 'single'}"
+                  [searchPanel]="{visible: showSearch, placeholder: l('Find by ID or name')}"
                   [rootValue]="'root'"
                   [autoExpandAll]="autoExpand"
+                  (onKeyDown)="onKeyDown($event)"
                   (onCellPrepared)="onCellPrepared($event)"
                   (onRowClick)="onRowClick($event)"
                   (onContentReady)="initDragAndDropEvents($event)"
-                  (onSelectionChanged)="onSelectionChanged.emit($event)"
+                  (onSelectionChanged)="onSelectedCategoryChanged($event)"
                   (onRowUpdated)="onCategoryUpdated($event)"
                   (onRowInserted)="onCategoryInserted($event)"
-                  (onRowRemoving)="onCategoryRemoving($event)">
+                  (onRowRemoving)="onCategoryRemoving($event)"
+                  (onRowPrepared)="onRowPrepared($event)"
+                  (onNodesInitialized)="onNodesInitialized()">
         <dxo-editing mode="row"
+                     [texts]="{confirmDeleteMessage: ''}"
                      [allowUpdating]="true"
                      [allowDeleting]="true"
                      [allowAdding]="true">
         </dxo-editing>
-        <dxi-column [width]="45" [allowEditing]="false"></dxi-column>
-        <dxi-column [allowSorting]="true" [sortIndex]="0" [width]="60" dataField="coAID" [caption]="'ID'"></dxi-column>
-        <dxi-column [allowSorting]="true" [sortIndex]="1" [sortingMethod]="sortItem" [calculateSortValue]="calculateSortValue" [sortOrder]="'asc'" dataField="name"></dxi-column>
+        <dxi-column 
+            [cssClass]="columnClassName"
+            [cellTemplate]="'categoryTemplate'"
+            [allowSorting]="true" 
+            [sortIndex]="0" 
+            [sortingMethod]="sortItem" 
+            [calculateSortValue]="calculateSortValue" 
+            [sortOrder]="'asc'" dataField="name">
+        </dxi-column>
+        <dxi-column 
+            [allowSorting]="true" 
+            [sortIndex]="1" 
+            [sortOrder]="'asc'" 
+            [width]="65" 
+            dataField="coAID" 
+            [dataType]="number" 
+            [caption]="'ID'" 
+            [calculateSortValue]="calculateSortValue" 
+            [visible]="settings.showCID">
+        </dxi-column>
+
+        <div *dxTemplate="let cell of 'categoryTemplate'">
+            <ng-container>
+                <div class="category-hover"></div>
+                <span> {{ cell.text }} </span>
+                <div class="category-drop-area"></div>
+            </ng-container>
+        </div>
+
     </dx-tree-list>
 </div>

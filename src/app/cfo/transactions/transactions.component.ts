@@ -5,7 +5,7 @@ import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { AppService } from '@app/app.service';
 import { ActivatedRoute } from '@angular/router';
 
-import { TransactionsServiceProxy, BankAccountDto, InstanceType } from '@shared/service-proxies/service-proxies';
+import { TransactionsServiceProxy, BankAccountDto, InstanceType, ClassificationServiceProxy, UpdateTransactionsCategoryInput, BankDto } from '@shared/service-proxies/service-proxies';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
@@ -38,16 +38,18 @@ import DataSource from 'devextreme/data/data_source';
     templateUrl: './transactions.component.html',
     styleUrls: ['./transactions.component.less'],
     animations: [appModuleAnimation()],
-    providers: [TransactionsServiceProxy]
+    providers: [TransactionsServiceProxy, ClassificationServiceProxy]
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    
+
     noRefreshedAfterSync: boolean;
     items: any;
     defaultCreditTooltipVisible = false;
     defaultDebitTooltipVisible = false;
     defaultTotalTooltipVisible = false;
+    defaultSubaccountTooltipVisible = false;
+
     private readonly dataSourceURI = 'Transaction';
     private readonly totalDataSourceURI = 'TransactionTotal';
     private filters: FilterModel[];
@@ -57,8 +59,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public dragInProgress = false;
     public selectedCashflowCategoryKey: any;
 
-    public accountCount: number;
-    public portfolioCount: number;
+    public bankAccountCount: number;
+    public bankAccounts: number[];
     public creditTransactionCount: number = 0;
     public creditTransactionTotal: number = 0;
     public creditTransactionTotalCent: number = 0;
@@ -76,6 +78,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public adjustmentTotal: number = 0;
     public adjustmentStartingBalanceTotal: number = 0;
     public adjustmentStartingBalanceTotalCent: number = 0;
+
+    public bankAccountsSource = {};
     headlineConfig: any;
 
     private _categoriesShowed = true;
@@ -83,7 +87,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (this._categoriesShowed = value) {
             this.filtersService.fixed = false;
             this.filtersService.disable();
-            this.initToolbarConfig();
         }
     }
 
@@ -199,6 +202,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private _appService: AppService,
         private _activatedRoute: ActivatedRoute,
         private _TransactionsServiceProxy: TransactionsServiceProxy,
+        private _classificationServiceProxy: ClassificationServiceProxy,
         public filtersService: FiltersService
     ) {
         super(injector);
@@ -216,24 +220,20 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     onToolbarPreparing(e) {
         e.toolbarOptions.items.unshift({
             location: 'after',
-            template: 'accountTotal'
-        },{
-            location: 'after',
-            template: 'portfolioTotal'
+            template: 'bankAccountTotal'
+        }, {
+                location: 'after',
+                template: 'startBalanceTotal'
             }, {
-        }, {
-            location: 'after',
-            template: 'startBalanceTotal'
-        }, {
-            location: 'after',
-            template: 'debitTotal'
-        }, {
-            location: 'after',
-            template: 'creditTotal'
-        },{
-            location: 'after',
-            template: 'transactionTotal'
-        });
+                location: 'after',
+                template: 'debitTotal'
+            }, {
+                location: 'after',
+                template: 'creditTotal'
+            }, {
+                location: 'after',
+                template: 'transactionTotal'
+            });
     }
 
     getTotalValues() {
@@ -252,14 +252,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.adjustmentStartingBalanceTotal = 0;
             this.adjustmentTotal = 0;
 
-            let portfolios = [];
-            let accounts = [];
+            let bankAccounts = [];
 
             _.each(selectedRows, function (row) {
-                portfolios.push(row.BankAccountId);
-                accounts.push(row.SyncAccountId);
+                bankAccounts.push(row.BankAccountId);
 
-                if (row.Amount > 0) {
+                if (row.Amount >= 0) {
                     creditTotal += row.Amount;
                     creditCount++;
                     if (row.CashflowCategoryId)
@@ -272,8 +270,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         debitClassifiedCount++;
                 }
             });
-            this.portfolioCount = _.uniq(portfolios).length;
-            this.accountCount = _.uniq(accounts).length;
+            this.bankAccounts = _.uniq(bankAccounts);
+            this.bankAccountCount = this.bankAccounts.length;
 
             this.creditTransactionTotal = creditTotal;
             this.creditTransactionCount = creditCount;
@@ -287,40 +285,45 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
         }
         else
-        if (totals && totals.length) {
-            this.creditTransactionTotal = totals[0].creditTotal;
-            this.creditTransactionCount = totals[0].creditCount;
-            this.creditClassifiedTransactionCount = totals[0].classifiedCreditTransactionCount;
+            if (totals && totals.length) {
+                this.creditTransactionTotal = totals[0].creditTotal;
+                this.creditTransactionCount = totals[0].creditCount;
+                this.creditClassifiedTransactionCount = totals[0].classifiedCreditTransactionCount;
 
-            this.debitTransactionTotal = totals[0].debitTotal;
-            this.debitTransactionCount = totals[0].debitCount;
-            this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
+                this.debitTransactionTotal = totals[0].debitTotal;
+                this.debitTransactionCount = totals[0].debitCount;
+                this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
+                if (totals[0].bankAccounts) {
+                    this.bankAccountCount = totals[0].bankAccounts.length;
+                    this.bankAccounts = totals[0].bankAccounts;
+                }
+                else {
+                    this.bankAccountCount =0;
+                    this.bankAccounts = [];
+                }
 
-            this.portfolioCount = totals[0].portfolioCount;
-            this.accountCount = totals[0].accountCount;
+                this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal;
+                this.adjustmentTotal = totals[0].adjustmentTotal;
 
-            this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal;
-            this.adjustmentTotal = totals[0].adjustmentTotal;
+                this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal + this.adjustmentTotal + this.adjustmentStartingBalanceTotal;
+                this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
+            }
+            else {
+                this.creditTransactionTotal = 0;
+                this.creditTransactionCount = 0;
 
-            this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal + this.adjustmentTotal + this.adjustmentStartingBalanceTotal;
-            this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
-        }
-        else {
-            this.creditTransactionTotal = 0;
-            this.creditTransactionCount = 0;
+                this.debitTransactionTotal = 0;
+                this.debitTransactionCount = 0;
 
-            this.debitTransactionTotal = 0;
-            this.debitTransactionCount = 0;
+                this.bankAccountCount = 0;
+                this.bankAccounts = [];
 
-            this.portfolioCount = 0;
-            this.accountCount = 0;
+                this.transactionTotal = 0;
+                this.transactionCount = 0;
 
-            this.transactionTotal = 0;
-            this.transactionCount = 0;
-
-            this.adjustmentStartingBalanceTotal = 0;
-            this.adjustmentTotal = 0;
-        }
+                this.adjustmentStartingBalanceTotal = 0;
+                this.adjustmentTotal = 0;
+            }
 
         this.adjustmentStartingBalanceTotalCent = this.getFloatPart(this.adjustmentStartingBalanceTotal);
         this.adjustmentStartingBalanceTotal = Math.trunc(this.adjustmentStartingBalanceTotal);
@@ -358,7 +361,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     searchValueChange(e: object) {
         this.searchValue = e['value'];
 
-        this.initToolbarConfig();
         this.processFilterInternal();
     }
 
@@ -370,6 +372,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
     toggleTotalDefault() {
         this.defaultTotalTooltipVisible = !this.defaultTotalTooltipVisible;
+    }
+    toggleSubaccountsDetails() {
+        this.defaultSubaccountTooltipVisible = !this.defaultSubaccountTooltipVisible;
     }
     applyTotalFilters(classified: boolean, credit: boolean, debit: boolean) {
         var classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
@@ -435,6 +440,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this._TransactionsServiceProxy.getTransactionTypesAndCategories(),
             this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId)
         ).subscribe(result => {
+            this.bankAccountsSource = this.getBankAccountsSource(result[1].banks);
+
             this.filtersService.setup(
                 this.filters = [
                     new FilterModel({
@@ -550,6 +557,43 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.dataGrid.instance.element()[0].classList.toggle('grid-compact-view');
     }
 
+    getBankAccountsSource(banks: BankDto[] ) {
+        let result = {};
+        banks.forEach((bank) => {
+
+            bank.bankAccounts.forEach((acc) => {
+                result[acc.id] = {
+                    id: bank.id + ':' + acc.id,
+                    accountId: acc.id, 
+                    parent: bank.name,
+                    parentId: bank.id,
+                    name: acc.accountNumber + ': ' + (acc.accountName ? acc.accountName : 'No name')
+                };
+            });
+        });
+        return result;
+    }
+
+    getBankAccounts() {
+        let result = [];
+        this.bankAccounts.forEach((id) => {
+            result.push(this.bankAccountsSource[id]);
+        });
+        return result;
+    }
+    applyTotalBankAccountFilter(bankAccountId) {
+        let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'Account'; });
+
+        if (bankAccountId) {
+            let val = [];
+            val.push(bankAccountId);
+            accountFilter.items['element'].setValue(val, accountFilter);
+        } else {
+            accountFilter.items['element'].setValue([], accountFilter);
+        }
+        this.defaultSubaccountTooltipVisible = false;
+        this.filtersService.change(accountFilter);
+    }
     processFilterInternal() {
         let filterQuery = this.processODataFilter(this.dataGrid.instance,
             this.dataSourceURI, this.cashFlowCategoryFilter.concat(this.filters),
@@ -666,9 +710,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             let field = {};
             if (!parseInt(data.key))
                 field['CashFlowTypeId'] = new FilterItemModel(data.key);
-            else if (!parseInt(data.key.split('').reverse().join('')))
+            else if (isNaN(data.key))
                 field['accountingTypeId'] = new FilterItemModel(parseInt(data.key));
-            else if (data.parent.split && !parseInt(data.parent.split('').reverse().join('')))
+            else if (isNaN(data.parent))
                 field['CashflowCategoryId'] = new FilterItemModel(parseInt(data.key));
             else
                 field['CashflowSubCategoryId'] = new FilterItemModel(parseInt(data.key));
@@ -692,7 +736,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     onSelectionChanged($event, initial = false) {
         let img = new Image(),
             transactionKeys = this.dataGrid.instance.getSelectedRowKeys();
-        img.src = 'assets/common/images/transactions.png';
+        img.src = 'assets/common/icons/drag-icon.svg';
         if (!initial && (Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length)))
             this.categoriesShowed = true;
         $event.element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend')
@@ -715,28 +759,84 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.getTotalValues();
     }
 
+    onCellPrepared($event) {
+        if ($event.rowType === 'data') {
+            if ($event.column.dataField == 'CashflowCategoryName' && !$event.data.CashflowCategoryName) {
+                $event.cellElement.parent().addClass(`uncategorized`);
+            }
+        }
+    }
+
     onContentReady($event) {
         this.onSelectionChanged($event, true);
     }
 
-    openCategorizationWindow($event) {
+    categorizeTransactions($event) {
         let transactions = this.dataGrid
             .instance.getSelectedRowKeys();
+        let transactionIds = transactions.map(t => t.Id);
+        
+        if ($event.categoryId) {
+            let updateTransactionCategoryMethod = (suppressCashflowTypeMismatch: boolean = false) => {
+                this._classificationServiceProxy.updateTransactionsCategory(
+                    InstanceType[this.instanceType],
+                    this.instanceId,
+                    new UpdateTransactionsCategoryInput({
+                        transactionIds: transactionIds,
+                        categoryId: $event.categoryId,
+                        standardDescriptor: null,
+                        descriptorAttributeTypeId: null,
+                        suppressCashflowMismatch: suppressCashflowTypeMismatch
+                    })
+                ).subscribe(() => {
+                    if (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey) {
+                        this.refreshDataGrid();
+                    }
+                    else {
+                        let gridItems = this.dataGrid.instance.getDataSource().items().filter((v) => _.some(transactionIds, x => x == v.Id));
+                        gridItems.forEach(
+                            (i) => {
+                                i.CashflowSubCategoryId = $event.parentId ? $event.categoryId : null;
+                                i.CashflowSubCategoryName = $event.parentId ? $event.categoryName : null;
+                                i.CashflowCategoryId = $event.parentId ? $event.parentId : $event.categoryId;
+                                i.CashflowCategoryName = $event.parentId ? $event.parentName : $event.categoryName;
+                                i.CashFlowTypeId = $event.categoryCashType;
+                                i.CashFlowTypeName = $event.categoryCashType == 'I' ? 'Inflows' : 'Outflows';
+                            }
+                        );
 
-        this.dialog.open(RuleDialogComponent, {
-            panelClass: 'slider',
-            data: {
-                instanceId: this.instanceId,
-                instanceType: this.instanceType,
-                categoryId: $event.categoryId,
-                transactions: transactions,
-                transactionIds: transactions
-                    .map((obj) => {
-                        return obj.Id;
-                    }),
-                refershParent: this.refreshDataGrid.bind(this)
+                        this.dataGrid.instance.selectRows(gridItems, false);
+                    }
+
+                    if ($event.showRuleDialog) {
+                        this.dialog.open(RuleDialogComponent, {
+                            panelClass: 'slider',
+                            data: {
+                                instanceId: this.instanceId,
+                                instanceType: this.instanceType,
+                                categoryId: $event.categoryId,
+                                categoryCashflowTypeId: $event.categoryCashType,
+                                transactions: transactions,
+                                transactionIds: transactionIds,
+                                refershParent: this.refreshDataGrid.bind(this)
+                            }
+                        }).afterClosed().subscribe(result => { });
+                    }
+                });
+            };
+            
+            if (_.some(transactions, x => x.CashFlowTypeId != $event.categoryCashType)) {
+                abp.message.confirm('You are about to change cashflow type for at least one transaction.', 'Are you sure you want to continue?',
+                    (result) => {
+                        if (result) {
+                            updateTransactionCategoryMethod(true);
+                        }
+                });
             }
-        }).afterClosed().subscribe(result => { });
+            else {
+                updateTransactionCategoryMethod(false);
+            }
+        }
     }
 
     ngAfterViewInit(): void {

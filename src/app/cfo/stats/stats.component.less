@@ -6,6 +6,7 @@
 
     &.fullscreen {
         top: 0px !important;
+
         dx-scroll-view {
             background: #fff
         }
@@ -15,6 +16,7 @@
         display: flex;
         overflow-x: hidden;
         border-bottom: 1px solid @border-color;
+
         .toolbar {
             width: 100%;
         }
@@ -26,14 +28,17 @@
         border-top: 1px solid #dfdfdf;
         position: relative;
         height: calc(100% + 62px);
+
         /deep/ .dxc-labels {
             rect {
                 rx: 5
             }
+
             text {
                 letter-spacing: 0.2px;
             }
         }
+
         /deep/ .dxc-arg-elements {
             text {
                 letter-spacing: 0.2px;
@@ -42,18 +47,76 @@
 
         .charts {
             padding: 25px 25px 0;
+
+            .header {
+                
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                
+                h2 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #212c36;
+                    margin: 0;
+                    line-height: 1;
+                }
+                
+                .btn-setion {
+                    margin-left: auto;
+                    display: flex;
+                    align-items: center;
+                    
+                    .title {
+                        display: inline-block;
+                        margin-bottom: 0;
+                    }
+                    
+                    button {
+                        padding: 2px 0 2px 50px;
+                        background: #71D460;
+                        border-radius: 15px;
+                        border: 0;
+                        margin-left: 10px;
+                        margin-right: 15px;
+                        outline: none;
+                        display: flex;
+                        align-items: center;
+                        
+                        i {
+                            color: #71D460;
+                            background: #fff;
+                            border-radius: 50%;
+                            width: 22px;
+                            height: 22px;
+                            font-size: 22px;
+                            line-height: 21px;
+                            margin-right: 3px;
+                            
+                            &::before {
+                                position: relative;
+                                right: -1px;
+                            }
+                        }
+                    }
+                }
+            }
+
             dx-chart {
                 position: relative;
                 color: red;
                 font-size: 60px;
                 color: rgba(99, 107, 114, .08);
                 font-weight: 700;
+
                 @media screen and (max-width: 1024px) {
                     font-size: 30px
                 }
+
                 &:first-of-type {
-                    margin-bottom: 42px;
+                    margin-bottom: 30px;
                 }
+
                 .yearArgument {
                     font-size: 10px;
                 }
@@ -70,8 +133,23 @@
             -moz-transition-duration: 0.3s;
             -o-transition-duration: 0.3s;
             transition-duration: 0.3s;
+
             &.showen {
                 right: 0;
+            }
+        }
+
+        /deep/ setup-steps {
+            .img-leftSideBarMonthlyTrendCharts {
+                background-image: url("../../../assets/common/icons/trend.svg");
+            }
+
+            .img-leftSideBarDailyTrendCharts {
+                background-image: url("../../../assets/common/icons/statistics2.svg");
+            }
+
+            .img-leftKeyMetricsKPI {
+                background-image: url("../../../assets/common/icons/pie-chart2.svg");
             }
         }
     }
@@ -88,6 +166,7 @@
         letter-spacing: 0.3px;
         display: inline-block;
         font-weight: 400;
+
         .dx-widget {
             &:before {
                 top: 9px;
@@ -96,6 +175,7 @@
                 width: 8px;
                 height: 15px;
             }
+
             &:after {
                 background: none
             }

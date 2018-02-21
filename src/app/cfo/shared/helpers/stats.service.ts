@@ -18,25 +18,31 @@ export class StatsService {
     getTooltipInfoHtml(data, fields, pointInfo) {
         let html = '';
         let pointDataObject = data.find(item => item.date.toDate().toString() == pointInfo.argument);
-        html += `<header class="tooltip-header">${moment(pointInfo.argument).utc().format('MMM YYYY')}</header>`;
+
+        moment.tz.setDefault(undefined);
+        let date = moment(pointInfo.argument);
+        moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
+
+        html += `<header class="tooltip-header">${date.format('MMM YYYY')}</header>`;
         fields.forEach(field => {
             if (pointDataObject[field.name] !== null && pointDataObject[field.name] !== undefined) {
                 if (field.label == 'Starting Balance') {
                     html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span style="float: right; font-family: Lato; margin-left: 10px">
-                            ${(pointDataObject[field.name] - pointDataObject['startingBalanceAdjustments']).toLocaleString('en-EN', {
+                            ${(pointDataObject[field.name] - pointDataObject[field.name + 'Adjustments']).toLocaleString('en-EN', {
                                 style: 'currency',
                                 currency: 'USD'
                             })}</span></div>`;
-                } else {
+                } else if ((field.name.indexOf('BalanceAdjustments') < 0) || pointDataObject[field.name]) {
                     html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span style="float: right; font-family: Lato; margin-left: 10px">${pointDataObject[field.name].toLocaleString('en-EN', {
                         style: 'currency',
                         currency: 'USD'
                     })}</span></div>`;
                 }
-                if (field.name === 'forecastStartingBalance' ||
+                if (field.name === 'forecastStartingBalanceAdjustments' ||
                     field.name === 'netChange' ||
                     field.name === 'startingBalanceAdjustments' ||
-                    field.name === 'forecastNetChange')
+                    field.name === 'forecastNetChange'
+                )
                     html += '<hr style="margin: 5px 0"/>';
             }
         });

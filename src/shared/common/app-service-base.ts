@@ -1,7 +1,9 @@
+import { Injector } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import * as _ from 'underscore';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 export abstract class AppServiceBase{
     private readonly MODULE_DEFAULT: string;
@@ -10,14 +12,17 @@ export abstract class AppServiceBase{
     private _subscribers: Array<Subscription> = [];
     private _modules: Array<string>;
     private _configs: { [id: string]: any; };
+    feature: FeatureCheckerService;
 
     public params: any;
 
     constructor(
+        private _injector: Injector,
         defaultModuleName: string,
         moduleNames: Array<string>,
         configs: { [id: string]: any; }
     ) {
+        this.feature = _injector.get(FeatureCheckerService);
         this._config = new Subject<Object>();
         this.MODULE_DEFAULT = defaultModuleName;
         this._modules = moduleNames;
@@ -46,7 +51,7 @@ export abstract class AppServiceBase{
 
     isModuleActive(name: string) {
         let config = this._configs[name.toLowerCase()];
-        return (config && typeof (config.navigation) == 'object');
+        return (config && typeof (config.navigation) == 'object' && (!abp.session.tenantId || !config.requiredFeature || this.feature.isEnabled(config.requiredFeature)));
     }
 
     initModule() {

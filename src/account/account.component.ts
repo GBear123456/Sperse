@@ -27,7 +27,6 @@ export class AccountComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         private _router: Router,
         private _loginService: LoginService,
-        private _uiCustomizationService: AppUiCustomizationService,
         viewContainerRef: ViewContainerRef
     ) {
         super(injector);
@@ -54,6 +53,7 @@ export class AccountComponent extends AppComponentBase implements OnInit {
 
     ngOnInit(): void {
         this._loginService.init();
+        this.setTitle('Login');
     }
 
     goToHome(): void {

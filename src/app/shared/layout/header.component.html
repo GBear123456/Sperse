@@ -30,7 +30,7 @@
                                     </ul>
                                 </li>
 
-                                <li *ngIf="_layoutService.showNotificationsButton" headerNotifications class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width" data-dropdown-toggle="click" data-dropdown-persistent="true" id="header_notification_bar"></li>
+                                <li *ngIf="notificationEnabled && _layoutService.showNotificationsButton" headerNotifications class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width" data-dropdown-toggle="click" data-dropdown-persistent="true" id="header_notification_bar"></li>
 
                                 <li *ngIf="chatEnabled && !chatConnected && _layoutService.showChatButton" class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width">
                                     <a href="javascript:;" class="m-nav__link">
@@ -168,6 +168,18 @@
                                                                     <span class="m-nav__link-wrap">
                                                                         <span class="m-nav__link-text">
                                                                             {{l("VisualSettings")}}
+                                                                        </span>
+                                                                    </span>
+                                                                </span>
+                                                            </a>
+                                                        </li>
+                                                        <li class="m-nav__item">
+                                                            <a href={{helpLink}} target="_blank" class="m-nav__link">
+                                                                <i class="m-nav__link-icon flaticon-info"></i>
+                                                                <span class="m-nav__link-title">
+                                                                    <span class="m-nav__link-wrap">
+                                                                        <span class="m-nav__link-text">
+                                                                            {{l("Help")}}
                                                                         </span>
                                                                     </span>
                                                                 </span>

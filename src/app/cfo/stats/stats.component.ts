@@ -89,6 +89,14 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             'label': this.l('Stats_endingBalance')
         },
         {
+            'name': 'forecastStartingBalance',
+            'label': this.l('Stats_startingBalance')
+        },
+        {
+            'name': 'forecastStartingBalanceAdjustments',
+            'label': this.l('Stats_Starting_Balance_Adjustments')
+        },
+        {
             'name': 'forecastIncome',
             'label': this.l('Stats_Forecast_Inflows')
         },
@@ -106,9 +114,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         }
     ];
     leftSideBarItems = [
-        'leftSideBarMonthlyTrendCharts',
-        'leftSideBarDailyTrendCharts',
-        'leftKeyMetricsKPI'
+        { caption: 'leftSideBarMonthlyTrendCharts' },
+        { caption: 'leftSideBarDailyTrendCharts' },
+        { caption: 'leftKeyMetricsKPI' }
     ];
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
@@ -309,14 +317,14 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
     calculateChartsSize() {
-        let chartsHeight = window.innerHeight - 410;
+        let chartsHeight = window.innerHeight - 370;
         this.chartsHeight =  chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
         this.chartsWidth = window.innerWidth - 371;
     }
 
     /** Calculates the height of the charts scrollable height after resizing */
     calculateChartsScrolableHeight() {
-        return window.innerHeight - 360;
+        return window.innerHeight - 270;
     }
 
     handleCashFlowInitialResult(result) {
@@ -403,6 +411,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
                 minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
                 this.statsData = result.map(statsItem => {
+                    statsItem.date.add(statsItem.date.toDate().getTimezoneOffset(), 'minutes');
                     Object.defineProperties(statsItem, {
                         'netChange': { value: statsItem.income + statsItem.expenses, enumerable: true },
                         'minRange': { value: minRange, enumerable: true }
@@ -427,6 +436,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             abp.ui.clearBusy();
         },
         error => console.log('Error: ' + error));
+    }
+
+    getUpdatedDataSource() {
+        this.loadStatsData();
     }
 
     ngAfterViewInit(): void {
@@ -535,7 +548,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                     'styles': {
                         'left': left + '%',
                         'top': y + 'px',
-                        'position': 'absolute'
+                        'position': 'absolute',
+                        'pointer-events': 'none'
                     }
                 }));
                 let elementTextWidth = $(`.${period}Label`).width(),

@@ -138,14 +138,18 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             _classificationServiceProxy.getTransactionCommonDetails(InstanceType[this.instanceType], this.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data))
                 .subscribe((data) => {
                     this.bankId = data.bankId;
-                    if (this.descriptor = data.standardDescriptor)
+                    if (this.descriptor = this.getCapitalizedWords(data.standardDescriptor))
                         this.data.title = this.descriptor;
                     this.keywords = this.getKeywordsFromString(data.descriptionPhrases.join(','));
                     this.attributes = this.getAttributesFromCommonDetails(data.attributes);
-                    this.attributesAndKeywords = this.getAtributesAndKeywords();
+                    this.attributesAndKeywords = this.getAtributesAndKeywords(false);
                     this.showOverwriteWarning = data.sourceTransactionsAreMatchingExistingRules;
                 });
 
+    }
+
+    getCapitalizedWords(value) {
+        return value.replace(/\b\w/g, l => l.toUpperCase());
     }
 
     getKeywordsFromString(value: string) {
@@ -235,17 +239,35 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 title: this.l('Don\'t add'),
                 class: 'default',
                 action: () => {
-                    if (this.data.transactionIds)
-                        this.validate(true) && this._classificationServiceProxy.updateTransactionsCategory(
-                            InstanceType[this.instanceType],
-                            this.instanceId,
-                            UpdateTransactionsCategoryInput.fromJS({
-                                transactionIds: this.data.transactionIds,
-                                categoryId: this.data.categoryId,
-                                standardDescriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
-                                descriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
-                            })
-                        ).subscribe(this.updateDataHandler.bind(this));
+                    if (this.data.transactionIds) {
+                        if (this.validate(true)) {
+                            let updateTransactionCategoryMethod = (suppressCashflowTypeMismatch: boolean = false) => {
+                                this._classificationServiceProxy.updateTransactionsCategory(
+                                    InstanceType[this.instanceType],
+                                    this.instanceId,
+                                    UpdateTransactionsCategoryInput.fromJS({
+                                        transactionIds: this.data.transactionIds,
+                                        categoryId: this.data.categoryId,
+                                        standardDescriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
+                                        descriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
+                                        suppressCashflowMismatch: suppressCashflowTypeMismatch
+                                    })
+                                ).subscribe(this.updateDataHandler.bind(this));
+                            };
+
+                            if (this.data.categoryCashflowTypeId && _.some(this.data.transactions, x => x.CashFlowTypeId != this.data.categoryCashflowTypeId)) {
+                                abp.message.confirm('At least 1 transaction will reverse cashflow type after the modification.', 'Are you ok with it?',
+                                    (result) => {
+                                        if (result) {
+                                            updateTransactionCategoryMethod(true);
+                                        }
+                                    });
+                            }
+                            else {
+                                updateTransactionCategoryMethod(false);
+                            }
+                        }
+                    }
                     else
                         this.close(true);
                 }
@@ -273,17 +295,23 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         }).join(',') || '';
     }
 
-    getAtributesAndKeywords() {
-        let array: any[] =  this.attributes.concat(this.keywords.map((item) => {
-            return {
-                attributeTypeId: 'keyword',
-                conditionTypeId: ConditionAttributeDtoConditionTypeId.Equal,
-                conditionValue: item.keyword
-            };
-        }));
+    getAtributesAndKeywords(showKeywords: boolean = true) {
+        let list = this.attributes;
+        if (showKeywords || !list.length)
+            list = list.concat(this.keywords.map((item) => {
+                return {
+                    attributeTypeId: 'keyword',
+                    conditionTypeId: ConditionAttributeDtoConditionTypeId.Equal,
+                    conditionValue: item.keyword
+                };
+            }));
 
-        array.forEach((v, i) => v.id = i);
-        return array;
+        list.forEach((item, index) => {
+            item.id = index;
+            item.conditionValue = 
+                this.getCapitalizedWords(item.conditionValue);
+        });
+        return list;
     }
 
     getAttributes() {
@@ -341,6 +369,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     onCategoryChanged($event) {
         this.data.categoryId = $event.selectedRowKeys.pop();
+        this.data.categoryCashflowTypeId = $event.selectedCashFlowTypeId;
+        
         this.isCategoryValid = true;
     }
 

@@ -3,7 +3,7 @@
         <h2 class="title">{{l('Totals_by_period')}}</h2>
         <div class="select-box-wrap">
             <dx-select-box [items]="availablePeriods"
-                           [value]="availablePeriods[6]"
+                           [value]="availablePeriods[availablePeriods.length - 1]"
                            (onValueChanged)="onValueChanged($event)">
             </dx-select-box>
         </div>
@@ -73,7 +73,7 @@
                 </dx-chart>
             </div>
         </div>
-        <app-dashboard-no-data [hidden]="loading || (totalData && totalData.length)"></app-dashboard-no-data>
+        <app-no-data [hidden]="loading || (totalData && totalData.length)"></app-no-data>
 
         <div class="row summary" [hidden]="!totalData || !totalData.length">
             <ng-container *ngFor="let item of totalData">

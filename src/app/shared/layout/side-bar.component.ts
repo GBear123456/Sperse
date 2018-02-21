@@ -60,7 +60,7 @@ export class SideBarComponent extends AppComponentBase {
         this._filtersService.change(filter);
         event.stopPropagation();
     }
-    
+
     clearAllFilters() {
         $('.show-all-elements').removeClass('show-all-elements');
         this._filtersService.clearAllFilters();
@@ -105,7 +105,7 @@ export class SideBarComponent extends AppComponentBase {
         if (!this._filtersService.fixed)
             this._filtersService.disable(() => {
                 this.activeFilter = undefined;
-            });            
+            });
     }
 
     itemClick(event, filter) {
@@ -114,9 +114,8 @@ export class SideBarComponent extends AppComponentBase {
 
         if (filter.showAllSelected) {
             container.addClass('show-all-elements');
-            event.target.text = "show less";
-        }
-        else {
+            event.target.text = 'show less';
+        } else {
             container.removeClass('show-all-elements');
             event.target.text = '+' + (filter.displayElements.length - 2) + ' more';
         }

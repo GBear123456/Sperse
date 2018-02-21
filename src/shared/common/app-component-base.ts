@@ -24,20 +24,12 @@ import * as _ from 'underscore';
 
 export abstract class AppComponentBase {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
-    @HostListener('document:webkitfullscreenchange', ['$event'])
-    @HostListener('document:mozfullscreenchange', ['$event'])
-    @HostListener('document:fullscreenchange', ['$event'])
-    onWebkitFullscreenChange($event) {
-        this.isFullscreenMode = document['fullScreen']
-            || document['mozFullScreen'] || document.webkitIsFullScreen;
-    }
-
     dataGrid: any;
     dataSource: any;
     totalDataSource: any;
     localization: LocalizationService;
-    permission: PermissionCheckerService;
-    feature: FeatureCheckerService;
+    protected permission: PermissionCheckerService;
+    protected feature: FeatureCheckerService;
     notify: NotifyService;
     setting: SettingService;
     message: MessageService;
@@ -75,6 +67,14 @@ export abstract class AppComponentBase {
         this._applicationRef = _injector.get(ApplicationRef);
         this._exportService = _injector.get(ExportService);
         this.primengDatatableHelper = new PrimengDatatableHelper();
+    }
+
+    @HostListener('document:webkitfullscreenchange', ['$event'])
+    @HostListener('document:mozfullscreenchange', ['$event'])
+    @HostListener('document:fullscreenchange', ['$event'])
+    onWebkitFullscreenChange($event) {
+        this.isFullscreenMode = document['fullScreen']
+            || document['mozFullScreen'] || document.webkitIsFullScreen;
     }
 
     getRootComponent() {
@@ -183,6 +183,10 @@ export abstract class AppComponentBase {
         return keywords;
     }
 
+    isFeatureEnable(featureName: string): boolean {
+        return !abp.session.tenantId || !featureName || this.feature.isEnabled(featureName);
+    }
+
     isGranted(permissionName: string): boolean {
         return this.permission.isGranted(permissionName);
     }
@@ -247,5 +251,10 @@ export abstract class AppComponentBase {
     finishLoading() {
         abp.ui.clearBusy(this.getElementRef().nativeElement);
         this.loading = false;
+    }
+
+    protected setTitle(moduleName: string) {
+        let rootComponent: any = this.getRootComponent();
+        rootComponent.setTitle(this.appSession.tenantName, moduleName);
     }
 }

@@ -60,6 +60,14 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             'label': this.l('Stats_endingBalance')
         },
         {
+            'name': 'forecastStartingBalance',
+            'label': this.l('Stats_startingBalance')
+        },
+        {
+            'name': 'forecastStartingBalanceAdjustments',
+            'label': this.l('Stats_Starting_Balance_Adjustments')
+        },
+        {
             'name': 'forecastIncome',
             'label': this.l('Stats_Forecast_Inflows')
         },
@@ -185,7 +193,13 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                         }
                     });
                     this.mergeHistoricalAndForecast(historical, forecast)
-                        .subscribe(res => { this.trendData = <any>res; this.finishLoading(); });
+                        .subscribe(res => { 
+                            this.trendData = <any>res.map((obj) => {
+                                obj['date'].add(obj['date'].toDate().getTimezoneOffset(), 'minutes');
+                                return obj;
+                            }); 
+                            this.finishLoading(); 
+                        });
                 } else {
                     console.log('No daily stats');
                     this.finishLoading();

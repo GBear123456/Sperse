@@ -1,9 +1,9 @@
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
-import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Injector } from '@angular/core';
 import { AppConsts } from 'shared/AppConsts';
 import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { Router } from '@angular/router';
-
+import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 
 @Component({
     selector: 'dashboard',
@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
     styleUrls: ['./dashboard.component.less'],
     animations: [appModuleAnimation()]
 })
-export class DashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
+export class DashboardComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     public headlineConfig;
     private rootComponent: any;
     linksTo = [
@@ -22,7 +22,8 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     constructor(
         injector: Injector,
-        private _router: Router
+        private _router: Router,
+        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -38,8 +39,13 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         };
     }
 
+    ngAfterViewInit(): void {
+        CFOComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
+    }
+
     ngOnDestroy(): void {
         this.rootComponent.overflowHidden();
+        CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
     }
 
     navigateTo() {

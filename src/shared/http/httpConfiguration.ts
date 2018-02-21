@@ -1,11 +1,21 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { AbpHttpConfiguration } from '@abp/abpHttp';
+import { MessageService } from '@abp/message/message.service';
+import { LogService } from '@abp/log/log.service';
 
 @Injectable()
 export class httpConfiguration extends AbpHttpConfiguration {
+
+    constructor(
+        _messageService: MessageService,
+        _logService: LogService) {
+        super(_messageService, _logService);
+
+        this.defaultError.details = 'No further information available.';
+    }
 
     handleUnAuthorizedRequest(messagePromise: any, targetUrl?: string) {
         sessionStorage.setItem('redirectUrl', location.href);
