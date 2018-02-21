@@ -1,7 +1,7 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { FinancialInformationServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { DomSanitizer } from '@angular/platform-browser';
-import { CFOComponentBase } from "../shared/common/cfo-component-base";
+import { CFOComponentBase } from '../shared/common/cfo-component-base';
 
 @Component({
     selector: 'accounts',

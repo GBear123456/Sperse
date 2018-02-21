@@ -149,7 +149,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     getCapitalizedWords(value) {
-        return value.replace(/\b\w/g, l => l.toUpperCase());
+        return value.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
     }
 
     getKeywordsFromString(value: string) {
