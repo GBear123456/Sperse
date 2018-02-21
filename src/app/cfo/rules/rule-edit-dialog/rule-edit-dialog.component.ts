@@ -138,7 +138,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             _classificationServiceProxy.getTransactionCommonDetails(InstanceType[this.instanceType], this.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data))
                 .subscribe((data) => {
                     this.bankId = data.bankId;
-                    if (this.descriptor = data.standardDescriptor)
+                    if (this.descriptor = this.getCapitalizedWords(data.standardDescriptor))
                         this.data.title = this.descriptor;
                     this.keywords = this.getKeywordsFromString(data.descriptionPhrases.join(','));
                     this.attributes = this.getAttributesFromCommonDetails(data.attributes);
@@ -146,6 +146,10 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.showOverwriteWarning = data.sourceTransactionsAreMatchingExistingRules;
                 });
 
+    }
+
+    getCapitalizedWords(value) {
+        return value.replace(/\b\w/g, l => l.toUpperCase());
     }
 
     getKeywordsFromString(value: string) {
@@ -302,7 +306,11 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 };
             }));
 
-        list.forEach((v, i) => v.id = i);
+        list.forEach((item, index) => {
+            item.id = index;
+            item.conditionValue = 
+                this.getCapitalizedWords(item.conditionValue);
+        });
         return list;
     }
 
