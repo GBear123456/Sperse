@@ -171,6 +171,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                                 {          
                                   type: 'option',    
                                   name: 'trCount',
+                                  visible: false,
                                   checked: this.settings.showTC,
                                   text: this.l('Transaction Counts'),
                                   action: (event) => {
@@ -489,14 +490,15 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 }
                 if (data.categories)
                     _.mapObject(data.categories, (item, key) => {
-                        if (data.accountingTypes[item.accountingTypeId] &&
-                            (!item.parentId || data.categories[item.parentId]))
+                        let accounting = data.accountingTypes[item.accountingTypeId];
+                        if (accounting && (!item.parentId || data.categories[item.parentId]))
                             categories.push({
                                 key: parseInt(key),
-                                parent: item.parentId || (this.settings.showAT ? item.accountingTypeId +
-                                    data.accountingTypes[item.accountingTypeId].typeId: 'root'),
+                                parent: item.parentId || (this.settings.showAT ?  
+                                    item.accountingTypeId + accounting.typeId: 'root'),
                                 coAID: item.coAID,
                                 name: item.name
+                                typeId: accounting.typeId
                             });
                     });
 
@@ -632,7 +634,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                     });
         });
     }
-
+    
     onSelectedCategoryChanged($event) {
         let categoryData = $event.selectedRowsData[0];
         if (categoryData && !isNaN(categoryData.key))
@@ -647,13 +649,14 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
     }
 
     calculateSortValue(data) {
-        if (data.typeId) {
-            let prefix = '';
-            if (data.typeId == 'I')
-                prefix = (<any>this).sortOrder == 'asc' ? "aaa" : "zzz";
-            return prefix + data.name;
-        }
-        return data.name;
+        let isNumber = (<any>this).dataType == "number",
+            fieldValue = isNumber ? Number(data.coAID): data.name;
+        if (data.parent == 'root' && data.typeId == 'I')
+            fieldValue = ((<any>this).sortOrder == 'asc' ?
+                (isNumber ? -9999999999: 'aaa') : 
+                (isNumber ? 9999999999: 'zzz')) + fieldValue;
+
+        return fieldValue;
     }
 
     onKeyDown($event) {
@@ -706,7 +709,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         if (accounting)
             $event.rowElement.addClass(
                 (accounting.typeId == 'I' ? 'inflows': 'outflows') +
-                (accounting.isSystem ? ' system-type': ''));
+                (isNaN($event.key) && accounting.isSystem ? ' system-type': ''));
         if ($event.level > 0) {
             $event.rowElement.attr('draggable', true);
         }
