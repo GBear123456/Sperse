@@ -4,29 +4,30 @@
     </app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
+            <dx-tree-list height="calc(100vh - 210px)"
+                          [hoverStateEnabled]="true"
+                          [dataSource]="ruleTreeListDataSource"
+                          dataStructure="tree"
+                          [sorting]="{mode: 'none'}"
+                          [editing]="{allowAdding: true, allowDeleting: true, allowUpdating: true, mode: 'popup', popup: {onShowing: onShowingPopup, height: '0px', width: '0px'}}"
+                          [selection]="{allowSelectAll: false, mode: 'none'}"
+                          [autoExpandAll]="true"
+                          [showColumnLines]="false"
+                          [showRowLines]="true"
+                          (onInitNewRow)="onEditingStart($event)"
+                          (onEditingStart)="onEditingStart($event)"
+                          (onRowRemoved)="onRowRemoved($event)"
+                          keyExpr="id"
+                          parentIdExpr="parentId"
+                          [rootValue]="null">
 
-            <dx-tree-list
-                height="calc(100vh - 210px)"
-                [hoverStateEnabled]="true"
-                [dataSource]="ruleTreeListDataSource"
-                dataStructure="tree"
-                [sorting]="{mode: 'none'}"
-                [editing]="{allowAdding: true, allowDeleting: true, allowUpdating: true, mode: 'popup', popup: {onShowing: onShowingPopup, height: '0px', width: '0px'}}"
-                [selection]="{allowSelectAll: false, mode: 'none'}"
-                [autoExpandAll]="true"
-                [showColumnLines]="false"
-                [showRowLines]="true"
-                (onInitNewRow)="onEditingStart($event)"
-                (onEditingStart)="onEditingStart($event)"
-                (onRowRemoved)="onRowRemoved($event)"
-                keyExpr="id"
-                parentIdExpr="parentId"
-                [rootValue]="null">
                 <dxi-column dataField="isActive" caption="{{l('Status')}}"></dxi-column>
                 <dxi-column dataField="name" caption="{{l('RuleName')}}"></dxi-column>
                 <dxi-column dataField="creationTime" caption="{{l('CreationDate')}}"></dxi-column>
-            </dx-tree-list>
 
+                <dxi-column dataField="sortOrder" [visible]="false" [sortIndex]="0" sortOrder="asc"></dxi-column>
+                <dxi-column dataField="id" [visible]="false" [sortIndex]="1" sortOrder="asc"></dxi-column>
+            </dx-tree-list>
         </div>
     </div>
 </div>
