@@ -142,7 +142,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                         this.data.title = this.descriptor;
                     this.keywords = this.getKeywordsFromString(data.descriptionPhrases.join(','));
                     this.attributes = this.getAttributesFromCommonDetails(data.attributes);
-                    this.attributesAndKeywords = this.getAtributesAndKeywords();
+                    this.attributesAndKeywords = this.getAtributesAndKeywords(false);
                     this.showOverwriteWarning = data.sourceTransactionsAreMatchingExistingRules;
                 });
 
@@ -291,17 +291,19 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         }).join(',') || '';
     }
 
-    getAtributesAndKeywords() {
-        let array: any[] =  this.attributes.concat(this.keywords.map((item) => {
-            return {
-                attributeTypeId: 'keyword',
-                conditionTypeId: ConditionAttributeDtoConditionTypeId.Equal,
-                conditionValue: item.keyword
-            };
-        }));
+    getAtributesAndKeywords(showKeywords: boolean = true) {
+        let list = this.attributes;
+        if (showKeywords || !list.length)
+            list = list.concat(this.keywords.map((item) => {
+                return {
+                    attributeTypeId: 'keyword',
+                    conditionTypeId: ConditionAttributeDtoConditionTypeId.Equal,
+                    conditionValue: item.keyword
+                };
+            }));
 
-        array.forEach((v, i) => v.id = i);
-        return array;
+        list.forEach((v, i) => v.id = i);
+        return list;
     }
 
     getAttributes() {
