@@ -1847,6 +1847,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.cellElement.find('> span').text(_.prune(e.cell.text, this.maxCategoriesWidth));
         }
 
+        /** Show descriptors in Italic */
+        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path) {
+            /** get last row - it is opened */
+            let row = e.cell.path.slice(-1);
+            let prefix = row[0] ? row[0].slice(0, 2) : undefined;
+            if (prefix && prefix === CategorizationPrefixes.TransactionDescriptor) {
+                e.cellElement.addClass('descriptor');
+            }
+        }
+
         // /** add draggable attribute to the cells that can be dragged */
         // if (this.cellIsDraggable(e)) {
         //     e.cellElement.attr('droppable', 'false');
