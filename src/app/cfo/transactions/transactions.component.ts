@@ -564,7 +564,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             bank.bankAccounts.forEach((acc) => {
                 result[acc.id] = {
                     id: bank.id + ':' + acc.id,
-                    accountId: acc.id, 
+                    accountId: acc.id,
                     parent: bank.name,
                     parentId: bank.id,
                     name: acc.accountNumber + ': ' + (acc.accountName ? acc.accountName : 'No name')
@@ -762,7 +762,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     onCellPrepared($event) {
         if ($event.rowType === 'data') {
             if ($event.column.dataField == 'CashflowCategoryName' && !$event.data.CashflowCategoryName) {
-                $event.cellElement.parent().addClass(`uncategorized`);
+                let rowIndex = $event.cellElement.parent().index();
+                $event.cellElement.closest('.dx-datagrid-rowsview').find(`tr:nth-of-type(${rowIndex})`).addClass(`uncategorized`);
             }
         }
     }
@@ -775,7 +776,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         let transactions = this.dataGrid
             .instance.getSelectedRowKeys();
         let transactionIds = transactions.map(t => t.Id);
-        
+
         if ($event.categoryId) {
             let updateTransactionCategoryMethod = (suppressCashflowTypeMismatch: boolean = false) => {
                 this._classificationServiceProxy.updateTransactionsCategory(
@@ -824,7 +825,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     }
                 });
             };
-            
+
             if (_.some(transactions, x => x.CashFlowTypeId != $event.categoryCashType)) {
                 abp.message.confirm('You are about to change cashflow type for at least one transaction.', 'Are you sure you want to continue?',
                     (result) => {
