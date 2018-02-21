@@ -20,6 +20,8 @@
 
     .full_name {
         font-family: Montserrat;
+        display: flex;
+        flex-direction: row;
 
         h1 {
             color: #202b35;
@@ -166,5 +168,16 @@
     .header_buttons {
         margin-left: auto;
         margin-right: 60px;
+    }
+
+    .contact-persons-info {
+        cursor: pointer;
+        margin: 3px 0 0 15px;
+        height: 10px;
+        opacity: 0.8;
+
+        &:hover {
+            opacity: 1;
+        }
     }
 }

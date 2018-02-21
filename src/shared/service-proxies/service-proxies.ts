@@ -20729,6 +20729,7 @@ export interface IGetDefaultEditionNameOutput {
 export class ContactInfoBaseDto implements IContactInfoBaseDto {
     id: number;
     fullName: string;
+    jobTitle: string;
     photo: ContactPhotoDto;
     emails: ContactEmailDto[];
     phones: ContactPhoneDto[];
@@ -20749,6 +20750,7 @@ export class ContactInfoBaseDto implements IContactInfoBaseDto {
         if (data) {
             this.id = data["id"];
             this.fullName = data["fullName"];
+            this.jobTitle = data["jobTitle"];
             this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
             if (data["emails"] && data["emails"].constructor === Array) {
                 this.emails = [];
@@ -20784,6 +20786,7 @@ export class ContactInfoBaseDto implements IContactInfoBaseDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["fullName"] = this.fullName;
+        data["jobTitle"] = this.jobTitle;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         if (this.emails && this.emails.constructor === Array) {
             data["emails"] = [];
@@ -20813,6 +20816,7 @@ export class ContactInfoBaseDto implements IContactInfoBaseDto {
 export interface IContactInfoBaseDto {
     id: number;
     fullName: string;
+    jobTitle: string;
     photo: ContactPhotoDto;
     emails: ContactEmailDto[];
     phones: ContactPhoneDto[];
@@ -25314,6 +25318,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     person: PersonInfoDto;
     id: number;
     fullName: string;
+    jobTitle: string;
     photo: ContactPhotoDto;
     emails: ContactEmailDto[];
     phones: ContactPhoneDto[];
@@ -25335,6 +25340,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
             this.person = data["person"] ? PersonInfoDto.fromJS(data["person"]) : <any>undefined;
             this.id = data["id"];
             this.fullName = data["fullName"];
+            this.jobTitle = data["jobTitle"];
             this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
             if (data["emails"] && data["emails"].constructor === Array) {
                 this.emails = [];
@@ -25371,6 +25377,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
         data["person"] = this.person ? this.person.toJSON() : <any>undefined;
         data["id"] = this.id;
         data["fullName"] = this.fullName;
+        data["jobTitle"] = this.jobTitle;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         if (this.emails && this.emails.constructor === Array) {
             data["emails"] = [];
@@ -25401,6 +25408,7 @@ export interface IPersonContactInfoDto {
     person: PersonInfoDto;
     id: number;
     fullName: string;
+    jobTitle: string;
     photo: ContactPhotoDto;
     emails: ContactEmailDto[];
     phones: ContactPhoneDto[];
@@ -25413,6 +25421,7 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
     organization: OrganizationInfoDto;
     id: number;
     fullName: string;
+    jobTitle: string;
     photo: ContactPhotoDto;
     emails: ContactEmailDto[];
     phones: ContactPhoneDto[];
@@ -25434,6 +25443,7 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
             this.organization = data["organization"] ? OrganizationInfoDto.fromJS(data["organization"]) : <any>undefined;
             this.id = data["id"];
             this.fullName = data["fullName"];
+            this.jobTitle = data["jobTitle"];
             this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
             if (data["emails"] && data["emails"].constructor === Array) {
                 this.emails = [];
@@ -25470,6 +25480,7 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
         data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
         data["id"] = this.id;
         data["fullName"] = this.fullName;
+        data["jobTitle"] = this.jobTitle;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         if (this.emails && this.emails.constructor === Array) {
             data["emails"] = [];
@@ -25500,6 +25511,7 @@ export interface IOrganizationContactInfoDto {
     organization: OrganizationInfoDto;
     id: number;
     fullName: string;
+    jobTitle: string;
     photo: ContactPhotoDto;
     emails: ContactEmailDto[];
     phones: ContactPhoneDto[];

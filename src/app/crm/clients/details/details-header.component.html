@@ -6,6 +6,9 @@
     <div class="personal_info">
         <div class="full_name">
             <h1 *ngIf="data && data?.name; else loading">{{ data?.name }}</h1>
+            <div *ngIf="data?.contactPersons?.length > 1" class="contact-persons-info" (click)="showContactPersons($event)">
+                <img src="../../../../assets/common/icons/down-arrow-icon.svg" alt="Contact Persons">
+            </div>
             <ng-template #loading>
                 <mat-progress-spinner mode="indeterminate" strokeWidth="10"></mat-progress-spinner>
             </ng-template>

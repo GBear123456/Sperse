@@ -27,6 +27,7 @@ import { CreditLinesComponent } from './credit-lines/credit-lines.component';
 import { RequiredDocumentsComponent } from './required-documents/required-documents.component';
 import { ContactInformationComponent } from './contact-information/contact-information.component';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
+import { ContactPersonsDialogComponent }  from './contact-persons-dialog/contact-persons-dialog.component';
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
@@ -54,7 +55,8 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     ContactInformationComponent,
     RequiredDocumentsComponent,
     OperationsWidgetComponent,
-    OrganizationDialogComponent
+    OrganizationDialogComponent,
+    ContactPersonsDialogComponent
   ],
   imports: [
     FormsModule,
@@ -87,7 +89,8 @@ import { PhoneFormatPipe } from './phone-format.pipe';
   entryComponents: [
     EditContactDialog,
     EditAddressDialog,
-    OrganizationDialogComponent
+    OrganizationDialogComponent,
+    ContactPersonsDialogComponent
   ],
   bootstrap: [
     ClientDetailsComponent

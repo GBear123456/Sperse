@@ -4,6 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, InstanceServiceProxy, SetupInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
+import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 
 @Component({
     selector: 'details-header',
@@ -64,10 +65,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         );
     }
 
-    getDialogPossition(event) {
-        let shift = 304, parent =
-          event.target.closest('div');
-    
+    getDialogPossition(event, shift) {
+        let parent = event.target.closest('div');
+
         if (parent) {
           let rect = parent.getBoundingClientRect();
           return {
@@ -80,16 +80,26 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             left: event.clientX - shift  + 'px'
           };
     }
-    
+
     showOrganizationDetails(event) {
-        var dialogData = this.data.organizationContactInfo;
+        let dialogData = this.data.organizationContactInfo;
         this.dialog.closeAll();
         this.dialog.open(OrganizationDialogComponent, {
           data: dialogData,
           hasBackdrop: false,
-          position: this.getDialogPossition(event)
+          position: this.getDialogPossition(event, 304)
         }).afterClosed().subscribe(result => {
           // some logic
+        });
+        event.stopPropagation();
+    }
+
+    showContactPersons(event) {
+        this.dialog.closeAll();
+        this.dialog.open(ContactPersonsDialogComponent, {
+          data: this.data,
+          hasBackdrop: false,
+          position: this.getDialogPossition(event, 220)
         });
         event.stopPropagation();
     }
