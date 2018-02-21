@@ -710,9 +710,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             let field = {};
             if (!parseInt(data.key))
                 field['CashFlowTypeId'] = new FilterItemModel(data.key);
-            else if (!parseInt(data.key.split('').reverse().join('')))
+            else if (isNaN(data.key))
                 field['accountingTypeId'] = new FilterItemModel(parseInt(data.key));
-            else if (data.parent.split && !parseInt(data.parent.split('').reverse().join('')))
+            else if (isNaN(data.parent))
                 field['CashflowCategoryId'] = new FilterItemModel(parseInt(data.key));
             else
                 field['CashflowSubCategoryId'] = new FilterItemModel(parseInt(data.key));
