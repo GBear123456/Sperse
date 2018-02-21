@@ -30,7 +30,7 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
     }
 
     getCategorizationStatus(): void {
-        this._dashboardService.getCategorizationStatus(InstanceType[this.instanceType], this.instanceId)
+        this._dashboardService.getCategorizationStatus(InstanceType[this.instanceType], this.instanceId, undefined)
             .subscribe((result) => {
                 this.categorySynchData = result;
                 this.categorySynchData.totalCount = this.categorySynchData.classifiedTransactionCount + this.categorySynchData.unclassifiedTransactionCount;
