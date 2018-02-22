@@ -1879,119 +1879,94 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.cellElement.addClass('descriptor');
         }
 
-        // /** add draggable attribute to the cells that can be dragged */
-        // if (this.cellIsDraggable(e)) {
-        //     e.cellElement.attr('droppable', 'false');
-        //     let img = new Image();
-        //     img.src = 'assets/common/icons/drag-icon.svg';
-        //     e.cellElement.off('dragstart').off('dragend').off('dragenter').off('dragover').off('drop')
-        //         .on('mousedown', ev => {
-        //             e.cellElement.attr('draggable', Boolean(e.cell.value));
-        //         })
-        //         .on('mouseup', ev => {
-        //             e.cellElement.removeAttr('draggable');
-        //         })
-        //         .on('dragstart', ev => {
-        //             if (e.cell.value) {
-        //                 let targetElement = ev.target;
-        //                 /** add selected class */
-        //                 $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
-        //                 $(targetElement).addClass('chosenFilterForCashFlow');
-        //                 this.selectedCell = e;
-        //                 let cellIndex = $(targetElement).index();
-        //
-        //                 /** set the draggable image */
-        //                 ev.originalEvent.dataTransfer.setDragImage(img, -10, -10);
-        //                 ev.originalEvent.dataTransfer.setData('Text', cellIndex);
-        //                 ev.originalEvent.dropEffect = 'none';
-        //
-        //                 $('[droppable]').attr('droppable', 'false');
-        //                 /** find the dropable area depend on period */
-        //                 /** @todo uncomment to handle moving of historical transactions */
-        //                 /* if ($(targetElement).attr('class').indexOf('prev') !== -1) {
-        //                     $(`[droppable]:nth-child(${cellIndex + 1}):not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
-        //                 } else*/ if ($(targetElement).attr('class').indexOf('next') !== -1) {
-        //                     $(`[droppable][class*="next"]:not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
-        //                 }
-        //             }
-        //         })
-        //         .on('dragend', ev => {
-        //             ev.originalEvent.preventDefault();
-        //             ev.originalEvent.stopPropagation();
-        //             $(ev.target).removeClass('dragged');
-        //             $('[droppable]').removeClass('currentDroppable');
-        //             $('[droppable]').attr('droppable', 'false');
-        //         })
-        //         .on('dragenter', (ev) => {
-        //             ev.originalEvent.preventDefault();
-        //             ev.originalEvent.stopPropagation();
-        //             if (!$(ev.target).hasClass('chosenFilterForCashFlow')) {
-        //                 /** change the class for the target cell */
-        //                 if ($(ev.target).attr('droppable') === 'true') {
-        //                     $('[droppable]').removeClass('currentDroppable');
-        //                     $(ev.target).addClass('currentDroppable');
-        //                 }
-        //             }
-        //         })
-        //         .on('dragover', (ev) => {
-        //             ev.originalEvent.preventDefault();
-        //             ev.originalEvent.stopPropagation();
-        //             if (!$(ev.target).hasClass('chosenFilterForCashFlow')) {
-        //                 /** change the class for the target cell */
-        //                 if ($(ev.target).attr('droppable') === 'true') {
-        //                     $('[droppable]').removeClass('currentDroppable');
-        //                     $(ev.target).addClass('currentDroppable');
-        //                 } else {
-        //                     ev.originalEvent.dataTransfer.dropEffect = 'none';
-        //                 }
-        //             } else {
-        //                 ev.originalEvent.dataTransfer.dropEffect = 'none';
-        //             }
-        //         })
-        //         .on('drop', (ev) => {
-        //             ev.originalEvent.preventDefault();
-        //             ev.originalEvent.stopPropagation();
-        //             let cellWhereToMove = e;
-        //             let movedCell = this.selectedCell;
-        //
-        //             /** Get the transaction of moved cell */
-        //             let itemsToMove = this.getDataItemsByCell(movedCell);
-        //
-        //             /** Handle moving of historical transactions */
-        //             /** @todo implement */
-        //             if ($(ev.target).attr('class').indexOf('prev') !== -1) {
-        //                 let itemsToMovesIds = itemsToMove.map(item => item.id);
-        //             }
-        //
-        //             /** Handle moving of forecasts */
-        //             if ($(ev.target).attr('class').indexOf('next') !== -1) {
-        //                 this.moveOrCopyForecasts(itemsToMove, cellWhereToMove, 'move');
-        //             }
-        //
-        //         });
-        //
-        // }
-
-        /** Add copy event to the cells */
-        if (this.isCopyable(e)) {
-            e.cellElement.off('copy').off('paste')
-                .on('copy', ev => {
-                    ev.originalEvent.preventDefault();
-                    ev.originalEvent.stopPropagation();
-                    this.copiedCell = e;
+        /** add draggable attribute to the cells that can be dragged */
+        if (this.cellIsDraggable(e)) {
+            e.cellElement.attr('droppable', 'false');
+            let img = new Image();
+            img.src = 'assets/common/icons/drag-icon.svg';
+            e.cellElement.off('dragstart dragend dragenter dragover drop')
+                .on('mousedown', ev => {
+                    e.cellElement.attr('draggable', Boolean(e.cell.value));
+                    this.selectedCell = e;
                 })
-                .on('paste', ev => {
+                .on('mouseup', ev => {
+                    e.cellElement.removeAttr('draggable');
+                })
+                .on('dragstart', ev => {
+                    if (e.cell.value) {
+                        let targetElement = ev.target;
+                        /** add selected class */
+                        $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
+                        $(targetElement).addClass('chosenFilterForCashFlow');
+
+                        let cellIndex = $(targetElement).index();
+
+                        /** set the draggable image */
+                        ev.originalEvent.dataTransfer.setDragImage(img, -10, -10);
+                        ev.originalEvent.dataTransfer.setData('Text', cellIndex);
+                        ev.originalEvent.dropEffect = 'none';
+
+                        $('[droppable]').attr('droppable', 'false');
+                        /** find the dropable area depend on period */
+                        /** @todo uncomment to handle moving of historical transactions */
+                        /* if ($(targetElement).attr('class').indexOf('prev') !== -1) {
+                            $(`[droppable]:nth-child(${cellIndex + 1}):not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
+                        } else*/ if ($(targetElement).attr('class').indexOf('next') !== -1) {
+                            $(`[droppable][class*="next"]:not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
+                        }
+                    }
+                })
+                .on('dragend', ev => {
                     ev.originalEvent.preventDefault();
                     ev.originalEvent.stopPropagation();
+                    $(ev.target).removeClass('dragged');
+                    $('[droppable]').removeClass('currentDroppable');
+                    $('[droppable]').attr('droppable', 'false');
+                })
+                .on('dragenter', (ev) => {
+                    ev.originalEvent.preventDefault();
+                    ev.originalEvent.stopPropagation();
+                    if (!$(ev.target).hasClass('chosenFilterForCashFlow')) {
+                        /** change the class for the target cell */
+                        if ($(ev.target).attr('droppable') === 'true') {
+                            $('[droppable]').removeClass('currentDroppable');
+                            $(ev.target).addClass('currentDroppable');
+                        }
+                    }
+                })
+                .on('dragover', (ev) => {
+                    ev.originalEvent.preventDefault();
+                    ev.originalEvent.stopPropagation();
+                    if (!$(ev.target).hasClass('chosenFilterForCashFlow')) {
+                        /** change the class for the target cell */
+                        if ($(ev.target).attr('droppable') === 'true') {
+                            $('[droppable]').removeClass('currentDroppable');
+                            $(ev.target).addClass('currentDroppable');
+                        } else {
+                            ev.originalEvent.dataTransfer.dropEffect = 'none';
+                        }
+                    } else {
+                        ev.originalEvent.dataTransfer.dropEffect = 'none';
+                    }
+                })
+                .on('drop', (ev) => {
+                    ev.originalEvent.preventDefault();
+                    ev.originalEvent.stopPropagation();
+                    let cellWhereToMove = e;
+                    let movedCell = this.selectedCell;
 
-                    let targetCell = this.selectedCell;
-                    /** If user copy to the accounting type - show popup with message that he should select the category */
+                    /** Get the transaction of moved cell */
+                    let itemsToMove = this.getDataItemsByCell(movedCell);
+
+                    /** Handle moving of historical transactions */
                     /** @todo implement */
-                    /** Allow copy paste only for the same cashflowTypeId and to the current or forecast periods */
-                    if (this.selectedCell.cell.rowPath[0] === targetCell.cell.rowPath[0] &&
-                        targetCell.cell.columnPath[0] != Periods.Historical) {
-                        let forecastsItems = this.getDataItemsByCell(this.copiedCell);
-                        this.moveOrCopyForecasts(forecastsItems, targetCell, 'copy');
+                    if ($(ev.target).attr('class').indexOf('prev') !== -1) {
+                        let itemsToMovesIds = itemsToMove.map(item => item.id);
+                    }
+
+                    /** Handle moving of forecasts */
+                    if ($(ev.target).attr('class').indexOf('next') !== -1) {
+                        this.moveOrCopyForecasts(itemsToMove, cellWhereToMove, 'move');
                     }
                 });
         }
@@ -2007,6 +1982,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let endDate = moment(targetCellDate).endOf(targetLowestInterval);
         let forecastModels = {'forecasts': []};
         let date;
+        let categoryId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.Category);
+        let subCategoryId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.SubCategory);
+        let transactionDescriptor = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes
+.TransactionDescriptor);
+
         forecasts.forEach((forecast) => {
             date = moment(targetCellDate);
             /** if targetCellDate doesn't have certain month or day - get them from the copied transactions */
@@ -2017,10 +1997,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     targetCellDate.month(forecast.initialDate.month());
                 }
             }
-
-            let categoryId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.Category),
-                subCategoryId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.SubCategory),
-                transactionDescriptor = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
 
             let forecastModel;
             if (operation === 'copy') {
@@ -2038,10 +2014,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 });
             } else if (operation === 'move') {
                 /** @todo check moving of transaction to different date range then current one */
-                /** @todo check after adding updateForecasts method */
                 forecastModel = UpdateForecastInput.fromJS({
-                    id: forecast.id,
-                    date: targetCellDate,
+                    id: forecast.forecastId,
+                    date: date,
                     amount: forecast.amount,
                     categoryId: subCategoryId || categoryId || -1,
                     transactionDescriptor: transactionDescriptor
@@ -2057,22 +2032,42 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             forecastModels
         ).subscribe(
             result => {
-                forecastModels.forecasts.forEach((forecastModel, index) => {
+                /** Get ids from the server in a case of creation or from the local in a case of update */
+                let udpatedForecastsIds = result || forecastModels.forecasts.map(forecast => forecast.id);
+
+                /** if the operation is update - then also remove the old objects (income or expense, net change and total balance) */
+                if (operation === 'move') {
+                    forecastModels.forecasts.forEach(forecastModel => {
+                        let forecastsInCashflow = this.cashflowData.filter(item => item.forecastId === forecastModel.id);
+                        let timezoneOffset = new Date(<any>targetCellDate).getTimezoneOffset();
+                        forecastsInCashflow.forEach((forecastInCashflow, index) => {
+                            forecastInCashflow.date = moment(targetCellDate).add(timezoneOffset, 'minutes');
+                            forecastInCashflow.initialDate = targetCellDate;
+                            forecastInCashflow.categoryId = categoryId || subCategoryId || -1;
+                            forecastInCashflow.subCategoryId = subCategoryId;
+                            forecastInCashflow.transactionDescriptor = transactionDescriptor;
+                            forecastsInCashflow[index] = this.addCategorizationLevels(forecastInCashflow);
+                        });
+                    });
+                } else {
+                    forecastModels.forecasts.forEach((forecastModel, index) => {
+                        let timezoneOffset = new Date(<any>targetCellDate).getTimezoneOffset();
                         this.cashflowData.push(this.createStubTransaction({
                             accountId: forecastModel.bankAccountId,
                             count: 1,
                             amount: forecastModel.amount,
-                            date: targetCellDate.add(new Date().getTimezoneOffset()),
+                            date: moment(targetCellDate).add(timezoneOffset, 'minutes'),
                             initialDate: targetCellDate,
-                            forecastId: result[index]
+                            forecastId: udpatedForecastsIds[index]
                         }, targetCell.cell.rowPath));
-                    }
-                );
+                    });
+                }
             },
-            e => console.log(e),
+            e => { console.log(e); this.notify.error(e); },
             () => {
-                this.getApiDataSource();
+                //this.dataSource = this.getApiDataSource();
                 this.pivotGrid.instance.getDataSource().reload();
+                this.notify.success('Cell_pasted');
             }
         );
     }
@@ -2379,6 +2374,30 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onCellClick(cellObj) {
+
+        /** Add copy event to the cells */
+        if (this.isCopyable(cellObj)) {
+            cellObj.element.off('copy paste')
+                .on('copy', ev => {
+                    this.copiedCell = this.selectedCell;
+                    this.notify.info(this.l('Cell_Copied'));
+                })
+                .on('paste', ev => {
+                    let targetCell = this.selectedCell;
+                    /** If user copy to the accounting type - show popup with message that he should select the category */
+                    /** @todo implement */
+
+                    /** Allow copy paste only for the same cashflowTypeId and to the current or forecast periods */
+                    if (this.selectedCell.cell.rowPath[0] === targetCell.cell.rowPath[0] &&
+                        targetCell.cell.columnPath[0] != Periods.Historical) {
+                        let forecastsItems = this.getDataItemsByCell(this.copiedCell);
+                        this.moveOrCopyForecasts(forecastsItems, targetCell, 'copy', );
+                    }
+                });
+        } else {
+            cellObj.element.off('copy paste');
+        }
+
         /** bind the collapse action on white space column */
         if (cellObj.cell.isWhiteSpace) {
             this.bindCollapseActionOnWhiteSpaceColumn(cellObj);
@@ -2544,6 +2563,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         parent.css('padding', this.oldCellPadding);
         parent.children().show();
         if (+newValue !== this.clickedCellObj.cell.value) {
+            if (+newValue === 0) {
+                this.currentCellOperationType = 'delete';
+            }
             let forecastModel;
             let cashflowTypeId = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.CashflowType);
             let categoryId = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.Category);
@@ -2563,13 +2585,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     currencyId: this.currencyId,
                     amount: newValue
                 });
-            } else {
-                if (this.clickedRowResult && this.clickedRowResult.forecastId) {
-                    forecastModel = UpdateForecastInput.fromJS({
-                        id: this.clickedRowResult.forecastId,
-                        amount: newValue
-                    });
-                }
+            } else if (this.currentCellOperationType === 'update') {
+                forecastModel = UpdateForecastInput.fromJS({
+                    id: this.clickedRowResult.forecastId,
+                    amount: newValue
+                });
+            } else if (this.currentCellOperationType === 'delete') {
+                forecastModel = this.clickedRowResult.forecastId;
             }
 
             this._cashFlowForecastServiceProxy[`${this.currentCellOperationType}Forecast`](
@@ -2578,7 +2600,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 forecastModel
             ).subscribe(
                 res => {
-                    let date = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment().add(new Date().getTimezoneOffset());
+                    let date = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate.add(new Date(<any>this.statsDetailFilter.startDate).getTimezoneOffset(), 'minutes') : moment().add(new Date().getTimezoneOffset());
                     let initialDate = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment();
                     /** Update data locally */
                     if (this.currentCellOperationType === 'add') {

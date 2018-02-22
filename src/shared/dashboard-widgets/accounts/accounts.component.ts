@@ -26,7 +26,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     getAccountTotals(): void {
-        this._dashboardService.getAccountTotals(InstanceType[this.instanceType], this.instanceId)
+        this._dashboardService.getAccountTotals(InstanceType[this.instanceType], this.instanceId, undefined)
             .subscribe((result) => {
                 this.accountsData = result;
             });

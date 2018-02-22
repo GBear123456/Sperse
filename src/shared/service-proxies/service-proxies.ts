@@ -714,7 +714,63 @@ export class BankAccountsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    recalculateAllBankAccountDailyStats(instanceType: InstanceType, instanceId: number): Observable<void> {
+    getBankAccounts(instanceType: InstanceType, instanceId: number): Observable<BankAccountDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetBankAccounts?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetBankAccounts(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetBankAccounts(response_);
+                } catch (e) {
+                    return <Observable<BankAccountDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<BankAccountDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetBankAccounts(response: Response): Observable<BankAccountDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(BankAccountDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<BankAccountDto[]>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    recalculateAllBankAccountDailyStats(instanceType: InstanceType2, instanceId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/RecalculateAllBankAccountDailyStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -767,7 +823,7 @@ export class BankAccountsServiceProxy {
      * @maxCount (optional) 
      * @return Success
      */
-    getStats(instanceType: InstanceType2, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
+    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1060,7 +1116,7 @@ export class CashflowServiceProxy {
      * @filter (optional) 
      * @return Success
      */
-    getStats(instanceType: InstanceType3, instanceId: number, filter: StatsFilter): Observable<CashFlowStatsDto> {
+    getStats(instanceType: InstanceType4, instanceId: number, filter: StatsFilter): Observable<CashFlowStatsDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1115,7 +1171,7 @@ export class CashflowServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getCashFlowInitialData(instanceType: InstanceType4, instanceId: number): Observable<CashFlowInitialData> {
+    getCashFlowInitialData(instanceType: InstanceType5, instanceId: number): Observable<CashFlowInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetCashFlowInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1168,7 +1224,7 @@ export class CashflowServiceProxy {
      * @filter (optional) 
      * @return Success
      */
-    getStatsDetails(instanceType: InstanceType5, instanceId: number, filter: StatsDetailFilter): Observable<CashFlowStatsDetailDto[]> {
+    getStatsDetails(instanceType: InstanceType6, instanceId: number, filter: StatsDetailFilter): Observable<CashFlowStatsDetailDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStatsDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1227,7 +1283,7 @@ export class CashflowServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getCashFlowGridSettings(instanceType: InstanceType6, instanceId: number): Observable<CashFlowGridSettingsDto> {
+    getCashFlowGridSettings(instanceType: InstanceType7, instanceId: number): Observable<CashFlowGridSettingsDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetCashFlowGridSettings?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1280,7 +1336,7 @@ export class CashflowServiceProxy {
      * @settings (optional) 
      * @return Success
      */
-    saveCashFlowGridSettings(instanceType: InstanceType7, instanceId: number, settings: CashFlowGridSettingsDto): Observable<void> {
+    saveCashFlowGridSettings(instanceType: InstanceType8, instanceId: number, settings: CashFlowGridSettingsDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/SaveCashFlowGridSettings?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1343,7 +1399,7 @@ export class CashFlowForecastServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getModels(instanceType: InstanceType8, instanceId: number): Observable<ForecastModelDto[]> {
+    getModels(instanceType: InstanceType9, instanceId: number): Observable<ForecastModelDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetModels?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1400,7 +1456,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    addForecast(instanceType: InstanceType9, instanceId: number, input: AddForecastInput): Observable<number> {
+    addForecast(instanceType: InstanceType10, instanceId: number, input: AddForecastInput): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/AddForecast?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1456,7 +1512,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createForecasts(instanceType: InstanceType10, instanceId: number, input: CreateForecastsInput): Observable<number[]> {
+    createForecasts(instanceType: InstanceType11, instanceId: number, input: CreateForecastsInput): Observable<number[]> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/CreateForecasts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1516,7 +1572,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateForecast(instanceType: InstanceType11, instanceId: number, input: UpdateForecastInput): Observable<void> {
+    updateForecast(instanceType: InstanceType12, instanceId: number, input: UpdateForecastInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/UpdateForecast?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1565,9 +1621,61 @@ export class CashFlowForecastServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @input (optional) 
      * @return Success
      */
-    deleteForecast(instanceType: InstanceType12, instanceId: number, id: number): Observable<void> {
+    updateForecasts(instanceType: InstanceType13, instanceId: number, input: UpdateForecastsInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/UpdateForecasts?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdateForecasts(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateForecasts(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateForecasts(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    deleteForecast(instanceType: InstanceType14, instanceId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/DeleteForecast?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1620,7 +1728,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createForecastSchedule(instanceType: InstanceType13, instanceId: number, input: CreateForecastScheduleDto): Observable<number> {
+    createForecastSchedule(instanceType: InstanceType15, instanceId: number, input: CreateForecastScheduleDto): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/CreateForecastSchedule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1676,7 +1784,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateForecastSchedule(instanceType: InstanceType14, instanceId: number, input: UpdateForecastScheduleInput): Observable<void> {
+    updateForecastSchedule(instanceType: InstanceType16, instanceId: number, input: UpdateForecastScheduleInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/UpdateForecastSchedule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1727,7 +1835,7 @@ export class CashFlowForecastServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteForecastSchedule(instanceType: InstanceType15, instanceId: number, id: number): Observable<void> {
+    deleteForecastSchedule(instanceType: InstanceType17, instanceId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/DeleteForecastSchedule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1779,7 +1887,7 @@ export class CashFlowForecastServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getForecastSchedule(instanceType: InstanceType16, instanceId: number, id: number): Observable<ForecastScheduleDto> {
+    getForecastSchedule(instanceType: InstanceType18, instanceId: number, id: number): Observable<ForecastScheduleDto> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetForecastSchedule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1835,7 +1943,7 @@ export class CashFlowForecastServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getForecastSchedules(instanceType: InstanceType17, instanceId: number): Observable<ForecastScheduleDto[]> {
+    getForecastSchedules(instanceType: InstanceType19, instanceId: number): Observable<ForecastScheduleDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetForecastSchedules?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1892,7 +2000,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createForecastModel(instanceType: InstanceType18, instanceId: number, input: CreateForecastModelInput): Observable<number> {
+    createForecastModel(instanceType: InstanceType20, instanceId: number, input: CreateForecastModelInput): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/CreateForecastModel?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1948,7 +2056,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    renameForecastModel(instanceType: InstanceType19, instanceId: number, input: RenameForecastModelInput): Observable<void> {
+    renameForecastModel(instanceType: InstanceType21, instanceId: number, input: RenameForecastModelInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/RenameForecastModel?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1999,7 +2107,7 @@ export class CashFlowForecastServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteForecastModel(instanceType: InstanceType20, instanceId: number, id: number): Observable<void> {
+    deleteForecastModel(instanceType: InstanceType22, instanceId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/DeleteForecastModel?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2223,7 +2331,7 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getCategoryTree(instanceType: InstanceType21, instanceId: number): Observable<GetCategoryTreeOutput> {
+    getCategoryTree(instanceType: InstanceType23, instanceId: number): Observable<GetCategoryTreeOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetCategoryTree?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2276,7 +2384,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    getRules(instanceType: InstanceType22, instanceId: number, input: any): Observable<RuleDto[]> {
+    getRules(instanceType: InstanceType24, instanceId: number, input: any): Observable<RuleDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetRules?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2335,7 +2443,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createRule(instanceType: InstanceType23, instanceId: number, input: CreateRuleDto): Observable<void> {
+    createRule(instanceType: InstanceType25, instanceId: number, input: CreateRuleDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateRule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2386,7 +2494,7 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getRuleForEdit(instanceType: InstanceType24, instanceId: number, id: number): Observable<EditRuleDto> {
+    getRuleForEdit(instanceType: InstanceType26, instanceId: number, id: number): Observable<EditRuleDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetRuleForEdit?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2443,7 +2551,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    editRule(instanceType: InstanceType25, instanceId: number, input: EditRuleDto): Observable<void> {
+    editRule(instanceType: InstanceType27, instanceId: number, input: EditRuleDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/EditRule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2495,7 +2603,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    moveRule(instanceType: InstanceType26, instanceId: number, input: MoveRuleDto): Observable<void> {
+    moveRule(instanceType: InstanceType28, instanceId: number, input: MoveRuleDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/MoveRule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2547,7 +2655,7 @@ export class ClassificationServiceProxy {
      * @sourceTransactionList (optional) 
      * @return Success
      */
-    deleteRule(instanceType: InstanceType27, instanceId: number, sourceTransactionList: number[], applyOption: ApplyOption, id: number): Observable<void> {
+    deleteRule(instanceType: InstanceType29, instanceId: number, sourceTransactionList: number[], applyOption: ApplyOption, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteRule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2606,7 +2714,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    addMapping(instanceType: InstanceType28, instanceId: number, input: AddMappingDto): Observable<void> {
+    addMapping(instanceType: InstanceType30, instanceId: number, input: AddMappingDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/AddMapping?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2657,7 +2765,7 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteMapping(instanceType: InstanceType29, instanceId: number, name: string): Observable<void> {
+    deleteMapping(instanceType: InstanceType31, instanceId: number, name: string): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteMapping?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2710,7 +2818,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createCategory(instanceType: InstanceType30, instanceId: number, input: CreateCategoryInput): Observable<number> {
+    createCategory(instanceType: InstanceType32, instanceId: number, input: CreateCategoryInput): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateCategory?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2766,7 +2874,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateCategory(instanceType: InstanceType31, instanceId: number, input: UpdateCategoryInput): Observable<void> {
+    updateCategory(instanceType: InstanceType33, instanceId: number, input: UpdateCategoryInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategory?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2818,7 +2926,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateCategoryStatus(instanceType: InstanceType32, instanceId: number, input: UpdateCategoryStatusInput): Observable<void> {
+    updateCategoryStatus(instanceType: InstanceType34, instanceId: number, input: UpdateCategoryStatusInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategoryStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2870,7 +2978,7 @@ export class ClassificationServiceProxy {
      * @moveToCategoryId (optional) 
      * @return Success
      */
-    deleteCategory(instanceType: InstanceType33, instanceId: number, moveToCategoryId: number, deleteAllReferences: boolean, id: number): Observable<void> {
+    deleteCategory(instanceType: InstanceType35, instanceId: number, moveToCategoryId: number, deleteAllReferences: boolean, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteCategory?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2929,7 +3037,7 @@ export class ClassificationServiceProxy {
      * @recategorizeInput (optional) 
      * @return Success
      */
-    reclassify(instanceType: InstanceType34, instanceId: number, recategorizeInput: RecategorizeInput): Observable<void> {
+    reclassify(instanceType: InstanceType36, instanceId: number, recategorizeInput: RecategorizeInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/Reclassify?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2980,7 +3088,7 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    resetToDefaults(instanceType: InstanceType35, instanceId: number): Observable<void> {
+    resetToDefaults(instanceType: InstanceType37, instanceId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/ResetToDefaults?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3029,7 +3137,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    importAccountingTree(instanceType: InstanceType36, instanceId: number, input: AccountingCategoryDto[]): Observable<void> {
+    importAccountingTree(instanceType: InstanceType38, instanceId: number, input: AccountingCategoryDto[]): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/ImportAccountingTree?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3081,7 +3189,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    reset(instanceType: InstanceType37, instanceId: number, input: ResetClassificationDto): Observable<void> {
+    reset(instanceType: InstanceType39, instanceId: number, input: ResetClassificationDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/Reset?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3133,7 +3241,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateTransactionsCategory(instanceType: InstanceType38, instanceId: number, input: UpdateTransactionsCategoryInput): Observable<void> {
+    updateTransactionsCategory(instanceType: InstanceType40, instanceId: number, input: UpdateTransactionsCategoryInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategory?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3185,7 +3293,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateTransactionsCategoryWithFilter(instanceType: InstanceType39, instanceId: number, input: UpdateTransactionsCategoryWithFilterInput): Observable<void> {
+    updateTransactionsCategoryWithFilter(instanceType: InstanceType41, instanceId: number, input: UpdateTransactionsCategoryWithFilterInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategoryWithFilter?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3237,7 +3345,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    getTransactionCommonDetails(instanceType: InstanceType40, instanceId: number, input: GetTransactionCommonDetailsInput): Observable<TransactionCommonDetailsDto> {
+    getTransactionCommonDetails(instanceType: InstanceType42, instanceId: number, input: GetTransactionCommonDetailsInput): Observable<TransactionCommonDetailsDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetTransactionCommonDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3293,7 +3401,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    autoClassify(instanceType: InstanceType41, instanceId: number, input: AutoClassifyDto): Observable<void> {
+    autoClassify(instanceType: InstanceType43, instanceId: number, input: AutoClassifyDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/AutoClassify?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3345,7 +3453,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    changeCategoryForRules(instanceType: InstanceType42, instanceId: number, input: ChangeCategoryForRulesInput): Observable<void> {
+    changeCategoryForRules(instanceType: InstanceType44, instanceId: number, input: ChangeCategoryForRulesInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/ChangeCategoryForRules?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3397,7 +3505,7 @@ export class ClassificationServiceProxy {
      * @transactionIds (optional) 
      * @return Success
      */
-    getKeyAttributeValues(instanceType: InstanceType43, instanceId: number, transactionIds: number[]): Observable<AttributeValuesDto[]> {
+    getKeyAttributeValues(instanceType: InstanceType45, instanceId: number, transactionIds: number[]): Observable<AttributeValuesDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetKeyAttributeValues?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3456,7 +3564,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateAccountingType(instanceType: InstanceType44, instanceId: number, input: UpdateAccountingTypeInput): Observable<void> {
+    updateAccountingType(instanceType: InstanceType46, instanceId: number, input: UpdateAccountingTypeInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateAccountingType?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3508,7 +3616,7 @@ export class ClassificationServiceProxy {
      * @moveToAccountingTypeId (optional) 
      * @return Success
      */
-    deleteAccountingType(instanceType: InstanceType45, instanceId: number, moveToAccountingTypeId: number, deleteAllReferences: boolean, id: number): Observable<void> {
+    deleteAccountingType(instanceType: InstanceType47, instanceId: number, moveToAccountingTypeId: number, deleteAllReferences: boolean, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteAccountingType?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3578,7 +3686,7 @@ export class CommentServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getComments(instanceType: InstanceType46, instanceId: number, threadId: number): Observable<CommentDto[]> {
+    getComments(instanceType: InstanceType48, instanceId: number, threadId: number): Observable<CommentDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/GetComments?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3639,7 +3747,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createComment(instanceType: InstanceType47, instanceId: number, input: CreateCommentInput): Observable<CreateCommentOutput> {
+    createComment(instanceType: InstanceType49, instanceId: number, input: CreateCommentInput): Observable<CreateCommentOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3695,7 +3803,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateComment(instanceType: InstanceType48, instanceId: number, input: UpdateCommentInput): Observable<void> {
+    updateComment(instanceType: InstanceType50, instanceId: number, input: UpdateCommentInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/UpdateComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3746,7 +3854,7 @@ export class CommentServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteComment(instanceType: InstanceType49, instanceId: number, commentId: number): Observable<void> {
+    deleteComment(instanceType: InstanceType51, instanceId: number, commentId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/DeleteComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3799,7 +3907,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createTransactionCommentThread(instanceType: InstanceType50, instanceId: number, input: CreateTransactionCommentThreadInput): Observable<CreateTransactionCommentThreadOutput> {
+    createTransactionCommentThread(instanceType: InstanceType52, instanceId: number, input: CreateTransactionCommentThreadInput): Observable<CreateTransactionCommentThreadOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateTransactionCommentThread?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3855,7 +3963,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createCashFlowCommentThread(instanceType: InstanceType51, instanceId: number, input: CreateCashFlowCommentThreadInput): Observable<CreateCashFlowCommentThreadOutput> {
+    createCashFlowCommentThread(instanceType: InstanceType53, instanceId: number, input: CreateCashFlowCommentThreadInput): Observable<CreateCashFlowCommentThreadOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateCashFlowCommentThread?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3911,7 +4019,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    setResolved(instanceType: InstanceType52, instanceId: number, input: SetResolvedInput): Observable<void> {
+    setResolved(instanceType: InstanceType54, instanceId: number, input: SetResolvedInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/SetResolved?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6210,14 +6318,17 @@ export class DashboardServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @bankAccountIds (optional) 
      * @return Success
      */
-    getAccountTotals(instanceType: InstanceType53, instanceId: number): Observable<AccountTotals> {
+    getAccountTotals(instanceType: InstanceType55, instanceId: number, bankAccountIds: number[]): Observable<AccountTotals> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetAccountTotals?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (bankAccountIds !== undefined)
+            bankAccountIds && bankAccountIds.forEach(item => { url_ += "bankAccountIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -6262,14 +6373,17 @@ export class DashboardServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @bankAccountIds (optional) 
      * @return Success
      */
-    getCategorizationStatus(instanceType: InstanceType54, instanceId: number): Observable<CategorizationStatus> {
+    getCategorizationStatus(instanceType: InstanceType56, instanceId: number, bankAccountIds: number[]): Observable<CategorizationStatus> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetCategorizationStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (bankAccountIds !== undefined)
+            bankAccountIds && bankAccountIds.forEach(item => { url_ += "bankAccountIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -6908,7 +7022,7 @@ export class FinancialInformationServiceProxy {
      * @errorPage (optional) 
      * @return Success
      */
-    getSetupAccountsLink(instanceType: InstanceType55, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
+    getSetupAccountsLink(instanceType: InstanceType57, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSetupAccountsLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6964,7 +7078,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAccountsWithQuovo(instanceType: InstanceType56, instanceId: number): Observable<void> {
+    syncAccountsWithQuovo(instanceType: InstanceType58, instanceId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAccountsWithQuovo?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7012,7 +7126,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType57, instanceId: number, syncHistory: boolean, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType59, instanceId: number, syncHistory: boolean, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7072,7 +7186,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType58, instanceId: number): Observable<SyncProgressOutput> {
+    getSyncProgress(instanceType: InstanceType60, instanceId: number): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7868,7 +7982,7 @@ export class InstanceServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType59, instanceId: number): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType61, instanceId: number): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7918,7 +8032,7 @@ export class InstanceServiceProxy {
     /**
      * @return Success
      */
-    setup(instanceType: InstanceType60): Observable<SetupOutput> {
+    setup(instanceType: InstanceType62): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType === undefined || instanceType === null)
             throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
@@ -14475,7 +14589,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType61, instanceId: number): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType63, instanceId: number): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14527,7 +14641,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType62, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType64, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14579,7 +14693,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType63, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType65, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -16547,6 +16661,49 @@ export interface IFileDto {
     fileToken: string;
 }
 
+export class BankAccountDto implements IBankAccountDto {
+    id: number;
+    accountName: string;
+    accountNumber: string;
+
+    constructor(data?: IBankAccountDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.accountName = data["accountName"];
+            this.accountNumber = data["accountNumber"];
+        }
+    }
+
+    static fromJS(data: any): BankAccountDto {
+        let result = new BankAccountDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["accountName"] = this.accountName;
+        data["accountNumber"] = this.accountNumber;
+        return data; 
+    }
+}
+
+export interface IBankAccountDto {
+    id: number;
+    accountName: string;
+    accountNumber: string;
+}
+
 export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
     date: moment.Moment;
     startingBalance: number;
@@ -17271,49 +17428,6 @@ export interface IBankAccountBalanceDto {
     reconciledBalance: number;
 }
 
-export class BankAccountDto implements IBankAccountDto {
-    id: number;
-    accountName: string;
-    accountNumber: string;
-
-    constructor(data?: IBankAccountDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.accountName = data["accountName"];
-            this.accountNumber = data["accountNumber"];
-        }
-    }
-
-    static fromJS(data: any): BankAccountDto {
-        let result = new BankAccountDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["accountName"] = this.accountName;
-        data["accountNumber"] = this.accountNumber;
-        return data; 
-    }
-}
-
-export interface IBankAccountDto {
-    id: number;
-    accountName: string;
-    accountNumber: string;
-}
-
 export class StatsDetailFilter implements IStatsDetailFilter {
     searchTerm: string;
     forecastModelId: number;
@@ -17890,6 +18004,49 @@ export interface IUpdateForecastInput {
     bankAccountId: number;
     categoryId: number;
     transactionDescriptor: string;
+}
+
+export class UpdateForecastsInput implements IUpdateForecastsInput {
+    forecasts: UpdateForecastInput[] = [];
+
+    constructor(data?: IUpdateForecastsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["forecasts"] && data["forecasts"].constructor === Array) {
+                this.forecasts = [];
+                for (let item of data["forecasts"])
+                    this.forecasts.push(UpdateForecastInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateForecastsInput {
+        let result = new UpdateForecastsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.forecasts && this.forecasts.constructor === Array) {
+            data["forecasts"] = [];
+            for (let item of this.forecasts)
+                data["forecasts"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IUpdateForecastsInput {
+    forecasts: UpdateForecastInput[];
 }
 
 export class CreateForecastScheduleDto implements ICreateForecastScheduleDto {
@@ -19474,7 +19631,7 @@ export class UpdateTransactionsCategoryInput implements IUpdateTransactionsCateg
     categoryId: number;
     standardDescriptor: string;
     descriptorAttributeTypeId: string;
-    suppressCashflowMismatch: boolean = true;
+    suppressCashflowMismatch: boolean = false;
 
     constructor(data?: IUpdateTransactionsCategoryInput) {
         if (data) {
@@ -19495,7 +19652,7 @@ export class UpdateTransactionsCategoryInput implements IUpdateTransactionsCateg
             this.categoryId = data["categoryId"];
             this.standardDescriptor = data["standardDescriptor"];
             this.descriptorAttributeTypeId = data["descriptorAttributeTypeId"];
-            this.suppressCashflowMismatch = data["suppressCashflowMismatch"] !== undefined ? data["suppressCashflowMismatch"] : true;
+            this.suppressCashflowMismatch = data["suppressCashflowMismatch"] !== undefined ? data["suppressCashflowMismatch"] : false;
         }
     }
 
@@ -19533,7 +19690,7 @@ export class UpdateTransactionsCategoryWithFilterInput implements IUpdateTransac
     destinationCategoryId: number;
     standardDescriptor: string;
     descriptorAttributeTypeId: string;
-    suppressCashflowMismatch: boolean = true;
+    suppressCashflowMismatch: boolean = false;
 
     constructor(data?: IUpdateTransactionsCategoryWithFilterInput) {
         if (data) {
@@ -19550,7 +19707,7 @@ export class UpdateTransactionsCategoryWithFilterInput implements IUpdateTransac
             this.destinationCategoryId = data["destinationCategoryId"];
             this.standardDescriptor = data["standardDescriptor"];
             this.descriptorAttributeTypeId = data["descriptorAttributeTypeId"];
-            this.suppressCashflowMismatch = data["suppressCashflowMismatch"] !== undefined ? data["suppressCashflowMismatch"] : true;
+            this.suppressCashflowMismatch = data["suppressCashflowMismatch"] !== undefined ? data["suppressCashflowMismatch"] : false;
         }
     }
 
@@ -37875,17 +38032,17 @@ export enum InstanceType2 {
     Business = <any>"Business", 
 }
 
+export enum InstanceType3 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
 export enum GroupBy {
     Daily = <any>"Daily", 
     Weekly = <any>"Weekly", 
     Monthly = <any>"Monthly", 
     Quarterly = <any>"Quarterly", 
     Yearly = <any>"Yearly", 
-}
-
-export enum InstanceType3 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
 }
 
 export enum InstanceType4 {
@@ -38008,13 +38165,6 @@ export enum InstanceType27 {
     Business = <any>"Business", 
 }
 
-export enum ApplyOption {
-    None = <any>"None", 
-    MatchedAndUnclassified = <any>"MatchedAndUnclassified", 
-    SelectedOnly = <any>"SelectedOnly", 
-    AllExisting = <any>"AllExisting", 
-}
-
 export enum InstanceType28 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
@@ -38023,6 +38173,13 @@ export enum InstanceType28 {
 export enum InstanceType29 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
+}
+
+export enum ApplyOption {
+    None = <any>"None", 
+    MatchedAndUnclassified = <any>"MatchedAndUnclassified", 
+    SelectedOnly = <any>"SelectedOnly", 
+    AllExisting = <any>"AllExisting", 
 }
 
 export enum InstanceType30 {
@@ -38170,6 +38327,16 @@ export enum InstanceType58 {
     Business = <any>"Business", 
 }
 
+export enum InstanceType59 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType60 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
 export enum IncomeStatisticsDateInterval {
     _1 = 1, 
     _2 = 2, 
@@ -38182,12 +38349,12 @@ export enum IncomeStatisticsDateInterval2 {
     _3 = 3, 
 }
 
-export enum InstanceType59 {
+export enum InstanceType61 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
 
-export enum InstanceType60 {
+export enum InstanceType62 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
@@ -38228,17 +38395,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType61 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
-}
-
-export enum InstanceType62 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
-}
-
 export enum InstanceType63 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType64 {
+    Personal = <any>"Personal", 
+    Business = <any>"Business", 
+}
+
+export enum InstanceType65 {
     Personal = <any>"Personal", 
     Business = <any>"Business", 
 }
