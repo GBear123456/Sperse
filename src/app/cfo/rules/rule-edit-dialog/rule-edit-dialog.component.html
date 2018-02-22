@@ -192,14 +192,28 @@
                 <h3>{{l('Use the following Standard Descriptor')}}</h3>
                 <div class="field">
                     <dx-select-box placeholder=""
+                                   [hoverStateEnabled]="false"
+                                   [activeStateEnabled]="false"
+                                   [focusStateEnabled]="false"
                                    [acceptCustomValue]="true"
-                                   [dataSource]="attributeTypes"
-                                   valueExpr="id"
+                                   [dataSource]="keyAttributeValues"
+                                   [itemTemplate]="'itemTMPL'"
+                                   valueExpr="key"
                                    displayExpr="name"
                                    [showClearButton]="true"
                                    (onCustomItemCreating)="onCustomItemCreating($event)"
                                    (onValueChanged)="onDescriptorChanged($event)"
                                    [(value)]="descriptor">
+
+                        <div *dxTemplate="let item of 'itemTMPL'">
+                            <ng-container>
+                                <b>{{ item.name }}</b>
+                                <div *ngFor="let value of item.values">
+                                    <a class="attribute-value" (click)="selectedAttributeValue($event, value)">{{ value.name }}</a>
+                                </div>
+                            </ng-container>
+                        </div>
+
                     </dx-select-box>
                 </div>
 
