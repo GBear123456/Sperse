@@ -2563,6 +2563,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         parent.css('padding', this.oldCellPadding);
         parent.children().show();
         if (+newValue !== this.clickedCellObj.cell.value) {
+            if (+newValue === 0) {
+                this.currentCellOperationType = 'delete';
+            }
             let forecastModel;
             let cashflowTypeId = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.CashflowType);
             let categoryId = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.Category);
@@ -2582,13 +2585,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     currencyId: this.currencyId,
                     amount: newValue
                 });
-            } else {
-                if (this.clickedRowResult && this.clickedRowResult.forecastId) {
-                    forecastModel = UpdateForecastInput.fromJS({
-                        id: this.clickedRowResult.forecastId,
-                        amount: newValue
-                    });
-                }
+            } else if (this.currentCellOperationType === 'update') {
+                forecastModel = UpdateForecastInput.fromJS({
+                    id: this.clickedRowResult.forecastId,
+                    amount: newValue
+                });
+            } else if (this.currentCellOperationType === 'delete') {
+                forecastModel = this.clickedRowResult.forecastId;
             }
 
             this._cashFlowForecastServiceProxy[`${this.currentCellOperationType}Forecast`](
