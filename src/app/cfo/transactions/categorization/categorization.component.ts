@@ -157,31 +157,6 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                                   }
                                 },
                                 {          
-                                  type: 'option',    
-                                  name: 'categoryId',
-                                  checked: this.settings.showCID,
-                                  text: this.l('Category ID'),
-                                  action: (event) => {
-                                      if (event.jQueryEvent.target.tagName == 'INPUT') {
-                                          this.settings.showCID = !this.settings.showCID;
-                                          this.storeSettings();
-                                      }
-                                  }
-                                },
-                                {          
-                                  type: 'option',    
-                                  name: 'trCount',
-                                  visible: false,
-                                  checked: this.settings.showTC,
-                                  text: this.l('Transaction Counts'),
-                                  action: (event) => {
-                                      if (event.jQueryEvent.target.tagName == 'INPUT') {
-                                          this.settings.showTC = !this.settings.showTC;
-                                          this.storeSettings();
-                                      }
-                                  }
-                                },
-                                {          
                                   type: 'option',  
                                   name: 'accTypes',                
                                   checked: this.settings.showAT,
@@ -190,6 +165,40 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                                       if (event.jQueryEvent.target.tagName == 'INPUT') {
                                           this.settings.showAT = !this.settings.showAT;
                                           this.refreshCategories(false);
+                                          this.storeSettings();
+                                      }
+                                  }
+                                },
+                                {
+                                  type: 'delimiter'
+                                },
+                                {          
+                                  type: 'option',
+                                  name: 'categoryId',
+                                  checked: this.settings.showCID,
+                                  text: this.l('Category ID'),
+                                  action: (event) => {
+                                      if (event.jQueryEvent.target.tagName == 'INPUT') {
+                                          this.settings.showTC = false;
+                                          event.itemElement.next().find('input')
+                                              .prop('checked', false);
+                                          this.settings.showCID = !this.settings.showCID;
+                                          this.storeSettings();
+                                      }
+                                  }
+                                },
+                                {          
+                                  type: 'option',    
+                                  name: 'trCount',
+                                  checked: this.settings.showTC,
+                                  text: this.l('Transaction Counts'),
+                                  action: (event) => {
+                                      let target = event.jQueryEvent.target;
+                                      if (target.tagName == 'INPUT') {                                          
+                                          this.settings.showCID = false;
+                                          event.itemElement.prev().find('input')
+                                              .prop('checked', false);
+                                          this.settings.showTC = !this.settings.showTC;
                                           this.storeSettings();
                                       }
                                   }
