@@ -2597,7 +2597,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 forecastModel
             ).subscribe(
                 res => {
-                    let date = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment().add(new Date().getTimezoneOffset());
+                    let date = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate.add(new Date(<any>this.statsDetailFilter.startDate).getTimezoneOffset(), 'minutes') : moment().add(new Date().getTimezoneOffset());
                     let initialDate = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment();
                     /** Update data locally */
                     if (this.currentCellOperationType === 'add') {
