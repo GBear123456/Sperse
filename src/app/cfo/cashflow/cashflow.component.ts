@@ -3231,8 +3231,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.rowElement.addClass('forecastRow');
         }
 
-        if (e.rowType === 'data' && e.data.status === CashFlowStatsDetailDtoStatus.Incomplete) {
-            e.rowElement.addClass('incomplete');
+        if (e.rowType === 'data' && e.data.status === CashFlowStatsDetailDtoStatus.Projected) {
+            e.rowElement.addClass('projected');
         }
 
         if (e.rowType === 'data' && e.data.cashflowTypeId === StartedBalance) {
