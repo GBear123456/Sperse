@@ -33,25 +33,31 @@
                      [allowDeleting]="true"
                      [allowAdding]="true">
         </dxo-editing>
-        <dxi-column 
-            [cssClass]="columnClassName"
-            [cellTemplate]="'categoryTemplate'"
-            [allowSorting]="true" 
-            [sortIndex]="0" 
-            [sortingMethod]="sortItem" 
-            [calculateSortValue]="calculateSortValue" 
-            [sortOrder]="'asc'" dataField="name">
+        <dxi-column [cssClass]="columnClassName"
+                    [cellTemplate]="'categoryTemplate'"
+                    [allowSorting]="true"
+                    [sortIndex]="0"
+                    [sortingMethod]="sortItem"
+                    [calculateSortValue]="calculateSortValue"
+                    [sortOrder]="'asc'" dataField="name">
         </dxi-column>
-        <dxi-column 
-            [allowSorting]="true" 
-            [sortIndex]="1" 
-            [sortOrder]="'asc'" 
-            [width]="65" 
-            dataField="coAID" 
-            [dataType]="number" 
-            [caption]="'ID'" 
-            [calculateSortValue]="calculateSortValue" 
-            [visible]="settings.showCID">
+        <dxi-column [allowSorting]="true"
+                    [sortIndex]="1"
+                    [sortOrder]="'asc'"
+                    [width]="65"
+                    dataField="coAID"
+                    [dataType]="number"
+                    [caption]="'ID'"
+                    [calculateSortValue]="calculateSortValue"
+                    [visible]="settings.showCID">
+        </dxi-column>
+        <dxi-column dataField="transactionsCount"
+                    [cellTemplate]="'transactionsCountTemplate'"
+                    [dataType]="number"
+                    [width]="65"
+                    [caption]="'Count'"
+                    [allowEditing]="false"
+                    [visible]="settings.showTC">
         </dxi-column>
 
         <div *dxTemplate="let cell of 'categoryTemplate'">
@@ -60,6 +66,9 @@
                 <span> {{ cell.text }} </span>
                 <div class="category-drop-area"></div>
             </ng-container>
+        </div>
+        <div *dxTemplate="let cell of 'transactionsCountTemplate'" [ngClass]="{'transactionCount': cell.text}">
+            <span> {{ cell.text }} </span>
         </div>
 
     </dx-tree-list>

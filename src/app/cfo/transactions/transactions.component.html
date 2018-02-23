@@ -17,6 +17,7 @@
                         (close)="categoriesShowed = false"
                         [instanceType]="instanceType"
                         [instanceId]="instanceId"
+                        [transactionsFilter]="transactionsFilterQuery"
                         (onTransactionDrop)="categorizeTransactions($event)"
                         (onFilterSelected)="filterByCashflowCategory($event)"
                         (onCategoriesChanged)="refreshDataGrid()">

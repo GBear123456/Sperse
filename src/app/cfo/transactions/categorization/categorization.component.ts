@@ -1,6 +1,7 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Input, Output, EventEmitter, Injector, OnInit, ViewChild, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -10,6 +11,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 import { MatDialog } from '@angular/material';
+import DataSource from 'devextreme/data/data_source';
 
 import * as _ from 'underscore';
 
@@ -22,7 +24,7 @@ import * as _ from 'underscore';
         '(window:click)': 'toogleSearchInput($event)'
     }
 })
-export class CategorizationComponent extends AppComponentBase implements OnInit {
+export class CategorizationComponent extends CFOComponentBase implements OnInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @Output() close: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
@@ -54,12 +56,20 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 'elementAttr', {invalid: !value});
         }, 0);
     }
+    @Input('transactionsFilter')
+    set transactionsFilter(value: any[]) {
+        this._transactionsFilterQuery = value;
+        this.refreshTransactionsCountDataSource();
+    }
+    private _transactionsFilterQuery: any[];
 
     autoExpand = true;
-    categories: any;
+    categories: any[] = [];
     categorization: GetCategoryTreeOutput;
     columnClassName = '';
     showSearch = false;
+
+    transactionsCountDataSource: DataSource;
 
     private readonly MIN_PADDING = 7;
     private readonly MAX_PADDING = 17;
@@ -89,6 +99,19 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
         this.initSettings();
         this.refreshCategories();
         this.initToolbarConfig();
+        
+        this.transactionsCountDataSource = new DataSource({
+            store: {
+                type: 'odata',
+                url: this.getODataURL('TransactionCount'),
+                version: this.getODataVersion(),
+                beforeSend: function (request) {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
+                }
+            },
+            onChanged: this.setTransactionsCount.bind(this)
+        });
     }
 
     initToolbarConfig() {
@@ -477,6 +500,7 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
 
     refreshCategories(autoExpand: boolean = true) {
         this.autoExpand = autoExpand;
+        
         this._classificationServiceProxy.getCategoryTree(
             InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
                 let categories = [];
@@ -495,18 +519,20 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                 if (data.categories)
                     _.mapObject(data.categories, (item, key) => {
                         let accounting = data.accountingTypes[item.accountingTypeId];
-                        if (accounting && (!item.parentId || data.categories[item.parentId]))
+                        if (accounting && (!item.parentId || data.categories[item.parentId])) {                            
                             categories.push({
                                 key: parseInt(key),
-                                parent: item.parentId || (this.settings.showAT ?  
-                                    item.accountingTypeId + accounting.typeId: 'root'),
+                                parent: item.parentId || (this.settings.showAT ?
+                                    item.accountingTypeId + accounting.typeId : 'root'),
                                 coAID: item.coAID,
                                 name: item.name,
                                 typeId: accounting.typeId
                             });
+                        }
                     });
 
                 this.categories = categories;
+
                 if (this.categoryId) {
                     this.categoryList.instance.focus();
                     let category = data.categories[this.categoryId];
@@ -515,8 +541,27 @@ export class CategorizationComponent extends AppComponentBase implements OnInit 
                         this.categoryList.instance.selectRows([this.categoryId], true);
                     }, 0);
                 }
+
+                this.refreshTransactionsCountDataSource();
             }
         );
+    }
+
+    setTransactionsCount() {
+        let items = this.transactionsCountDataSource.items();
+
+        this.categories.forEach(x => {
+            x.transactionsCount = items[0][x.key];
+        });
+        
+        this.categoryList.instance.refresh();
+    }
+
+    refreshTransactionsCountDataSource() {
+        if (this.transactionsCountDataSource) {
+            this.transactionsCountDataSource.store()['_url'] = this.getODataURL('TransactionCount', this._transactionsFilterQuery);
+            this.transactionsCountDataSource.load();
+        }
     }
 
     addActionButton(name, container, callback) {
