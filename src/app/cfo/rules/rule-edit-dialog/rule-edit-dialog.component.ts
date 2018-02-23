@@ -20,7 +20,6 @@ import * as _ from 'underscore';
   providers: [CashflowServiceProxy, ClassificationServiceProxy, TransactionsServiceProxy]
 })
 export class RuleDialogComponent extends CFOModalDialogComponent implements OnInit, AfterViewInit {
-    @ViewChild(DxSelectBoxComponent) descriptorList: DxSelectBoxComponent;
     @ViewChild(DxTreeViewComponent) transactionTypesList: DxTreeViewComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
     showSelectedTransactions = false;
@@ -43,7 +42,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     categorization: any;
     attributesAndKeywords: any = [];
     keyAttributeValues: any = [];
-    descriptorList: Array<string> = [];
     private transactionAttributeTypes: any;
 
     transactionTypesAndCategoriesData: TransactionTypesAndCategoriesDto;
@@ -99,17 +97,15 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     attrValues.forEach((attrValue) => {
                         this.keyAttributeValues.push({
                             key: attrValue.attributeTypeId,
-                            name: _.findWhere(this.attributeTypes, {id: attrValue.attributeTypeId}).name
+                            name: _.findWhere(this.attributeTypes, {id: attrValue.attributeTypeId}).name,
                             values: attrValue.attributeValues.map((val, i) => {
                                 return {
                                     key: i,
                                     name: val
                                 };
-                            });
-
+                            })
                         });
                     });
-console.log(this.keyAttributeValues);
                 }
             );
         });
@@ -490,7 +486,6 @@ console.log(this.keyAttributeValues);
     }
 
     onCustomItemCreating($event) {
-
         setTimeout(() => this.descriptor = $event.text, 0);
     }
 
