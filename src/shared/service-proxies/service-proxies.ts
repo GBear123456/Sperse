@@ -19580,9 +19580,10 @@ export interface IAccountingCategoryDto {
 }
 
 export class ResetClassificationDto implements IResetClassificationDto {
-    removeForecasts: boolean = false;
+    unclassify: boolean = false;
     removeRules: boolean = false;
     removeCategoryTree: boolean = false;
+    removeForecasts: boolean = false;
     recalculateTransactionAttributes: boolean = false;
 
     constructor(data?: IResetClassificationDto) {
@@ -19596,9 +19597,10 @@ export class ResetClassificationDto implements IResetClassificationDto {
 
     init(data?: any) {
         if (data) {
-            this.removeForecasts = data["removeForecasts"] !== undefined ? data["removeForecasts"] : false;
+            this.unclassify = data["unclassify"] !== undefined ? data["unclassify"] : false;
             this.removeRules = data["removeRules"] !== undefined ? data["removeRules"] : false;
             this.removeCategoryTree = data["removeCategoryTree"] !== undefined ? data["removeCategoryTree"] : false;
+            this.removeForecasts = data["removeForecasts"] !== undefined ? data["removeForecasts"] : false;
             this.recalculateTransactionAttributes = data["recalculateTransactionAttributes"] !== undefined ? data["recalculateTransactionAttributes"] : false;
         }
     }
@@ -19611,18 +19613,20 @@ export class ResetClassificationDto implements IResetClassificationDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["removeForecasts"] = this.removeForecasts;
+        data["unclassify"] = this.unclassify;
         data["removeRules"] = this.removeRules;
         data["removeCategoryTree"] = this.removeCategoryTree;
+        data["removeForecasts"] = this.removeForecasts;
         data["recalculateTransactionAttributes"] = this.recalculateTransactionAttributes;
         return data; 
     }
 }
 
 export interface IResetClassificationDto {
-    removeForecasts: boolean;
+    unclassify: boolean;
     removeRules: boolean;
     removeCategoryTree: boolean;
+    removeForecasts: boolean;
     recalculateTransactionAttributes: boolean;
 }
 
@@ -38023,18 +38027,18 @@ export interface IGetLatestWebLogsOutput {
 }
 
 export enum InstanceType {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType2 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType3 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum GroupBy {
@@ -38046,133 +38050,133 @@ export enum GroupBy {
 }
 
 export enum InstanceType4 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType5 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType6 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType7 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType8 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType9 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType10 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType11 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType12 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType13 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType14 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType15 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType16 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType17 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType18 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType19 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType20 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType21 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType22 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType23 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType24 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType25 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType26 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType27 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType28 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType29 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum ApplyOption {
@@ -38183,158 +38187,158 @@ export enum ApplyOption {
 }
 
 export enum InstanceType30 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType31 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType32 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType33 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType34 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType35 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType36 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType37 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType38 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType39 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType40 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType41 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType42 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType43 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType44 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType45 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType46 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType47 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType48 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType49 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType50 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType51 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType52 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType53 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType54 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType55 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType56 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType57 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType58 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType59 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType60 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum IncomeStatisticsDateInterval {
@@ -38350,13 +38354,13 @@ export enum IncomeStatisticsDateInterval2 {
 }
 
 export enum InstanceType61 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType62 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum State {
@@ -38396,18 +38400,18 @@ export enum DefaultTimezoneScope {
 }
 
 export enum InstanceType63 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType64 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType65 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum IsTenantAvailableOutputState {
