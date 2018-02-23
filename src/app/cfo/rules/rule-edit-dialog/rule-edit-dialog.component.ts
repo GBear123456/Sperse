@@ -486,7 +486,9 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onCustomItemCreating($event) {
-        setTimeout(() => this.descriptor = $event.text, 0);
+        setTimeout(() => {
+            $event.component.option('value', $event.text);
+        }, 0);
     }
 
     selectedAttributeValue($event, value) {
@@ -495,5 +497,14 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         if (this.transactionAttributeTypes[this.descriptor])    
             this.descriptor = '';  
         this.descriptor += (this.descriptor ? ' - ': '') + value.name;
+    }
+
+    getKeyAttribute(typeId) {
+        return _.findWhere(this.keyAttributeValues, {key: typeId});
+    }
+
+    getKeyAttributeValues(typeId) {
+        let keyAttribute = this.getKeyAttribute(typeId);
+        return keyAttribute ? keyAttribute.values: [];
     }
 }

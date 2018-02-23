@@ -81,7 +81,28 @@
                         </dxo-lookup>
                     </dxi-column>
                     <dxi-column dataField="conditionValue"
-                        [validationRules]="[{ type: 'required' }]"></dxi-column>
+                        [editCellTemplate]="'valueTemplate'"
+                        [validationRules]="[{ type: 'required' }]">
+                    </dxi-column>
+
+                        <div *dxTemplate="let cell of 'valueTemplate'">
+                            <dx-select-box  *ngIf="getKeyAttribute(cell.data.attributeTypeId)"
+                                           placeholder=""
+                                           [hoverStateEnabled]="false"
+                                           [activeStateEnabled]="false"
+                                           [focusStateEnabled]="false"
+                                           [acceptCustomValue]="true"
+                                           [dataSource]="getKeyAttributeValues(cell.data.attributeTypeId)"
+                                           (onCustomItemCreating)="onCustomItemCreating($event)"
+                                           (onValueChanged)="cell.setValue($event.value)"
+                                           valueExpr="name"
+                                           displayExpr="name"
+                                           [value]="cell.value">
+                            </dx-select-box>
+                            <dx-text-box *ngIf="!getKeyAttribute(cell.data.attributeTypeId)"
+                                          (onValueChanged)="cell.setValue($event.value)">
+                            </dx-text-box>
+                        </div>
                 </dx-data-grid>
                 <span (click)="addAttributeRow()">{{l('+ Add attribute')}}</span>
 
