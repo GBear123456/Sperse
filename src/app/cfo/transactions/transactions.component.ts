@@ -608,7 +608,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.totalDataSource['_store']['_url'] = this.getODataURL(this.totalDataSourceURI, filterQuery);
         this.totalDataSource.load();
         
-        this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId') || _.has(x, 'CashflowCategoryId') || _.has(x, 'CashflowSubCategoryId'));
+        this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId')
+            || (_.has(x, 'CashflowCategoryId') && typeof x['CashflowCategoryId'] == 'number')
+            || _.has(x, 'CashflowSubCategoryId'));
     }
 
     filterByClassified(filter: FilterModel) {

@@ -581,14 +581,16 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         this.categories.forEach(x => {
             if (parseInt(x.parent) == x.parent && x.transactionsCount) {
                 let parentCategory = parentCategories[x.parent];
-                parentCategory.transactionsCount = parentCategory.transactionsCount ? parentCategory.transactionsCount + x.transactionsCount : x.transactionsCount;
+                if (x.transactionsCount)
+                    parentCategory.transactionsCount = parentCategory.transactionsCount ? parentCategory.transactionsCount + x.transactionsCount : x.transactionsCount;
             }
         });
         parentCategories.forEach(x => {
             let accountingType = accountingTypes[x.parent];
-            accountingType.transactionsCount = accountingType.transactionsCount ? accountingType.transactionsCount + x.transactionsCount : x.transactionsCount;
+            if (x.transactionsCount)
+                accountingType.transactionsCount = accountingType.transactionsCount ? accountingType.transactionsCount + x.transactionsCount : x.transactionsCount;
         });
-        
+
         this.categoryList.instance.refresh();
     }
 
