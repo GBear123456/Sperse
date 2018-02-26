@@ -72,7 +72,7 @@
                         dataType="date"
                         cellTemplate="dateCell"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
-                        alignment="left"
+                        alignment="right"
                         [caption]="this.l('DetailsHeaders_ForecastDate')">
                 <dxi-validation-rule type="required"></dxi-validation-rule>
                 <dxi-validation-rule type="custom" [validationCallback]="validateForecastDate"></dxi-validation-rule>
@@ -82,7 +82,7 @@
                         dataType="date"
                         cellTemplate="dateCell"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
-                        alignment="left"
+                        alignment="right"
                         [caption]="this.l('DetailsHeaders_ActualDate')"
                         [allowEditing]="false">
             </dxi-column>
@@ -101,7 +101,7 @@
                         [format]="customCurrency"
                         [allowSorting]="false"
                         [allowFiltering]="false"
-                        alignment="'right'">
+                        alignment="right">
                 <dxi-validation-rule type="numeric"></dxi-validation-rule>
             </dxi-column>
             <dxi-column dataField="credit"
@@ -109,7 +109,7 @@
                         [format]="customCurrency"
                         [allowSorting]="false"
                         [allowFiltering]="false"
-                        alignment="'right'">
+                        alignment="right">
                 <dxi-validation-rule type="numeric"></dxi-validation-rule>
             </dxi-column>
             <dxi-column [caption]="this.l('DetailsHeaders_Account')"
