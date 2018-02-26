@@ -1,0 +1,31 @@
+<div>
+    <dx-tooltip [target]="targetBankAccountsTooltip"
+                [(visible)]="tooltipVisible">
+        <div *dxTemplate="let data = data of 'content'">
+            <div class="bank-accounts-tooltip-container">
+                <div class="actions">
+                    <span class="filter-clear" (click)="bankAccountsClear()">{{l('Clear')}}</span>
+                    <span class="filter-apply" (click)="bankAccountsSelected()">{{l('Apply')}}</span>
+                </div>
+                <dx-scroll-view [showScrollbar]="onHover" [height]="calculateChartsScrolableHeight()">
+                    <dx-tree-list [dataSource]="getItems()"
+                                  dataStructure="tree"
+                                  keyExpr="id"
+                                  parentIdExpr="parentId"
+                                  [showRowLines]="false"
+                                  [showColumnLines]="false"
+                                  [showColumnHeaders]="false"
+                                  [autoExpandAll]="true"
+                                  [columnAutoWidth]="true"
+                                  [selection]="{allowSelectAll: true, mode: 'multiple', recursive:true }"                                 
+                                  scrolling="{mode: 'virtual', showScrollbar: 'always'}"
+                                  [(selectedRowKeys)]="selectedRowKeys">
+
+                        <dxi-column dataField="name" caption=""></dxi-column>
+                        <dxi-column dataField="number" caption=""></dxi-column>
+                    </dx-tree-list>
+               </dx-scroll-view>
+            </div>
+        </div>
+    </dx-tooltip>
+</div>

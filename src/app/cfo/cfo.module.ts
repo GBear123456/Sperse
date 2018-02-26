@@ -21,6 +21,7 @@ import { CategoryDeleteDialogComponent } from './transactions/categorization/cat
 import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
 
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
+import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
@@ -134,7 +135,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         SortingComponent,
         CFOModalDialogComponent,
         BusinessEntitiesComponent,
-        ChartOfAccountsComponent 
+        ChartOfAccountsComponent,
+        BankAccountsSelectComponent
     ],
     entryComponents: [
         RuleDialogComponent,
