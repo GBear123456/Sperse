@@ -547,7 +547,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     initHeadlineConfig() {
         this.headlineConfig = {
-            names: [this.l('Cash Flow Statement and Forecast')],
+            names: [this.l('Cashflow_mainTitle')],
             iconSrc: 'assets/common/icons/chart-icon.svg',
             buttons: [
                 {
