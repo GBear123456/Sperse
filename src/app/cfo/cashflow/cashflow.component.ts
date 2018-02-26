@@ -564,6 +564,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     initFiltering() {
         this._filtersService.apply(() => {
             for (let filter of this.filters) {
+                /** Reset cashed days months to apply the date filter again */
+                /** @todo reset only for the month for which the filter changed */
+                if (filter.caption.toLowerCase() === 'date') {
+                    this.monthsDaysLoadedPathes = [];
+                }
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
                 if (filterMethod)
                     filterMethod(filter, this.requestFilter);
@@ -864,7 +869,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** Make a copy of cashflow data to display it in custom total group on the top level */
                     let stubCashflowDataForEndingCashPosition = this.getStubCashflowDataForEndingCashPosition(this.cashflowData);
                     this.addCashflowType(Total, this.l('Ending Cash Balance'));
-                    let stubCashflowDataForAllDays = this.getStubCashflowDataForAllDays(this.cashflowData);
+                    let stubCashflowDataForAllDays = this.getStubCashflowDataForAllPeriods(this.cashflowData, 'month');
                     let cashflowWithStubForEndingPosition = this.cashflowData.concat(stubCashflowDataForEndingCashPosition);
                     let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(cashflowWithStubForEndingPosition);
                     /** concat initial data and stubs from the different hacks */
@@ -1153,21 +1158,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param {Array<TransactionStatsDtoExtended>} cashflowData
      * @return {TransactionStatsDtoExtended[]}
      */
-    getStubCashflowDataForAllDays(cashflowData: Array<TransactionStatsDtoExtended>) {
+    getStubCashflowDataForAllPeriods(cashflowData: Array<TransactionStatsDtoExtended>, period: 'month' | 'day') {
         let stubCashflowData = Array<TransactionStatsDtoExtended>(),
             allYears: Array<number> = [],
-            existingDates: Array<string> = [],
+            existingPeriods: Array<string> = [],
             firstAccountId,
             minDate: moment.Moment,
-            maxDate: moment.Moment;
+            maxDate: moment.Moment,
+            periodFormat = period === 'month' ? 'YYYY-MM' : 'YYYY-MM-DD';
 
         cashflowData.forEach(cashflowItem => {
             /** Move the year to the years array if it is unique */
             let date = cashflowItem.initialDate;
             let transactionYear = date.year();
-            let formatedDate = date.format('YYYY-MM-DD');
+            let formattedDate = date.utc().format(periodFormat);
             if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
-            if (existingDates.indexOf(formatedDate) === -1) existingDates.push(formatedDate);
+            if (existingPeriods.indexOf(formattedDate) === -1) existingPeriods.push(formattedDate);
             if (!minDate || cashflowItem.date < minDate)
                 minDate = date;
             if (!maxDate || cashflowItem.date > maxDate)
@@ -1176,18 +1182,24 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
         allYears = allYears.sort();
 
-        if (this.requestFilter.startDate && this.requestFilter.startDate < minDate) minDate = this.requestFilter.startDate;
-        if (this.requestFilter.endDate && this.requestFilter.endDate > maxDate) maxDate = this.requestFilter.endDate;
+        if (period === 'day' ) {
+            maxDate = maxDate ? maxDate.utc().endOf('month') : undefined;
+            minDate = minDate ? minDate.utc().startOf('month') : undefined;
+        }
+
+        /** consider the fitler */
+        if (this.requestFilter.startDate && (moment(this.requestFilter.startDate).utc().format(periodFormat) > minDate.format(periodFormat) || !minDate)) minDate = this.requestFilter.startDate;
+        if (this.requestFilter.endDate && (moment(this.requestFilter.startDate).utc().format(periodFormat) < maxDate.format(periodFormat) || !maxDate)) maxDate = this.requestFilter.endDate;
 
         /** cycle from started date to ended date */
         /** added fake data for each date that is not already exists in cashflow data */
 
-        let startDate = new Date(moment.utc(minDate).format('YYYY-MM-DD'));
-        let endDate = new Date(moment.utc(maxDate).format('YYYY-MM-DD'));
-
-        while (startDate <= endDate) {
-            let date = moment.utc(startDate, 'YYYY-MM-DD');
-            if (existingDates.indexOf(date.format('YYYY-MM-DD')) === -1) {
+        moment.tz.setDefault(undefined);
+        let startDate = moment.utc(minDate);
+        let endDate = moment.utc(maxDate);
+        while (startDate.isSameOrBefore(endDate)) {
+            let date = moment(startDate, 'YYYY-MM-DD');
+            if (existingPeriods.indexOf(date.format('YYYY-MM-DD')) === -1) {
                 stubCashflowData.push(
                     this.createStubTransaction({
                         'cashflowTypeId': StartedBalance,
@@ -1197,15 +1209,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     })
                 );
             }
-            startDate = new Date(startDate.setDate(startDate.getDate() + 1));
+            startDate.add(1, period);
         }
+        moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
 
         /** Add stub for current period */
         /** if we have no current period */
         if (
             (!this.requestFilter.startDate || this.requestFilter.startDate < moment()) &&
             (!this.requestFilter.endDate || this.requestFilter.endDate > moment()) &&
-            !cashflowData.concat(stubCashflowData).some(item => item.initialDate.format('DD.MM.YYYY') === moment().format('DD.MM.YYYY'))
+            !cashflowData.concat(stubCashflowData).some(item => item.initialDate.format(periodFormat) === moment().format('DD.MM.YYYY'))
         ) {
             /** then we add current stub day */
             stubCashflowData.push(
@@ -2410,10 +2423,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (!this.monthsDaysLoadedPathes.some(arr => arr.toString() === cellObj.cell.path.toString())) {
                 abp.ui.setBusy();
                 /** Prevent default expanding */
-                    //this.pivotGrid.instance.beginUpdate();
                 cellObj.cancel = true;
 
-                let startDate = <any>new Date();
                 /** @todo refactor - move to separate method */
                 let columnFields = {};
                 cellObj.columnFields.forEach(function(item) {
@@ -2435,22 +2446,29 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     .getStats(InstanceType[this.instanceType], this.instanceId, requestFilter)
                     .pluck('transactionStats')
                     .subscribe( (transactions: any) => {
-                            /** Remove old month transaction */
-                            let startGettingItems = new Date();
+                            moment.tz.setDefault(undefined);
+                            /** Remove old month transactions */
                             let date = this.getDateByPath(cellObj.cell.path, this.getColumnFields(), 'month');
-                            //this.cashflowData = this.cashflowData.filter(item => item.initialDate.year() === date.year() && item.initialDate.month() === date.month());
-                            this.cashflowData.forEach((item, index) => {
-                                if (item.initialDate.year() === date.year() && item.initialDate.month() === date.month()) {
-                                    this.cashflowData.splice(index, 1);
+                            let dateFormatted = date.format('MM.YYYY');
+                            this.cashflowData.slice().forEach(item => {
+                                if (item.initialDate.utc().format('MM.YYYY') === dateFormatted) {
+                                    this.cashflowData.splice(this.cashflowData.indexOf(item), 1);
                                 }
                             });
+                            this.adjustmentsList.slice().forEach(item => {
+                                if (item.initialDate.utc().format('MM.YYYY') === dateFormatted) {
+                                    this.adjustmentsList.splice(this.cashflowData.indexOf(item), 1);
+                                }
+                            });
+                            moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
 
                             /** Update cashflow data with the daily transactions */
                             transactions = this.getCashflowDataFromTransactions(transactions, false);
                             let stubCashflowDataForEndingCashPosition = this.getStubCashflowDataForEndingCashPosition(transactions);
-                            let stubCashflowDataForAllDays = this.getStubCashflowDataForAllDays(transactions);
+                            let stubCashflowDataForAllDays = this.getStubCashflowDataForAllPeriods(transactions, 'day');
                             let cashflowWithStubForEndingPosition = transactions.concat(stubCashflowDataForEndingCashPosition);
                             let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(cashflowWithStubForEndingPosition);
+
                             /** concat initial data and stubs from the different hacks */
                             transactions = cashflowWithStubForEndingPosition.concat(
                                 stubCashflowDataForAccounts,
@@ -2462,16 +2480,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                 this.cashflowData.push(transaction);
                             });
 
+                            /** Reload the cashflow */
                             this.pivotGrid.instance.getDataSource().reload();
-                            this.pivotGrid.instance.getDataSource().expandHeaderItem('column', cellObj.cell.path);
-                            console.log(<any>new Date() - startDate);
+
+                            /** Mark the month as already expanded to avoid double data loading */
                             this.monthsDaysLoadedPathes.push(cellObj.cell.path);
 
-                        },
-                        error => { console.log(error); },
-                        () => {
-                            abp.ui.clearBusy();
-                            //this.pivotGrid.instance.getDataSource().reload();
+                            /** Expand the month into days */
+                            this.pivotGrid.instance.getDataSource().expandHeaderItem('column', cellObj.cell.path);
                         });
             }
         }
