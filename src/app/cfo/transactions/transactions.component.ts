@@ -763,11 +763,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onCellPrepared($event) {
-        if ($event.rowType === 'data') {
-            if ($event.column.dataField == 'CashflowCategoryName' && !$event.data.CashflowCategoryName) {
-                let rowIndex = $event.cellElement.parent().index();
-                $event.cellElement.closest('.dx-datagrid-rowsview').find(`tr:nth-of-type(${rowIndex + 1})`).addClass(`uncategorized`);
-            }
+        if ($event.rowType === 'data' &&
+            $event.column.dataField == 'CashflowCategoryName' &&
+            !$event.data.CashflowCategoryName
+        ) {
+            let rowIndex = $event.cellElement.parent().index();
+            $event.cellElement.closest('.dx-datagrid-rowsview').find(`tr:nth-of-type(${rowIndex + 1})`).addClass(`uncategorized`);
         }
     }
 
