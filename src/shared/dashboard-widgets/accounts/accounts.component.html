@@ -3,13 +3,15 @@
         <div class="value">{{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</div>
         <div class="name">{{l('Total_Balance')}}</div>
     </div>
-    <div class="account-item totalportfolios">
-        <div class="value">{{accountsData?.bankAccountCount}}</div>
-        <div class="name">{{l('Total_Subaccounts')}}</div>
-    </div>
-    <div class="account-item totalaccounts">
+
+    <div class="account-item totalaccounts" id="totalaccounts" (mouseenter)="totalAccountsMouseenter()">
         <a (click)="navigateTo()" class="view-details">{{l('View_details')}}</a>
-        <div class="value">{{accountsData?.syncAccountCount}}</div>
-        <div class="name">{{l('Total_Accounts')}}</div>
+        <div class="value">{{accountsData?.bankAccountCount}}</div>
+        <div class="name">
+            {{l('Total_Accounts')}}
+            <ng-container *ngIf="bankAccountIds.length">
+                <span class="filtered">*</span>
+            </ng-container>
+        </div>
     </div>
 </div>

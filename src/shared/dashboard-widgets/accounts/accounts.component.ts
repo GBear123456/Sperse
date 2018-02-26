@@ -1,4 +1,4 @@
-import {Component, Injector, OnInit} from '@angular/core';
+import { Component, Injector, OnInit, Output, EventEmitter} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {CFOComponentBase} from 'app/cfo/shared/common/cfo-component-base';
 import {DashboardServiceProxy, InstanceType} from 'shared/service-proxies/service-proxies';
@@ -11,8 +11,10 @@ import {Router} from '@angular/router';
     providers: [DashboardServiceProxy]
 })
 export class AccountsComponent extends CFOComponentBase implements OnInit {
-    accountsData: any;
+    @Output() onTotalAccountsMouseenter: EventEmitter<any> = new EventEmitter();
 
+    accountsData: any;
+    bankAccountIds: number[] = [];
     constructor(
         injector: Injector,
         private _dashboardService: DashboardServiceProxy,
@@ -26,7 +28,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     getAccountTotals(): void {
-        this._dashboardService.getAccountTotals(InstanceType[this.instanceType], this.instanceId, undefined)
+        this._dashboardService.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds)
             .subscribe((result) => {
                 this.accountsData = result;
             });
@@ -34,5 +36,14 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
     navigateTo() {
         this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
+    }
+
+    filterByBankAccounts(bankAccountIds: number[]) {
+        this.bankAccountIds = bankAccountIds;
+        this.getAccountTotals();
+    }
+
+    totalAccountsMouseenter() {
+        this.onTotalAccountsMouseenter.emit();
     }
 }

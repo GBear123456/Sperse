@@ -69,6 +69,7 @@ export class AppSessionService {
             return false;
         }
 
+        abp.auth.clearToken();
         abp.multiTenancy.setTenantIdCookie(tenantId);
         location.reload();
         return true;

@@ -714,7 +714,7 @@ export class BankAccountsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getBankAccounts(instanceType: InstanceType, instanceId: number): Observable<BankAccountDto[]> {
+    getBankAccounts(instanceType: InstanceType, instanceId: number): Observable<BankDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetBankAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -737,14 +737,14 @@ export class BankAccountsServiceProxy {
                 try {
                     return this.processGetBankAccounts(response_);
                 } catch (e) {
-                    return <Observable<BankAccountDto[]>><any>Observable.throw(e);
+                    return <Observable<BankDto[]>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<BankAccountDto[]>><any>Observable.throw(response_);
+                return <Observable<BankDto[]>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetBankAccounts(response: Response): Observable<BankAccountDto[]> {
+    protected processGetBankAccounts(response: Response): Observable<BankDto[]> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -755,14 +755,14 @@ export class BankAccountsServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(BankAccountDto.fromJS(item));
+                    result200.push(BankDto.fromJS(item));
             }
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<BankAccountDto[]>(<any>null);
+        return Observable.of<BankDto[]>(<any>null);
     }
 
     /**
@@ -16713,6 +16713,57 @@ export interface IFileDto {
     fileToken: string;
 }
 
+export class BankDto implements IBankDto {
+    id: number;
+    name: string;
+    bankAccounts: BankAccountDto[];
+
+    constructor(data?: IBankDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
+                this.bankAccounts = [];
+                for (let item of data["bankAccounts"])
+                    this.bankAccounts.push(BankAccountDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BankDto {
+        let result = new BankDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        if (this.bankAccounts && this.bankAccounts.constructor === Array) {
+            data["bankAccounts"] = [];
+            for (let item of this.bankAccounts)
+                data["bankAccounts"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IBankDto {
+    id: number;
+    name: string;
+    bankAccounts: BankAccountDto[];
+}
+
 export class BankAccountDto implements IBankAccountDto {
     id: number;
     accountName: string;
@@ -17335,57 +17386,6 @@ export interface ICashFlowInitialData {
     bankAccountBalances: BankAccountBalanceDto[];
 }
 
-export class BankDto implements IBankDto {
-    id: number;
-    name: string;
-    bankAccounts: BankAccountDto[];
-
-    constructor(data?: IBankDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
-                this.bankAccounts = [];
-                for (let item of data["bankAccounts"])
-                    this.bankAccounts.push(BankAccountDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): BankDto {
-        let result = new BankDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        if (this.bankAccounts && this.bankAccounts.constructor === Array) {
-            data["bankAccounts"] = [];
-            for (let item of this.bankAccounts)
-                data["bankAccounts"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IBankDto {
-    id: number;
-    name: string;
-    bankAccounts: BankAccountDto[];
-}
-
 export class BusinessEntityDto implements IBusinessEntityDto {
     id: number;
     name: string;
@@ -17727,6 +17727,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
     showNegativeValuesInRed: number;
     showColumnsWithZeroActivity: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
     showNetChangeRow: boolean;
+    showAccountingTypeRow: boolean;
 
     constructor(data?: ICashflowGridGeneralSettingsDto) {
         if (data) {
@@ -17744,6 +17745,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
             this.showNegativeValuesInRed = data["showNegativeValuesInRed"];
             this.showColumnsWithZeroActivity = data["showColumnsWithZeroActivity"];
             this.showNetChangeRow = data["showNetChangeRow"];
+            this.showAccountingTypeRow = data["showAccountingTypeRow"];
         }
     }
 
@@ -17760,6 +17762,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
         data["showNegativeValuesInRed"] = this.showNegativeValuesInRed;
         data["showColumnsWithZeroActivity"] = this.showColumnsWithZeroActivity;
         data["showNetChangeRow"] = this.showNetChangeRow;
+        data["showAccountingTypeRow"] = this.showAccountingTypeRow;
         return data; 
     }
 }
@@ -17770,6 +17773,7 @@ export interface ICashflowGridGeneralSettingsDto {
     showNegativeValuesInRed: number;
     showColumnsWithZeroActivity: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
     showNetChangeRow: boolean;
+    showAccountingTypeRow: boolean;
 }
 
 export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSettingsDto {
@@ -29482,7 +29486,7 @@ export interface ISubmitContactUsRequestInput {
 
 export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRequestInput {
     companyName: string;
-    editionId: number;
+    editionName: string;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
     leadInterests: LeadInterestDto[] = [];
     leadRequestXref: string;
@@ -29506,7 +29510,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
     init(data?: any) {
         if (data) {
             this.companyName = data["companyName"];
-            this.editionId = data["editionId"];
+            this.editionName = data["editionName"];
             this.paymentPeriodType = data["paymentPeriodType"];
             if (data["leadInterests"] && data["leadInterests"].constructor === Array) {
                 this.leadInterests = [];
@@ -29533,7 +29537,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["companyName"] = this.companyName;
-        data["editionId"] = this.editionId;
+        data["editionName"] = this.editionName;
         data["paymentPeriodType"] = this.paymentPeriodType;
         if (this.leadInterests && this.leadInterests.constructor === Array) {
             data["leadInterests"] = [];
@@ -29554,7 +29558,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 
 export interface ISubmitTenantCreationRequestInput {
     companyName: string;
-    editionId: number;
+    editionName: string;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
     leadInterests: LeadInterestDto[];
     leadRequestXref: string;

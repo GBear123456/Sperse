@@ -608,7 +608,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.totalDataSource['_store']['_url'] = this.getODataURL(this.totalDataSourceURI, filterQuery);
         this.totalDataSource.load();
         
-        this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'accountingTypeId') || _.has(x, 'CashflowSubCategoryId') || _.has(x, 'CashflowSubCategoryId'));
+        this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId')
+            || (_.has(x, 'CashflowCategoryId') && typeof x['CashflowCategoryId'] == 'number')
+            || _.has(x, 'CashflowSubCategoryId'));
     }
 
     filterByClassified(filter: FilterModel) {
@@ -714,7 +716,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             if (!parseInt(data.key))
                 field['CashFlowTypeId'] = new FilterItemModel(data.key);
             else if (isNaN(data.key))
-                field['accountingTypeId'] = new FilterItemModel(parseInt(data.key));
+                field['AccountingTypeId'] = new FilterItemModel(parseInt(data.key));
             else if (isNaN(data.parent))
                 field['CashflowCategoryId'] = new FilterItemModel(parseInt(data.key));
             else
@@ -763,11 +765,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onCellPrepared($event) {
-        if ($event.rowType === 'data') {
-            if ($event.column.dataField == 'CashflowCategoryName' && !$event.data.CashflowCategoryName) {
-                let rowIndex = $event.cellElement.parent().index();
-                $event.cellElement.closest('.dx-datagrid-rowsview').find(`tr:nth-of-type(${rowIndex + 1})`).addClass(`uncategorized`);
-            }
+        if ($event.rowType === 'data' &&
+            $event.column.dataField == 'CashflowCategoryName' &&
+            !$event.data.CashflowCategoryName
+        ) {
+            let rowIndex = $event.cellElement.parent().index();
+            $event.cellElement.closest('.dx-datagrid-rowsview').find(`tr:nth-of-type(${rowIndex + 1})`).addClass(`uncategorized`);
         }
     }
 

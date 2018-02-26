@@ -14,7 +14,10 @@
                         </h2>
                         <a (click)="navigateTo()" class="dashboard-link">+ {{l('Add_account')}}</a>
                     </header>
-                    <app-accounts></app-accounts>
+                    <app-accounts (onTotalAccountsMouseenter)="bankAccountSelector.toggleBankAccountTooltip()"></app-accounts>
+                    <bank-accounts-select targetBankAccountsTooltip="#totalaccounts"
+                                          (onBankAccountsSelected)="filterByBankAccounts($event)">
+                    </bank-accounts-select>
                 </section>
                 <section class="analytics">
                     <div class="analytics-wrap">

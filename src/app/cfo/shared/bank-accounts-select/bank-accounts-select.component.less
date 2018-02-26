@@ -1,0 +1,30 @@
+
+.bank-accounts-tooltip-container {
+    font-size: 15px;
+    text-align: start;
+    width: 444px;
+
+
+    .actions {
+        width: 100%;
+        display: inline-block;
+    }
+
+    .filter-apply, .filter-clear {
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1.21;
+        letter-spacing: 0.3px;
+        color: #00AEEF;
+        padding: 10px 5px;
+        float: right;
+
+        &:hover {
+            color: lighten(#00AEEF, 20%);
+        }
+    }
+
+    /deep/ tr[aria-level="0"] .dx-select-checkbox {
+        display: none;
+    }
+}
