@@ -69,6 +69,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     columnClassName = '';
     showSearch = false;
 
+    filteredRowData: any;
+
     transactionsCountDataSource: DataSource;
 
     private readonly MIN_PADDING = 7;
@@ -332,6 +334,16 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         });
     }
 
+    onContentReady($event) {
+        this.initDragAndDropEvents($event);
+
+        if (this.filteredRowData) {
+            let rowIndex = this.categoryList.instance.getRowIndexByKey(this.filteredRowData.key);
+            let row = this.categoryList.instance.getRowElement(rowIndex);
+            if (row) row.addClass('filtered-category');
+        }
+    }
+
     initDragAndDropEvents($event) {
         let img = new Image();
         img.src = 'assets/common/icons/drag-icon.svg';
@@ -576,8 +588,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             let accountingType = accountingTypes[x.parent];
             accountingType.transactionsCount = accountingType.transactionsCount ? accountingType.transactionsCount + x.transactionsCount : x.transactionsCount;
         });
-
-
+        
         this.categoryList.instance.refresh();
     }
 
@@ -608,6 +619,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                     let wrapper = $event.cellElement.parent();
                     if (!this.clearSelection(wrapper.hasClass('filtered-category'))) {
                         wrapper.addClass('filtered-category');
+                        this.filteredRowData = $event.data;
                         this.onFilterSelected.emit($event.data);
                     }
                 });
@@ -759,6 +771,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
     clearSelection(clearFilter) {
         this.categoryList.instance.deselectAll();
+        this.filteredRowData = null;
         $('.filtered-category').removeClass('filtered-category');
         if (clearFilter)
             this.onFilterSelected.emit(null);
