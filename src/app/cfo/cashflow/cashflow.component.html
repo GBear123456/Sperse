@@ -145,7 +145,7 @@
         </dx-data-grid>
     </div>
 
-    <div id="cashflowFooterToolbar">
+    <div id="cashflowFooterToolbar" *ngIf="cashflowGridSettings?.visualPreferences?.showFooterBar">
         <app-toolbar [(config)]="footerToolbarConfig"></app-toolbar>
     </div>
 

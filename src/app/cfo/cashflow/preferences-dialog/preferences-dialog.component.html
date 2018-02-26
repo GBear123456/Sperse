@@ -60,8 +60,8 @@
             <div class="header header-visuals">
                 {{l("CashFlowGrid_UserPrefs_Visuals")}}
             </div>
-            <div class="section-body">
-                <div class="dx-field">
+            <div class="section-body container-fluid">
+                <div class="dx-field row">
                     <div class="dx-field-label">{{l("CashFlowGrid_UserPrefs_Font")}}</div>
                     <div class="dx-field-value">
                         <div class="left-select">
@@ -77,7 +77,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="dx-field">
+                <div class="dx-field row">
                     <div class="dx-field-label">{{l("CashFlowGrid_UserPrefs_CFOTheme")}}</div>
                     <div class="dx-field-value">
                         <div class="left-select">
@@ -85,6 +85,14 @@
                                            [(value)]="model.visualPreferences.cfoTheme">
                             </dx-select-box>
                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_ShowFooterBar")}}</div>
+                    <div class="col-xs-1">
+                        <dx-check-box [value]="model.visualPreferences.showFooterBar"
+                                        (onValueChanged)="model.visualPreferences.showFooterBar = !model.visualPreferences.showFooterBar">
+                        </dx-check-box>
                     </div>
                 </div>
             </div>
