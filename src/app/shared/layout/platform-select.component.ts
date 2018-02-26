@@ -36,7 +36,7 @@ export class PlatformSelectComponent extends AppComponentBase {
                 this.modules.push({
                     code: module,
                     name: 'CFO',
-                    uri: cfoPersonalEnable ? 'personal' : 'business',
+                    uri: cfoPersonalEnable ? 'user' : 'main',
                 });
             }
 

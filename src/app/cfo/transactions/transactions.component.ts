@@ -55,6 +55,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private filters: FilterModel[];
     private rootComponent: any;
     private cashFlowCategoryFilter = [];
+    public transactionsFilterQuery: any[];
 
     public dragInProgress = false;
     public selectedCashflowCategoryKey: any;
@@ -606,6 +607,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         );
         this.totalDataSource['_store']['_url'] = this.getODataURL(this.totalDataSourceURI, filterQuery);
         this.totalDataSource.load();
+        
+        this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'accountingTypeId') || _.has(x, 'CashflowSubCategoryId') || _.has(x, 'CashflowSubCategoryId'));
     }
 
     filterByClassified(filter: FilterModel) {

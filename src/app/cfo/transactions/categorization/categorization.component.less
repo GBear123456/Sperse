@@ -104,8 +104,11 @@
         }
 
         .dx-treelist-header-panel {
-            position: absolute;
+            height: 1px;
             width: 330px;
+            border-bottom: none !important;
+            overflow: visible !important;
+
             .dx-toolbar-after {
                 z-index: 3;
             }
@@ -198,34 +201,44 @@
                     &.column-padding-7 {
                         padding-bottom: 7px;
                     }
+
                     &.column-padding-9 {
                         padding-bottom: 9px;
+
                         &:before {
-                            height: 43px!important;
+                            height: 43px !important;
                         }
                     }
+
                     &.column-padding-11 {
                         padding-bottom: 11px;
+
                         &:before {
-                            height: 45px!important;
+                            height: 45px !important;
                         }
                     }
+
                     &.column-padding-13 {
                         padding-bottom: 13px;
+
                         &:before {
-                            height: 47px!important;
+                            height: 47px !important;
                         }
                     }
+
                     &.column-padding-15 {
                         padding-bottom: 15px;
+
                         &:before {
-                            height: 49px!important;
+                            height: 49px !important;
                         }
                     }
+
                     &.column-padding-17 {
                         padding-bottom: 17px;
+
                         &:before {
-                            height: 51px!important;
+                            height: 51px !important;
                         }
                     }
                 }
@@ -340,6 +353,7 @@
                     td {
                         &:nth-child(2) {
                             position: absolute;
+                            max-width: 40px;
                             right: 0px;
                         }
 
@@ -437,12 +451,27 @@
                         font-stretch: normal;
                         letter-spacing: 0.3px;
                         color: #424c56;
+
                         span:not(.dx-treelist-search-text) {
                             max-width: 210px;
                             display: inline-block;
                             overflow: hidden;
                             text-overflow: ellipsis;
-                        }                        
+                        }
+                    }
+
+                    .transactionCount {
+                        border-radius: 10px;
+                        background-color: #f0f2f5;
+                        min-width: 30px;
+                        text-align: center;
+                        font-size: 11px;
+                        color: #9a9fa4;
+
+                        span {
+                            margin: 3px 8px;
+                            display: inline-block;
+                        }
                     }
 
                     &[aria-level="1"], &[aria-level="2"] {

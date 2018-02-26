@@ -7,19 +7,18 @@
             <dx-tree-list height="calc(100vh - 210px)"
                           [hoverStateEnabled]="true"
                           [dataSource]="ruleTreeListDataSource"
-                          dataStructure="tree"
                           [sorting]="{mode: 'none'}"
-                          [editing]="{allowAdding: true, allowDeleting: true, allowUpdating: true, mode: 'popup', popup: {onShowing: onShowingPopup, height: '0px', width: '0px'}}"
+                          [editing]="{allowAdding: true, allowDeleting: true, allowUpdating: true, mode: 'popup', popup: {onShowing: onShowingPopup, height: '0px', width: '0px'}, texts: {confirmDeleteMessage: ''}}"
                           [selection]="{allowSelectAll: false, mode: 'none'}"
                           [autoExpandAll]="true"
                           [showColumnLines]="false"
                           [showRowLines]="true"
                           (onInitNewRow)="onEditingStart($event)"
                           (onEditingStart)="onEditingStart($event)"
-                          (onRowRemoved)="onRowRemoved($event)"
+                          (onRowRemoving)="onRuleRemoving($event)"
                           keyExpr="id"
                           parentIdExpr="parentId"
-                          [rootValue]="null">
+                          [rootValue]="0">
 
                 <dxi-column dataField="isActive" caption="{{l('Status')}}"></dxi-column>
                 <dxi-column dataField="name" caption="{{l('RuleName')}}"></dxi-column>

@@ -27,21 +27,25 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
         this._route = injector.get(ActivatedRoute);
         this._cfoService = injector.get(CFOService);
 
-        this._sub = this._route.params.subscribe(params => {
-            let instance = params['instance'];
+        if (this.constructor == this._route.component)
+            this._sub = this._route.params.subscribe(params => {
+                let instance = params['instance'];
+                if (!(this.instanceId = parseInt(instance))) {
+                    this.instanceId = undefined;
+                }
+                this.instanceType = this.capitalize(instance);
 
-            if (!(this.instanceId = parseInt(instance))) {
-                this.instanceId = undefined;
-            }
-            this.instanceType = this.capitalize(instance);
-
-            if (this.instanceType !== this._cfoService.instanceType
-                || this.instanceId !== this._cfoService.instanceId) {
-                this._cfoService.instanceType = this.instanceType;
-                this._cfoService.instanceId = this.instanceId;
-                this._cfoService.instanceChangeProcess();
-            }
-        });
+                if (this.instanceType !== this._cfoService.instanceType
+                    || this.instanceId !== this._cfoService.instanceId) {
+                    this._cfoService.instanceType = this.instanceType;
+                    this._cfoService.instanceId = this.instanceId;
+                    this._cfoService.instanceChangeProcess();
+                }
+            });
+        else {
+            this.instanceType = this._cfoService.instanceType;
+            this.instanceId = this._cfoService.instanceId;
+        }
     }
 
     private static zendeskWebwidgetSetup(service: ngxZendeskWebwidgetService) {
@@ -83,7 +87,8 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
     }
 
     ngOnDestroy() {
-        this._sub.unsubscribe();
+        if (this._sub)
+            this._sub.unsubscribe();
     }
 
     getODataURL(uri: String, filter?: Object) {

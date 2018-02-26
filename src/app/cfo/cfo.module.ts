@@ -16,6 +16,7 @@ import { ModalModule } from 'ngx-bootstrap';
 
 import { RulesComponent } from './rules/rules.component';
 import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.component';
+import { RuleDeleteDialogComponent } from './rules/rule-delete-dialog/rule-delete-dialog.component';
 import { CategoryDeleteDialogComponent } from './transactions/categorization/category-delete-dialog/category-delete-dialog.component';
 import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
 
@@ -127,6 +128,7 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         StatsComponent,
         SourceDataComponent,
         RuleDialogComponent,
+        RuleDeleteDialogComponent,
         CategoryDeleteDialogComponent,
         RulesComponent,
         SortingComponent,
@@ -136,6 +138,7 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     ],
     entryComponents: [
         RuleDialogComponent,
+        RuleDeleteDialogComponent,
         CategoryDeleteDialogComponent,
         PreferencesDialogComponent
     ],
