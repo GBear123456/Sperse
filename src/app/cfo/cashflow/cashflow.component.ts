@@ -522,7 +522,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** Text customizing for acounts names  */
             if (prefix === CategorizationPrefixes.AccountName) {
                 let account = this.bankAccounts.find(account => account.id == key );
-                text = account ? (account.accountName || account.accountNumber) : cellInfo.valueText;
+                text = account ? account.accountNumber + (account.accountName ? ': ' + account.accountName : '') : cellInfo.valueText;
             }
 
             /** Text customizing for transactions descriptor */
