@@ -17727,6 +17727,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
     showNegativeValuesInRed: number;
     showColumnsWithZeroActivity: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
     showNetChangeRow: boolean;
+    showAccountingTypeRow: boolean;
 
     constructor(data?: ICashflowGridGeneralSettingsDto) {
         if (data) {
@@ -17744,6 +17745,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
             this.showNegativeValuesInRed = data["showNegativeValuesInRed"];
             this.showColumnsWithZeroActivity = data["showColumnsWithZeroActivity"];
             this.showNetChangeRow = data["showNetChangeRow"];
+            this.showAccountingTypeRow = data["showAccountingTypeRow"];
         }
     }
 
@@ -17760,6 +17762,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
         data["showNegativeValuesInRed"] = this.showNegativeValuesInRed;
         data["showColumnsWithZeroActivity"] = this.showColumnsWithZeroActivity;
         data["showNetChangeRow"] = this.showNetChangeRow;
+        data["showAccountingTypeRow"] = this.showAccountingTypeRow;
         return data; 
     }
 }
@@ -17770,6 +17773,7 @@ export interface ICashflowGridGeneralSettingsDto {
     showNegativeValuesInRed: number;
     showColumnsWithZeroActivity: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
     showNetChangeRow: boolean;
+    showAccountingTypeRow: boolean;
 }
 
 export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSettingsDto {
@@ -29482,7 +29486,7 @@ export interface ISubmitContactUsRequestInput {
 
 export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRequestInput {
     companyName: string;
-    editionId: number;
+    editionName: string;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
     leadInterests: LeadInterestDto[] = [];
     leadRequestXref: string;
@@ -29506,7 +29510,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
     init(data?: any) {
         if (data) {
             this.companyName = data["companyName"];
-            this.editionId = data["editionId"];
+            this.editionName = data["editionName"];
             this.paymentPeriodType = data["paymentPeriodType"];
             if (data["leadInterests"] && data["leadInterests"].constructor === Array) {
                 this.leadInterests = [];
@@ -29533,7 +29537,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["companyName"] = this.companyName;
-        data["editionId"] = this.editionId;
+        data["editionName"] = this.editionName;
         data["paymentPeriodType"] = this.paymentPeriodType;
         if (this.leadInterests && this.leadInterests.constructor === Array) {
             data["leadInterests"] = [];
@@ -29554,7 +29558,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 
 export interface ISubmitTenantCreationRequestInput {
     companyName: string;
-    editionId: number;
+    editionName: string;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
     leadInterests: LeadInterestDto[];
     leadRequestXref: string;
