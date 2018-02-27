@@ -46,7 +46,9 @@
         </div>
     </dx-scroll-view>
     <dx-resizable *ngIf="statsDetailResult !== undefined" class="cashflow-wrap"
+                  [maxHeight]="900"
                   (onResize)="onTransactionDetailsResize($event)"
+                  (onResizeEnd)="onTransactionDetailsResizeEnd($event)"
                   handles="top">
             <div class="resize-buttons noselect">....</div>
             <div class="detailsButtons">

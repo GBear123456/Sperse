@@ -451,6 +451,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     selectedCell;
     copiedCell;
     monthsDaysLoadedPathes = [];
+    cashflowDetailsGridSessionIdentifier: string = `cashflow_forecastModel_${abp.session.tenantId}_${abp.session.userId}`;
+
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -2714,10 +2716,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.removeLocalTimezoneOffset(detail.forecastDate);
             return detail;
         });
+
+        setTimeout(() => {
+            let height = this._cacheService.get(this.cashflowDetailsGridSessionIdentifier);
+            if (height)
+                $('.cashflow-wrap').css('height', height);
+        }, 0);
     }
 
     onTransactionDetailsResize($event) {
         this.cashFlowGrid.height = $event.height;
+    }
+
+    onTransactionDetailsResizeEnd($event) {
+        this._cacheService.set(this.cashflowDetailsGridSessionIdentifier, $event.height);
     }
 
     saveForecast = (arg: any): void  => {
