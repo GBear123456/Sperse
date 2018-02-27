@@ -794,6 +794,28 @@
                             color: #424c56;
                             font-weight: 600;
                         }
+
+                        &:last-child {
+                            position: relative;
+
+                            &::before {
+                                content: '';
+                                border-right: 1px solid #e5e9ec;
+                                position: absolute;
+                                left: 24px;
+                                width: 1px;
+                                height: 200%;
+                                top: -50%;
+                            }
+
+                            .dx-button {
+                                margin: 0;
+                            }
+
+                            img {
+                                margin-top: 0;
+                            }
+                        }
                     }
                 }
             }
