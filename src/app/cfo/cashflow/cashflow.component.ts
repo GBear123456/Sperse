@@ -13,9 +13,8 @@ import {
     GetCategoryTreeOutput,
     CashFlowGridSettingsDto,
     InstanceType,
-    InstanceType17,
-    InstanceType18
     InstanceType10,
+    InstanceType17,
     InstanceType18,
     UpdateForecastInput,
     CashFlowStatsDetailDtoStatus,
