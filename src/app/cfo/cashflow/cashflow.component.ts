@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { GroupbyItem } from './models/groupbyItem';
 
@@ -102,7 +102,6 @@ class CashflowCategorizationModel {
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
-
     showAllDisabled = true;
     noRefreshedAfterSync: boolean;
     headlineConfig: any;
@@ -499,6 +498,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.addHeaderExpandClickHandling();
     }
 
+    @HostListener('window:resize') onResize() {
+        this.handleBottomHorizontalScrollPosition();
+    }
+
     customizeFieldText(cellInfo, emptyText = null) {
 
         let text;
@@ -596,7 +599,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (
                     !clickedElement.hasClass('closed-head-cell') &&
                     !clickedElement.hasClass('totals') &&
-                    /** year or quarter values*/
+                    /** year or quarter values */
                     !clickedElement.is('span')
                 ) {
                     $event.stopPropagation();
@@ -604,13 +607,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
 
                 let cashflowComponent = this;
-                clickedElement.closest('tr').children().each(function() {
-                    if ($(this).hasClass('dx-pivotgrid-expanded')) {
-                        let headCellExpandElement = $(this).find('div.head-cell-expand');
-                        headCellExpandElement.toggleClass('closed');
-                        cashflowComponent[`${fieldPeriod}HeadersAreCollapsed`] = headCellExpandElement.hasClass('closed') || defaultClick;
-                    }
+                clickedElement.closest('tr').children('.dx-pivotgrid-expanded').each(function() {
+                    let headCellExpandElement = $(this).find('div.head-cell-expand');
+                    headCellExpandElement.toggleClass('closed');
+                    cashflowComponent[`${fieldPeriod}HeadersAreCollapsed`] = headCellExpandElement.hasClass('closed') || defaultClick;
                 });
+                this.synchronizeCashflowHeaders();
             }
         };
     }
@@ -1386,9 +1388,42 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.finishLoading();
         }
 
+        this.synchronizeCashflowHeaders();
+        this.handleBottomHorizontalScrollPosition();
+
         /** Clear cache with columns activity */
         this.cashedColumnActivity.clear();
         this.applyUserPreferencesForAreas();
+    }
+
+    handleBottomHorizontalScrollPosition() {
+        let scrollElement = <HTMLElement>document.querySelector('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
+        let pivotGridElement = <HTMLElement>document.getElementsByClassName('pivot-grid')[0];
+        let toolbarElement = <HTMLElement>document.querySelector('app-toolbar .dx-toolbar ');
+        let headlineElement = <HTMLElement>document.getElementsByClassName('headline-row')[0];
+        let topBarElement = <HTMLElement>document.getElementsByTagName('top-bar')[0];
+        let viewSize = window.innerHeight - toolbarElement.offsetHeight - headlineElement.offsetHeight - topBarElement.offsetHeight;
+        if (pivotGridElement.clientHeight > viewSize) {
+            scrollElement.classList.add('fixedScrollbar');
+            if (this.cashflowGridSettings.visualPreferences.showFooterBar) {
+                scrollElement.classList.add('withFooterToolbar');
+            } else {
+                scrollElement.classList.remove('withFooterToolbar');
+            }
+        } else {
+            scrollElement.classList.remove('fixedScrollbar', 'withFooterToolbar');
+        }
+    }
+
+    /**
+     * Method that makes the headers in cashflow the same height (one of them has fixed position)
+     */
+    synchronizeCashflowHeaders() {
+        let descriptionHeader = <HTMLElement>document.getElementsByClassName('dx-area-description-cell')[0];
+        let columnsHeader = <HTMLElement>document.getElementsByClassName('dx-area-column-cell')[0];
+        if (descriptionHeader && columnsHeader && descriptionHeader.parentElement.clientHeight !== columnsHeader.clientHeight) {
+            descriptionHeader.parentElement.style.height = columnsHeader.clientHeight + 'px';
+        }
     }
 
     getDataItemsByCell(cellObj) {
@@ -2276,7 +2311,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     hideFooterBar() {
         this.cashflowGridSettings.visualPreferences.showFooterBar = false;
         this.userPreferencesService.removeLocalModel();
-
+        this.handleBottomHorizontalScrollPosition();
         this._cashflowServiceProxy.saveCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId, this.cashflowGridSettings)
             .subscribe((result) => {  });
     }
@@ -2461,7 +2496,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onCellClick(cellObj) {
-
         /** If user click to the month header - then send new getStats request for this month to load data for that month */
         if (this.isMonthHeaderCell(cellObj) && !cellObj.cell.expanded) {
             if (!this.monthsDaysLoadedPathes.some(arr => arr.toString() === cellObj.cell.path.toString())) {
