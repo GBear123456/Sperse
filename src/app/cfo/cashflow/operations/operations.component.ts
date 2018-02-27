@@ -98,6 +98,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                     }
                 ]
             },
+/*
             {
                 location: 'before',
                 items: [
@@ -130,6 +131,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                     }
                 ]
             },
+*/
             // {
             //     location: 'after',
             //     items: [
