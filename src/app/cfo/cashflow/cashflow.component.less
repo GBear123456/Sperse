@@ -855,6 +855,21 @@
         background: #fff;
         z-index: 2;
 
+        transform: translate(0, 0) !important;
+
+        .resize-buttons {
+            z-index: 1;
+            text-align: center;
+            font-size: 22px;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            line-height: 0.5;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: #cecece;
+        }
+
         .detailsButtons {
             position: absolute;
             z-index: 100;
@@ -873,7 +888,7 @@
     }
 
     /deep/ #cashflowGridContainer {
-        height: 400px;
+        height: 100%;
 
         .dx-datagrid-headers {
             .dx-datagrid-content {

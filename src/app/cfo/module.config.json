@@ -6,10 +6,9 @@
   "navigation": [
     [ "", "", "icon-home", "/app/cfo/:instance/start" ],
     [ "Accounts", "", "icon-home", "/app/cfo/:instance/linkaccounts" ],
+    [ "Transactions", "", "icon-home", "/app/cfo/:instance/transactions" ],
     [ "Cashflow", "", "icon-home", "/app/cfo/:instance/cashflow" ],
     [ "Stats", "", "icon-home", "/app/cfo/:instance/stats" ],
-    [ "Transactions", "", "icon-home", "/app/cfo/:instance/transactions" ],
-    [ "Rules", "", "icon-home", "/app/cfo/:instance/rules" ],
     [ "Statements", "", "", "" ]
   ]
 }
