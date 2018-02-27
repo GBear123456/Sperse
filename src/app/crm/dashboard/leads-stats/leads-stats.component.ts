@@ -5,7 +5,6 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { BrowserModule } from '@angular/platform-browser';
 import { DxPivotGridModule } from 'devextreme-angular';
 
-
 import {LeadServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import DataSource from 'devextreme/data/data_source';
@@ -16,7 +15,7 @@ import DataSource from 'devextreme/data/data_source';
     styleUrls: ['./leads-stats.component.less'],
     providers: [LeadServiceProxy]
 })
-export class LeadsStatsComponent extends AppComponentBase {
+export class LeadsStatsComponent extends AppComponentBase implements OnInit {
     types: string[] = new Array<string>();
     pipelines: string[] = new Array<string>();
     stages: string[] = new Array<string>();

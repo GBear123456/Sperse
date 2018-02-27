@@ -4,6 +4,7 @@
   "search": false,
   "requiredFeature": "Admin",
   "navigation": [
+    [ "Dashboard", "Pages.Administration.Host.Dashboard", "icon-home", "/app/admin/hostDashboard"],
     [ "Tenants", "Pages.Tenants", "icon-globe", "/app/crm/tenants", "Admin.Advanced" ],
     [ "Roles", "Pages.Administration.Roles", "icon-briefcase", "/app/admin/roles", "" ],
     [ "Users", "Pages.Administration.Users", "icon-people", "/app/admin/users", "" ],
