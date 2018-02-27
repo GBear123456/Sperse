@@ -449,7 +449,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         operator: { from: 'ge', to: 'le' },
                         caption: 'Date',
                         field: 'Date',
-                        items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                        items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                        options: {method: 'getFilterByDate'}
                     }),
                     new FilterModel({
                         component: FilterCheckBoxesComponent,
@@ -622,23 +623,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             }
             return obj;
         }
-    }
-
-    filterByDate(filter) {
-        let data = {};
-        data[filter.field] = {};
-        _.each(filter.items, (item: FilterItemModel, key) => {
-            if (item && item.value) {
-                let date = moment.utc(item.value, 'YYYY-MM-DDT');
-                if (key.toString() === 'to') {
-                    date.add(1, 'd').add(-1, 's');
-                }
-
-                data[filter.field][filter.operator[key]] = date.toDate();
-            }
-        });
-
-        return data;
     }
 
     filterByAccount(filter) {

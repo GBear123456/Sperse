@@ -181,7 +181,8 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                     operator: { from: '>=', to: '<=' },
                     caption: 'CreationDate',
                     field: 'creationTime',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: {method: 'getFilterByDate'}
                 })
             ]
         );
@@ -210,23 +211,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
             this.ruleTreeListDataSource.filter(dataSourceFilters);
             this.ruleTreeListDataSource.load();
         });
-    }
-
-    filterByCreationDate(filter: FilterModel): any[][] {
-        let result: any[][] = [];
-
-        _.each(filter.items, (item: FilterItemModel, key) => {
-            if (item && item.value) {
-                let date = moment.utc(item.value, 'YYYY-MM-DDT');
-                if (key.toString() === 'to') {
-                    date.add(1, 'd').add(-1, 's');
-                }
-
-                result.push([filter.field, filter.operator[key], date.toDate()]);
-            }
-        });
-
-        return result;
     }
 
     ngAfterViewInit(): void {

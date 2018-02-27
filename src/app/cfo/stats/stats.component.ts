@@ -335,7 +335,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 new FilterModel({
                     component: FilterCalendarComponent,
                     caption: 'Date',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: {method: 'getFilterByDate'}
                 }),
                 new FilterModel({
                     field: 'accountIds',

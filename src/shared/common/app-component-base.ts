@@ -130,16 +130,8 @@ export abstract class AppComponentBase {
     processODataFilter(grid, uri, filters, getCheckCustom) {
         return this.advancedODataFilter(grid, uri,
             filters.map((filter) => {
-                return getCheckCustom(filter) || _.pairs(filter.items)
-                    .reduce((obj, pair) => {
-                        let val = pair.pop().value, key = pair.pop(), operator = {};
-                        if (filter.operator)
-                            operator[filter.operator] = val;
-                        if (val && (['string', 'number'].indexOf(typeof (val)) >= 0)) {
-                            obj[this.capitalize(key)] = filter.operator ? operator : val;
-                        }
-                        return obj;
-                    }, {});
+                return getCheckCustom(filter) ||
+                    filter.getODataFilterObject();                    
             })
         );
     }
