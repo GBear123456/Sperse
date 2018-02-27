@@ -408,24 +408,62 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         [ModelEnums.GeneralScope.EndingBalances]: this.isAllTotalBalanceCell
     };
     cashflowGridSettings: CashFlowGridSettingsDto;
-    sortings: SortingItemModel[] = [
+    categoryToolbarConfig = [
         {
-            name: 'Category',
-            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_CashflowCategoryName')),
-            activeByDefault: true,
-            sortOptions: {
-                sortBy: 'displayText',
-                sortOrder: 'asc'
-            }
-        },
-        {
-            name: 'Account',
-            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_Amount')),
-            sortOptions: {
-                sortBySummaryField: 'amount',
-                sortBySummaryPath: [],
-                sortOrder: 'asc'
-            }
+            location: 'center', items: [
+                {
+                    name: 'find',
+                    action: (event) => {
+                        event.jQueryEvent.stopPropagation();
+                        event.jQueryEvent.preventDefault();
+                    }
+                },
+                {
+                    name: 'sort',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Sort'),
+                        items: [{
+                            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_CashflowCategoryName')),
+                            action: this.resortPivotGrid.bind(this, {
+                                sortBy: 'displayText',
+                                sortOrder: 'asc'
+                            })
+                        }, {
+                            text: this.ls('Platform', 'SortBy', this.ls('CFO', 'Transactions_Amount')),
+                            action: this.resortPivotGrid.bind(this, {
+                                sortBySummaryField: 'amount',
+                                sortBySummaryPath: [],
+                                sortOrder: 'asc'
+                            })
+                        }]
+                    }
+                },
+                {
+                    name: 'expandTree',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Expand'),
+                        items: [{
+                                action: this.togglePivotGridRows.bind(this),
+                                text: this.l('Level 1'),
+                            }, {
+                                action: this.togglePivotGridRows.bind(this),
+                                text: this.l('Level 2'),
+                            }, {
+                                action: this.togglePivotGridRows.bind(this),
+                                text: this.l('Level 3'),
+                            }, {
+                                action: this.togglePivotGridRows.bind(this),
+                                text: this.l('All'),
+                            }, {
+                                action: this.togglePivotGridRows.bind(this),
+                                text: this.l('None'),
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     ];
     maxCategoriesWidth = 25;
@@ -3356,9 +3394,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Method for sorting pivot grid
      * @param {string} name
      */
-    resortPivotGrid(event: {sortBy: string, sortByDirection: SortState}) {
-        let sortOptions = underscore.extend(this.sortings.find(sorting => sorting.name.toLowerCase() === event.sortBy.toLowerCase())['sortOptions']);
-        sortOptions.sortOrder = event.sortByDirection === SortState.DOWN ? 'asc' : 'desc';
+    resortPivotGrid(sortOptions: any, event: any) {        
+        sortOptions.sortOrder = 
+            event.itemElement.hasClass('desc') ? 'asc': 'desc';
+        event.itemElement.parent().children().removeClass('asc desc');
+        event.itemElement.addClass(sortOptions.sortOrder);
+
         this.apiTableFields.filter(field => field.resortable).forEach(field => {
             this.resetFieldSortOptions(field.caption);
             this.pivotGrid.instance.getDataSource().field(field.caption, sortOptions);

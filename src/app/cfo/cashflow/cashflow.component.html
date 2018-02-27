@@ -18,7 +18,7 @@
 
 <div class="cashflow" *ngIf="cashflowData && cashflowData.length">
     <div class="sort-options" [hidden]="!contentReady">
-        <app-sorting [sortings]="sortings" (sortingChange)="resortPivotGrid($event)"></app-sorting>
+        <app-toolbar [config]="categoryToolbarConfig" [compact]="true" ></app-toolbar>
     </div>
     <dx-scroll-view>
         <div class="pivot-grid-wrapper">
