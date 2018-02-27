@@ -17780,6 +17780,7 @@ export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSetting
     fontName: string;
     fontSize: string;
     cfoTheme: string;
+    showFooterBar: boolean;
 
     constructor(data?: ICashflowGridVisualSettingsDto) {
         if (data) {
@@ -17795,6 +17796,7 @@ export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSetting
             this.fontName = data["fontName"];
             this.fontSize = data["fontSize"];
             this.cfoTheme = data["cfoTheme"];
+            this.showFooterBar = data["showFooterBar"];
         }
     }
 
@@ -17809,6 +17811,7 @@ export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSetting
         data["fontName"] = this.fontName;
         data["fontSize"] = this.fontSize;
         data["cfoTheme"] = this.cfoTheme;
+        data["showFooterBar"] = this.showFooterBar;
         return data; 
     }
 }
@@ -17817,6 +17820,7 @@ export interface ICashflowGridVisualSettingsDto {
     fontName: string;
     fontSize: string;
     cfoTheme: string;
+    showFooterBar: boolean;
 }
 
 export class LocalizationAndCurrencyDto implements ILocalizationAndCurrencyDto {

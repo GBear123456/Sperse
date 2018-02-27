@@ -729,6 +729,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     {
                         name: 'average',
                         html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this.transactionsAverage.toLocaleString('en-EN', {style: 'currency',  currency: 'USD' })}</span>`
+                    },
+                    {
+                        action: this.hideFooterBar.bind(this),
+                        options: {
+                            iconSrc: 'assets/common/icons/close.svg'
+                        }
                     }
                 ]
             }
@@ -2235,6 +2241,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 currency: this.currencyId
             }));
         }
+    }
+
+    hideFooterBar() {
+        this.cashflowGridSettings.visualPreferences.showFooterBar = false;
+        this.userPreferencesService.removeLocalModel();
+
+        this._cashflowServiceProxy.saveCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId, this.cashflowGridSettings)
+            .subscribe((result) => {  });
     }
 
     /** Get column activity */
