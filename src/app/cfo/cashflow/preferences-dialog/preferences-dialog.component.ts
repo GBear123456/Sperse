@@ -20,7 +20,6 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
     active = false;
     saving = false;
     rememberLastSettings = true;
-    cacheKey = `UserPreferences_${abp.session.userId}`;
     fonts = [
         'Lato',
         'Open Sans',
@@ -39,8 +38,7 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
     constructor(
         injector: Injector,
         private _cashflowService: CashflowServiceProxy,
-        public userPreferencesService: UserPreferencesService,
-        private _cacheService: CacheService
+        public userPreferencesService: UserPreferencesService
     ) {
         super(injector);
         for (let i = 10; i < 21; i++)
@@ -53,9 +51,9 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         this.initHeader();
 
         let cashflowGridObservable;
-        if (this._cacheService.exists(this.cacheKey)) {
-            let data = this._cacheService.get(this.cacheKey);
-            let model = new CashFlowGridSettingsDto(this._cacheService.get(data));
+        if (this.userPreferencesService.checkExistsLocally()) {
+            let data = this.userPreferencesService.getLocalModel();
+            let model = new CashFlowGridSettingsDto();
             model.init(data);
             cashflowGridObservable = Observable.from([model]);
         } else {
@@ -69,9 +67,9 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
 
         this.dialogRef.afterClosed().subscribe(closeData => {
             if ((closeData && closeData.saveLocally) || !closeData) {
-                this.saveLocally(this.model);
+                this.userPreferencesService.saveLocally(this.model);
             } else {
-                this.removeLocalModel();
+                this.userPreferencesService.removeLocalModel();
             }
         });
     }
@@ -154,13 +152,5 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
             'apply': true,
             'model': this.model
         });
-    }
-
-    saveLocally(model: CashFlowGridSettingsDto) {
-        this._cacheService.set(this.cacheKey, model);
-    }
-
-    removeLocalModel() {
-        this._cacheService.remove(this.cacheKey);
     }
 }
