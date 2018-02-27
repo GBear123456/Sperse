@@ -2,7 +2,7 @@
   <div class="social">
     <h3 class="lab">{{l('Social')}}</h3>
     <ul>
-      <li *ngFor="let social of data?.customerInfo?.primaryContactInfo.links" [ngStyle]="{display: social.isSocialNetwork ? 'inline-block': 'none'}">
+      <li *ngFor="let social of contactInfoData?.links" [ngStyle]="{display: social.isSocialNetwork ? 'inline-block': 'none'}">
         <a href="{{social.url}}" target="_blank">
           <i class="fa fa-{{LINK_TYPES[social.linkTypeId] || 'share-square-o'}}" aria-hidden="true"></i>
         </a>
@@ -12,7 +12,7 @@
   <div class="other-links">
     <h3 class="lab">{{l('Others')}}</h3>
     <ul class="others">
-      <li *ngFor="let social of data?.customerInfo?.primaryContactInfo.links; let i = index" [ngStyle]="{display: social.isSocialNetwork ? 'none': 'block'}">
+      <li *ngFor="let social of contactInfoData?.links; let i = index" [ngStyle]="{display: social.isSocialNetwork ? 'none': 'block'}">
         <div *ngIf="isEditAllowed" class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog(social, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteLink(social, $event, i)"></i></div>
         <a href="{{social.url}}" target="_blank">
           {{social.url}}

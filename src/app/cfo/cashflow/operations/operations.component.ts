@@ -93,9 +93,6 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                             }, {
                                 action: this.groupBy.bind(this),
                                 text: 'Months'
-                            }, {
-                                action: this.groupBy.bind(this),
-                                text: 'Days'
                             }]
                         }
                     }

@@ -29,6 +29,7 @@ import { AuditLogDetailModalComponent } from './audit-logs/audit-log-detail-moda
 import { HostSettingsComponent } from './settings/host-settings.component';
 import { InstallComponent } from './install/install.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
+import { JobsComponent } from './jobs/jobs.component';
 import { ImpersonationService } from './users/impersonation.service';
 import { LanguagesComponent } from './languages/languages.component';
 import { LanguageTextsComponent } from './languages/language-texts.component';
@@ -101,6 +102,7 @@ import { UiCustomizationComponent } from './ui-customization/ui-customization.co
         HostSettingsComponent,
         InstallComponent,
         MaintenanceComponent,
+        JobsComponent,
         LanguagesComponent,
         LanguageTextsComponent,
         CreateOrEditLanguageModalComponent,

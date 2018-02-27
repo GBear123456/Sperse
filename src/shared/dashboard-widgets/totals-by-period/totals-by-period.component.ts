@@ -17,6 +17,7 @@ import 'rxjs/add/operator/scan';
     providers: [BankAccountsServiceProxy]
 })
 export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit {
+    bankAccountIds: number[] = [];
     availablePeriods = [
         this.l('Today'),
         this.l('Yesterday'),
@@ -54,7 +55,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
             this.instanceId,
             'USD',
             undefined,
-            null,
+            this.bankAccountIds,
             this.startDate,
             this.endDate,
             undefined,
@@ -143,4 +144,10 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
             return pointInfo.valueText;
         }
     }
+
+    filterByBankAccounts(bankAccountIds: number[]) {
+        this.bankAccountIds = bankAccountIds;
+        this.loadStatsData();
+    }
+
 }

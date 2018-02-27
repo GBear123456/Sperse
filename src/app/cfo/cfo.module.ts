@@ -21,6 +21,7 @@ import { CategoryDeleteDialogComponent } from './transactions/categorization/cat
 import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
 
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
+import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
@@ -35,8 +36,9 @@ import { MatTabsModule, MatDialogModule } from '@angular/material';
 import { SortingComponent } from '@app/cfo/shared/common/sorting/sorting.component';
 
 import { CFOService } from './cfo.service';
-import { InstanceServiceProxy, CustomersServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
+
 
 import {
     DxButtonModule,
@@ -134,7 +136,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         SortingComponent,
         CFOModalDialogComponent,
         BusinessEntitiesComponent,
-        ChartOfAccountsComponent 
+        ChartOfAccountsComponent,
+        BankAccountsSelectComponent
     ],
     entryComponents: [
         RuleDialogComponent,
@@ -142,7 +145,13 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         CategoryDeleteDialogComponent,
         PreferencesDialogComponent
     ],
-    providers: [InstanceServiceProxy, CFOService, CustomersServiceProxy, ngxZendeskWebwidgetService]
+    providers: [
+        InstanceServiceProxy,
+        CFOService,
+        CustomersServiceProxy,
+        ContactServiceProxy,
+        ngxZendeskWebwidgetService
+    ]
 })
 
 export class CfoModule { }

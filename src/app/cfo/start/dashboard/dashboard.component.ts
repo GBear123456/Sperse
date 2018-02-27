@@ -1,9 +1,14 @@
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
-import { Component, OnInit, AfterViewInit, OnDestroy, Injector } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { AppConsts } from 'shared/AppConsts';
 import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { Router } from '@angular/router';
+import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+import { AccountsComponent } from 'shared/dashboard-widgets/accounts/accounts.component';
+import { CategorizationStatusComponent } from 'shared/dashboard-widgets/categorization-status/categorization-status.component';
+import { TotalsByPeriodComponent } from 'shared/dashboard-widgets/totals-by-period/totals-by-period.component';
+import { TrendByPeriodComponent } from 'shared/dashboard-widgets/trend-by-period/trend-by-period.component';
 
 @Component({
     selector: 'dashboard',
@@ -12,6 +17,12 @@ import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
     animations: [appModuleAnimation()]
 })
 export class DashboardComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
+    @ViewChild(AccountsComponent) accountsComponent: AccountsComponent;
+    @ViewChild(CategorizationStatusComponent) categorizationStatusComponent: CategorizationStatusComponent;
+    @ViewChild(TotalsByPeriodComponent) totalsByPeriodComponent: TotalsByPeriodComponent;
+    @ViewChild(TrendByPeriodComponent) trendByPeriodComponent: TrendByPeriodComponent;
+    
     public headlineConfig;
     private rootComponent: any;
     linksTo = [
@@ -50,5 +61,12 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
 
     navigateTo() {
         this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
+    }
+
+    filterByBankAccounts(bankAccountIds: number[]) {
+        this.accountsComponent.filterByBankAccounts(bankAccountIds);
+        this.categorizationStatusComponent.filterByBankAccounts(bankAccountIds);
+        this.totalsByPeriodComponent.filterByBankAccounts(bankAccountIds);
+        this.trendByPeriodComponent.filterByBankAccounts(bankAccountIds);
     }
 }

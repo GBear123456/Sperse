@@ -1,8 +1,8 @@
 <div class="contacts">
   <h3 class="lab">{{l('Contact')}}</h3>
-  <div class="emails" *ngIf="data?.customerInfo?.primaryContactInfo.emails.length; let i = index">
+  <div class="emails" *ngIf="contactInfoData?.emails.length; let i = index">
     <i class="icons email"></i>
-    <ul *ngFor="let email of data?.customerInfo?.primaryContactInfo.emails; let i = index;">
+    <ul *ngFor="let email of contactInfoData?.emails; let i = index;">
       <div *ngIf="!email.inplaceEdit">
         <div class="actions" *ngIf="isEditAllowed"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog('emailAddress', email, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteEmailAddress(email, $event, i)"></i></div>
         <li (click)="inPlaceEdit('emailAddress', email, $event, i)">{{email.emailAddress}}</li>      
@@ -22,7 +22,7 @@
     </ul>
   </div>
   <div *ngIf="isEditAllowed" class="add-contact" (click)="showDialog('emailAddress', null, $event)">+</div>
-  <div class="phone" *ngFor="let phone of data?.customerInfo?.primaryContactInfo.phones; let i = index;">
+  <div class="phone" *ngFor="let phone of contactInfoData?.phones; let i = index;">
     <i class="icons phone type-{{phone?.usageTypeId || 'P'}}"></i>
     <ul *ngIf="!phone.inplaceEdit">
       <div class="actions" *ngIf="isEditAllowed"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog('phoneNumber', phone, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deletePhoneNumber(phone, $event, i)"></i></div>

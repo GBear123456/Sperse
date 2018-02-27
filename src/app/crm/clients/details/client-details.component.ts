@@ -53,7 +53,6 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     private _customerService: CustomersServiceProxy
   ) {
     super(injector);
-
     _customerService['data'] = {customerInfo: null};
     this.rootComponent = this.getRootComponent();
     this.paramsSubscribe = this._route.params.subscribe(params => {
