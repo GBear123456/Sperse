@@ -2716,6 +2716,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
     }
 
+    onTransactionDetailsResize($event) {
+        this.cashFlowGrid.height = $event.height;
+    }
+
     saveForecast = (arg: any): void  => {
         let newValue = arg.component.option('value');
         let parent = arg.component.element().parent();
