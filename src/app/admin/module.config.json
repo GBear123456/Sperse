@@ -1,6 +1,5 @@
 {
   "name": "Admin",
-  "title": "Admin",
   "search": false,
   "requiredFeature": "Admin",
   "navigation": [
