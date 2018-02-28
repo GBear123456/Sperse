@@ -1,7 +1,8 @@
-import { Component, Injector, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, OnDestroy, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from '@app/app.service';
+import { DxRangeSliderComponent } from 'devextreme-angular';
 
 @Component({
     selector: 'cashflow-operations',
@@ -11,11 +12,21 @@ import { AppService } from '@app/app.service';
 
 export class OperationsComponent extends AppComponentBase implements OnDestroy {
     private initTimeout: any;
-    @Input('forecastModelsObj')
+    private initReportPeriodTimeout: any;
+
+    @Input('forecastModelsObj')    
     set forecastModelsObj(forecastModelsObj) {
         clearTimeout(this.initTimeout);
         this.initTimeout = setTimeout(() => {
             this.initToolbarConfig(forecastModelsObj);
+        }, 300);
+    }
+    //@Input() reportPeriod: any;
+    @Input('reportPeriod')
+    set reportPeriod(reportPeriod) {
+        clearTimeout(this.initReportPeriodTimeout);
+        this.initReportPeriodTimeout = setTimeout(() => {
+            this.sliderReportPeriod = reportPeriod
         }, 300);
     }
     @Output() repaintCashflow: EventEmitter<any> = new EventEmitter();
@@ -26,7 +37,14 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     @Output() showPreferencesDialog: EventEmitter<any> = new EventEmitter();
     @Output() onSearchValueChange: EventEmitter<any> = new EventEmitter();
     @Output() onRefresh: EventEmitter<any> = new EventEmitter();
+    @Output() onReportPeriodChange: EventEmitter<any> = new EventEmitter();
 
+    reportPeriodTooltipVisible: boolean = false;
+    sliderReportPeriod = { start: 2000, end: 2028 };
+
+    tooltipEnabled = {
+        enabled: true
+    };
     initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number} = { 'items' : [], 'selectedItemIndex': null}) {
         this._appService.toolbarIsAdaptive = true;
         this._appService.toolbarConfig = [
@@ -79,6 +97,14 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 location: 'before',
                 items: [
                     {
+                        name: 'reportPeriod',                       
+                        action: this.reportPeriodFilter.bind(this),
+                        options: {
+                            id: 'reportPeriod',
+                            iconSrc: 'assets/common/icons/report-period.png'
+                        }
+                    },
+                    {
                         name: 'select-box',
                         text: this.ls('CFO', 'CashflowToolbar_Group_By'),
                         widget: 'dxDropDownMenu',
@@ -95,7 +121,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                                 text: 'Months'
                             }]
                         }
-                    }
+                    }                    
                 ]
             },
             {
@@ -271,7 +297,29 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     refresh() {
         this.onRefresh.emit();
     }
+    
+    reportPeriodFilter() {
+        this.reportPeriodTooltipVisible = !this.reportPeriodTooltipVisible;
+    }
 
+    reportPeriodChange() {
+        let period = {
+            start: this.sliderReportPeriod.start,
+            end: this.sliderReportPeriod.end
+        };
+
+        this.onReportPeriodChange.emit(period);
+    }
+    
+    clear() {
+        this.onReportPeriodChange.emit({});
+        this.reportPeriodTooltipVisible = false;
+    }
+
+    apply() {
+        this.reportPeriodChange();
+        this.reportPeriodTooltipVisible = false;
+    }
     ngOnDestroy() {
         this._appService.toolbarConfig = null;
     }
