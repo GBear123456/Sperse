@@ -20,7 +20,8 @@ import {
     CashFlowStatsDetailDtoStatus,
     AddForecastInput,
     BankAccountDto,
-    StatsFilterGroupByPeriod
+    StatsFilterGroupByPeriod,
+    TransactionStatsDtoAdjustmentType
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
@@ -926,10 +927,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         if (cashflowItem.cashflowTypeId === Income || cashflowItem.cashflowTypeId === Expense) {
                             let totalObject = Object.assign({}, cashflowItem);
                             totalObject.cashflowTypeId = Total;
-                            let netChangeObject = Object.assign({}, cashflowItem);
-                            netChangeObject.cashflowTypeId = NetChange;
                             Array.prototype.push.call(this.cashflowData, this.addCategorizationLevels(totalObject));
-                            Array.prototype.push.call(this.cashflowData, this.addCategorizationLevels(netChangeObject));
+                            if (this.cashflowGridSettings.general.showNetChangeRow) {
+                                let netChangeObject = Object.assign({}, cashflowItem);
+                                netChangeObject.cashflowTypeId = NetChange;
+                                Array.prototype.push.call(this.cashflowData, this.addCategorizationLevels(netChangeObject));
+                            }
                         }
                         return Array.prototype.push.call(this.cashflowData, cashflowItem);
                     };
@@ -2521,6 +2524,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 requestFilter.groupByPeriod = StatsFilterGroupByPeriod.Daily;
                 requestFilter.startDate = this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? this.requestFilter.startDate : datePeriod.startDate;
                 requestFilter.endDate = this.requestFilter.endDate && this.requestFilter.endDate < datePeriod.endDate ? this.requestFilter.endDate : datePeriod.endDate;
+                requestFilter.calculateStartingBalance = false;
 
                 this._cashflowServiceProxy
                     .getStats(InstanceType[this.instanceType], this.instanceId, requestFilter)
@@ -2531,12 +2535,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             let date = this.getDateByPath(cellObj.cell.path, this.getColumnFields(), 'month');
                             let dateFormatted = date.format('MM.YYYY');
                             this.cashflowData.slice().forEach(item => {
-                                if (item.initialDate.utc().format('MM.YYYY') === dateFormatted) {
+                                if (item.initialDate.utc().format('MM.YYYY') === dateFormatted &&
+                                    item.adjustmentStartingBalanceTotal !== TransactionStatsDtoAdjustmentType._2) {
                                     this.cashflowData.splice(this.cashflowData.indexOf(item), 1);
                                 }
                             });
                             this.adjustmentsList.slice().forEach(item => {
-                                if (item.initialDate.utc().format('MM.YYYY') === dateFormatted) {
+                                if (item.initialDate.utc().format('MM.YYYY') === dateFormatted &&
+                                    item.adjustmentStartingBalanceTotal !== TransactionStatsDtoAdjustmentType._2) {
                                     this.adjustmentsList.splice(this.cashflowData.indexOf(item), 1);
                                 }
                             });
@@ -2544,13 +2550,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                             /** Update cashflow data with the daily transactions */
                             transactions = this.getCashflowDataFromTransactions(transactions, false);
-                            let stubCashflowDataForEndingCashPosition = this.getStubCashflowDataForEndingCashPosition(transactions);
                             let stubCashflowDataForAllDays = this.getStubCashflowDataForAllPeriods(transactions, 'day');
-                            let cashflowWithStubForEndingPosition = transactions.concat(stubCashflowDataForEndingCashPosition);
-                            let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(cashflowWithStubForEndingPosition);
+                            let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(transactions);
 
                             /** concat initial data and stubs from the different hacks */
-                            transactions = cashflowWithStubForEndingPosition.concat(
+                            transactions = transactions.concat(
                                 stubCashflowDataForAccounts,
                                 stubCashflowDataForAllDays
                             );

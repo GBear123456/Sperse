@@ -1,6 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
-:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker):not([class^=dx-sort]):not([class*=fa-]):not(.dx-header-filter):not(.dx-treeview-toggle-item-visibility):not(.close):not(.dx-datagrid-group-closed):not(.dx-datagrid-group-opened):not([class*='prev']):not([class*='current']):not([class*='next']) {
+body, html, *, .btn {
+    font-family: Montserrat;
+}
+
+[class^='dx']:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker):not([class^=dx-sort]):not([class*=fa-]):not(.dx-header-filter):not(.dx-treeview-toggle-item-visibility):not(.dx-datagrid-group-opened) {
     font-family: Montserrat !important;
 }
 
