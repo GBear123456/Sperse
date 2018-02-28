@@ -3,16 +3,20 @@
         <div class="value">{{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</div>
         <div class="name">{{l('Total_Balance')}}</div>
     </div>
-
     <div class="account-item dailyStats">
         <dx-select-box [items]="availablePeriods"
-                       [value]="availablePeriods[0]"
-                       (onValueChanged)="onDailyStatsPeriodChanged($event)">
+                       [(value)]="dailyStatsPeriodSelected"
+                       (onValueChanged)="onDailyStatsPeriodChanged()">
         </dx-select-box>
-        <div class="value">{{dailyStatsData?.avarageBalance | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</div>
-        <div class="name">{{l('Daily avarage balance')}}</div>
-    </div>
+        <div class="value">{{dailyStatsAmount | currency: dailyStatsData?.currency : 'symbol' : '1.2-2'}}</div>
+        <dx-slider [min]="0"
+                   [max]="2"
+                   [(value)]="dailyStatsSliderSelected"
+                   (onValueChanged)="setDailyStatsAmount()">
 
+        </dx-slider>
+        <div class="name">{{dailyStatsText}}</div>
+    </div>
     <div class="account-item totalaccounts" id="totalaccounts" (mouseenter)="totalAccountsMouseenter()">
         <a (click)="navigateTo()" class="view-details">{{l('View_details')}}</a>
         <div class="value">{{accountsData?.bankAccountCount}}</div>
