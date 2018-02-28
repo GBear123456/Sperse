@@ -6481,6 +6481,7 @@ export class DashboardServiceProxy {
      * @instanceType (optional) 
      * @instanceId (optional) 
      * @bankAccountIds (optional) 
+     * @startDate (optional) 
      * @return Success
      */
     getDailyBalanceStats(instanceType: InstanceType58, instanceId: number, bankAccountIds: number[], startDate: moment.Moment, endDate: moment.Moment): Observable<GetDailyBalanceStatsOutput> {
@@ -6491,9 +6492,7 @@ export class DashboardServiceProxy {
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (bankAccountIds !== undefined)
             bankAccountIds && bankAccountIds.forEach(item => { url_ += "BankAccountIds=" + encodeURIComponent("" + item) + "&"; });
-        if (startDate === undefined || startDate === null)
-            throw new Error("The parameter 'startDate' must be defined and cannot be null.");
-        else
+        if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate === undefined || endDate === null)
             throw new Error("The parameter 'endDate' must be defined and cannot be null.");
