@@ -9592,6 +9592,56 @@ export class OrganizationContactServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getOrganizations(): Observable<OrganizationShortInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetOrganizations";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetOrganizations(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetOrganizations(response_);
+                } catch (e) {
+                    return <Observable<OrganizationShortInfoDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<OrganizationShortInfoDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetOrganizations(response: Response): Observable<OrganizationShortInfoDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(OrganizationShortInfoDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<OrganizationShortInfoDto[]>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -21173,6 +21223,8 @@ export class ContactInfoBaseDto implements IContactInfoBaseDto {
     phones: ContactPhoneDto[];
     addresses: ContactAddressDto[];
     links: ContactLinkDto[];
+    primaryPhone: ContactPhoneDto;
+    primaryAddress: ContactAddressDto;
     comment: string;
 
     constructor(data?: IContactInfoBaseDto) {
@@ -21210,6 +21262,8 @@ export class ContactInfoBaseDto implements IContactInfoBaseDto {
                 for (let item of data["links"])
                     this.links.push(ContactLinkDto.fromJS(item));
             }
+            this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
+            this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -21246,6 +21300,8 @@ export class ContactInfoBaseDto implements IContactInfoBaseDto {
             for (let item of this.links)
                 data["links"].push(item.toJSON());
         }
+        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
+        data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
@@ -21260,6 +21316,8 @@ export interface IContactInfoBaseDto {
     phones: ContactPhoneDto[];
     addresses: ContactAddressDto[];
     links: ContactLinkDto[];
+    primaryPhone: ContactPhoneDto;
+    primaryAddress: ContactAddressDto;
     comment: string;
 }
 
@@ -23242,7 +23300,9 @@ export class ContactEmploymentInfo implements IContactEmploymentInfo {
     id: number;
     orgName: string;
     orgId: number;
+    country: string;
     countryId: string;
+    state: string;
     stateId: string;
     city: string;
     streetAddress: string;
@@ -23276,7 +23336,9 @@ export class ContactEmploymentInfo implements IContactEmploymentInfo {
             this.id = data["id"];
             this.orgName = data["orgName"];
             this.orgId = data["orgId"];
+            this.country = data["country"];
             this.countryId = data["countryId"];
+            this.state = data["state"];
             this.stateId = data["stateId"];
             this.city = data["city"];
             this.streetAddress = data["streetAddress"];
@@ -23309,7 +23371,9 @@ export class ContactEmploymentInfo implements IContactEmploymentInfo {
         data["id"] = this.id;
         data["orgName"] = this.orgName;
         data["orgId"] = this.orgId;
+        data["country"] = this.country;
         data["countryId"] = this.countryId;
+        data["state"] = this.state;
         data["stateId"] = this.stateId;
         data["city"] = this.city;
         data["streetAddress"] = this.streetAddress;
@@ -23336,7 +23400,9 @@ export interface IContactEmploymentInfo {
     id: number;
     orgName: string;
     orgId: number;
+    country: string;
     countryId: string;
+    state: string;
     stateId: string;
     city: string;
     streetAddress: string;
@@ -23396,7 +23462,9 @@ export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo
     personId: number;
     orgName: string;
     orgId: number;
+    country: string;
     countryId: string;
+    state: string;
     stateId: string;
     city: string;
     streetAddress: string;
@@ -23430,7 +23498,9 @@ export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo
             this.personId = data["personId"];
             this.orgName = data["orgName"];
             this.orgId = data["orgId"];
+            this.country = data["country"];
             this.countryId = data["countryId"];
+            this.state = data["state"];
             this.stateId = data["stateId"];
             this.city = data["city"];
             this.streetAddress = data["streetAddress"];
@@ -23463,7 +23533,9 @@ export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo
         data["personId"] = this.personId;
         data["orgName"] = this.orgName;
         data["orgId"] = this.orgId;
+        data["country"] = this.country;
         data["countryId"] = this.countryId;
+        data["state"] = this.state;
         data["stateId"] = this.stateId;
         data["city"] = this.city;
         data["streetAddress"] = this.streetAddress;
@@ -23490,7 +23562,9 @@ export interface IContactEmploymentCreateInfo {
     personId: number;
     orgName: string;
     orgId: number;
+    country: string;
     countryId: string;
+    state: string;
     stateId: string;
     city: string;
     streetAddress: string;
@@ -23588,7 +23662,9 @@ export interface IUpdateContactEmploymentInput {
 export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
     orgName: string;
     orgId: number;
+    country: string;
     countryId: string;
+    state: string;
     stateId: string;
     city: string;
     streetAddress: string;
@@ -23621,7 +23697,9 @@ export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
         if (data) {
             this.orgName = data["orgName"];
             this.orgId = data["orgId"];
+            this.country = data["country"];
             this.countryId = data["countryId"];
+            this.state = data["state"];
             this.stateId = data["stateId"];
             this.city = data["city"];
             this.streetAddress = data["streetAddress"];
@@ -23653,7 +23731,9 @@ export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
         data = typeof data === 'object' ? data : {};
         data["orgName"] = this.orgName;
         data["orgId"] = this.orgId;
+        data["country"] = this.country;
         data["countryId"] = this.countryId;
+        data["state"] = this.state;
         data["stateId"] = this.stateId;
         data["city"] = this.city;
         data["streetAddress"] = this.streetAddress;
@@ -23679,7 +23759,9 @@ export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
 export interface IContactEmploymentEditInfo {
     orgName: string;
     orgId: number;
+    country: string;
     countryId: string;
+    state: string;
     stateId: string;
     city: string;
     streetAddress: string;
@@ -25762,6 +25844,8 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     phones: ContactPhoneDto[];
     addresses: ContactAddressDto[];
     links: ContactLinkDto[];
+    primaryPhone: ContactPhoneDto;
+    primaryAddress: ContactAddressDto;
     comment: string;
 
     constructor(data?: IPersonContactInfoDto) {
@@ -25800,6 +25884,8 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
                 for (let item of data["links"])
                     this.links.push(ContactLinkDto.fromJS(item));
             }
+            this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
+            this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -25837,6 +25923,8 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
             for (let item of this.links)
                 data["links"].push(item.toJSON());
         }
+        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
+        data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
@@ -25852,6 +25940,8 @@ export interface IPersonContactInfoDto {
     phones: ContactPhoneDto[];
     addresses: ContactAddressDto[];
     links: ContactLinkDto[];
+    primaryPhone: ContactPhoneDto;
+    primaryAddress: ContactAddressDto;
     comment: string;
 }
 
@@ -25865,6 +25955,8 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
     phones: ContactPhoneDto[];
     addresses: ContactAddressDto[];
     links: ContactLinkDto[];
+    primaryPhone: ContactPhoneDto;
+    primaryAddress: ContactAddressDto;
     comment: string;
 
     constructor(data?: IOrganizationContactInfoDto) {
@@ -25903,6 +25995,8 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
                 for (let item of data["links"])
                     this.links.push(ContactLinkDto.fromJS(item));
             }
+            this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
+            this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -25940,6 +26034,8 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
             for (let item of this.links)
                 data["links"].push(item.toJSON());
         }
+        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
+        data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
@@ -25955,6 +26051,8 @@ export interface IOrganizationContactInfoDto {
     phones: ContactPhoneDto[];
     addresses: ContactAddressDto[];
     links: ContactLinkDto[];
+    primaryPhone: ContactPhoneDto;
+    primaryAddress: ContactAddressDto;
     comment: string;
 }
 
@@ -31543,6 +31641,45 @@ export interface IActionDto {
     name: string;
     sysId: string;
     targetStageId: number;
+}
+
+export class OrganizationShortInfoDto implements IOrganizationShortInfoDto {
+    id: number;
+    name: string;
+
+    constructor(data?: IOrganizationShortInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationShortInfoDto {
+        let result = new OrganizationShortInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IOrganizationShortInfoDto {
+    id: number;
+    name: string;
 }
 
 export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput {

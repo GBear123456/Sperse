@@ -1,0 +1,207 @@
+<div class="employment">
+    <div class="row">
+        <div class="col-md-6">
+            <h3 class="lab">{{l('EmployerInfo')}}</h3>
+            <i class="icons company"></i>
+            <div class="info-container">
+                <h4>{{l('CompanyName')}}</h4>
+                <p *ngIf="contactEmploymentInfo?.inplaceEditField != 'orgName'" (click)="inPlaceEditOrganization(contactEmploymentInfo)">{{contactEmploymentInfo?.orgName}}</p>
+                <div *ngIf="contactEmploymentInfo?.inplaceEditField == 'orgName'" class="inplace-edit-wrapper">
+                    <dx-validation-group>
+                        <dx-select-box
+                            [items]="organizations"
+                            [acceptCustomValue]="true"
+                            [value]="contactEmploymentInfo.orgName"
+                            displayExpr="name"
+                            (onSelectionChanged)="organizationNameChanged($event)">
+                            <dx-validator>
+                                <dxi-validation-rule type="required" message="{{l('CompanyNameIsRequired')}}"></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-select-box>
+                        <dx-button class="update" icon="todo" (onClick)="updateOrganizationData(contactEmploymentInfo, $event)"></dx-button>
+                        <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEditOrganization(contactEmploymentInfo)"></dx-button>
+                    </dx-validation-group>
+                </div>
+                <p>
+                    <span *ngIf="contactEmploymentInfo?.orgId; then organizationAddressTemplate else employmentAddressTemplate"></span>
+                    <ng-template #organizationAddressTemplate>
+                        <span *ngIf="organizationAddress as value; else emptyAddressTemplate">
+                            {{organizationAddress?.streetAddress}}, {{organizationAddress?.city}}, {{organizationAddress?.state}}, {{organizationAddress?.zip}}, {{organizationAddress?.country}}
+                        </span>
+                    </ng-template>
+                    <ng-template #employmentAddressTemplate>
+                        <span *ngIf="contactEmploymentInfo?.streetAddress || contactEmploymentInfo?.city || contactEmploymentInfo?.state || contactEmploymentInfo?.country; else emptyAddressTemplate">
+                            {{contactEmploymentInfo?.streetAddress}}, {{contactEmploymentInfo?.city}}, {{contactEmploymentInfo?.state}}, {{contactEmploymentInfo?.zip}}, {{contactEmploymentInfo?.country}}
+                        </span>
+                    </ng-template>
+                    <ng-template #emptyAddressTemplate><span class="caption">{{l('Address')}}</span></ng-template>
+                    &nbsp;
+                    <i *ngIf="isEditOrgDetailsAllowed" class="edit fa fa-pencil" aria-hidden="true" (click)="showEditAddressDialog(contactEmploymentInfo, $event)"></i>
+                </p>
+                <p *ngIf="contactEmploymentInfo?.inplaceEditField != 'websiteUrl'" (click)="inPlaceEdit('websiteUrl', contactEmploymentInfo, isEditOrgDetailsAllowed)">
+                    <span *ngIf="contactEmploymentInfo?.orgId; then organizationWebsiteUrlTemplate else employmentWebsiteUrlTemplate"></span>
+                    <ng-template #organizationWebsiteUrlTemplate>
+                        <span *ngIf="organizationWebsiteUrl as value; else emptyWebsiteUrlTemplate">{{value}}</span>
+                    </ng-template>
+                    <ng-template #employmentWebsiteUrlTemplate>
+                        <span *ngIf="contactEmploymentInfo?.websiteUrl as value; else emptyWebsiteUrlTemplate">{{value}}</span>
+                    </ng-template>
+                    <ng-template #emptyWebsiteUrlTemplate><span class="caption">{{l('WebsiteUrl')}}</span></ng-template>
+                </p>
+                <div *ngIf="contactEmploymentInfo?.inplaceEditField == 'websiteUrl'" class="inplace-edit-wrapper">
+                    <dx-text-box placeholder="" [(value)]="contactEmploymentInfo.websiteUrl"></dx-text-box>
+                    <dx-button class="update" icon="todo" (onClick)="updateDataField('websiteUrl', contactEmploymentInfo, $event)"></dx-button>
+                    <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('websiteUrl', contactEmploymentInfo)"></dx-button>
+                </div>
+            </div>
+            <i class="icons phone type-H"></i>
+            <p *ngIf="contactEmploymentInfo?.inplaceEditField != 'phoneNumber'" (click)="inPlaceEdit('phoneNumber', contactEmploymentInfo, isEditOrgDetailsAllowed)" class="phone-number">
+                <span *ngIf="contactEmploymentInfo?.orgId; then organizationPhoneTemplate else employmentPhoneTemplate"></span>
+                <ng-template #organizationPhoneTemplate>
+                    <span *ngIf="organizationPhoneNumber as value; else emptyPhoneNumberTemplate">{{value | phone}}</span>
+                </ng-template>
+                <ng-template #employmentPhoneTemplate>
+                    <span *ngIf="contactEmploymentInfo?.phoneNumber as value; else emptyPhoneNumberTemplate">{{value | phone}}</span>
+                </ng-template>
+                <ng-template #emptyPhoneNumberTemplate><span class="caption">{{l('WorkPhoneNumber')}}</span></ng-template>
+            </p>
+            <div *ngIf="contactEmploymentInfo?.inplaceEditField == 'phoneNumber'" class="inplace-edit-wrapper phone-number">
+                <dx-validation-group>
+                    <dx-text-box placeholder="" mask="(000) 000-0000" [(value)]="contactEmploymentInfo.phoneNumber">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" message="{{l('WorkPhoneNumberIsRequired')}}"></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-text-box>
+                    <dx-button class="update" icon="todo" (onClick)="updateDataField('phoneNumber', contactEmploymentInfo, $event)"></dx-button>
+                    <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('phoneNumber', contactEmploymentInfo)"></dx-button>
+                </dx-validation-group>
+            </div>      
+            <i class="icons phone type-M"></i>
+            <p *ngIf="contactEmploymentInfo?.inplaceEditField != 'mobilePhoneNumber'" (click)="inPlaceEdit('mobilePhoneNumber', contactEmploymentInfo, isEditOrgDetailsAllowed)" class="phone-number">
+                <span *ngIf="contactEmploymentInfo?.orgId; then organizationMobilePhoneTemplate else employmentMobilePhoneTemplate"></span>
+                <ng-template #organizationMobilePhoneTemplate>
+                    <span *ngIf="organizationMobilePhoneNumber as value; else emptyMobilePhoneNumberTemplate">{{value | phone}}</span>
+                </ng-template>
+                <ng-template #employmentMobilePhoneTemplate>
+                    <span *ngIf="contactEmploymentInfo?.mobilePhoneNumber as value; else emptyMobilePhoneNumberTemplate">{{value | phone}}</span>
+                </ng-template>
+                <ng-template #emptyMobilePhoneNumberTemplate><span class="caption">{{l('MobilePhoneNumber')}}</span></ng-template>           
+            </p>
+            <div *ngIf="contactEmploymentInfo?.inplaceEditField == 'mobilePhoneNumber'" class="inplace-edit-wrapper phone-number">
+                <dx-validation-group>
+                    <dx-text-box placeholder="" mask="(000) 000-0000" [(value)]="contactEmploymentInfo.mobilePhoneNumber">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" message="{{l('MobilePhoneNumberIsRequired')}}"></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-text-box>
+                    <dx-button class="update" icon="todo" (onClick)="updateDataField('mobilePhoneNumber', contactEmploymentInfo, $event)"></dx-button>
+                    <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('mobilePhoneNumber', contactEmploymentInfo)"></dx-button>
+                </dx-validation-group>
+            </div>            
+        </div>
+        <div class="col-md-6">
+            <h3 class="lab">{{l('JobInfo')}}</h3>
+            <i class="icons job"></i>
+            <div class="info-container">
+                <h4>{{l('JobDetails')}}</h4>
+                <div class="row">
+                    <div class="col-md-4 caption">
+                        <p>{{l('JobTitle')}}</p>
+                    </div>
+                    <div class="col-md-8">
+                        <p *ngIf="contactEmploymentInfo?.inplaceEditField != 'jobTitle'" (click)="inPlaceEdit('jobTitle', contactEmploymentInfo)">
+                            <span *ngIf="contactEmploymentInfo?.jobTitle">{{contactEmploymentInfo?.jobTitle}}</span>
+                            <i *ngIf="!contactEmploymentInfo?.jobTitle"class="edit fa fa-pencil" aria-hidden="true" (click)="inPlaceEdit('jobTitle', contactEmploymentInfo)"></i>
+                        </p>
+                        <div *ngIf="contactEmploymentInfo?.inplaceEditField == 'jobTitle'" class="inplace-edit-wrapper">
+                            <dx-validation-group>
+                                <dx-text-box placeholder="" [(value)]="contactEmploymentInfo.jobTitle">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required" message="{{l('JobTitleIsRequired')}}"></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
+                                <dx-button class="update" icon="todo" (onClick)="updateDataField('jobTitle', contactEmploymentInfo, $event)">
+                                </dx-button>
+                                <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('jobTitle', contactEmploymentInfo)"></dx-button>
+                            </dx-validation-group>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 caption">
+                        <p>{{l('SupervisorName')}}</p>
+                    </div>
+                    <div class="col-md-8">
+                        <p *ngIf="contactEmploymentInfo?.inplaceEditField != 'supervisorName'" (click)="inPlaceEdit('supervisorName', contactEmploymentInfo)">
+                            <span *ngIf="contactEmploymentInfo?.supervisorName">{{contactEmploymentInfo?.supervisorName}}</span>
+                            <i *ngIf="!contactEmploymentInfo?.supervisorName"class="edit fa fa-pencil" aria-hidden="true" (click)="inPlaceEdit('supervisorName', contactEmploymentInfo)"></i>
+                        </p>
+                        <div *ngIf="contactEmploymentInfo?.inplaceEditField == 'supervisorName'" class="inplace-edit-wrapper">
+                            <dx-text-box placeholder="" [(value)]="contactEmploymentInfo.supervisorName"></dx-text-box>
+                            <dx-button class="update" icon="todo" (onClick)="updateDataField('supervisorName', contactEmploymentInfo, $event)"></dx-button>
+                            <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('supervisorName', contactEmploymentInfo)"></dx-button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 caption">
+                        <p>{{l('SeniorManager')}}</p>
+                    </div>
+                    <div class="col-md-8">
+                        <p *ngIf="contactEmploymentInfo?.inplaceEditField != 'seniorManager'" (click)="inPlaceEdit('seniorManager', contactEmploymentInfo)">
+                            <span *ngIf="contactEmploymentInfo?.seniorManager">{{contactEmploymentInfo?.seniorManager}}</span>
+                            <i *ngIf="!contactEmploymentInfo?.seniorManager"class="edit fa fa-pencil" aria-hidden="true" (click)="inPlaceEdit('seniorManager', contactEmploymentInfo)"></i>
+                        </p>
+                        <div *ngIf="contactEmploymentInfo?.inplaceEditField == 'seniorManager'" class="inplace-edit-wrapper">
+                            <dx-text-box placeholder="" [(value)]="contactEmploymentInfo.seniorManager"></dx-text-box>
+                            <dx-button class="update" icon="todo" (onClick)="updateDataField('seniorManager', contactEmploymentInfo, $event)"></dx-button>
+                            <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('seniorManager', contactEmploymentInfo)"></dx-button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 caption">
+                        <p>{{l('WorkEmail')}}</p>
+                    </div>
+                    <div class="col-md-8">
+                        <p *ngIf="contactEmploymentInfo?.inplaceEditField != 'workEmail'" (click)="inPlaceEdit('workEmail', contactEmploymentInfo)">
+                            <span *ngIf="contactEmploymentInfo?.workEmail">{{contactEmploymentInfo?.workEmail}}</span>
+                            <i *ngIf="!contactEmploymentInfo?.workEmail"class="edit fa fa-pencil" aria-hidden="true" (click)="inPlaceEdit('workEmail', contactEmploymentInfo)"></i>
+                        </p>
+                        <div *ngIf="contactEmploymentInfo?.inplaceEditField == 'workEmail'" class="inplace-edit-wrapper">
+                            <dx-validation-group>
+                                <dx-text-box placeholder="" [(value)]="contactEmploymentInfo.workEmail">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
+                                <dx-button class="update" icon="todo" (onClick)="updateDataField('workEmail', contactEmploymentInfo, $event)"></dx-button>
+                                <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('workEmail', contactEmploymentInfo)"></dx-button>
+                            </dx-validation-group>
+                        </div>
+                    </div>
+                </div>                                                                                                                    
+            </div>
+            <i class="icons revenue"></i>
+            <div class="info-container">
+                <h4>{{l('Revenue')}}</h4>
+                <div class="row">
+                    <div class="col-md-4 caption">
+                        <p>{{l('MonthlyIncome')}}</p>
+                    </div>
+                    <div class="col-md-8">
+                        <p *ngIf="contactEmploymentInfo?.inplaceEditField != 'monthlyIncome'" (click)="inPlaceEdit('monthlyIncome', contactEmploymentInfo)">
+                            <span *ngIf="contactEmploymentInfo?.monthlyIncome">${{contactEmploymentInfo?.monthlyIncome}}</span>
+                            <i *ngIf="!contactEmploymentInfo?.monthlyIncome"class="edit fa fa-pencil" aria-hidden="true" (click)="inPlaceEdit('monthlyIncome', contactEmploymentInfo)"></i>
+                        </p>
+                        <div *ngIf="contactEmploymentInfo?.inplaceEditField == 'monthlyIncome'" class="inplace-edit-wrapper">
+                            <dx-number-box placeholder="" [(value)]="contactEmploymentInfo.monthlyIncome"></dx-number-box>
+                            <dx-button class="update" icon="todo" (onClick)="updateDataField('monthlyIncome', contactEmploymentInfo, $event)"></dx-button>
+                            <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('monthlyIncome', contactEmploymentInfo)"></dx-button>
+                        </div>                        
+                    </div>
+                </div>                                                                                                                    
+            </div>
+        </div>
+    </div>
+</div>

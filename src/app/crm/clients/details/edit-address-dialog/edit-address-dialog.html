@@ -1,7 +1,8 @@
-<h2 mat-dialog-title (mousedown)="mouseDown($event)">{{l('ContactInfoDialogTitle', l(action), l('Address'))}}</h2>
+<h2 mat-dialog-title (mousedown)="mouseDown($event)" *ngIf="data.title">{{data.title}}</h2>
+<h2 mat-dialog-title (mousedown)="mouseDown($event)" *ngIf="!data.title">{{l('ContactInfoDialogTitle', l(action), l('Address'))}}</h2>
 <mat-dialog-content>
   <dx-validation-group (onInitialized)="initValidationGroup($event)">
-    <div>
+    <div *ngIf="!data.editAddressOnly">
       <label>{{l('Type')}}</label>
       <dx-select-box
         name="usageType"
@@ -125,7 +126,7 @@
       </dx-text-box>
     </div>
 
-    <div>
+    <div *ngIf="!data.editAddressOnly">
       <label>{{l('Comment')}}</label>
       <dx-text-box 
         name="comment"
@@ -134,7 +135,7 @@
       </dx-text-box>
     </div>
 
-    <p>
+    <p *ngIf="!data.editAddressOnly">
       <dx-check-box
         text="{{l('ConfirmedContact', [data.name])}}"
         [disabled]="!isEditAllowed"
@@ -150,7 +151,7 @@
   </dx-validation-group>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button *ngIf="isEditAllowed && (action=='Edit')" mat-button class="button-layout button-clean-red" (click)="data.deleteItem($event)">
+  <button *ngIf="isEditAllowed && data.deleteItem && (action=='Edit')" mat-button class="button-layout button-clean-red" (click)="data.deleteItem($event)">
     <i class="delete fa fa-times" aria-hidden="true"></i>{{l('Delete')}}
   </button>
   <button mat-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>

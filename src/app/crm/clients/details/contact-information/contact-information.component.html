@@ -22,6 +22,9 @@
       </dx-scroll-view>
   </mat-tab>
   <mat-tab label="Employment">
+    <dx-scroll-view showScrollbar="onHover">
+      <employment [contactId]="data?.customerInfo?.primaryContactInfo?.id"></employment>
+    </dx-scroll-view>
   </mat-tab>
   <mat-tab label="Confidential">
   </mat-tab>
