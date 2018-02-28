@@ -9,8 +9,14 @@
                        [value]="availablePeriods[0]"
                        (onValueChanged)="onDailyStatsPeriodChanged($event)">
         </dx-select-box>
-        <div class="value">{{dailyStatsData?.avarageBalance | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</div>
-        <div class="name">{{l('Daily avarage balance')}}</div>
+        <div class="value">{{dailyStatsAmount | currency: dailyStatsData?.currency : 'symbol' : '1.2-2'}}</div>
+        <dx-slider [min]="0"
+                   [max]="2"
+                   [(value)]="dailyStatsSliderSelected"
+                   (onValueChanged)="setDailyStatsAmount()">
+
+        </dx-slider>
+        <div class="name">{{dailyStatsText}}</div>
     </div>
 
     <div class="account-item totalaccounts" id="totalaccounts" (mouseenter)="totalAccountsMouseenter()">

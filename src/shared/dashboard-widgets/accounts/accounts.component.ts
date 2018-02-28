@@ -15,12 +15,21 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     @Output() onTotalAccountsMouseenter: EventEmitter<any> = new EventEmitter();
 
     accountsData: any;
-    dailyStatsData: GetDailyBalanceStatsOutput;
     bankAccountIds: number[] = [];
+
+    dailyStatsData: GetDailyBalanceStatsOutput;
+    dailyStatsAmount: number;
+    dailyStatsText: string;
+    dailyStatsSliderSelected: number = 1;
     availablePeriods = [
         this.l('Last_Month'),
         this.l('Last_Year'),
         this.l('All_Periods')
+    ];
+    dailyStatsToggleValues: any[] = [
+        this.l('Minimum'),
+        this.l('Average'),
+        this.l('Maximum')
     ];
 
     constructor(
@@ -49,6 +58,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         this._dashboardService.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, startDate, endDate)
             .subscribe(result => {
                 this.dailyStatsData = result;
+                this.setDailyStatsAmount();
             });
     }
 
@@ -84,5 +94,21 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         }
 
         this.getDailyStats(startDate, endDate);
+    }
+
+    setDailyStatsAmount(): void {
+        switch (this.dailyStatsSliderSelected) {
+            case 0:
+                this.dailyStatsAmount = this.dailyStatsData.minBalance;
+                break;
+            case 1:
+                this.dailyStatsAmount = this.dailyStatsData.avarageBalance;
+                break;
+            case 2:
+                this.dailyStatsAmount = this.dailyStatsData.maxBalance;
+                break;
+        }
+
+        this.dailyStatsText = this.l('Daily_Balance', this.l(this.dailyStatsToggleValues[this.dailyStatsSliderSelected]));
     }
 }
