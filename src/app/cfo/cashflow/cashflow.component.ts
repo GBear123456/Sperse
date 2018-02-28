@@ -1881,7 +1881,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxPivotGrid/Events/#cellPrepared
      */
     onCellPrepared(e) {
-console.log(e);
         /** added css class to start balance row */
         if (this.isStartingBalanceHeaderColumn(e) || this.isStartingBalanceTotalDataColumn(e)) {
             e.cellElement.parent().addClass('startedBalance');
