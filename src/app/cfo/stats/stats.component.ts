@@ -64,6 +64,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     loadingFinished = false;
     chartsHeight = 400;
     chartsWidth;
+    isForecast = false;
     barChartTooltipFields = [
         {
             'name': 'startingBalance',
@@ -319,14 +320,14 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
     calculateChartsSize() {
-        let chartsHeight = window.innerHeight - 370;
+        let chartsHeight = window.innerHeight - 390;
         this.chartsHeight =  chartsHeight > this.chartsHeight ? chartsHeight : this.chartsHeight;
         this.chartsWidth = window.innerWidth - 371;
     }
 
     /** Calculates the height of the charts scrollable height after resizing */
     calculateChartsScrolableHeight() {
-        return window.innerHeight - 270;
+        return window.innerHeight - 260;
     }
 
     handleCashFlowInitialResult(result) {
@@ -419,6 +420,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         'minRange': { value: minRange, enumerable: true }
                     });
                     if (statsItem.isForecast) {
+                        this.isForecast = true;
                         for (let prop in statsItem) {
                             if (statsItem.hasOwnProperty(prop) && prop !== 'date' && prop !== 'isForecast') {
                                 statsItem['forecast' + this.capitalize(prop)] = statsItem[prop];
