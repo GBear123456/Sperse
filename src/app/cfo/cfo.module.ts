@@ -64,7 +64,7 @@ import {
     DxProgressBarModule,
     DxTabsModule,
     DxTagBoxModule,
-    DxResizableModule
+    DxResizableModule,
     DxRangeSliderModule
 } from 'devextreme-angular';
 import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widgets.module';

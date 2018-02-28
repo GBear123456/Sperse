@@ -1103,6 +1103,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.categorization.every((level) => {
             if (transactionObj[level.statsKeyName]) {
 
+                /** If user doens't want to show accounting type row - skip it */
+                if (level.prefix === CategorizationPrefixes.AccountType && !this.cashflowGridSettings.general.showAccountingTypeRow) {
+                    return true;
+                }
+
                 /** Create categories levels */
                 if (level.prefix === CategorizationPrefixes.AccountName) {
                     if (isAccountTransaction) {
@@ -1334,6 +1339,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
         preferencesObservable.subscribe(result => {
             let updateWithNetChange = result.general.showNetChangeRow !== this.cashflowGridSettings.general.showNetChangeRow;
+            let updateAfterAccountingTypeShowingChange = result.general.showAccountingTypeRow !== this.cashflowGridSettings.general.showAccountingTypeRow;
             this.handleGetCashflowGridSettingsResult(result);
             this.expandedIncomeExpense = false;
             this.closeTransactionsDetail();
@@ -1341,19 +1347,28 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** @todo refactor - move to the showNetChangeRow and call here all
              *  appliedTo data methods before reloading the cashflow
              */
-            if (updateWithNetChange) {
-                /** If user choose to show net change - then add stub data to data source */
-                if (result.general.showNetChangeRow) {
-                    this.cashflowData = this.cashflowData.concat(this.getStubForNetChange(this.cashflowData));
-                /** else - remove the stubed net change data from data source */
-                } else {
-                    this.cashflowData = this.cashflowData.filter(item => item.cashflowTypeId !== NetChange);
+            /** @todo move to the userPreferencesHandlers to avoid if else structure */
+            if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange) {
+                this.pivotGrid.instance.repaint();
+            } else {
+                if (updateWithNetChange) {
+                    /** If user choose to show net change - then add stub data to data source */
+                    if (result.general.showNetChangeRow) {
+                        this.cashflowData = this.cashflowData.concat(this.getStubForNetChange(this.cashflowData));
+                        /** else - remove the stubbed net change data from data source */
+                    } else {
+                        this.cashflowData = this.cashflowData.filter(item => item.cashflowTypeId !== NetChange);
+                    }
+                }
+
+                if (updateAfterAccountingTypeShowingChange) {
+                    this.cashflowData.forEach(item => {
+                        this.addCategorizationLevels(item);
+                    });
                 }
                 this.dataSource = this.getApiDataSource();
-                this.pivotGrid.instance.getDataSource().reload();
-            } else {
-                this.pivotGrid.instance.repaint();
             }
+
             this.notify.info(notificationMessage);
         });
     }
@@ -2295,6 +2310,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         //        }
         //    }
         //}
+    }
+
+    showAccountingTypeRow(cellObj, preference) {
+        this.pivotGrid.instance.getDataSource().reload();
     }
 
     addPreferenceClass(preference) {

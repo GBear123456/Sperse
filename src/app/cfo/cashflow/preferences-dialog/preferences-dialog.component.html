@@ -54,6 +54,14 @@
                         </dx-check-box>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_ShowAccountingTypeRow")}}</div>
+                    <div class="col-xs-1">
+                        <dx-check-box [value]="model.general.showAccountingTypeRow"
+                                      (onValueChanged)="model.general.showAccountingTypeRow = !model.general.showAccountingTypeRow">
+                        </dx-check-box>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="section">
