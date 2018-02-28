@@ -1,16 +1,17 @@
-import { Component, OnInit, Injector, Input, ViewChild, Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, Injector, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
 import { BankAccountsServiceProxy, InstanceType, BankDto } from 'shared/service-proxies/service-proxies';
 
 import { DxDropDownBoxComponent } from 'devextreme-angular';
+import { CacheService } from 'ng2-cache-service';
 
 @Component({
     selector: 'bank-accounts-select',
     templateUrl: './bank-accounts-select.component.html',
     styleUrls: ['./bank-accounts-select.component.less'],
-    providers: [BankAccountsServiceProxy]
+    providers: [BankAccountsServiceProxy, CacheService]
 })
-export class BankAccountsSelectComponent extends CFOComponentBase implements OnInit {    
+export class BankAccountsSelectComponent extends CFOComponentBase implements OnInit {
     @Input() targetBankAccountsTooltip = "";
 
     @Output() onBankAccountsSelected: EventEmitter<any> = new EventEmitter();
@@ -18,10 +19,12 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     data: any;
     tooltipVisible: boolean;
     selectedRowKeys: any[] = [];
+    bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}`;
 
     constructor(
         injector: Injector,
-        private _bankAccountsService: BankAccountsServiceProxy
+        private _bankAccountsService: BankAccountsServiceProxy,
+        private _cacheService: CacheService
     ) {
         super(injector);
     }
@@ -43,12 +46,16 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     bankAccountsSelected() {
         let result = [];
         this.selectedRowKeys.forEach((key, i) => {
-            result.push(key.substring(key.search(':')+1));
+            result.push(key.substring(key.search(':') + 1));
         });
-        this.onBankAccountsSelected.emit({
+
+        let data = {
             bankAccountIds: result,
             banksWithAccounts: this.selectedRowKeys.slice()
-        });
+        };
+        this._cacheService.set(this.bankAccountsCacheKey, data.banksWithAccounts);
+
+        this.onBankAccountsSelected.emit(data);
         this.tooltipVisible = false;
     }
 
@@ -60,6 +67,11 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         this._bankAccountsService.getBankAccounts(InstanceType[this.instanceType], this.instanceId)
             .subscribe((result) => {
                 this.data = this.convertBanksToTreeSource(result);
+
+                if (this._cacheService.exists(this.bankAccountsCacheKey)) {
+                    this.selectedRowKeys = this._cacheService.get(this.bankAccountsCacheKey);
+                    this.bankAccountsSelected();
+                }
             });
     }
 
