@@ -33,7 +33,10 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
 
     bankAccountsClear() {
         this.selectedRowKeys = [];
-        this.onBankAccountsSelected.emit([]);
+        this.onBankAccountsSelected.emit({
+            bankAccountIds: [],
+            banksWithAccounts: []
+        });
         this.tooltipVisible = false;
     }
 
@@ -42,7 +45,10 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         this.selectedRowKeys.forEach((key, i) => {
             result.push(key.substring(key.search(':')+1));
         });
-        this.onBankAccountsSelected.emit(result);
+        this.onBankAccountsSelected.emit({
+            bankAccountIds: result,
+            banksWithAccounts: this.selectedRowKeys.slice()
+        });
         this.tooltipVisible = false;
     }
 
