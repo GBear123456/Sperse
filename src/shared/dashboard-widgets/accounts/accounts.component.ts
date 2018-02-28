@@ -17,10 +17,6 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     accountsData: any;
     bankAccountIds: number[] = [];
 
-    dailyStatsData: GetDailyBalanceStatsOutput;
-    dailyStatsAmount: number;
-    dailyStatsText: string;
-    dailyStatsSliderSelected: number = 1;
     availablePeriods = [
         this.l('Last_Month'),
         this.l('Last_Year'),
@@ -32,6 +28,12 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         this.l('Maximum')
     ];
 
+    dailyStatsData: GetDailyBalanceStatsOutput;
+    dailyStatsAmount: number;
+    dailyStatsText: string;
+    dailyStatsSliderSelected: number = 1;
+    dailyStatsPeriodSelected: string = this.availablePeriods[0];
+
     constructor(
         injector: Injector,
         private _dashboardService: DashboardServiceProxy,
@@ -42,9 +44,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
     ngOnInit() {
         this.getAccountTotals();
-        this.onDailyStatsPeriodChanged({
-            value: this.l('Last_Month')
-        });
+        this.onDailyStatsPeriodChanged();
     }
 
     getAccountTotals(): void {
@@ -69,17 +69,18 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     filterByBankAccounts(bankAccountIds: number[]) {
         this.bankAccountIds = bankAccountIds;
         this.getAccountTotals();
+        this.onDailyStatsPeriodChanged();
     }
 
     totalAccountsMouseenter() {
         this.onTotalAccountsMouseenter.emit();
     }
 
-    onDailyStatsPeriodChanged($event) {
+    onDailyStatsPeriodChanged() {
         let startDate: moment.Moment = moment().utc();
         let endDate: moment.Moment = moment().utc();
 
-        switch ($event.value) {
+        switch (this.dailyStatsPeriodSelected) {
             case this.l('Last_Month'):
                 startDate.subtract(1, 'month').startOf('month');
                 endDate = startDate.clone().endOf('month');
@@ -90,7 +91,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                 break;
             case this.l('All_Periods'):
                 startDate = null;
-                break; 
+                break;
         }
 
         this.getDailyStats(startDate, endDate);
