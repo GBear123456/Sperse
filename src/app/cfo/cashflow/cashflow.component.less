@@ -402,6 +402,95 @@
                         }
                     }
 
+                    &.incomeRow, &.incomeChildRow, &.expensesRow, &.expensesChildRow {
+                        .dx-pivotgrid-collapsed .dx-expand-icon-container {
+                            span {
+                                width: 15px;
+                                height: 15px;
+                                display: inline-block;
+                                transform: rotate(-90deg);
+                                &:before {
+                                    bottom: 5px;
+                                }
+                                background: url('../../../assets/common/icons/rectangle.svg') no-repeat center;
+                            }
+                        }
+                    }
+
+                    &.incomeChildRow, &.expensesChildRow {
+                        .dx-white-space-column {
+                            span {
+                                width: 10px;
+                                height: 10px;
+                                display: inline-block;
+                                position: relative;
+                                left: 18px;
+                                top: 6px;
+                                z-index: 1;
+                            }
+                            &:before {
+                                content: url('../../../assets/common/icons/rectangle.svg');
+                            }
+                        }
+                    }
+
+                    &.incomeRow, &.incomeChildRow {
+                        .dx-pivotgrid-expanded .dx-expand-icon-container {
+                            span:before {
+                                border-bottom: 2px solid #61c670!important;    
+                            }
+                            &:after {
+                                background: #61c670!important;
+                            }
+                        }
+                        .dx-pivotgrid-collapsed .dx-expand-icon-container {
+                            span{
+                                &:before {
+                                    content: url('../../../assets/common/icons/arrow-down-green.svg');
+                                }                                
+                            }
+                        }
+                    }
+
+                    &.incomeChildRow {
+                        .dx-white-space-column {
+                            &:after {
+                                border-right: 2px solid #61c670!important;
+                            }
+                            span {
+                                background: url('../../../assets/common/icons/arrow-down-green.svg') no-repeat center;
+                            }
+                        }
+                    }
+
+                    &.expensesRow, &.expensesChildRow {
+                        .dx-pivotgrid-expanded .dx-expand-icon-container {
+                            span:before {
+                                border-bottom: 2px solid #e7326a!important;
+                            }
+                            &:after {
+                                background: #e7326a!important;
+                            }
+                        }
+                        .dx-pivotgrid-collapsed .dx-expand-icon-container {
+                            span{
+                                &:before {
+                                    content: url('../../../assets/common/icons/arrow-down-red.svg');
+                                }                               
+                            }
+                        }
+                    }
+                    &.expensesChildRow {
+                        .dx-white-space-column {
+                            &:after {
+                                border-right: 2px solid #e7326a!important;
+                            }
+                            span {
+                                background: url('../../../assets/common/icons/arrow-down-red.svg') no-repeat center;
+                            }
+                        }
+                    }
+
                     &.startedBalance,
                     &.incomeRow,
                     &.expensesRow,

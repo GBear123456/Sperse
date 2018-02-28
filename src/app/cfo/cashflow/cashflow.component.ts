@@ -1861,8 +1861,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * return {boolean}
      */
     isIncomeOrExpensesTotalHeaderCell(cellObj) {
-        return cellObj.area === 'row' && cellObj.cell.type === 'D' && !cellObj.cell.isWhiteSpace &&
-            cellObj.cell.path !== undefined && cellObj.cell.path.length === 1 &&
+        return cellObj.area === 'row' && !cellObj.cell.isWhiteSpace && cellObj.cell.path !== undefined && 
             (cellObj.cell.path[0] === CategorizationPrefixes.CashflowType + Income || cellObj.cell.path[0] === (CategorizationPrefixes.CashflowType + Expense));
     }
 
@@ -1954,7 +1953,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxPivotGrid/Events/#cellPrepared
      */
     onCellPrepared(e) {
-
+console.log(e);
         /** added css class to start balance row */
         if (this.isStartingBalanceHeaderColumn(e) || this.isStartingBalanceTotalDataColumn(e)) {
             e.cellElement.parent().addClass('startedBalance');
@@ -1975,12 +1974,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.isIncomeOrExpensesTotalHeaderCell(e)
         ) {
             let isDataCell = this.isIncomeOrExpensesDataCell(e);
+            let level = e.cell.path && e.cell.path.length - 1;
             let pathProp = isDataCell ? 'rowPath' : 'path';
-            let cssClass = e.cell[pathProp] !== undefined && e.cell[pathProp][0] === CategorizationPrefixes.CashflowType + Income ? 'income' : 'expenses';
+            let cssClass = (e.cell[pathProp] !== undefined && 
+                e.cell[pathProp][0] === CategorizationPrefixes.CashflowType + Income 
+                    ? 'income' : 'expenses')  + (level ? 'Child': '');
             e.cellElement.addClass(cssClass);
             e.cellElement.parent().addClass(cssClass + 'Row');
             /** disable collapsing for income and expenses columns */
-            if (this.isIncomeOrExpensesHeaderCell(e)) {
+            if (this.isIncomeOrExpensesHeaderCell(e) && !level) {
                 e.cellElement.addClass('uppercase');
             }
         }
