@@ -102,6 +102,8 @@ class CashflowCategorizationModel {
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
+    reportPeriod = {};
+    defaultReportPeriod = {};
     showAllDisabled = true;
     noRefreshedAfterSync: boolean;
     headlineConfig: any;
@@ -574,6 +576,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 /** @todo reset only for the month for which the filter changed */
                 if (filter.caption.toLowerCase() === 'date') {
                     this.monthsDaysLoadedPathes = [];
+                    if (filter.items.from.value)
+                        this.reportPeriod['start'] = filter.items.from.value.getFullYear();
+                    else
+                        this.reportPeriod['start'] = this.defaultReportPeriod['start'];
+
+                    if (filter.items.to.value)
+                        this.reportPeriod['end'] = filter.items.to.value.getFullYear();
+                    else
+                        this.reportPeriod['end'] = this.defaultReportPeriod['end'];
                 }
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
                 if (filterMethod)
@@ -918,6 +929,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         stubCashflowDataForAllDays
                     );
 
+                    this.defaultReportPeriod['start'] = underscore.min(this.cashflowData, function (val) { return val.date; }).date.year();
+                    this.defaultReportPeriod['end'] = underscore.max(this.cashflowData, function (val) { return val.date; }).date.year();
+                    if (!this.reportPeriod['start'] )
+                        this.reportPeriod['start'] = this.defaultReportPeriod['start'];
+                    if (!this.reportPeriod['end'])
+                        this.reportPeriod['end'] = this.defaultReportPeriod['end'];
                     /**
                      * Override the native array push method for the cashflow that will add the total and netChange objects before pushing the income or expense objects
                      * @type {Object}
@@ -3504,4 +3521,23 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return commentsWidth > buttonsWidthWithCommentsTitle ? window.innerWidth > 1600 ? '33%' : '23%' : buttonsWidthWithCommentsTitle;
     }
 
+    setReportPeriodFilter(period) {
+        let dateFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
+
+        if (period.start) {
+            let from = new Date(period.start + "-01-01");
+            dateFilter.items['from'].setValue(from, dateFilter);
+        } else {
+            dateFilter.items['from'].setValue('', dateFilter);
+        }
+
+        if (period.end) {
+            let from = new Date(period.end + "-12-31");
+            dateFilter.items['to'].setValue(from, dateFilter);
+        } else {
+            dateFilter.items['to'].setValue('', dateFilter);
+        }
+
+        this._filtersService.change(dateFilter);
+    }
 }

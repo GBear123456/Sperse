@@ -4,6 +4,7 @@
 
 <cashflow-operations
     [forecastModelsObj]="forecastModelsObj"
+    [reportPeriod]="reportPeriod"
     (repaintCashflow)="repaintDataGrid()"
     (onGroupBy)="changeGroupBy($event)"
     (handleFullscreen)="toggleFullscreen(getFullscreenElement())"
@@ -12,6 +13,7 @@
     (showPreferencesDialog)="showPreferencesDialog()"
     (onSearchValueChange)="searchValueChange($event)"
     (onRefresh)="refreshDataGrid()"
+    (onReportPeriodChange)="setReportPeriodFilter($event)"
 ></cashflow-operations>
 
 <div class="cashflow" *ngIf="cashflowData && cashflowData.length">

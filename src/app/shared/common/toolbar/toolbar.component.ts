@@ -157,6 +157,10 @@ export class ToolBarComponent extends AppComponentBase {
         showCompactRowsHeight: {
             hint: this.l('Compact View'),
             iconSrc: this.getImgURI('ic_format_line_spacing')
+        },
+        reportPeriod: {
+            iconSrc: this.getImgURI('report-period'),
+            text: this.ls('CFO','CashflowToolbar_Report_Period')
         }
     };
 
