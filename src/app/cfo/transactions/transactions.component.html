@@ -8,7 +8,7 @@
                 <div class="categories">
                     <categorization
                         [width]="'340px'"
-                        [height]="'calc(100vh - 270px)'"
+                        [height]="'calc(100vh - 300px)'"
                         [showTitle]="true"
                         [showHeader]="true"
                         [showClearSelection]="true"
@@ -17,6 +17,7 @@
                         (close)="categoriesShowed = false"
                         [instanceType]="instanceType"
                         [instanceId]="instanceId"
+                        [transactionsFilter]="transactionsFilterQuery"
                         (onTransactionDrop)="categorizeTransactions($event)"
                         (onFilterSelected)="filterByCashflowCategory($event)"
                         (onCategoriesChanged)="refreshDataGrid()">
@@ -49,7 +50,7 @@
                                     cellTemplate="CashflowCategoryNameTemplate"
                                     cssClass="category"></dxi-column>
                         <dxi-column dataField="CashflowSubCategoryName" caption="{{l('Transactions_CashflowSubCategoryName')}}"></dxi-column>
-                        <dxi-column dataField="Amount" cssClass="tabular" name="Amount" caption="{{l('Transactions_Amounts')}}" cellTemplate="amountTemplate"></dxi-column>
+                        <dxi-column dataField="Amount" cssClass="tabular" name="Amount" caption="{{l('Transactions_Amount')}}" cellTemplate="amountTemplate"></dxi-column>
                         <dxi-column dataField="EndingBalance" cssClass="tabular" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate"></dxi-column>
                         <dxi-column dataField="CashFlowTypeName"
                                     cellTemplate="CashFlowTypeNameTemplate"
@@ -66,7 +67,7 @@
                         <dxi-column dataField="IsPending" caption="{{l('Transactions_IsPending')}}" [visible]="false" cellTemplate="isPendingTemplate"></dxi-column>
                         <dxi-column dataField="BankAccountTypeName" caption="{{l('Transactions_BankAccountType')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="Currency" caption="{{l('Transactions_Currency')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="BankAccountBankName" caption="{{l('Transactions_BankName')}}" [visible]="false"></dxi-column>                        
+                        <dxi-column dataField="BankAccountBankName" caption="{{l('Transactions_BankName')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="Fees" cssClass="tabular" caption="{{l('Transactions_Fees')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="CategoryName" caption="{{l('Transactions_CategoryName')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="TypeName" caption="{{l('Transactions_Type')}}" [visible]="false"></dxi-column>

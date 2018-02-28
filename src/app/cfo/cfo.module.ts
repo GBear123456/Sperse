@@ -16,10 +16,12 @@ import { ModalModule } from 'ngx-bootstrap';
 
 import { RulesComponent } from './rules/rules.component';
 import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.component';
+import { RuleDeleteDialogComponent } from './rules/rule-delete-dialog/rule-delete-dialog.component';
 import { CategoryDeleteDialogComponent } from './transactions/categorization/category-delete-dialog/category-delete-dialog.component';
 import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
 
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
+import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
@@ -34,8 +36,9 @@ import { MatTabsModule, MatDialogModule } from '@angular/material';
 import { SortingComponent } from '@app/cfo/shared/common/sorting/sorting.component';
 
 import { CFOService } from './cfo.service';
-import { InstanceServiceProxy, CustomersServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
+
 
 import {
     DxButtonModule,
@@ -127,19 +130,28 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         StatsComponent,
         SourceDataComponent,
         RuleDialogComponent,
+        RuleDeleteDialogComponent,
         CategoryDeleteDialogComponent,
         RulesComponent,
         SortingComponent,
         CFOModalDialogComponent,
         BusinessEntitiesComponent,
-        ChartOfAccountsComponent 
+        ChartOfAccountsComponent,
+        BankAccountsSelectComponent
     ],
     entryComponents: [
         RuleDialogComponent,
+        RuleDeleteDialogComponent,
         CategoryDeleteDialogComponent,
         PreferencesDialogComponent
     ],
-    providers: [InstanceServiceProxy, CFOService, CustomersServiceProxy, ngxZendeskWebwidgetService]
+    providers: [
+        InstanceServiceProxy,
+        CFOService,
+        CustomersServiceProxy,
+        ContactServiceProxy,
+        ngxZendeskWebwidgetService
+    ]
 })
 
 export class CfoModule { }

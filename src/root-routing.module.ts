@@ -7,7 +7,7 @@ import { AppRootComponent } from 'root.components';
 const routes: Routes = [{
     path: '',
     component: AppRootComponent,
-    children: [        
+    children: [
         {
             path: 'account',
             loadChildren: 'account/account.module#AccountModule', //Lazy load account module
@@ -22,7 +22,7 @@ const routes: Routes = [{
             path: 'desktop',
             loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
             data: {preload: true}
-        }    
+        }
     ]
 }];
 
@@ -35,19 +35,19 @@ export class RootRoutingModule implements AfterViewInit {
     constructor(private _router: Router,
                 private _injector: Injector,
                 private _applicationRef: ApplicationRef
-    ) { 
-        _router.config[0].children.push(           
-           { 
-               path: '', 
-               redirectTo: AppConsts.isMobile 
-                   ? '/app/cfo/personal/start'
-                   : '/app/main/start', 
-               pathMatch: 'full' 
+    ) {
+        _router.config[0].children.push(
+           {
+               path: '',
+               redirectTo: AppConsts.isMobile
+                   ? '/app/cfo/user/start'
+                   : '/app/crm/start',
+               pathMatch: 'full'
            },
            {
                path: 'app',
                loadChildren: AppConsts.isMobile
-                   ? 'mobile/mobile.module#MobileModule' //Lazy load mobile module    
+                   ? 'mobile/mobile.module#MobileModule' //Lazy load mobile module
                    : 'app/app.module#AppModule',         //Lazy load desktop module
                data: {preload: true}
            }

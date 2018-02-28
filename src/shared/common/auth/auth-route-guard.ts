@@ -55,8 +55,7 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
             return '/account/login';
         }
 
-        if(AppConsts.isMobile)
-        {
+        if (AppConsts.isMobile) {
             return 'app/cfo';
         }
 
@@ -64,19 +63,19 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
             if (this._permissionChecker.isGranted('Pages.CFO.BaseAccess') && this._feature.isEnabled('CFO')) {
 
                 if (this._permissionChecker.isGranted('Pages.CFO.BusinessAccess'))
-                    return '/app/cfo/business/';
+                    return '/app/cfo/main/';
 
                 if (this._feature.isEnabled('CFO.Partner'))
-                    return '/app/cfo/personal/';
-            }            
-        }           
+                    return '/app/cfo/user/';
+            }
+        }
 
         if (this._permissionChecker.isGranted('Pages.Administration.Host.Dashboard')) {
             return '/app/admin/hostDashboard';
         }
 
-        if (this._permissionChecker.isGranted('Pages.Tenant.Dashboard')) {
-            return '/app/main/dashboard';
+        if (this._permissionChecker.isGranted('Pages.Administration.Dashboard')) {
+            return '/app/crm/dashboard';
         }
 
         if (this._permissionChecker.isGranted('Pages.Tenants')) {
@@ -87,6 +86,12 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
             return '/app/admin/users';
         }
 
-        return '/app/notifications';
+        if (this._permissionChecker.isGranted('Pages.CRM')) {
+            return '/app/crm/clients';
+        }
+
+        if (this._feature.isEnabled('Notification')) {
+            return '/app/notifications';
+        }
     }
 }

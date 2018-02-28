@@ -18,10 +18,6 @@ export class CFOService extends CFOServiceBase {
         super();
 
         _appService.subscribeModuleChange((config) => {
-            this.instanceId = undefined;
-            this.instanceType = undefined;
-            this.initialized = undefined;
-
             if (config['name'] == 'CFO') {
                 this._appService.topMenu.items
                     .forEach((item, i) => {

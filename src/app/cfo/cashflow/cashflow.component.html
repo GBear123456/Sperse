@@ -16,7 +16,7 @@
 
 <div class="cashflow" *ngIf="cashflowData && cashflowData.length">
     <div class="sort-options" [hidden]="!contentReady">
-        <app-sorting [sortings]="sortings" (sortingChange)="resortPivotGrid($event)"></app-sorting>
+        <app-toolbar [config]="categoryToolbarConfig" [compact]="true" ></app-toolbar>
     </div>
     <dx-scroll-view>
         <div class="pivot-grid-wrapper">
@@ -72,7 +72,7 @@
                         dataType="date"
                         cellTemplate="dateCell"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
-                        alignment="left"
+                        alignment="right"
                         [caption]="this.l('DetailsHeaders_ForecastDate')">
                 <dxi-validation-rule type="required"></dxi-validation-rule>
                 <dxi-validation-rule type="custom" [validationCallback]="validateForecastDate"></dxi-validation-rule>
@@ -82,7 +82,7 @@
                         dataType="date"
                         cellTemplate="dateCell"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
-                        alignment="left"
+                        alignment="right"
                         [caption]="this.l('DetailsHeaders_ActualDate')"
                         [allowEditing]="false">
             </dxi-column>
@@ -101,7 +101,7 @@
                         [format]="customCurrency"
                         [allowSorting]="false"
                         [allowFiltering]="false"
-                        alignment="'right'">
+                        alignment="right">
                 <dxi-validation-rule type="numeric"></dxi-validation-rule>
             </dxi-column>
             <dxi-column dataField="credit"
@@ -109,7 +109,7 @@
                         [format]="customCurrency"
                         [allowSorting]="false"
                         [allowFiltering]="false"
-                        alignment="'right'">
+                        alignment="right">
                 <dxi-validation-rule type="numeric"></dxi-validation-rule>
             </dxi-column>
             <dxi-column [caption]="this.l('DetailsHeaders_Account')"
@@ -145,7 +145,7 @@
         </dx-data-grid>
     </div>
 
-    <div id="cashflowFooterToolbar">
+    <div id="cashflowFooterToolbar" *ngIf="cashflowGridSettings?.visualPreferences?.showFooterBar">
         <app-toolbar [(config)]="footerToolbarConfig"></app-toolbar>
     </div>
 
@@ -154,7 +154,7 @@
 <app-no-data
     *ngIf="startDataLoading && (!cashflowData || !cashflowData.length)"
     text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidid"
-    linkUrl="/app/cfo/business/start"
+    linkUrl="/app/cfo/main/start"
     [showLink]="!filteredLoad"
     [linkText]="l('Go_to_sfo_setup')">
 </app-no-data>

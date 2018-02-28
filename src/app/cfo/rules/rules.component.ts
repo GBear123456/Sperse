@@ -3,10 +3,11 @@ import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { AppService } from '@app/app.service';
 
-import { ClassificationServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
+import { ClassificationServiceProxy, ApplyOption, InstanceType } from '@shared/service-proxies/service-proxies';
 
 import { MatDialog } from '@angular/material';
 import { RuleDialogComponent } from './rule-edit-dialog/rule-edit-dialog.component';
+import { RuleDeleteDialogComponent } from './rule-delete-dialog/rule-delete-dialog.component';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -33,6 +34,7 @@ import * as moment from 'moment';
 export class RulesComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxTreeListComponent) treeList: DxTreeListComponent;
 
+    private lastRemovedItemID: number;
     private rootComponent: any;
     public ruleTreeListDataSource: DataSource = new DataSource([]);
     private filters: FilterModel[];
@@ -105,7 +107,13 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     refreshList() {
         this._ClassificationService.getRules(InstanceType[this.instanceType], this.instanceId, null)
             .subscribe(result => {
-                this.ruleTreeListDataSource = new DataSource(result);
+                this.ruleTreeListDataSource = new DataSource({
+                    store: {  
+                        key: 'id',
+                        data: result,
+                        type: 'array'
+                    }
+                });
             });
     }
 
@@ -122,8 +130,27 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
         e.component.hide();
     }
 
-    onRowRemoved($event) {
-        this._ClassificationService.deleteRule(InstanceType[this.instanceType], this.instanceId, [], null, $event.key);
+    onRuleRemoving($event) {
+        let itemId = $event.key,
+            dialogData = {
+                ruleId: itemId,
+                reclassify: false
+            };
+        if ($event.cancel = this.lastRemovedItemID != itemId)
+            this.dialog.open(RuleDeleteDialogComponent, {
+                data: dialogData
+            }).afterClosed().subscribe((result) => {
+                if (result) {
+                    this.startLoading(true);
+                    this._ClassificationService.deleteRule(InstanceType[this.instanceType], this.instanceId, 
+                        [], ApplyOption[dialogData.reclassify ? 'MatchedAndUnclassified': 'None'], itemId)
+                            .subscribe((id) => {
+                                this.lastRemovedItemID = itemId;
+                                $event.component.deleteRow($event.component.getRowIndexByKey(itemId));
+                                this.finishLoading(true);
+                            });
+                }
+            });
     }
 
     showEditDialog(data = {}) {
@@ -154,7 +181,8 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                     operator: { from: '>=', to: '<=' },
                     caption: 'CreationDate',
                     field: 'creationTime',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: {method: 'getFilterByDate'}
                 })
             ]
         );
@@ -183,23 +211,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
             this.ruleTreeListDataSource.filter(dataSourceFilters);
             this.ruleTreeListDataSource.load();
         });
-    }
-
-    filterByCreationDate(filter: FilterModel): any[][] {
-        let result: any[][] = [];
-
-        _.each(filter.items, (item: FilterItemModel, key) => {
-            if (item && item.value) {
-                let date = moment.utc(item.value, 'YYYY-MM-DDT');
-                if (key.toString() === 'to') {
-                    date.add(1, 'd').add(-1, 's');
-                }
-
-                result.push([filter.field, filter.operator[key], date.toDate()]);
-            }
-        });
-
-        return result;
     }
 
     ngAfterViewInit(): void {

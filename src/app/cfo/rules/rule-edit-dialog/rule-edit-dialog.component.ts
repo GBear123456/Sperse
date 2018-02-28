@@ -2,7 +2,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
 import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
-import { DxTreeListComponent, DxDataGridComponent, DxTreeViewComponent } from 'devextreme-angular';
+import { DxTreeListComponent, DxDataGridComponent, DxTreeViewComponent, DxSelectBoxComponent } from 'devextreme-angular';
 
 import {
     CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto, GetTransactionCommonDetailsInput,
@@ -32,7 +32,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     banks: any;
     accounts: any;
     categories: any = [];
-    descriptor: string;
+    descriptor: string = '';
     attributes: any = [];
     keywords: any = [];
     formats: any = [];
@@ -42,7 +42,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     categorization: any;
     attributesAndKeywords: any = [];
     keyAttributeValues: any = [];
-    descriptorList: Array<string> = [];
     private transactionAttributeTypes: any;
 
     transactionTypesAndCategoriesData: TransactionTypesAndCategoriesDto;
@@ -98,13 +97,13 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     attrValues.forEach((attrValue) => {
                         this.keyAttributeValues.push({
                             key: attrValue.attributeTypeId,
-                            name: _.findWhere(this.attributeTypes, {id: attrValue.attributeTypeId}).name
-                        });
-                        attrValue.attributeValues.forEach((val, i) => {
-                            this.keyAttributeValues.push({
-                                key: i,
-                                name: val
-                            });
+                            name: _.findWhere(this.attributeTypes, {id: attrValue.attributeTypeId}).name,
+                            values: attrValue.attributeValues.map((val, i) => {
+                                return {
+                                    key: i,
+                                    name: val
+                                };
+                            })
                         });
                     });
                 }
@@ -462,10 +461,11 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onDescriptorChanged($event) {
-        if (!this.data.title && $event.value) {
-            let attrType = this.transactionAttributeTypes[$event.value];
+        let attrType = this.transactionAttributeTypes[$event.value];
+        $event.component.option('inputAttr', {'attribute-selected': Boolean(attrType)});
+
+        if (!this.data.title && $event.value)
             this.data.title = attrType && attrType.name || $event.value;
-        }
     }
 
     onAttributeInitNewRow($event) {
@@ -480,12 +480,31 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         return $event.value;
     }
 
-    onEditorPreparing ($event) {
+    onEditorPreparing($event) {
         if ($event.dataField == 'conditionValue')
             $event.editorOptions.placeholder = 'Enter Value';
     }
 
     onCustomItemCreating($event) {
-        setTimeout(() => this.descriptor = $event.text, 0);
+        setTimeout(() => {
+            $event.component.option('value', $event.text);
+        }, 0);
+    }
+
+    selectedAttributeValue($event, value) {
+        $event.stopPropagation();
+        $event.preventDefault();
+        if (this.transactionAttributeTypes[this.descriptor])    
+            this.descriptor = '';  
+        this.descriptor += (this.descriptor ? ' - ': '') + value.name;
+    }
+
+    getKeyAttribute(typeId) {
+        return _.findWhere(this.keyAttributeValues, {key: typeId});
+    }
+
+    getKeyAttributeValues(typeId) {
+        let keyAttribute = this.getKeyAttribute(typeId);
+        return keyAttribute ? keyAttribute.values: [];
     }
 }

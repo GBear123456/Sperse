@@ -24,6 +24,7 @@ import {AppConsts} from "@shared/AppConsts";
     styleUrls: ['./trend-by-period.component.less']
 })
 export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
+    bankAccountIds: number[] = [];
     trendData: Array<BankAccountDailyStatDto>;
     chartWidth = 650;
     currency = 'USD';
@@ -165,7 +166,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             this.instanceId,
             'USD',
             this.selectedForecastModelId,
-            [],
+            this.bankAccountIds,
             undefined,
             undefined,
             this.selectedPeriod.amount * 2,
@@ -230,6 +231,11 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
 
     onSelectChange(event) {
         this.selectedPeriod = this.periods.find(period => period.key === event.value);
+        this.loadStatsData();
+    }
+
+    filterByBankAccounts(bankAccountIds: number[]) {
+        this.bankAccountIds = bankAccountIds;
         this.loadStatsData();
     }
 

@@ -150,14 +150,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     operator: { from: 'ge', to: 'le' },
                     caption: 'creation',
                     field: 'CreationTime',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: {method: 'getFilterByDate'}
                 }),
                 new FilterModel({
                     component: FilterCalendarComponent,
                     operator: { from: 'ge', to: 'le' },
                     caption: 'updating',
                     field: 'UpdatingTime',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: {method: 'getFilterByDate'}
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
@@ -245,11 +247,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._filtersService.apply(() => {
             this.initToolbarConfig();
             this.processODataFilter(this.dataGrid.instance,
-                this.dataSourceURI, this.filters, (filter) => {
+                this.dataSourceURI, this.filters, (filter) => {                    
                     let filterMethod = this['filterBy' +
                         this.capitalize(filter.caption)];
                     if (filterMethod)
-                        return filterMethod.call(this, filter);
+                        return filterMethod.call(this, filter);                    
                 }
             );
         });
@@ -385,23 +387,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 or: filterData
             };
         }
-
-        return data;
-    }
-
-    filterByCreation(filter: FilterModel) {
-        let data = {};
-        data[filter.field] = {};
-        _.each(filter.items, (item: FilterItemModel, key) => {
-            if (item.value) {
-                let date = moment.utc(item.value, 'YYYY-MM-DDT');
-                if (key.toString() === 'to') {
-                    date.add(1, 'd').add(-1, 's');
-                }
-
-                data[filter.field][filter.operator[key]] = date.toDate();
-            }
-        });
 
         return data;
     }

@@ -714,7 +714,7 @@ export class BankAccountsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getBankAccounts(instanceType: InstanceType, instanceId: number): Observable<BankAccountDto[]> {
+    getBankAccounts(instanceType: InstanceType, instanceId: number): Observable<BankDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetBankAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -737,14 +737,14 @@ export class BankAccountsServiceProxy {
                 try {
                     return this.processGetBankAccounts(response_);
                 } catch (e) {
-                    return <Observable<BankAccountDto[]>><any>Observable.throw(e);
+                    return <Observable<BankDto[]>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<BankAccountDto[]>><any>Observable.throw(response_);
+                return <Observable<BankDto[]>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetBankAccounts(response: Response): Observable<BankAccountDto[]> {
+    protected processGetBankAccounts(response: Response): Observable<BankDto[]> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -755,14 +755,14 @@ export class BankAccountsServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(BankAccountDto.fromJS(item));
+                    result200.push(BankDto.fromJS(item));
             }
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<BankAccountDto[]>(<any>null);
+        return Observable.of<BankDto[]>(<any>null);
     }
 
     /**
@@ -3564,7 +3564,59 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateAccountingType(instanceType: InstanceType46, instanceId: number, input: UpdateAccountingTypeInput): Observable<void> {
+    createAccountingType(instanceType: InstanceType46, instanceId: number, input: CreateAccountingTypeInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateAccountingType?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processCreateAccountingType(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateAccountingType(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateAccountingType(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    updateAccountingType(instanceType: InstanceType47, instanceId: number, input: UpdateAccountingTypeInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateAccountingType?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3616,7 +3668,7 @@ export class ClassificationServiceProxy {
      * @moveToAccountingTypeId (optional) 
      * @return Success
      */
-    deleteAccountingType(instanceType: InstanceType47, instanceId: number, moveToAccountingTypeId: number, deleteAllReferences: boolean, id: number): Observable<void> {
+    deleteAccountingType(instanceType: InstanceType48, instanceId: number, moveToAccountingTypeId: number, deleteAllReferences: boolean, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteAccountingType?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3686,7 +3738,7 @@ export class CommentServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getComments(instanceType: InstanceType48, instanceId: number, threadId: number): Observable<CommentDto[]> {
+    getComments(instanceType: InstanceType49, instanceId: number, threadId: number): Observable<CommentDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/GetComments?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3747,7 +3799,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createComment(instanceType: InstanceType49, instanceId: number, input: CreateCommentInput): Observable<CreateCommentOutput> {
+    createComment(instanceType: InstanceType50, instanceId: number, input: CreateCommentInput): Observable<CreateCommentOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3803,7 +3855,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateComment(instanceType: InstanceType50, instanceId: number, input: UpdateCommentInput): Observable<void> {
+    updateComment(instanceType: InstanceType51, instanceId: number, input: UpdateCommentInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/UpdateComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3854,7 +3906,7 @@ export class CommentServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteComment(instanceType: InstanceType51, instanceId: number, commentId: number): Observable<void> {
+    deleteComment(instanceType: InstanceType52, instanceId: number, commentId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/DeleteComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3907,7 +3959,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createTransactionCommentThread(instanceType: InstanceType52, instanceId: number, input: CreateTransactionCommentThreadInput): Observable<CreateTransactionCommentThreadOutput> {
+    createTransactionCommentThread(instanceType: InstanceType53, instanceId: number, input: CreateTransactionCommentThreadInput): Observable<CreateTransactionCommentThreadOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateTransactionCommentThread?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3963,7 +4015,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createCashFlowCommentThread(instanceType: InstanceType53, instanceId: number, input: CreateCashFlowCommentThreadInput): Observable<CreateCashFlowCommentThreadOutput> {
+    createCashFlowCommentThread(instanceType: InstanceType54, instanceId: number, input: CreateCashFlowCommentThreadInput): Observable<CreateCashFlowCommentThreadOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateCashFlowCommentThread?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4019,7 +4071,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    setResolved(instanceType: InstanceType54, instanceId: number, input: SetResolvedInput): Observable<void> {
+    setResolved(instanceType: InstanceType55, instanceId: number, input: SetResolvedInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/SetResolved?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6233,7 +6285,7 @@ export class DashboardServiceProxy {
      * @bankAccountIds (optional) 
      * @return Success
      */
-    getAccountTotals(instanceType: InstanceType55, instanceId: number, bankAccountIds: number[]): Observable<AccountTotals> {
+    getAccountTotals(instanceType: InstanceType56, instanceId: number, bankAccountIds: number[]): Observable<AccountTotals> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetAccountTotals?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6288,7 +6340,7 @@ export class DashboardServiceProxy {
      * @bankAccountIds (optional) 
      * @return Success
      */
-    getCategorizationStatus(instanceType: InstanceType56, instanceId: number, bankAccountIds: number[]): Observable<CategorizationStatus> {
+    getCategorizationStatus(instanceType: InstanceType57, instanceId: number, bankAccountIds: number[]): Observable<CategorizationStatus> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetCategorizationStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6934,7 +6986,7 @@ export class FinancialInformationServiceProxy {
      * @errorPage (optional) 
      * @return Success
      */
-    getSetupAccountsLink(instanceType: InstanceType57, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
+    getSetupAccountsLink(instanceType: InstanceType58, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSetupAccountsLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6990,7 +7042,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAccountsWithQuovo(instanceType: InstanceType58, instanceId: number): Observable<void> {
+    syncAccountsWithQuovo(instanceType: InstanceType59, instanceId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAccountsWithQuovo?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7038,7 +7090,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType59, instanceId: number, syncHistory: boolean, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType60, instanceId: number, syncHistory: boolean, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7098,7 +7150,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType60, instanceId: number): Observable<SyncProgressOutput> {
+    getSyncProgress(instanceType: InstanceType61, instanceId: number): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7894,7 +7946,7 @@ export class InstanceServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType61, instanceId: number): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType62, instanceId: number): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7944,7 +7996,7 @@ export class InstanceServiceProxy {
     /**
      * @return Success
      */
-    setup(instanceType: InstanceType62): Observable<SetupOutput> {
+    setup(instanceType: InstanceType63): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType === undefined || instanceType === null)
             throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
@@ -14883,7 +14935,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType63, instanceId: number): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType64, instanceId: number): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14935,7 +14987,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType64, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType65, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14987,7 +15039,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType65, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType66, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -16955,6 +17007,57 @@ export interface IFileDto {
     fileToken: string;
 }
 
+export class BankDto implements IBankDto {
+    id: number;
+    name: string;
+    bankAccounts: BankAccountDto[];
+
+    constructor(data?: IBankDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
+                this.bankAccounts = [];
+                for (let item of data["bankAccounts"])
+                    this.bankAccounts.push(BankAccountDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BankDto {
+        let result = new BankDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        if (this.bankAccounts && this.bankAccounts.constructor === Array) {
+            data["bankAccounts"] = [];
+            for (let item of this.bankAccounts)
+                data["bankAccounts"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IBankDto {
+    id: number;
+    name: string;
+    bankAccounts: BankAccountDto[];
+}
+
 export class BankAccountDto implements IBankAccountDto {
     id: number;
     accountName: string;
@@ -17577,57 +17680,6 @@ export interface ICashFlowInitialData {
     bankAccountBalances: BankAccountBalanceDto[];
 }
 
-export class BankDto implements IBankDto {
-    id: number;
-    name: string;
-    bankAccounts: BankAccountDto[];
-
-    constructor(data?: IBankDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
-                this.bankAccounts = [];
-                for (let item of data["bankAccounts"])
-                    this.bankAccounts.push(BankAccountDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): BankDto {
-        let result = new BankDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        if (this.bankAccounts && this.bankAccounts.constructor === Array) {
-            data["bankAccounts"] = [];
-            for (let item of this.bankAccounts)
-                data["bankAccounts"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IBankDto {
-    id: number;
-    name: string;
-    bankAccounts: BankAccountDto[];
-}
-
 export class BusinessEntityDto implements IBusinessEntityDto {
     id: number;
     name: string;
@@ -17969,6 +18021,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
     showNegativeValuesInRed: number;
     showColumnsWithZeroActivity: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
     showNetChangeRow: boolean;
+    showAccountingTypeRow: boolean;
 
     constructor(data?: ICashflowGridGeneralSettingsDto) {
         if (data) {
@@ -17986,6 +18039,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
             this.showNegativeValuesInRed = data["showNegativeValuesInRed"];
             this.showColumnsWithZeroActivity = data["showColumnsWithZeroActivity"];
             this.showNetChangeRow = data["showNetChangeRow"];
+            this.showAccountingTypeRow = data["showAccountingTypeRow"];
         }
     }
 
@@ -18002,6 +18056,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
         data["showNegativeValuesInRed"] = this.showNegativeValuesInRed;
         data["showColumnsWithZeroActivity"] = this.showColumnsWithZeroActivity;
         data["showNetChangeRow"] = this.showNetChangeRow;
+        data["showAccountingTypeRow"] = this.showAccountingTypeRow;
         return data; 
     }
 }
@@ -18012,12 +18067,14 @@ export interface ICashflowGridGeneralSettingsDto {
     showNegativeValuesInRed: number;
     showColumnsWithZeroActivity: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
     showNetChangeRow: boolean;
+    showAccountingTypeRow: boolean;
 }
 
 export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSettingsDto {
     fontName: string;
     fontSize: string;
     cfoTheme: string;
+    showFooterBar: boolean;
 
     constructor(data?: ICashflowGridVisualSettingsDto) {
         if (data) {
@@ -18033,6 +18090,7 @@ export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSetting
             this.fontName = data["fontName"];
             this.fontSize = data["fontSize"];
             this.cfoTheme = data["cfoTheme"];
+            this.showFooterBar = data["showFooterBar"];
         }
     }
 
@@ -18047,6 +18105,7 @@ export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSetting
         data["fontName"] = this.fontName;
         data["fontSize"] = this.fontSize;
         data["cfoTheme"] = this.cfoTheme;
+        data["showFooterBar"] = this.showFooterBar;
         return data; 
     }
 }
@@ -18055,6 +18114,7 @@ export interface ICashflowGridVisualSettingsDto {
     fontName: string;
     fontSize: string;
     cfoTheme: string;
+    showFooterBar: boolean;
 }
 
 export class LocalizationAndCurrencyDto implements ILocalizationAndCurrencyDto {
@@ -19874,9 +19934,10 @@ export interface IAccountingCategoryDto {
 }
 
 export class ResetClassificationDto implements IResetClassificationDto {
-    removeForecasts: boolean = false;
+    unclassify: boolean = false;
     removeRules: boolean = false;
     removeCategoryTree: boolean = false;
+    removeForecasts: boolean = false;
     recalculateTransactionAttributes: boolean = false;
 
     constructor(data?: IResetClassificationDto) {
@@ -19890,9 +19951,10 @@ export class ResetClassificationDto implements IResetClassificationDto {
 
     init(data?: any) {
         if (data) {
-            this.removeForecasts = data["removeForecasts"] !== undefined ? data["removeForecasts"] : false;
+            this.unclassify = data["unclassify"] !== undefined ? data["unclassify"] : false;
             this.removeRules = data["removeRules"] !== undefined ? data["removeRules"] : false;
             this.removeCategoryTree = data["removeCategoryTree"] !== undefined ? data["removeCategoryTree"] : false;
+            this.removeForecasts = data["removeForecasts"] !== undefined ? data["removeForecasts"] : false;
             this.recalculateTransactionAttributes = data["recalculateTransactionAttributes"] !== undefined ? data["recalculateTransactionAttributes"] : false;
         }
     }
@@ -19905,18 +19967,20 @@ export class ResetClassificationDto implements IResetClassificationDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["removeForecasts"] = this.removeForecasts;
+        data["unclassify"] = this.unclassify;
         data["removeRules"] = this.removeRules;
         data["removeCategoryTree"] = this.removeCategoryTree;
+        data["removeForecasts"] = this.removeForecasts;
         data["recalculateTransactionAttributes"] = this.recalculateTransactionAttributes;
         return data; 
     }
 }
 
 export interface IResetClassificationDto {
-    removeForecasts: boolean;
+    unclassify: boolean;
     removeRules: boolean;
     removeCategoryTree: boolean;
+    removeForecasts: boolean;
     recalculateTransactionAttributes: boolean;
 }
 
@@ -20433,6 +20497,49 @@ export class AttributeValuesDto implements IAttributeValuesDto {
 export interface IAttributeValuesDto {
     attributeTypeId: string;
     attributeValues: string[];
+}
+
+export class CreateAccountingTypeInput implements ICreateAccountingTypeInput {
+    cashflowTypeId: string;
+    name: string;
+    sortOrder: number;
+
+    constructor(data?: ICreateAccountingTypeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.cashflowTypeId = data["cashflowTypeId"];
+            this.name = data["name"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): CreateAccountingTypeInput {
+        let result = new CreateAccountingTypeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["cashflowTypeId"] = this.cashflowTypeId;
+        data["name"] = this.name;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface ICreateAccountingTypeInput {
+    cashflowTypeId: string;
+    name: string;
+    sortOrder: number;
 }
 
 export class UpdateAccountingTypeInput implements IUpdateAccountingTypeInput {
@@ -29753,7 +29860,7 @@ export interface ISubmitContactUsRequestInput {
 
 export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRequestInput {
     companyName: string;
-    editionId: number;
+    editionName: string;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
     leadInterests: LeadInterestDto[] = [];
     leadRequestXref: string;
@@ -29777,7 +29884,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
     init(data?: any) {
         if (data) {
             this.companyName = data["companyName"];
-            this.editionId = data["editionId"];
+            this.editionName = data["editionName"];
             this.paymentPeriodType = data["paymentPeriodType"];
             if (data["leadInterests"] && data["leadInterests"].constructor === Array) {
                 this.leadInterests = [];
@@ -29804,7 +29911,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["companyName"] = this.companyName;
-        data["editionId"] = this.editionId;
+        data["editionName"] = this.editionName;
         data["paymentPeriodType"] = this.paymentPeriodType;
         if (this.leadInterests && this.leadInterests.constructor === Array) {
             data["leadInterests"] = [];
@@ -29825,7 +29932,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 
 export interface ISubmitTenantCreationRequestInput {
     companyName: string;
-    editionId: number;
+    editionName: string;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
     leadInterests: LeadInterestDto[];
     leadRequestXref: string;
@@ -38530,18 +38637,18 @@ export interface IGetLatestWebLogsOutput {
 }
 
 export enum InstanceType {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType2 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType3 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum GroupBy {
@@ -38553,133 +38660,133 @@ export enum GroupBy {
 }
 
 export enum InstanceType4 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType5 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType6 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType7 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType8 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType9 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType10 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType11 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType12 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType13 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType14 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType15 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType16 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType17 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType18 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType19 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType20 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType21 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType22 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType23 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType24 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType25 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType26 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType27 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType28 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType29 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum ApplyOption {
@@ -38690,158 +38797,163 @@ export enum ApplyOption {
 }
 
 export enum InstanceType30 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType31 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType32 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType33 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType34 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType35 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType36 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType37 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType38 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType39 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType40 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType41 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType42 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType43 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType44 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType45 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType46 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType47 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType48 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType49 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType50 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType51 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType52 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType53 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType54 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType55 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType56 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType57 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType58 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType59 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType60 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
+export enum InstanceType61 {
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum IncomeStatisticsDateInterval {
@@ -38856,14 +38968,14 @@ export enum IncomeStatisticsDateInterval2 {
     _3 = 3, 
 }
 
-export enum InstanceType61 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+export enum InstanceType62 {
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
-export enum InstanceType62 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+export enum InstanceType63 {
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum State {
@@ -38902,19 +39014,19 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType63 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
-}
-
 export enum InstanceType64 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum InstanceType65 {
-    Personal = <any>"Personal", 
-    Business = <any>"Business", 
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
+export enum InstanceType66 {
+    User = <any>"User", 
+    Main = <any>"Main", 
 }
 
 export enum IsTenantAvailableOutputState {
@@ -38947,7 +39059,7 @@ export enum TransactionStatsDtoAdjustmentType {
 export enum CashFlowStatsDetailDtoStatus {
     Historical = <any>"Historical", 
     Partial = <any>"Partial", 
-    Incomplete = <any>"Incomplete", 
+    Projected = <any>"Projected", 
     Completed = <any>"Completed", 
 }
 

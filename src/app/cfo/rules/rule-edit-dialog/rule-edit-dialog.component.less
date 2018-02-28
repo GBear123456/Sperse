@@ -1,3 +1,18 @@
+/deep/ .dx-selectbox-popup-wrapper {
+    .dx-item {
+        &.dx-state-focused, &.dx-state-active { 
+            background-color: transparent!important;
+            color: #333!important;
+        }
+        .attribute-value {
+            margin-left: 30px;
+            &:hover {
+                background-color: #dddddd;
+            }
+        }
+    }
+}
+
 :host {
     h2 {
         font-size: 20px;
@@ -428,6 +443,9 @@
                         border: solid 1px #e5e9ec;
                         background-color: #ffffff;
                         border-radius: 4px;
+                        &[attribute-selected="true"] {
+                            font-weight: 600;
+                        }
                     }
                 }
 
