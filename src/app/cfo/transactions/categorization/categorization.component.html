@@ -1,7 +1,7 @@
 <div>
     <div class="tree-header" *ngIf="showHeader">
         <h3 *ngIf="showTitle">
-            {{l('Categorize transactions')}}
+            {{l('ClassifyTransactions')}}
             <span class="close" (click)="close.emit(null)"></span>
             <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection(true)">{{'Clear'}}</span>
         </h3>

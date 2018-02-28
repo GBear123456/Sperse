@@ -222,7 +222,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             expanded: false,
             showTotals: true,
             resortable: true,
-            customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.l('Uncategorized'))(),
+            customizeText: cellInfo => this.customizeFieldText.bind(this, cellInfo, this.l('Unclassified'))(),
             rowHeaderLayout: 'tree'
         },
         {
