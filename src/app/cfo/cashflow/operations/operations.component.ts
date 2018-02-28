@@ -124,10 +124,10 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                     }                    
                 ]
             },
-/*
             {
                 location: 'before',
                 items: [
+/*
                     {
                         name: 'expandRows',
                         widget: 'dxDropDownMenu',
@@ -151,13 +151,13 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                             }]
                         }
                     },
+*/
                     {
                         name: 'rules',
                         action: this.preferencesDialog.bind(this)
                     }
                 ]
             },
-*/
             // {
             //     location: 'after',
             //     items: [
