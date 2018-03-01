@@ -110,6 +110,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
             this.contactInfoData.emails
               .push(ContactEmailDto.fromJS(updatedData));
         }
+      }, error => {
+        dataItem[field] = dataItem.original;
       });
   }
 

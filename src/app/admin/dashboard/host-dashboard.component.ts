@@ -180,77 +180,77 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
     }
 
     drawIncomeStatisticsChart(data): void {
-        this.incomeStatisticsHasData = (data && data.length > 0);
-        if (!this.incomeStatisticsHasData) {
-            return;
+        if (this.incomeStatisticsHasData = data && data.length > 0) {
+            setTimeout(this.initIncomeStatisticChart.bind(this), 0, data);
         }
+    }
 
-        const self = this;
+    initIncomeStatisticChart(data) {
         const normalizedData = this.normalizeIncomeStatisticsData(data);
-        ($ as any).plot($(self.incomeStatisticsChart.nativeElement),
-            [{
-                data: normalizedData,
-                lines: {
-                    fill: 0.2,
-                    lineWidth: 1
-                },
-                color: ['#BAD9F5']
-            }, {
-                data: normalizedData,
-                points: {
-                    show: true,
-                    fill: true,
-                    radius: 4,
-                    fillColor: '#9ACAE6',
-                    lineWidth: 2
-                },
-                color: '#9ACAE6',
-                shadowSize: 1
-            }, {
-                data: normalizedData,
-                lines: {
-                    show: true,
-                    fill: false,
-                    lineWidth: 3
-                },
-                color: '#9ACAE6',
-                shadowSize: 0
-            }],
-            {
-                xaxis: {
-                    mode: 'time',
-                    timeformat: this.l('ChartDateFormat'),
-                    minTickSize: [1, 'day'],
-                    font: {
-                        lineHeight: 20,
-                        style: 'normal',
-                        variant: 'small-caps',
-                        color: '#6F7B8A',
-                        size: 10
-                    }
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0,
-                    tickColor: '#eee',
-                    font: {
-                        lineHeight: 14,
-                        style: 'normal',
-                        variant: 'small-caps',
-                        color: '#6F7B8A'
-                    }
-                },
-                grid: {
-                    hoverable: true,
-                    clickable: false,
-                    tickColor: '#eee',
-                    borderColor: '#eee',
-                    borderWidth: 1,
-                    margin: {
-                        bottom: 20
-                    }
+        ($ as any).plot($(this.incomeStatisticsChart.nativeElement),
+        [{
+            data: normalizedData,
+            lines: {
+                fill: 0.2,
+                lineWidth: 1
+            },
+            color: ['#BAD9F5']
+        }, {
+            data: normalizedData,
+            points: {
+                show: true,
+                fill: true,
+                radius: 4,
+                fillColor: '#9ACAE6',
+                lineWidth: 2
+            },
+            color: '#9ACAE6',
+            shadowSize: 1
+        }, {
+            data: normalizedData,
+            lines: {
+                show: true,
+                fill: false,
+                lineWidth: 3
+            },
+            color: '#9ACAE6',
+            shadowSize: 0
+        }],
+        {
+            xaxis: {
+                mode: 'time',
+                timeformat: this.l('ChartDateFormat'),
+                minTickSize: [1, 'day'],
+                font: {
+                    lineHeight: 20,
+                    style: 'normal',
+                    variant: 'small-caps',
+                    color: '#6F7B8A',
+                    size: 10
                 }
-            });
+            },
+            yaxis: {
+                ticks: 5,
+                tickDecimals: 0,
+                tickColor: '#eee',
+                font: {
+                    lineHeight: 14,
+                    style: 'normal',
+                    variant: 'small-caps',
+                    color: '#6F7B8A'
+                }
+            },
+            grid: {
+                hoverable: true,
+                clickable: false,
+                tickColor: '#eee',
+                borderColor: '#eee',
+                borderWidth: 1,
+                margin: {
+                    bottom: 20
+                }
+            }
+        });
     }
 
     incomeStatisticsDateIntervalChange(interval: number) {
