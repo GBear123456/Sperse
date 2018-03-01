@@ -26,12 +26,15 @@ import { TotalApprovedComponent } from './total-approved/total-approved.componen
 import { CreditLinesComponent } from './credit-lines/credit-lines.component';
 import { RequiredDocumentsComponent } from './required-documents/required-documents.component';
 import { ContactInformationComponent } from './contact-information/contact-information.component';
+import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
+import { ContactPersonsDialogComponent }  from './contact-persons-dialog/contact-persons-dialog.component';
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
 
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
-  ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy } from '@shared/service-proxies/service-proxies';
+  ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
+  OrganizationTypeServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import { PhoneFormatPipe } from './phone-format.pipe';
 
@@ -51,7 +54,9 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     CreditLinesComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent,
-    OperationsWidgetComponent
+    OperationsWidgetComponent,
+    OrganizationDialogComponent,
+    ContactPersonsDialogComponent
   ],
   imports: [
     FormsModule,
@@ -83,7 +88,9 @@ import { PhoneFormatPipe } from './phone-format.pipe';
   ],
   entryComponents: [
     EditContactDialog,
-    EditAddressDialog
+    EditAddressDialog,
+    OrganizationDialogComponent,
+    ContactPersonsDialogComponent
   ],
   bootstrap: [
     ClientDetailsComponent
@@ -95,7 +102,9 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     ContactPhoneServiceProxy,
     ContactLinkServiceProxy,
     CustomersServiceProxy,
-    MemberServiceProxy
+    MemberServiceProxy,
+    OrganizationContactServiceProxy,
+    OrganizationTypeServiceProxy
   ]
 })
 export class ClientDetailsModule { }

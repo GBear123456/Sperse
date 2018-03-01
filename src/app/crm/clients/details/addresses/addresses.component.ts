@@ -1,10 +1,10 @@
 import { AppConsts } from '@shared/AppConsts';
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, Input } from '@angular/core';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { MatDialog } from '@angular/material';
-import { CustomersServiceProxy, ContactAddressServiceProxy, CustomerInfoDto, CountryDto, CountryServiceProxy,
+import { CustomersServiceProxy, ContactAddressServiceProxy, ContactInfoBaseDto, CountryDto, CountryServiceProxy,
   ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
@@ -15,9 +15,8 @@ import * as _ from 'underscore';
   styleUrls: ['./addresses.component.less']
 })
 export class AddressesComponent extends AppComponentBase implements OnInit {
-  data: {
-    customerInfo: CustomerInfoDto
-  };
+  @Input() contactInfoData: ContactInfoBaseDto;
+
   types: Object = {};
   country: string;
   streetNumber: string;
@@ -26,7 +25,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
   state: string;
   zip: string;
 
-  isEditAllowed: boolean = false;
+  isEditAllowed = false;
 
   countries: CountryDto[];
 
@@ -75,8 +74,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     let dialogData = _.pick(address || {}, 'id', 'city',
       'comment', 'country', 'isActive', 'isConfirmed',
       'state', 'streetAddress', 'usageTypeId', 'zip');
-    dialogData.contactId = this.data
-      .customerInfo.primaryContactInfo.id;
+    dialogData.contactId = this.contactInfoData.id;
     dialogData.deleteItem = (event) => {
       this.deleteAddress(address, event, index);
     };
@@ -109,7 +107,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
           address.zip = data.zip;
         } else if (result.id) {
           data.id = result.id;
-          this.data.customerInfo.primaryContactInfo.addresses
+          this.contactInfoData.addresses
             .push(ContactAddressDto.fromJS(data));
         }
       }
@@ -126,8 +124,8 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
       if (result) {
         this.dialog.closeAll();
         this._addressService.deleteContactAddress(
-          this.data.customerInfo.primaryContactInfo.id, address.id).subscribe(result => {
-            this.data.customerInfo.primaryContactInfo.addresses.splice(index, 1);
+          this.contactInfoData.id, address.id).subscribe(result => {
+            this.contactInfoData.addresses.splice(index, 1);
           });
       }
     });
@@ -178,8 +176,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         ) {
           this.updateDataField(address, {
             id: address.id,
-            contactId: this.data.customerInfo
-              .primaryContactInfo.id,
+            contactId: this.contactInfoData.id,
             city: this.city,
             country: this.country,
             isActive: address.isActive,
@@ -199,6 +196,5 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
   }
 
   ngOnInit() {
-    this.data = this._customerService['data'];
   }
 }

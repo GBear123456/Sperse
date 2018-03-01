@@ -1,15 +1,16 @@
 {
   "name": "Admin",
-  "title": "Admin",
   "search": false,
   "requiredFeature": "Admin",
   "navigation": [
+    [ "Dashboard", "Pages.Administration.Host.Dashboard", "icon-home", "/app/admin/hostDashboard"],
     [ "Tenants", "Pages.Tenants", "icon-globe", "/app/crm/tenants", "Admin.Advanced" ],
-    [ "Roles", "Pages.Administration.Roles", "icon-briefcase", "/app/admin/roles","" ],
+    [ "Roles", "Pages.Administration.Roles", "icon-briefcase", "/app/admin/roles", "" ],
     [ "Users", "Pages.Administration.Users", "icon-people", "/app/admin/users", "" ],
     [ "Languages", "Pages.Administration.Languages", "icon-flag", "/app/admin/languages", "Admin.Advanced" ],
     [ "AuditLogs", "Pages.Administration.AuditLogs", "icon-lock", "/app/admin/auditLogs", "" ],
     [ "Maintenance", "Pages.Administration.Host.Maintenance", "icon-wrench", "/app/admin/maintenance", "Admin.Advanced" ],
+    [ "Jobs", "Pages.Administration.HangfireDashboard", "icon-wrench", "/app/admin/jobs", "Admin.Advanced" ],
     [ "Subscription", "Pages.Administration.Tenant.SubscriptionManagement", "icon-refresh", "/app/admin/subscription-management", "Admin.Advanced" ],
     [ "Settings", "Pages.Administration.Host.Settings", "icon-settings", "/app/admin/hostSettings", "Admin.Advanced" ],
     [ "Settings", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/tenantSettings", "Admin.Advanced" ],

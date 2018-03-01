@@ -7,17 +7,17 @@ import { FilterComponent } from '../models/filter-component';
 	styleUrls: ['./filter-inputs.component.less']
 })
 export class FilterInputsComponent extends AppComponentBase implements OnInit, FilterComponent {
-  items: {};   
-	apply: (event) => void;
-  
-  constructor(injector: Injector) {
-    super(injector);
-  }
-  
-  getItems(): string[] {
-    return Object.keys(this.items);
-  }
+    items: {};   
+  	apply: (event) => void;
+    
+    constructor(injector: Injector) {
+      super(injector);
+    }
+    
+    getItems(): string[] {
+      return Object.keys(this.items);
+    }
 
-  ngOnInit(): void {
-  }
+    ngOnInit(): void {
+    }
 }
