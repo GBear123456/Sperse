@@ -9,7 +9,7 @@
       </div>
       <div *ngIf="email.inplaceEdit" class="inplace-edit-wrapper">
         <dx-validation-group>
-          <dx-text-box placeholder="" [(value)]="email.emailAddress">
+          <dx-text-box placeholder="" [(value)]="email.emailAddress" (onValueChanged)="itemValueChanged('emailAddress', email)">
             <dx-validator>
               <dxi-validation-rule type="required" message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
               <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
