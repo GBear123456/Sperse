@@ -66,14 +66,14 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     }
 
     getBankAccounts(): void {
-        this._bankAccountsService.getBankAccounts(InstanceType[this.instanceType], this.instanceId)
+        this._bankAccountsService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
             .subscribe((result) => {
-                this.data = this.convertBanksToTreeSource(result);
+                //this.data = this.convertBanksToTreeSource(result);
 
-                if (this._cacheService.exists(this.bankAccountsCacheKey)) {
-                    this.selectedRowKeys = this._cacheService.get(this.bankAccountsCacheKey);
-                    this.bankAccountsSelected();
-                }
+                //if (this._cacheService.exists(this.bankAccountsCacheKey)) {
+                //    this.selectedRowKeys = this._cacheService.get(this.bankAccountsCacheKey);
+                //    this.bankAccountsSelected();
+                //}
             });
     }
 
