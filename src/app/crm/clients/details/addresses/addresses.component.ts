@@ -29,6 +29,9 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
 
   countries: CountryDto[];
 
+  private _isInPlaceEditAllowed = true;
+  private _itemInEditMode: any;
+
   constructor(
     injector: Injector,
     public dialog: MatDialog,
@@ -133,23 +136,27 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
   }
 
   inPlaceEdit(address, event, index) {
-    if(!this.isEditAllowed || !window['google'])
+    if (!this.isEditAllowed || !window['google'])
       return this.showDialog(address, event, index);
 
+    if (!this._isInPlaceEditAllowed)
+      return;
+
     address.inplaceEdit = true;
-    address.autoComplete = [
-      address.streetAddress,
-      address.city,
-      address.state,
-      address.zip,
-      address.country
-    ].join(',');
+    address.autoComplete = this.aggregateAddress(address);
+
+    if (this._itemInEditMode && this._itemInEditMode != address)
+      this._itemInEditMode.inplaceEdit = false;
+
+    this._itemInEditMode = address;
+
     event.stopPropagation();
   }
 
   closeInPlaceEdit(address, event) {
     this.clearInplaceData();
     address.inplaceEdit = false;
+    this._isInPlaceEditAllowed = true;
     event.jQueryEvent.stopPropagation();
   }
 
@@ -192,7 +199,22 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         }
       });
     address.inplaceEdit = false;
+    this._isInPlaceEditAllowed = true;
     event.jQueryEvent.stopPropagation();
+  }
+
+  aggregateAddress(address: ContactAddressDto) {
+    return [
+      address.streetAddress,
+      address.city,
+      address.state,
+      address.zip,
+      address.country
+    ].join(',');
+  }
+
+  addressChanged(address, event) {
+    this._isInPlaceEditAllowed = address.autoComplete == event.formatted_address;
   }
 
   ngOnInit() {
