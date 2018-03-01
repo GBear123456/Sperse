@@ -23,9 +23,9 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         this.l('All_Periods')
     ];
     dailyStatsToggleValues: any[] = [
-        this.l('Minimum'),
+        this.l('Highest'),
         this.l('Average'),
-        this.l('Maximum')
+        this.l('Lowest')
     ];
 
     dailyStatsData: GetDailyBalanceStatsOutput;
@@ -76,6 +76,11 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         this.onTotalAccountsMouseenter.emit();
     }
 
+    changeDailyStatsToggleValue(index) {
+        this.dailyStatsSliderSelected = index;
+        this.setDailyStatsAmount();
+    }
+
     onDailyStatsPeriodChanged() {
         let startDate: moment.Moment = moment().utc();
         let endDate: moment.Moment = moment().utc();
@@ -100,16 +105,16 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     setDailyStatsAmount(): void {
         switch (this.dailyStatsSliderSelected) {
             case 0:
-                this.dailyStatsAmount = this.dailyStatsData.minBalance;
+                this.dailyStatsAmount = this.dailyStatsData.maxBalance;
                 break;
             case 1:
                 this.dailyStatsAmount = this.dailyStatsData.avarageBalance;
                 break;
             case 2:
-                this.dailyStatsAmount = this.dailyStatsData.maxBalance;
+                this.dailyStatsAmount = this.dailyStatsData.minBalance;
                 break;
         }
 
-        this.dailyStatsText = this.l('Daily_Balance', this.l(this.dailyStatsToggleValues[this.dailyStatsSliderSelected]));
+        this.dailyStatsText = this.l(this.dailyStatsToggleValues[this.dailyStatsSliderSelected]) + ' ' + this.l('Balance');
     }
 }

@@ -14,7 +14,42 @@
             position: relative;
 
             &.dailyStats {
-                background-image: url('../../../assets/common/icons/copy-icon.svg');
+                background-image: url('../../../assets/common/icons/coins-icon-2.svg');
+
+                .value {
+                    font-weight: 400;
+                    color: #677380;
+                }
+
+                ul {
+                    padding: 0;
+                    list-style-type: none;
+                    margin: 0;
+
+                    li {
+                        padding-right: 8px;
+                        text-transform: uppercase;
+                        font-size: 10px;
+                        font-weight: 300;
+                        letter-spacing: 0.2px;
+                        color: #afb4bb;
+                        line-height: 1.5;
+                        border-right: 2px solid transparent;
+                        cursor: pointer;
+                        display: inline-block;
+                        float: right;
+
+                        + li {
+                            margin-top: 7px;
+                        }
+
+                        &.selected {
+                            font-weight: 600;
+                            border-right: 2px solid #32bef2;
+                            color: #656a6f;
+                        }
+                    }
+                }
 
                 /deep/ dx-select-box {
                     border-radius: 0;
@@ -126,7 +161,7 @@
             }
 
             &.networth {
-                background-image: url('../../../assets/common/icons/hand-icon.svg');
+                background-image: url('../../../assets/common/icons/coins-icon.svg');
             }
 
             .value {
