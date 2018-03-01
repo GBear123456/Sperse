@@ -13,14 +13,7 @@ import { DxRangeSliderComponent } from 'devextreme-angular';
 export class OperationsComponent extends AppComponentBase implements OnDestroy {
     private initTimeout: any;
     private initReportPeriodTimeout: any;
-
-    @Input('forecastModelsObj')    
-    set forecastModelsObj(forecastModelsObj) {
-        clearTimeout(this.initTimeout);
-        this.initTimeout = setTimeout(() => {
-            this.initToolbarConfig(forecastModelsObj);
-        }, 300);
-    }
+    
     //@Input() reportPeriod: any;
     @Input('reportPeriod')
     set reportPeriod(reportPeriod) {
@@ -45,7 +38,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     tooltipEnabled = {
         enabled: true
     };
-    initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number} = { 'items' : [], 'selectedItemIndex': null}) {
+    initToolbarConfig() {
         this._appService.toolbarIsAdaptive = true;
         this._appService.toolbarConfig = [
             {
@@ -266,6 +259,8 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
         private _appService: AppService
     ) {
         super(injector);
+
+        this.initToolbarConfig();
     }
 
     exportTo(event) {
