@@ -63,10 +63,10 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
     }
 
-    filterByBankAccounts(bankAccountIds: number[]) {
-        this.accountsComponent.filterByBankAccounts(bankAccountIds);
-        this.categorizationStatusComponent.filterByBankAccounts(bankAccountIds);
-        this.totalsByPeriodComponent.filterByBankAccounts(bankAccountIds);
-        this.trendByPeriodComponent.filterByBankAccounts(bankAccountIds);
+    filterByBankAccounts(data) {
+        this.accountsComponent.filterByBankAccounts(data.bankAccountIds);
+        this.categorizationStatusComponent.filterByBankAccounts(data);
+        this.totalsByPeriodComponent.filterByBankAccounts(data.bankAccountIds);
+        this.trendByPeriodComponent.filterByBankAccounts(data.bankAccountIds);
     }
 }

@@ -1,8 +1,9 @@
-import { Component, Injector, OnInit, Output, EventEmitter} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {CFOComponentBase} from 'app/cfo/shared/common/cfo-component-base';
-import {DashboardServiceProxy, InstanceType} from 'shared/service-proxies/service-proxies';
-import {Router} from '@angular/router';
+import { Component, Injector, OnInit, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
+import { DashboardServiceProxy, InstanceType, GetDailyBalanceStatsOutput } from 'shared/service-proxies/service-proxies';
+import { Router } from '@angular/router';
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-accounts',
@@ -15,6 +16,24 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
     accountsData: any;
     bankAccountIds: number[] = [];
+
+    availablePeriods = [
+        this.l('Last_Month'),
+        this.l('Last_Year'),
+        this.l('All_Periods')
+    ];
+    dailyStatsToggleValues: any[] = [
+        this.l('Minimum'),
+        this.l('Average'),
+        this.l('Maximum')
+    ];
+
+    dailyStatsData: GetDailyBalanceStatsOutput;
+    dailyStatsAmount: number;
+    dailyStatsText: string;
+    dailyStatsSliderSelected: number = 1;
+    dailyStatsPeriodSelected: string = this.availablePeriods[0];
+
     constructor(
         injector: Injector,
         private _dashboardService: DashboardServiceProxy,
@@ -25,12 +44,21 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
     ngOnInit() {
         this.getAccountTotals();
+        this.onDailyStatsPeriodChanged();
     }
 
     getAccountTotals(): void {
         this._dashboardService.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds)
             .subscribe((result) => {
                 this.accountsData = result;
+            });
+    }
+
+    getDailyStats(startDate: moment.Moment, endDate: moment.Moment): void {
+        this._dashboardService.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, startDate, endDate)
+            .subscribe(result => {
+                this.dailyStatsData = result;
+                this.setDailyStatsAmount();
             });
     }
 
@@ -41,9 +69,47 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     filterByBankAccounts(bankAccountIds: number[]) {
         this.bankAccountIds = bankAccountIds;
         this.getAccountTotals();
+        this.onDailyStatsPeriodChanged();
     }
 
     totalAccountsMouseenter() {
         this.onTotalAccountsMouseenter.emit();
+    }
+
+    onDailyStatsPeriodChanged() {
+        let startDate: moment.Moment = moment().utc();
+        let endDate: moment.Moment = moment().utc();
+
+        switch (this.dailyStatsPeriodSelected) {
+            case this.l('Last_Month'):
+                startDate.subtract(1, 'month').startOf('month');
+                endDate = startDate.clone().endOf('month');
+                break;
+            case this.l('Last_Year'):
+                startDate.subtract(1, 'year').startOf('year');
+                endDate = startDate.clone().endOf('year');
+                break;
+            case this.l('All_Periods'):
+                startDate = null;
+                break;
+        }
+
+        this.getDailyStats(startDate, endDate);
+    }
+
+    setDailyStatsAmount(): void {
+        switch (this.dailyStatsSliderSelected) {
+            case 0:
+                this.dailyStatsAmount = this.dailyStatsData.minBalance;
+                break;
+            case 1:
+                this.dailyStatsAmount = this.dailyStatsData.avarageBalance;
+                break;
+            case 2:
+                this.dailyStatsAmount = this.dailyStatsData.maxBalance;
+                break;
+        }
+
+        this.dailyStatsText = this.l('Daily_Balance', this.l(this.dailyStatsToggleValues[this.dailyStatsSliderSelected]));
     }
 }

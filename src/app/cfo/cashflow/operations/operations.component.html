@@ -1,0 +1,30 @@
+<div>
+    <dx-tooltip target="[aria-label='Report Period']"
+                [(visible)]="reportPeriodTooltipVisible">
+        <div *dxTemplate="let data = data of 'content'">
+            <div class="report-period-tooltip-container">
+                <div class="actions">
+                    <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
+                    <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
+                </div>
+                <div class="report-period-title">
+                    <span class="title">{{ls('CFO','CashflowToolbar_Report_Period_Title')}}</span>
+                    <span class="start">{{sliderReportPeriod.start}}</span>
+                    to
+                    <span class="end">{{sliderReportPeriod.end}}</span>
+                </div>
+
+                <dx-range-slider [min]="2000"
+                                 [max]="2028"
+                                 [(start)]="sliderReportPeriod.start"
+                                 [(end)]="sliderReportPeriod.end"
+                                 [step]="1">
+                </dx-range-slider>
+            </div>
+        </div>
+    </dx-tooltip>
+
+    <bank-accounts-select targetBankAccountsTooltip="[aria-label='Accounts']"
+                          (onBankAccountsSelected)="filterByBankAccounts($event)">
+    </bank-accounts-select>
+</div>
