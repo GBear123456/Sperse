@@ -105,6 +105,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
     @ViewChild(OperationsComponent) operations: OperationsComponent;
+    selectedBankAccounts = [];
     reportPeriod = {};
     defaultReportPeriod = {};
     showAllDisabled = true;
@@ -627,6 +628,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     else
                         this.reportPeriod['end'] = this.defaultReportPeriod['end'];
                 }
+                if (filter.caption.toLowerCase() === 'account') {
+                    this.selectedBankAccounts = filter.items.element.value; 
+                }
+
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
                 if (filterMethod)
                     filterMethod(filter, this.requestFilter);
@@ -3607,5 +3612,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         this._filtersService.change(dateFilter);
+    }
+
+    setBankAccountsFilter(data) {
+        let accountFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
+
+        if (data.banksWithAccounts) {
+            accountFilter.items['element'].setValue(data.banksWithAccounts, accountFilter);
+        } else {
+            accountFilter.items['element'].setValue([], accountFilter);
+        }
+        this._filtersService.change(accountFilter);
     }
 }

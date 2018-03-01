@@ -12,8 +12,8 @@ import { CacheService } from 'ng2-cache-service';
     providers: [BankAccountsServiceProxy, CacheService]
 })
 export class BankAccountsSelectComponent extends CFOComponentBase implements OnInit {
+    private initSelectedBankAccountsTimeout: any;
     @Input() targetBankAccountsTooltip = "";
-
     @Output() onBankAccountsSelected: EventEmitter<any> = new EventEmitter();
 
     data: any;
@@ -44,9 +44,11 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     }
 
     bankAccountsSelected() {
-        let result = [];
+        let result = [];        
         this.selectedRowKeys.forEach((key, i) => {
-            result.push(key.substring(key.search(':') + 1));
+            let position = key.search(':');
+            if (position !== -1)
+                result.push(key.substring(position + 1));
         });
 
         let data = {
@@ -114,5 +116,9 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         } else {
             return 550;
         }
+    }
+
+    setSelectedBankAccounts(bankAccountIds) {
+        this.selectedRowKeys = bankAccountIds;
     }
 }
