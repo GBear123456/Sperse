@@ -67,7 +67,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 let expenses = Math.abs(currentStatsItem.expenses) + prevStatsItem.expenses;
                 return {
                     'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? 
-                        prevStatsItem.startingBalance: currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
+                        prevStatsItem['startingBalance']: currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
                     'endingBalance': currentStatsItem.endingBalance,
                     'income': income,
                     'expenses': expenses,
