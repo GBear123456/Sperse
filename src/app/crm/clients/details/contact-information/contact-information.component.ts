@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injector } from '@angular/core';
+import { CustomersServiceProxy, CustomerInfoDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'contact-information',
@@ -6,10 +7,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./contact-information.component.less']
 })
 export class ContactInformationComponent implements OnInit {
+  public data: {
+    customerInfo: CustomerInfoDto
+  };
 
-  constructor() { }
-
-  ngOnInit() {
+  constructor(
+    injector: Injector,
+    private _customerService: CustomersServiceProxy
+  ) {
   }
 
+  ngOnInit() {
+    this.data = this._customerService['data'];
+  }
 }

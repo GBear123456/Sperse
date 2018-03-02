@@ -2,7 +2,7 @@ import { Injectable, Input } from "@angular/core";
 import { AppService } from "@app/app.service";
 import { LayoutService } from "@app/shared/layout/layout.service";
 import { CFOServiceBase } from "shared/cfo/cfo-service-base";
-import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, CustomersServiceProxy } from "shared/service-proxies/service-proxies";
+import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, CustomersServiceProxy, ContactServiceProxy } from "shared/service-proxies/service-proxies";
 import { ActivatedRoute } from "@angular/router";
 
 @Injectable()
@@ -13,7 +13,7 @@ export class CFOService extends CFOServiceBase {
         private _appService: AppService,
         private _layoutService: LayoutService,
         private _instanceServiceProxy: InstanceServiceProxy,
-        private _customerService: CustomersServiceProxy
+        private _contactService: ContactServiceProxy
     ) {
         super();
 
@@ -30,7 +30,7 @@ export class CFOService extends CFOServiceBase {
     }
 
     initContactInfo(userId) {
-        this._customerService.getContactInfoByUser(userId).subscribe(response => {
+        this._contactService.getContactInfoByUser(userId).subscribe(response => {
             this._appService.contactInfo = response;
         });
     }

@@ -426,7 +426,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
         if ($event.cells[1].value == 'Exist' && $event.cells[0].value != 'keyword')
             setTimeout(() => {
-                $event.cells[2].value = '-';
+                $event.cells[2].value = '';
                 $event.cells[2].cellElement.hide();
                 $event.cells[1].cellElement.attr('colspan', '2');
             }, 0);
@@ -485,10 +485,21 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             $event.editorOptions.placeholder = 'Enter Value';
     }
 
-    onCustomItemCreating($event) {
+    onCustomDescriptorCreating($event) {
         setTimeout(() => {
-            $event.component.option('value', $event.text);
+            this.descriptor = $event.text;
         }, 0);
+    }
+
+    onCustomAttributeCreating($event, cell) {
+        cell.value = $event.value;
+        cell.setValue($event.value);
+    }
+
+    onAttributeKeyEnter($event, cell) {
+        if ($event.jQueryEvent.keyCode == 13)
+            this.onCustomAttributeCreating(
+                {value: $event.jQueryEvent.target.value}, cell);
     }
 
     selectedAttributeValue($event, value) {
