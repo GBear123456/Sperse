@@ -3237,7 +3237,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         }
                     }
                 } else {
-                    if (this.l('Uncategorized').toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                    if (this.l('Unclassified').toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
                         return true;
                     }
                 }
