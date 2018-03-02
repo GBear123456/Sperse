@@ -1,6 +1,7 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {CFOComponentBase} from '@app/cfo/shared/common/cfo-component-base';
 import {AppConsts} from '@shared/AppConsts';
+import { DashboardService } from '../dashboard.service';
 import {
     BankAccountsServiceProxy,
     GroupBy,
@@ -39,9 +40,13 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
 
     constructor(
         injector: Injector,
+        private _dashboardService: DashboardService,
         private _bankAccountService: BankAccountsServiceProxy
     ) {
         super(injector);
+
+        _dashboardService.subscribePeriodChange(
+            this.onValueChanged.bind(this));
     }
 
     ngOnInit() {
@@ -82,7 +87,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                         Math.abs(result.income),
                         Math.abs(result.expenses),
                         Math.abs(result.netChange)
-                    ) * 1.5;
+                    ) * 1.8;
                     
                     this.totalData.incomePercent = this.getPercentage(maxValue, result.income);
                     this.totalData.expensesPercent = this.getPercentage(maxValue, result.expenses);
@@ -97,12 +102,12 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         return maxValue ? Math.round(currValue / maxValue * 100): 0;
     }
 
-    onValueChanged($event): void {
+    onValueChanged(value): void {
         let period;
         let groupBy;
         let startDate = moment().utc();
         let endDate = moment().utc();
-        switch ($event.value) {
+        switch (value) {
             case this.l('Today'):
                 period = 'day';
                 groupBy = 'Daily';

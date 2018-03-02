@@ -10,7 +10,7 @@
                            (onValueChanged)="onDailyStatsPeriodChanged()">
             </dx-select-box>-->
             <div class="col-8">
-                <div class="value">{{dailyStatsAmount | currency: dailyStatsData?.currency : 'symbol' : '1.2-2'}}</div>
+                <div class="value">{{ dailyStatsAmountInteger | currency: dailyStatsData?.currency : 'symbol' : '1.0-0'}}<span>{{ dailyStatsAmountFloat }}</span></div>
                 <div class="name">{{dailyStatsText}}</div>
             </div>
             <div class="col-4">
@@ -22,8 +22,14 @@
             </div>
         </div>
     </div>
-    <div class="account-item totalaccounts" id="totalaccounts" (mouseenter)="totalAccountsMouseenter()">
-        <a (click)="navigateTo()" class="view-details">{{l('View_details')}}</a>
+    <div class="account-item total-accounts" id="totalaccounts" (mouseenter)="totalAccountsMouseenter()">
+        <!-- a (click)="navigateTo()" class="view-details">{{l('View_details')}}</a -->
+        <dx-select-box [items]="availablePeriods"
+                       [width]="'100px'"
+                       [value]="availablePeriods[availablePeriods.length - 1]"
+                       (onValueChanged)="onPeriodChanged($event)">
+        </dx-select-box>
+
         <div class="value">{{accountsData?.bankAccountCount}}</div>
         <div class="name">
             {{l('Total_Accounts')}}
