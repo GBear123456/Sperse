@@ -190,6 +190,24 @@
                 vertical-align: top;
                 background-color: #fff;
                 min-width: @left-column-width;
+
+                #findInputBlock {
+                    position: absolute;
+                    font-size: 15px;
+                    font-weight: 300;
+                    line-height: 1.67;
+                    letter-spacing: 0.3px;
+                    color: #424c56;
+                    z-index: 2;
+                    left: 11px;
+                    border: 1px solid #ddd;
+                    bottom: 17px;
+                    margin: auto;
+                    .dx-searchbox .dx-texteditor-input {
+                        padding-left: 44px;
+                        border-bottom: none;
+                    }
+                }
             }
             /** upper right column (historical row and dates rows) */
             .dx-area-column-cell {
@@ -284,9 +302,14 @@
                 }
             }
             /** bottom left column (labels cells) */
-            .dx-area-row-cell {
+            .dx-area-row-cell table {
+                width: 100% !important;
                 tr {
                     position: relative;
+
+                    &:first-child td.dx-white-space-column {
+                        border-top: 0;
+                    }
 
                     td {
                         text-align: left;
@@ -416,7 +439,6 @@
                     &.startedBalance td {
                         background: @startedBalanceBackgroundColor;
                     }
-
 
                     &.netChangeRow td {
                         background: transparent;

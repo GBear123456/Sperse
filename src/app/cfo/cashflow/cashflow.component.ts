@@ -111,6 +111,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     categoryTree: GetCategoryTreeOutput;
     cashflowData: any;
     cashflowDataTree = {};
+    treePathes = [];
     cashflowTypes: any;
     bankAccounts: BankAccountDto[];
     dataSource: any;
@@ -124,6 +125,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     };
     statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
     statsDetailResult: any;
+    filterBy;
     /**
      *  Categorization settings for creating categorization tree on cashflow
      */
@@ -416,6 +418,25 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     action: (event) => {
                         event.jQueryEvent.stopPropagation();
                         event.jQueryEvent.preventDefault();
+                        let toolbarElement = event.element.closest('.dx-area-description-cell');
+                        if (!toolbarElement.find('#findInputBlock').length) {
+                            let searchInputBlock = $('<div id="findInputBlock"><div></div></div>');
+                            searchInputBlock.find('div')
+                                .dxTextBox({
+                                    showClearButton: true,
+                                    mode: 'search',
+                                    onValueChanged: e => {
+                                        searchInputBlock.hide();
+                                        this.cashedRowsFitsToFilter.clear();
+                                        this.filterBy = e.element.find('input').val()
+                                        this.pivotGrid.instance.getDataSource().reload();
+                                    }
+                                });
+                            searchInputBlock.appendTo(toolbarElement);
+                        } else {
+                            toolbarElement.find('#findInputBlock').show();
+                        }
+                        toolbarElement.find('input').focus();
                     }
                 },
                 {
@@ -474,6 +495,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private requestFilter: StatsFilter;
     private anotherPeriodAccountsValues: Map<object, number> = new Map();
     private cashedColumnActivity: Map<string, boolean> = new Map();
+    private cashedRowsFitsToFilter: Map<string, boolean> = new Map();
     transactionsTotal = 0;
     transactionsAmount = 0;
     transactionsAverage = 0;
@@ -676,7 +698,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     handleCashFlowInitialResult(initialDataResult) {
         this.initialData = initialDataResult;
         this.cashflowTypes = this.initialData.cashflowTypes;
-        this.cashflowTypes[NetChange] = this.l('Net Change');
+        this.addCashflowType(Total, this.l('Ending Cash Balance'));
+        this.addCashflowType(NetChange, this.l('Net Change'));
         this.bankAccounts = this.initialData.banks.map(x => x.bankAccounts).reduce((x, y) => x.concat(y));
         this._filtersService.setup(
             this.filters = [
@@ -892,6 +915,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     handleGetCategoryTreeResult(getCategoriesResult) {
         this.categoryTree = getCategoriesResult;
+        /** Add starting balance, ending balance, netchange and balance discrepancy */
+        for (let type in this.cashflowTypes) {
+            if (!this.categoryTree.types.hasOwnProperty(type)) {
+                this.categoryTree.types[type] = <any>{ name: this.cashflowTypes[type]};
+            }
+        }
     }
 
     /**
@@ -958,7 +987,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.cashflowData = this.getCashflowDataFromTransactions(transactions);
                     /** Make a copy of cashflow data to display it in custom total group on the top level */
                     let stubCashflowDataForEndingCashPosition = this.getStubCashflowDataForEndingCashPosition(this.cashflowData);
-                    this.addCashflowType(Total, this.l('Ending Cash Balance'));
                     let stubCashflowDataForAllDays = this.getStubCashflowDataForAllPeriods(this.cashflowData, 'month');
                     let cashflowWithStubForEndingPosition = this.cashflowData.concat(stubCashflowDataForEndingCashPosition);
                     let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(cashflowWithStubForEndingPosition);
@@ -1181,7 +1209,36 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             return true;
         });
+        this.updateTreePathes(transactionObj);
         return transactionObj;
+    }
+
+    /**
+     * Update pathes for the filtering
+     * @param transactionObj
+     */
+    updateTreePathes(transactionObj) {
+        let fullPath = [];
+        for (let i = 0; i < 5; i++) {
+            let levelValue = transactionObj[`level${i}`];
+            if (levelValue || i === 1) {
+                fullPath.push(levelValue);
+            }
+        }
+        if (this.treePathes.indexOf(fullPath) === -1) {
+            this.treePathes.push(fullPath);
+        }
+    }
+
+    /**
+     * Build the nested object from array as the properties
+     * @param base - the object to create
+     * @param names - the array with nested keys
+     */
+    updateNestedObject(base, names) {
+        for (let i = 0; i < names.length; i++ ) {
+            base = base[ names[i] ] = base[ names[i] ] || {};
+        }
     }
 
     /**
@@ -3065,6 +3122,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     calculateSummaryValue() {
         return summaryCell => {
 
+            /** To hide rows that not correspond to the search */
+            if (this.filterBy && summaryCell.field('row')) {
+                if (!this.rowFitsToFilter(summaryCell, this.filterBy)) {
+                    return null;
+                }
+            }
+
             let prevWithParent = this.getPrevWithParent(summaryCell);
 
             /** calculation for ending cash position value */
@@ -3107,12 +3171,74 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             /** To hide rows that has empty header (except level1) */
-            let value = summaryCell.field('row') && (summaryCell.value(summaryCell.field('row').dataField) !== undefined || summaryCell.field('row').dataField === 'level1') ?
+            let value = this.cellRowIsNotEmpty(summaryCell) ?
                         summaryCell.value() || 0 :
                         null;
 
             return value;
         };
+    }
+
+    /**
+     * Method that check if the cell of format CTI (Category Type Income) is fit to the filter
+     * It looks all pathes where the cell value is presented and if any of the elements of these pathes
+     * contains filter string - return true
+     * @param rowInfo - info of format (CategoryPrefixes + Key)
+     * @param filter - string for which to filter
+     * @return {boolean}
+     */
+    rowFitsToFilter(summaryCell, filter: string) {
+        let cellsToCheck = [];
+        let rowInfo = summaryCell.value(summaryCell.field('row').dataField);
+        let result = false;
+        /** add the rowInfo to cash to avoid checking for every cell */
+        if (!this.cashedRowsFitsToFilter.has(rowInfo) || !rowInfo) {
+            this.treePathes.forEach(path => {
+                if (path.indexOf(rowInfo) !== -1) {
+                    /** Handle for uncategorized */
+                    if (!rowInfo) {
+                        let parent = summaryCell.parent('row');
+                        let parentInfo = parent.value(parent.field('row').dataField);
+                        if (path.indexOf(parentInfo) !== -1) {
+                            cellsToCheck = underscore.union(cellsToCheck, path);
+                        }
+                    } else {
+                        cellsToCheck = underscore.union(cellsToCheck, path);
+                    }
+                }
+            });
+            result = cellsToCheck.some(value => {
+                if (value) {
+                    let [prefix, key] = [value.slice(0, 2), value.slice(2)];
+                    let dataSource = this.getNamesSourceLink(prefix);
+                    if (dataSource) {
+                        let possibleIds = [];
+                        for (let id in dataSource) {
+                            let cellInfo = {value: value};
+                            if (this.customizeFieldText(cellInfo).toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                                possibleIds.push(id);
+                            }
+                        }
+                        if (possibleIds.indexOf(key) !== -1) {
+                            return true;
+                        }
+                    } else {
+                        if (key.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                            return true;
+                        }
+                    }
+                } else {
+                    if (this.l('Uncategorized').toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+            this.cashedRowsFitsToFilter.set(rowInfo, result);
+        } else {
+            result = this.cashedRowsFitsToFilter.get(rowInfo);
+        }
+        return result;
     }
 
     /**
@@ -3358,6 +3484,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + StartedBalance);
     }
 
+    cellRowIsNotEmpty(summaryCell) {
+        return summaryCell.field('row') &&
+                (
+                    summaryCell.value(summaryCell.field('row').dataField) !== undefined ||
+                    summaryCell.field('row').dataField === 'level1'
+                );
+    }
+
     isEndingBalanceAccountCell(summaryCell) {
         return summaryCell.field('row') !== null &&
                summaryCell.field('row').dataField === 'level1' &&
@@ -3394,8 +3528,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Method for sorting pivot grid
      * @param {string} name
      */
-    resortPivotGrid(sortOptions: any, event: any) {        
-        sortOptions.sortOrder = 
+    resortPivotGrid(sortOptions: any, event: any) {
+        sortOptions.sortOrder =
             event.itemElement.hasClass('desc') ? 'asc': 'desc';
         event.itemElement.parent().children().removeClass('asc desc');
         event.itemElement.addClass(sortOptions.sortOrder);
@@ -3603,5 +3737,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         this._filtersService.change(dateFilter);
+    }
+
+    @HostListener('window:click', ['$event']) toogleSearchInput(event) {
+        if (!event.target.closest('#findInputBlock')) {
+            const findInput = document.getElementById('findInputBlock');
+            if (findInput) {
+                findInput.style.display = 'none';
+            }
+        }
     }
 }
