@@ -20,7 +20,10 @@ export class FilterItemModel {
         let value = (typeof (this.value) == 'string') && this.value
             || isBoolValues && this.value && caption
             || this.value && this.value['getDate'] && (caption + ': ' +
-            moment(this.value, 'YYYY-MM-DD').format('MM/DD/YYYY'));
+            this.value.toLocaleDateString().split('/').map((part) => {
+                return part.length >= 2 ? part: '0' + part;
+            }).join('/'));
+
         return [<DisplayElement>{ item: this, displayValue: value }];
     }
 

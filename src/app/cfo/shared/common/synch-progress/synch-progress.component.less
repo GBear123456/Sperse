@@ -124,115 +124,199 @@
 }
 
 .tooltip-container {
-    h3 {
-        font-size: 18px;
-        line-height: 1.21;
-        letter-spacing: 0.3px;
-        text-align: left;
-        color: #212c36;
-    }
+    .header {
+        border-bottom: 1px solid #e5e9ec;
+        padding-bottom: 14px;
+        padding-top: 7px;
 
-    
-
-    @media all and (min-width: 800px) {
-        .row {
-            width: 750px;
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.21;
+            letter-spacing: 0.3px;
+            text-align: left;
+            color: #212c36;
         }
     }
-    
-    .progress-wrap {
-        margin: 0 auto;
-        max-width: 180px;
-        width: 100%;
-        height: auto;
-        position: fixed;
-        left: 45px;
-        top: 60px;
-    }
-    
-    .total-synch-progress {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        font-size: 24px;
-        transform: translate(-50%, -50%);
-    }
-    
-    .list-of-synch-accounts {
-        list-style-type: none;
-        margin-bottom: 0;
-        padding-left: 0;
-        
-        li {
-            border-top: 1px solid #e5e9ec;
-            padding: 5px 5px 5px 25px;
+
+    .scroll-zone {
+        margin-top: 21px;
+
+        .progress-wrap {
+            max-width: 138px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto;
             position: relative;
-            
-            &:last-child {
-                border-bottom: 1px solid #e5e9ec;
-            }
-            
-            .name {
-                width: 79%;
-                display: block;
-                float: left;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                overflow: hidden;
-                padding-right: 5px;
-    
-                &::before {
-                    content: '';
-                    width: 10px;
-                    height: 10px;
-                    background-color: #f9b74b;
-                    border-radius: 50%;
-                    display: block;
+        }
+
+        .progress-description {
+            width: 213px;
+            height: auto;
+            position: relative;
+            margin: 20px auto 20px;
+            padding: 22px;
+            background-color: #f3f7fa;
+
+            .progress-description-arrow {
+                top: -10px;
+                left: 96px;
+                width: 20px;
+                height: 10px;
+                position: absolute;
+
+                &::after {
+                    background: #f3f7fa;
+                    right: 0;
+                    bottom: 0;
+                    transform-origin: bottom right;
+                    width: 14px;
+                    height: 14px;
                     position: absolute;
-                    left: 7px;
-                    top: 10px;
+                    display: block;
+                    content: " ";
+                    transform: rotate(-45deg);
                 }
             }
-    
-            &.completed {
-                background: transparent url('../../../../../assets/common/icons/completed-icon.svg') 4px 50% no-repeat;
-                .name::before {
-                    content: none;
-                }
+
+            .progress-description-header {
+                text-transform: uppercase;
+                font-size: 14px;
+                font-weight: 600;
+                line-height: 1.21;
+                color: #35c8a8;
+                margin-bottom: 17px;
             }
-    
-            &.failed {
-                .name::before {
-                    background-color: #f05b2a;
-                }
-                &:hover {
+
+            .progress-description-text {
+                white-space: initial;
+                font-size: 12px;
+                font-weight: 300;
+                line-height: 1.5;
+                letter-spacing: 0.2px;
+            }
+        }
+
+        .total-synch-progress {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 24px;
+            transform: translate(-50%, -50%);
+            font-weight: 600;
+            font-size: 30px;
+        }
+
+        .list-of-synch-accounts {
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.31;
+            list-style-type: none;
+            margin-bottom: 0;
+            padding-left: 0;
+
+            li {
+                padding: 5px 5px 5px 25px;
+                position: relative;
+
+                .name {
+                    width: 79%;
+                    display: block;
+                    float: left;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    padding-right: 5px;
+
                     &::before {
-                        content: attr(data-errormsg);
-                        background: #fff;
+                        content: '';
+                        width: 10px;
+                        height: 10px;
+                        background-color: #f9b74b;
+                        border-radius: 50%;
                         display: block;
-                        width: auto;
-                        height: auto;
-                        padding: 8px;
-                        font-size: 13px;
-                        color: red;
-                        border-radius: 3px;
-                        border: 1px solid #ddd;
                         position: absolute;
-                        top: 25px;
-                        left: 0;
-                        z-index: 10;
+                        left: 7px;
+                        top: 10px;
                     }
                 }
+
+                &.completed {
+                    background: transparent url('../../../../../assets/common/icons/completed-icon.svg') 4px 50% no-repeat;
+
+                    .name::before {
+                        content: none;
+                    }
+                }
+
+                &.failed {
+                    .name::before {
+                        background-color: #f05b2a;
+                    }
+
+                    &:hover {
+                        &::before {
+                            content: attr(data-errormsg);
+                            background: #fff;
+                            display: block;
+                            width: auto;
+                            height: auto;
+                            padding: 8px;
+                            font-size: 13px;
+                            color: red;
+                            border-radius: 3px;
+                            border: 1px solid #ddd;
+                            position: absolute;
+                            top: 25px;
+                            left: 0;
+                            z-index: 10;
+                        }
+                    }
+                }
+
+                .percent {
+                    width: 20%;
+                    display: block;
+                    float: right;
+                    text-align: right;
+                    padding-right: 5px;
+                    font-weight: 500;
+                    color: #677380;
+                }
             }
-            
-            .percent {
-                width: 20%;
-                display: block;
-                float: right;
-                text-align: right;
-                padding-right: 5px;
+        }
+    }
+
+    .footer {
+        border-top: 1px solid #e5e9ec;
+        padding-top: 18px;
+        padding-bottom: 10px;
+
+        .footer-text {
+            font-size: 12px;
+            font-weight: 300;
+            line-height: 1.5;
+            letter-spacing: 0.2px;
+            padding-left: 30px;
+            position: relative;
+            white-space: initial;
+
+            &::before {
+                color: white;
+                font-size: 11px;
+                font-weight: 600;
+                line-height: 16px;
+                text-align: center;
+                width: 16px;
+                height: 16px;
+                content: "i";
+                border-radius: 50%;
+                background: #8bd5ef;
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
             }
-            
         }
     }
 }
@@ -273,12 +357,3 @@
         transform: rotate(359deg);
     }
 }
-/*
-@media all and (min-width:1024px) {
-    /deep/ .dx-tooltip-wrapper .dx-overlay-content {
-        transform: translate(320px, 140px) !important;
-    }
-    /deep/ .dx-popover-wrapper.dx-position-bottom .dx-popover-arrow {
-        left: 180px !important;
-    }
-}*/

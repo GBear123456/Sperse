@@ -8,6 +8,7 @@ import { InstallComponent } from './install/install.component';
 import { TenantSettingsComponent } from './settings/tenant-settings.component';
 import { SystemSettingsComponent } from './settings/system-settings.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
+import { JobsComponent } from './jobs/jobs.component';
 import { LanguagesComponent } from './languages/languages.component';
 import { LanguageTextsComponent } from './languages/language-texts.component';
 import { OrganizationUnitsComponent } from './organization-units/organization-units.component';
@@ -28,6 +29,7 @@ import { UiCustomizationComponent } from './ui-customization/ui-customization.co
                     { path: 'roles', component: RolesComponent, data: { permission: 'Pages.Administration.Roles' } },
                     { path: 'auditLogs', component: AuditLogsComponent, data: { permission: 'Pages.Administration.AuditLogs' } },
                     { path: 'maintenance', component: MaintenanceComponent, data: { permission: 'Pages.Administration.Host.Maintenance' } },
+                    { path: 'jobs', component: JobsComponent, data: { permission: 'Pages.Administration.HangfireDashboard' } },
                     { path: 'hostSettings', component: HostSettingsComponent, data: { permission: 'Pages.Administration.Host.Settings' } },
                     { path: 'languages', component: LanguagesComponent, data: { permission: 'Pages.Administration.Languages' } },
                     { path: 'languages/:name/texts', component: LanguageTextsComponent, data: { permission: 'Pages.Administration.Languages.ChangeTexts' } },

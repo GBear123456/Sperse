@@ -131,6 +131,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
             {
                 location: 'before',
                 items: [
+/*
                     {
                         name: 'bankAccountSelect',
                         widget: 'dxButton',
@@ -139,7 +140,8 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                             id: 'bankAccountSelect',
                             text: this.l('Accounts')
                         }
-                    }
+                    },
+*/
                 ]
             },          
             {

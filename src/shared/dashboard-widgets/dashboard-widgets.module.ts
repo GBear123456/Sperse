@@ -6,6 +6,7 @@ import {CategorizationStatusComponent} from './categorization-status/categorizat
 import {AccountsSynchStatusComponent} from './accounts-synch-status/accounts-synch-status.component';
 import {TotalsByPeriodComponent} from './totals-by-period/totals-by-period.component';
 import {TrendByPeriodComponent} from './trend-by-period/trend-by-period.component';
+import {DashboardService} from './dashboard.service';
 import {RoundProgressModule} from 'angular-svg-round-progressbar';
 
 import {
@@ -48,7 +49,8 @@ import {ChooseResetRulesComponent} from './categorization-status/choose-reset-ru
         TotalsByPeriodComponent,
         TrendByPeriodComponent,
         ChooseResetRulesComponent
-    ]
+    ],
+    providers: [DashboardService]
 })
 export class DashboardWidgetsModule {
 }

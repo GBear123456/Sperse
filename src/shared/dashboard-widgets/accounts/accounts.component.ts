@@ -1,5 +1,6 @@
 import { Component, Injector, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DashboardService } from '../dashboard.service';
 import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
 import { DashboardServiceProxy, InstanceType, GetDailyBalanceStatsOutput } from 'shared/service-proxies/service-proxies';
 import { Router } from '@angular/router';
@@ -18,10 +19,16 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     bankAccountIds: number[] = [];
 
     availablePeriods = [
+        this.l('Today'),
+        this.l('Yesterday'),
+        this.l('This_Week'),
+        this.l('This_Month'),
         this.l('Last_Month'),
+        this.l('This_Year'),
         this.l('Last_Year'),
         this.l('All_Periods')
     ];
+
     dailyStatsToggleValues: any[] = [
         this.l('Highest'),
         this.l('Average'),
@@ -36,7 +43,8 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private _dashboardService: DashboardServiceProxy,
+        private _dashboardService: DashboardService,
+        private _dashboardProxy: DashboardServiceProxy,
         private _router: Router
     ) {
         super(injector);
@@ -48,14 +56,14 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     getAccountTotals(): void {
-        this._dashboardService.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds)
+        this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds)
             .subscribe((result) => {
                 this.accountsData = result;
             });
     }
 
     getDailyStats(startDate: moment.Moment, endDate: moment.Moment): void {
-        this._dashboardService.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, startDate, endDate)
+        this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, startDate, endDate)
             .subscribe(result => {
                 this.dailyStatsData = result;
                 this.setDailyStatsAmount();
@@ -81,21 +89,47 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         this.setDailyStatsAmount();
     }
 
-    onDailyStatsPeriodChanged() {
+    onPeriodChanged($event) {
+        this._dashboardService.periodChanged($event.value);
+        this.onDailyStatsPeriodChanged($event.value);
+    }
+
+    onDailyStatsPeriodChanged(value = '') {
         let startDate: moment.Moment = moment().utc();
         let endDate: moment.Moment = moment().utc();
 
-        switch (this.dailyStatsPeriodSelected) {
+        switch (value) {
+            case this.l('Today'):
+                startDate.startOf('day');
+                endDate.startOf('day');
+                break;
+            case this.l('Yesterday'):
+                startDate.subtract(1, 'day').startOf('day');
+                endDate.subtract(1, 'day').endOf('day');
+                break;
+            case this.l('This_Week'):
+                startDate.startOf('week');
+                endDate.endOf('week');
+                break;
+            case this.l('This_Month'):
+                startDate.startOf('month');
+                endDate.endOf('month');
+                break;
             case this.l('Last_Month'):
                 startDate.subtract(1, 'month').startOf('month');
                 endDate = startDate.clone().endOf('month');
+                break;
+            case this.l('This_Year'):
+                startDate.startOf('year');
+                endDate.endOf('year');
                 break;
             case this.l('Last_Year'):
                 startDate.subtract(1, 'year').startOf('year');
                 endDate = startDate.clone().endOf('year');
                 break;
-            case this.l('All_Periods'):
+            default:
                 startDate = null;
+                endDate.startOf('day');
                 break;
         }
 

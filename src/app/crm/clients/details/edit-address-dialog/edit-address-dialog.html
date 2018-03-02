@@ -136,15 +136,14 @@
 
     <p>
       <dx-check-box
-        text="{{l('ConfirmedContact', [data.name])}}"
-        [disabled]="!isEditAllowed"
-        [(value)]="data.isConfirmed">
-      </dx-check-box>
-      &nbsp;&nbsp;&nbsp;
-      <dx-check-box
-        text="{{l('ActiveContact', [data.name])}}"
+        text="{{l('ActiveContact')}}"
         [disabled]="!isEditAllowed"
         [(value)]="data.isActive">
+      </dx-check-box>
+      <dx-check-box
+        text="{{l('ConfirmedContact')}}"
+        [disabled]="!isEditAllowed"
+        [(value)]="data.isConfirmed">
       </dx-check-box>
     </p>
   </dx-validation-group>
