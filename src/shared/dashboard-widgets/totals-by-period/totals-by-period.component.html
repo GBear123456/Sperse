@@ -9,77 +9,20 @@
         </div>
     </header>
     <div class="content-wrap">
-        <div class="row" [hidden]="!totalData || !totalData.length" *ngIf="totalData?.length > 0">
-            <div class="col-4 text-right labels">
-                <div>{{l('Cash_Inflows')}}</div>
-                <div>{{l('Cash_Outflows')}}</div>
-                <div>{{l('Net_Change')}}</div>
-            </div>
-            <div class="col-8">
-                <dx-chart
-                    id="totalsByPeriod"
-                    [dataSource]="totalData"
-                    [equalBarWidth]=true
-                    [barWidth]=0.62
-                    [rotated]=true
-                    [size]="{height: 185}"
-                    [palette]="soft">
+        <div [hidden]="!totalData" *ngIf="totalData?.hasOwnProperty('startingBalance')">
 
-                    <dxo-common-series-settings argumentField="date"
-                                                type="bar">
-                    </dxo-common-series-settings>
+            <div class="starting-balance">{{l('Stats_startingBalance')}}<span>{{ totalData.startingBalance | currency }}</span></div>
 
-                    <dxo-argument-axis>
-                        <dxo-label [visible]="false"></dxo-label>
-                    </dxo-argument-axis>
+            <div class="chart-head">{{l('Cash_Inflows')}}</div>
+            <div class="chart-line"><div [ngStyle]="{width: totalData.incomePercent + '%', 'background-color': incomeColor}"></div><span [ngStyle]="{'color': incomeColor}">{{ totalData.income | currency }}</span></div>
+            <div class="chart-head">{{l('Cash_Outflows')}}</div>
+            <div class="chart-line"><div [ngStyle]="{width: totalData.expensesPercent + '%', 'background-color': expensesColor}"></div><span [ngStyle]="{'color': expensesColor}">{{ totalData.expenses | currency }}</span></div>
+            <div class="chart-head">{{l('Net_Change')}}</div>
+            <div class="chart-line"><div [ngStyle]="{width: totalData.netChangePercent + '%', 'background-color': totalData.income - totalData.expenses > 0 ? netChangeColor : expensesColor }"></div><span [ngStyle]="{'color': totalData.income - totalData.expenses > 0 ? netChangeColor : expensesColor}">{{ totalData.netChange | currency }}</span></div>
 
-                    <dxi-value-axis>
-                        <dxo-label [format]="'currency'"></dxo-label>
-                   </dxi-value-axis>
+            <div class="ending-balance">{{l('Stats_endingBalance')}}<span>{{ totalData.endingBalance | currency }}</span></div>
 
-                    <dxo-legend verticalAlignment="top"
-                                [visible]="false"
-                                horizontalAlignment="left">
-                    </dxo-legend>
-
-                    <dxi-series [color]="totalData[0].income - totalData[0].expenses > 0 ? netChangeColor : '#f05b2a'"
-                                [class]="totalData[0].income - totalData[0].expenses > 0 ? positive : negative"
-                                valueField="netChange"
-                                name="{{l('Net_Change')}}">
-                        <dxo-label
-                            [visible]="true"
-                            [customizeText]="customizeText"
-                            [format]="'currency'">
-                        </dxo-label>
-                    </dxi-series>
-                    <dxi-series [color]="expensesColor"
-                                valueField="expenses"
-                                name="{{l('Cash_Outflows')}}">
-                        <dxo-label
-                            [visible]="true"
-                            [format]="'currency'">
-
-                        </dxo-label>
-                    </dxi-series>
-                    <dxi-series [color]="incomeColor"
-                                valueField="income"
-                                name="{{l('Cash_Inflows')}}">
-                        <dxo-label
-                            [visible]="true"
-                            [format]="'currency'">
-
-                        </dxo-label>
-                    </dxi-series>
-                </dx-chart>
-            </div>
         </div>
-        <app-no-data [hidden]="loading || (totalData && totalData.length)"></app-no-data>
-
-        <div class="row summary" [hidden]="!totalData || !totalData.length">
-            <ng-container *ngFor="let item of totalData">
-                <div class="col-7 name">{{l('Net_Change')}}</div>
-                <div class="col-5 text-right value" [ngClass]="item.income - item.expenses >= 0 ? ' positive' : 'negative'">{{item.netChange | currency: 'USD' : 'symbol' : '1.0-0'}}</div>
-            </ng-container>
-        </div>
+        <app-no-data [hidden]="loading || (totalData && totalData?.hasOwnProperty('startingBalance'))"></app-no-data>
     </div>
 </section>

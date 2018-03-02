@@ -33,7 +33,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     startDate;
     endDate;
     incomeColor = '#32bef2';
-    expensesColor = '#f9b74b';
+    expensesColor = '#f75a29'; 
     netChangeColor = '#35c8a8';
     loading = true;
 
@@ -66,6 +66,9 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 let income = Math.abs(currentStatsItem.income) + prevStatsItem.income;
                 let expenses = Math.abs(currentStatsItem.expenses) + prevStatsItem.expenses;
                 return {
+                    'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? 
+                        prevStatsItem['startingBalance']: currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
+                    'endingBalance': currentStatsItem.endingBalance,
                     'income': income,
                     'expenses': expenses,
                     'netChange': Math.abs(income - expenses),
@@ -73,10 +76,25 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 };
             }, { 'income': 0, 'expenses': 0, 'netChange': 0 })
             .subscribe(
-                result => this.totalData = [result],
-                e => { this.finishLoading(); console.log(e); },
+                result => {
+                    this.totalData = result;
+                    let maxValue = Math.max(
+                        Math.abs(result.income),
+                        Math.abs(result.expenses),
+                        Math.abs(result.netChange)
+                    ) * 1.5;
+                    
+                    this.totalData.incomePercent = this.getPercentage(maxValue, result.income);
+                    this.totalData.expensesPercent = this.getPercentage(maxValue, result.expenses);
+                    this.totalData.netChangePercent = this.getPercentage(maxValue, result.netChange);
+                },
+                e => { this.finishLoading(); },
                 () => this.finishLoading()
             );
+    }
+
+    getPercentage(maxValue, currValue) {
+        return maxValue ? Math.round(currValue / maxValue * 100): 0;
     }
 
     onValueChanged($event): void {

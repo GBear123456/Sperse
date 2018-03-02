@@ -15,13 +15,24 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     @Output() onTotalAccountsMouseenter: EventEmitter<any> = new EventEmitter();
 
     accountsData: any;
-    dailyStatsData: GetDailyBalanceStatsOutput;
     bankAccountIds: number[] = [];
+
     availablePeriods = [
         this.l('Last_Month'),
         this.l('Last_Year'),
         this.l('All_Periods')
     ];
+    dailyStatsToggleValues: any[] = [
+        this.l('Highest'),
+        this.l('Average'),
+        this.l('Lowest')
+    ];
+
+    dailyStatsData: GetDailyBalanceStatsOutput;
+    dailyStatsAmount: number;
+    dailyStatsText: string;
+    dailyStatsSliderSelected: number = 1;
+    dailyStatsPeriodSelected: string = this.availablePeriods[0];
 
     constructor(
         injector: Injector,
@@ -33,9 +44,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
     ngOnInit() {
         this.getAccountTotals();
-        this.onDailyStatsPeriodChanged({
-            value: this.l('Last_Month')
-        });
+        this.onDailyStatsPeriodChanged();
     }
 
     getAccountTotals(): void {
@@ -49,6 +58,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         this._dashboardService.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, startDate, endDate)
             .subscribe(result => {
                 this.dailyStatsData = result;
+                this.setDailyStatsAmount();
             });
     }
 
@@ -59,17 +69,23 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     filterByBankAccounts(bankAccountIds: number[]) {
         this.bankAccountIds = bankAccountIds;
         this.getAccountTotals();
+        this.onDailyStatsPeriodChanged();
     }
 
     totalAccountsMouseenter() {
         this.onTotalAccountsMouseenter.emit();
     }
 
-    onDailyStatsPeriodChanged($event) {
+    changeDailyStatsToggleValue(index) {
+        this.dailyStatsSliderSelected = index;
+        this.setDailyStatsAmount();
+    }
+
+    onDailyStatsPeriodChanged() {
         let startDate: moment.Moment = moment().utc();
         let endDate: moment.Moment = moment().utc();
 
-        switch ($event.value) {
+        switch (this.dailyStatsPeriodSelected) {
             case this.l('Last_Month'):
                 startDate.subtract(1, 'month').startOf('month');
                 endDate = startDate.clone().endOf('month');
@@ -80,9 +96,25 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                 break;
             case this.l('All_Periods'):
                 startDate = null;
-                break; 
+                break;
         }
 
         this.getDailyStats(startDate, endDate);
+    }
+
+    setDailyStatsAmount(): void {
+        switch (this.dailyStatsSliderSelected) {
+            case 0:
+                this.dailyStatsAmount = this.dailyStatsData.maxBalance;
+                break;
+            case 1:
+                this.dailyStatsAmount = this.dailyStatsData.avarageBalance;
+                break;
+            case 2:
+                this.dailyStatsAmount = this.dailyStatsData.minBalance;
+                break;
+        }
+
+        this.dailyStatsText = this.l(this.dailyStatsToggleValues[this.dailyStatsSliderSelected]) + ' ' + this.l('Balance');
     }
 }

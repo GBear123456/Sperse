@@ -3,8 +3,8 @@
 </app-headline>
 
 <cashflow-operations
-    [forecastModelsObj]="forecastModelsObj"
     [reportPeriod]="reportPeriod"
+    [selectedBankAccounts]="selectedBankAccounts"
     (repaintCashflow)="repaintDataGrid()"
     (onGroupBy)="changeGroupBy($event)"
     (handleFullscreen)="toggleFullscreen(getFullscreenElement())"
@@ -14,6 +14,7 @@
     (onSearchValueChange)="searchValueChange($event)"
     (onRefresh)="refreshDataGrid()"
     (onReportPeriodChange)="setReportPeriodFilter($event)"
+    (onSelectedBankAccountsChange)="setBankAccountsFilter($event)"
 ></cashflow-operations>
 
 <div class="cashflow" *ngIf="cashflowData && cashflowData.length">

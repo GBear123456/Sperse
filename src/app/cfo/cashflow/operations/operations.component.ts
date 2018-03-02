@@ -3,6 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from '@app/app.service';
 import { DxRangeSliderComponent } from 'devextreme-angular';
+import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 
 @Component({
     selector: 'cashflow-operations',
@@ -11,22 +12,24 @@ import { DxRangeSliderComponent } from 'devextreme-angular';
 })
 
 export class OperationsComponent extends AppComponentBase implements OnDestroy {
+    @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     private initTimeout: any;
     private initReportPeriodTimeout: any;
-
-    @Input('forecastModelsObj')    
-    set forecastModelsObj(forecastModelsObj) {
-        clearTimeout(this.initTimeout);
-        this.initTimeout = setTimeout(() => {
-            this.initToolbarConfig(forecastModelsObj);
-        }, 300);
-    }
-    //@Input() reportPeriod: any;
+    private initSelectedBankAccountsTimeout: any;
+    
+   
     @Input('reportPeriod')
     set reportPeriod(reportPeriod) {
         clearTimeout(this.initReportPeriodTimeout);
         this.initReportPeriodTimeout = setTimeout(() => {
             this.sliderReportPeriod = reportPeriod
+        }, 300);
+    }
+    @Input('selectedBankAccounts')
+    set selectedBankAccounts(selectedBankAccounts) {
+        clearTimeout(this.initSelectedBankAccountsTimeout);
+        this.initSelectedBankAccountsTimeout = setTimeout(() => {
+            this.bankAccountSelector.setSelectedBankAccounts(selectedBankAccounts);
         }, 300);
     }
     @Output() repaintCashflow: EventEmitter<any> = new EventEmitter();
@@ -38,14 +41,15 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     @Output() onSearchValueChange: EventEmitter<any> = new EventEmitter();
     @Output() onRefresh: EventEmitter<any> = new EventEmitter();
     @Output() onReportPeriodChange: EventEmitter<any> = new EventEmitter();
+    @Output() onSelectedBankAccountsChange: EventEmitter<any> = new EventEmitter();
 
     reportPeriodTooltipVisible: boolean = false;
     sliderReportPeriod = { start: 2000, end: 2028 };
-
+    totalCount = 3;
     tooltipEnabled = {
         enabled: true
     };
-    initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number} = { 'items' : [], 'selectedItemIndex': null}) {
+    initToolbarConfig() {
         this._appService.toolbarIsAdaptive = true;
         this._appService.toolbarConfig = [
             {
@@ -124,40 +128,51 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                     }                    
                 ]
             },
-/*
             {
                 location: 'before',
                 items: [
                     {
-                        name: 'expandRows',
-                        widget: 'dxDropDownMenu',
+                        name: 'bankAccountSelect',
+                        widget: 'dxButton',
+                        action: this.toggleBankAccountTooltip.bind(this),
                         options: {
-                            hint: this.l('Expand rows'),
-                            items: [{
-                                action: this.toggleRows.bind(this),
-                                text: this.l('Level 1'),
-                            }, {
-                                action: this.toggleRows.bind(this),
-                                text: this.l('Level 2'),
-                            }, {
-                                action: this.toggleRows.bind(this),
-                                text: this.l('Level 3'),
-                            }, {
-                                action: this.toggleRows.bind(this),
-                                text: this.l('All'),
-                            }, {
-                                action: this.toggleRows.bind(this),
-                                text: this.l('None'),
-                            }]
+                            id: 'bankAccountSelect',
+                            text: this.l('Accounts')
                         }
-                    },
+                    }
+                ]
+            },          
+            {
+                location: 'before',
+                items: [
+                    //{
+                    //    name: 'expandRows',                        
+                    //    options: {
+                    //        hint: this.l('Expand rows'),
+                    //        items: [{
+                    //            action: this.toggleRows.bind(this),
+                    //            text: this.l('Level 1'),
+                    //        }, {
+                    //            action: this.toggleRows.bind(this),
+                    //            text: this.l('Level 2'),
+                    //        }, {
+                    //            action: this.toggleRows.bind(this),
+                    //            text: this.l('Level 3'),
+                    //        }, {
+                    //            action: this.toggleRows.bind(this),
+                    //            text: this.l('All'),
+                    //        }, {
+                    //            action: this.toggleRows.bind(this),
+                    //            text: this.l('None'),
+                    //        }]
+                    //    }
+                    //},
                     {
                         name: 'rules',
                         action: this.preferencesDialog.bind(this)
                     }
                 ]
             },
-*/
             // {
             //     location: 'after',
             //     items: [
@@ -266,6 +281,8 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
         private _appService: AppService
     ) {
         super(injector);
+
+        this.initToolbarConfig();
     }
 
     exportTo(event) {
@@ -322,6 +339,15 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
         this.reportPeriodChange();
         this.reportPeriodTooltipVisible = false;
     }
+
+    filterByBankAccounts(data) {
+        this.onSelectedBankAccountsChange.emit(data);
+    }
+
+    toggleBankAccountTooltip() {
+        this.bankAccountSelector.toggleBankAccountTooltip();
+    }
+
     ngOnDestroy() {
         this._appService.toolbarConfig = null;
     }

@@ -1,5 +1,5 @@
 <div>
-    <dx-tooltip target="[aria-label='Report Period']" 
+    <dx-tooltip target="[aria-label='Report Period']"
                 [(visible)]="reportPeriodTooltipVisible">
         <div *dxTemplate="let data = data of 'content'">
             <div class="report-period-tooltip-container">
@@ -13,14 +13,18 @@
                     to
                     <span class="end">{{sliderReportPeriod.end}}</span>
                 </div>
-                
+
                 <dx-range-slider [min]="2000"
-                                    [max]="2028"
-                                    [(start)]="sliderReportPeriod.start"
-                                    [(end)]="sliderReportPeriod.end"
-                                    [step]="1">
+                                 [max]="2028"
+                                 [(start)]="sliderReportPeriod.start"
+                                 [(end)]="sliderReportPeriod.end"
+                                 [step]="1">
                 </dx-range-slider>
             </div>
         </div>
     </dx-tooltip>
+
+    <bank-accounts-select targetBankAccountsTooltip="[aria-label='Accounts']"
+                          (onBankAccountsSelected)="filterByBankAccounts($event)">
+    </bank-accounts-select>
 </div>

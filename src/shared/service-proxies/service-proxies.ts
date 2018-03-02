@@ -714,12 +714,16 @@ export class BankAccountsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getBankAccounts(instanceType: InstanceType, instanceId: number): Observable<BankDto[]> {
+    getBankAccounts(instanceType: InstanceType, instanceId: number, currency: string): Observable<SyncAccountBankDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetBankAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (currency === undefined || currency === null)
+            throw new Error("The parameter 'currency' must be defined and cannot be null.");
+        else
+            url_ += "Currency=" + encodeURIComponent("" + currency) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -737,14 +741,14 @@ export class BankAccountsServiceProxy {
                 try {
                     return this.processGetBankAccounts(response_);
                 } catch (e) {
-                    return <Observable<BankDto[]>><any>Observable.throw(e);
+                    return <Observable<SyncAccountBankDto[]>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<BankDto[]>><any>Observable.throw(response_);
+                return <Observable<SyncAccountBankDto[]>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetBankAccounts(response: Response): Observable<BankDto[]> {
+    protected processGetBankAccounts(response: Response): Observable<SyncAccountBankDto[]> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -755,14 +759,14 @@ export class BankAccountsServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(BankDto.fromJS(item));
+                    result200.push(SyncAccountBankDto.fromJS(item));
             }
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<BankDto[]>(<any>null);
+        return Observable.of<SyncAccountBankDto[]>(<any>null);
     }
 
     /**
@@ -4277,6 +4281,68 @@ export class CommonLookupServiceProxy {
 }
 
 @Injectable()
+export class ContactServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getContactInfoByUser(userId: number): Observable<ContactInfoBaseDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactInfoByUser?";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetContactInfoByUser(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetContactInfoByUser(response_);
+                } catch (e) {
+                    return <Observable<ContactInfoBaseDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ContactInfoBaseDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetContactInfoByUser(response: Response): Observable<ContactInfoBaseDto> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ContactInfoBaseDto.fromJS(resultData200) : new ContactInfoBaseDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<ContactInfoBaseDto>(<any>null);
+    }
+}
+
+@Injectable()
 export class ContactAddressServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -6103,156 +6169,6 @@ export class CustomersServiceProxy {
     constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getPersonContactInfo(contactId: number): Observable<PersonContactInfoDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetPersonContactInfo?";
-        if (contactId === undefined || contactId === null)
-            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
-        else
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGetPersonContactInfo(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetPersonContactInfo(response_);
-                } catch (e) {
-                    return <Observable<PersonContactInfoDto>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<PersonContactInfoDto>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetPersonContactInfo(response: Response): Observable<PersonContactInfoDto> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PersonContactInfoDto.fromJS(resultData200) : new PersonContactInfoDto();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<PersonContactInfoDto>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getOrganizationContactInfo(contactId: number): Observable<OrganizationContactInfoDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetOrganizationContactInfo?";
-        if (contactId === undefined || contactId === null)
-            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
-        else
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGetOrganizationContactInfo(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetOrganizationContactInfo(response_);
-                } catch (e) {
-                    return <Observable<OrganizationContactInfoDto>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<OrganizationContactInfoDto>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetOrganizationContactInfo(response: Response): Observable<OrganizationContactInfoDto> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? OrganizationContactInfoDto.fromJS(resultData200) : new OrganizationContactInfoDto();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<OrganizationContactInfoDto>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getContactInfoByUser(userId: number): Observable<ContactInfoDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetContactInfoByUser?";
-        if (userId === undefined || userId === null)
-            throw new Error("The parameter 'userId' must be defined and cannot be null.");
-        else
-            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGetContactInfoByUser(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetContactInfoByUser(response_);
-                } catch (e) {
-                    return <Observable<ContactInfoDto>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<ContactInfoDto>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetContactInfoByUser(response: Response): Observable<ContactInfoDto> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ContactInfoDto.fromJS(resultData200) : new ContactInfoDto();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<ContactInfoDto>(<any>null);
     }
 
     /**
@@ -9733,6 +9649,226 @@ export class OrderServiceProxy {
 }
 
 @Injectable()
+export class OrganizationContactServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getOrganizationContactInfo(contactId: number): Observable<OrganizationContactInfoDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetOrganizationContactInfo?";
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetOrganizationContactInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetOrganizationContactInfo(response_);
+                } catch (e) {
+                    return <Observable<OrganizationContactInfoDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<OrganizationContactInfoDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetOrganizationContactInfo(response: Response): Observable<OrganizationContactInfoDto> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? OrganizationContactInfoDto.fromJS(resultData200) : new OrganizationContactInfoDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<OrganizationContactInfoDto>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateOrganizationInfo(input: UpdateOrganizationInfoInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/UpdateOrganizationInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdateOrganizationInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateOrganizationInfo(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateOrganizationInfo(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getContactInfoByUser(userId: number): Observable<ContactInfoBaseDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetContactInfoByUser?";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetContactInfoByUser(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetContactInfoByUser(response_);
+                } catch (e) {
+                    return <Observable<ContactInfoBaseDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ContactInfoBaseDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetContactInfoByUser(response: Response): Observable<ContactInfoBaseDto> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ContactInfoBaseDto.fromJS(resultData200) : new ContactInfoBaseDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<ContactInfoBaseDto>(<any>null);
+    }
+}
+
+@Injectable()
+export class OrganizationTypeServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getOrganizationTypes(): Observable<OrganizationTypeDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrganizationType/GetOrganizationTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetOrganizationTypes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetOrganizationTypes(response_);
+                } catch (e) {
+                    return <Observable<OrganizationTypeDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<OrganizationTypeDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetOrganizationTypes(response: Response): Observable<OrganizationTypeDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(OrganizationTypeDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<OrganizationTypeDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class OrganizationUnitServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -10536,6 +10672,118 @@ export class PermissionServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<ListResultDtoOfFlatPermissionWithLevelDto>(<any>null);
+    }
+}
+
+@Injectable()
+export class PersonContactServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getPersonContactInfo(contactId: number): Observable<PersonContactInfoDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonContact/GetPersonContactInfo?";
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetPersonContactInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetPersonContactInfo(response_);
+                } catch (e) {
+                    return <Observable<PersonContactInfoDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<PersonContactInfoDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetPersonContactInfo(response: Response): Observable<PersonContactInfoDto> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PersonContactInfoDto.fromJS(resultData200) : new PersonContactInfoDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<PersonContactInfoDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getContactInfoByUser(userId: number): Observable<ContactInfoBaseDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonContact/GetContactInfoByUser?";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetContactInfoByUser(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetContactInfoByUser(response_);
+                } catch (e) {
+                    return <Observable<ContactInfoBaseDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ContactInfoBaseDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetContactInfoByUser(response: Response): Observable<ContactInfoBaseDto> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ContactInfoBaseDto.fromJS(resultData200) : new ContactInfoBaseDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<ContactInfoBaseDto>(<any>null);
     }
 }
 
@@ -16775,12 +17023,15 @@ export interface IFileDto {
     fileToken: string;
 }
 
-export class BankDto implements IBankDto {
-    id: number;
+export class SyncAccountBankDto implements ISyncAccountBankDto {
+    syncAccountId: number;
+    bankId: number;
     name: string;
+    balance: number;
     bankAccounts: BankAccountDto[];
+    syncAccountStatus: SyncAccountBankDtoSyncAccountStatus;
 
-    constructor(data?: IBankDto) {
+    constructor(data?: ISyncAccountBankDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -16791,45 +17042,57 @@ export class BankDto implements IBankDto {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
+            this.syncAccountId = data["syncAccountId"];
+            this.bankId = data["bankId"];
             this.name = data["name"];
+            this.balance = data["balance"];
             if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
                 this.bankAccounts = [];
                 for (let item of data["bankAccounts"])
                     this.bankAccounts.push(BankAccountDto.fromJS(item));
             }
+            this.syncAccountStatus = data["syncAccountStatus"];
         }
     }
 
-    static fromJS(data: any): BankDto {
-        let result = new BankDto();
+    static fromJS(data: any): SyncAccountBankDto {
+        let result = new SyncAccountBankDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
+        data["syncAccountId"] = this.syncAccountId;
+        data["bankId"] = this.bankId;
         data["name"] = this.name;
+        data["balance"] = this.balance;
         if (this.bankAccounts && this.bankAccounts.constructor === Array) {
             data["bankAccounts"] = [];
             for (let item of this.bankAccounts)
                 data["bankAccounts"].push(item.toJSON());
         }
+        data["syncAccountStatus"] = this.syncAccountStatus;
         return data; 
     }
 }
 
-export interface IBankDto {
-    id: number;
+export interface ISyncAccountBankDto {
+    syncAccountId: number;
+    bankId: number;
     name: string;
+    balance: number;
     bankAccounts: BankAccountDto[];
+    syncAccountStatus: SyncAccountBankDtoSyncAccountStatus;
 }
 
 export class BankAccountDto implements IBankAccountDto {
     id: number;
+    type: string;
     accountName: string;
     accountNumber: string;
+    businessEntityName: string;
+    balance: number;
 
     constructor(data?: IBankAccountDto) {
         if (data) {
@@ -16843,8 +17106,11 @@ export class BankAccountDto implements IBankAccountDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.type = data["type"];
             this.accountName = data["accountName"];
             this.accountNumber = data["accountNumber"];
+            this.businessEntityName = data["businessEntityName"];
+            this.balance = data["balance"];
         }
     }
 
@@ -16857,16 +17123,22 @@ export class BankAccountDto implements IBankAccountDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["type"] = this.type;
         data["accountName"] = this.accountName;
         data["accountNumber"] = this.accountNumber;
+        data["businessEntityName"] = this.businessEntityName;
+        data["balance"] = this.balance;
         return data; 
     }
 }
 
 export interface IBankAccountDto {
     id: number;
+    type: string;
     accountName: string;
     accountNumber: string;
+    businessEntityName: string;
+    balance: number;
 }
 
 export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
@@ -17450,6 +17722,57 @@ export interface ICashFlowInitialData {
     businessEntities: BusinessEntityDto[];
     cashflowTypes: { [key: string] : string; };
     bankAccountBalances: BankAccountBalanceDto[];
+}
+
+export class BankDto implements IBankDto {
+    id: number;
+    name: string;
+    bankAccounts: BankAccountDto[];
+
+    constructor(data?: IBankDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
+                this.bankAccounts = [];
+                for (let item of data["bankAccounts"])
+                    this.bankAccounts.push(BankAccountDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BankDto {
+        let result = new BankDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        if (this.bankAccounts && this.bankAccounts.constructor === Array) {
+            data["bankAccounts"] = [];
+            for (let item of this.bankAccounts)
+                data["bankAccounts"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IBankDto {
+    id: number;
+    name: string;
+    bankAccounts: BankAccountDto[];
 }
 
 export class BusinessEntityDto implements IBusinessEntityDto {
@@ -21091,6 +21414,507 @@ export class GetDefaultEditionNameOutput implements IGetDefaultEditionNameOutput
 
 export interface IGetDefaultEditionNameOutput {
     name: string;
+}
+
+export class ContactInfoBaseDto implements IContactInfoBaseDto {
+    id: number;
+    fullName: string;
+    jobTitle: string;
+    photo: ContactPhotoDto;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+    comment: string;
+
+    constructor(data?: IContactInfoBaseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.fullName = data["fullName"];
+            this.jobTitle = data["jobTitle"];
+            this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
+            if (data["emails"] && data["emails"].constructor === Array) {
+                this.emails = [];
+                for (let item of data["emails"])
+                    this.emails.push(ContactEmailDto.fromJS(item));
+            }
+            if (data["phones"] && data["phones"].constructor === Array) {
+                this.phones = [];
+                for (let item of data["phones"])
+                    this.phones.push(ContactPhoneDto.fromJS(item));
+            }
+            if (data["addresses"] && data["addresses"].constructor === Array) {
+                this.addresses = [];
+                for (let item of data["addresses"])
+                    this.addresses.push(ContactAddressDto.fromJS(item));
+            }
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(ContactLinkDto.fromJS(item));
+            }
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): ContactInfoBaseDto {
+        let result = new ContactInfoBaseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["fullName"] = this.fullName;
+        data["jobTitle"] = this.jobTitle;
+        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
+        if (this.emails && this.emails.constructor === Array) {
+            data["emails"] = [];
+            for (let item of this.emails)
+                data["emails"].push(item.toJSON());
+        }
+        if (this.phones && this.phones.constructor === Array) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item.toJSON());
+        }
+        if (this.addresses && this.addresses.constructor === Array) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IContactInfoBaseDto {
+    id: number;
+    fullName: string;
+    jobTitle: string;
+    photo: ContactPhotoDto;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+    comment: string;
+}
+
+export class ContactPhotoDto implements IContactPhotoDto {
+    thumbnail: string;
+    source: string;
+    comment: string;
+
+    constructor(data?: IContactPhotoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.thumbnail = data["thumbnail"];
+            this.source = data["source"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): ContactPhotoDto {
+        let result = new ContactPhotoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["thumbnail"] = this.thumbnail;
+        data["source"] = this.source;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IContactPhotoDto {
+    thumbnail: string;
+    source: string;
+    comment: string;
+}
+
+export class ContactEmailDto implements IContactEmailDto {
+    usageTypeId: string;
+    emailAddress: string;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+
+    constructor(data?: IContactEmailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.usageTypeId = data["usageTypeId"];
+            this.emailAddress = data["emailAddress"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactEmailDto {
+        let result = new ContactEmailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["usageTypeId"] = this.usageTypeId;
+        data["emailAddress"] = this.emailAddress;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactEmailDto {
+    usageTypeId: string;
+    emailAddress: string;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+}
+
+export class ContactPhoneDto implements IContactPhoneDto {
+    usageTypeId: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+
+    constructor(data?: IContactPhoneDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.usageTypeId = data["usageTypeId"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactPhoneDto {
+        let result = new ContactPhoneDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["usageTypeId"] = this.usageTypeId;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactPhoneDto {
+    usageTypeId: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+}
+
+export class ContactAddressDto implements IContactAddressDto {
+    usageTypeId: string;
+    streetAddress: string;
+    city: string;
+    state: string;
+    country: string;
+    zip: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+
+    constructor(data?: IContactAddressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.usageTypeId = data["usageTypeId"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.country = data["country"];
+            this.zip = data["zip"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactAddressDto {
+        let result = new ContactAddressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["usageTypeId"] = this.usageTypeId;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["country"] = this.country;
+        data["zip"] = this.zip;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactAddressDto {
+    usageTypeId: string;
+    streetAddress: string;
+    city: string;
+    state: string;
+    country: string;
+    zip: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+}
+
+export class ContactLinkDto implements IContactLinkDto {
+    linkTypeId: string;
+    url: string;
+    isSocialNetwork: boolean;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+
+    constructor(data?: IContactLinkDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.linkTypeId = data["linkTypeId"];
+            this.url = data["url"];
+            this.isSocialNetwork = data["isSocialNetwork"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactLinkDto {
+        let result = new ContactLinkDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["linkTypeId"] = this.linkTypeId;
+        data["url"] = this.url;
+        data["isSocialNetwork"] = this.isSocialNetwork;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactLinkDto {
+    linkTypeId: string;
+    url: string;
+    isSocialNetwork: boolean;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+}
+
+export class UserKeyInfoDto implements IUserKeyInfoDto {
+    id: number;
+    userName: string;
+    fullName: string;
+
+    constructor(data?: IUserKeyInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.userName = data["userName"];
+            this.fullName = data["fullName"];
+        }
+    }
+
+    static fromJS(data: any): UserKeyInfoDto {
+        let result = new UserKeyInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["userName"] = this.userName;
+        data["fullName"] = this.fullName;
+        return data; 
+    }
+}
+
+export interface IUserKeyInfoDto {
+    id: number;
+    userName: string;
+    fullName: string;
 }
 
 export class CreateContactAddressInput implements ICreateContactAddressInput {
@@ -25105,10 +25929,86 @@ export interface IScoreSimulatorDto {
     transferCreditBalances: number;
 }
 
+export class CustomerInfoDto implements ICustomerInfoDto {
+    name: string;
+    status: string;
+    score: number;
+    primaryContactInfo: PersonContactInfoDto;
+    organizationContactInfo: OrganizationContactInfoDto;
+    contactPersons: PersonContactInfoDto[];
+    creationDate: moment.Moment;
+    userContextOrderId: number;
+    userContextOrderType: string;
+
+    constructor(data?: ICustomerInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.status = data["status"];
+            this.score = data["score"];
+            this.primaryContactInfo = data["primaryContactInfo"] ? PersonContactInfoDto.fromJS(data["primaryContactInfo"]) : <any>undefined;
+            this.organizationContactInfo = data["organizationContactInfo"] ? OrganizationContactInfoDto.fromJS(data["organizationContactInfo"]) : <any>undefined;
+            if (data["contactPersons"] && data["contactPersons"].constructor === Array) {
+                this.contactPersons = [];
+                for (let item of data["contactPersons"])
+                    this.contactPersons.push(PersonContactInfoDto.fromJS(item));
+            }
+            this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
+            this.userContextOrderId = data["userContextOrderId"];
+            this.userContextOrderType = data["userContextOrderType"];
+        }
+    }
+
+    static fromJS(data: any): CustomerInfoDto {
+        let result = new CustomerInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["status"] = this.status;
+        data["score"] = this.score;
+        data["primaryContactInfo"] = this.primaryContactInfo ? this.primaryContactInfo.toJSON() : <any>undefined;
+        data["organizationContactInfo"] = this.organizationContactInfo ? this.organizationContactInfo.toJSON() : <any>undefined;
+        if (this.contactPersons && this.contactPersons.constructor === Array) {
+            data["contactPersons"] = [];
+            for (let item of this.contactPersons)
+                data["contactPersons"].push(item.toJSON());
+        }
+        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
+        data["userContextOrderId"] = this.userContextOrderId;
+        data["userContextOrderType"] = this.userContextOrderType;
+        return data; 
+    }
+}
+
+export interface ICustomerInfoDto {
+    name: string;
+    status: string;
+    score: number;
+    primaryContactInfo: PersonContactInfoDto;
+    organizationContactInfo: OrganizationContactInfoDto;
+    contactPersons: PersonContactInfoDto[];
+    creationDate: moment.Moment;
+    userContextOrderId: number;
+    userContextOrderType: string;
+}
+
 export class PersonContactInfoDto implements IPersonContactInfoDto {
     person: PersonInfoDto;
     id: number;
     fullName: string;
+    jobTitle: string;
     photo: ContactPhotoDto;
     emails: ContactEmailDto[];
     phones: ContactPhoneDto[];
@@ -25130,6 +26030,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
             this.person = data["person"] ? PersonInfoDto.fromJS(data["person"]) : <any>undefined;
             this.id = data["id"];
             this.fullName = data["fullName"];
+            this.jobTitle = data["jobTitle"];
             this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
             if (data["emails"] && data["emails"].constructor === Array) {
                 this.emails = [];
@@ -25166,6 +26067,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
         data["person"] = this.person ? this.person.toJSON() : <any>undefined;
         data["id"] = this.id;
         data["fullName"] = this.fullName;
+        data["jobTitle"] = this.jobTitle;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         if (this.emails && this.emails.constructor === Array) {
             data["emails"] = [];
@@ -25196,6 +26098,110 @@ export interface IPersonContactInfoDto {
     person: PersonInfoDto;
     id: number;
     fullName: string;
+    jobTitle: string;
+    photo: ContactPhotoDto;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+    comment: string;
+}
+
+export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
+    organization: OrganizationInfoDto;
+    id: number;
+    fullName: string;
+    jobTitle: string;
+    photo: ContactPhotoDto;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+    comment: string;
+
+    constructor(data?: IOrganizationContactInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.organization = data["organization"] ? OrganizationInfoDto.fromJS(data["organization"]) : <any>undefined;
+            this.id = data["id"];
+            this.fullName = data["fullName"];
+            this.jobTitle = data["jobTitle"];
+            this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
+            if (data["emails"] && data["emails"].constructor === Array) {
+                this.emails = [];
+                for (let item of data["emails"])
+                    this.emails.push(ContactEmailDto.fromJS(item));
+            }
+            if (data["phones"] && data["phones"].constructor === Array) {
+                this.phones = [];
+                for (let item of data["phones"])
+                    this.phones.push(ContactPhoneDto.fromJS(item));
+            }
+            if (data["addresses"] && data["addresses"].constructor === Array) {
+                this.addresses = [];
+                for (let item of data["addresses"])
+                    this.addresses.push(ContactAddressDto.fromJS(item));
+            }
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(ContactLinkDto.fromJS(item));
+            }
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationContactInfoDto {
+        let result = new OrganizationContactInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
+        data["id"] = this.id;
+        data["fullName"] = this.fullName;
+        data["jobTitle"] = this.jobTitle;
+        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
+        if (this.emails && this.emails.constructor === Array) {
+            data["emails"] = [];
+            for (let item of this.emails)
+                data["emails"].push(item.toJSON());
+        }
+        if (this.phones && this.phones.constructor === Array) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item.toJSON());
+        }
+        if (this.addresses && this.addresses.constructor === Array) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IOrganizationContactInfoDto {
+    organization: OrganizationInfoDto;
+    id: number;
+    fullName: string;
+    jobTitle: string;
     photo: ContactPhotoDto;
     emails: ContactEmailDto[];
     phones: ContactPhoneDto[];
@@ -25307,510 +26313,13 @@ export interface IPersonInfoDto {
     lastName: string;
 }
 
-export class ContactPhotoDto implements IContactPhotoDto {
-    thumbnail: string;
-    source: string;
-    comment: string;
-
-    constructor(data?: IContactPhotoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.thumbnail = data["thumbnail"];
-            this.source = data["source"];
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): ContactPhotoDto {
-        let result = new ContactPhotoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["thumbnail"] = this.thumbnail;
-        data["source"] = this.source;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IContactPhotoDto {
-    thumbnail: string;
-    source: string;
-    comment: string;
-}
-
-export class ContactEmailDto implements IContactEmailDto {
-    contactId: number;
-    id: number;
-    usageTypeId: string;
-    emailAddress: string;
-    isActive: boolean;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-    comment: string;
-
-    constructor(data?: IContactEmailDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.usageTypeId = data["usageTypeId"];
-            this.emailAddress = data["emailAddress"];
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): ContactEmailDto {
-        let result = new ContactEmailDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["usageTypeId"] = this.usageTypeId;
-        data["emailAddress"] = this.emailAddress;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IContactEmailDto {
-    contactId: number;
-    id: number;
-    usageTypeId: string;
-    emailAddress: string;
-    isActive: boolean;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-    comment: string;
-}
-
-export class ContactPhoneDto implements IContactPhoneDto {
-    contactId: number;
-    id: number;
-    usageTypeId: string;
-    phoneNumber: string;
-    phoneExtension: string;
-    isActive: boolean;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-    comment: string;
-
-    constructor(data?: IContactPhoneDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.usageTypeId = data["usageTypeId"];
-            this.phoneNumber = data["phoneNumber"];
-            this.phoneExtension = data["phoneExtension"];
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): ContactPhoneDto {
-        let result = new ContactPhoneDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["usageTypeId"] = this.usageTypeId;
-        data["phoneNumber"] = this.phoneNumber;
-        data["phoneExtension"] = this.phoneExtension;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IContactPhoneDto {
-    contactId: number;
-    id: number;
-    usageTypeId: string;
-    phoneNumber: string;
-    phoneExtension: string;
-    isActive: boolean;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-    comment: string;
-}
-
-export class ContactAddressDto implements IContactAddressDto {
-    contactId: number;
-    id: number;
-    usageTypeId: string;
-    streetAddress: string;
-    city: string;
-    state: string;
-    country: string;
-    zip: string;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    isActive: boolean;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-    comment: string;
-
-    constructor(data?: IContactAddressDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.usageTypeId = data["usageTypeId"];
-            this.streetAddress = data["streetAddress"];
-            this.city = data["city"];
-            this.state = data["state"];
-            this.country = data["country"];
-            this.zip = data["zip"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): ContactAddressDto {
-        let result = new ContactAddressDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["usageTypeId"] = this.usageTypeId;
-        data["streetAddress"] = this.streetAddress;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["country"] = this.country;
-        data["zip"] = this.zip;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IContactAddressDto {
-    contactId: number;
-    id: number;
-    usageTypeId: string;
-    streetAddress: string;
-    city: string;
-    state: string;
-    country: string;
-    zip: string;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    isActive: boolean;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-    comment: string;
-}
-
-export class ContactLinkDto implements IContactLinkDto {
-    contactId: number;
-    id: number;
-    linkTypeId: string;
-    url: string;
-    isSocialNetwork: boolean;
-    isActive: boolean;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-    comment: string;
-
-    constructor(data?: IContactLinkDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.linkTypeId = data["linkTypeId"];
-            this.url = data["url"];
-            this.isSocialNetwork = data["isSocialNetwork"];
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): ContactLinkDto {
-        let result = new ContactLinkDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["linkTypeId"] = this.linkTypeId;
-        data["url"] = this.url;
-        data["isSocialNetwork"] = this.isSocialNetwork;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IContactLinkDto {
-    contactId: number;
-    id: number;
-    linkTypeId: string;
-    url: string;
-    isSocialNetwork: boolean;
-    isActive: boolean;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-    comment: string;
-}
-
-export class UserKeyInfoDto implements IUserKeyInfoDto {
-    id: number;
-    userName: string;
-    fullName: string;
-
-    constructor(data?: IUserKeyInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.userName = data["userName"];
-            this.fullName = data["fullName"];
-        }
-    }
-
-    static fromJS(data: any): UserKeyInfoDto {
-        let result = new UserKeyInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["userName"] = this.userName;
-        data["fullName"] = this.fullName;
-        return data; 
-    }
-}
-
-export interface IUserKeyInfoDto {
-    id: number;
-    userName: string;
-    fullName: string;
-}
-
-export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
-    organization: OrganizationInfoDto;
-    id: number;
-    fullName: string;
-    photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
-    comment: string;
-
-    constructor(data?: IOrganizationContactInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.organization = data["organization"] ? OrganizationInfoDto.fromJS(data["organization"]) : <any>undefined;
-            this.id = data["id"];
-            this.fullName = data["fullName"];
-            this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
-            if (data["emails"] && data["emails"].constructor === Array) {
-                this.emails = [];
-                for (let item of data["emails"])
-                    this.emails.push(ContactEmailDto.fromJS(item));
-            }
-            if (data["phones"] && data["phones"].constructor === Array) {
-                this.phones = [];
-                for (let item of data["phones"])
-                    this.phones.push(ContactPhoneDto.fromJS(item));
-            }
-            if (data["addresses"] && data["addresses"].constructor === Array) {
-                this.addresses = [];
-                for (let item of data["addresses"])
-                    this.addresses.push(ContactAddressDto.fromJS(item));
-            }
-            if (data["links"] && data["links"].constructor === Array) {
-                this.links = [];
-                for (let item of data["links"])
-                    this.links.push(ContactLinkDto.fromJS(item));
-            }
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): OrganizationContactInfoDto {
-        let result = new OrganizationContactInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
-        data["id"] = this.id;
-        data["fullName"] = this.fullName;
-        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
-        if (this.emails && this.emails.constructor === Array) {
-            data["emails"] = [];
-            for (let item of this.emails)
-                data["emails"].push(item.toJSON());
-        }
-        if (this.phones && this.phones.constructor === Array) {
-            data["phones"] = [];
-            for (let item of this.phones)
-                data["phones"].push(item.toJSON());
-        }
-        if (this.addresses && this.addresses.constructor === Array) {
-            data["addresses"] = [];
-            for (let item of this.addresses)
-                data["addresses"].push(item.toJSON());
-        }
-        if (this.links && this.links.constructor === Array) {
-            data["links"] = [];
-            for (let item of this.links)
-                data["links"].push(item.toJSON());
-        }
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IOrganizationContactInfoDto {
-    organization: OrganizationInfoDto;
-    id: number;
-    fullName: string;
-    photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
-    comment: string;
-}
-
 export class OrganizationInfoDto implements IOrganizationInfoDto {
+    typeId: string;
     industry: string;
-    type: string;
+    primaryFundingType: string;
+    formedCountryId: string;
+    formedStateId: string;
+    formedDate: moment.Moment;
     contactPerson: PersonKeyInfoDto;
 
     constructor(data?: IOrganizationInfoDto) {
@@ -25824,8 +26333,12 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     init(data?: any) {
         if (data) {
+            this.typeId = data["typeId"];
             this.industry = data["industry"];
-            this.type = data["type"];
+            this.primaryFundingType = data["primaryFundingType"];
+            this.formedCountryId = data["formedCountryId"];
+            this.formedStateId = data["formedStateId"];
+            this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
             this.contactPerson = data["contactPerson"] ? PersonKeyInfoDto.fromJS(data["contactPerson"]) : <any>undefined;
         }
     }
@@ -25838,16 +26351,24 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["typeId"] = this.typeId;
         data["industry"] = this.industry;
-        data["type"] = this.type;
+        data["primaryFundingType"] = this.primaryFundingType;
+        data["formedCountryId"] = this.formedCountryId;
+        data["formedStateId"] = this.formedStateId;
+        data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
         data["contactPerson"] = this.contactPerson ? this.contactPerson.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IOrganizationInfoDto {
+    typeId: string;
     industry: string;
-    type: string;
+    primaryFundingType: string;
+    formedCountryId: string;
+    formedStateId: string;
+    formedDate: moment.Moment;
     contactPerson: PersonKeyInfoDto;
 }
 
@@ -25892,176 +26413,6 @@ export interface IPersonKeyInfoDto {
     contactId: number;
     firstName: string;
     lastName: string;
-}
-
-export class ContactInfoDto implements IContactInfoDto {
-    id: number;
-    fullName: string;
-    photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
-    comment: string;
-
-    constructor(data?: IContactInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.fullName = data["fullName"];
-            this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
-            if (data["emails"] && data["emails"].constructor === Array) {
-                this.emails = [];
-                for (let item of data["emails"])
-                    this.emails.push(ContactEmailDto.fromJS(item));
-            }
-            if (data["phones"] && data["phones"].constructor === Array) {
-                this.phones = [];
-                for (let item of data["phones"])
-                    this.phones.push(ContactPhoneDto.fromJS(item));
-            }
-            if (data["addresses"] && data["addresses"].constructor === Array) {
-                this.addresses = [];
-                for (let item of data["addresses"])
-                    this.addresses.push(ContactAddressDto.fromJS(item));
-            }
-            if (data["links"] && data["links"].constructor === Array) {
-                this.links = [];
-                for (let item of data["links"])
-                    this.links.push(ContactLinkDto.fromJS(item));
-            }
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): ContactInfoDto {
-        let result = new ContactInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["fullName"] = this.fullName;
-        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
-        if (this.emails && this.emails.constructor === Array) {
-            data["emails"] = [];
-            for (let item of this.emails)
-                data["emails"].push(item.toJSON());
-        }
-        if (this.phones && this.phones.constructor === Array) {
-            data["phones"] = [];
-            for (let item of this.phones)
-                data["phones"].push(item.toJSON());
-        }
-        if (this.addresses && this.addresses.constructor === Array) {
-            data["addresses"] = [];
-            for (let item of this.addresses)
-                data["addresses"].push(item.toJSON());
-        }
-        if (this.links && this.links.constructor === Array) {
-            data["links"] = [];
-            for (let item of this.links)
-                data["links"].push(item.toJSON());
-        }
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IContactInfoDto {
-    id: number;
-    fullName: string;
-    photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
-    comment: string;
-}
-
-export class CustomerInfoDto implements ICustomerInfoDto {
-    name: string;
-    status: string;
-    score: number;
-    primaryContactInfo: PersonContactInfoDto;
-    organizationContactInfo: OrganizationContactInfoDto;
-    contactPersons: PersonContactInfoDto[];
-    creationDate: moment.Moment;
-    userContextOrderId: number;
-    userContextOrderType: string;
-
-    constructor(data?: ICustomerInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            this.status = data["status"];
-            this.score = data["score"];
-            this.primaryContactInfo = data["primaryContactInfo"] ? PersonContactInfoDto.fromJS(data["primaryContactInfo"]) : <any>undefined;
-            this.organizationContactInfo = data["organizationContactInfo"] ? OrganizationContactInfoDto.fromJS(data["organizationContactInfo"]) : <any>undefined;
-            if (data["contactPersons"] && data["contactPersons"].constructor === Array) {
-                this.contactPersons = [];
-                for (let item of data["contactPersons"])
-                    this.contactPersons.push(PersonContactInfoDto.fromJS(item));
-            }
-            this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
-            this.userContextOrderId = data["userContextOrderId"];
-            this.userContextOrderType = data["userContextOrderType"];
-        }
-    }
-
-    static fromJS(data: any): CustomerInfoDto {
-        let result = new CustomerInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["status"] = this.status;
-        data["score"] = this.score;
-        data["primaryContactInfo"] = this.primaryContactInfo ? this.primaryContactInfo.toJSON() : <any>undefined;
-        data["organizationContactInfo"] = this.organizationContactInfo ? this.organizationContactInfo.toJSON() : <any>undefined;
-        if (this.contactPersons && this.contactPersons.constructor === Array) {
-            data["contactPersons"] = [];
-            for (let item of this.contactPersons)
-                data["contactPersons"].push(item.toJSON());
-        }
-        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
-        data["userContextOrderId"] = this.userContextOrderId;
-        data["userContextOrderType"] = this.userContextOrderType;
-        return data; 
-    }
-}
-
-export interface ICustomerInfoDto {
-    name: string;
-    status: string;
-    score: number;
-    primaryContactInfo: PersonContactInfoDto;
-    organizationContactInfo: OrganizationContactInfoDto;
-    contactPersons: PersonContactInfoDto[];
-    creationDate: moment.Moment;
-    userContextOrderId: number;
-    userContextOrderType: string;
 }
 
 export class CreateCustomerInput implements ICreateCustomerInput {
@@ -27040,6 +27391,7 @@ export interface ISyncProgressOutput {
 }
 
 export class SyncProgressDto implements ISyncProgressDto {
+    accountId: number;
     accountName: string;
     syncStatusMessage: string;
     progressPercent: number;
@@ -27056,6 +27408,7 @@ export class SyncProgressDto implements ISyncProgressDto {
 
     init(data?: any) {
         if (data) {
+            this.accountId = data["accountId"];
             this.accountName = data["accountName"];
             this.syncStatusMessage = data["syncStatusMessage"];
             this.progressPercent = data["progressPercent"];
@@ -27071,6 +27424,7 @@ export class SyncProgressDto implements ISyncProgressDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["accountId"] = this.accountId;
         data["accountName"] = this.accountName;
         data["syncStatusMessage"] = this.syncStatusMessage;
         data["progressPercent"] = this.progressPercent;
@@ -27080,6 +27434,7 @@ export class SyncProgressDto implements ISyncProgressDto {
 }
 
 export interface ISyncProgressDto {
+    accountId: number;
     accountName: string;
     syncStatusMessage: string;
     progressPercent: number;
@@ -31495,6 +31850,104 @@ export interface IActionDto {
     name: string;
     sysId: string;
     targetStageId: number;
+}
+
+export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput {
+    id: number;
+    typeId: string;
+    industry: string;
+    primaryFundingType: string;
+    formedCountryId: string;
+    formedStateId: string;
+    formedDate: moment.Moment;
+
+    constructor(data?: IUpdateOrganizationInfoInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.typeId = data["typeId"];
+            this.industry = data["industry"];
+            this.primaryFundingType = data["primaryFundingType"];
+            this.formedCountryId = data["formedCountryId"];
+            this.formedStateId = data["formedStateId"];
+            this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UpdateOrganizationInfoInput {
+        let result = new UpdateOrganizationInfoInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["typeId"] = this.typeId;
+        data["industry"] = this.industry;
+        data["primaryFundingType"] = this.primaryFundingType;
+        data["formedCountryId"] = this.formedCountryId;
+        data["formedStateId"] = this.formedStateId;
+        data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IUpdateOrganizationInfoInput {
+    id: number;
+    typeId: string;
+    industry: string;
+    primaryFundingType: string;
+    formedCountryId: string;
+    formedStateId: string;
+    formedDate: moment.Moment;
+}
+
+export class OrganizationTypeDto implements IOrganizationTypeDto {
+    id: string;
+    name: string;
+
+    constructor(data?: IOrganizationTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationTypeDto {
+        let result = new OrganizationTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IOrganizationTypeDto {
+    id: string;
+    name: string;
 }
 
 export class ListResultDtoOfOrganizationUnitDto implements IListResultDtoOfOrganizationUnitDto {
@@ -38650,6 +39103,13 @@ export enum IsTenantAvailableOutputState {
     _3 = 3, 
 }
 
+export enum SyncAccountBankDtoSyncAccountStatus {
+    InProgress = <any>"InProgress", 
+    Completed = <any>"Completed", 
+    Failed = <any>"Failed", 
+    Unavailable = <any>"Unavailable", 
+}
+
 export enum BankAccountDailyStatDtoPeriod {
     Daily = <any>"Daily", 
     Weekly = <any>"Weekly", 
@@ -38826,6 +39286,7 @@ export enum SyncProgressDtoSyncStatus {
     InProgress = <any>"InProgress", 
     Completed = <any>"Completed", 
     Failed = <any>"Failed", 
+    Unavailable = <any>"Unavailable", 
 }
 
 export enum GetStatusOutputStatus {
