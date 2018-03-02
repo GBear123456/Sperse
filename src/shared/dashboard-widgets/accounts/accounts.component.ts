@@ -101,7 +101,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         switch (value) {
             case this.l('Today'):
                 startDate.startOf('day');
-                endDate.endOf('day');
+                endDate.startOf('day');
                 break;
             case this.l('Yesterday'):
                 startDate.subtract(1, 'day').startOf('day');
@@ -129,6 +129,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                 break;
             default:
                 startDate = null;
+                endDate.startOf('day');
                 break;
         }
 
