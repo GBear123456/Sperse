@@ -49,10 +49,6 @@
         }
     }
 
-    .sort-options {
-        padding: 20px 15px 0px 15px;
-    }
-
     /deep/ .cashflow .dx-pivotgrid {
         overflow: visible;
 
@@ -172,6 +168,7 @@
                         &.yearRow {
                             td {
                                 background: rgba(221, 221, 221, .32) !important;
+                                color: rgb(51, 51, 51) !important;
                             }
                         }
 
@@ -185,477 +182,424 @@
                     }
                 }
             }
-            /** upper left column */
-            .dx-area-description-cell {
-                vertical-align: top;
-                background-color: #fff;
-                min-width: @left-column-width;
 
-                #findInputBlock {
-                    position: absolute;
-                    font-size: 15px;
-                    font-weight: 300;
-                    line-height: 1.67;
-                    letter-spacing: 0.3px;
-                    color: #424c56;
-                    z-index: 2;
-                    left: 11px;
-                    border: 1px solid #ddd;
-                    bottom: 17px;
-                    margin: auto;
-                    .dx-searchbox .dx-texteditor-input {
-                        padding-left: 44px;
-                        border-bottom: none;
-                    }
-                }
-            }
-            /** upper right column (historical row and dates rows) */
-            .dx-area-column-cell {
+            & > tr:nth-child(3) {
                 position: fixed;
-                z-index: 1;
-                background: #fff;
+                z-index: 2;
                 border-top: 1px solid #ddd;
                 margin-top: -1px;
-                tr {
-                    height: auto !important;
-                    td {
-                        font-size: 10px;
 
-                        &.cashflow {
-                            color: #00aeef;
-                        }
-
-                        .totals {
-                            font-size: 10px;
-                        }
-
-                        &.dx-pivotgrid-expanded,
-                        &.dx-pivotgrid-collapsed {
-                            text-align: center;
-                        }
-
-                        .dx-expand-icon-container {
-                            display: none;
-                        }
-
-                        &.year {
-                            color: @yearTextColor;
-                            background: @incomeVerticalHeaderBackgroundColor;
-                            font-weight: 600;
-                            font-size: 20px;
-                        }
-
-                        &.lowestOpenedCurrent:not(.mtdCell):not(.currentDay):not(.nextDay) {
-                            background-color: @currentPeriodCellBackgroundColor;
-                        }
-
-                        &.month,
-                        &.quarter,
-                        &.day,
-                        &.dx-row-total {
-                            color: @generalColor;
-                            font-weight: 600;
-                            font-size: 18px;
-
-                            &.current {
-                                color: #fff;
-                                background: @currentTextColor;
-                            }
-                        }
-
-                        &.dataFieldHidden {
-                            padding: 0;
-                            height: 0;
-                            max-height: 0;
-                        }
-
-                        &.historicalField {
-                            cursor: default;
-                            font-size: 10px;
-                            letter-spacing: 0.6px;
-
-                            &.historical {
-                                color: @historicalTextColor;
-                                background-color: #f7f9ff;
-                            }
-
-                            &.current {
-                                background: @currentTextColor;
-                                color: #fff;
-                            }
-
-                            &.forecast {
-                                color: @forecastTextColor
-                            }
-                        }
-
-                        span.dayEnding {
-                            font-size: 10px;
-                            position: absolute;
-                        }
-
-                        &.projectedField.projectedHidden {
-                            border: none;
-                            padding: 0;
+                /** upper left column */
+                .dx-area-description-cell {
+                    vertical-align: top;
+                    background-color: #fff;
+                    min-width: @left-column-width;
+                    .sort-options {
+                        padding: 0 15px;
+                        position: absolute;
+                        bottom: 10px;
+                    }
+                    #findInputBlock {
+                        position: absolute;
+                        font-size: 15px;
+                        font-weight: 300;
+                        line-height: 1.67;
+                        letter-spacing: 0.3px;
+                        color: #424c56;
+                        z-index: 2;
+                        left: 11px;
+                        border: 1px solid #ddd;
+                        bottom: 17px;
+                        margin: auto;
+                        .dx-searchbox .dx-texteditor-input {
+                            padding-left: 44px;
+                            border-bottom: none;
                         }
                     }
                 }
-            }
-            /** bottom left column (labels cells) */
-            .dx-area-row-cell table {
-                width: 100% !important;
-                tr {
-                    position: relative;
+                /** upper right column (historical row and dates rows) */
+                .dx-area-column-cell {
+                    background: #fff;
+                    tr {
+                        height: auto !important;
+                        td {
+                            font-size: 10px;
 
-                    &:first-child td.dx-white-space-column {
-                        border-top: 0;
-                    }
-
-                    td {
-                        text-align: left;
-                        color: inherit;
-                        width: 23px;
-                        min-width: 23px;
-
-                        &.dx-white-space-column {
-                            background: #fff;
-                            border-right: none;
-                            border-top: 1px solid @tableBorderColor;
-                            position: relative;
-                            cursor: pointer;
-
-                            &:before {
-                                content: url('../../../assets/common/icons/collapse-icon.svg');
-                                position: absolute;
-                                left: 16px;
-                                width: 16px;
-                                top: 7px;
-                                z-index: 1
+                            &.cashflow {
+                                color: #00aeef;
                             }
 
-                            &:after {
-                                content: '';
-                                position: absolute;
-                                top: 22px;
-                                left: 23px;
-                                display: block;
-                                border-right: 2px solid @expendedLineColor;
-                                height: calc(~"100%" - 4px);
-                                z-index: 1;
+                            .totals {
+                                font-size: 10px;
                             }
 
-                            &.startedBalanceWhiteSpace {
-                                border-top: none
-                            }
-                        }
-
-                        &.income {
-                            background: @incomeVerticalHeaderBackgroundColor;
-                        }
-
-                        &.expenses {
-                            background: @expensesVerticalHeaderBackgroundColor;
-                        }
-
-                        &.emptyChildren {
-                            cursor: default;
-                            padding-left: 43px !important;
-                        }
-
-                        &.netChange {
-                            text-align: left;
-                        }
-
-                        &.dx-last-cell {
-                            width: 100%;
-                            padding-left: 22px;
-                        }
-
-                        &.descriptor {
-                            font-style: italic;
-                        }
-
-                        .dx-expand-icon-container {
-                            font: inherit;
-                            margin-right: 10px;
-
-                            &:before {
-                                display: none;
-                            }
-
-                            .dx-expand:before {
-                                top: auto;
-                                left: auto;
-                                position: relative;
-                                width: auto;
-                                margin: auto;
-                            }
-                        }
-
-                        &.dx-pivotgrid-collapsed {
-                            .dx-expand:before {
-                                content: url('../../../assets/common/icons/expand-icon.svg');
-                            }
-                        }
-
-                        &.dx-pivotgrid-expanded {
-                            position: relative;
-
-                            .dx-expand:before {
-                                content: '';
-                                width: 7px;
-                                border-bottom: 2px solid @expendedLineColor;
-                                margin-left: 8px;
-                                top: -4px;
+                            &.dx-pivotgrid-expanded,
+                            &.dx-pivotgrid-collapsed {
+                                text-align: center;
                             }
 
                             .dx-expand-icon-container {
-                                position: relative;
-                                &:after {
-                                    content: '';
-                                    top: 6px;
-                                    position: absolute;
-                                    left: 12px;
-                                    width: 6px;
-                                    height: 6px;
-                                    border-radius: 50%;
-                                    background: @expendedLineColor;
+                                display: none;
+                            }
+
+                            &.year {
+                                color: @yearTextColor;
+                                background: @incomeVerticalHeaderBackgroundColor;
+                                font-weight: 600;
+                                font-size: 20px;
+                            }
+
+                            &.lowestOpenedCurrent:not(.mtdCell):not(.currentDay):not(.nextDay) {
+                                background-color: @currentPeriodCellBackgroundColor;
+                            }
+
+                            &.month,
+                            &.quarter,
+                            &.day,
+                            &.dx-row-total {
+                                color: @generalColor;
+                                font-weight: 600;
+                                font-size: 18px;
+
+                                &.current {
+                                    color: #fff;
+                                    background: @currentTextColor;
                                 }
                             }
-                        }
-                    }
 
-                    &.incomeRow, &.incomeChildRow, &.expensesRow, &.expensesChildRow {
-                        .dx-pivotgrid-collapsed .dx-expand-icon-container {
-                            span {
-                                width: 15px;
-                                height: 15px;
-                                display: inline-block;
-                                transform: rotate(-90deg);
-                                &:before {
-                                    bottom: 5px;
+                            &.dataFieldHidden {
+                                padding: 0;
+                                height: 0;
+                                max-height: 0;
+                            }
+
+                            &.historicalField {
+                                cursor: default;
+                                font-size: 10px;
+                                letter-spacing: 0.6px;
+
+                                &.historical {
+                                    color: @historicalTextColor;
+                                    background-color: #f7f9ff;
                                 }
-                                background: url('../../../assets/common/icons/rectangle.svg') no-repeat center;
-                            }
-                        }
-                    }
 
-                    &.incomeChildRow, &.expensesChildRow {
-                        .dx-white-space-column {
-                            span {
-                                width: 10px;
-                                height: 10px;
-                                display: inline-block;
-                                position: relative;
-                                left: 18px;
-                                top: 6px;
-                                z-index: 1;
-                            }
-                            &:before {
-                                content: url('../../../assets/common/icons/rectangle.svg');
-                            }
-                        }
-                    }
+                                &.current {
+                                    background: @currentTextColor;
+                                    color: #fff;
+                                }
 
-                    &.incomeRow, &.incomeChildRow {
-                        .dx-pivotgrid-expanded .dx-expand-icon-container {
-                            span:before {
-                                border-bottom: 2px solid #61c670!important;    
+                                &.forecast {
+                                    color: @forecastTextColor
+                                }
                             }
-                            &:after {
-                                background: #61c670!important;
-                            }
-                        }
-                        .dx-pivotgrid-collapsed .dx-expand-icon-container {
-                            span{
-                                &:before {
-                                    content: url('../../../assets/common/icons/arrow-down-green.svg');
-                                }                                
-                            }
-                        }
-                    }
 
-                    &.incomeChildRow {
-                        .dx-white-space-column {
-                            &:after {
-                                border-right: 2px solid #61c670!important;
+                            span.dayEnding {
+                                font-size: 10px;
+                                position: absolute;
                             }
-                            span {
-                                background: url('../../../assets/common/icons/arrow-down-green.svg') no-repeat center;
-                            }
-                        }
-                    }
 
-                    &.expensesRow, &.expensesChildRow {
-                        .dx-pivotgrid-expanded .dx-expand-icon-container {
-                            span:before {
-                                border-bottom: 2px solid #e7326a!important;
+                            &.projectedField.projectedHidden {
+                                border: none;
+                                padding: 0;
                             }
-                            &:after {
-                                background: #e7326a!important;
-                            }
-                        }
-                        .dx-pivotgrid-collapsed .dx-expand-icon-container {
-                            span{
-                                &:before {
-                                    content: url('../../../assets/common/icons/arrow-down-red.svg');
-                                }                               
-                            }
-                        }
-                    }
-                    &.expensesChildRow {
-                        .dx-white-space-column {
-                            &:after {
-                                border-right: 2px solid #e7326a!important;
-                            }
-                            span {
-                                background: url('../../../assets/common/icons/arrow-down-red.svg') no-repeat center;
-                            }
-                        }
-                    }
-
-                    &.startedBalance,
-                    &.incomeRow,
-                    &.expensesRow,
-                    &.netChangeRow,
-                    &.endingCashPosition {
-                        td {
-                            letter-spacing: 0.8px;
-                            font-weight: 600;
-                        }
-                    }
-
-                    &.startedBalance td {
-                        background: @startedBalanceBackgroundColor;
-                    }
-
-                    &.netChangeRow td {
-                        background: transparent;
-                    }
-
-                    &.endingCashPosition {
-                        td {
-                            background: #00aff0;
-                            color: #fff;
-                            padding-left: 22px;
-                        }
-                    }
-
-                    &.reconciliation {
-                        td {
-                            letter-spacing: 0.2px;
-                            padding-left: 22px;
-                            font-weight: 600;
-                            background: @reconciliationVerticalHeaderBackgroundColor;
                         }
                     }
                 }
             }
-            /** bottom right column (data cells) */
-            .dx-area-data-cell {
 
-                &.fontNameLato tr td {
-                    &, span {
-                        font-family: Lato !important;
-                    }
+            tr.dx-bottom-row {
+                & > td {
+                    padding-top: 84px;
                 }
 
-                &.fontNameOpenSans tr td {
-                    &, span {
-                        font-family: "Open Sans" !important;
-                    }
-                }
+                /** bottom left column (labels cells) */
+                .dx-area-row-cell table {
+                    width: @left-column-width !important;
+                    tr {
+                            position: relative;
+                            &:first-child td.dx-white-space-column {
+                                border-top: 0;
+                            }
+                            td {
+                                text-align: left;
+                                color: inherit;
+                                width: 23px;
+                                min-width: 23px;
 
-                &.fontNameKameron tr td {
-                    &, span {
-                        font-family: Kameron !important;
-                    }
-                }
+                                &.dx-white-space-column {
+                                    background: #fff;
+                                    border-right: none;
+                                    border-top: 1px solid @tableBorderColor;
+                                    position: relative;
+                                    cursor: pointer;
 
-                &.fontNameWorkSans tr td {
-                    &, span {
-                        font-family: Work Sans !important;
-                    }
-                }
+                                    &:before {
+                                        content: url('../../../assets/common/icons/collapse-icon.svg');
+                                        position: absolute;
+                                        left: 16px;
+                                        width: 16px;
+                                        top: 7px;
+                                        z-index: 1
+                                    }
 
-                tr {
-                    td {
-                        background: @dataCellBackgroundColor;
-                        color: @middleGrayColor;
-                        font-family: Lato !important;
-                        letter-spacing: 0.2px;
+                                    &:after {
+                                        content: '';
+                                        position: absolute;
+                                        top: 22px;
+                                        left: 23px;
+                                        display: block;
+                                        border-right: 2px solid @expendedLineColor;
+                                        height: calc(~"100%" - 4px);
+                                        z-index: 1;
+                                    }
 
-                        &.red {
-                            &,
-                            & span {
-                                color: red !important;
+                                    &.startedBalanceWhiteSpace {
+                                        border-top: none
+                                    }
+                                }
+
+                                &.income {
+                                    background: @incomeVerticalHeaderBackgroundColor;
+                                }
+
+                                &.expenses {
+                                    background: @expensesVerticalHeaderBackgroundColor;
+                                }
+
+                                &.emptyChildren {
+                                    cursor: default;
+                                    padding-left: 43px !important;
+                                }
+
+                                &.netChange {
+                                    text-align: left;
+                                }
+
+                                &.dx-last-cell {
+                                    width: @left-column-width;
+                                    padding-left: 22px;
+                                }
+
+                                &.descriptor {
+                                    font-style: italic;
+                                }
+
+                                .dx-expand-icon-container {
+                                    font: inherit;
+                                    margin-right: 10px;
+
+                                    &:before {
+                                        display: none;
+                                    }
+
+                                    .dx-expand:before {
+                                        top: auto;
+                                        left: auto;
+                                        position: relative;
+                                        width: auto;
+                                        margin: auto;
+                                    }
+                                }
+
+                                &.dx-pivotgrid-collapsed {
+                                    .dx-expand:before {
+                                        content: url('../../../assets/common/icons/expand-icon.svg');
+                                    }
+                                }
+
+                                &.dx-pivotgrid-expanded {
+                                    position: relative;
+
+                                    .dx-expand:before {
+                                        content: '';
+                                        width: 7px;
+                                        border-bottom: 2px solid @expendedLineColor;
+                                        margin-left: 8px;
+                                        top: -4px;
+                                    }
+
+                                    .dx-expand-icon-container {
+                                        position: relative;
+                                        &:after {
+                                            content: '';
+                                            top: 6px;
+                                            position: absolute;
+                                            left: 12px;
+                                            width: 6px;
+                                            height: 6px;
+                                            border-radius: 50%;
+                                            background: @expendedLineColor;
+                                        }
+                                    }
+                                }
+                            }
+
+                            &.incomeRow, &.incomeChildRow, &.expensesRow, &.expensesChildRow {
+                                .dx-pivotgrid-collapsed .dx-expand-icon-container {
+                                    span {
+                                        width: 15px;
+                                        height: 15px;
+                                        display: inline-block;
+                                        transform: rotate(-90deg);
+                                        &:before {
+                                            bottom: 5px;
+                                        }
+                                        background: url('../../../assets/common/icons/rectangle.svg') no-repeat center;
+                                    }
+                                }
+                            }
+
+                            &.incomeChildRow, &.expensesChildRow {
+                                .dx-white-space-column {
+                                    span {
+                                        width: 10px;
+                                        height: 10px;
+                                        display: inline-block;
+                                        position: relative;
+                                        left: 18px;
+                                        top: 6px;
+                                        z-index: 1;
+                                    }
+                                    &:before {
+                                        content: url('../../../assets/common/icons/rectangle.svg');
+                                    }
+                                }
+                            }
+
+                            &.incomeRow, &.incomeChildRow {
+                                .dx-pivotgrid-expanded .dx-expand-icon-container {
+                                    span:before {
+                                        border-bottom: 2px solid #61c670!important;
+                                    }
+                                    &:after {
+                                        background: #61c670!important;
+                                    }
+                                }
+                                .dx-pivotgrid-collapsed .dx-expand-icon-container {
+                                    span{
+                                        &:before {
+                                            content: url('../../../assets/common/icons/arrow-down-green.svg');
+                                        }
+                                    }
+                                }
+                            }
+
+                            &.incomeChildRow {
+                                .dx-white-space-column {
+                                    &:after {
+                                        border-right: 2px solid #61c670!important;
+                                    }
+                                    span {
+                                        background: url('../../../assets/common/icons/arrow-down-green.svg') no-repeat center;
+                                    }
+                                }
+                            }
+
+                            &.expensesRow, &.expensesChildRow {
+                                .dx-pivotgrid-expanded .dx-expand-icon-container {
+                                    span:before {
+                                        border-bottom: 2px solid #e7326a!important;
+                                    }
+                                    &:after {
+                                        background: #e7326a!important;
+                                    }
+                                }
+                                .dx-pivotgrid-collapsed .dx-expand-icon-container {
+                                    span{
+                                        &:before {
+                                            content: url('../../../assets/common/icons/arrow-down-red.svg');
+                                        }
+                                    }
+                                }
+                            }
+                            &.expensesChildRow {
+                                .dx-white-space-column {
+                                    &:after {
+                                        border-right: 2px solid #e7326a!important;
+                                    }
+                                    span {
+                                        background: url('../../../assets/common/icons/arrow-down-red.svg') no-repeat center;
+                                    }
+                                }
+                            }
+
+                            &.startedBalance,
+                            &.incomeRow,
+                            &.expensesRow,
+                            &.netChangeRow,
+                            &.endingCashPosition {
+                                td {
+                                    letter-spacing: 0.8px;
+                                    font-weight: 600;
+                                }
+                            }
+
+                            &.startedBalance td {
+                                background: @startedBalanceBackgroundColor;
+                            }
+
+                            &.netChangeRow td {
+                                background: transparent;
+                            }
+
+                            &.endingCashPosition {
+                                td {
+                                    background: #00aff0;
+                                    color: #fff;
+                                    padding-left: 22px;
+                                }
+                            }
+
+                            &.reconciliation {
+                                td {
+                                    letter-spacing: 0.2px;
+                                    padding-left: 22px;
+                                    font-weight: 600;
+                                    background: @reconciliationVerticalHeaderBackgroundColor;
+                                }
                             }
                         }
+                }
 
-                        &.zeroValue {
-                            &,
-                            & span {
-                                color: @dataCellColorForZeroValues;
-                                font-weight: 300;
-                            }
-                        }
+                /** bottom right column (data cells) */
+                .dx-area-data-cell {
 
-                        &[droppable='true'] {
-                            background: #fffbf4 !important;
-                        }
-
-                        &.currentDroppable {
-                            background: #CBEEFF !important;
-                            cursor: pointer;
-                        }
-
-                        span {
+                    &.fontNameLato tr td {
+                        &, span {
                             font-family: Lato !important;
-                            color: @middleGrayColor;
-                        }
-
-                        &.income {
-                            background: @incomeDataCellBackgroundColor;
-                        }
-
-                        &.expenses {
-                            background: @expensesDataCellBackgroundColor;
-                        }
-
-                        &.netChange {
-                            background: transparent;
-                        }
-
-                        &.lowestOpenedCurrent:not(.mtdCell):not(.currentDay):not(.nextDay) {
-                            &.income {
-                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@incomeDataCellBackgroundColor, @incomeDataCellBackgroundColor);
-                            }
-
-                            &.expenses {
-                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@expensesDataCellBackgroundColor, @expensesDataCellBackgroundColor);
-                            }
-                        }
-
-                        &.lowestOpenedCurrent:not(.mtdCell):not(.currentDay):not(.nextDay) {
-                            background-color: @currentPeriodCellBackgroundColor;
-                        }
-
-                        .dx-texteditor-input {
-                            text-align: right;
                         }
                     }
 
-                    &.startedBalance,
-                    &.incomeRow,
-                    &.expensesRow,
-                    &.netChangeRow,
-                    &.endingCashPosition,
-                    &.reconciliation {
+                    &.fontNameOpenSans tr td {
+                        &, span {
+                            font-family: "Open Sans" !important;
+                        }
+                    }
+
+                    &.fontNameKameron tr td {
+                        &, span {
+                            font-family: Kameron !important;
+                        }
+                    }
+
+                    &.fontNameWorkSans tr td {
+                        &, span {
+                            font-family: Work Sans !important;
+                        }
+                    }
+
+                    tr {
                         td {
-                            &,
-                            & span {
-                                color: @totalsTextColor;
-                                font-weight: 600;
+                            background: @dataCellBackgroundColor;
+                            color: @middleGrayColor;
+                            font-family: Lato !important;
+                            letter-spacing: 0.2px;
+
+                            &.red {
+                                &,
+                                & span {
+                                    color: red !important;
+                                }
                             }
 
                             &.zeroValue {
@@ -665,84 +609,152 @@
                                     font-weight: 300;
                                 }
                             }
-                        }
-                    }
 
-                    &.startedBalance {
-                        td {
-                            &.dx-total {
-                                background: @startedBalanceDataCellColor;
+                            &[droppable='true'] {
+                                background: #fffbf4 !important;
+                            }
+
+                            &.currentDroppable {
+                                background: #CBEEFF !important;
+                                cursor: pointer;
+                            }
+
+                            span {
+                                font-family: Lato !important;
+                                color: @middleGrayColor;
+                            }
+
+                            &.income {
+                                background: @incomeDataCellBackgroundColor;
+                            }
+
+                            &.expenses {
+                                background: @expensesDataCellBackgroundColor;
+                            }
+
+                            &.netChange {
+                                background: transparent;
                             }
 
                             &.lowestOpenedCurrent:not(.mtdCell):not(.currentDay):not(.nextDay) {
-                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
+                                &.income {
+                                    background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@incomeDataCellBackgroundColor, @incomeDataCellBackgroundColor);
+                                }
+
+                                &.expenses {
+                                    background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@expensesDataCellBackgroundColor, @expensesDataCellBackgroundColor);
+                                }
+                            }
+
+                            &.lowestOpenedCurrent:not(.mtdCell):not(.currentDay):not(.nextDay) {
+                                background-color: @currentPeriodCellBackgroundColor;
+                            }
+
+                            .dx-texteditor-input {
+                                text-align: right;
                             }
                         }
 
-                        &:first-child {
+                        &.startedBalance,
+                        &.incomeRow,
+                        &.expensesRow,
+                        &.netChangeRow,
+                        &.endingCashPosition,
+                        &.reconciliation {
                             td {
-                                background: @startedBalanceDataCellColor;
+                                &,
+                                & span {
+                                    color: @totalsTextColor;
+                                    font-weight: 600;
+                                }
+
+                                &.zeroValue {
+                                    &,
+                                    & span {
+                                        color: @dataCellColorForZeroValues;
+                                        font-weight: 300;
+                                    }
+                                }
+                            }
+                        }
+
+                        &.startedBalance {
+                            td {
+                                &.dx-total {
+                                    background: @startedBalanceDataCellColor;
+                                }
 
                                 &.lowestOpenedCurrent:not(.mtdCell):not(.currentDay):not(.nextDay) {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                                 }
                             }
-                        }
-                    }
 
-                    &.endingCashPosition {
-                        td {
-                            background: @grandTotalBackgroundColor;
+                            &:first-child {
+                                td {
+                                    background: @startedBalanceDataCellColor;
 
-                            &.lowestOpenedCurrent:not(.mtdCell):not(.currentDay):not(.nextDay) {
-                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
-                            }
-
-                            span {
-                                color: @grandTotalTextColor;
+                                    &.lowestOpenedCurrent:not(.mtdCell):not(.currentDay):not(.nextDay) {
+                                        background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
+                                    }
+                                }
                             }
                         }
-                    }
 
-                    &.reconciliation {
-                        td {
-                            background: @reconciliationDataCellBackgroundColor;
-                            color: @reconciliationDataCellTextColor;
+                        &.endingCashPosition {
+                            td {
+                                background: @grandTotalBackgroundColor;
 
-                            &.lowestOpenedCurrent:not(.mtdCell):not(.currentDay):not(.nextDay) {
-                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
+                                &.lowestOpenedCurrent:not(.mtdCell):not(.currentDay):not(.nextDay) {
+                                    background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
+                                }
+
+                                span {
+                                    color: @grandTotalTextColor;
+                                }
+                            }
+                        }
+
+                        &.reconciliation {
+                            td {
+                                background: @reconciliationDataCellBackgroundColor;
+                                color: @reconciliationDataCellTextColor;
+
+                                &.lowestOpenedCurrent:not(.mtdCell):not(.currentDay):not(.nextDay) {
+                                    background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
+                                }
                             }
                         }
                     }
-                }
 
-                .dx-scrollable-scrollbar {
-                    bottom: -7px;
+                    .dx-scrollable-scrollbar {
+                        bottom: -7px;
 
-                    &.fixedScrollbar {
-                        position: fixed;
-                        bottom: 5px;
-                        left: @left-column-width;
-                        &.withFooterToolbar {
-                            bottom: 47px;
+                        &.fixedScrollbar {
+                            position: fixed;
+                            bottom: 5px;
+                            left: @left-column-width;
+                            &.withFooterToolbar {
+                                bottom: 47px;
+                            }
                         }
-                    }
 
-                    &.dx-state-hover,
-                    &.dx-scrollable-scrollbar-hoverable,
-                    &.dx-scrollable-scrollbar-active {
-                        height: 8px;
-                    }
+                        &.dx-state-hover,
+                        &.dx-scrollable-scrollbar-hoverable,
+                        &.dx-scrollable-scrollbar-active {
+                            height: 8px;
+                        }
 
-                    .dx-scrollable-scroll {
-                        height: 15px;
+                        .dx-scrollable-scroll {
+                            height: 15px;
 
-                        .dx-scrollable-scroll-content {
-                            background-color: rgb(191,191,191)
+                            .dx-scrollable-scroll-content {
+                                background-color: rgb(191,191,191)
+                            }
                         }
                     }
                 }
             }
+
         }
     }
 
@@ -1245,12 +1257,9 @@
 }
 .pivot-grid-wrapper {
     margin-bottom: 190px;
-    border-top: 1px solid #ddd;
 }
 
 .invisible {
     opacity: 0;
 }
-.pivot-grid {
-    margin-top: -1px;
-}
+

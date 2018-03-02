@@ -694,7 +694,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     headCellExpandElement.toggleClass('closed');
                     cashflowComponent[`${fieldPeriod}HeadersAreCollapsed`] = headCellExpandElement.hasClass('closed') || defaultClick;
                 });
-                this.synchronizeCashflowHeaders();
+                this.synchronizeHeaderHeightWithCashflow();
             }
         };
     }
@@ -1520,20 +1520,37 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** Calculate the amount current cells to cut the current period current cell to change current from
          *  current for year to current for the grouping period */
-        let lowestOpenedInterval = this.getLowestOpenedCurrentInterval();
-        $(`.current${_.capitalize(lowestOpenedInterval)}`).addClass('lowestOpenedCurrent');
+        let lowestOpenedCurrentInterval = this.getLowestOpenedCurrentInterval();
+        $(`.current${_.capitalize(lowestOpenedCurrentInterval)}`).addClass('lowestOpenedCurrent');
+
+        let lowestOpenedInterval = this.getLowestOpenedInterval();
         this.changeHistoricalColspans(lowestOpenedInterval);
 
         if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
             this.finishLoading();
         }
 
-        this.synchronizeCashflowHeaders();
+        this.synchronizeHeaderHeightWithCashflow();
         this.handleBottomHorizontalScrollPosition();
 
         /** Clear cache with columns activity */
         this.cashedColumnActivity.clear();
         this.applyUserPreferencesForAreas();
+    }
+
+    synchronizeHeaderHeightWithCashflow() {
+        let headerElement = document.getElementsByClassName('dx-area-description-cell')[0].parentElement;
+        let headerElementHeight = headerElement.clientHeight;
+        let bottomRow = <HTMLElement>document.getElementsByClassName('dx-bottom-row')[0];
+        /** Set the top padding for bottom row children depends on header element height */
+        for (let i = 0; i < bottomRow.children.length; i++) {
+            let childTd = <HTMLTableCellElement>bottomRow.children[i];
+            if (childTd.style.paddingTop !== headerElementHeight + 'px') {
+                childTd.style.paddingTop = headerElementHeight + 'px';
+            } else {
+                break;
+            }
+        }
     }
 
     handleBottomHorizontalScrollPosition() {
@@ -1552,17 +1569,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         } else {
             scrollElement.classList.remove('fixedScrollbar', 'withFooterToolbar');
-        }
-    }
-
-    /**
-     * Method that makes the headers in cashflow the same height (one of them has fixed position)
-     */
-    synchronizeCashflowHeaders() {
-        let descriptionHeader = <HTMLElement>document.getElementsByClassName('dx-area-description-cell')[0];
-        let columnsHeader = <HTMLElement>document.getElementsByClassName('dx-area-column-cell')[0];
-        if (descriptionHeader && columnsHeader && descriptionHeader.parentElement.clientHeight !== columnsHeader.clientHeight) {
-            descriptionHeader.parentElement.style.height = columnsHeader.clientHeight + 'px';
         }
     }
 
@@ -1663,6 +1669,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 !$(`.current${_.capitalize(interval)}.projectedField`).attr('colspan'))) ) {
                 return false;
             }
+            return true;
+        });
+        return lowestInterval;
+    }
+
+    getLowestOpenedInterval() {
+        let allIntervals = this.groupbyItems.map(item => item.groupInterval);
+        let lowestInterval = allIntervals.shift();
+        allIntervals.every(interval => {
+            let periodElements = $(`[class*="${_.capitalize(interval)}"]`);
+            if (!periodElements.length) {
+                return false;
+            }
+            lowestInterval = interval;
             return true;
         });
         return lowestInterval;

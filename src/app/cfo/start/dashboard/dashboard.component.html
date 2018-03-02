@@ -16,6 +16,7 @@
                     </header>
                     <app-accounts (onTotalAccountsMouseenter)="bankAccountSelector.toggleBankAccountTooltip()"></app-accounts>
                     <bank-accounts-select targetBankAccountsTooltip="#totalaccounts"
+                                          useGlobalCache="true"
                                           (onBankAccountsSelected)="filterByBankAccounts($event)">
                     </bank-accounts-select>
                 </section>

@@ -2,7 +2,7 @@
 .bank-accounts-tooltip-container {
     font-size: 15px;
     text-align: start;
-    width: 444px;
+    width: 555px;
 
 
     .actions {
@@ -10,7 +10,7 @@
         display: inline-block;
     }
 
-    .filter-apply, .filter-clear {
+    .filter-apply, .filter-clear, .selectAll {
         cursor: pointer;
         font-size: 14px;
         line-height: 1.21;
@@ -24,7 +24,62 @@
         }
     }
 
-    /deep/ tr[aria-level="0"] .dx-select-checkbox {
-        display: none;
+    .selectAll {
+        float: left;
+    }
+
+    .grid-container {
+        width: 100%;
+        font-size: 12px;
+
+        /deep/ tr[aria-selected ="true"] {
+            background-color: transparent;
+        }
+
+        /deep/ .dx-master-detail-row .dx-master-detail-cell {
+            background-color: transparent;
+            padding: 7px;
+        }
+
+        .account-status {
+            width: 100%;
+            border-radius: 15px;
+            background-color: #e8ecf2;
+            display: inline-block;
+
+            .text {
+                font-size: 12px;
+                margin-top: 2px;
+                margin-right: 5px;
+                float: right;
+            }
+
+            .status-color-container {
+
+                .status-color {
+                    float: left;
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 4px;
+                    margin: 8px;
+                }
+
+                .status-color.completed {
+                    background-color: green;
+                }
+
+                .status-color.inprogress {
+                    background-color: orange;
+                }
+
+                .status-color.failed{
+                    background-color: red;
+                }
+            }
+        }
+    }
+
+    .bank-accounts-grid-container {
+        width: 100%;
     }
 }
