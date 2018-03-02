@@ -41,7 +41,7 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
             if (this._values.from.value || this._values.to.value) {
                 dateRange.setDateRange(
                     new Date((this._values.from.value || this._values.to.value).getTime()),
-                    new Date((this._values.to.value || this._values.to.value).getTime())
+                    new Date((this._values.to.value || this._values.from.value).getTime())
                 );
             }
         }

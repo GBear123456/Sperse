@@ -1,11 +1,11 @@
 import { AppConsts } from '@shared/AppConsts';
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, Input } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
-import { CustomersServiceProxy, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
-  ContactPhoneServiceProxy, CustomerInfoDto, CreateContactEmailInput,
+import { CustomersServiceProxy, ContactInfoBaseDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
+  ContactPhoneServiceProxy, CreateContactEmailInput,
   UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -14,10 +14,9 @@ import { CustomersServiceProxy, ContactEmailServiceProxy, ContactEmailDto, Conta
   styleUrls: ['./contacts.component.less']
 })
 export class ContactsComponent extends AppComponentBase implements OnInit {
-  data: {
-    customerInfo: CustomerInfoDto
-  };
-  isEditAllowed: boolean = false;
+  @Input() contactInfoData: ContactInfoBaseDto;
+
+  isEditAllowed = false;
 
   constructor(
     injector: Injector,
@@ -27,7 +26,6 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
     private _contactPhoneService: ContactPhoneServiceProxy
   ) {
     super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
     this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
   }
 
@@ -59,8 +57,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
       value: data && data[field],
       name: this.getFieldName(field),
       contactId: data && data.contactId
-        || this.data.customerInfo
-        .primaryContactInfo.id,
+        || this.contactInfoData.id,
       emailAddress: data && data.emailAddress,
       phoneNumber: data && data.phoneNumber,
       phoneExtension: data && data.phoneExtension,
@@ -107,12 +104,14 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
         } else if (result.id) {
           updatedData.id = result.id;
           if (isPhoneDialog)
-            this.data.customerInfo.primaryContactInfo.phones
+            this.contactInfoData.phones
               .push(ContactPhoneDto.fromJS(updatedData));
           else
-            this.data.customerInfo.primaryContactInfo.emails
+            this.contactInfoData.emails
               .push(ContactEmailDto.fromJS(updatedData));
         }
+      }, error => {
+        dataItem[field] = dataItem.original;
       });
   }
 
@@ -147,9 +146,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
       if (result) {
         this.dialog.closeAll();
         this._contactEmailService.deleteContactEmail(
-          this.data.customerInfo.primaryContactInfo.id, email.id).subscribe(result => {
+          this.contactInfoData.id, email.id).subscribe(result => {
             if (!result)
-              this.data.customerInfo.primaryContactInfo.emails.splice(index, 1);
+              this.contactInfoData.emails.splice(index, 1);
           });
       }
     });
@@ -166,9 +165,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
       if (result) {
         this.dialog.closeAll();
         this._contactPhoneService.deleteContactPhone(
-          this.data.customerInfo.primaryContactInfo.id, phone.id).subscribe(result => {
+          this.contactInfoData.id, phone.id).subscribe(result => {
             if (!result)
-              this.data.customerInfo.primaryContactInfo.phones.splice(index, 1);
+              this.contactInfoData.phones.splice(index, 1);
           });
       }
     });
@@ -176,6 +175,5 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
   }
 
   ngOnInit() {
-    this.data = this._customerService['data'];
   }
 }

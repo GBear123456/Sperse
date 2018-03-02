@@ -101,10 +101,10 @@
                         color: #424c56;
                         font-weight: 400;
                     }
-                }
 
-                &.dx-freespace-row td {
-                    border-bottom: 0px;
+                    &.dx-freespace-row td {
+                        border-bottom: 0px;
+                    }
                 }
             }
         }
@@ -403,6 +403,9 @@
                             .dx-datagrid-table {
                                 transform: rotate(180deg);
                                 tr {
+                                    &.dx-freespace-row {
+                                        display: none!important;
+                                    }
                                     transform: rotate(180deg);
                                 }
                             }

@@ -17,14 +17,9 @@ import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
                     {
                         path: '',
                         children: [
-                            { path: '', redirectTo: '/app/main/start', pathMatch: 'full' },
+                            { path: '', redirectTo: '/app/crm/start', pathMatch: 'full' },
                             { path: 'notifications', component: NotificationsComponent }
                         ]
-                    },
-                    {
-                        path: 'main',
-                        loadChildren: 'app/main/main.module#MainModule', //Lazy load main module
-                        data: { preload: true }
                     },
                     {
                         path: 'admin',

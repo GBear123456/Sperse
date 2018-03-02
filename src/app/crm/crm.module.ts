@@ -22,6 +22,8 @@ import { TenantsComponent } from './tenants/tenants.component';
 import { CreateTenantModalComponent } from './tenants/create-tenant-modal.component';
 import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component';
 import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { LeadsStatsComponent } from './dashboard/leads-stats/leads-stats.component';
 
 import { EditionComboComponent } from './shared/edition-combo.component';
 import { FeatureTreeComponent } from './shared/feature-tree.component';
@@ -39,7 +41,8 @@ import {
     DxValidationSummaryModule,
     DxButtonModule,
     DxFileUploaderModule,
-    DxSelectBoxModule
+    DxSelectBoxModule,
+    DxPivotGridModule
 } from 'devextreme-angular';
 
 @NgModule({
@@ -56,6 +59,7 @@ import {
       DxButtonModule,
       DxFileUploaderModule,
       DxSelectBoxModule,
+      DxPivotGridModule,
 
       ClientDetailsModule,
       FileUploadModule,
@@ -83,7 +87,9 @@ import {
       EditTenantModalComponent,
       TenantFeaturesModalComponent,
       FeatureTreeComponent,
-      EditionComboComponent
+      EditionComboComponent,
+      DashboardComponent,
+      LeadsStatsComponent
     ]
 })
 export class CrmModule {

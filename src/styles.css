@@ -5,6 +5,7 @@ body, html, *, .btn {
 }
 
 [class^='dx']:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker):not([class^=dx-sort]):not([class*=fa-]):not(.dx-header-filter):not(.dx-treeview-toggle-item-visibility):not(.dx-datagrid-group-opened):not(.dx-total) {
+
     font-family: Montserrat !important;
 }
 

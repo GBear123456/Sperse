@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterComponent } from '../models/filter-component';
 
@@ -6,7 +6,7 @@ import { FilterComponent } from '../models/filter-component';
     templateUrl: './filter-calendar.component.html',
     styleUrls: ['./filter-calendar.component.less']
 })
-export class FilterCalendarComponent extends AppComponentBase implements OnInit, FilterComponent {
+export class FilterCalendarComponent extends AppComponentBase implements FilterComponent {
     options: any;
     items: {
         from: any,
@@ -16,8 +16,5 @@ export class FilterCalendarComponent extends AppComponentBase implements OnInit,
 
     constructor(injector: Injector) {
         super(injector);
-    }
-
-    ngOnInit(): void {
     }
 }
