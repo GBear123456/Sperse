@@ -94,7 +94,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         this.onDailyStatsPeriodChanged($event.value);
     }
 
-    onDailyStatsPeriodChanged(value) {
+    onDailyStatsPeriodChanged(value = '') {
         let startDate: moment.Moment = moment().utc();
         let endDate: moment.Moment = moment().utc();
 

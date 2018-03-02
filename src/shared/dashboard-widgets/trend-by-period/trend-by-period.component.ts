@@ -28,8 +28,8 @@ import * as moment from 'moment';
 export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     bankAccountIds: number[] = [];
     trendData: Array<BankAccountDailyStatDto>;
-    startDate;
-    endDate;
+    startDate: any;
+    endDate: any;
     chartWidth = 650;
     currency = 'USD';
     isForecast = false;
@@ -263,20 +263,16 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                 break;
             case this.l('Last_Month'):
                 period = 'day';
-                startDate.startOf('month');
-                endDate.endOf('month');
-                startDate.subtract(1, 'month');
-                endDate.subtract(1, 'month');
+                startDate.startOf('month').subtract(1, 'month');
+                endDate.endOf('month').subtract(1, 'month');
                 break;
             case this.l('This_Year'):
                 startDate.startOf('year');
                 endDate.endOf('year');
                 break;
             case this.l('Last_Year'):
-                startDate.startOf('year');
-                endDate.endOf('year');
-                startDate.subtract(1, 'year');
-                endDate.subtract(1, 'year');
+                startDate.startOf('year').subtract(1, 'year');
+                endDate.endOf('year').subtract(1, 'year');
                 break;
             case this.l('All_Periods'):
                 period = 'all';
@@ -286,8 +282,8 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                 break;
         }
 
-        this.startDate = period == 'all' ? undefined: startDate.startOf(period);
-        this.endDate = period == 'all' ? undefined: endDate.endOf(period);
+        this.startDate = (period == 'all' ? undefined: startDate.startOf('day'));
+        this.endDate = (period == 'all' ? undefined: endDate.endOf('day'));
 
         this.selectedPeriod = this.periods.find((obj) => { 
             return obj.name === (period == 'all' ? 'month': period); 
