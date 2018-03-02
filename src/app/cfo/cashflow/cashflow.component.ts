@@ -1520,8 +1520,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** Calculate the amount current cells to cut the current period current cell to change current from
          *  current for year to current for the grouping period */
-        let lowestOpenedInterval = this.getLowestOpenedCurrentInterval();
-        $(`.current${_.capitalize(lowestOpenedInterval)}`).addClass('lowestOpenedCurrent');
+        let lowestOpenedCurrentInterval = this.getLowestOpenedCurrentInterval();
+        $(`.current${_.capitalize(lowestOpenedCurrentInterval)}`).addClass('lowestOpenedCurrent');
+
+        let lowestOpenedInterval = this.getLowestOpenedInterval();
         this.changeHistoricalColspans(lowestOpenedInterval);
 
         if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
@@ -1667,6 +1669,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 !$(`.current${_.capitalize(interval)}.projectedField`).attr('colspan'))) ) {
                 return false;
             }
+            return true;
+        });
+        return lowestInterval;
+    }
+
+    getLowestOpenedInterval() {
+        let allIntervals = this.groupbyItems.map(item => item.groupInterval);
+        let lowestInterval = allIntervals.shift();
+        allIntervals.every(interval => {
+            let periodElements = $(`[class*="${_.capitalize(interval)}"]`);
+            if (!periodElements.length) {
+                return false;
+            }
+            lowestInterval = interval;
             return true;
         });
         return lowestInterval;
