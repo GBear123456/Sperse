@@ -87,7 +87,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                         Math.abs(result.income),
                         Math.abs(result.expenses),
                         Math.abs(result.netChange)
-                    ) * 1.5;
+                    ) * 1.8;
                     
                     this.totalData.incomePercent = this.getPercentage(maxValue, result.income);
                     this.totalData.expensesPercent = this.getPercentage(maxValue, result.expenses);
