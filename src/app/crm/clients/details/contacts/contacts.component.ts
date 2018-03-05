@@ -18,6 +18,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
 
   isEditAllowed = false;
 
+  private _isInPlaceEditAllowed = true;
+  private _itemInEditMode: any;
+
   constructor(
     injector: Injector,
     public dialog: MatDialog,
@@ -110,13 +113,24 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
             this.contactInfoData.emails
               .push(ContactEmailDto.fromJS(updatedData));
         }
+      }, error => {
+        dataItem[field] = dataItem.original;
       });
   }
 
   inPlaceEdit(field, item, event, index) {
     if (this.isEditAllowed) {
+
+      if (!this._isInPlaceEditAllowed)
+        return;
+
       item.inplaceEdit = true;
       item.original = item[field];
+
+      if (this._itemInEditMode && this._itemInEditMode != item)
+        this._itemInEditMode.inplaceEdit = false;
+
+      this._itemInEditMode = item;
     } else
       this.showDialog(field, item, event, index);
   }
@@ -124,6 +138,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
   closeInPlaceEdit(field, item) {
     item.inplaceEdit = false;
     item[field] = item.original;
+    this._isInPlaceEditAllowed = true;
+  }
+
+  itemValueChanged(field, item) {
+    this._isInPlaceEditAllowed = item[field] == item.original;
   }
 
   updateItem(field, item, event) {
@@ -131,6 +150,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
       if (item[field] != item.original)
         this.updateDataField(field, item, item);
       item.inplaceEdit = false;
+      this._isInPlaceEditAllowed = true;
     }
   }
 

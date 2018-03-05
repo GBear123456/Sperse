@@ -28,15 +28,17 @@
     .dashboard-wrapper {
         background-color: #fff;
         width: calc(~"100vw - 322px");
-        padding: 0 48px 40px;
+        padding: 0 48px 10px;
 
         section {
-            margin-bottom: 20px;
+            + section {
+                margin-top: 20px;
+            }
             header {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 20px 0 10px;
+                padding: 10px 0;
             }
         }
 
@@ -77,6 +79,9 @@
             justify-content: space-between;
             align-items: flex-start;
         }
+        .synch-status .synch-section-wrap {
+            align-items: center;
+        }
         .synch-status .synch-section-wrap .links {
             width: 32%;
             height: 100%;
@@ -87,7 +92,7 @@
             margin-bottom: 0;
         }
         .synch-status .synch-section-wrap .link-item {
-            padding: 10px 5px;
+            padding: 7px 5px;
             border-bottom: 1px solid  #E5E9EC;
         }
 
@@ -127,7 +132,7 @@
                 background-color: #FFFFFF;
                 border-radius: 4px;
                 position: relative;
-                padding: 30px;
+                padding: 20px 30px;
             }
         }
     }

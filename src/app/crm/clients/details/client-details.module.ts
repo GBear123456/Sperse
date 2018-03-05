@@ -86,7 +86,8 @@ import { PhoneFormatPipe } from './phone-format.pipe';
   exports: [
     ClientDetailsComponent,
     ContactInformationComponent,
-    RequiredDocumentsComponent
+    RequiredDocumentsComponent,
+    PhoneFormatPipe
   ],
   entryComponents: [
     EditContactDialog,

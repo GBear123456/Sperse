@@ -12,7 +12,7 @@ import {ChooseResetRulesComponent} from './choose-reset-rules/choose-reset-rules
     providers: [DashboardServiceProxy, ClassificationServiceProxy]
 })
 export class CategorizationStatusComponent extends CFOComponentBase implements OnInit {
-    bankAccountIds: number[] = [];
+    bankAccountFilterData: any = { };
     categorySynchData: any;
     private autoClassifyData = new AutoClassifyDto();
     resetRules = new ResetClassificationDto();
@@ -31,7 +31,7 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
     }
 
     getCategorizationStatus(): void {
-        this._dashboardService.getCategorizationStatus(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds)
+        this._dashboardService.getCategorizationStatus(InstanceType[this.instanceType], this.instanceId, this.bankAccountFilterData.bankAccountIds)
             .subscribe((result) => {
                 this.categorySynchData = result;
                 this.categorySynchData.totalCount = this.categorySynchData.classifiedTransactionCount + this.categorySynchData.unclassifiedTransactionCount;
@@ -78,17 +78,23 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
                 no: undefined
             }
         };
+
+        if (this.bankAccountFilterData.banksWithAccounts && this.bankAccountFilterData.banksWithAccounts.length) {
+            filter['Account'] = {
+                element: this.bankAccountFilterData.banksWithAccounts
+            };
+        }
+
         if (classified)
             filter.classified.yes = true;
         else
             filter.classified.no = true;
-
+        
         this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/transactions'], { queryParams: { filters: encodeURIComponent(JSON.stringify(filter)) } });
     }
 
-    filterByBankAccounts(bankAccountIds: number[]) {
-        this.bankAccountIds = bankAccountIds;
+    filterByBankAccounts(data) {
+        this.bankAccountFilterData = data;
         this.getCategorizationStatus();
     }
-
 }

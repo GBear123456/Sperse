@@ -6,13 +6,15 @@ import {CategorizationStatusComponent} from './categorization-status/categorizat
 import {AccountsSynchStatusComponent} from './accounts-synch-status/accounts-synch-status.component';
 import {TotalsByPeriodComponent} from './totals-by-period/totals-by-period.component';
 import {TrendByPeriodComponent} from './trend-by-period/trend-by-period.component';
+import {DashboardService} from './dashboard.service';
 import {RoundProgressModule} from 'angular-svg-round-progressbar';
 
 import {
     DxSelectBoxModule,
     DxCheckBoxModule,
     DxTooltipModule,
-    DxChartModule
+    DxChartModule,
+    DxSliderModule
 } from 'devextreme-angular';
 import { MatDialogModule } from '@angular/material';
 import {ChooseResetRulesComponent} from './categorization-status/choose-reset-rules/choose-reset-rules.component';
@@ -25,6 +27,7 @@ import {ChooseResetRulesComponent} from './categorization-status/choose-reset-ru
         DxCheckBoxModule,
         DxTooltipModule,
         DxChartModule,
+        DxSliderModule,
         MatDialogModule,
         ngCommon.CommonModule
     ],
@@ -46,7 +49,8 @@ import {ChooseResetRulesComponent} from './categorization-status/choose-reset-ru
         TotalsByPeriodComponent,
         TrendByPeriodComponent,
         ChooseResetRulesComponent
-    ]
+    ],
+    providers: [DashboardService]
 })
 export class DashboardWidgetsModule {
 }

@@ -1,11 +1,35 @@
 <div class="accounts-list">
     <div class="account-item networth">
         <div class="value">{{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</div>
-        <div class="name">{{l('Total_Balance')}}</div>
+        <div class="name">{{l('Current_Balance')}}</div>
     </div>
+    <div class="account-item dailyStats">
+        <div class="row">
+            <!--<dx-select-box [items]="availablePeriods"
+                           [(value)]="dailyStatsPeriodSelected"
+                           (onValueChanged)="onDailyStatsPeriodChanged()">
+            </dx-select-box>-->
+            <div class="col-8">
+                <div class="value">{{ dailyStatsAmountInteger | currency: dailyStatsData?.currency : 'symbol' : '1.0-0'}}<span>{{ dailyStatsAmountFloat }}</span></div>
+                <div class="name">{{dailyStatsText}}</div>
+            </div>
+            <div class="col-4">
+                <ul>
+                    <li *ngFor="let item of dailyStatsToggleValues; let i = index" (click)="changeDailyStatsToggleValue(i)" [class.selected]='i == dailyStatsSliderSelected'>
+                        {{item}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="account-item total-accounts" id="totalaccounts" (mouseenter)="totalAccountsMouseenter()">
+        <!-- a (click)="navigateTo()" class="view-details">{{l('View_details')}}</a -->
+        <dx-select-box [items]="availablePeriods"
+                       [width]="'100px'"
+                       [value]="availablePeriods[availablePeriods.length - 1]"
+                       (onValueChanged)="onPeriodChanged($event)">
+        </dx-select-box>
 
-    <div class="account-item totalaccounts" id="totalaccounts" (mouseenter)="totalAccountsMouseenter()">
-        <a (click)="navigateTo()" class="view-details">{{l('View_details')}}</a>
         <div class="value">{{accountsData?.bankAccountCount}}</div>
         <div class="name">
             {{l('Total_Accounts')}}

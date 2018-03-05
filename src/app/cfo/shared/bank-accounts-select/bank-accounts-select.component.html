@@ -4,27 +4,67 @@
         <div *dxTemplate="let data = data of 'content'">
             <div class="bank-accounts-tooltip-container">
                 <div class="actions">
+                    <span class="selectAll" (click)="bankAccountsSelecteAll()">{{l('Select All')}}</span>
                     <span class="filter-clear" (click)="bankAccountsClear()">{{l('Clear')}}</span>
                     <span class="filter-apply" (click)="bankAccountsSelected()">{{l('Apply')}}</span>
                 </div>
-                <dx-scroll-view [showScrollbar]="onHover" [height]="calculateChartsScrolableHeight()">
-                    <dx-tree-list [dataSource]="getItems()"
-                                  dataStructure="tree"
-                                  keyExpr="id"
-                                  parentIdExpr="parentId"
-                                  [showRowLines]="false"
-                                  [showColumnLines]="false"
-                                  [showColumnHeaders]="false"
-                                  [autoExpandAll]="true"
-                                  [columnAutoWidth]="true"
-                                  [selection]="{allowSelectAll: true, mode: 'multiple', recursive:true }"                                 
-                                  scrolling="{mode: 'virtual', showScrollbar: 'always'}"
-                                  [(selectedRowKeys)]="selectedRowKeys">
+                <div class="grid-container">
+                    <dx-scroll-view [showScrollbar]="onHover" [height]="calculateChartsScrolableHeight()">
+                        <dx-data-grid id="gridContainer"
+                                      [dataSource]="getItems()"
+                                      [masterDetail]="{ enabled: false, template: 'detail' }"
+                                      keyExpr="syncAccountId"
+                                      [showColumnHeaders]="false"
+                                      [columnAutoWidth]="true"
+                                      (onSelectionChanged)="masterSelectionChanged($event)"
+                                      (onContentReady)="contentReady($event)">
+                            <dxo-selection mode="single"></dxo-selection>
 
-                        <dxi-column dataField="name" caption=""></dxi-column>
-                        <dxi-column dataField="number" caption=""></dxi-column>
-                    </dx-tree-list>
-               </dx-scroll-view>
+                            <dxi-column dataField="name" [width]="200" alignment="left"></dxi-column>
+                            <dxi-column dataField="balance" cellTemplate="amountTemplate" alignment="center"></dxi-column>
+                            <dxi-column dataField="syncAccountStatus" [width]="135" alignment="right" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate"></dxi-column>
+
+                            <div *dxTemplate="let syncAccount of 'detail'">
+                                <div class="bank-accounts-grid-container">
+                                    <dx-data-grid [dataSource]="syncAccount.data.bankAccounts"
+                                                  [showBorders]="true"
+                                                  [columnAutoWidth]="true"
+                                                  [selectionFilter]="['selected', '=', true]"
+                                                  (onSelectionChanged)="bankAccountSelectionChanged($event)">
+                                        <dxo-selection [selectAllMode]="allMode"
+                                                       [showCheckBoxesMode]="checkBoxesMode"
+                                                       mode="multiple"
+                                                       [deferred]="true"></dxo-selection>
+                                        <dxi-column dataField="accountName" [width]="150" alignment="left"></dxi-column>
+                                        <dxi-column dataField="balance" alignment="left" cellTemplate="amountTemplate"></dxi-column>
+                                        <dxi-column dataField="type" [width]="130" alignment="left"></dxi-column>
+                                        <dxi-column dataField="businessEntityName" [width]="80" caption="{{l('Entity')}}" alignment="left"></dxi-column>
+                                        <div *dxTemplate="let cell of 'amountTemplate'">
+                                            <ng-container *ngIf="(cell.text)">
+                                                <span> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}  </span>
+                                            </ng-container>
+                                        </div>
+                                    </dx-data-grid>
+                                </div>
+                            </div>
+                            <div *dxTemplate="let cell of 'amountTemplate'">
+                                <ng-container *ngIf="(cell.text)">
+                                    <span> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}} </span>
+                                </ng-container>
+                            </div>
+                            <div *dxTemplate="let cell of 'statusTemplate'">
+                                <ng-container *ngIf="(cell.text)">
+                                    <div class="account-status">
+                                        <div class='status-color-container'>
+                                            <div [class]="'status-color ' + cell.text | lowercase"></div>
+                                        </div>
+                                        <span class="text"> {{cell.text | uppercase}}</span>
+                                    </div>                                   
+                                </ng-container>
+                            </div>
+                        </dx-data-grid>
+                    </dx-scroll-view>
+                </div>
             </div>
         </div>
     </dx-tooltip>

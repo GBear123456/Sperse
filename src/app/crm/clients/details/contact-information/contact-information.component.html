@@ -1,17 +1,20 @@
 <mat-tab-group>
   <mat-tab label="Personal">        
     <dx-scroll-view showScrollbar="onHover">
-      <div class="col-md-6">
-        <contacts [contactInfoData]="data?.customerInfo?.primaryContactInfo"></contacts>
-        <socials [contactInfoData]="data?.customerInfo?.primaryContactInfo"></socials>
-      </div>
-      <div class="col-md-6">
-        <addresses [contactInfoData]="data?.customerInfo?.primaryContactInfo"></addresses>
+      <div class="row">
+        <div class="col-md-6">
+          <contacts [contactInfoData]="data?.customerInfo?.primaryContactInfo"></contacts>
+          <socials [contactInfoData]="data?.customerInfo?.primaryContactInfo"></socials>
+        </div>
+        <div class="col-md-6">
+          <addresses [contactInfoData]="data?.customerInfo?.primaryContactInfo"></addresses>
+        </div>
       </div>
     </dx-scroll-view>
   </mat-tab>    
   <mat-tab label="Business" *ngIf="data?.customerInfo?.organizationContactInfo">
     <dx-scroll-view showScrollbar="onHover">
+      <div class="row">
         <div class="col-md-6">
           <contacts [contactInfoData]="data?.customerInfo?.organizationContactInfo"></contacts>
           <socials [contactInfoData]="data?.customerInfo?.organizationContactInfo"></socials>
@@ -19,7 +22,8 @@
         <div class="col-md-6">
           <addresses [contactInfoData]="data?.customerInfo?.organizationContactInfo"></addresses>
         </div>
-      </dx-scroll-view>
+      </div>
+    </dx-scroll-view>
   </mat-tab>
   <mat-tab label="Employment">
     <dx-scroll-view showScrollbar="onHover">

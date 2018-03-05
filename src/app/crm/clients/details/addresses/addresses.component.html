@@ -19,6 +19,7 @@
           (city)='city=$event'
           (state)='state=$event'
           (postal_code)='zip=$event'
+          (setAddress)='addressChanged(address, $event)'
           ng2-google-place-autocomplete/>
         <dx-button class="update" icon="todo" (onClick)="updateItem(address, $event)"></dx-button>
         <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit(address, $event)"></dx-button>
