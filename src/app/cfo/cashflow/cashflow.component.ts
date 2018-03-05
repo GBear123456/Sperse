@@ -662,6 +662,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.loadGridDataSource();
             this.operations.initToolbarConfig();
         });
+        /** Repaint pivot grid after closing the filter modal */
+        this._filtersService.subjectFilterDisable.subscribe(e => {
+            setTimeout(
+                this.repaintDataGrid.bind(this),
+                1000
+            );
+        });
     }
 
     /**
@@ -1829,14 +1836,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.expandRows(child, stopDepth, childPath, currentDepth + 1);
             }
         }
-    }
-
-    toggleFilters(event) {
-        this._filtersService.toggle();
-    }
-
-    clearAllFilters(event) {
-        this._filtersService.clearAllFilters();
     }
 
     /**
