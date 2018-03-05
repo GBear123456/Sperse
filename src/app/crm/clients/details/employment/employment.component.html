@@ -67,7 +67,7 @@
             </p>
             <div *ngIf="contactEmploymentInfo?.inplaceEditField == 'phoneNumber'" class="inplace-edit-wrapper phone-number">
                 <dx-validation-group>
-                    <dx-text-box placeholder="" mask="(000) 000-0000" [(value)]="contactEmploymentInfo.phoneNumber">
+                    <dx-text-box placeholder="" mask="+1 (000)-000-0000" [(value)]="contactEmploymentInfo.phoneNumber">
                         <dx-validator>
                             <dxi-validation-rule type="required" message="{{l('WorkPhoneNumberIsRequired')}}"></dxi-validation-rule>
                         </dx-validator>
@@ -89,7 +89,7 @@
             </p>
             <div *ngIf="contactEmploymentInfo?.inplaceEditField == 'mobilePhoneNumber'" class="inplace-edit-wrapper phone-number">
                 <dx-validation-group>
-                    <dx-text-box placeholder="" mask="(000) 000-0000" [(value)]="contactEmploymentInfo.mobilePhoneNumber">
+                    <dx-text-box placeholder="" mask="+1 (000)-000-0000" [(value)]="contactEmploymentInfo.mobilePhoneNumber">
                         <dx-validator>
                             <dxi-validation-rule type="required" message="{{l('MobilePhoneNumberIsRequired')}}"></dxi-validation-rule>
                         </dx-validator>
