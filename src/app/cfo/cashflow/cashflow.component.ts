@@ -487,7 +487,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             ]
         }
     ];
-    maxCategoriesWidth = 25;
+    maxCategoriesWidth = 22;
     footerToolbarConfig = [];
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
@@ -2034,6 +2034,47 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxPivotGrid/Events/#cellPrepared
      */
     onCellPrepared(e) {
+        /* added charts near row titles */
+        if (e.area === 'row' && e.cell.type === 'D' && e.cell.path.length > 1 && !e.cell.expanded && !e.cell.isWhiteSpace) {
+            let allData: any;
+            allData = this.pivotGrid.instance.getDataSource().getData();
+            let chartData = [];
+            for (let i in allData.columns) {
+                if (allData.columns[i].children) {
+                    let years = allData.columns[i].children;
+                    years.forEach(obj => {
+                        let rObj = {};
+                        let value = allData.values[e.cell.dataSourceIndex][obj.index];
+                        rObj['year'] = obj.value;
+                        rObj['value'] = value.length ? Math.abs(value[0]) : Math.abs(value);
+                        chartData.push(rObj);
+                    });
+                }
+            }
+            let spanChart = $('<div class="chart"></div>');
+            e.cellElement.append(spanChart);
+            let chartOptions = {
+                dataSource: chartData,
+                type: 'area',
+                argumentField: 'year',
+                valueField: 'value',
+                lineWidth: 1,
+                lineColor: '#fab800',
+                showMinMax: false,
+                showFirstLast: false,
+                tooltip: {
+                    enabled: false
+                }
+            };
+            if (e.cell.path[0] === 'CTI') {
+                chartOptions.lineColor = '#61c670';
+            }
+            if (e.cell.path[0] === 'CTE') {
+                chartOptions.lineColor = '#e7326a';
+            }
+            spanChart.dxSparkline(chartOptions);
+        }
+        
         /** added css class to start balance row */
         if (this.isStartingBalanceHeaderColumn(e) || this.isStartingBalanceTotalDataColumn(e)) {
             e.cellElement.parent().addClass('startedBalance');
