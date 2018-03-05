@@ -3341,11 +3341,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     modifyStartingBalanceAccountCell(summaryCell, prevWithParent) {
         let prevEndingAccountValue = this.getCellValue(prevWithParent, Total),
-            currentCellValue = summaryCell.value() || 0,
             prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false,
             prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0,
             prevReconciliation = this.getCellValue(prevWithParent, Reconciliation);
-        return currentCellValue + prevEndingAccountValue + prevCellValue + prevReconciliation;
+        return prevEndingAccountValue + prevCellValue + prevReconciliation;
     }
 
     /**
