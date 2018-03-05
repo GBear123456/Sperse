@@ -159,7 +159,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     }
 
     getDayBottomAxisCustomizer(elem) {
-        return `${elem.value.getDate()}.${elem.value.getMonth() + 1}`;
+        return elem.value.toDateString().split(' ').splice(1, 2).join(' ');
     }
 
     customizeBarTooltip = (pointInfo) => {
@@ -178,7 +178,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             this.bankAccountIds,
             this.startDate,
             this.endDate,
-            this.selectedPeriod.amount * 2,
+            undefined,
             this.selectedPeriod.key
         ).subscribe(result => {
                 if (result) {
