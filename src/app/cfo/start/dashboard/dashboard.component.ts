@@ -9,6 +9,7 @@ import { AccountsComponent } from 'shared/dashboard-widgets/accounts/accounts.co
 import { CategorizationStatusComponent } from 'shared/dashboard-widgets/categorization-status/categorization-status.component';
 import { TotalsByPeriodComponent } from 'shared/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TrendByPeriodComponent } from 'shared/dashboard-widgets/trend-by-period/trend-by-period.component';
+import { DashboardService } from 'shared/dashboard-widgets/dashboard.service';
 
 @Component({
     selector: 'dashboard',
@@ -23,6 +24,17 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     @ViewChild(TotalsByPeriodComponent) totalsByPeriodComponent: TotalsByPeriodComponent;
     @ViewChild(TrendByPeriodComponent) trendByPeriodComponent: TrendByPeriodComponent;
     
+    availablePeriods = [
+        this.l('Today'),
+        this.l('Yesterday'),
+        this.l('This_Week'),
+        this.l('This_Month'),
+        this.l('Last_Month'),
+        this.l('This_Year'),
+        this.l('Last_Year'),
+        this.l('All_Periods')
+    ];
+
     public headlineConfig;
     private rootComponent: any;
     linksTo = [
@@ -34,6 +46,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     constructor(
         injector: Injector,
         private _router: Router,
+        private _dashboardService: DashboardService,
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
     ) {
         super(injector);
@@ -68,5 +81,9 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.categorizationStatusComponent.filterByBankAccounts(data);
         this.totalsByPeriodComponent.filterByBankAccounts(data.bankAccountIds);
         this.trendByPeriodComponent.filterByBankAccounts(data.bankAccountIds);
+    }
+
+    onPeriodChanged($event) {
+        this._dashboardService.periodChanged($event.value);
     }
 }
