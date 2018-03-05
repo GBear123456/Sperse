@@ -111,11 +111,11 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                 break;
             case this.l('This_Week'):
                 startDate.startOf('week');
-                endDate.endOf('week');
+                endDate.startOf('day');
                 break;
             case this.l('This_Month'):
                 startDate.startOf('month');
-                endDate.endOf('month');
+                endDate.startOf('day');
                 break;
             case this.l('Last_Month'):
                 startDate.subtract(1, 'month').startOf('month');
@@ -123,7 +123,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                 break;
             case this.l('This_Year'):
                 startDate.startOf('year');
-                endDate.endOf('year');
+                endDate.startOf('day');
                 break;
             case this.l('Last_Year'):
                 startDate.subtract(1, 'year').startOf('year');
