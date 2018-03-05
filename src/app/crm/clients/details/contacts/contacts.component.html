@@ -30,7 +30,7 @@
     </ul>
     <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
       <dx-validation-group>
-        <dx-text-box placeholder="" mask="(000) 000-0000" [(value)]="phone.phoneNumber">
+        <dx-text-box placeholder="" mask="+1 (000)-000-0000" [(value)]="phone.phoneNumber">
           <dx-validator>
             <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
           </dx-validator>

@@ -35,7 +35,7 @@
                                     [visible]="false"></dxi-column>
                         <dxi-column dataField="State" caption="{{l('Contact.State')}}"></dxi-column>
                         <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
-                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}"></dxi-column>
+                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell"></dxi-column>
                         <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
                         <dxi-column cellTemplate="linkToCFOTemplate" [width]="75" [fixed]="true" [fixedPosition]="'right'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
@@ -44,7 +44,10 @@
                             </span>
                         </div>
                         <div *dxTemplate="let cellData of 'dateCell'">
-                            {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
+                            {{cellData.value | date: 'MM/dd/yyyy hh:mm a'}}
+                        </div>
+                        <div *dxTemplate="let cellData of 'phoneCell'">
+                            {{cellData.value | phone}}
                         </div>
 
                         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
