@@ -56,9 +56,6 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/buffer';
 
-import { SortState } from '@app/cfo/shared/common/sorting/sort-state';
-import { SortingItemModel } from '@app/cfo/shared/common/sorting/sorting-item.model';
-
 class TransactionStatsDtoExtended extends TransactionStatsDto {
     initialDate: moment.Moment;
 }
@@ -431,7 +428,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     onValueChanged: e => {
                                         searchInputBlock.hide();
                                         this.cashedRowsFitsToFilter.clear();
-                                        this.filterBy = e.element.find('input').val()
+                                        this.filterBy = e.element.find('input').val();
                                         this.pivotGrid.instance.getDataSource().reload();
                                     }
                                 });
@@ -2062,7 +2059,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let pathProp = isDataCell ? 'rowPath' : 'path';
             let cssClass = (e.cell[pathProp] !== undefined &&
                 e.cell[pathProp][0] === CategorizationPrefixes.CashflowType + Income
-                    ? 'income' : 'expenses')  + (level ? 'Child': '');
+                    ? 'income' : 'expenses')  + (level ? 'Child' : '');
             e.cellElement.addClass(cssClass);
             e.cellElement.parent().addClass(cssClass + 'Row');
             /** disable collapsing for income and expenses columns */
@@ -3750,14 +3747,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let dateFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
 
         if (period.start) {
-            let from = new Date(period.start + "-01-01");
+            let from = new Date(period.start + '-01-01');
             dateFilter.items['from'].setValue(from, dateFilter);
         } else {
             dateFilter.items['from'].setValue('', dateFilter);
         }
 
         if (period.end) {
-            let from = new Date(period.end + "-12-31");
+            let from = new Date(period.end + '-12-31');
             dateFilter.items['to'].setValue(from, dateFilter);
         } else {
             dateFilter.items['to'].setValue('', dateFilter);
