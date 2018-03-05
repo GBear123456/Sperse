@@ -198,9 +198,10 @@ export abstract class AppComponentBase {
           .exportToExcel(option == 'selected');
     }
 
-    exportToCSV() {
+    exportToCSV(option) {
         this._exportService.saveAsCSV(
-            this.dataGrid.instance.getDataSource().items()
+            this.dataGrid,
+            option == 'all'
         );
     }
 

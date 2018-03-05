@@ -12,6 +12,11 @@
                         <h2 class="dashboard-title">
                             {{l('Accounts_Summary')}}
                         </h2>
+                        <dx-select-box [items]="availablePeriods"
+                                       [width]="'100px'"
+                                       [value]="availablePeriods[availablePeriods.length - 1]"
+                                       (onValueChanged)="onPeriodChanged($event)">
+                        </dx-select-box>
                         <a (click)="navigateTo()" class="dashboard-link">+ {{l('Add_account')}}</a>
                     </header>
                     <app-accounts (onTotalAccountsMouseenter)="bankAccountSelector.toggleBankAccountTooltip()"></app-accounts>

@@ -18,17 +18,6 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     accountsData: any;
     bankAccountIds: number[] = [];
 
-    availablePeriods = [
-        this.l('Today'),
-        this.l('Yesterday'),
-        this.l('This_Week'),
-        this.l('This_Month'),
-        this.l('Last_Month'),
-        this.l('This_Year'),
-        this.l('Last_Year'),
-        this.l('All_Periods')
-    ];
-
     dailyStatsToggleValues: any[] = [
         this.l('Highest'),
         this.l('Average'),
@@ -41,7 +30,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     dailyStatsAmountInteger: number;
     dailyStatsText: string;
     dailyStatsSliderSelected: number = 1;
-    dailyStatsPeriodSelected: string = this.availablePeriods[0];
+    dailyStatsPeriodSelected: string = this.l('All_Periods');
 
     constructor(
         injector: Injector,
@@ -50,6 +39,9 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         private _router: Router
     ) {
         super(injector);
+
+        _dashboardService.subscribePeriodChange(
+            this.onDailyStatsPeriodChanged.bind(this));
     }
 
     ngOnInit() {
@@ -89,11 +81,6 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     changeDailyStatsToggleValue(index) {
         this.dailyStatsSliderSelected = index;
         this.setDailyStatsAmount();
-    }
-
-    onPeriodChanged($event) {
-        this._dashboardService.periodChanged($event.value);
-        this.onDailyStatsPeriodChanged($event.value);
     }
 
     onDailyStatsPeriodChanged(value = '') {

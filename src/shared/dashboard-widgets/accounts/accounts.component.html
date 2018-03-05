@@ -23,14 +23,8 @@
         </div>
     </div>
     <div class="account-item total-accounts" id="totalaccounts">
-        <!-- a (click)="navigateTo()" class="view-details">{{l('View_details')}}</a -->
-        <dx-select-box [items]="availablePeriods"
-                       [width]="'100px'"
-                       [value]="availablePeriods[availablePeriods.length - 1]"
-                       (onValueChanged)="onPeriodChanged($event)">
-        </dx-select-box>
-
-        <div class="value" (click)="totalAccountsMouseenter()">{{ bankAccountIds.length }} of {{ accountsData?.bankAccountCount }}</div>
+        <a (click)="totalAccountsMouseenter()" class="view-details">{{l('Select')}}</a>
+        <div class="value">{{ bankAccountIds.length }} of {{ accountsData?.bankAccountCount }}</div>
         <div class="name">
             {{l('Accounts')}}
             <ng-container *ngIf="bankAccountIds.length">
