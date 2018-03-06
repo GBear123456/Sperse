@@ -51,6 +51,13 @@ export abstract class AppComponentBase {
     public _exportService: ExportService;
     public capitalize = require('underscore.string/capitalize');
 
+    public defaultGridPagerConfig = {
+        showPageSizeSelector: true,
+        allowedPageSizes: [20, 100, 500, 1000, 5000],
+        showInfo: true,
+        visible: true
+    };
+
     constructor(private _injector: Injector,
         public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName
     ) {
