@@ -52,5 +52,7 @@ export class AppConsts {
     static readonly formatting = {
         date: 'MM/dd/yyyy hh:mm a'
     };
+
+    static readonly otherLinkTypeId = 'X';
 }
 

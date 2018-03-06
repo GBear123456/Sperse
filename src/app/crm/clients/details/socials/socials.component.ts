@@ -78,7 +78,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
       contactId: data && data.contactId
         || this.contactInfoData.id,
       url: data && data.url,
-      usageTypeId: data && data.linkTypeId,
+      usageTypeId: data && data.linkTypeId ? data.linkTypeId : AppConsts.otherLinkTypeId,
       isConfirmed: Boolean(data && data.isConfirmed),
       isActive: Boolean(data && data.isActive),
       comment: data && data.comment,
@@ -93,8 +93,9 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
       position: this.getDialogPossition(event)
     }).afterClosed().subscribe(result => {
         if (result) {
-          if (dialogData.usageTypeId != 'O')
+          if (dialogData.usageTypeId != AppConsts.otherLinkTypeId)
             dialogData['linkTypeId'] = dialogData.usageTypeId;
+
           this._contactLinkService
             [(data ? 'update': 'create') + 'ContactLink'](
               (data ? UpdateContactLinkInput: CreateContactLinkInput).fromJS(dialogData)
@@ -102,7 +103,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
               if (!result && data) {
                 data.url = dialogData.url;
                 data.comment = dialogData.comment;
-                data.usageTypeId = dialogData.usageTypeId;
+                data.linkTypeId = dialogData.usageTypeId;
                 data.isSocialNetwork = dialogData['isSocialNetwork'];
                 data.isConfirmed = dialogData.isConfirmed;
                 data.isActive = dialogData.isActive;
