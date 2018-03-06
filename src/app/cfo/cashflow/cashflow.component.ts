@@ -507,7 +507,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     currentCellOperationType: string;
     oldCellPadding: string;
     clickedRowResult;
-    clickedCellObj;
     quarterHeadersAreCollapsed = false;
     yearHeadersAreCollapsed = false;
     selectedCell;
@@ -1544,15 +1543,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     synchronizeHeaderHeightWithCashflow() {
         let headerElement = document.getElementsByClassName('dx-area-description-cell')[0].parentElement;
-        let headerElementHeight = headerElement.clientHeight;
-        let bottomRow = <HTMLElement>document.getElementsByClassName('dx-bottom-row')[0];
-        /** Set the top padding for bottom row children depends on header element height */
-        for (let i = 0; i < bottomRow.children.length; i++) {
-            let childTd = <HTMLTableCellElement>bottomRow.children[i];
-            if (childTd.style.paddingTop !== headerElementHeight + 'px') {
-                childTd.style.paddingTop = headerElementHeight + 'px';
-            } else {
-                break;
+        if (headerElement) {
+            let headerElementHeight = headerElement.clientHeight;
+            let bottomRow = <HTMLElement>document.getElementsByClassName('dx-bottom-row')[0];
+            /** Set the top padding for bottom row children depends on header element height */
+            for (let i = 0; i < bottomRow.children.length; i++) {
+                let childTd = <HTMLTableCellElement>bottomRow.children[i];
+                if (childTd.style.paddingTop !== headerElementHeight + 'px') {
+                    childTd.style.paddingTop = headerElementHeight + 'px';
+                } else {
+                    break;
+                }
             }
         }
     }
@@ -2719,13 +2720,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 abp.ui.setBusy();
                 /** Prevent default expanding */
                 cellObj.cancel = true;
-
-                /** @todo refactor - move to separate method */
-                let columnFields = {};
-                cellObj.columnFields.forEach(function(item) {
-                    columnFields[item.groupInterval] = item.areaIndex;
-                });
-                const datePeriod = this.formattingDate(cellObj.cell.path, columnFields);
+                const datePeriod = this.formattingDate(cellObj, cellObj.cell.path);
                 /** if somehow user click on the cell that is not in the filter date range - return null */
                 if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
                     this.requestFilter.endDate && datePeriod.startDate > this.requestFilter.endDate) {
@@ -2839,7 +2834,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                              * forecast transaction */
                             (result.length === 0 || (result.length === 1 && result[0].forecastId)) &&
                             /** disallow adding or editing unclassified category, but allow change or add (no descriptor) */
-                        (clickedCellPrefix || cellObj.cell.rowPath.length !== 2) &&
+                            (clickedCellPrefix || cellObj.cell.rowPath.length !== 2) &&
                             /** disallow adding or editing of these levels */
                             clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
                             clickedCellPrefix !== CategorizationPrefixes.AccountType &&
@@ -2865,12 +2860,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getDetailFilterFromCell(cellObj) {
-        let columnFields = {};
-        cellObj.columnFields.forEach(function(item) {
-            columnFields[item.groupInterval] = item.areaIndex;
-        });
-
-        const datePeriod = this.formattingDate(cellObj.cell.columnPath, columnFields);
+        const datePeriod = this.formattingDate(cellObj, cellObj.cell.columnPath);
 
         /** if somehow user click on the cell that is not in the filter date range - return null */
         if (this.requestFilter.startDate && datePeriod.endDate < this.requestFilter.startDate ||
@@ -2943,7 +2933,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (details.length === 1) {
             this.clickedRowResult = details[0];
         }
-        this.clickedCellObj = cellObj;
         this.modifyingCelltextBox = $('<div>')
             .appendTo(cellObj.cellElement)
             .on('click', function(ev) {
@@ -2952,8 +2941,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             .dxNumberBox({
                 value: cellObj.cell.value,
                 height: cellObj.cellElement.height(),
-                onEnterKey: this.saveForecast.bind(this),
-                onFocusOut: this.saveForecast.bind(this)
+                onEnterKey: this.saveForecast.bind(this, cellObj),
+                onFocusOut: this.saveForecast.bind(this, cellObj)
             })
             .dxNumberBox('instance')
             .focus();
@@ -2982,22 +2971,24 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this._cacheService.set(this.cashflowDetailsGridSessionIdentifier, $event.height);
     }
 
-    saveForecast = (arg: any): void  => {
-        let newValue = arg.component.option('value');
-        let parent = arg.component.element().parent();
-        arg.component.element().remove();
+    saveForecast() {
+        let event = arguments[1];
+        let savedCellObj = arguments[0];
+        let newValue = event.component.option('value');
+        let parent = event.component.element().parent();
+        event.component.element().remove();
         this.modifyingCelltextBox = null;
         parent.css('padding', this.oldCellPadding);
         parent.children().show();
-        if (+newValue !== this.clickedCellObj.cell.value) {
+        if (+newValue !== savedCellObj.cell.value) {
             if (+newValue === 0) {
                 this.currentCellOperationType = 'delete';
             }
             let forecastModel;
-            let cashflowTypeId = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.CashflowType);
-            let categoryId = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.Category);
-            let subCategoryId = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
-            let transactionDescriptor = this.getCategoryValueByPrefix(this.clickedCellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
+            let cashflowTypeId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.CashflowType);
+            let categoryId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.Category);
+            let subCategoryId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
+            let transactionDescriptor = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
             if (this.currentCellOperationType === 'add') {
                 /** @todo fix bug with wrong date */
                 let forecastedDate = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment();
@@ -3028,8 +3019,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 forecastModel
             ).subscribe(
                 res => {
-                    let date = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate.add(new Date(<any>this.statsDetailFilter.startDate).getTimezoneOffset(), 'minutes') : moment().add(new Date().getTimezoneOffset());
-                    let initialDate = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment();
+                    let cellDate = this.formattingDate(savedCellObj, savedCellObj.cell.columnPath);
+                    let date = cellDate.startDate > moment() ? cellDate.startDate.add(new Date(<any>cellDate.startDate).getTimezoneOffset(), 'minutes') : moment().add(new Date().getTimezoneOffset());
+                    let initialDate = cellDate.startDate > moment() ? cellDate.startDate : moment();
                     /** Update data locally */
                     if (this.currentCellOperationType === 'add') {
                         this.cashflowData.push(this.createStubTransaction({
@@ -3039,7 +3031,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             date: date,
                             initialDate: initialDate,
                             forecastId: res
-                        }, this.clickedCellObj.cell.rowPath));
+                        }, savedCellObj.cell.rowPath));
                     } else {
                         /** Find an item and its total and edit it */
                         this.cashflowData.forEach(item => {
@@ -3124,13 +3116,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return (value).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
-    formattingDate(param = [], columnFields) {
+    formattingDate(cellObj, path) {
+        let columnFields = {};
+        cellObj.columnFields.forEach(function(item) {
+            columnFields[item.groupInterval] = item.areaIndex;
+        });
+
         let startDate: moment.Moment = moment.utc('1970-01-01');
         let endDate: moment.Moment = moment.utc('1970-01-01');
-        let year = param[columnFields.year];
-        let quarter = param[columnFields.quarter];
-        let month = param[columnFields.month];
-        let day = param[columnFields.day];
+        let year = path[columnFields['year']];
+        let quarter = path[columnFields['quarter']];
+        let month = path[columnFields['month']];
+        let day = path[columnFields['day']];
 
         startDate.year(year);
         endDate.year(year).endOf('year');
