@@ -83,7 +83,7 @@
                 <div class="dx-field">
                     <div class="dx-field-value">
                         <dx-text-box type="text" name="PhoneNumber" placeholder="{{l('PhoneNumber')}}"
-                                     mask="+1 (000)-000-0000"
+                                     mask="{{masks.phone}}"
                                      maskInvalidMessage="{{l('PhoneFormatError')}}"
                                      [(value)]="client.phoneNumber"
                                      (onFocusIn)="focusInput($event)" (onFocusOut)="blurInput($event)">
@@ -98,7 +98,7 @@
                     <div class="dx-field-value">
                         <dx-text-box type="text"
                                      name="Ssn"
-                                     mask="000-00-0000"
+                                     mask="{{masks.ssn}}"
                                      maskInvalidMessage="{{l('SSNFormatError')}}"
                                      placeholder="{{l('Ssn')}}"
                                      [(value)]="client.ssn"

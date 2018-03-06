@@ -50,6 +50,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     private readonly dataSourceURI = 'Customer';
     private filters: FilterModel[];
     private rootComponent: any;
+    private formatting = AppConsts.formatting;
 
     public headlineConfig = {
         names: [this.l('Customers')],

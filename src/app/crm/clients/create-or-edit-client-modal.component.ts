@@ -25,6 +25,8 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     client: CreateCustomerInput = new CreateCustomerInput();
     profilePicture: string;
 
+    private masks = AppConsts.masks;
+
     constructor(
         injector: Injector,
         private _customersService: CustomersServiceProxy
