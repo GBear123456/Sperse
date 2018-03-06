@@ -531,6 +531,15 @@ button {
                 opacity: 0.5;
             }
         }
+        .dx-group-row {
+            .dx-command-edit {
+                + td {
+                    &::before {
+                        content: none;
+                    }
+                }
+            }
+        }
         .dx-freespace-row {
             .dx-command-edit + td {
                 &::before {
