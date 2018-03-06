@@ -163,6 +163,22 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 this.searchValueChange(e);
                             }
                         }
+                    }                   
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'searchAll',
+                        action: this.searchAllClick.bind(this),
+                        options: {
+                            text: this.l('Search All')
+                        },
+                        attr: {
+                            'filter-selected': this.filtersService.hasFilterSelected,
+                            'custaccesskey': 'search-container'
+                        }
                     }
                 ]
             },
@@ -367,6 +383,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.processFilterInternal();
     }
 
+    searchAllClick() {
+        this.filtersService.clearAllFilters();
+    }
+
     toggleCreditDefault() {
         this.defaultCreditTooltipVisible = !this.defaultCreditTooltipVisible;
     }
@@ -553,8 +573,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.filtersService.apply(() => {
             this.initToolbarConfig();
-            this.processFilterInternal();
-        });
+            this.processFilterInternal();                 
+        });           
     }
 
     showCompactRowsHeight() {
