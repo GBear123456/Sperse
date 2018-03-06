@@ -32,6 +32,8 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
 
     private isEditOrgDetailsAllowed: boolean;
 
+    private masks = AppConsts.masks;
+
     private _contactInfoBehaviorSubject = new BehaviorSubject<number>(0);
     private _isEditAllowed = false;
     private _originalData = new Object();
