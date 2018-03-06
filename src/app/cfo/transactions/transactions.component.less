@@ -34,7 +34,7 @@
                 tr.dx-selection {
                     cursor: grab;
                 }
-                
+
                 .dx-header-row {
                     td[role="columnheader"] {
                         text-align: left !important;
@@ -45,11 +45,15 @@
                             float: left !important;
                         }
                     }
+
+                    td.category {
+                        padding-left: 15px;
+                    }
                 }
-                
+
                 .dx-header-row td,
                 .dx-data-row td {
-    
+
                     padding: 7px 15px;
                     &.id-column {
                         min-width: 30px;
@@ -59,12 +63,12 @@
                         width: 22px !important;
                         min-width: 22px !important;
                     }
-                    
+
                     &.cashflow-type {
                         text-align: center;
                         padding-right: 15px;
                         padding-left: 15px;
-                        
+
                         .outflows,
                         .inflows {
                             font-size: 13px;
@@ -83,14 +87,9 @@
                         }
                     }
                 }
-                
-                .dx-header-row td {
-                    &.category {
-                        padding-left: 15px;
-                    }
-                }
-                
+
                 .dx-data-row td {
+                    font-size: 13.5px !important;
                     &.category {
                         padding-left: 15px;
                         position: relative;
@@ -161,18 +160,18 @@
                         text-align: center;
                         display: flex;
                         align-items: center;
-                        
+
                         .informer {
                             padding: 0 30px;
                             border-left: 1px solid #ddd;
-                            
+
                             &.starting-balance {
                                 > .count {
                                     font-weight: 400;
                                 }
                             }
                         }
-                        
+
                         .name {
                             font-size: 11px;
                             font-weight: 400;
@@ -184,12 +183,12 @@
                                 border-left: 4px solid transparent;
                                 border-right: 4px solid transparent;
                                 border-top: 4px solid #00aeef;
-                                
+
                                 display: inline-block;
                                 margin: 2px;
                                 align-self: flex-end;
                             }
-                            
+
                             .name-count {
                                 color: #00aeef;
                             }
@@ -227,7 +226,7 @@
                 }
             }
         }
-    
+
         .dx-datagrid-rowsview {
             .dx-column-lines {
                 td {
@@ -235,14 +234,14 @@
                 }
             }
         }
-        
+
         .uncategorized {
             td {
                 background-color: #FFFBF5;
                 color: #757B7F;
             }
         }
-        
+
         /*.dx-pointer-events-target {
             * {
                 background-color: transparent;
