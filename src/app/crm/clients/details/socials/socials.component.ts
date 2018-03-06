@@ -104,6 +104,8 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
                 data.comment = dialogData.comment;
                 data.usageTypeId = dialogData.usageTypeId;
                 data.isSocialNetwork = dialogData['isSocialNetwork'];
+                data.isConfirmed = dialogData.isConfirmed;
+                data.isActive = dialogData.isActive;
               } else if (result.id) {
                 dialogData.id = result.id;
                 this.contactInfoData.links
