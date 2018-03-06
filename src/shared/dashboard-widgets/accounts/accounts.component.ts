@@ -24,6 +24,8 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         this.l('Lowest')
     ];
 
+    startDate: moment.Moment = null;
+    endDate: moment.Moment;
     dailyStatsData: GetDailyBalanceStatsOutput;
     dailyStatsAmount: number;
     dailyStatsAmountFloat: string;
@@ -40,13 +42,15 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     ) {
         super(injector);
 
+        this.endDate = moment().utc().startOf('day');
+
         _dashboardService.subscribePeriodChange(
             this.onDailyStatsPeriodChanged.bind(this));
     }
 
     ngOnInit() {
         this.getAccountTotals();
-        this.onDailyStatsPeriodChanged();
+        this.getDailyStats();
     }
 
     getAccountTotals(): void {
@@ -56,8 +60,8 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
             });
     }
 
-    getDailyStats(startDate: moment.Moment, endDate: moment.Moment): void {
-        this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, startDate, endDate)
+    getDailyStats(): void {
+        this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate)
             .subscribe(result => {
                 this.dailyStatsData = result;
                 this.setDailyStatsAmount();
@@ -71,7 +75,8 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     filterByBankAccounts(bankAccountIds: number[]) {
         this.bankAccountIds = bankAccountIds;
         this.getAccountTotals();
-        this.onDailyStatsPeriodChanged();
+
+        this.getDailyStats();
     }
 
     totalAccountsMouseenter() {
@@ -122,7 +127,10 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                 break;
         }
 
-        this.getDailyStats(startDate, endDate);
+        this.startDate = startDate;
+        this.endDate = endDate;
+
+        this.getDailyStats();
     }
 
     setDailyStatsAmount(): void {
