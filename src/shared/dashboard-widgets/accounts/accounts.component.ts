@@ -50,7 +50,6 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
     ngOnInit() {
         this.getAccountTotals();
-        this.getDailyStats();
     }
 
     getAccountTotals(): void {

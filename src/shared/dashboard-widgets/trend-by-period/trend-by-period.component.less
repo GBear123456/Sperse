@@ -1,10 +1,10 @@
 :host {
-    min-height: 360px;
+    min-height: 330px;
     border: 1px solid #E5E9EC;
     background-color: #FFFFFF;
     border-radius: 4px;
     position: relative;
-    padding: 20px 30px;
+    padding: 12px 30px;
     display: block;
 
     header {
@@ -12,10 +12,9 @@
         justify-content: space-between;
         font-weight: 500;
         .left-section {
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             flex: 1 auto;
             display: flex;
-            padding-right: 20px;
             align-items: center;
             .title {
                 font-size: 18px;
@@ -40,7 +39,9 @@
                         font-weight: 400;
                         font-size: 12px;
                         margin-right: 15px;
-                        // line-height: 34px;
+                        &:last-child {
+                            margin-right: 0px;
+                        }
 
                         &::before {
                             content: '';
@@ -150,11 +151,15 @@
         font-size: 36.9px;
         color: rgba(99, 107, 114, .08);
         font-weight: 700;
+
         @media screen and (max-width: 1024px) {
             font-size: 30px
         }
         .yearArgument {
             font-size: 10px;
+        }
+        /deep/ g.dxc-arg-line {
+            display: none!important;
         }
     }
 }

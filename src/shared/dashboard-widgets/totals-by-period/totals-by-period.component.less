@@ -26,7 +26,10 @@
 
         .ending-balance,
         .starting-balance,
-        .chart-line {
+        .chart-head {
+            display: flex;
+            justify-content: space-between;
+
             span {
                 float: right;
                 font-size: 14px;
@@ -38,6 +41,11 @@
             }        
         }
 
+        .chart-head,
+        .chart-line {
+            padding-left: 15px;
+        }
+
         .ending-balance,
         .starting-balance,
         .chart-head {
@@ -47,7 +55,7 @@
             font-stretch: normal;
             letter-spacing: 0.3px;
             color: #677380;
-        }
+        }        
       
         .starting-balance {
             padding-bottom: 10px;

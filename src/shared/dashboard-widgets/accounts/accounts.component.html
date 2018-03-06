@@ -1,16 +1,28 @@
 <div class="accounts-list">
     <div class="account-item networth">
-        <div class="value">{{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</div>
+        <dx-tooltip
+            target="#valueTotal"
+            showEvent="dxhoverstart"
+            hideEvent="dxhoverend">     
+            <div *dxTemplate="let data = data of 'content'">  
+                {{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}
+            </div>
+        </dx-tooltip>
+        <div class="value" id="valueTotal">{{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</div>
         <div class="name">{{l('Current_Balance')}}</div>
     </div>
     <div class="account-item dailyStats">
         <div class="row">
-            <!--<dx-select-box [items]="availablePeriods"
-                           [(value)]="dailyStatsPeriodSelected"
-                           (onValueChanged)="onDailyStatsPeriodChanged()">
-            </dx-select-box>-->
             <div class="col-8">
-                <div class="value">{{ dailyStatsAmountInteger | currency: dailyStatsData?.currency : 'symbol' : '1.0-0'}}<span>{{ dailyStatsAmountFloat }}</span></div>
+                 <dx-tooltip
+                     target="#valueDaily"
+                     showEvent="dxhoverstart"
+                     hideEvent="dxhoverend">     
+                     <div *dxTemplate="let data = data of 'content'">  
+                         {{ dailyStatsAmount | currency: dailyStatsData?.currency : 'symbol' : '1.2-2'}}
+                     </div>
+                 </dx-tooltip>
+                <div class="value" id="valueDaily">{{ dailyStatsAmountInteger | currency: dailyStatsData?.currency : 'symbol' : '1.0-0'}}<span>{{ dailyStatsAmountFloat }}</span></div>
                 <div class="name">{{dailyStatsText}}</div>
             </div>
             <div class="col-4">
@@ -24,9 +36,9 @@
     </div>
     <div class="account-item total-accounts" id="totalaccounts">
         <a (click)="totalAccountsMouseenter()" class="view-details">{{l('Select')}}</a>
-        <div class="value">{{ bankAccountIds.length }} of {{ accountsData?.bankAccountCount }}</div>
+        <div class="value">{{ bankAccountIds.length ? bankAccountIds.length + ' of ': ''}}{{ accountsData?.bankAccountCount }}</div>
         <div class="name">
-            {{l('Accounts')}}
+            {{l((bankAccountIds.length ? '': 'Total_') + 'Accounts')}}
             <ng-container *ngIf="bankAccountIds.length">
                 <span class="filtered">*</span>
             </ng-container>

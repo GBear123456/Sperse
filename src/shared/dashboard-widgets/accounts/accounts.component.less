@@ -13,6 +13,11 @@
             border-radius: 4px;
             position: relative;
 
+            @media (max-width: 1300px) { 
+                padding-left: 60px!important;
+                background-position: 15px 50%!important;
+            }
+
             &.dailyStats {
                 background-image: url('../../../assets/common/icons/coins-icon-2.svg');
 
@@ -20,6 +25,7 @@
                     font-size: 24px;
                     font-weight: 400;
                     color: #677380;
+
                     span {
                         font-size: 14px;    
                         line-height: 2.4;
@@ -105,8 +111,11 @@
                 font-size: 26px;
                 font-weight: 500;
                 cursor: pointer;
-                display: inline-block;
+                display: block;
                 padding-right: 20px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
             }
 
             .name {
@@ -115,6 +124,9 @@
                 font-weight: 300;
                 letter-spacing: 0.2px;
                 line-height: 20px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
 
                 .filtered {
                     color: red;

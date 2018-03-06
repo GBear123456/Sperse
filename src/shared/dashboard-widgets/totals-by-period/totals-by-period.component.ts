@@ -49,10 +49,6 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
             this.onValueChanged.bind(this));
     }
 
-    ngOnInit() {
-        this.loadStatsData();
-    }
-
     loadStatsData() {
         this.startLoading();
         this._bankAccountService.getStats(
@@ -86,7 +82,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                         Math.abs(result.income),
                         Math.abs(result.expenses),
                         Math.abs(result.netChange)
-                    ) * 1.8;
+                    ) * 1.5;
                     this.totalData.incomePercent = this.getPercentage(maxValue, result.income);
                     this.totalData.expensesPercent = this.getPercentage(maxValue, result.expenses);
                     this.totalData.netChangePercent = this.getPercentage(maxValue, result.netChange);
