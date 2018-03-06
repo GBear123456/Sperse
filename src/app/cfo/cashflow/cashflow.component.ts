@@ -1905,7 +1905,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     isMonthHeaderCell(cellObj) {
         let monthIndex = this.pivotGrid.instance.getDataSource().getAreaFields('column', true).find(item => item.dataType === 'date' && item.groupInterval === 'month')['areaIndex'];
-        return cellObj.area === 'column' && cellObj.cell.path && cellObj.cell.path[monthIndex] !== undefined;
+        return cellObj.area === 'column' && cellObj.cell.path && cellObj.cell.path.length === (monthIndex + 1);
     }
 
     isTransactionDetailHeader(cellObj) {
