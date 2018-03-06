@@ -14,6 +14,7 @@
                         [showClearSelection]="true"
                         [showFilterIcon]="true"
                         [dragMode]="dragInProgress"
+                        [pager]="defaultGridPagerConfig"
                         (close)="categoriesShowed = false"
                         [instanceType]="instanceType"
                         [instanceId]="instanceId"
@@ -113,10 +114,6 @@
                         </div>
 
                         <dxo-paging [pageSize]="20"></dxo-paging>
-                        <dxo-pager [showPageSizeSelector]="true"
-                                   [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
-                                   [showInfo]="true">
-                        </dxo-pager>
 
                         <div *dxTemplate="let data of 'bankAccountTotal'">
                             <div class="informer" (click)="toggleSubaccountsDetails()">
