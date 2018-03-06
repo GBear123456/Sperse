@@ -11,6 +11,7 @@
                                       [columnAutoWidth]="true"
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
+                                      [pager]="defaultGridPagerConfig"
                                       (onContentReady)="onContentReady($event)"
                                       (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                             <dxo-selection selectAllMode="page"
@@ -51,10 +52,6 @@
                             <dxo-sorting mode="multiple"></dxo-sorting>
                             <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-paging [pageSize]="20"></dxo-paging>
-                            <dxo-pager [showPageSizeSelector]="true"
-                                       [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
-                                       [showInfo]="true">
-                            </dxo-pager>
                             <div *dxTemplate="let cellData of 'phoneCell'">
                                 {{cellData.value | phone}}
                             </div>

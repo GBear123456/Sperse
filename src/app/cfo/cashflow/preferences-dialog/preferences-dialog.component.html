@@ -46,16 +46,40 @@
                                     [disabled]="true">
                     </dx-radio-group>
                 </div>-->
+
+                <div class="row row-header row-header-narrow">
+                    <div class="col-xs-4"></div>
+                    <div class="col-xs-1">
+                        {{l("CashFlowGrid_UserPrefs_ShowNetChangeRow")}}
+                    </div>
+                    <div class="col-xs-1">
+                        {{l("CashFlowGrid_UserPrefs_BalanceDiscrepancy")}}
+                    </div>
+                    <div class="col-xs-1">
+                        {{l("CashFlowGrid_UserPrefs_ShowFooterBar")}}
+                    </div>
+                    <div class="col-xs-1">
+                        {{l("CashFlowGrid_UserPrefs_ShowAccountingTypeRow")}}
+                    </div>
+                </div>
                 <div class="row">
-                    <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_ShowNetChangeRow")}}</div>
+                    <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_ShowRowsAndSections")}}</div>
                     <div class="col-xs-1">
                         <dx-check-box [value]="model.general.showNetChangeRow"
                                       (onValueChanged)="model.general.showNetChangeRow = !model.general.showNetChangeRow">
                         </dx-check-box>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_ShowAccountingTypeRow")}}</div>
+                    <div class="col-xs-1">
+                        <dx-check-box [disabled]="true"
+                                      [value]="model.general.showBalanceDiscrepancy"
+                                      (onValueChanged)="model.general.showBalanceDiscrepancy = !model.general.showBalanceDiscrepancy">
+                        </dx-check-box>
+                    </div>
+                    <div class="col-xs-1">
+                        <dx-check-box [value]="model.visualPreferences.showFooterBar"
+                                      (onValueChanged)="model.visualPreferences.showFooterBar = !model.visualPreferences.showFooterBar">
+                        </dx-check-box>
+                    </div>
                     <div class="col-xs-1">
                         <dx-check-box [value]="model.general.showAccountingTypeRow"
                                       (onValueChanged)="model.general.showAccountingTypeRow = !model.general.showAccountingTypeRow">
@@ -95,14 +119,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_ShowFooterBar")}}</div>
-                    <div class="col-xs-1">
-                        <dx-check-box [value]="model.visualPreferences.showFooterBar"
-                                        (onValueChanged)="model.visualPreferences.showFooterBar = !model.visualPreferences.showFooterBar">
-                        </dx-check-box>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="section">
@@ -110,14 +126,20 @@
                 {{l("CashFlowGrid_UserPrefs_L11nAndCurrency")}}
             </div>
             <div class="section-body">
-                <div class="dx-field">
+                <div class="dx-field left-field">
                     <div class="dx-field-label">{{l("CashFlowGrid_UserPrefs_NumbersFormatting")}}</div>
                     <div class="dx-field-value">
-                        <div class="left-select">
-                            <dx-select-box [items]="numberFormats"
-                                           [(value)]="model.localizationAndCurrency.numberFormatting">
-                            </dx-select-box>
-                        </div>
+                        <dx-select-box [items]="numberFormats"
+                                        [(value)]="model.localizationAndCurrency.numberFormatting">
+                        </dx-select-box>
+                    </div>
+                </div>
+
+                <div class="dx-field right-field">
+                    <div class="dx-field-label">{{l("CashFlowGrid_UserPrefs_Currency")}}</div>
+                    <div class="dx-field-value">
+                        <dx-select-box [items]="currencies" [value]="currencies[0]">
+                        </dx-select-box>
                     </div>
                 </div>
             </div>

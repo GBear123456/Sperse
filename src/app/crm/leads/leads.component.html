@@ -11,6 +11,7 @@
                                       [columnAutoWidth]="false"
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
+                                      [pager]="defaultGridPagerConfig"
                                       (onContentReady)="onContentReady($event)"
                                       (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                             <dxo-selection
@@ -66,11 +67,6 @@
                             <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-sorting mode="multiple"></dxo-sorting>
                             <dxo-paging [pageSize]="20"></dxo-paging>
-                            <dxo-pager
-                                [showPageSizeSelector]="true"
-                                [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
-                                [showInfo]="true">
-                            </dxo-pager>
                         </dx-data-grid>
                     </div>
                 </div>

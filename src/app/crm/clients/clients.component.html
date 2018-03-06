@@ -10,6 +10,7 @@
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
+                                  [pager]="defaultGridPagerConfig"
                                   (onContentReady)="onContentReady($event)"
                                   (onEditingStart)="showClientDetails($event)"
                                   (onDataErrorOccurred)="httpConfig.handleError($event.error)">
@@ -53,10 +54,6 @@
                         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-paging [pageSize]="20"></dxo-paging>
-                        <dxo-pager [showPageSizeSelector]="true"
-                                   [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
-                                   [showInfo]="true">
-                        </dxo-pager>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                     </dx-data-grid>
 

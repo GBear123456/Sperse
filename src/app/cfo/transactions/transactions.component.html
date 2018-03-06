@@ -30,7 +30,9 @@
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
+                                  [pager]="defaultGridPagerConfig"
                                   [columnResizingMode]="'widget'"
+                                  [pager]="defaultGridPagerConfig"
                                   (onContentReady)="onContentReady($event)"
                                   (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                                   (onSelectionChanged)="onSelectionChanged($event)"
@@ -113,10 +115,6 @@
                         </div>
 
                         <dxo-paging [pageSize]="20"></dxo-paging>
-                        <dxo-pager [showPageSizeSelector]="true"
-                                   [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
-                                   [showInfo]="true">
-                        </dxo-pager>
 
                         <div *dxTemplate="let data of 'bankAccountTotal'">
                             <div class="informer" (click)="toggleSubaccountsDetails()">
