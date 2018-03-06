@@ -562,10 +562,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.addHeaderExpandClickHandling();
     }
 
-    @HostListener('window:resize') onResize() {
-        this.handleBottomHorizontalScrollPosition();
-    }
-
     customizeFieldText(cellInfo, emptyText = null) {
 
         let text;
@@ -1541,6 +1537,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.applyUserPreferencesForAreas();
     }
 
+    onScroll(e) {
+        let toolbar = <HTMLElement>document.querySelector('.page-content-wrapper app-toolbar');
+        let dxToolbar = <HTMLElement>toolbar.children[0];
+        let topIntend = toolbar.offsetTop + dxToolbar.offsetHeight;
+        $('.cashflow table.dx-pivotgrid-border > tr:nth-child(3)').offset({top: Math.floor(topIntend), left: 0});
+
+        console.log(e);
+        let scrollElement = <HTMLElement>document.querySelector('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
+        scrollElement.style.top = e.scrollOffset + e.element.height();
+    }
+
     synchronizeHeaderHeightWithCashflow() {
         let headerElement = document.getElementsByClassName('dx-area-description-cell')[0].parentElement;
         if (headerElement) {
@@ -1561,11 +1568,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     handleBottomHorizontalScrollPosition() {
         let scrollElement = <HTMLElement>document.querySelector('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
         let pivotGridElement = <HTMLElement>document.getElementsByClassName('pivot-grid')[0];
-        let toolbarElement = <HTMLElement>document.querySelector('app-toolbar .dx-toolbar ');
+        let toolbarElement = <HTMLElement>document.querySelector('app-toolbar .dx-toolbar');
         let headlineElement = <HTMLElement>document.getElementsByClassName('headline-row')[0];
         let topBarElement = <HTMLElement>document.getElementsByTagName('top-bar')[0];
         let viewSize = window.innerHeight - toolbarElement.offsetHeight - headlineElement.offsetHeight - topBarElement.offsetHeight;
-        if (pivotGridElement.clientHeight > viewSize) {
+        if (pivotGridElement && pivotGridElement.clientHeight > viewSize) {
             scrollElement.classList.add('fixedScrollbar');
             if (this.cashflowGridSettings.visualPreferences.showFooterBar) {
                 scrollElement.classList.add('withFooterToolbar');
