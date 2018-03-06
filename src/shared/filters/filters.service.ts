@@ -9,6 +9,7 @@ export class FiltersService {
     private filters: FilterModel[];
     private subjectFilters: Subject<FilterModel[]>;
     private subjectFilter: Subject<FilterModel>;
+    public  subjectFilterDisable: Subject<undefined>;
     private subscribers: Array<Subscription> = [];
     private disableTimeout: any;
 
@@ -20,6 +21,7 @@ export class FiltersService {
     constructor() {
         this.subjectFilters = new Subject<FilterModel[]>();
         this.subjectFilter = new Subject<FilterModel>();
+        this.subjectFilterDisable = new Subject();
     }
 
     setup(filters: FilterModel[], initialValues?: any) {
@@ -86,6 +88,7 @@ export class FiltersService {
             callback && callback();
             this.enabled = false;
             this.fixed = false;
+            this.subjectFilterDisable.next();
         }, 300);
     }
 
