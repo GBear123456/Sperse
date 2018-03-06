@@ -192,8 +192,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         Income,
         Expense,
         NetChange,
-        Total,
-        Reconciliation
+        Reconciliation,
+        Total
     ];
     apiTableFields: any = [
         {
@@ -2074,7 +2074,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             spanChart.dxSparkline(chartOptions);
         }
-        
+
         /** added css class to start balance row */
         if (this.isStartingBalanceHeaderColumn(e) || this.isStartingBalanceTotalDataColumn(e)) {
             e.cellElement.parent().addClass('startedBalance');
