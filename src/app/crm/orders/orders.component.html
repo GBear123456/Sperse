@@ -35,7 +35,7 @@
                             <dxi-column dataField="Email" caption="{{l('Contact.Email')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" [visible]="false" cellTemplate="phoneCell" 
                                 [editorOptions]="{
-                                    mask: '+1 (000)-000-0000',
+                                    mask: masks.phone,
                                     maskInvalidMessage: l('PhoneValidationError')
                                 }">
                             </dxi-column>
@@ -56,7 +56,7 @@
                                 {{cellData.value | phone}}
                             </div>
                             <div *dxTemplate="let cellData of 'dateCell'">
-                                {{cellData.value | date: 'MM/dd/yyyy hh:mm a'}}
+                                {{cellData.value | date: formatting.date}}
                             </div>
                         </dx-data-grid>
 				    </div>

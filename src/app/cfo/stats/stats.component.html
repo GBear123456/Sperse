@@ -15,6 +15,12 @@
                 <!-- Top linear chart -->
                 <div class="header">
                     <h2>{{l('Stats_Header_Trends')}}</h2>
+                    <div class="btn-setion">
+                        <p class="title">{{l('Monthly_Ending_Balances')}}</p>
+                        <button>
+                            <i class="fa fa-angle-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
                 <dx-chart id="chart"
                           [dataSource]="statsData"
@@ -114,12 +120,6 @@
                                 <li class="legend-item forecast net-change">{{l('Net_Change')}}</li>
                             </ul>
                         </ng-container>
-                    </div>
-                    <div class="btn-setion">
-                        <p class="title">{{l('Monthly_Ending_Balances')}}</p>
-                        <button>
-                            <i class="fa fa-angle-right" aria-hidden="true"></i>
-                        </button>
                     </div>
                 </div>
                 <dx-chart id="bar"

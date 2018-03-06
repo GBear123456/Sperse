@@ -57,6 +57,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private readonly dataSourceURI = 'Order';
     private filters: FilterModel[];
 
+    private masks = AppConsts.masks;
+    private formatting = AppConsts.formatting;
+
     public headlineConfig = {
         names: [this.l('Orders')],
         icon: 'briefcase',

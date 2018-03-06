@@ -29,6 +29,8 @@ export class EditContactDialog extends AppComponentBase {
 
   isEditAllowed: boolean = false;
 
+  masks = AppConsts.masks;
+
   constructor(
     injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: any,

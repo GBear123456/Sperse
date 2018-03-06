@@ -18,6 +18,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
 
   isEditAllowed = false;
 
+  private masks = AppConsts.masks;
+
   private _isInPlaceEditAllowed = true;
   private _itemInEditMode: any;
 
