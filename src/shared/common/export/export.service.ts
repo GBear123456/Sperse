@@ -1,4 +1,4 @@
-﻿import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 
 import { Angular2Csv } from 'angular2-csv/Angular2-csv';
@@ -22,7 +22,11 @@ export class ExportService {
         return capitalize(location.href.split('/').pop()) + '_' + moment().local().format('YYYY-MM-DD_hhmmss_a');
     }
 
-    saveAsCSV(data: any, name?: string) {
+    saveAsCSV(dataGrid: DxDataGridComponent, exportAllData: boolean, name?: string) {
+        let data = exportAllData ?
+            dataGrid.instance.getDataSource().items()
+            : dataGrid.instance.getSelectedRowsData();
+
         if (data) {
             setTimeout(() => {
                 var _headers = [''];

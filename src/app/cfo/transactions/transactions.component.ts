@@ -83,8 +83,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public bankAccountsSource = {};
     headlineConfig: any;
 
+    private _categoriesShowedBefore = true;
     private _categoriesShowed = true;
     public set categoriesShowed(value: boolean) {
+        this._categoriesShowedBefore = this._categoriesShowed;
         if (this._categoriesShowed = value) {
             this.filtersService.fixed = false;
             this.filtersService.disable();
@@ -118,11 +120,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     {
                         name: 'filters',
                         action: (event) => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                            }, 1000);
                             this.filtersService.fixed =
                                 !this.filtersService.fixed;
+                            if (this.filtersService.fixed)
+                                this.categoriesShowed = false;
+                            else 
+                                this.categoriesShowed = 
+                                    this._categoriesShowedBefore;
+                            this.filtersService.enable();
                         },
                         options: {
                             checkPressed: () => {
@@ -130,13 +135,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             },
                             mouseover: (event) => {
                                 this.filtersService.enable();
-                                this.categoriesShowed = false;
                             },
                             mouseout: (event) => {
-                                if (!this.filtersService.fixed) {
+                                if (!this.filtersService.fixed)
                                     this.filtersService.disable();
-                                    this.categoriesShowed = true;
-                                }
                             }
                         },
                         attr: {
@@ -227,10 +229,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 template: 'startBalanceTotal'
             }, {
                 location: 'after',
-                template: 'debitTotal'
+                template: 'creditTotal'
             }, {
                 location: 'after',
-                template: 'creditTotal'
+                template: 'debitTotal'
             }, {
                 location: 'after',
                 template: 'transactionTotal'
@@ -608,7 +610,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         );
         this.totalDataSource['_store']['_url'] = this.getODataURL(this.totalDataSourceURI, filterQuery);
         this.totalDataSource.load();
-        
+
         this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId')
             || (_.has(x, 'CashflowCategoryId') && typeof x['CashflowCategoryId'] == 'number')
             || _.has(x, 'CashflowSubCategoryId'));

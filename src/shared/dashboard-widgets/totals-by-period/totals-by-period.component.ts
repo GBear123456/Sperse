@@ -34,7 +34,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     startDate;
     endDate;
     incomeColor = '#32bef2';
-    expensesColor = '#f75a29'; 
+    expensesColor = '#f75a29';
     netChangeColor = '#35c8a8';
     loading = true;
 
@@ -71,8 +71,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 let income = Math.abs(currentStatsItem.income) + prevStatsItem.income;
                 let expenses = Math.abs(currentStatsItem.expenses) + prevStatsItem.expenses;
                 return {
-                    'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? 
-                        prevStatsItem['startingBalance']: currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
+                    'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
                     'endingBalance': currentStatsItem.endingBalance,
                     'income': income,
                     'expenses': expenses,
@@ -88,7 +87,6 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                         Math.abs(result.expenses),
                         Math.abs(result.netChange)
                     ) * 1.8;
-                    
                     this.totalData.incomePercent = this.getPercentage(maxValue, result.income);
                     this.totalData.expensesPercent = this.getPercentage(maxValue, result.expenses);
                     this.totalData.netChangePercent = this.getPercentage(maxValue, result.netChange);
@@ -99,7 +97,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     getPercentage(maxValue, currValue) {
-        return maxValue ? Math.round(currValue / maxValue * 100): 0;
+        return maxValue ? Math.round(currValue / maxValue * 100) : 0;
     }
 
     onValueChanged(value): void {

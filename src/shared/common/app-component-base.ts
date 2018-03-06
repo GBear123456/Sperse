@@ -42,10 +42,7 @@ export abstract class AppComponentBase {
 
     public searchValue: string;
     public searchColumns: string[];
-    public _wordRegex = /\b(\w|')+\b/gim;
-    public _removeFromEnd = ['at', 'on', 'and'];
-    public _remove = ['and', 'or', 'no', 'if', 'from', 'to', 'etc', 'for', 'like at'];
-
+   
     private _elementRef: ElementRef;
     private _applicationRef: ApplicationRef;
     public _exportService: ExportService;
@@ -141,7 +138,7 @@ export abstract class AppComponentBase {
         let filterData: any[] = [];
 
         if (this.searchColumns && this.searchValue) {
-            let values = this.getSearchKeyWords();
+            let values = FilterModel.getSearchKeyWords(this.searchValue);
             this.searchColumns.forEach((col) => {
                 let colFilterData: any[] = [];
 
@@ -167,14 +164,7 @@ export abstract class AppComponentBase {
 
         return data;
     }
-
-    getSearchKeyWords() {
-        let words = this.searchValue.match(this._wordRegex);
-        let noisyWords = _.union(this._removeFromEnd, this._remove);
-        let keywords = _.difference(words, noisyWords);
-        return keywords;
-    }
-
+     
     isFeatureEnable(featureName: string): boolean {
         return !abp.session.tenantId || !featureName || this.feature.isEnabled(featureName);
     }
@@ -208,9 +198,10 @@ export abstract class AppComponentBase {
           .exportToExcel(option == 'selected');
     }
 
-    exportToCSV() {
+    exportToCSV(option) {
         this._exportService.saveAsCSV(
-            this.dataGrid.instance.getDataSource().items()
+            this.dataGrid,
+            option == 'all'
         );
     }
 
