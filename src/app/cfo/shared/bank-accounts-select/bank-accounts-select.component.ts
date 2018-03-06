@@ -19,6 +19,8 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     @Input() useGlobalCache = false;
     @Output() onBankAccountsSelected: EventEmitter<any> = new EventEmitter();
 
+    private readonly LOCAL_STORAGE = 0;
+
     data: SyncAccountBankDto[] = [];
     selectedBankAccountIds = {};
     tooltipVisible: boolean;
@@ -31,6 +33,8 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         private _cacheService: CacheService
     ) {
         super(injector);
+
+        this._cacheService = this._cacheService.useStorage(this.LOCAL_STORAGE);
     }
 
     ngOnInit(): void {

@@ -36,9 +36,9 @@
     </div>
     <div class="account-item total-accounts" id="totalaccounts">
         <a (click)="totalAccountsMouseenter()" class="view-details">{{l('Select')}}</a>
-        <div class="value">{{ bankAccountIds.length }} of {{ accountsData?.bankAccountCount }}</div>
+        <div class="value">{{ bankAccountIds.length ? bankAccountIds.length + ' of ': ''}}{{ accountsData?.bankAccountCount }}</div>
         <div class="name">
-            {{l('Accounts')}}
+            {{l((bankAccountIds.length ? '': 'Total_') + 'Accounts')}}
             <ng-container *ngIf="bankAccountIds.length">
                 <span class="filtered">*</span>
             </ng-container>

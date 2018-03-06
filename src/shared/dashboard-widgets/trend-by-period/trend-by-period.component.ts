@@ -33,6 +33,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     chartWidth = 650;
     currency = 'USD';
     isForecast = false;
+    initCallback;
     historicalIncomeColor = '#00aeef';
     historicalExpensesColor = '#f05b2a';
     forecastIncomeColor = '#a9e3f9';
@@ -120,8 +121,12 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     ) {
         super(injector);
 
-        _dashboardService.subscribePeriodChange(
-            this.onSelectChange.bind(this));
+        _dashboardService.subscribePeriodChange((value) => {
+            if (this.initCallback)
+                this.onSelectChange(value);
+            else
+                this.initCallback = this.onSelectChange.bind(this, value);
+        });
     }
 
     ngOnInit() {
@@ -131,7 +136,10 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                 if (data && data.length) {
                     this.selectedForecastModelId = data[0].id;
                 }
-                this.loadStatsData();
+                if (this.initCallback)
+                    this.initCallback.call(this);
+                else
+                    this.initCallback = Function();
                 this.chartWidth = this.getElementRef().nativeElement.clientWidth - 60;
             });
     }
@@ -239,6 +247,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     }
 
     onSelectChange(value) {
+console.log(value);
         let period = 'month';
         let startDate = moment().utc();
         let endDate = moment().utc();

@@ -49,10 +49,6 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
             this.onValueChanged.bind(this));
     }
 
-    ngOnInit() {
-        this.loadStatsData();
-    }
-
     loadStatsData() {
         this.startLoading();
         this._bankAccountService.getStats(
