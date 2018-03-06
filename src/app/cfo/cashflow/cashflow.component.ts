@@ -56,9 +56,6 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/buffer';
 
-import { SortState } from '@app/cfo/shared/common/sorting/sort-state';
-import { SortingItemModel } from '@app/cfo/shared/common/sorting/sorting-item.model';
-
 class TransactionStatsDtoExtended extends TransactionStatsDto {
     initialDate: moment.Moment;
 }
@@ -195,8 +192,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         Income,
         Expense,
         NetChange,
-        Total,
-        Reconciliation
+        Reconciliation,
+        Total
     ];
     apiTableFields: any = [
         {
@@ -431,7 +428,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     onValueChanged: e => {
                                         searchInputBlock.hide();
                                         this.cashedRowsFitsToFilter.clear();
-                                        this.filterBy = e.element.find('input').val()
+                                        this.filterBy = e.element.find('input').val();
                                         this.pivotGrid.instance.getDataSource().reload();
                                     }
                                 });
@@ -490,7 +487,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             ]
         }
     ];
-    maxCategoriesWidth = 25;
+    maxCategoriesWidth = 22;
     footerToolbarConfig = [];
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
@@ -664,6 +661,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.filteredLoad = true;
             this.loadGridDataSource();
             this.operations.initToolbarConfig();
+        });
+        /** Repaint pivot grid after closing the filter modal */
+        this._filtersService.subjectFilterDisable.subscribe(e => {
+            setTimeout(
+                this.repaintDataGrid.bind(this),
+                1000
+            );
         });
     }
 
@@ -1834,14 +1838,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    toggleFilters(event) {
-        this._filtersService.toggle();
-    }
-
-    clearAllFilters(event) {
-        this._filtersService.clearAllFilters();
-    }
-
     /**
      * whether or not the cell is balance sheet header
      * @param cellObj - the object that pivot grid passes to the onCellPrepared event
@@ -2038,6 +2034,47 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxPivotGrid/Events/#cellPrepared
      */
     onCellPrepared(e) {
+        /* added charts near row titles */
+        if (e.area === 'row' && e.cell.type === 'D' && e.cell.path.length > 1 && !e.cell.expanded && !e.cell.isWhiteSpace) {
+            let allData: any;
+            allData = this.pivotGrid.instance.getDataSource().getData();
+            let chartData = [];
+            for (let i in allData.columns) {
+                if (allData.columns[i].children) {
+                    let years = allData.columns[i].children;
+                    years.forEach(obj => {
+                        let rObj = {};
+                        let value = allData.values[e.cell.dataSourceIndex][obj.index];
+                        rObj['year'] = obj.value;
+                        rObj['value'] = value.length ? Math.abs(value[0]) : Math.abs(value);
+                        chartData.push(rObj);
+                    });
+                }
+            }
+            let spanChart = $('<div class="chart"></div>');
+            e.cellElement.append(spanChart);
+            let chartOptions = {
+                dataSource: chartData,
+                type: 'area',
+                argumentField: 'year',
+                valueField: 'value',
+                lineWidth: 1,
+                lineColor: '#fab800',
+                showMinMax: false,
+                showFirstLast: false,
+                tooltip: {
+                    enabled: false
+                }
+            };
+            if (e.cell.path[0] === 'CTI') {
+                chartOptions.lineColor = '#61c670';
+            }
+            if (e.cell.path[0] === 'CTE') {
+                chartOptions.lineColor = '#e7326a';
+            }
+            spanChart.dxSparkline(chartOptions);
+        }
+
         /** added css class to start balance row */
         if (this.isStartingBalanceHeaderColumn(e) || this.isStartingBalanceTotalDataColumn(e)) {
             e.cellElement.parent().addClass('startedBalance');
@@ -2062,7 +2099,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let pathProp = isDataCell ? 'rowPath' : 'path';
             let cssClass = (e.cell[pathProp] !== undefined &&
                 e.cell[pathProp][0] === CategorizationPrefixes.CashflowType + Income
-                    ? 'income' : 'expenses')  + (level ? 'Child': '');
+                    ? 'income' : 'expenses')  + (level ? 'Child' : '');
             e.cellElement.addClass(cssClass);
             e.cellElement.parent().addClass(cssClass + 'Row');
             /** disable collapsing for income and expenses columns */
@@ -3341,11 +3378,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     modifyStartingBalanceAccountCell(summaryCell, prevWithParent) {
         let prevEndingAccountValue = this.getCellValue(prevWithParent, Total),
-            currentCellValue = summaryCell.value() || 0,
             prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false,
             prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0,
             prevReconciliation = this.getCellValue(prevWithParent, Reconciliation);
-        return currentCellValue + prevEndingAccountValue + prevCellValue + prevReconciliation;
+        return prevEndingAccountValue + prevCellValue + prevReconciliation;
     }
 
     /**
@@ -3751,14 +3787,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let dateFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
 
         if (period.start) {
-            let from = new Date(period.start + "-01-01");
+            let from = new Date(period.start + '-01-01');
             dateFilter.items['from'].setValue(from, dateFilter);
         } else {
             dateFilter.items['from'].setValue('', dateFilter);
         }
 
         if (period.end) {
-            let from = new Date(period.end + "-12-31");
+            let from = new Date(period.end + '-12-31');
             dateFilter.items['to'].setValue(from, dateFilter);
         } else {
             dateFilter.items['to'].setValue('', dateFilter);

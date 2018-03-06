@@ -101,6 +101,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
           dataItem[field] = updatedData[field];
           dataItem.comment = updatedData.comment;
           dataItem.usageTypeId = updatedData.usageTypeId;
+          dataItem.isConfirmed = updatedData.isConfirmed;
+          dataItem.isActive = updatedData.isActive;
           if (isPhoneDialog)
             dataItem.phoneExtension =
               updatedData['phoneExtension'];

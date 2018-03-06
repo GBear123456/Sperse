@@ -45,14 +45,14 @@
                         <dxo-sorting mode="multiple"></dxo-sorting>
 
                         <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell"></dxi-column>
-                        <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}" [width]="350"></dxi-column>
+                        <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}" [width]="450"></dxi-column>
                         <dxi-column caption="{{l('Transactions_CashflowCategoryName')}}"
                                     dataField="CashflowCategoryName"
                                     cellTemplate="CashflowCategoryNameTemplate"
                                     cssClass="category"></dxi-column>
                         <dxi-column dataField="CashflowSubCategoryName" caption="{{l('Transactions_CashflowSubCategoryName')}}"></dxi-column>
                         <dxi-column dataField="Amount" cssClass="tabular" name="Amount" caption="{{l('Transactions_Amount')}}" cellTemplate="amountTemplate"></dxi-column>
-                        <dxi-column dataField="EndingBalance" cssClass="tabular" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate"></dxi-column>
+                        <dxi-column dataField="EndingBalance" cssClass="tabular" caption="{{l('Transactions_EndingBalance')}}" cellTemplate="endBalanceTemplate" [visible]="false"></dxi-column>
                         <dxi-column dataField="CashFlowTypeName"
                                     cellTemplate="CashFlowTypeNameTemplate"
                                     cssClass="cashflow-type"
@@ -77,7 +77,7 @@
 
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="(cell.text) && (cell.column.name == 'Amount') ">
-                                <span [ngClass]="cell.value < 0 ? 'negative-values' : 'positive-values'"> {{ cell.text | number:'1.2-2' }} </span>
+                                <span [ngClass]="cell.value < 0 ? 'negative-values' : 'positive-values'"> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'isPendingTemplate'">
@@ -152,7 +152,7 @@
                         <div *dxTemplate="let data of 'creditTotal'">
                             <div class="informer">
                                 <h2 class="count positive-values">
-                                    ${{creditTransactionTotal | number:'1.0-0'}}
+                                    {{creditTransactionTotal | currency:'USD':'symbol':'1.0-0'}}
                                     <span class="cent">.{{creditTransactionTotalCent | number:'2.0-0'}}</span>
                                 </h2>
                                 <span class="name" (click)="toggleCreditDefault()">
@@ -178,7 +178,7 @@
                         <div *dxTemplate="let data of 'debitTotal'">
                             <div class="informer">
                                 <h2 class="count negative-values">
-                                    ${{debitTransactionTotal | number:'1.0-0'}}
+                                    {{debitTransactionTotal | currency:'USD':'symbol':'1.0-0'}}
                                     <span class="cent">.{{debitTransactionTotalCent | number:'2.0-0'}}</span>
                                 </h2>
                                 <span class="name" (click)="toggleDebitDefault()">

@@ -18,30 +18,21 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     accountsData: any;
     bankAccountIds: number[] = [];
 
-    availablePeriods = [
-        this.l('Today'),
-        this.l('Yesterday'),
-        this.l('This_Week'),
-        this.l('This_Month'),
-        this.l('Last_Month'),
-        this.l('This_Year'),
-        this.l('Last_Year'),
-        this.l('All_Periods')
-    ];
-
     dailyStatsToggleValues: any[] = [
         this.l('Highest'),
         this.l('Average'),
         this.l('Lowest')
     ];
 
+    startDate: moment.Moment = null;
+    endDate: moment.Moment;
     dailyStatsData: GetDailyBalanceStatsOutput;
     dailyStatsAmount: number;
     dailyStatsAmountFloat: string;
     dailyStatsAmountInteger: number;
     dailyStatsText: string;
     dailyStatsSliderSelected: number = 1;
-    dailyStatsPeriodSelected: string = this.availablePeriods[0];
+    dailyStatsPeriodSelected: string = this.l('All_Periods');
 
     constructor(
         injector: Injector,
@@ -50,11 +41,16 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         private _router: Router
     ) {
         super(injector);
+
+        this.endDate = moment().utc().startOf('day');
+
+        _dashboardService.subscribePeriodChange(
+            this.onDailyStatsPeriodChanged.bind(this));
     }
 
     ngOnInit() {
         this.getAccountTotals();
-        this.onDailyStatsPeriodChanged();
+        this.getDailyStats();
     }
 
     getAccountTotals(): void {
@@ -64,8 +60,8 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
             });
     }
 
-    getDailyStats(startDate: moment.Moment, endDate: moment.Moment): void {
-        this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, startDate, endDate)
+    getDailyStats(): void {
+        this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate)
             .subscribe(result => {
                 this.dailyStatsData = result;
                 this.setDailyStatsAmount();
@@ -79,7 +75,8 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     filterByBankAccounts(bankAccountIds: number[]) {
         this.bankAccountIds = bankAccountIds;
         this.getAccountTotals();
-        this.onDailyStatsPeriodChanged();
+
+        this.getDailyStats();
     }
 
     totalAccountsMouseenter() {
@@ -89,11 +86,6 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     changeDailyStatsToggleValue(index) {
         this.dailyStatsSliderSelected = index;
         this.setDailyStatsAmount();
-    }
-
-    onPeriodChanged($event) {
-        this._dashboardService.periodChanged($event.value);
-        this.onDailyStatsPeriodChanged($event.value);
     }
 
     onDailyStatsPeriodChanged(value = '') {
@@ -111,11 +103,11 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                 break;
             case this.l('This_Week'):
                 startDate.startOf('week');
-                endDate.endOf('week');
+                endDate.startOf('day');
                 break;
             case this.l('This_Month'):
                 startDate.startOf('month');
-                endDate.endOf('month');
+                endDate.startOf('day');
                 break;
             case this.l('Last_Month'):
                 startDate.subtract(1, 'month').startOf('month');
@@ -123,7 +115,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                 break;
             case this.l('This_Year'):
                 startDate.startOf('year');
-                endDate.endOf('year');
+                endDate.startOf('day');
                 break;
             case this.l('Last_Year'):
                 startDate.subtract(1, 'year').startOf('year');
@@ -135,7 +127,10 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                 break;
         }
 
-        this.getDailyStats(startDate, endDate);
+        this.startDate = startDate;
+        this.endDate = endDate;
+
+        this.getDailyStats();
     }
 
     setDailyStatsAmount(): void {
