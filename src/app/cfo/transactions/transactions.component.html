@@ -32,10 +32,10 @@
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
                                   [columnResizingMode]="'widget'"
-                                  [pager]="defaultGridPagerConfig"
                                   (onContentReady)="onContentReady($event)"
                                   (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                                   (onSelectionChanged)="onSelectionChanged($event)"
+                                  (onCellClick)="onCellClick($event)"
                                   (onCellPrepared)="onCellPrepared($event)"
                                   (onToolbarPreparing)="onToolbarPreparing($event)">
                         <dxo-selection selectAllMode="page"
@@ -98,7 +98,7 @@
                         <div *dxTemplate="let data of 'CashflowCategoryNameTemplate'">
                             <span [ngClass]="{'uncategorized': !data.value}">
                                 <ng-container *ngIf="data.value">
-                                    <span> {{data.value}} </span>
+                                    <span class="clickable-item"> {{data.value}} </span>
                                 </ng-container>
                                 <ng-container *ngIf="!data.value">
                                     <span> {{l('Unclassified')}} </span>
