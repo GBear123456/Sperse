@@ -10,7 +10,8 @@ import DsataSource from 'devextreme/data/data_source';
 @Component({
   selector: 'chart-of-accounts',
   templateUrl: './chart-of-accounts.component.html',
-  styleUrls: ['./chart-of-accounts.component.less']
+  styleUrls: ['./chart-of-accounts.component.less'],
+  animations: [appModuleAnimation()]
 })
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit {
 
