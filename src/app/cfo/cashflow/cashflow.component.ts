@@ -591,7 +591,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** Text customizing for acounts names  */
             if (prefix === CategorizationPrefixes.AccountName) {
                 let account = this.bankAccounts.find(account => account.id == key );
-                text = account ? account.accountNumber + (account.accountName ? ': ' + account.accountName : '') : cellInfo.valueText;
+                text = account ? account.accountName + account.accountName : cellInfo.valueText;
             }
 
             /** Text customizing for transactions descriptor */
@@ -1894,6 +1894,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return cellObj.cell[pathProperty] && !cellObj.cell.isWhiteSpace && cellObj.cell[pathProperty].length === 1 && cellObj.cell[pathProperty][0] === (CategorizationPrefixes.CashflowType + NetChange);
     }
 
+    isAccountHeaderCell(cellObj) {
+        return cellObj.area === 'row' && cellObj.cell.path && cellObj.cell.path[1] && cellObj.cell.path[1].slice(0, 2) === CategorizationPrefixes.AccountName;
+    }
+
     isCopyable(cellObj) {
         return cellObj.area === 'data' && (cellObj.cell.rowPath[0].slice(2) === Income || cellObj.cell.rowPath[0].slice(2) === Expense);
     }
@@ -2034,6 +2038,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxPivotGrid/Events/#cellPrepared
      */
     onCellPrepared(e) {
+        let maxCategoryWidth = this.maxCategoriesWidth;
+
         /* added charts near row titles */
         if (e.area === 'row' && e.cell.type === 'D' && e.cell.path.length > 1 && !e.cell.expanded && !e.cell.isWhiteSpace) {
             let allData: any;
@@ -2113,6 +2119,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.cellElement.parent().addClass('netChangeRow');
         }
 
+        if (this.isAccountHeaderCell(e)) {
+            let accountId = e.cell.path[1].slice(2);
+            let account = this.bankAccounts.find(account => account.id == accountId);
+            if (account && account.accountNumber) {
+                maxCategoryWidth -= 8;
+                e.cellElement.append(`<span class="accountNumber">${account.accountNumber}</span>`);
+            }
+        }
+
         /** headers manipulation (adding css classes and appending 'Totals text') */
         if (e.area === 'column' && e.cell.type !== GrandTotal) {
             this.prepareColumnCell(e);
@@ -2163,9 +2178,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** hide long text for row headers and show '...' instead with the hover and long text*/
-        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.path.length !== 1 && e.cell.text && e.cell.text.length > this.maxCategoriesWidth) {
+        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.path.length !== 1 && e.cell.text && e.cell.text.length > maxCategoryWidth) {
             e.cellElement.attr('title', e.cell.text);
-            e.cellElement.find('> span').text(_.prune(e.cell.text, this.maxCategoriesWidth));
+            e.cellElement.find('> span:first-of-type').text(_.prune(e.cell.text, maxCategoryWidth));
         }
 
         /** Show descriptors in Italic */
