@@ -59,6 +59,12 @@
                         color: #677380;
                         padding-bottom: 16px;
                         border-bottom: 1px solid #E5E9EC;
+
+                        &.row-header-narrow {
+                            .col-xs-1 {
+                                padding: 0 28px;
+                            }
+                        }
                     }
 
                     + .row-header {
@@ -79,26 +85,50 @@
                     }
                 }
 
-                .dx-field-label {
-                    color: #677380;
-                    font-size: 14px;
-                    font-weight: 300;
-                    width: 29%;
-                    padding: 13px 0 11px 0;
-                    border-bottom: 1px solid #dfdfdf;
-                }
-
-                .dx-field-value {
-                    width: 71%;
-
-                    .left-select {
-                        width: 41%;
-                        float: left;
+                .dx-field {
+                    .dx-field-label {
+                        color: #677380;
+                        font-size: 14px;
+                        font-weight: 300;
+                        width: 29%;
+                        padding: 13px 0 11px 0;
+                        border-bottom: 1px solid #dfdfdf;
                     }
 
-                    .right-select {
-                        width: 54%;
+                    .dx-field-value {
+                        width: 71%;
+
+                        .left-select {
+                            width: 41%;
+                            float: left;
+                        }
+
+                        .right-select {
+                            width: 54%;
+                            float: right;
+                        }
+                    }
+
+                    &.left-field {
+                        float: left;
+                        width: 60%;
+
+                        .dx-field-label {
+                            width: 50%;
+                        }
+
+                        .dx-field-value {
+                            width: 50%;
+                        }
+                    }
+
+                    &.right-field {
+                        width: 36%;
                         float: right;
+
+                        .dx-field-value {
+                            width: 71%;
+                        }
                     }
                 }
             }
