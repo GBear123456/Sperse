@@ -247,7 +247,6 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     }
 
     onSelectChange(value) {
-console.log(value);
         let period = 'month';
         let startDate = moment().utc();
         let endDate = moment().utc();
