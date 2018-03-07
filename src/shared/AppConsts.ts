@@ -54,5 +54,9 @@ export class AppConsts {
     };
 
     static readonly otherLinkTypeId = 'X';
+
+    static readonly regexPatterns = {
+        name: /^[A-Z][a-zA-Z]+$/
+    };
 }
 
