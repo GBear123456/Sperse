@@ -204,7 +204,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             this.processODataFilter(this.dataGrid.instance,
                 this.dataSourceURI, this.filters, (filter) => {
                     let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
+                        this.capitalize(filter.caption)];
                     if (filterMethod)
                         return filterMethod.call(this, filter);
                 }

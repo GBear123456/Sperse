@@ -9141,6 +9141,52 @@ export class LeadServiceProxy {
         }
         return Observable.of<LeadBusinessInfoOutput[]>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getFiltersInitialData(): Observable<LeadFiltersInitialData> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetFiltersInitialData";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetFiltersInitialData(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetFiltersInitialData(response_);
+                } catch (e) {
+                    return <Observable<LeadFiltersInitialData>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<LeadFiltersInitialData>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetFiltersInitialData(response: Response): Observable<LeadFiltersInitialData> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? LeadFiltersInitialData.fromJS(resultData200) : new LeadFiltersInitialData();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<LeadFiltersInitialData>(<any>null);
+    }
 }
 
 @Injectable()
@@ -30844,6 +30890,257 @@ export interface ILeadBusinessInfoOutput {
     errorMessage: string;
 }
 
+export class LeadFiltersInitialData implements ILeadFiltersInitialData {
+    pipelines: PipelineDto[];
+    leadTypes: LeadTypeDto[];
+
+    constructor(data?: ILeadFiltersInitialData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["pipelines"] && data["pipelines"].constructor === Array) {
+                this.pipelines = [];
+                for (let item of data["pipelines"])
+                    this.pipelines.push(PipelineDto.fromJS(item));
+            }
+            if (data["leadTypes"] && data["leadTypes"].constructor === Array) {
+                this.leadTypes = [];
+                for (let item of data["leadTypes"])
+                    this.leadTypes.push(LeadTypeDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): LeadFiltersInitialData {
+        let result = new LeadFiltersInitialData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.pipelines && this.pipelines.constructor === Array) {
+            data["pipelines"] = [];
+            for (let item of this.pipelines)
+                data["pipelines"].push(item.toJSON());
+        }
+        if (this.leadTypes && this.leadTypes.constructor === Array) {
+            data["leadTypes"] = [];
+            for (let item of this.leadTypes)
+                data["leadTypes"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ILeadFiltersInitialData {
+    pipelines: PipelineDto[];
+    leadTypes: LeadTypeDto[];
+}
+
+export class PipelineDto implements IPipelineDto {
+    id: number;
+    name: string;
+    purpose: string;
+    stages: StageDto[];
+
+    constructor(data?: IPipelineDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.purpose = data["purpose"];
+            if (data["stages"] && data["stages"].constructor === Array) {
+                this.stages = [];
+                for (let item of data["stages"])
+                    this.stages.push(StageDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PipelineDto {
+        let result = new PipelineDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["purpose"] = this.purpose;
+        if (this.stages && this.stages.constructor === Array) {
+            data["stages"] = [];
+            for (let item of this.stages)
+                data["stages"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPipelineDto {
+    id: number;
+    name: string;
+    purpose: string;
+    stages: StageDto[];
+}
+
+export class LeadTypeDto implements ILeadTypeDto {
+    id: number;
+    name: string;
+
+    constructor(data?: ILeadTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): LeadTypeDto {
+        let result = new LeadTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ILeadTypeDto {
+    id: number;
+    name: string;
+}
+
+export class StageDto implements IStageDto {
+    id: number;
+    name: string;
+    color: string;
+    accessibleActions: ActionDto[];
+
+    constructor(data?: IStageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.color = data["color"];
+            if (data["accessibleActions"] && data["accessibleActions"].constructor === Array) {
+                this.accessibleActions = [];
+                for (let item of data["accessibleActions"])
+                    this.accessibleActions.push(ActionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): StageDto {
+        let result = new StageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["color"] = this.color;
+        if (this.accessibleActions && this.accessibleActions.constructor === Array) {
+            data["accessibleActions"] = [];
+            for (let item of this.accessibleActions)
+                data["accessibleActions"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IStageDto {
+    id: number;
+    name: string;
+    color: string;
+    accessibleActions: ActionDto[];
+}
+
+export class ActionDto implements IActionDto {
+    id: number;
+    name: string;
+    sysId: string;
+    targetStageId: number;
+
+    constructor(data?: IActionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.sysId = data["sysId"];
+            this.targetStageId = data["targetStageId"];
+        }
+    }
+
+    static fromJS(data: any): ActionDto {
+        let result = new ActionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["sysId"] = this.sysId;
+        data["targetStageId"] = this.targetStageId;
+        return data; 
+    }
+}
+
+export interface IActionDto {
+    id: number;
+    name: string;
+    sysId: string;
+    targetStageId: number;
+}
+
 export class SelectPackageResponseDto implements ISelectPackageResponseDto {
     registrationId: string;
     memberInfo: MemberInfoDto;
@@ -31865,61 +32162,6 @@ export interface IOrderFiltersInitialData {
     subscriptionStatuses: BillingSubscriptionStatusDto[];
 }
 
-export class PipelineDto implements IPipelineDto {
-    id: number;
-    name: string;
-    purpose: string;
-    stages: StageDto[];
-
-    constructor(data?: IPipelineDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.purpose = data["purpose"];
-            if (data["stages"] && data["stages"].constructor === Array) {
-                this.stages = [];
-                for (let item of data["stages"])
-                    this.stages.push(StageDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): PipelineDto {
-        let result = new PipelineDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["purpose"] = this.purpose;
-        if (this.stages && this.stages.constructor === Array) {
-            data["stages"] = [];
-            for (let item of this.stages)
-                data["stages"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IPipelineDto {
-    id: number;
-    name: string;
-    purpose: string;
-    stages: StageDto[];
-}
-
 export class BillingSubscriptionStatusDto implements IBillingSubscriptionStatusDto {
     id: string;
     name: string;
@@ -31957,108 +32199,6 @@ export class BillingSubscriptionStatusDto implements IBillingSubscriptionStatusD
 export interface IBillingSubscriptionStatusDto {
     id: string;
     name: string;
-}
-
-export class StageDto implements IStageDto {
-    id: number;
-    name: string;
-    color: string;
-    accessibleActions: ActionDto[];
-
-    constructor(data?: IStageDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.color = data["color"];
-            if (data["accessibleActions"] && data["accessibleActions"].constructor === Array) {
-                this.accessibleActions = [];
-                for (let item of data["accessibleActions"])
-                    this.accessibleActions.push(ActionDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): StageDto {
-        let result = new StageDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["color"] = this.color;
-        if (this.accessibleActions && this.accessibleActions.constructor === Array) {
-            data["accessibleActions"] = [];
-            for (let item of this.accessibleActions)
-                data["accessibleActions"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IStageDto {
-    id: number;
-    name: string;
-    color: string;
-    accessibleActions: ActionDto[];
-}
-
-export class ActionDto implements IActionDto {
-    id: number;
-    name: string;
-    sysId: string;
-    targetStageId: number;
-
-    constructor(data?: IActionDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.sysId = data["sysId"];
-            this.targetStageId = data["targetStageId"];
-        }
-    }
-
-    static fromJS(data: any): ActionDto {
-        let result = new ActionDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["sysId"] = this.sysId;
-        data["targetStageId"] = this.targetStageId;
-        return data; 
-    }
-}
-
-export interface IActionDto {
-    id: number;
-    name: string;
-    sysId: string;
-    targetStageId: number;
 }
 
 export class OrganizationShortInfoDto implements IOrganizationShortInfoDto {
