@@ -10,6 +10,7 @@ import {
     TransactionStatsDto,
     CashFlowForecastServiceProxy,
     ClassificationServiceProxy,
+    BankAccountsServiceProxy,
     GetCategoryTreeOutput,
     CashFlowGridSettingsDto,
     InstanceType,
@@ -21,12 +22,14 @@ import {
     AddForecastInput,
     BankAccountDto,
     StatsFilterGroupByPeriod,
-    TransactionStatsDtoAdjustmentType
+    TransactionStatsDtoAdjustmentType,
+    DiscardDiscrepancyInput
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { OperationsComponent } from './operations/operations.component';
+import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { DxPivotGridComponent, DxDataGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
 import * as underscore from 'underscore';
@@ -96,7 +99,7 @@ class CashflowCategorizationModel {
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService ]
+    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy ]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
@@ -522,6 +525,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
                 private _cacheService: CacheService,
                 private _classificationServiceProxy: ClassificationServiceProxy,
+                private _bankAccountsServiceProxy: BankAccountsServiceProxy,
                 public dialog: MatDialog,
                 public userPreferencesService: UserPreferencesService,
                 private _appService: AppService
@@ -2033,6 +2037,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             (cellObj.cell.rowPath[0] === (CategorizationPrefixes.CashflowType + Reconciliation));
     }
 
+    isReconciliationRows(cellObj) {
+        return cellObj.cell.rowPath !== undefined &&
+            (cellObj.cell.rowPath[0] === (CategorizationPrefixes.CashflowType + Reconciliation));
+    }
+
     /**
      * whether or not the cell is data cell
      * @param cellObj
@@ -2049,6 +2058,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     isHistoricalCell(cellObj) {
         return cellObj.rowIndex === 0;
+    }
+
+    addActionButton(name, container, callback) {
+        $('<a>')
+            .text(this.l(this.capitalize(name)))
+            .addClass('dx-link dx-link-' + name)
+            .on('click', callback)
+            .appendTo(container);
     }
 
     /**
@@ -2311,6 +2328,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** Apply user preferences to the data showing */
         this.applyUserPreferencesForCells(e);
+
+        if (this.isReconciliationRows(e) && e.cell.value !== 0) {
+            this.addActionButton('delete', e.cellElement, (event) => { this.discardDiscrepancy(e); });
+        }
     }
 
     moveOrCopyForecasts(forecasts, targetCell, operation: 'copy' | 'move' = 'copy') {
@@ -3839,6 +3860,31 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             accountFilter.items['element'].setValue([], accountFilter);
         }
         this._filtersService.change(accountFilter);
+    }
+
+    discardDiscrepancy(cellObj) {
+        this.dialog.open(ConfirmDialogComponent, {
+            data: {
+                title: this.l('DiscardDiscrepancy_WarningHeader'),
+                message: this.l('DiscardDiscrepancy_WarningMessage')
+            }
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.dialog.closeAll();
+
+                let filterDetails = this.statsDetailFilter;
+                let discardDiscrepancyInput = DiscardDiscrepancyInput.fromJS({
+                    bankIds: filterDetails.bankIds,
+                    bankAccountIds: filterDetails.accountIds,
+                    currencyId: filterDetails.currencyId,
+                    startDate: filterDetails.startDate,
+                    endDate: filterDetails.endDate
+                });
+
+                this._bankAccountsServiceProxy.discardDiscrepancy(InstanceType[this.instanceType], this.instanceId, discardDiscrepancyInput)
+                    .subscribe((result) => { this.refreshDataGrid(); });
+            }
+        });
     }
 
     @HostListener('window:click', ['$event']) toogleSearchInput(event) {
