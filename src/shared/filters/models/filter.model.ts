@@ -14,7 +14,7 @@ export class FilterModelBase<T extends FilterItemModel> {
     items?: { [item: string]: T; };
     displayElements?: any[];
     options?: any;
-        
+
     public constructor(init?: Partial<FilterModelBase<T>>) {
         Object.assign(this, init);
     }
@@ -37,7 +37,6 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
     public static _wordRegex = /\b(\w|')+\b/gim;
     public static _removeFromEnd = ['at', 'on', 'and'];
     public static _remove = ['and', 'or', 'no', 'if', 'from', 'to', 'etc', 'for', 'like at'];
-    
     public getODataFilterObject() {
         if (this.options && this.options.method)
             return this[this.options.method].call(this);
@@ -86,14 +85,14 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
         data[this.field] = {};
         _.each(this.items, (item: FilterItemModel, key) => {
             if (item && item.value) {
-                Date.prototype.setHours.apply(item.value, 
+                Date.prototype.setHours.apply(item.value,
                     key == 'to' ? [23,59,59,999]: [0,0,0,0]);
 
                 let clone = new Date(item.value.getTime());
-                clone.setTime(clone.getTime() - 
+                clone.setTime(clone.getTime() -
                     clone.getTimezoneOffset() * 60 * 1000);
 
-                data[this.field][this.operator[key]] = clone; 
+                data[this.field][this.operator[key]] = clone;
             }
         });
         return data;

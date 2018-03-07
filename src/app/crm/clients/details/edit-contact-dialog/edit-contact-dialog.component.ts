@@ -29,6 +29,8 @@ export class EditContactDialog extends AppComponentBase {
 
   isEditAllowed: boolean = false;
 
+  masks = AppConsts.masks;
+
   constructor(
     injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -49,7 +51,7 @@ export class EditContactDialog extends AppComponentBase {
   urlTypesLoad() {
     this._contactLinkService.getContactLinkTypes().subscribe(result => {
       this.types = result.items;
-      this.types.unshift({id: 'O', name: this.l('Other Link')});
+      this.types.unshift({id: AppConsts.otherLinkTypeId, name: this.l('Other Link')});
     });
   }
 

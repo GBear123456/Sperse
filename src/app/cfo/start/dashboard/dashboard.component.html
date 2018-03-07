@@ -14,7 +14,7 @@
                         </h2>
                         <dx-select-box [items]="availablePeriods"
                                        [width]="'100px'"
-                                       [value]="availablePeriods[availablePeriods.length - 1]"
+                                       [value]="selectedPeriod"
                                        (onValueChanged)="onPeriodChanged($event)">
                         </dx-select-box>
                         <a (click)="navigateTo()" class="dashboard-link">+ {{l('Add_account')}}</a>

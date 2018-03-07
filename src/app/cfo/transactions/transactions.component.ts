@@ -124,8 +124,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 !this.filtersService.fixed;
                             if (this.filtersService.fixed)
                                 this.categoriesShowed = false;
-                            else 
-                                this.categoriesShowed = 
+                            else
+                                this.categoriesShowed =
                                     this._categoriesShowedBefore;
                             this.filtersService.enable();
                         },
@@ -162,6 +162,22 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'searchAll',
+                        action: this.searchAllClick.bind(this),
+                        options: {
+                            text: this.l('Search All')
+                        },
+                        attr: {
+                            'filter-selected': this.filtersService.hasFilterSelected,
+                            'custaccesskey': 'search-container'
                         }
                     }
                 ]
@@ -301,7 +317,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     this.bankAccounts = totals[0].bankAccounts;
                 }
                 else {
-                    this.bankAccountCount =0;
+                    this.bankAccountCount = 0;
                     this.bankAccounts = [];
                 }
 
@@ -365,6 +381,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.searchValue = e['value'];
 
         this.processFilterInternal();
+    }
+
+    searchAllClick() {
+        this.filtersService.clearAllFilters();
     }
 
     toggleCreditDefault() {
@@ -453,7 +473,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         caption: 'Date',
                         field: 'Date',
                         items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                        options: {method: 'getFilterByDate'}
+                        options: { method: 'getFilterByDate' }
                     }),
                     new FilterModel({
                         component: FilterCheckBoxesComponent,
@@ -561,7 +581,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.dataGrid.instance.element()[0].classList.toggle('grid-compact-view');
     }
 
-    getBankAccountsSource(banks: BankDto[] ) {
+    getBankAccountsSource(banks: BankDto[]) {
         let result = {};
         banks.forEach((bank) => {
 
@@ -750,13 +770,34 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.getTotalValues();
     }
 
+    onCellClick($event) {
+        if ($event.rowType === 'data') {
+            if (($event.column.dataField == 'CashflowCategoryName' && $event.data.CashflowCategoryId) ||
+                ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryId)){
+                this.dialog.open(RuleDialogComponent, {
+                    panelClass: 'slider',
+                    data: {
+                        instanceId: this.instanceId,
+                        instanceType: this.instanceType,
+                        categoryId: $event.column.dataField == 'CashflowCategoryName' ? $event.data.CashflowCategoryId : $event.data.CashflowSubCategoryId,
+                        categoryCashflowTypeId: $event.CashFlowTypeId,
+                        transactions: [$event.data],
+                        transactionIds: [$event.data.Id],
+                        refershParent: this.refreshDataGrid.bind(this)
+                    }
+                }).afterClosed().subscribe(result => { });
+            }
+        }
+    }
+
     onCellPrepared($event) {
-        if ($event.rowType === 'data' &&
-            $event.column.dataField == 'CashflowCategoryName' &&
-            !$event.data.CashflowCategoryName
-        ) {
-            let rowIndex = $event.cellElement.parent().index();
-            $event.cellElement.closest('.dx-datagrid-rowsview').find(`tr:nth-of-type(${rowIndex + 1})`).addClass(`uncategorized`);
+        if ($event.rowType === 'data') {
+            if ($event.column.dataField == 'CashflowCategoryName' && !$event.data.CashflowCategoryName) {
+                let rowIndex = $event.cellElement.parent().index();
+                $event.cellElement.closest('.dx-datagrid-rowsview').find(`tr:nth-of-type(${rowIndex + 1})`).addClass(`uncategorized`);
+            } else if ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryName) {
+                $event.cellElement.addClass('clickable-item');
+            }
         }
     }
 
@@ -824,7 +865,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         if (result) {
                             updateTransactionCategoryMethod(true);
                         }
-                });
+                    });
             }
             else {
                 updateTransactionCategoryMethod(false);

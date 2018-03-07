@@ -32,12 +32,16 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
 
     private isEditOrgDetailsAllowed: boolean;
 
+    private masks = AppConsts.masks;
+
     private _contactInfoBehaviorSubject = new BehaviorSubject<number>(0);
     private _isEditAllowed = false;
     private _originalData = new Object();
 
     private _selectedOrgName: string;
     private _selectedOrgId: number;
+
+    private _isInPlaceEditAllowed = true;
 
     constructor(
         injector: Injector,
@@ -107,7 +111,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     }
 
     inPlaceEdit(field, contactEmploymentData, isActionAllowed = true) {
-        if (this._isEditAllowed && isActionAllowed) {
+        if (this._isEditAllowed && isActionAllowed && this._isInPlaceEditAllowed) {
             contactEmploymentData.inplaceEditField = field;
             this._originalData[field] = contactEmploymentData[field];
         }
@@ -116,10 +120,15 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     closeInPlaceEdit(field, contactEmploymentData) {
         contactEmploymentData.inplaceEditField = null;
         contactEmploymentData[field] = this._originalData[field];
+        this._isInPlaceEditAllowed = true;
+    }
+
+    valueChanged(field) {
+        this._isInPlaceEditAllowed = this.contactEmploymentInfo[field] == this._originalData[field];
     }
 
     inPlaceEditOrganization(contactEmploymentData) {
-        if (this._isEditAllowed) {
+        if (this._isEditAllowed && this._isInPlaceEditAllowed) {
             let orgNameField = 'orgName', orgIdField = 'orgId';
             contactEmploymentData.inplaceEditField = orgNameField;
             this._originalData[orgNameField] = contactEmploymentData[orgNameField];
@@ -131,6 +140,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
         contactEmploymentData.inplaceEditField = null;
         this._selectedOrgName = this._originalData['orgName'];
         this._selectedOrgId = this._originalData['orgId'];
+        this._isInPlaceEditAllowed = true;
     }
 
     updateDataField(field, contactEmploymentData, event) {
@@ -140,6 +150,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
             }
 
             contactEmploymentData.inplaceEditField = null;
+            this._isInPlaceEditAllowed = true;
         }
     }
 
@@ -163,6 +174,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
         }
 
         contactEmploymentData.inplaceEditField = null;
+        this._isInPlaceEditAllowed = true;
     }
 
     clearPersonEmploymentContacts() {
@@ -190,6 +202,8 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
             this._selectedOrgName = event.selectedItem;
             this._selectedOrgId = null;
         }
+
+        this._isInPlaceEditAllowed = this._selectedOrgName == this._originalData['orgName'];
     }
 
     updateContactEmployment(contactEmploymentData) {

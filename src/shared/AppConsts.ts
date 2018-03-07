@@ -43,5 +43,16 @@ export class AppConsts {
         lead: 'L',
         order: 'O'
     };
+
+    static readonly masks = {
+        phone: '+1 (000)-000-0000',
+        ssn: '000-00-0000'
+    };
+
+    static readonly formatting = {
+        date: 'MM/dd/yyyy hh:mm a'
+    };
+
+    static readonly otherLinkTypeId = 'X';
 }
 

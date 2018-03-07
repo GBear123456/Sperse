@@ -18320,6 +18320,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
     showColumnsWithZeroActivity: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
     showNetChangeRow: boolean;
     showAccountingTypeRow: boolean;
+    showBalanceDiscrepancy: boolean;
 
     constructor(data?: ICashflowGridGeneralSettingsDto) {
         if (data) {
@@ -18338,6 +18339,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
             this.showColumnsWithZeroActivity = data["showColumnsWithZeroActivity"];
             this.showNetChangeRow = data["showNetChangeRow"];
             this.showAccountingTypeRow = data["showAccountingTypeRow"];
+            this.showBalanceDiscrepancy = data["showBalanceDiscrepancy"];
         }
     }
 
@@ -18355,6 +18357,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
         data["showColumnsWithZeroActivity"] = this.showColumnsWithZeroActivity;
         data["showNetChangeRow"] = this.showNetChangeRow;
         data["showAccountingTypeRow"] = this.showAccountingTypeRow;
+        data["showBalanceDiscrepancy"] = this.showBalanceDiscrepancy;
         return data; 
     }
 }
@@ -18366,6 +18369,7 @@ export interface ICashflowGridGeneralSettingsDto {
     showColumnsWithZeroActivity: CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
     showNetChangeRow: boolean;
     showAccountingTypeRow: boolean;
+    showBalanceDiscrepancy: boolean;
 }
 
 export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSettingsDto {

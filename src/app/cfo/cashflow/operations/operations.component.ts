@@ -16,13 +16,11 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     private initTimeout: any;
     private initReportPeriodTimeout: any;
     private initSelectedBankAccountsTimeout: any;
-    
-   
     @Input('reportPeriod')
     set reportPeriod(reportPeriod) {
         clearTimeout(this.initReportPeriodTimeout);
         this.initReportPeriodTimeout = setTimeout(() => {
-            this.sliderReportPeriod = reportPeriod
+            this.sliderReportPeriod = reportPeriod;
         }, 300);
     }
     @Input('selectedBankAccounts')
@@ -103,7 +101,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 location: 'before',
                 items: [
                     {
-                        name: 'reportPeriod',                       
+                        name: 'reportPeriod',
                         action: this.reportPeriodFilter.bind(this),
                         options: {
                             id: 'reportPeriod',
@@ -127,7 +125,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                                 text: 'Months'
                             }]
                         }
-                    }                    
+                    }
                 ]
             },
             {
@@ -143,12 +141,12 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                         }
                     },
                 ]
-            },          
+            },
             {
                 location: 'before',
                 items: [
                     //{
-                    //    name: 'expandRows',                        
+                    //    name: 'expandRows',
                     //    options: {
                     //        hint: this.l('Expand rows'),
                     //        items: [{
@@ -318,7 +316,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     refresh() {
         this.onRefresh.emit();
     }
-    
+
     reportPeriodFilter() {
         this.reportPeriodTooltipVisible = !this.reportPeriodTooltipVisible;
     }
@@ -331,7 +329,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
 
         this.onReportPeriodChange.emit(period);
     }
-    
+
     clear() {
         this.onReportPeriodChange.emit({});
         this.reportPeriodTooltipVisible = false;

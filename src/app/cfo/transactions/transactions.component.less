@@ -250,6 +250,27 @@
     }
 }
 
+/deep/ [custaccesskey="search-container"] {
+    &[filter-selected="true"] {
+        border: 0;
+
+        .dx-button-text {
+            font-size: 14px !important;
+            letter-spacing: 0.3px !important;
+            color: #00AEEF !important;
+
+            &:hover {
+                color: lighten(#00AEEF, 20%) !important;
+            }
+        }
+    }
+
+    &[filter-selected="false"] {
+        display: none;
+    }
+}
+
+
 .tooltip-wrap {
     text-align: left;
     max-height: 250px;

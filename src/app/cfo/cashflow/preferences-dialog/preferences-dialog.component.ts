@@ -10,7 +10,7 @@ import { Observable } from 'rxjs/Observable';
     selector: 'preferences-modal',
     templateUrl: 'preferences-dialog.component.html',
     styleUrls: ['preferences-dialog.component.less'],
-    providers: [ CashflowServiceProxy, UserPreferencesService, CacheService ]
+    providers: [CashflowServiceProxy, UserPreferencesService, CacheService]
 })
 export class PreferencesDialogComponent extends CFOModalDialogComponent implements OnInit {
     GeneralScope = ModelEnums.GeneralScope;
@@ -34,6 +34,9 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
     numberFormats = [
         '-$1,000,000.0',
         '-$1.000.000.0'
+    ];
+    currencies = [
+        '$ USD US Dollars'
     ];
     constructor(
         injector: Injector,

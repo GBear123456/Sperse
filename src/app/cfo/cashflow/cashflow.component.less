@@ -48,7 +48,7 @@
             bottom: 0;
         }
     }
-    
+
     /deep/ .cashflow .dx-pivotgrid {
         overflow: visible;
 
@@ -188,6 +188,7 @@
                 z-index: 2;
                 border-top: 1px solid #ddd;
                 margin-top: -1px;
+                background: #fff;
 
                 /** upper left column */
                 .dx-area-description-cell {
@@ -316,249 +317,254 @@
                 .dx-area-row-cell table {
                     width: @left-column-width !important;
                     tr {
-                            position: relative;
-                            &:first-child td.dx-white-space-column {
-                                border-top: 0;
+                        position: relative;
+                        &:first-child td.dx-white-space-column {
+                            border-top: 0;
+                        }
+                        td {
+                            text-align: left;
+                            color: inherit;
+                            width: 23px;
+                            min-width: 23px;
+
+                            .accountNumber {
+                                font-family: Lato;
+                                float: right;
                             }
-                            td {
+
+                            &.dx-white-space-column {
+                                background: #fff;
+                                border-right: none;
+                                border-top: 1px solid @tableBorderColor;
+                                position: relative;
+                                cursor: pointer;
+
+                                &:before {
+                                    content: url('../../../assets/common/icons/collapse-icon.svg');
+                                    position: absolute;
+                                    left: 16px;
+                                    width: 16px;
+                                    top: 7px;
+                                    z-index: 1
+                                }
+
+                                &:after {
+                                    content: '';
+                                    position: absolute;
+                                    top: 22px;
+                                    left: 23px;
+                                    display: block;
+                                    border-right: 2px solid @expendedLineColor;
+                                    height: calc(~"100%" - 4px);
+                                    z-index: 1;
+                                }
+
+                                &.startedBalanceWhiteSpace {
+                                    border-top: none
+                                }
+                            }
+
+                            &.income {
+                                background: @incomeVerticalHeaderBackgroundColor;
+                            }
+
+                            &.expenses {
+                                background: @expensesVerticalHeaderBackgroundColor;
+                            }
+
+                            &.emptyChildren {
+                                cursor: default;
+                                padding-left: 43px !important;
+                            }
+
+                            &.netChange {
                                 text-align: left;
-                                color: inherit;
-                                width: 23px;
-                                min-width: 23px;
+                            }
 
-                                &.dx-white-space-column {
-                                    background: #fff;
-                                    border-right: none;
-                                    border-top: 1px solid @tableBorderColor;
+                            &.dx-last-cell {
+                                width: @left-column-width;
+                                padding-left: 22px;
+                            }
+
+                            &.descriptor {
+                                font-style: italic;
+                            }
+
+                            .dx-expand-icon-container {
+                                font: inherit;
+                                margin-right: 10px;
+
+                                &:before {
+                                    display: none;
+                                }
+
+                                .dx-expand:before {
+                                    top: auto;
+                                    left: auto;
                                     position: relative;
-                                    cursor: pointer;
-
-                                    &:before {
-                                        content: url('../../../assets/common/icons/collapse-icon.svg');
-                                        position: absolute;
-                                        left: 16px;
-                                        width: 16px;
-                                        top: 7px;
-                                        z-index: 1
-                                    }
-
-                                    &:after {
-                                        content: '';
-                                        position: absolute;
-                                        top: 22px;
-                                        left: 23px;
-                                        display: block;
-                                        border-right: 2px solid @expendedLineColor;
-                                        height: calc(~"100%" - 4px);
-                                        z-index: 1;
-                                    }
-
-                                    &.startedBalanceWhiteSpace {
-                                        border-top: none
-                                    }
+                                    width: auto;
+                                    margin: auto;
                                 }
+                            }
 
-                                &.income {
-                                    background: @incomeVerticalHeaderBackgroundColor;
+                            &.dx-pivotgrid-collapsed {
+                                .dx-expand:before {
+                                    content: url('../../../assets/common/icons/expand-icon.svg');
                                 }
+                            }
 
-                                &.expenses {
-                                    background: @expensesVerticalHeaderBackgroundColor;
-                                }
+                            &.dx-pivotgrid-expanded {
+                                position: relative;
 
-                                &.emptyChildren {
-                                    cursor: default;
-                                    padding-left: 43px !important;
-                                }
-
-                                &.netChange {
-                                    text-align: left;
-                                }
-
-                                &.dx-last-cell {
-                                    width: @left-column-width;
-                                    padding-left: 22px;
-                                }
-
-                                &.descriptor {
-                                    font-style: italic;
+                                .dx-expand:before {
+                                    content: '';
+                                    width: 7px;
+                                    border-bottom: 2px solid @expendedLineColor;
+                                    margin-left: 8px;
+                                    top: -4px;
                                 }
 
                                 .dx-expand-icon-container {
-                                    font: inherit;
-                                    margin-right: 10px;
-
-                                    &:before {
-                                        display: none;
-                                    }
-
-                                    .dx-expand:before {
-                                        top: auto;
-                                        left: auto;
-                                        position: relative;
-                                        width: auto;
-                                        margin: auto;
-                                    }
-                                }
-
-                                &.dx-pivotgrid-collapsed {
-                                    .dx-expand:before {
-                                        content: url('../../../assets/common/icons/expand-icon.svg');
-                                    }
-                                }
-
-                                &.dx-pivotgrid-expanded {
                                     position: relative;
-
-                                    .dx-expand:before {
+                                    &:after {
                                         content: '';
-                                        width: 7px;
-                                        border-bottom: 2px solid @expendedLineColor;
-                                        margin-left: 8px;
-                                        top: -4px;
-                                    }
-
-                                    .dx-expand-icon-container {
-                                        position: relative;
-                                        &:after {
-                                            content: '';
-                                            top: 6px;
-                                            position: absolute;
-                                            left: 12px;
-                                            width: 6px;
-                                            height: 6px;
-                                            border-radius: 50%;
-                                            background: @expendedLineColor;
-                                        }
-                                    }
-                                }
-                            }
-
-                            &.incomeRow, &.incomeChildRow, &.expensesRow, &.expensesChildRow {
-                                .dx-pivotgrid-collapsed .dx-expand-icon-container {
-                                    span {
-                                        width: 15px;
-                                        height: 15px;
-                                        display: inline-block;
-                                        transform: rotate(-90deg);
-                                        &:before {
-                                            bottom: 5px;
-                                        }
-                                        background: url('../../../assets/common/icons/rectangle.svg') no-repeat center;
-                                    }
-                                }
-                            }
-
-                            &.incomeChildRow, &.expensesChildRow {
-                                .dx-white-space-column {
-                                    span {
-                                        width: 10px;
-                                        height: 10px;
-                                        display: inline-block;
-                                        position: relative;
-                                        left: 18px;
                                         top: 6px;
-                                        z-index: 1;
+                                        position: absolute;
+                                        left: 12px;
+                                        width: 6px;
+                                        height: 6px;
+                                        border-radius: 50%;
+                                        background: @expendedLineColor;
                                     }
-                                    &:before {
-                                        content: url('../../../assets/common/icons/rectangle.svg');
-                                    }
-                                }
-                            }
-
-                            &.incomeRow, &.incomeChildRow {
-                                .dx-pivotgrid-expanded .dx-expand-icon-container {
-                                    span:before {
-                                        border-bottom: 2px solid #61c670!important;
-                                    }
-                                    &:after {
-                                        background: #61c670!important;
-                                    }
-                                }
-                                .dx-pivotgrid-collapsed .dx-expand-icon-container {
-                                    span{
-                                        &:before {
-                                            content: url('../../../assets/common/icons/arrow-down-green.svg');
-                                        }
-                                    }
-                                }
-                            }
-
-                            &.incomeChildRow {
-                                .dx-white-space-column {
-                                    &:after {
-                                        border-right: 2px solid #61c670!important;
-                                    }
-                                    span {
-                                        background: url('../../../assets/common/icons/arrow-down-green.svg') no-repeat center;
-                                    }
-                                }
-                            }
-
-                            &.expensesRow, &.expensesChildRow {
-                                .dx-pivotgrid-expanded .dx-expand-icon-container {
-                                    span:before {
-                                        border-bottom: 2px solid #e7326a!important;
-                                    }
-                                    &:after {
-                                        background: #e7326a!important;
-                                    }
-                                }
-                                .dx-pivotgrid-collapsed .dx-expand-icon-container {
-                                    span{
-                                        &:before {
-                                            content: url('../../../assets/common/icons/arrow-down-red.svg');
-                                        }
-                                    }
-                                }
-                            }
-                            &.expensesChildRow {
-                                .dx-white-space-column {
-                                    &:after {
-                                        border-right: 2px solid #e7326a!important;
-                                    }
-                                    span {
-                                        background: url('../../../assets/common/icons/arrow-down-red.svg') no-repeat center;
-                                    }
-                                }
-                            }
-
-                            &.startedBalance,
-                            &.incomeRow,
-                            &.expensesRow,
-                            &.netChangeRow,
-                            &.endingCashPosition {
-                                td {
-                                    letter-spacing: 0.8px;
-                                    font-weight: 600;
-                                }
-                            }
-
-                            &.startedBalance td {
-                                background: @startedBalanceBackgroundColor;
-                            }
-
-                            &.netChangeRow td {
-                                background: transparent;
-                            }
-
-                            &.endingCashPosition {
-                                td {
-                                    background: #00aff0;
-                                    color: #fff;
-                                    padding-left: 22px;
-                                }
-                            }
-
-                            &.reconciliation {
-                                td {
-                                    letter-spacing: 0.2px;
-                                    padding-left: 22px;
-                                    font-weight: 600;
-                                    background: @reconciliationVerticalHeaderBackgroundColor;
                                 }
                             }
                         }
+
+                        &.incomeRow, &.incomeChildRow, &.expensesRow, &.expensesChildRow {
+                            .dx-pivotgrid-collapsed .dx-expand-icon-container {
+                                span {
+                                    width: 15px;
+                                    height: 15px;
+                                    display: inline-block;
+                                    transform: rotate(-90deg);
+                                    &:before {
+                                        bottom: 5px;
+                                    }
+                                    background: url('../../../assets/common/icons/rectangle.svg') no-repeat center;
+                                }
+                            }
+                        }
+
+                        &.incomeChildRow, &.expensesChildRow {
+                            .dx-white-space-column {
+                                span {
+                                    width: 10px;
+                                    height: 10px;
+                                    display: inline-block;
+                                    position: relative;
+                                    left: 18px;
+                                    top: 6px;
+                                    z-index: 1;
+                                }
+                                &:before {
+                                    content: url('../../../assets/common/icons/rectangle.svg');
+                                }
+                            }
+                        }
+
+                        &.incomeRow, &.incomeChildRow {
+                            .dx-pivotgrid-expanded .dx-expand-icon-container {
+                                span:before {
+                                    border-bottom: 2px solid #61c670!important;
+                                }
+                                &:after {
+                                    background: #61c670!important;
+                                }
+                            }
+                            .dx-pivotgrid-collapsed .dx-expand-icon-container {
+                                span{
+                                    &:before {
+                                        content: url('../../../assets/common/icons/arrow-down-green.svg');
+                                    }
+                                }
+                            }
+                        }
+
+                        &.incomeChildRow {
+                            .dx-white-space-column {
+                                &:after {
+                                    border-right: 2px solid #61c670!important;
+                                }
+                                span {
+                                    background: url('../../../assets/common/icons/arrow-down-green.svg') no-repeat center;
+                                }
+                            }
+                        }
+
+                        &.expensesRow, &.expensesChildRow {
+                            .dx-pivotgrid-expanded .dx-expand-icon-container {
+                                span:before {
+                                    border-bottom: 2px solid #e7326a!important;
+                                }
+                                &:after {
+                                    background: #e7326a!important;
+                                }
+                            }
+                            .dx-pivotgrid-collapsed .dx-expand-icon-container {
+                                span{
+                                    &:before {
+                                        content: url('../../../assets/common/icons/arrow-down-red.svg');
+                                    }
+                                }
+                            }
+                        }
+                        &.expensesChildRow {
+                            .dx-white-space-column {
+                                &:after {
+                                    border-right: 2px solid #e7326a!important;
+                                }
+                                span {
+                                    background: url('../../../assets/common/icons/arrow-down-red.svg') no-repeat center;
+                                }
+                            }
+                        }
+
+                        &.startedBalance,
+                        &.incomeRow,
+                        &.expensesRow,
+                        &.netChangeRow,
+                        &.endingCashPosition {
+                            td {
+                                letter-spacing: 0.8px;
+                                font-weight: 600;
+                            }
+                        }
+
+                        &.startedBalance td {
+                            background: @startedBalanceBackgroundColor;
+                        }
+
+                        &.netChangeRow td {
+                            background: transparent;
+                        }
+
+                        &.endingCashPosition {
+                            td {
+                                background: #00aff0;
+                                color: #fff;
+                                padding-left: 22px;
+                            }
+                        }
+
+                        &.reconciliation {
+                            td {
+                                letter-spacing: 0.2px;
+                                padding-left: 22px;
+                                font-weight: 600;
+                                background: @reconciliationVerticalHeaderBackgroundColor;
+                            }
+                        }
+                    }
                 }
 
                 /** bottom right column (data cells) */
@@ -727,21 +733,18 @@
                     }
 
                     .dx-scrollable-scrollbar {
-                        bottom: -7px;
-
+                        bottom: -11px;
+                        height: 13px;
                         &.fixedScrollbar {
                             position: fixed;
                             bottom: 5px;
                             left: @left-column-width;
-                            &.withFooterToolbar {
-                                bottom: 47px;
-                            }
                         }
 
                         &.dx-state-hover,
                         &.dx-scrollable-scrollbar-hoverable,
                         &.dx-scrollable-scrollbar-active {
-                            height: 8px;
+                            height: 13px;
                         }
 
                         .dx-scrollable-scroll {
@@ -828,13 +831,13 @@
             background: none !important;
         }
     }
-    
+
     /deep/ [class*='chart'] {
         width: 65px;
         height: 18px;
         float: right;
     }
-    
+
     .cashflow {
         background-color: #fff;
         position: relative;

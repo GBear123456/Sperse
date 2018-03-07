@@ -21,7 +21,7 @@
     <div class="sort-options" [hidden]="!contentReady">
         <app-toolbar [config]="categoryToolbarConfig" [compact]="true" ></app-toolbar>
     </div>
-    <dx-scroll-view>
+    <dx-scroll-view (onScroll)="onScroll($event)">
         <div class="pivot-grid-wrapper">
             <dx-pivot-grid *ngIf="cashflowData && cashflowData.length" id="operations"
                            class="pivot-grid invisible"
