@@ -1551,6 +1551,30 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Clear cache with columns activity */
         this.cashedColumnActivity.clear();
         this.applyUserPreferencesForAreas();
+
+        $('.dx-pivotgrid-area-data').off('keydown').on('keydown', e => {
+            let nextElement;
+            switch (e.keyCode) {
+                case 37: //left
+                    nextElement = this.selectedCell.cellElement.prev();
+                    break;
+                case 38: //up
+                    nextElement = this.selectedCell.cellElement.parent().prev().find(`td:nth-child(${this.selectedCell.columnIndex + 1})`);
+                    break;
+                case 39: //right
+                    nextElement = this.selectedCell.cellElement.next();
+                    break;
+                case 40: //down
+                    nextElement = this.selectedCell.cellElement.parent().next().find(`td:nth-child(${this.selectedCell.columnIndex + 1})`);
+                    break;
+            }
+
+            if (nextElement && nextElement.length) {
+                this.pivotGrid.instance['clickCount'] = 0;
+                nextElement[0].click();
+                this.pivotGrid.instance['clickCount'] = 0;
+            }
+        });
     }
 
     onScroll(e) {
