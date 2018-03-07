@@ -188,6 +188,7 @@
                 z-index: 2;
                 border-top: 1px solid #ddd;
                 margin-top: -1px;
+                background: #fff;
 
                 /** upper left column */
                 .dx-area-description-cell {
@@ -732,21 +733,18 @@
                     }
 
                     .dx-scrollable-scrollbar {
-                        bottom: -7px;
-
+                        bottom: -11px;
+                        height: 13px;
                         &.fixedScrollbar {
                             position: fixed;
                             bottom: 5px;
                             left: @left-column-width;
-                            &.withFooterToolbar {
-                                bottom: 47px;
-                            }
                         }
 
                         &.dx-state-hover,
                         &.dx-scrollable-scrollbar-hoverable,
                         &.dx-scrollable-scrollbar-active {
-                            height: 8px;
+                            height: 13px;
                         }
 
                         .dx-scrollable-scroll {

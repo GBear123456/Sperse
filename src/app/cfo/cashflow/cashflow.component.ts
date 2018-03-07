@@ -513,6 +513,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     copiedCell;
     monthsDaysLoadedPathes = [];
     cashflowDetailsGridSessionIdentifier: string = `cashflow_forecastModel_${abp.session.tenantId}_${abp.session.userId}`;
+    private leftColumnWidth = 339;
+    private bottomToolbarHeight = 41;
 
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
@@ -560,10 +562,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.initHeadlineConfig();
         this.initFiltering();
         this.addHeaderExpandClickHandling();
-    }
-
-    @HostListener('window:resize') onResize() {
-        this.handleBottomHorizontalScrollPosition();
     }
 
     customizeFieldText(cellInfo, emptyText = null) {
@@ -1474,7 +1472,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
                 this.dataSource = this.getApiDataSource();
             }
-
+            this.handleBottomHorizontalScrollPosition();
             this.notify.info(notificationMessage);
         });
     }
@@ -1541,6 +1539,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.applyUserPreferencesForAreas();
     }
 
+    onScroll(e) {
+        this.handleHeaderPosition(e);
+        this.handleBottomHorizontalScrollPosition();
+    }
+
+    handleHeaderPosition(e) {
+        let toolbar = <HTMLElement>document.querySelector('.page-content-wrapper app-toolbar');
+        let dxToolbar = <HTMLElement>toolbar.children[0];
+        let topIntend = toolbar.offsetTop + dxToolbar.offsetHeight;
+        $('.cashflow table.dx-pivotgrid-border > tr:nth-child(3)').offset({top: Math.floor(topIntend), left: 0});
+        let scrollElement = <HTMLElement>document.querySelector('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
+        scrollElement.style.top = e.scrollOffset + e.element.height();
+    }
+
     synchronizeHeaderHeightWithCashflow() {
         let headerElement = document.getElementsByClassName('dx-area-description-cell')[0].parentElement;
         if (headerElement) {
@@ -1559,22 +1571,28 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     handleBottomHorizontalScrollPosition() {
-        let scrollElement = <HTMLElement>document.querySelector('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
-        let pivotGridElement = <HTMLElement>document.getElementsByClassName('pivot-grid')[0];
-        let toolbarElement = <HTMLElement>document.querySelector('app-toolbar .dx-toolbar ');
-        let headlineElement = <HTMLElement>document.getElementsByClassName('headline-row')[0];
-        let topBarElement = <HTMLElement>document.getElementsByTagName('top-bar')[0];
-        let viewSize = window.innerHeight - toolbarElement.offsetHeight - headlineElement.offsetHeight - topBarElement.offsetHeight;
-        if (pivotGridElement.clientHeight > viewSize) {
-            scrollElement.classList.add('fixedScrollbar');
+        let scrollElement = $('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
+        let lastRow = $('.cashflow .dx-area-data-cell tr:last-child');
+        if (lastRow && lastRow.offset().top > window.innerHeight) {
+            scrollElement.addClass('fixedScrollbar');
+            let minusValue = scrollElement.height();
             if (this.cashflowGridSettings.visualPreferences.showFooterBar) {
-                scrollElement.classList.add('withFooterToolbar');
-            } else {
-                scrollElement.classList.remove('withFooterToolbar');
+                minusValue += $('#cashflowFooterToolbar').length ? $('#cashflowFooterToolbar').height() : this.bottomToolbarHeight;
             }
+            /** Set new offset to stick the scrollbar to the bottom of the page */
+            scrollElement.offset({
+                top: window.innerHeight - minusValue,
+                left: this.leftColumnWidth
+            });
         } else {
-            scrollElement.classList.remove('fixedScrollbar', 'withFooterToolbar');
+            scrollElement.removeClass('fixedScrollbar');
+            scrollElement.css({left: 'auto', top: 'auto'});
         }
+    }
+
+    @HostListener('window:resize', ['$event']) onResize() {
+        this.synchronizeHeaderHeightWithCashflow();
+        this.handleBottomHorizontalScrollPosition();
     }
 
     getDataItemsByCell(cellObj) {
@@ -1990,8 +2008,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** @todo check */
     isSubtotalRows(cellObj) {
-        return cellObj.cell.rowPath !== undefined &&
-            cellObj.cell.type === 'Total';
+        return cellObj.cell.rowPath !== undefined && cellObj.cell.type === 'Total';
     }
 
     isTransactionRows(cellObj) {
@@ -2487,10 +2504,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         //        }
         //    }
         //}
-    }
-
-    showAccountingTypeRow(cellObj, preference) {
-        this.pivotGrid.instance.getDataSource().reload();
     }
 
     addPreferenceClass(preference) {
