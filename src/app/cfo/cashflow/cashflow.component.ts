@@ -2842,17 +2842,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
                         if (
                             /** disallow adding historical periods */
-                        cellObj.cell.columnPath[0] !== Periods.Historical &&
-                        /** allow adding for empty cells */
-                        result.length === 0 &&
-                        /** disallow adding unclassified category, but allow change or add (no descriptor) */
-                        (clickedCellPrefix || cellObj.cell.rowPath.length !== 2) &&
-                        /** disallow adding of these levels */
-                        clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
-                        clickedCellPrefix !== CategorizationPrefixes.AccountType &&
-                        clickedCellPrefix !== CategorizationPrefixes.AccountName
-                        // check feature
-                        && this.IsEnableForecastAdding()
+                            cellObj.cell.columnPath[0] !== Periods.Historical &&
+                            /** allow adding for empty cells */
+                            result.length === 0 &&
+                            /** disallow adding unclassified category, but allow change or add (no descriptor) */
+                            (clickedCellPrefix || cellObj.cell.rowPath.length !== 2) &&
+                            /** disallow adding of these levels */
+                            clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
+                            clickedCellPrefix !== CategorizationPrefixes.AccountType &&
+                            clickedCellPrefix !== CategorizationPrefixes.AccountName
+                            // check feature
+                            && this.IsEnableForecastAdding()
                         ) {
                             this.handleAddOrEdit(cellObj, result);
                         } else {
