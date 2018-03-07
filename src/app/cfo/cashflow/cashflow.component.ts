@@ -2404,7 +2404,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             () => {
                 //this.dataSource = this.getApiDataSource();
                 this.pivotGrid.instance.getDataSource().reload();
-                this.notify.success('Cell_pasted');
+                this.notify.success(this.l('Cell_pasted'));
             }
         );
     }
@@ -3032,7 +3032,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             ).subscribe(
                 res => {
                     let cellDate = this.formattingDate(savedCellObj, savedCellObj.cell.columnPath);
-                    let date = cellDate.startDate > moment() ? cellDate.startDate.add(new Date(<any>cellDate.startDate).getTimezoneOffset(), 'minutes') : moment().add(new Date().getTimezoneOffset());
+                    let date = cellDate.startDate > moment() ? moment(cellDate.startDate).add(new Date(<any>cellDate.startDate).getTimezoneOffset(), 'minutes') : moment().add(new Date().getTimezoneOffset());
                     let initialDate = cellDate.startDate > moment() ? cellDate.startDate : moment();
                     /** Update data locally */
                     if (this.currentCellOperationType === 'add') {
