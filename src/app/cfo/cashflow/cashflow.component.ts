@@ -2823,24 +2823,23 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     .subscribe(result => {
                         /**
                          * If the cell is not historical
-                         * If cell is current - if amount of results is 0 - add, 1 and it is forecast - update, >1 - show details
-                         * If cell is forecast - if amount of results is 0 - add, 1 - update, >1 - show details
+                         * If cell is current - if amount of results is 0 - add, >1 - show details
+                         * If cell is forecast - if amount of results is 0 - add, >1 - show details
                          */
                         let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
                         if (
-                            /** disallow adding or editing historical periods */
-                            cellObj.cell.columnPath[0] !== Periods.Historical &&
-                            /** allow adding for empty cells or the cells that has only one transaction and this is
-                             * forecast transaction */
-                            (result.length === 0 || (result.length === 1 && result[0].forecastId)) &&
-                            /** disallow adding or editing unclassified category, but allow change or add (no descriptor) */
-                            (clickedCellPrefix || cellObj.cell.rowPath.length !== 2) &&
-                            /** disallow adding or editing of these levels */
-                            clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
-                            clickedCellPrefix !== CategorizationPrefixes.AccountType &&
-                            clickedCellPrefix !== CategorizationPrefixes.AccountName
-                            // check feature
-                            && this.IsEnableForecastAdding()
+                            /** disallow adding historical periods */
+                        cellObj.cell.columnPath[0] !== Periods.Historical &&
+                        /** allow adding for empty cells */
+                        result.length === 0 &&
+                        /** disallow adding unclassified category, but allow change or add (no descriptor) */
+                        (clickedCellPrefix || cellObj.cell.rowPath.length !== 2) &&
+                        /** disallow adding of these levels */
+                        clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
+                        clickedCellPrefix !== CategorizationPrefixes.AccountType &&
+                        clickedCellPrefix !== CategorizationPrefixes.AccountName
+                        // check feature
+                        && this.IsEnableForecastAdding()
                         ) {
                             this.handleAddOrEdit(cellObj, result);
                         } else {
