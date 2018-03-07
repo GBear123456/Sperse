@@ -15,7 +15,7 @@ import * as _ from 'underscore';
 export class BankAccountsSelectComponent extends CFOComponentBase implements OnInit {
     private initSelectedBankAccountsTimeout: any;
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
-    @Input() targetBankAccountsTooltip = "";
+    @Input() targetBankAccountsTooltip = '';
     @Input() useGlobalCache = false;
     @Output() onBankAccountsSelected: EventEmitter<any> = new EventEmitter();
 
@@ -79,7 +79,6 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
 
     refreshSelected(bankAccountsIds: any[]) {
         let newData = [];
-        
         this.data.forEach((syncAccount, i) => {
 
             let bankAccounts = [];
@@ -145,7 +144,6 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 if (this.useGlobalCache && this._cacheService.exists(this.bankAccountsCacheKey)) {
                     let bankAccountIds = this.removeBankIds(this._cacheService.get(this.bankAccountsCacheKey));
                     this.refreshSelected(bankAccountIds);
-                
                     this.bankAccountsSelected();
                 }
             });
@@ -154,7 +152,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     getItems() {
         return this.data;
     }
-    
+
     calculateChartsScrolableHeight() {
         let contentHeight = $('dx-data-grid').height();
         if (contentHeight < 230) {
@@ -183,5 +181,5 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                     return id.substring(position + 1);
 
             });
-    }    
+    }
 }
