@@ -985,6 +985,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     loadGridDataSource() {
         this.startLoading();
         this.requestFilter.forecastModelId = this.selectedForecastModel.id;
+        /** Clear cash of loaded days */
+        this.monthsDaysLoadedPathes = [];
         /** @todo refactor - completely rewrite with using rxjs operators */
         this._cashflowServiceProxy
             .getStats(InstanceType[this.instanceType], this.instanceId, this.requestFilter)
@@ -1416,7 +1418,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     refreshDataGrid() {
         this.expandedIncomeExpense = false;
-
         this.noRefreshedAfterSync = false;
         this.initHeadlineConfig();
 
