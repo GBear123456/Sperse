@@ -27,7 +27,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
-import { CommonLookupServiceProxy, PipelineServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CommonLookupServiceProxy, LeadServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -41,7 +41,7 @@ import * as moment from 'moment';
 @Component({
     templateUrl: './leads.component.html',
     styleUrls: ['./leads.component.less'],
-    providers: [PipelineServiceProxy],
+    providers: [LeadServiceProxy],
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -74,7 +74,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private _appService: AppService,
         private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy,
-        private _pipelineService: PipelineServiceProxy) {
+        private _leadService: LeadServiceProxy) {
         super(injector);
 
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
@@ -124,7 +124,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     ngOnInit(): void {
-        this._pipelineService.getPipelinesFullData('L').subscribe(result => {
+        this._leadService.getFiltersInitialData().subscribe(result => {
             this._filtersService.setup(this.filters = [
                 new FilterModel({
                     component: FilterCheckBoxesComponent,
@@ -132,9 +132,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource: FilterHelpers.ConvertPipelinesToTreeSource(result),
+                                dataSource: FilterHelpers.ConvertPipelinesToTreeSource(result.pipelines),
                                 nameField: 'name',
-                                parentExpr: 'parentId',
+                                keyExpr: 'id'
+                            })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    caption: 'LeadType',
+                    field: 'LeadTypeId',
+                    items: {
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource: result.leadTypes,
+                                nameField: 'name',
                                 keyExpr: 'id'
                             })
                     }
@@ -383,6 +395,23 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         let data = {};
         if (filter.items.element) {
             let filterData = FilterHelpers.ParsePipelineIds(filter.items.element.value);
+            data = {
+                or: filterData
+            };
+        }
+
+        return data;
+    }
+
+    filterByLeadType(filter: FilterModel) {
+        let data = {};
+        if (filter.items.element && filter.items.element.value) {
+            let filterData = _.map(filter.items.element.value, x => {
+                let el = {};
+                el[filter.field] = x;
+                return el;
+            });
+
             data = {
                 or: filterData
             };
