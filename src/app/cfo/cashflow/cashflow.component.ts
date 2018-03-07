@@ -1442,9 +1442,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             preferencesObservable = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
             notificationMessage = this.l('SavedSuccessfully');
         }
-        preferencesObservable.subscribe(result => {
+        preferencesObservable.subscribe((result: CashFlowGridSettingsDto) => {
             let updateWithNetChange = result.general.showNetChangeRow !== this.cashflowGridSettings.general.showNetChangeRow;
             let updateAfterAccountingTypeShowingChange = result.general.showAccountingTypeRow !== this.cashflowGridSettings.general.showAccountingTypeRow;
+            let updateWithDiscrepancyChange = result.general.showBalanceDiscrepancy !== this.cashflowGridSettings.general.showBalanceDiscrepancy;
             this.handleGetCashflowGridSettingsResult(result);
             this.expandedIncomeExpense = false;
             this.closeTransactionsDetail();
@@ -1453,25 +1454,33 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
              *  appliedTo data methods before reloading the cashflow
              */
             /** @todo move to the userPreferencesHandlers to avoid if else structure */
-            if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange) {
+            if (updateWithDiscrepancyChange) {
+                this.pivotGrid.instance.getDataSource().reload();
+            }
+            if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange && !updateWithDiscrepancyChange) {
                 this.pivotGrid.instance.repaint();
             } else {
-                if (updateWithNetChange) {
-                    /** If user choose to show net change - then add stub data to data source */
-                    if (result.general.showNetChangeRow) {
-                        this.cashflowData = this.cashflowData.concat(this.getStubForNetChange(this.cashflowData));
-                        /** else - remove the stubbed net change data from data source */
-                    } else {
-                        this.cashflowData = this.cashflowData.filter(item => item.cashflowTypeId !== NetChange);
+                if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange) {
+                    this.pivotGrid.instance.getDataSource().reload();
+                }
+                else {
+                    if (updateWithNetChange) {
+                        /** If user choose to show net change - then add stub data to data source */
+                        if (result.general.showNetChangeRow) {
+                            this.cashflowData = this.cashflowData.concat(this.getStubForNetChange(this.cashflowData));
+                            /** else - remove the stubbed net change data from data source */
+                        } else {
+                            this.cashflowData = this.cashflowData.filter(item => item.cashflowTypeId !== NetChange);
+                        }
                     }
-                }
 
-                if (updateAfterAccountingTypeShowingChange) {
-                    this.cashflowData.forEach(item => {
-                        this.addCategorizationLevels(item);
-                    });
+                    if (updateAfterAccountingTypeShowingChange) {
+                        this.cashflowData.forEach(item => {
+                            this.addCategorizationLevels(item);
+                        });
+                    }
+                    this.dataSource = this.getApiDataSource();
                 }
-                this.dataSource = this.getApiDataSource();
             }
             this.handleBottomHorizontalScrollPosition();
             this.notify.info(notificationMessage);
@@ -3213,6 +3222,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     calculateSummaryValue() {
         return summaryCell => {
 
+            if (!this.cashflowGridSettings.general.showBalanceDiscrepancy && this.isCellDiscrapencyCell(summaryCell)) {
+                return null;
+            }
+
             /** To hide rows that not correspond to the search */
             if (this.filterBy && summaryCell.field('row')) {
                 if (!this.rowFitsToFilter(summaryCell, this.filterBy)) {
@@ -3569,9 +3582,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === (CategorizationPrefixes.CashflowType + StartedBalance);
     }
 
-    isCellIsStartingBalanceSummary(summaryCell) {
+    isCellIsStartingBalanceSummary(summaryCell): boolean {
+        return this.checkCellType(summaryCell, StartedBalance);
+    }
+
+    isCellDiscrapencyCell(summaryCell): boolean {
+        return this.checkCellType(summaryCell, Reconciliation);
+    }
+
+    checkCellType(summaryCell, type): boolean {
         return summaryCell.field('row') !== null &&
-            summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + StartedBalance);
+            summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + Reconciliation);
     }
 
     cellRowIsNotEmpty(summaryCell) {
