@@ -67,7 +67,9 @@
                         <dxi-column dataField="Id" cssClass="tabular id-column" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="0" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankCode" caption="{{l('Transactions_BankCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="IsPending" caption="{{l('Transactions_IsPending')}}" [visible]="false" cellTemplate="isPendingTemplate"></dxi-column>
-                        <dxi-column dataField="BankAccountTypeName" caption="{{l('Transactions_BankAccountType')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Debit" cssClass="tabular" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Credit" cssClass="tabular" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate" [visible]="false"></dxi-column>
+                                                <dxi-column dataField="BankAccountTypeName" caption="{{l('Transactions_BankAccountType')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="Currency" caption="{{l('Transactions_Currency')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankAccountBankName" caption="{{l('Transactions_BankName')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="Fees" cssClass="tabular" caption="{{l('Transactions_Fees')}}" [visible]="false"></dxi-column>
@@ -77,7 +79,7 @@
                         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
 
                         <div *dxTemplate="let cell of 'amountTemplate'">
-                            <ng-container *ngIf="(cell.text) && (cell.column.name == 'Amount') ">
+                            <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit'))">
                                 <span [ngClass]="cell.value < 0 ? 'negative-values' : 'positive-values'"> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
                             </ng-container>
                         </div>

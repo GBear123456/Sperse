@@ -268,9 +268,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             dataField: 'amount',
             dataType: 'number',
             summaryType: 'sum',
-            format: {
-                type: 'currency',
-                precision: 2
+            format: (value) => {
+                return this.formatAsCurrencyWithLocale(value, 'en-EN');
             },
             area: 'data',
             showColumnTotals: true,
@@ -1551,6 +1550,30 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Clear cache with columns activity */
         this.cashedColumnActivity.clear();
         this.applyUserPreferencesForAreas();
+
+        $('.dx-pivotgrid-area-data').off('keydown').on('keydown', e => {
+            let nextElement;
+            switch (e.keyCode) {
+                case 37: //left
+                    nextElement = this.selectedCell.cellElement.prev();
+                    break;
+                case 38: //up
+                    nextElement = this.selectedCell.cellElement.parent().prev().find(`td:nth-child(${this.selectedCell.columnIndex + 1})`);
+                    break;
+                case 39: //right
+                    nextElement = this.selectedCell.cellElement.next();
+                    break;
+                case 40: //down
+                    nextElement = this.selectedCell.cellElement.parent().next().find(`td:nth-child(${this.selectedCell.columnIndex + 1})`);
+                    break;
+            }
+
+            if (nextElement && nextElement.length) {
+                this.pivotGrid.instance['clickCount'] = 0;
+                nextElement[0].click();
+                this.pivotGrid.instance['clickCount'] = 0;
+            }
+        });
     }
 
     onScroll(e) {
@@ -2489,8 +2512,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (cellType) {
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
             if (!isCellMarked) {
-                let valueWithDecimals = cellObj.cellElement.text();
-                cellObj.cellElement.text(valueWithDecimals.slice(0, valueWithDecimals.length - 3));
+                cellObj.cellElement.text(this.formatAsCurrencyWithLocale(Math.round(cellObj.cell.value), 'en-EN', 0));
+                /** add title to the cells that has too little value and showen as 0 to show the real value on hover */
+                if (cellObj.cell.value > -1 && cellObj.cell.value < 1 && cellObj.cell.value !== 0 && Math.abs(cellObj.cell.value) >= 0.01) {
+                    cellObj.cellElement.attr('title', this.formatAsCurrencyWithLocale(cellObj.cell.value, 'en-EN', 2));
+                }
             }
         }
     }
@@ -2499,7 +2525,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let cellType = this.getCellType(cellObj);
         if (cellType) {
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
-            if (isCellMarked && cellObj.cell.value === 0) {
+            if (isCellMarked && (cellObj.cell.value > -0.01 && cellObj.cell.value <= 0)) {
                 cellObj.cellElement.text('');
                 cellObj.cellElement.addClass('hideZeroValues');
             }
@@ -2510,7 +2536,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let cellType = this.getCellType(cellObj);
         if (cellType) {
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
-            if (isCellMarked && cellObj.cell.value < 0) {
+            if (isCellMarked && (cellObj.cell.value > -0.01 && cellObj.cell.value < 0)) {
                 cellObj.cellElement.addClass('red');
             }
         }
@@ -2559,15 +2585,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     reformatCell(cellObj, preference) {
-        const locale = preference.sourceValue.indexOf('.') <= 3 ? 'es-BO' : 'en-EN';
+        const locale = preference.sourceValue.indexOf('.') <= 3 ? 'en-EN' : 'tr';
         if (!cellObj.cellElement.hasClass('hideZeroActivity') &&
             !cellObj.cellElement.hasClass('hideZeroValues') &&
             cellObj.cell.value) {
-            cellObj.cellElement.text(cellObj.cell.value.toLocaleString(locale, {
-                style: 'currency',
-                currency: this.currencyId
-            }));
+            cellObj.cellElement.text(this.formatAsCurrencyWithLocale(cellObj.cell.value, locale));
         }
+    }
+
+    formatAsCurrencyWithLocale(value: number, locale: string, fractionDigits = 2) {
+        value = value > -0.01 && value <= 0 ? 0 : value;
+        return value.toLocaleString(locale, {
+            style: 'currency',
+            currency: this.currencyId,
+            maximumFractionDigits: fractionDigits,
+            minimumFractionDigits: fractionDigits
+        });
     }
 
     hideFooterBar() {
@@ -2883,7 +2916,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             clickedCellPrefix !== CategorizationPrefixes.AccountType &&
                             clickedCellPrefix !== CategorizationPrefixes.AccountName
                             // check feature
-                            && this.IsEnableForecastAdding()
+                            && this.isEnableForecastAdding()
                         ) {
                             this.handleAddOrEdit(cellObj, result);
                         } else {
@@ -2943,7 +2976,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return StatsDetailFilter.fromJS(filterParams);
     }
 
-    IsEnableForecastAdding() {
+    isEnableForecastAdding() {
         if (!abp.session.tenantId)
             return true;
 

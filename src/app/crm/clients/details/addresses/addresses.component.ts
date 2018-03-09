@@ -4,8 +4,8 @@ import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.co
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { MatDialog } from '@angular/material';
-import { CustomersServiceProxy, ContactAddressServiceProxy, ContactInfoBaseDto, CountryDto, CountryServiceProxy,
-  ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput } from '@shared/service-proxies/service-proxies';
+import { CustomersServiceProxy, ContactAddressServiceProxy, CountryDto, CountryServiceProxy,
+  ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput, ContactInfoDetailsDto } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -15,7 +15,7 @@ import * as _ from 'underscore';
   styleUrls: ['./addresses.component.less']
 })
 export class AddressesComponent extends AppComponentBase implements OnInit {
-  @Input() contactInfoData: ContactInfoBaseDto;
+  @Input() contactInfoData: ContactInfoDetailsDto;
 
   types: Object = {};
   country: string;
@@ -77,7 +77,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     let dialogData = _.pick(address || {}, 'id', 'city',
       'comment', 'country', 'isActive', 'isConfirmed',
       'state', 'streetAddress', 'usageTypeId', 'zip');
-    dialogData.contactId = this.contactInfoData.id;
+    dialogData.contactId = this.contactInfoData.contactId;
     dialogData.deleteItem = (event) => {
       this.deleteAddress(address, event, index);
     };
@@ -127,7 +127,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
       if (result) {
         this.dialog.closeAll();
         this._addressService.deleteContactAddress(
-          this.contactInfoData.id, address.id).subscribe(result => {
+          this.contactInfoData.contactId, address.id).subscribe(result => {
             this.contactInfoData.addresses.splice(index, 1);
           });
       }
@@ -183,7 +183,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         ) {
           this.updateDataField(address, {
             id: address.id,
-            contactId: this.contactInfoData.id,
+            contactId: this.contactInfoData.contactId,
             city: this.city,
             country: this.country,
             isActive: address.isActive,
