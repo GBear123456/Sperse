@@ -32,6 +32,7 @@ import * as moment from 'moment';
 
 import query from 'devextreme/data/query';
 import DataSource from 'devextreme/data/data_source';
+import { CategorizationComponent } from 'app/cfo/transactions/categorization/categorization.component';
 
 
 @Component({
@@ -42,6 +43,7 @@ import DataSource from 'devextreme/data/data_source';
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
 
     noRefreshedAfterSync: boolean;
     items: any;
@@ -400,8 +402,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.defaultSubaccountTooltipVisible = !this.defaultSubaccountTooltipVisible;
     }
     applyTotalFilters(classified: boolean, credit: boolean, debit: boolean) {
-        var classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
-        var amountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'Amount'; });
+        let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
+        let amountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'Amount'; });
 
         if (classified) {
             classifiedFilter.items['yes'].setValue(true, classifiedFilter);
@@ -427,7 +429,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.filtersService.change(classifiedFilter);
     }
-
+    
+    clearClassifiedFilter() {
+        let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
+        classifiedFilter.items['yes'].setValue(false, classifiedFilter);
+        classifiedFilter.items['no'].setValue(false, classifiedFilter);
+        this.filtersService.change(classifiedFilter);
+    }
     ngOnInit(): void {
         super.ngOnInit();
 
@@ -573,7 +581,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.filtersService.apply(() => {
             this.initToolbarConfig();
-            this.processFilterInternal();
+            let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
+            if (this.selectedCashflowCategoryKey && classifiedFilter.items['no'].value === true && classifiedFilter.items['yes'].value !== true) {
+                this.cashFlowCategoryFilter = [];
+                this.categorizationComponent.clearSelection(false);
+                this.processFilterInternal();
+                this.selectedCashflowCategoryKey = null;
+            } else {
+                this.processFilterInternal();
+            }
         });
     }
 
@@ -733,7 +749,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     items: field
                 })
             ];
-
+            this.clearClassifiedFilter();
             this.processFilterInternal();
         }
         else if (this.selectedCashflowCategoryKey) {
