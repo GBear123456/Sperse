@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { GroupbyItem } from './models/groupbyItem';
+import { IGroupbyItem } from './models/groupbyItem';
 
 import {
     CashflowServiceProxy,
@@ -46,6 +46,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { MatDialog } from '@angular/material';
 import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
 import * as ModelEnums from './models/setting-enums';
+import { IExpandLevel } from './models/expand-level';
 import * as $ from 'jquery';
 
 import { CacheService } from 'ng2-cache-service';
@@ -170,7 +171,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     ];
     /** posible groupIntervals year, quarter, month, dayofweek, day */
-    groupbyItems: GroupbyItem[] = [
+    groupbyItems: IGroupbyItem[] = [
         {
             'groupInterval': 'year',
             'optionText': this.l('Years').toUpperCase(),
@@ -412,6 +413,24 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         [ModelEnums.GeneralScope.EndingBalances]: this.isAllTotalBalanceCell
     };
     cashflowGridSettings: CashFlowGridSettingsDto;
+    expandLevels: IExpandLevel[] = [
+        {
+            action: this.togglePivotGridRows.bind(this),
+            text: this.l('Level 1'),
+        }, {
+            action: this.togglePivotGridRows.bind(this),
+            text: this.l('Level 2'),
+        }, {
+            action: this.togglePivotGridRows.bind(this),
+            text: this.l('Level 3'),
+        }, {
+            action: this.togglePivotGridRows.bind(this),
+            text: this.l('All'),
+        }, {
+            action: this.togglePivotGridRows.bind(this),
+            text: this.l('None'),
+        }
+    ];
     categoryToolbarConfig = [
         {
             location: 'center', items: [
@@ -467,23 +486,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     widget: 'dxDropDownMenu',
                     options: {
                         hint: this.l('Expand'),
-                        items: [{
-                                action: this.togglePivotGridRows.bind(this),
-                                text: this.l('Level 1'),
-                            }, {
-                                action: this.togglePivotGridRows.bind(this),
-                                text: this.l('Level 2'),
-                            }, {
-                                action: this.togglePivotGridRows.bind(this),
-                                text: this.l('Level 3'),
-                            }, {
-                                action: this.togglePivotGridRows.bind(this),
-                                text: this.l('All'),
-                            }, {
-                                action: this.togglePivotGridRows.bind(this),
-                                text: this.l('None'),
-                            }
-                        ]
+                        items: this.expandLevels
                     }
                 }
             ]
@@ -1822,8 +1825,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     changeGroupBy(event) {
         this.startLoading();
-        let date = new Date();
-        console.log('start:', `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
         let itemIndex = event.itemData.itemIndex !== undefined ? event.itemData.itemIndex : event.itemIndex,
             value = this.groupbyItems[itemIndex],
             startedGroupInterval = value.groupInterval;
@@ -1865,6 +1866,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             case 2:
                 source = this.pivotGrid.instance.getDataSource().getData();
                 this.expandRows(source, levelIndex);
+                this.pivotGrid.instance.getDataSource().collapseAll(levelIndex + 1);
                 break;
             case 3:
                 source = this.pivotGrid.instance.getDataSource().getData();
@@ -1885,7 +1887,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (!source || (!source.children && !source.rows))
             return;
         let rows = source.rows ? source.rows : source.children;
-        for (let child of rows ){
+        for (let child of rows){
             let childPath = path.slice();
             childPath.push(child.value);
             if (this.hasChildsByPath(childPath)) {
