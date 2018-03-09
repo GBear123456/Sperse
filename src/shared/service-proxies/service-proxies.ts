@@ -17357,7 +17357,9 @@ export interface IBankAccountDailyStatDto {
 }
 
 export class DiscardDiscrepancyInput implements IDiscardDiscrepancyInput {
+    bankIds: number[];
     bankAccountIds: number[];
+    currencyId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     adjustmentId: number;
@@ -17373,11 +17375,17 @@ export class DiscardDiscrepancyInput implements IDiscardDiscrepancyInput {
 
     init(data?: any) {
         if (data) {
+            if (data["bankIds"] && data["bankIds"].constructor === Array) {
+                this.bankIds = [];
+                for (let item of data["bankIds"])
+                    this.bankIds.push(item);
+            }
             if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
                 this.bankAccountIds = [];
                 for (let item of data["bankAccountIds"])
                     this.bankAccountIds.push(item);
             }
+            this.currencyId = data["currencyId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.adjustmentId = data["adjustmentId"];
@@ -17392,11 +17400,17 @@ export class DiscardDiscrepancyInput implements IDiscardDiscrepancyInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        if (this.bankIds && this.bankIds.constructor === Array) {
+            data["bankIds"] = [];
+            for (let item of this.bankIds)
+                data["bankIds"].push(item);
+        }
         if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
             data["bankAccountIds"] = [];
             for (let item of this.bankAccountIds)
                 data["bankAccountIds"].push(item);
         }
+        data["currencyId"] = this.currencyId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["adjustmentId"] = this.adjustmentId;
@@ -17405,7 +17419,9 @@ export class DiscardDiscrepancyInput implements IDiscardDiscrepancyInput {
 }
 
 export interface IDiscardDiscrepancyInput {
+    bankIds: number[];
     bankAccountIds: number[];
+    currencyId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     adjustmentId: number;
