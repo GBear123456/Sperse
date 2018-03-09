@@ -28,10 +28,8 @@ export class EditContactDialog extends AppComponentBase {
   movePos: any;
 
   isEditAllowed: boolean = false;
-  private readonly INPUT_MASK = {
-    phone: '(000) 000-0000',
-    phoneExtension: '0000000000'
-  }
+
+  masks = AppConsts.masks;
 
   constructor(
     injector: Injector,
@@ -72,10 +70,6 @@ export class EditContactDialog extends AppComponentBase {
   focusInput(event) {
     if (!(event.component._value && event.component._value.trim())) {
       let input = event.jQueryEvent.originalEvent.target;
-      event.component.option({
-        mask: this.INPUT_MASK[input.name],
-        isValid: true
-      });
       setTimeout(function(){
         if (input.createTextRange) {
           let part = input.createTextRange();

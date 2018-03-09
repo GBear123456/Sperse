@@ -11,6 +11,7 @@
                                       [columnAutoWidth]="true"
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
+                                      [pager]="defaultGridPagerConfig"
                                       (onContentReady)="onContentReady($event)"
                                       (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                             <dxo-selection selectAllMode="page"
@@ -32,7 +33,12 @@
                             <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
                             <dxi-column dataField="State" caption="{{l('Contact.State')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="Email" caption="{{l('Contact.Email')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" [visible]="false" cellTemplate="phoneCell" 
+                                [editorOptions]="{
+                                    mask: masks.phone,
+                                    maskInvalidMessage: l('PhoneValidationError')
+                                }">
+                            </dxi-column>
                             <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
                             <dxi-column dataField="Amount" caption="{{l('Amount')}}"></dxi-column>
                             <dxi-column dataField="OrderType" caption="{{l('Type')}}"></dxi-column>
@@ -46,12 +52,11 @@
                             <dxo-sorting mode="multiple"></dxo-sorting>
                             <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-paging [pageSize]="20"></dxo-paging>
-                            <dxo-pager [showPageSizeSelector]="true"
-                                       [allowedPageSizes]="[20, 100, 500, 1000, 5000]"
-                                       [showInfo]="true">
-                            </dxo-pager>
+                            <div *dxTemplate="let cellData of 'phoneCell'">
+                                {{cellData.value | phone}}
+                            </div>
                             <div *dxTemplate="let cellData of 'dateCell'">
-                                {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
+                                {{cellData.value | date: formatting.date}}
                             </div>
                         </dx-data-grid>
 				    </div>

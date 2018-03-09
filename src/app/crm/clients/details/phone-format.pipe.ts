@@ -7,6 +7,6 @@ export class PhoneFormatPipe implements PipeTransform {
   transform(s, args) {
     let s2 = (''+s).replace(/\D/g, '');
     let m = s2.match(/^(\d{3})(\d{3})(\d{4})$/);
-    return (!m) ? null : '(' + m[1] + ') ' + m[2] + '-' + m[3];
+    return (!m) ? null : '+1 (' + m[1] + ')-' + m[2] + '-' + m[3];
   }
 }

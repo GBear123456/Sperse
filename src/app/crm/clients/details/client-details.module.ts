@@ -21,20 +21,21 @@ import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.com
 import { SocialsComponent } from './socials/socials.component';
 import { ContactsComponent } from './contacts/contacts.component';
 import { AddressesComponent } from './addresses/addresses.component';
+import { EmploymentComponent } from './employment/employment.component';
 import { ClientScoresComponent } from './client-scores/client-scores.component';
 import { TotalApprovedComponent } from './total-approved/total-approved.component';
 import { CreditLinesComponent } from './credit-lines/credit-lines.component';
 import { RequiredDocumentsComponent } from './required-documents/required-documents.component';
 import { ContactInformationComponent } from './contact-information/contact-information.component';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
-import { ContactPersonsDialogComponent }  from './contact-persons-dialog/contact-persons-dialog.component';
+import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
 
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
   ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
-  OrganizationTypeServiceProxy } from '@shared/service-proxies/service-proxies';
+  OrganizationTypeServiceProxy, ContactEmploymentServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import { PhoneFormatPipe } from './phone-format.pipe';
 
@@ -49,6 +50,7 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     SocialsComponent,
     ContactsComponent,
     AddressesComponent,
+    EmploymentComponent,
     ClientScoresComponent,
     TotalApprovedComponent,
     CreditLinesComponent,
@@ -84,7 +86,8 @@ import { PhoneFormatPipe } from './phone-format.pipe';
   exports: [
     ClientDetailsComponent,
     ContactInformationComponent,
-    RequiredDocumentsComponent
+    RequiredDocumentsComponent,
+    PhoneFormatPipe
   ],
   entryComponents: [
     EditContactDialog,
@@ -102,6 +105,7 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     ContactPhoneServiceProxy,
     ContactLinkServiceProxy,
     CustomersServiceProxy,
+    ContactEmploymentServiceProxy,
     MemberServiceProxy,
     OrganizationContactServiceProxy,
     OrganizationTypeServiceProxy

@@ -25,10 +25,7 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     client: CreateCustomerInput = new CreateCustomerInput();
     profilePicture: string;
 
-    readonly INPUT_MASK = {
-        Ssn: '000-00-0000',
-        PhoneNumber: '(000) 000-0000'
-    }
+    private masks = AppConsts.masks;
 
     constructor(
         injector: Injector,
@@ -135,11 +132,6 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     focusInput(event) {
         if (!(event.component._value && event.component._value.trim())) {
             let input = event.jQueryEvent.originalEvent.target;
-            event.component.option({
-                mask: this.INPUT_MASK[input.name],
-                maskRules: { 'D': /\d?/ },
-                isValid: true
-            });
             setTimeout(function () {
                 if (input.createTextRange) {
                     let part = input.createTextRange();

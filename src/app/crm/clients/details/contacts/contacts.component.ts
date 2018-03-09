@@ -18,6 +18,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
 
   isEditAllowed = false;
 
+  private masks = AppConsts.masks;
+
+  private _isInPlaceEditAllowed = true;
+  private _itemInEditMode: any;
+
   constructor(
     injector: Injector,
     public dialog: MatDialog,
@@ -98,6 +103,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
           dataItem[field] = updatedData[field];
           dataItem.comment = updatedData.comment;
           dataItem.usageTypeId = updatedData.usageTypeId;
+          dataItem.isConfirmed = updatedData.isConfirmed;
+          dataItem.isActive = updatedData.isActive;
           if (isPhoneDialog)
             dataItem.phoneExtension =
               updatedData['phoneExtension'];
@@ -117,8 +124,17 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
 
   inPlaceEdit(field, item, event, index) {
     if (this.isEditAllowed) {
+
+      if (!this._isInPlaceEditAllowed)
+        return;
+
       item.inplaceEdit = true;
       item.original = item[field];
+
+      if (this._itemInEditMode && this._itemInEditMode != item)
+        this._itemInEditMode.inplaceEdit = false;
+
+      this._itemInEditMode = item;
     } else
       this.showDialog(field, item, event, index);
   }
@@ -126,6 +142,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
   closeInPlaceEdit(field, item) {
     item.inplaceEdit = false;
     item[field] = item.original;
+    this._isInPlaceEditAllowed = true;
+  }
+
+  itemValueChanged(field, item) {
+    this._isInPlaceEditAllowed = item[field] == item.original;
   }
 
   updateItem(field, item, event) {
@@ -133,6 +154,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
       if (item[field] != item.original)
         this.updateDataField(field, item, item);
       item.inplaceEdit = false;
+      this._isInPlaceEditAllowed = true;
     }
   }
 

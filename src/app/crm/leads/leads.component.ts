@@ -57,6 +57,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
 
+    private masks = AppConsts.masks;
+    private formatting = AppConsts.formatting;
+
     public headlineConfig = {
         names: [this.l('Leads')],
         icon: 'basket',

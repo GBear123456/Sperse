@@ -1,6 +1,6 @@
 <mat-dialog-content>
     <div class="contact-persons-container">
-        <h5>Related or similar contacts</h5>
+        <h5>{{l('RelatedOrSimilarContacts')}}</h5>
         <div class="contact-person-info" *ngFor="let contactPerson of contactPersonsFiltered" (click)='selectContactPerson(contactPerson)'>
             <div class="avatar">
                 <div class="active"></div>

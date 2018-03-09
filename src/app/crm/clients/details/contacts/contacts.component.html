@@ -9,7 +9,7 @@
       </div>
       <div *ngIf="email.inplaceEdit" class="inplace-edit-wrapper">
         <dx-validation-group>
-          <dx-text-box placeholder="" [(value)]="email.emailAddress">
+          <dx-text-box placeholder="" [(value)]="email.emailAddress" (onValueChanged)="itemValueChanged('emailAddress', email)">
             <dx-validator>
               <dxi-validation-rule type="required" message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
               <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
@@ -30,7 +30,7 @@
     </ul>
     <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
       <dx-validation-group>
-        <dx-text-box placeholder="" mask="(000) 000-0000" [(value)]="phone.phoneNumber">
+        <dx-text-box placeholder="" mask="{{masks.phone}}" maskInvalidMessage="{{l('PhoneValidationError')}}" [(value)]="phone.phoneNumber">
           <dx-validator>
             <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
           </dx-validator>
