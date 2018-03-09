@@ -73,7 +73,6 @@ export class OrganizationDialogComponent extends AppComponentBase {
     loadOrgTypes() {
         this._orgTypeService.getOrganizationTypes().subscribe(result => {
             this.orgTypes.options = result.map((v, i, a) => { return { id: v.id, name: v.name } });
-            debugger;
             var currentType = this.data.organization.typeId;
             if (currentType != null)
                 this.orgTypes.value = currentType;

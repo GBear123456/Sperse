@@ -408,8 +408,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     filterByLeadType(filter: FilterModel) {
         let data = {};
-        if (filter.items.element && filter.items.element.value) {
-            let filterData = _.map(filter.items.element.value, x => {
+        let element = filter.items.element;
+        if (element && element.value) {
+            let filterData = _.map(element.value, x => {
                 let el = {};
                 el[filter.field] = x;
                 return el;

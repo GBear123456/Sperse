@@ -821,13 +821,14 @@ export class BankAccountsServiceProxy {
      * @instanceType (optional) 
      * @instanceId (optional) 
      * @forecastModelId (optional) 
+     * @banks (optional) 
      * @accounts (optional) 
      * @startDate (optional) 
      * @endDate (optional) 
      * @maxCount (optional) 
      * @return Success
      */
-    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
+    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, banks: number[], accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -839,6 +840,8 @@ export class BankAccountsServiceProxy {
             url_ += "Currency=" + encodeURIComponent("" + currency) + "&"; 
         if (forecastModelId !== undefined)
             url_ += "ForecastModelId=" + encodeURIComponent("" + forecastModelId) + "&"; 
+        if (banks !== undefined)
+            banks && banks.forEach(item => { url_ += "Banks=" + encodeURIComponent("" + item) + "&"; });
         if (accounts !== undefined)
             accounts && accounts.forEach(item => { url_ += "Accounts=" + encodeURIComponent("" + item) + "&"; });
         if (startDate !== undefined)
@@ -4346,7 +4349,7 @@ export class ContactServiceProxy {
     /**
      * @return Success
      */
-    getContactInfoByUser(userId: number): Observable<ContactInfoBaseDto> {
+    getContactInfoByUser(userId: number): Observable<ContactShortInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactInfoByUser?";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined and cannot be null.");
@@ -4369,14 +4372,14 @@ export class ContactServiceProxy {
                 try {
                     return this.processGetContactInfoByUser(response_);
                 } catch (e) {
-                    return <Observable<ContactInfoBaseDto>><any>Observable.throw(e);
+                    return <Observable<ContactShortInfoDto>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<ContactInfoBaseDto>><any>Observable.throw(response_);
+                return <Observable<ContactShortInfoDto>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetContactInfoByUser(response: Response): Observable<ContactInfoBaseDto> {
+    protected processGetContactInfoByUser(response: Response): Observable<ContactShortInfoDto> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -4384,13 +4387,13 @@ export class ContactServiceProxy {
             const _responseText = response.text();
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ContactInfoBaseDto.fromJS(resultData200) : new ContactInfoBaseDto();
+            result200 = resultData200 ? ContactShortInfoDto.fromJS(resultData200) : new ContactShortInfoDto();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<ContactInfoBaseDto>(<any>null);
+        return Observable.of<ContactShortInfoDto>(<any>null);
     }
 }
 
@@ -9906,7 +9909,7 @@ export class OrganizationContactServiceProxy {
     /**
      * @return Success
      */
-    getContactInfoByUser(userId: number): Observable<ContactInfoBaseDto> {
+    getContactInfoByUser(userId: number): Observable<ContactShortInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetContactInfoByUser?";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined and cannot be null.");
@@ -9929,14 +9932,14 @@ export class OrganizationContactServiceProxy {
                 try {
                     return this.processGetContactInfoByUser(response_);
                 } catch (e) {
-                    return <Observable<ContactInfoBaseDto>><any>Observable.throw(e);
+                    return <Observable<ContactShortInfoDto>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<ContactInfoBaseDto>><any>Observable.throw(response_);
+                return <Observable<ContactShortInfoDto>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetContactInfoByUser(response: Response): Observable<ContactInfoBaseDto> {
+    protected processGetContactInfoByUser(response: Response): Observable<ContactShortInfoDto> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -9944,13 +9947,13 @@ export class OrganizationContactServiceProxy {
             const _responseText = response.text();
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ContactInfoBaseDto.fromJS(resultData200) : new ContactInfoBaseDto();
+            result200 = resultData200 ? ContactShortInfoDto.fromJS(resultData200) : new ContactShortInfoDto();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<ContactInfoBaseDto>(<any>null);
+        return Observable.of<ContactShortInfoDto>(<any>null);
     }
 }
 
@@ -10887,7 +10890,7 @@ export class PersonContactServiceProxy {
     /**
      * @return Success
      */
-    getContactInfoByUser(userId: number): Observable<ContactInfoBaseDto> {
+    getContactInfoByUser(userId: number): Observable<ContactShortInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonContact/GetContactInfoByUser?";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined and cannot be null.");
@@ -10910,14 +10913,14 @@ export class PersonContactServiceProxy {
                 try {
                     return this.processGetContactInfoByUser(response_);
                 } catch (e) {
-                    return <Observable<ContactInfoBaseDto>><any>Observable.throw(e);
+                    return <Observable<ContactShortInfoDto>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<ContactInfoBaseDto>><any>Observable.throw(response_);
+                return <Observable<ContactShortInfoDto>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetContactInfoByUser(response: Response): Observable<ContactInfoBaseDto> {
+    protected processGetContactInfoByUser(response: Response): Observable<ContactShortInfoDto> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -10925,13 +10928,13 @@ export class PersonContactServiceProxy {
             const _responseText = response.text();
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ContactInfoBaseDto.fromJS(resultData200) : new ContactInfoBaseDto();
+            result200 = resultData200 ? ContactShortInfoDto.fromJS(resultData200) : new ContactShortInfoDto();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<ContactInfoBaseDto>(<any>null);
+        return Observable.of<ContactShortInfoDto>(<any>null);
     }
 }
 
@@ -17357,7 +17360,9 @@ export interface IBankAccountDailyStatDto {
 }
 
 export class DiscardDiscrepancyInput implements IDiscardDiscrepancyInput {
+    bankIds: number[];
     bankAccountIds: number[];
+    currencyId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     adjustmentId: number;
@@ -17373,11 +17378,17 @@ export class DiscardDiscrepancyInput implements IDiscardDiscrepancyInput {
 
     init(data?: any) {
         if (data) {
+            if (data["bankIds"] && data["bankIds"].constructor === Array) {
+                this.bankIds = [];
+                for (let item of data["bankIds"])
+                    this.bankIds.push(item);
+            }
             if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
                 this.bankAccountIds = [];
                 for (let item of data["bankAccountIds"])
                     this.bankAccountIds.push(item);
             }
+            this.currencyId = data["currencyId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.adjustmentId = data["adjustmentId"];
@@ -17392,11 +17403,17 @@ export class DiscardDiscrepancyInput implements IDiscardDiscrepancyInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        if (this.bankIds && this.bankIds.constructor === Array) {
+            data["bankIds"] = [];
+            for (let item of this.bankIds)
+                data["bankIds"].push(item);
+        }
         if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
             data["bankAccountIds"] = [];
             for (let item of this.bankAccountIds)
                 data["bankAccountIds"].push(item);
         }
+        data["currencyId"] = this.currencyId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["adjustmentId"] = this.adjustmentId;
@@ -17405,7 +17422,9 @@ export class DiscardDiscrepancyInput implements IDiscardDiscrepancyInput {
 }
 
 export interface IDiscardDiscrepancyInput {
+    bankIds: number[];
     bankAccountIds: number[];
+    currencyId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     adjustmentId: number;
@@ -21623,20 +21642,12 @@ export interface IGetDefaultEditionNameOutput {
     name: string;
 }
 
-export class ContactInfoBaseDto implements IContactInfoBaseDto {
+export class ContactShortInfoDto implements IContactShortInfoDto {
     id: number;
     fullName: string;
-    jobTitle: string;
     photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
-    primaryPhone: ContactPhoneDto;
-    primaryAddress: ContactAddressDto;
-    comment: string;
 
-    constructor(data?: IContactInfoBaseDto) {
+    constructor(data?: IContactShortInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -21649,36 +21660,12 @@ export class ContactInfoBaseDto implements IContactInfoBaseDto {
         if (data) {
             this.id = data["id"];
             this.fullName = data["fullName"];
-            this.jobTitle = data["jobTitle"];
             this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
-            if (data["emails"] && data["emails"].constructor === Array) {
-                this.emails = [];
-                for (let item of data["emails"])
-                    this.emails.push(ContactEmailDto.fromJS(item));
-            }
-            if (data["phones"] && data["phones"].constructor === Array) {
-                this.phones = [];
-                for (let item of data["phones"])
-                    this.phones.push(ContactPhoneDto.fromJS(item));
-            }
-            if (data["addresses"] && data["addresses"].constructor === Array) {
-                this.addresses = [];
-                for (let item of data["addresses"])
-                    this.addresses.push(ContactAddressDto.fromJS(item));
-            }
-            if (data["links"] && data["links"].constructor === Array) {
-                this.links = [];
-                for (let item of data["links"])
-                    this.links.push(ContactLinkDto.fromJS(item));
-            }
-            this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
-            this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
-            this.comment = data["comment"];
         }
     }
 
-    static fromJS(data: any): ContactInfoBaseDto {
-        let result = new ContactInfoBaseDto();
+    static fromJS(data: any): ContactShortInfoDto {
+        let result = new ContactShortInfoDto();
         result.init(data);
         return result;
     }
@@ -21687,47 +21674,15 @@ export class ContactInfoBaseDto implements IContactInfoBaseDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["fullName"] = this.fullName;
-        data["jobTitle"] = this.jobTitle;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
-        if (this.emails && this.emails.constructor === Array) {
-            data["emails"] = [];
-            for (let item of this.emails)
-                data["emails"].push(item.toJSON());
-        }
-        if (this.phones && this.phones.constructor === Array) {
-            data["phones"] = [];
-            for (let item of this.phones)
-                data["phones"].push(item.toJSON());
-        }
-        if (this.addresses && this.addresses.constructor === Array) {
-            data["addresses"] = [];
-            for (let item of this.addresses)
-                data["addresses"].push(item.toJSON());
-        }
-        if (this.links && this.links.constructor === Array) {
-            data["links"] = [];
-            for (let item of this.links)
-                data["links"].push(item.toJSON());
-        }
-        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
-        data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
-        data["comment"] = this.comment;
         return data; 
     }
 }
 
-export interface IContactInfoBaseDto {
+export interface IContactShortInfoDto {
     id: number;
     fullName: string;
-    jobTitle: string;
     photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
-    primaryPhone: ContactPhoneDto;
-    primaryAddress: ContactAddressDto;
-    comment: string;
 }
 
 export class ContactPhotoDto implements IContactPhotoDto {
@@ -21771,365 +21726,6 @@ export interface IContactPhotoDto {
     thumbnail: string;
     source: string;
     comment: string;
-}
-
-export class ContactEmailDto implements IContactEmailDto {
-    usageTypeId: string;
-    emailAddress: string;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-
-    constructor(data?: IContactEmailDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.usageTypeId = data["usageTypeId"];
-            this.emailAddress = data["emailAddress"];
-            this.isActive = data["isActive"];
-            this.comment = data["comment"];
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ContactEmailDto {
-        let result = new ContactEmailDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["usageTypeId"] = this.usageTypeId;
-        data["emailAddress"] = this.emailAddress;
-        data["isActive"] = this.isActive;
-        data["comment"] = this.comment;
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IContactEmailDto {
-    usageTypeId: string;
-    emailAddress: string;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-}
-
-export class ContactPhoneDto implements IContactPhoneDto {
-    usageTypeId: string;
-    phoneNumber: string;
-    phoneExtension: string;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-
-    constructor(data?: IContactPhoneDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.usageTypeId = data["usageTypeId"];
-            this.phoneNumber = data["phoneNumber"];
-            this.phoneExtension = data["phoneExtension"];
-            this.isActive = data["isActive"];
-            this.comment = data["comment"];
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ContactPhoneDto {
-        let result = new ContactPhoneDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["usageTypeId"] = this.usageTypeId;
-        data["phoneNumber"] = this.phoneNumber;
-        data["phoneExtension"] = this.phoneExtension;
-        data["isActive"] = this.isActive;
-        data["comment"] = this.comment;
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IContactPhoneDto {
-    usageTypeId: string;
-    phoneNumber: string;
-    phoneExtension: string;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-}
-
-export class ContactAddressDto implements IContactAddressDto {
-    usageTypeId: string;
-    streetAddress: string;
-    city: string;
-    state: string;
-    country: string;
-    zip: string;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-
-    constructor(data?: IContactAddressDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.usageTypeId = data["usageTypeId"];
-            this.streetAddress = data["streetAddress"];
-            this.city = data["city"];
-            this.state = data["state"];
-            this.country = data["country"];
-            this.zip = data["zip"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.isActive = data["isActive"];
-            this.comment = data["comment"];
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ContactAddressDto {
-        let result = new ContactAddressDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["usageTypeId"] = this.usageTypeId;
-        data["streetAddress"] = this.streetAddress;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["country"] = this.country;
-        data["zip"] = this.zip;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["isActive"] = this.isActive;
-        data["comment"] = this.comment;
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IContactAddressDto {
-    usageTypeId: string;
-    streetAddress: string;
-    city: string;
-    state: string;
-    country: string;
-    zip: string;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-}
-
-export class ContactLinkDto implements IContactLinkDto {
-    linkTypeId: string;
-    url: string;
-    isSocialNetwork: boolean;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-
-    constructor(data?: IContactLinkDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.linkTypeId = data["linkTypeId"];
-            this.url = data["url"];
-            this.isSocialNetwork = data["isSocialNetwork"];
-            this.isActive = data["isActive"];
-            this.comment = data["comment"];
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ContactLinkDto {
-        let result = new ContactLinkDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["linkTypeId"] = this.linkTypeId;
-        data["url"] = this.url;
-        data["isSocialNetwork"] = this.isSocialNetwork;
-        data["isActive"] = this.isActive;
-        data["comment"] = this.comment;
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IContactLinkDto {
-    linkTypeId: string;
-    url: string;
-    isSocialNetwork: boolean;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-}
-
-export class UserKeyInfoDto implements IUserKeyInfoDto {
-    id: number;
-    userName: string;
-    fullName: string;
-
-    constructor(data?: IUserKeyInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.userName = data["userName"];
-            this.fullName = data["fullName"];
-        }
-    }
-
-    static fromJS(data: any): UserKeyInfoDto {
-        let result = new UserKeyInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["userName"] = this.userName;
-        data["fullName"] = this.fullName;
-        return data; 
-    }
-}
-
-export interface IUserKeyInfoDto {
-    id: number;
-    userName: string;
-    fullName: string;
 }
 
 export class CreateContactAddressInput implements ICreateContactAddressInput {
@@ -26248,13 +25844,10 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     id: number;
     fullName: string;
     jobTitle: string;
-    photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
+    primaryPhoto: ContactPhotoDto;
     primaryPhone: ContactPhoneDto;
     primaryAddress: ContactAddressDto;
+    details: ContactInfoDetailsDto;
     comment: string;
 
     constructor(data?: IPersonContactInfoDto) {
@@ -26272,29 +25865,10 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
             this.id = data["id"];
             this.fullName = data["fullName"];
             this.jobTitle = data["jobTitle"];
-            this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
-            if (data["emails"] && data["emails"].constructor === Array) {
-                this.emails = [];
-                for (let item of data["emails"])
-                    this.emails.push(ContactEmailDto.fromJS(item));
-            }
-            if (data["phones"] && data["phones"].constructor === Array) {
-                this.phones = [];
-                for (let item of data["phones"])
-                    this.phones.push(ContactPhoneDto.fromJS(item));
-            }
-            if (data["addresses"] && data["addresses"].constructor === Array) {
-                this.addresses = [];
-                for (let item of data["addresses"])
-                    this.addresses.push(ContactAddressDto.fromJS(item));
-            }
-            if (data["links"] && data["links"].constructor === Array) {
-                this.links = [];
-                for (let item of data["links"])
-                    this.links.push(ContactLinkDto.fromJS(item));
-            }
+            this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
             this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
             this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
+            this.details = data["details"] ? ContactInfoDetailsDto.fromJS(data["details"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -26311,29 +25885,10 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["jobTitle"] = this.jobTitle;
-        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
-        if (this.emails && this.emails.constructor === Array) {
-            data["emails"] = [];
-            for (let item of this.emails)
-                data["emails"].push(item.toJSON());
-        }
-        if (this.phones && this.phones.constructor === Array) {
-            data["phones"] = [];
-            for (let item of this.phones)
-                data["phones"].push(item.toJSON());
-        }
-        if (this.addresses && this.addresses.constructor === Array) {
-            data["addresses"] = [];
-            for (let item of this.addresses)
-                data["addresses"].push(item.toJSON());
-        }
-        if (this.links && this.links.constructor === Array) {
-            data["links"] = [];
-            for (let item of this.links)
-                data["links"].push(item.toJSON());
-        }
+        data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
         data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
         data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
+        data["details"] = this.details ? this.details.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
@@ -26344,13 +25899,10 @@ export interface IPersonContactInfoDto {
     id: number;
     fullName: string;
     jobTitle: string;
-    photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
+    primaryPhoto: ContactPhotoDto;
     primaryPhone: ContactPhoneDto;
     primaryAddress: ContactAddressDto;
+    details: ContactInfoDetailsDto;
     comment: string;
 }
 
@@ -26359,13 +25911,10 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
     id: number;
     fullName: string;
     jobTitle: string;
-    photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
+    primaryPhoto: ContactPhotoDto;
     primaryPhone: ContactPhoneDto;
     primaryAddress: ContactAddressDto;
+    details: ContactInfoDetailsDto;
     comment: string;
 
     constructor(data?: IOrganizationContactInfoDto) {
@@ -26383,29 +25932,10 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
             this.id = data["id"];
             this.fullName = data["fullName"];
             this.jobTitle = data["jobTitle"];
-            this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
-            if (data["emails"] && data["emails"].constructor === Array) {
-                this.emails = [];
-                for (let item of data["emails"])
-                    this.emails.push(ContactEmailDto.fromJS(item));
-            }
-            if (data["phones"] && data["phones"].constructor === Array) {
-                this.phones = [];
-                for (let item of data["phones"])
-                    this.phones.push(ContactPhoneDto.fromJS(item));
-            }
-            if (data["addresses"] && data["addresses"].constructor === Array) {
-                this.addresses = [];
-                for (let item of data["addresses"])
-                    this.addresses.push(ContactAddressDto.fromJS(item));
-            }
-            if (data["links"] && data["links"].constructor === Array) {
-                this.links = [];
-                for (let item of data["links"])
-                    this.links.push(ContactLinkDto.fromJS(item));
-            }
+            this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
             this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
             this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
+            this.details = data["details"] ? ContactInfoDetailsDto.fromJS(data["details"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -26422,29 +25952,10 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["jobTitle"] = this.jobTitle;
-        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
-        if (this.emails && this.emails.constructor === Array) {
-            data["emails"] = [];
-            for (let item of this.emails)
-                data["emails"].push(item.toJSON());
-        }
-        if (this.phones && this.phones.constructor === Array) {
-            data["phones"] = [];
-            for (let item of this.phones)
-                data["phones"].push(item.toJSON());
-        }
-        if (this.addresses && this.addresses.constructor === Array) {
-            data["addresses"] = [];
-            for (let item of this.addresses)
-                data["addresses"].push(item.toJSON());
-        }
-        if (this.links && this.links.constructor === Array) {
-            data["links"] = [];
-            for (let item of this.links)
-                data["links"].push(item.toJSON());
-        }
+        data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
         data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
         data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
+        data["details"] = this.details ? this.details.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
@@ -26455,13 +25966,10 @@ export interface IOrganizationContactInfoDto {
     id: number;
     fullName: string;
     jobTitle: string;
-    photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
+    primaryPhoto: ContactPhotoDto;
     primaryPhone: ContactPhoneDto;
     primaryAddress: ContactAddressDto;
+    details: ContactInfoDetailsDto;
     comment: string;
 }
 
@@ -26568,6 +26076,259 @@ export interface IPersonInfoDto {
     lastName: string;
 }
 
+export class ContactPhoneDto implements IContactPhoneDto {
+    usageTypeId: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+
+    constructor(data?: IContactPhoneDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.usageTypeId = data["usageTypeId"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactPhoneDto {
+        let result = new ContactPhoneDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["usageTypeId"] = this.usageTypeId;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactPhoneDto {
+    usageTypeId: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+}
+
+export class ContactAddressDto implements IContactAddressDto {
+    usageTypeId: string;
+    streetAddress: string;
+    city: string;
+    state: string;
+    country: string;
+    zip: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+
+    constructor(data?: IContactAddressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.usageTypeId = data["usageTypeId"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.country = data["country"];
+            this.zip = data["zip"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactAddressDto {
+        let result = new ContactAddressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["usageTypeId"] = this.usageTypeId;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["country"] = this.country;
+        data["zip"] = this.zip;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactAddressDto {
+    usageTypeId: string;
+    streetAddress: string;
+    city: string;
+    state: string;
+    country: string;
+    zip: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+}
+
+export class ContactInfoDetailsDto implements IContactInfoDetailsDto {
+    contactId: number;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+
+    constructor(data?: IContactInfoDetailsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            if (data["emails"] && data["emails"].constructor === Array) {
+                this.emails = [];
+                for (let item of data["emails"])
+                    this.emails.push(ContactEmailDto.fromJS(item));
+            }
+            if (data["phones"] && data["phones"].constructor === Array) {
+                this.phones = [];
+                for (let item of data["phones"])
+                    this.phones.push(ContactPhoneDto.fromJS(item));
+            }
+            if (data["addresses"] && data["addresses"].constructor === Array) {
+                this.addresses = [];
+                for (let item of data["addresses"])
+                    this.addresses.push(ContactAddressDto.fromJS(item));
+            }
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(ContactLinkDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ContactInfoDetailsDto {
+        let result = new ContactInfoDetailsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        if (this.emails && this.emails.constructor === Array) {
+            data["emails"] = [];
+            for (let item of this.emails)
+                data["emails"].push(item.toJSON());
+        }
+        if (this.phones && this.phones.constructor === Array) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item.toJSON());
+        }
+        if (this.addresses && this.addresses.constructor === Array) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IContactInfoDetailsDto {
+    contactId: number;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+}
+
 export class OrganizationInfoDto implements IOrganizationInfoDto {
     typeId: string;
     industry: string;
@@ -26625,6 +26386,195 @@ export interface IOrganizationInfoDto {
     formedStateId: string;
     formedDate: moment.Moment;
     contactPerson: PersonKeyInfoDto;
+}
+
+export class UserKeyInfoDto implements IUserKeyInfoDto {
+    id: number;
+    userName: string;
+    fullName: string;
+
+    constructor(data?: IUserKeyInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.userName = data["userName"];
+            this.fullName = data["fullName"];
+        }
+    }
+
+    static fromJS(data: any): UserKeyInfoDto {
+        let result = new UserKeyInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["userName"] = this.userName;
+        data["fullName"] = this.fullName;
+        return data; 
+    }
+}
+
+export interface IUserKeyInfoDto {
+    id: number;
+    userName: string;
+    fullName: string;
+}
+
+export class ContactEmailDto implements IContactEmailDto {
+    usageTypeId: string;
+    emailAddress: string;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+
+    constructor(data?: IContactEmailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.usageTypeId = data["usageTypeId"];
+            this.emailAddress = data["emailAddress"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactEmailDto {
+        let result = new ContactEmailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["usageTypeId"] = this.usageTypeId;
+        data["emailAddress"] = this.emailAddress;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactEmailDto {
+    usageTypeId: string;
+    emailAddress: string;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+}
+
+export class ContactLinkDto implements IContactLinkDto {
+    linkTypeId: string;
+    url: string;
+    isSocialNetwork: boolean;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+
+    constructor(data?: IContactLinkDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.linkTypeId = data["linkTypeId"];
+            this.url = data["url"];
+            this.isSocialNetwork = data["isSocialNetwork"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactLinkDto {
+        let result = new ContactLinkDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["linkTypeId"] = this.linkTypeId;
+        data["url"] = this.url;
+        data["isSocialNetwork"] = this.isSocialNetwork;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactLinkDto {
+    linkTypeId: string;
+    url: string;
+    isSocialNetwork: boolean;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
 }
 
 export class PersonKeyInfoDto implements IPersonKeyInfoDto {

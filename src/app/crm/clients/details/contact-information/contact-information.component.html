@@ -3,11 +3,11 @@
     <dx-scroll-view showScrollbar="onHover">
       <div class="row">
         <div class="col-md-6">
-          <contacts [contactInfoData]="data?.customerInfo?.primaryContactInfo"></contacts>
-          <socials [contactInfoData]="data?.customerInfo?.primaryContactInfo"></socials>
+          <contacts [contactInfoData]="data?.customerInfo?.primaryContactInfo.details"></contacts>
+          <socials [contactInfoData]="data?.customerInfo?.primaryContactInfo.details"></socials>
         </div>
         <div class="col-md-6">
-          <addresses [contactInfoData]="data?.customerInfo?.primaryContactInfo"></addresses>
+          <addresses [contactInfoData]="data?.customerInfo?.primaryContactInfo.details"></addresses>
         </div>
       </div>
     </dx-scroll-view>
@@ -16,11 +16,11 @@
     <dx-scroll-view showScrollbar="onHover">
       <div class="row">
         <div class="col-md-6">
-          <contacts [contactInfoData]="data?.customerInfo?.organizationContactInfo"></contacts>
-          <socials [contactInfoData]="data?.customerInfo?.organizationContactInfo"></socials>
+          <contacts [contactInfoData]="data?.customerInfo?.organizationContactInfo.details"></contacts>
+          <socials [contactInfoData]="data?.customerInfo?.organizationContactInfo.details"></socials>
         </div>
         <div class="col-md-6">
-          <addresses [contactInfoData]="data?.customerInfo?.organizationContactInfo"></addresses>
+          <addresses [contactInfoData]="data?.customerInfo?.organizationContactInfo.details"></addresses>
         </div>
       </div>
     </dx-scroll-view>

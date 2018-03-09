@@ -183,6 +183,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             this.instanceId,
             'USD',
             this.selectedForecastModelId,
+            undefined,
             this.bankAccountIds,
             this.startDate,
             this.endDate,
