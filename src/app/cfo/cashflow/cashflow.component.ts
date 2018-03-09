@@ -1423,7 +1423,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.expandedIncomeExpense = false;
         this.noRefreshedAfterSync = false;
         this.initHeadlineConfig();
-
         this.closeTransactionsDetail();
         this.loadGridDataSource();
     }
@@ -1610,7 +1609,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     handleBottomHorizontalScrollPosition() {
         let scrollElement = $('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
         let lastRow = $('.cashflow .dx-area-data-cell tr:last-child');
-        if (lastRow && lastRow.offset().top > window.innerHeight) {
+        if (lastRow.length && lastRow.offset().top > window.innerHeight) {
             scrollElement.addClass('fixedScrollbar');
             let minusValue = scrollElement.height();
             if (this.cashflowGridSettings.visualPreferences.showFooterBar) {
@@ -1830,7 +1829,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         //this.updateDateFields(startedGroupInterval);
         /** Change historical field for different date intervals */
         let historicalField = this.getHistoricField();
-        historicalField ['selector'] = value.historicalSelectionFunction();
+        historicalField['selector'] = value.historicalSelectionFunction();
         this.expandedIncomeExpense = false;
         this.closeTransactionsDetail();
         let columns = this.pivotGrid.instance.getDataSource().getAreaFields('column', true);
@@ -1844,6 +1843,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
             }
         });
+        this.pivotGrid.instance.repaint();
     }
 
     downloadData(event) {
