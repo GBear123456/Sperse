@@ -1349,9 +1349,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
             if (existingPeriods.indexOf(formattedDate) === -1) existingPeriods.push(formattedDate);
             if (!minDate || cashflowItem.date < minDate)
-                minDate = date;
+                minDate = moment(date);
             if (!maxDate || cashflowItem.date > maxDate)
-                maxDate = date;
+                maxDate = moment(date);
             if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
         });
         allYears = allYears.sort();
@@ -1378,7 +1378,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.createStubTransaction({
                         'cashflowTypeId': StartedBalance,
                         'accountId': firstAccountId,
-                        'date': date.add(date.toDate().getTimezoneOffset(), 'minutes'),
+                        'date': moment(date).add(date.toDate().getTimezoneOffset(), 'minutes'),
                         'initialDate': date
                     })
                 );
@@ -1392,7 +1392,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (
             (!this.requestFilter.startDate || this.requestFilter.startDate < moment()) &&
             (!this.requestFilter.endDate || this.requestFilter.endDate > moment()) &&
-            !cashflowData.concat(stubCashflowData).some(item => item.initialDate.format(periodFormat) === moment().format('DD.MM.YYYY'))
+            !cashflowData.concat(stubCashflowData).some(item => item.initialDate.format(periodFormat) === moment().format(periodFormat))
         ) {
             /** then we add current stub day */
             stubCashflowData.push(
@@ -1822,6 +1822,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     changeGroupBy(event) {
         this.startLoading();
+        let date = new Date();
+        console.log('start:', `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
         let itemIndex = event.itemData.itemIndex !== undefined ? event.itemData.itemIndex : event.itemIndex,
             value = this.groupbyItems[itemIndex],
             startedGroupInterval = value.groupInterval;
