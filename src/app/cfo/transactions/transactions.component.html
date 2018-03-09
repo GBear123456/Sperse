@@ -67,9 +67,10 @@
                         <dxi-column dataField="Id" cssClass="tabular id-column" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="0" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankCode" caption="{{l('Transactions_BankCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="IsPending" caption="{{l('Transactions_IsPending')}}" [visible]="false" cellTemplate="isPendingTemplate"></dxi-column>
+                        <dxi-column dataField="MonthYear" caption="{{l('Transactions_MonthYear')}}" cellTemplate="dateMonthYear" groupCellTemplate="dateMonthYear" calculateSortValue="Date" [visible]="false"></dxi-column>
                         <dxi-column dataField="Debit" cssClass="tabular" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate" [visible]="false"></dxi-column>
                         <dxi-column dataField="Credit" cssClass="tabular" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate" [visible]="false"></dxi-column>
-                                                <dxi-column dataField="BankAccountTypeName" caption="{{l('Transactions_BankAccountType')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="BankAccountTypeName" caption="{{l('Transactions_BankAccountType')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="Currency" caption="{{l('Transactions_Currency')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankAccountBankName" caption="{{l('Transactions_BankName')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="Fees" cssClass="tabular" caption="{{l('Transactions_Fees')}}" [visible]="false"></dxi-column>
@@ -114,6 +115,10 @@
 
                         <div *dxTemplate="let cellData of 'dateCell'">
                             {{cellData.value | date: 'MM/dd/yyyy'}}
+                        </div>
+
+                        <div *dxTemplate="let cellData of 'dateMonthYear'">
+                            {{cellData.value | date: 'MMM yyyy'}}
                         </div>
 
                         <dxo-paging [pageSize]="20"></dxo-paging>
