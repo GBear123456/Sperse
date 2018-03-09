@@ -1,5 +1,7 @@
-.employment {
-  padding: 0 15px;
+:host {
+    .employment {
+        padding: 0 15px;
+    }
     
     h3 {
         font-size: 12px;
@@ -97,32 +99,39 @@
             min-width: 230px;
             width: 70%;
         }
+
         dx-button {
-            /deep/ &.update i {
-                color: #00aeef;
-        }
-
-        dx-select-box {
-            /deep/ input {
-                font-size: 15px;
-                font-weight: 100;
-                color: #424c56;
-                margin: 0;
-                padding: 0;
-            }
-        }
-
-        /deep/ &.exit i {
-            color: #f44336;
-        }
-    
             border: none;
             position: relative;
             top: -14px;
+
+            dx-select-box {
+                /deep/ input {
+                    font-size: 15px;
+                    font-weight: 100;
+                    color: #424c56;
+                    margin: 0;
+                    padding: 0;
+                }
+            }
         }
 
         &.phone-number {
             margin-bottom: 30px;
         }    
+    }
+}
+
+.employment {
+    .inplace-edit-wrapper {
+        dx-button {
+            /deep/ &.update i {
+                color: #00aeef;
+            }
+
+            /deep/ &.exit i {
+                color: #f44336;
+            }
+        }
     }
 }

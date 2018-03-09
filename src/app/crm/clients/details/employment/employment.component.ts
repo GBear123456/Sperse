@@ -1,4 +1,5 @@
 import { AppConsts } from '@shared/AppConsts';
+import { LinkType, LinkUsageType } from '@shared/AppEnums';
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/takeWhile';
@@ -64,12 +65,12 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
             if (contactId) {
                 this._сontactEmploymentService.get(contactId).subscribe(response => {
                     this.contactEmploymentInfo = response.contactEmploymentInfo;
-
-                    let orgId = this.contactEmploymentInfo.orgId;
-                    this.isEditOrgDetailsAllowed = orgId == null;
-
-                    if (orgId) {
-                        this.setOrganizationContactInfo(orgId);
+                    if (this.contactEmploymentInfo) {
+                        let orgId = this.contactEmploymentInfo.orgId;
+                        this.isEditOrgDetailsAllowed = orgId == null;
+                        if (orgId) {
+                            this.setOrganizationContactInfo(orgId);
+                        }
                     }
                 });
             }
@@ -96,7 +97,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     }
 
     getOrganizationWebsiteUrl(organizationContactInfo: OrganizationContactInfoDto) {
-        let links = organizationContactInfo.details.links.filter(item => item.linkTypeId == '2' || item.linkTypeId == '3' ); //Website 2, Website 3
+        let links = organizationContactInfo.details.links.filter(item => item.linkTypeId == LinkType.WebSite2 || item.linkTypeId == LinkType.WebSite3 );
         return links.length > 0 ? links[0].url : null;
     }
 
@@ -106,7 +107,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     }
 
     getOrganizationMobilePhoneNumber(organizationContactInfo: OrganizationContactInfoDto) {
-        let phones = organizationContactInfo.details.phones.filter(item => item.usageTypeId == 'M'); //Mobile
+        let phones = organizationContactInfo.details.phones.filter(item => item.usageTypeId == LinkUsageType.Mobile);
         return phones.length > 0 ? phones[0].phoneNumber : null;
     }
 

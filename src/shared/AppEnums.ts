@@ -86,3 +86,32 @@ export class AppSalesSummaryDatePeriod {
     static Monthly: number = SalesSummaryDatePeriod._3;
 }
 
+export class LinkType {
+    static Facebook = 'F';
+    static GooglePlus = 'G';
+    static LinkedIn = 'L';
+    static Pinterest = 'P';
+    static Twitter = 'T';
+    static WebSite2 = '2';
+    static WebSite3 = '3';
+    static Alexa = 'A';
+    static BBB = 'B';
+    static Crunchbase = 'C';
+    static Domain = 'D';
+    static Yelp = 'E';
+    static Instagram = 'I';
+    static Nav = 'N';
+    static OpenCorporates = 'O';
+    static Trustpilot = 'R';
+    static GlassDoor = 'S';
+    static Followers = 'W';
+    static Youtube = 'Y';
+    static RSS = 'Z';
+}
+
+export class LinkUsageType {
+    static Home = 'H';
+    static Mobile = 'M';
+    static Work	= 'W';
+}
+
