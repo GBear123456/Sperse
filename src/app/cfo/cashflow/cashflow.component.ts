@@ -10,6 +10,7 @@ import {
     TransactionStatsDto,
     CashFlowForecastServiceProxy,
     ClassificationServiceProxy,
+    BankAccountsServiceProxy,
     GetCategoryTreeOutput,
     CashFlowGridSettingsDto,
     InstanceType,
@@ -21,12 +22,14 @@ import {
     AddForecastInput,
     BankAccountDto,
     StatsFilterGroupByPeriod,
-    TransactionStatsDtoAdjustmentType
+    TransactionStatsDtoAdjustmentType,
+    DiscardDiscrepancyInput
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { OperationsComponent } from './operations/operations.component';
+import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { DxPivotGridComponent, DxDataGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore.string';
 import * as underscore from 'underscore';
@@ -96,7 +99,7 @@ class CashflowCategorizationModel {
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService ]
+    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy ]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
@@ -521,6 +524,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
                 private _cacheService: CacheService,
                 private _classificationServiceProxy: ClassificationServiceProxy,
+                private _bankAccountsServiceProxy: BankAccountsServiceProxy,
                 public dialog: MatDialog,
                 public userPreferencesService: UserPreferencesService,
                 private _appService: AppService
@@ -1441,9 +1445,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             preferencesObservable = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
             notificationMessage = this.l('SavedSuccessfully');
         }
-        preferencesObservable.subscribe(result => {
+        preferencesObservable.subscribe((result: CashFlowGridSettingsDto) => {
             let updateWithNetChange = result.general.showNetChangeRow !== this.cashflowGridSettings.general.showNetChangeRow;
             let updateAfterAccountingTypeShowingChange = result.general.showAccountingTypeRow !== this.cashflowGridSettings.general.showAccountingTypeRow;
+            let updateWithDiscrepancyChange = result.general.showBalanceDiscrepancy !== this.cashflowGridSettings.general.showBalanceDiscrepancy;
             this.handleGetCashflowGridSettingsResult(result);
             this.expandedIncomeExpense = false;
             this.closeTransactionsDetail();
@@ -1452,25 +1457,33 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
              *  appliedTo data methods before reloading the cashflow
              */
             /** @todo move to the userPreferencesHandlers to avoid if else structure */
-            if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange) {
+            if (updateWithDiscrepancyChange) {
+                this.pivotGrid.instance.getDataSource().reload();
+            }
+            if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange && !updateWithDiscrepancyChange) {
                 this.pivotGrid.instance.repaint();
             } else {
-                if (updateWithNetChange) {
-                    /** If user choose to show net change - then add stub data to data source */
-                    if (result.general.showNetChangeRow) {
-                        this.cashflowData = this.cashflowData.concat(this.getStubForNetChange(this.cashflowData));
-                        /** else - remove the stubbed net change data from data source */
-                    } else {
-                        this.cashflowData = this.cashflowData.filter(item => item.cashflowTypeId !== NetChange);
+                if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange) {
+                    this.pivotGrid.instance.getDataSource().reload();
+                }
+                else {
+                    if (updateWithNetChange) {
+                        /** If user choose to show net change - then add stub data to data source */
+                        if (result.general.showNetChangeRow) {
+                            this.cashflowData = this.cashflowData.concat(this.getStubForNetChange(this.cashflowData));
+                            /** else - remove the stubbed net change data from data source */
+                        } else {
+                            this.cashflowData = this.cashflowData.filter(item => item.cashflowTypeId !== NetChange);
+                        }
                     }
-                }
 
-                if (updateAfterAccountingTypeShowingChange) {
-                    this.cashflowData.forEach(item => {
-                        this.addCategorizationLevels(item);
-                    });
+                    if (updateAfterAccountingTypeShowingChange) {
+                        this.cashflowData.forEach(item => {
+                            this.addCategorizationLevels(item);
+                        });
+                    }
+                    this.dataSource = this.getApiDataSource();
                 }
-                this.dataSource = this.getApiDataSource();
             }
             this.handleBottomHorizontalScrollPosition();
             this.notify.info(notificationMessage);
@@ -1537,6 +1550,30 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Clear cache with columns activity */
         this.cashedColumnActivity.clear();
         this.applyUserPreferencesForAreas();
+
+        $('.dx-pivotgrid-area-data').off('keydown').on('keydown', e => {
+            let nextElement;
+            switch (e.keyCode) {
+                case 37: //left
+                    nextElement = this.selectedCell.cellElement.prev();
+                    break;
+                case 38: //up
+                    nextElement = this.selectedCell.cellElement.parent().prev().find(`td:nth-child(${this.selectedCell.columnIndex + 1})`);
+                    break;
+                case 39: //right
+                    nextElement = this.selectedCell.cellElement.next();
+                    break;
+                case 40: //down
+                    nextElement = this.selectedCell.cellElement.parent().next().find(`td:nth-child(${this.selectedCell.columnIndex + 1})`);
+                    break;
+            }
+
+            if (nextElement && nextElement.length) {
+                this.pivotGrid.instance['clickCount'] = 0;
+                nextElement[0].click();
+                this.pivotGrid.instance['clickCount'] = 0;
+            }
+        });
     }
 
     onScroll(e) {
@@ -2032,6 +2069,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             (cellObj.cell.rowPath[0] === (CategorizationPrefixes.CashflowType + Reconciliation));
     }
 
+    isReconciliationRows(cellObj) {
+        return cellObj.cell.rowPath !== undefined &&
+            (cellObj.cell.rowPath[0] === (CategorizationPrefixes.CashflowType + Reconciliation));
+    }
+
     /**
      * whether or not the cell is data cell
      * @param cellObj
@@ -2048,6 +2090,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     isHistoricalCell(cellObj) {
         return cellObj.rowIndex === 0;
+    }
+
+    addActionButton(name, container, callback) {
+        $('<a>')
+            .text(this.l(this.capitalize(name)))
+            .addClass('dx-link dx-link-' + name)
+            .on('click', callback)
+            .appendTo(container);
     }
 
     /**
@@ -2310,6 +2360,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** Apply user preferences to the data showing */
         this.applyUserPreferencesForCells(e);
+
+        if (this.isReconciliationRows(e) && e.cell.value !== 0) {
+            this.addActionButton('delete', e.cellElement, (event) => { this.discardDiscrepancy(e); });
+        }
     }
 
     moveOrCopyForecasts(forecasts, targetCell, operation: 'copy' | 'move' = 'copy') {
@@ -3222,6 +3276,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     calculateSummaryValue() {
         return summaryCell => {
 
+            if (!this.cashflowGridSettings.general.showBalanceDiscrepancy && this.isCellDiscrapencyCell(summaryCell)) {
+                return null;
+            }
+
             /** To hide rows that not correspond to the search */
             if (this.filterBy && summaryCell.field('row')) {
                 if (!this.rowFitsToFilter(summaryCell, this.filterBy)) {
@@ -3578,9 +3636,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === (CategorizationPrefixes.CashflowType + StartedBalance);
     }
 
-    isCellIsStartingBalanceSummary(summaryCell) {
+    isCellIsStartingBalanceSummary(summaryCell): boolean {
+        return this.checkCellType(summaryCell, StartedBalance);
+    }
+
+    isCellDiscrapencyCell(summaryCell): boolean {
+        return this.checkCellType(summaryCell, Reconciliation);
+    }
+
+    checkCellType(summaryCell, type): boolean {
         return summaryCell.field('row') !== null &&
-            summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + StartedBalance);
+            summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + Reconciliation);
     }
 
     cellRowIsNotEmpty(summaryCell) {
@@ -3848,6 +3914,31 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             accountFilter.items['element'].setValue([], accountFilter);
         }
         this._filtersService.change(accountFilter);
+    }
+
+    discardDiscrepancy(cellObj) {
+        this.dialog.open(ConfirmDialogComponent, {
+            data: {
+                title: this.l('DiscardDiscrepancy_WarningHeader'),
+                message: this.l('DiscardDiscrepancy_WarningMessage')
+            }
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.dialog.closeAll();
+
+                let filterDetails = this.statsDetailFilter;
+                let discardDiscrepancyInput = DiscardDiscrepancyInput.fromJS({
+                    bankIds: filterDetails.bankIds,
+                    bankAccountIds: filterDetails.accountIds,
+                    currencyId: filterDetails.currencyId,
+                    startDate: filterDetails.startDate,
+                    endDate: filterDetails.endDate
+                });
+
+                this._bankAccountsServiceProxy.discardDiscrepancy(InstanceType[this.instanceType], this.instanceId, discardDiscrepancyInput)
+                    .subscribe((result) => { this.refreshDataGrid(); });
+            }
+        });
     }
 
     @HostListener('window:click', ['$event']) toogleSearchInput(event) {

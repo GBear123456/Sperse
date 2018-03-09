@@ -26,12 +26,17 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     profilePicture: string;
 
     private masks = AppConsts.masks;
+    private namePattern = AppConsts.regexPatterns.name;
+    private maxDob = new Date();
+    private minDob = new Date(1900, 0);
 
     constructor(
         injector: Injector,
         private _customersService: CustomersServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
+
+        this.maxDob = new Date(this.maxDob.setFullYear(this.maxDob.getFullYear() - 21));
     }
 
     show(clientId?: number): void {
@@ -115,10 +120,11 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     }
 
     focusDateBirth(event) {
+        let value = this.client.dob ? this.client.dob : new Date(1980, 0);
         setTimeout(function () {
             event.component._popup._$popupContent.find('.dx-calendar').dxCalendar({
                 zoomLevel: 'decade',
-                value: new Date(1980, 0)
+                value: value
             });
         }, 0);
 
@@ -143,10 +149,5 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
                 input.focus();
             }, 100);
         }
-    }
-
-    blurInput(event) {
-        if (!(event.component._value && event.component._value.trim()))
-            event.component.option({ mask: '', value: '', isValid: true });
     }
 }
