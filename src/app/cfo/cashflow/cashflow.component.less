@@ -600,6 +600,7 @@
                             color: @middleGrayColor;
                             font-family: Lato !important;
                             letter-spacing: 0.2px;
+                            padding-left: 19px;
 
                             &.red {
                                 &,
@@ -658,6 +659,23 @@
 
                             .dx-texteditor-input {
                                 text-align: right;
+                            }
+
+                            &.chosenFilterForCashFlow a.dx-link {
+                                display: inline-block;
+                            }
+
+                            a.dx-link {
+                                width: 15px;
+                                display: none;
+                                color: transparent !important;
+                                position: relative;
+                                float: left;
+                                margin-left: -15px;
+
+                                &.dx-link-delete {
+                                    background: url('../../../assets/common/icons/delete-icon.svg') no-repeat center;
+                                }
                             }
                         }
 
