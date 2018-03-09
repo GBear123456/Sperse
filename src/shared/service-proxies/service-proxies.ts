@@ -821,13 +821,14 @@ export class BankAccountsServiceProxy {
      * @instanceType (optional) 
      * @instanceId (optional) 
      * @forecastModelId (optional) 
+     * @banks (optional) 
      * @accounts (optional) 
      * @startDate (optional) 
      * @endDate (optional) 
      * @maxCount (optional) 
      * @return Success
      */
-    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
+    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, banks: number[], accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -839,6 +840,8 @@ export class BankAccountsServiceProxy {
             url_ += "Currency=" + encodeURIComponent("" + currency) + "&"; 
         if (forecastModelId !== undefined)
             url_ += "ForecastModelId=" + encodeURIComponent("" + forecastModelId) + "&"; 
+        if (banks !== undefined)
+            banks && banks.forEach(item => { url_ += "Banks=" + encodeURIComponent("" + item) + "&"; });
         if (accounts !== undefined)
             accounts && accounts.forEach(item => { url_ += "Accounts=" + encodeURIComponent("" + item) + "&"; });
         if (startDate !== undefined)
