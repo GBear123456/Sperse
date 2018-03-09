@@ -5,7 +5,7 @@ import 'rxjs/add/operator/takeWhile';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatDialog } from '@angular/material';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
-import { ContactEmploymentServiceProxy, OrganizationContactServiceProxy, ContactInfoBaseDto, OrganizationShortInfoDto,
+import { ContactEmploymentServiceProxy, OrganizationContactServiceProxy, OrganizationShortInfoDto,
     ContactEmploymentInfo, UpdateContactEmploymentInput, ContactAddressDto, OrganizationContactInfoDto } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
@@ -96,7 +96,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     }
 
     getOrganizationWebsiteUrl(organizationContactInfo: OrganizationContactInfoDto) {
-        let links = organizationContactInfo.links.filter(item => item.linkTypeId == '2' || item.linkTypeId == '3' ); //Website 2, Website 3
+        let links = organizationContactInfo.details.links.filter(item => item.linkTypeId == '2' || item.linkTypeId == '3' ); //Website 2, Website 3
         return links.length > 0 ? links[0].url : null;
     }
 
@@ -106,7 +106,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     }
 
     getOrganizationMobilePhoneNumber(organizationContactInfo: OrganizationContactInfoDto) {
-        let phones = organizationContactInfo.phones.filter(item => item.usageTypeId == 'M'); //Mobile
+        let phones = organizationContactInfo.details.phones.filter(item => item.usageTypeId == 'M'); //Mobile
         return phones.length > 0 ? phones[0].phoneNumber : null;
     }
 

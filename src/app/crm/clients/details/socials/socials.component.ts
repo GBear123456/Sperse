@@ -2,7 +2,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CustomersServiceProxy, ContactInfoBaseDto, ContactLinkServiceProxy,
+import { CustomersServiceProxy, ContactInfoDetailsDto, ContactLinkServiceProxy,
   ContactLinkDto, CreateContactLinkInput, UpdateContactLinkInput } from '@shared/service-proxies/service-proxies';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 
@@ -14,7 +14,7 @@ import { MatDialog } from '@angular/material';
   styleUrls: ['./socials.component.less']
 })
 export class SocialsComponent extends AppComponentBase implements OnInit {
-  @Input() contactInfoData: ContactInfoBaseDto;
+  @Input() contactInfoData: ContactInfoDetailsDto;
 
   isEditAllowed = false;
 
@@ -76,7 +76,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
       value: data && data.url,
       name: this.l('Link'),
       contactId: data && data.contactId
-        || this.contactInfoData.id,
+        || this.contactInfoData.contactId,
       url: data && data.url,
       usageTypeId: data && data.linkTypeId ? data.linkTypeId : AppConsts.otherLinkTypeId,
       isConfirmed: Boolean(data && data.isConfirmed),
@@ -128,7 +128,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
       if (result) {
         this.dialog.closeAll();
         this._contactLinkService.deleteContactLink(
-          this.contactInfoData.id, link.id).subscribe(result => {
+          this.contactInfoData.contactId, link.id).subscribe(result => {
             if (!result)
               this.contactInfoData.links.splice(index, 1);
           });

@@ -4,8 +4,8 @@ import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
-import { CustomersServiceProxy, ContactInfoBaseDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
-  ContactPhoneServiceProxy, CreateContactEmailInput,
+import { CustomersServiceProxy, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
+  ContactPhoneServiceProxy, CreateContactEmailInput, ContactInfoDetailsDto,
   UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -14,7 +14,7 @@ import { CustomersServiceProxy, ContactInfoBaseDto, ContactEmailServiceProxy, Co
   styleUrls: ['./contacts.component.less']
 })
 export class ContactsComponent extends AppComponentBase implements OnInit {
-  @Input() contactInfoData: ContactInfoBaseDto;
+  @Input() contactInfoData: ContactInfoDetailsDto;
 
   isEditAllowed = false;
 
@@ -62,7 +62,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
       value: data && data[field],
       name: this.getFieldName(field),
       contactId: data && data.contactId
-        || this.contactInfoData.id,
+        || this.contactInfoData.contactId,
       emailAddress: data && data.emailAddress,
       phoneNumber: data && data.phoneNumber,
       phoneExtension: data && data.phoneExtension,
@@ -168,7 +168,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
       if (result) {
         this.dialog.closeAll();
         this._contactEmailService.deleteContactEmail(
-          this.contactInfoData.id, email.id).subscribe(result => {
+          this.contactInfoData.contactId, email.id).subscribe(result => {
             if (!result)
               this.contactInfoData.emails.splice(index, 1);
           });
@@ -187,7 +187,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
       if (result) {
         this.dialog.closeAll();
         this._contactPhoneService.deleteContactPhone(
-          this.contactInfoData.id, phone.id).subscribe(result => {
+          this.contactInfoData.contactId, phone.id).subscribe(result => {
             if (!result)
               this.contactInfoData.phones.splice(index, 1);
           });
