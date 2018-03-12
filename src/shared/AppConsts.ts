@@ -53,7 +53,7 @@ export class AppConsts {
         date: 'MM/dd/yyyy hh:mm a'
     };
 
-    static readonly otherLinkTypeId = 'X';
+    static readonly otherLinkTypeId = '-';
 
     static readonly regexPatterns = {
         name: /^[A-Z][a-zA-Z]+$/
