@@ -26,7 +26,9 @@
     <i class="icons phone type-{{phone?.usageTypeId || 'P'}}"></i>
     <ul *ngIf="!phone.inplaceEdit">
       <div class="actions" *ngIf="isEditAllowed"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog('phoneNumber', phone, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deletePhoneNumber(phone, $event, i)"></i></div>
-      <li (click)="inPlaceEdit('phoneNumber', phone, $event, i)">{{ phone.phoneNumber | phone }}</li>
+      <li (click)="inPlaceEdit('phoneNumber', phone, $event, i)">{{ phone.phoneNumber | phone }}
+        <span *ngIf="phone.phoneExtension" class="phoneExt">Ext. {{ phone.phoneExtension }}</span>
+      </li>
     </ul>
     <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
       <dx-validation-group>
