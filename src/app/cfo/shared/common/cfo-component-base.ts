@@ -70,9 +70,9 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
 
     protected static zendeskWebwidgetShow(service: ngxZendeskWebwidgetService) {
         if (environment.zenDeskEnabled) {
+            CFOComponentBase.zendeskWebwidgetSetup(service);
             setTimeout(() => {
                 service.show();
-                CFOComponentBase.zendeskWebwidgetSetup(service);
             }, 1000);
         }
     }

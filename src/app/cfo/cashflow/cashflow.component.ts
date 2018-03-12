@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { GroupbyItem } from './models/groupbyItem';
+import { IGroupbyItem } from './models/groupbyItem';
 
 import {
     CashflowServiceProxy,
@@ -46,6 +46,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { MatDialog } from '@angular/material';
 import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
 import * as ModelEnums from './models/setting-enums';
+import { IExpandLevel } from './models/expand-level';
 import * as $ from 'jquery';
 
 import { CacheService } from 'ng2-cache-service';
@@ -170,7 +171,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     ];
     /** posible groupIntervals year, quarter, month, dayofweek, day */
-    groupbyItems: GroupbyItem[] = [
+    groupbyItems: IGroupbyItem[] = [
         {
             'groupInterval': 'year',
             'optionText': this.l('Years').toUpperCase(),
@@ -412,6 +413,24 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         [ModelEnums.GeneralScope.EndingBalances]: this.isAllTotalBalanceCell
     };
     cashflowGridSettings: CashFlowGridSettingsDto;
+    expandLevels: IExpandLevel[] = [
+        {
+            action: this.togglePivotGridRows.bind(this),
+            text: this.l('Level 1'),
+        }, {
+            action: this.togglePivotGridRows.bind(this),
+            text: this.l('Level 2'),
+        }, {
+            action: this.togglePivotGridRows.bind(this),
+            text: this.l('Level 3'),
+        }, {
+            action: this.togglePivotGridRows.bind(this),
+            text: this.l('All'),
+        }, {
+            action: this.togglePivotGridRows.bind(this),
+            text: this.l('None'),
+        }
+    ];
     categoryToolbarConfig = [
         {
             location: 'center', items: [
@@ -467,23 +486,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     widget: 'dxDropDownMenu',
                     options: {
                         hint: this.l('Expand'),
-                        items: [{
-                                action: this.togglePivotGridRows.bind(this),
-                                text: this.l('Level 1'),
-                            }, {
-                                action: this.togglePivotGridRows.bind(this),
-                                text: this.l('Level 2'),
-                            }, {
-                                action: this.togglePivotGridRows.bind(this),
-                                text: this.l('Level 3'),
-                            }, {
-                                action: this.togglePivotGridRows.bind(this),
-                                text: this.l('All'),
-                            }, {
-                                action: this.togglePivotGridRows.bind(this),
-                                text: this.l('None'),
-                            }
-                        ]
+                        items: this.expandLevels
                     }
                 }
             ]
@@ -1349,9 +1352,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (allYears.indexOf(transactionYear) === -1) allYears.push(transactionYear);
             if (existingPeriods.indexOf(formattedDate) === -1) existingPeriods.push(formattedDate);
             if (!minDate || cashflowItem.date < minDate)
-                minDate = date;
+                minDate = moment(date);
             if (!maxDate || cashflowItem.date > maxDate)
-                maxDate = date;
+                maxDate = moment(date);
             if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
         });
         allYears = allYears.sort();
@@ -1378,7 +1381,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.createStubTransaction({
                         'cashflowTypeId': StartedBalance,
                         'accountId': firstAccountId,
-                        'date': date.add(date.toDate().getTimezoneOffset(), 'minutes'),
+                        'date': moment(date).add(date.toDate().getTimezoneOffset(), 'minutes'),
                         'initialDate': date
                     })
                 );
@@ -1392,7 +1395,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (
             (!this.requestFilter.startDate || this.requestFilter.startDate < moment()) &&
             (!this.requestFilter.endDate || this.requestFilter.endDate > moment()) &&
-            !cashflowData.concat(stubCashflowData).some(item => item.initialDate.format(periodFormat) === moment().format('DD.MM.YYYY'))
+            !cashflowData.concat(stubCashflowData).some(item => item.initialDate.format(periodFormat) === moment().format(periodFormat))
         ) {
             /** then we add current stub day */
             stubCashflowData.push(
@@ -1423,7 +1426,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.expandedIncomeExpense = false;
         this.noRefreshedAfterSync = false;
         this.initHeadlineConfig();
-
         this.closeTransactionsDetail();
         this.loadGridDataSource();
     }
@@ -1585,7 +1587,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let toolbar = <HTMLElement>document.querySelector('.page-content-wrapper app-toolbar');
         let dxToolbar = <HTMLElement>toolbar.children[0];
         let topIntend = toolbar.offsetTop + dxToolbar.offsetHeight;
-        $('.cashflow table.dx-pivotgrid-border > tr:nth-child(3)').offset({top: Math.floor(topIntend), left: 0});
+        $('.cashflow table.dx-pivotgrid-border > tr:nth-child(3)').offset().top = Math.floor(topIntend);
         let scrollElement = <HTMLElement>document.querySelector('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
         scrollElement.style.top = e.scrollOffset + e.element.height();
     }
@@ -1610,16 +1612,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     handleBottomHorizontalScrollPosition() {
         let scrollElement = $('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
         let lastRow = $('.cashflow .dx-area-data-cell tr:last-child');
-        if (lastRow && lastRow.offset().top > window.innerHeight) {
+        if (lastRow.length && lastRow.offset().top > window.innerHeight) {
             scrollElement.addClass('fixedScrollbar');
             let minusValue = scrollElement.height();
             if (this.cashflowGridSettings.visualPreferences.showFooterBar) {
                 minusValue += $('#cashflowFooterToolbar').length ? $('#cashflowFooterToolbar').height() : this.bottomToolbarHeight;
             }
+            let fixedFiltersWidth: number = $('.fixed-filters').length ? parseInt($('.fixed-filters').css('marginLeft')) : 0;
             /** Set new offset to stick the scrollbar to the bottom of the page */
             scrollElement.offset({
                 top: window.innerHeight - minusValue,
-                left: this.leftColumnWidth
+                left: this.leftColumnWidth + fixedFiltersWidth
             });
         } else {
             scrollElement.removeClass('fixedScrollbar');
@@ -1830,7 +1833,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         //this.updateDateFields(startedGroupInterval);
         /** Change historical field for different date intervals */
         let historicalField = this.getHistoricField();
-        historicalField ['selector'] = value.historicalSelectionFunction();
+        historicalField['selector'] = value.historicalSelectionFunction();
         this.expandedIncomeExpense = false;
         this.closeTransactionsDetail();
         let columns = this.pivotGrid.instance.getDataSource().getAreaFields('column', true);
@@ -1844,6 +1847,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
             }
         });
+        this.pivotGrid.instance.repaint();
     }
 
     downloadData(event) {
@@ -1863,6 +1867,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             case 2:
                 source = this.pivotGrid.instance.getDataSource().getData();
                 this.expandRows(source, levelIndex);
+                this.pivotGrid.instance.getDataSource().collapseAll(levelIndex + 1);
                 break;
             case 3:
                 source = this.pivotGrid.instance.getDataSource().getData();
@@ -1883,7 +1888,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (!source || (!source.children && !source.rows))
             return;
         let rows = source.rows ? source.rows : source.children;
-        for (let child of rows ){
+        for (let child of rows){
             let childPath = path.slice();
             childPath.push(child.value);
             if (this.hasChildsByPath(childPath)) {
