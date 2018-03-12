@@ -1587,7 +1587,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let toolbar = <HTMLElement>document.querySelector('.page-content-wrapper app-toolbar');
         let dxToolbar = <HTMLElement>toolbar.children[0];
         let topIntend = toolbar.offsetTop + dxToolbar.offsetHeight;
-        $('.cashflow table.dx-pivotgrid-border > tr:nth-child(3)').offset({top: Math.floor(topIntend), left: 0});
+        $('.cashflow table.dx-pivotgrid-border > tr:nth-child(3)').offset().top = Math.floor(topIntend);
         let scrollElement = <HTMLElement>document.querySelector('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
         scrollElement.style.top = e.scrollOffset + e.element.height();
     }
@@ -1618,10 +1618,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (this.cashflowGridSettings.visualPreferences.showFooterBar) {
                 minusValue += $('#cashflowFooterToolbar').length ? $('#cashflowFooterToolbar').height() : this.bottomToolbarHeight;
             }
+            let fixedFiltersWidth: number = $('.fixed-filters').length ? parseInt($('.fixed-filters').css('marginLeft')) : 0;
             /** Set new offset to stick the scrollbar to the bottom of the page */
             scrollElement.offset({
                 top: window.innerHeight - minusValue,
-                left: this.leftColumnWidth
+                left: this.leftColumnWidth + fixedFiltersWidth
             });
         } else {
             scrollElement.removeClass('fixedScrollbar');

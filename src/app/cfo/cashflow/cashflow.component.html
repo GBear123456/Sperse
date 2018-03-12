@@ -45,6 +45,10 @@
                            (onCellClick)="onCellClick($event)"
                            [wordWrapEnabled]="false">
                 <dxo-scrolling mode="standard"></dxo-scrolling>
+                <dxo-state-storing
+                    [enabled]="true"
+                    type="sessionStorage">
+                </dxo-state-storing>
             </dx-pivot-grid>
         </div>
     </dx-scroll-view>

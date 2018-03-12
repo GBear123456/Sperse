@@ -25,7 +25,7 @@
       </div>
     </dx-scroll-view>
   </mat-tab>
-  <mat-tab label="Employment">
+  <mat-tab label="Employment" *ngIf="data?.customerInfo?.primaryContactInfo?.jobTitle">
     <dx-scroll-view showScrollbar="onHover">
       <employment [contactId]="data?.customerInfo?.primaryContactInfo?.id"></employment>
     </dx-scroll-view>

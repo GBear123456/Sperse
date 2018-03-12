@@ -539,6 +539,29 @@ button {
                     }
                 }
             }
+            .dx-group-cell {
+                font-weight: 600;
+            }
+            .dx-datagrid-group-opened, .dx-datagrid-group-closed {
+                color: #424c56;
+            }
+        }
+        .dx-datagrid-group-panel {
+            .dx-group-panel-item {
+                font-weight: 600;
+                border: 0;
+                color: #424c56;
+                .dx-sort-up{
+                    &::before {
+                        content: '\f176'
+                    }
+                }
+                .dx-sort-down{
+                    &::before {
+                        content: '\f175'
+                    }
+                }
+            }
         }
         .dx-freespace-row {
             .dx-command-edit + td {
@@ -838,17 +861,34 @@ button {
 }
 
 // toolbar .dx-datagrid-group-panel .dx-group-panel-message
-.dx-datagrid-group-panel .dx-group-panel-message {
+.dx-datagrid-group-panel {
     max-width: 98%;
-    background-color: #F9FBFC;
+    height: 46px;
     border: 1px solid transparent;
     border-image: url("../../assets/common/icons/border-img.png") 1 round;
-    padding: 9px 10px 8px;
-    
-    font-size: 14px;
-    font-weight: 300;
-    line-height: 1.8;
-    letter-spacing: 0.3px;
-    text-align: left;
-    color: #677380;
+
+    .dx-group-panel-message {
+        background-color: #F9FBFC;
+        padding: 9px 10px 8px;
+        
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.8;
+        letter-spacing: 0.3px;
+        text-align: left;
+        color: #677380;
+    }
+
+    .dx-group-panel-item{
+        padding: 12px 10px;
+    }
+}
+
+.dx-datagrid-header-panel {
+    .dx-toolbar-items-container {
+        .dx-toolbar-before{
+            width: 100%;
+            padding: 0;
+        }
+    }
 }
