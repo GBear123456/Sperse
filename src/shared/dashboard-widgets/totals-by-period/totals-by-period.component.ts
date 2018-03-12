@@ -33,8 +33,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     selectedPeriod: any = String(GroupBy['Yearly']).toLowerCase();
     startDate;
     endDate;
-    incomeColor = '#32bef2';
-    expensesColor = '#f75a29';
+    inflowsColor = '#32bef2';
+    outflowsColor = '#f75a29';
     netChangeColor = '#35c8a8';
     loading = true;
 
@@ -65,27 +65,27 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         )
             .mergeMap(x => x)
             .scan((prevStatsItem, currentStatsItem) => {
-                let income = Math.abs(currentStatsItem.income) + prevStatsItem.income;
-                let expenses = Math.abs(currentStatsItem.expenses) + prevStatsItem.expenses;
+                let inflows = Math.abs(currentStatsItem.inflows) + prevStatsItem.inflows;
+                let outflows = Math.abs(currentStatsItem.outflows) + prevStatsItem.outflows;
                 return {
                     'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
                     'endingBalance': currentStatsItem.endingBalance,
-                    'income': income,
-                    'expenses': expenses,
-                    'netChange': Math.abs(income - expenses),
+                    'inflows': inflows,
+                    'outflows': outflows,
+                    'netChange': Math.abs(inflows - outflows),
                     'date': currentStatsItem.date
                 };
-            }, { 'income': 0, 'expenses': 0, 'netChange': 0 })
+            }, { 'inflows': 0, 'outflows': 0, 'netChange': 0 })
             .subscribe(
                 result => {
                     this.totalData = result;
                     let maxValue = Math.max(
-                        Math.abs(result.income),
-                        Math.abs(result.expenses),
+                        Math.abs(result.inflows),
+                        Math.abs(result.outflows),
                         Math.abs(result.netChange)
                     ) * 1.5;
-                    this.totalData.incomePercent = this.getPercentage(maxValue, result.income);
-                    this.totalData.expensesPercent = this.getPercentage(maxValue, result.expenses);
+                    this.totalData.inflowsPercent = this.getPercentage(maxValue, result.inflows);
+                    this.totalData.outflowsPercent = this.getPercentage(maxValue, result.outflows);
                     this.totalData.netChangePercent = this.getPercentage(maxValue, result.netChange);
                 },
                 e => { this.finishLoading(); },
@@ -156,7 +156,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     customizeText = (pointInfo: any) => {
-        if (this.totalData[0].income - this.totalData[0].expenses < 0) {
+        if (this.totalData[0].inflows - this.totalData[0].outflows < 0) {
             return '-' + pointInfo.valueText;
         } else {
             return pointInfo.valueText;

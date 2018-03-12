@@ -14,12 +14,12 @@
 
             <div class="starting-balance">{{l('Stats_startingBalance')}}<span>{{ totalData.startingBalance | currency }}</span></div>
 
-            <div class="chart-head">{{l('Cash_Inflows')}}<span [ngStyle]="{'color': incomeColor}">{{ totalData.income | currency }}</span></div>
-            <div class="chart-line"><div [ngStyle]="{width: totalData.incomePercent + '%', 'background-color': incomeColor}"></div></div>
-            <div class="chart-head">{{l('Cash_Outflows')}}<span [ngStyle]="{'color': expensesColor}">{{ totalData.expenses | currency }}</span></div>
-            <div class="chart-line"><div [ngStyle]="{width: totalData.expensesPercent + '%', 'background-color': expensesColor}"></div></div>
-            <div class="chart-head">{{l('Net_Change')}}<span [ngStyle]="{'color': totalData.income - totalData.expenses > 0 ? netChangeColor : expensesColor}">{{ totalData.netChange | currency }}</span></div>
-            <div class="chart-line"><div [ngStyle]="{width: totalData.netChangePercent + '%', 'background-color': totalData.income - totalData.expenses > 0 ? netChangeColor : expensesColor }"></div></div>
+            <div class="chart-head">{{l('Cash_Inflows')}}<span [ngStyle]="{'color': inflowsColor}">{{ totalData.inflows | currency }}</span></div>
+            <div class="chart-line"><div [ngStyle]="{width: totalData.inflowsPercent + '%', 'background-color': inflowsColor}"></div></div>
+            <div class="chart-head">{{l('Cash_Outflows')}}<span [ngStyle]="{'color': outflowsColor}">{{ totalData.outflows | currency }}</span></div>
+            <div class="chart-line"><div [ngStyle]="{width: totalData.outflowsPercent + '%', 'background-color': outflowsColor}"></div></div>
+            <div class="chart-head">{{l('Net_Change')}}<span [ngStyle]="{'color': totalData.inflows - totalData.outflows > 0 ? netChangeColor : outflowsColor}">{{ totalData.netChange | currency }}</span></div>
+            <div class="chart-line"><div [ngStyle]="{width: totalData.netChangePercent + '%', 'background-color': totalData.inflows - totalData.outflows > 0 ? netChangeColor : outflowsColor }"></div></div>
 
             <div class="ending-balance">{{l('Stats_endingBalance')}}<span>{{ totalData.endingBalance | currency }}</span></div>
 

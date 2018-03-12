@@ -49,10 +49,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     labelNegativeBackgroundColor = '#f05b2a';
     historicalEndingBalanceColor = '#00aeef';
     forecastEndingBalanceColor = '#f9ba4e';
-    historicalIncomeColor = '#00aeef';
-    historicalExpensesColor = '#f05b2a';
-    forecastIncomeColor = '#a9e3f9';
-    forecastExpensesColor = '#fec6b3';
+    historicalInflowsColor = '#00aeef';
+    historicalOutflowsColor = '#f05b2a';
+    forecastInflowsColor = '#a9e3f9';
+    forecastOutflowsColor = '#fec6b3';
     historicalShadowStartedColor = 'rgba(0, 174, 239, .5)';
     forecastShadowStartedColor = 'rgba(249, 186, 78, .5)';
     historicalNetChangeColor = '#fab800';
@@ -75,11 +75,11 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             'label': this.l('Stats_Starting_Balance_Adjustments')
         },
         {
-            'name': 'income',
+            'name': 'inflows',
             'label': this.ls('Platform', 'Stats_Inflows')
         },
         {
-            'name': 'expenses',
+            'name': 'outflows',
             'label': this.ls('Platform', 'Stats_Outflows')
         },
         {
@@ -99,11 +99,11 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             'label': this.l('Stats_Starting_Balance_Adjustments')
         },
         {
-            'name': 'forecastIncome',
+            'name': 'forecastInflows',
             'label': this.l('Stats_Forecast_Inflows')
         },
         {
-            'name': 'forecastExpenses',
+            'name': 'forecastOutflows',
             'label': this.l('Stats_Forecast_Outflows')
         },
         {
@@ -418,7 +418,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 this.statsData = result.map(statsItem => {
                     statsItem.date.add(statsItem.date.toDate().getTimezoneOffset(), 'minutes');
                     Object.defineProperties(statsItem, {
-                        'netChange': { value: statsItem.income + statsItem.expenses, enumerable: true },
+                        'netChange': { value: statsItem.inflows + statsItem.outflows, enumerable: true },
                         'minRange': { value: minRange, enumerable: true }
                     });
                     if (statsItem.isForecast) {

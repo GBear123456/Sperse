@@ -34,10 +34,10 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     currency = 'USD';
     isForecast = false;
     initCallback;
-    historicalIncomeColor = '#00aeef';
-    historicalExpensesColor = '#f05b2a';
-    forecastIncomeColor = '#a9e3f9';
-    forecastExpensesColor = '#fec6b3';
+    historicalInflowsColor = '#00aeef';
+    historicalOutflowsColor = '#f05b2a';
+    forecastInflowsColor = '#a9e3f9';
+    forecastOutflowsColor = '#fec6b3';
     historicalNetChangeColor = '#fab800';
     forecastNetChangeColor = '#a82aba';
     barChartTooltipFields = [
@@ -50,11 +50,11 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             'label': this.l('Stats_Starting_Balance_Adjustments')
         },
         {
-            'name': 'income',
+            'name': 'inflows',
             'label': this.l('Stats_Inflows')
         },
         {
-            'name': 'expenses',
+            'name': 'outflows',
             'label': this.l('Stats_Outflows')
         },
         {
@@ -74,11 +74,11 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             'label': this.l('Stats_Starting_Balance_Adjustments')
         },
         {
-            'name': 'forecastIncome',
+            'name': 'forecastInflows',
             'label': this.l('Stats_Forecast_Inflows')
         },
         {
-            'name': 'forecastExpenses',
+            'name': 'forecastOutflows',
             'label': this.l('Stats_Forecast_Outflows')
         },
         {
@@ -196,7 +196,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                         Object.defineProperty(
                             statsItem,
                             'netChange',
-                            { value: statsItem.income + statsItem.expenses, enumerable: true }
+                            { value: statsItem.inflows + statsItem.outflows, enumerable: true }
                         );
                         if (statsItem.isForecast) {
                             this.isForecast = true;
