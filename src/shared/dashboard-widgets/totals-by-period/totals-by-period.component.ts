@@ -33,8 +33,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     selectedPeriod: any = String(GroupBy['Yearly']).toLowerCase();
     startDate;
     endDate;
-    inflowsColor = '#32bef2';
-    outflowsColor = '#f75a29';
+    creditColor = '#32bef2';
+    debitColor = '#f75a29';
     netChangeColor = '#35c8a8';
     loading = true;
 
@@ -65,27 +65,27 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         )
             .mergeMap(x => x)
             .scan((prevStatsItem, currentStatsItem) => {
-                let inflows = Math.abs(currentStatsItem.inflows) + prevStatsItem.inflows;
-                let outflows = Math.abs(currentStatsItem.outflows) + prevStatsItem.outflows;
+                let credit = Math.abs(currentStatsItem.credit) + prevStatsItem.credit;
+                let debit = Math.abs(currentStatsItem.debit) + prevStatsItem.debit;
                 return {
                     'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
                     'endingBalance': currentStatsItem.endingBalance,
-                    'inflows': inflows,
-                    'outflows': outflows,
-                    'netChange': Math.abs(inflows - outflows),
+                    'credit': credit,
+                    'debit': debit,
+                    'netChange': Math.abs(credit - debit),
                     'date': currentStatsItem.date
                 };
-            }, { 'inflows': 0, 'outflows': 0, 'netChange': 0 })
+            }, { 'credit': 0, 'debit': 0, 'netChange': 0 })
             .subscribe(
                 result => {
                     this.totalData = result;
                     let maxValue = Math.max(
-                        Math.abs(result.inflows),
-                        Math.abs(result.outflows),
+                        Math.abs(result.credit),
+                        Math.abs(result.debit),
                         Math.abs(result.netChange)
                     ) * 1.5;
-                    this.totalData.inflowsPercent = this.getPercentage(maxValue, result.inflows);
-                    this.totalData.outflowsPercent = this.getPercentage(maxValue, result.outflows);
+                    this.totalData.creditPercent = this.getPercentage(maxValue, result.credit);
+                    this.totalData.debitPercent = this.getPercentage(maxValue, result.debit);
                     this.totalData.netChangePercent = this.getPercentage(maxValue, result.netChange);
                 },
                 e => { this.finishLoading(); },
@@ -156,7 +156,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     customizeText = (pointInfo: any) => {
-        if (this.totalData[0].inflows - this.totalData[0].outflows < 0) {
+        if (this.totalData[0].credit - this.totalData[0].debit < 0) {
             return '-' + pointInfo.valueText;
         } else {
             return pointInfo.valueText;
