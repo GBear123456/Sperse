@@ -3651,7 +3651,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     checkCellType(summaryCell, type): boolean {
         return summaryCell.field('row') !== null &&
-            summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + Reconciliation);
+            summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + type);
     }
 
     cellRowIsNotEmpty(summaryCell) {
