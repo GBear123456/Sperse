@@ -182,7 +182,7 @@ export class ToolBarComponent extends AppComponentBase {
 
         let checkPressed = item.options && item.options['checkPressed'];
         if (checkPressed)
-            event.element.attr('button-pressed', Boolean(checkPressed.call(this)));
+            event.element.setAttribute('button-pressed', Boolean(checkPressed.call(this)));
     }
 
     getImgURI(name: string) {
@@ -193,7 +193,7 @@ export class ToolBarComponent extends AppComponentBase {
         return {
             item: '<div class="toolbar-dropdown-item" ' + (width ? 'style="width:' + width + 'px;"' : '') + '>' +
             (link.icon ? '<img style="margin-right: 15px; position: relative; top: -2px;" src="' + this.getImgURI(link.icon) + '">' : '') + link.text + '</div>',
-            option: '<div><input type="checkbox" id="' + link.name + '" class="dropdown-option-checkbox"' + (link.checked || link.checked == undefined ? ' checked': '') + '><label for="' + link.name + '">' + link.text + '</label></div>',
+            option: '<div><input type="checkbox" id="' + link.name + '" class="dropdown-option-checkbox"' + (link.checked || link.checked == undefined ? ' checked' : '') + '><label for="' + link.name + '">' + link.text + '</label></div>',
             downloadOptions: '<div class="toolbar-download-options" onclick="event.stopPropagation()">' +
                 '<div><input type="radio" name="export" value="all" checked><label>' + this.l('Export all data') + '</label></div>' +
                 '<div><input type="radio" name="export" value="selected"><label>' + this.l('Export selected') + '</label></div>' +
@@ -221,10 +221,10 @@ export class ToolBarComponent extends AppComponentBase {
 
     onItemRendered($event) {
         if ($event.itemData.options.mouseover)
-            $event.itemElement.on('mouseover',
+            $($event.itemElement).on('mouseover',
                 $event.itemData.options.mouseover);
         if ($event.itemData.options.mouseout)
-            $event.itemElement.on('mouseout',
+            $($event.itemElement).on('mouseout',
                 $event.itemData.options.mouseout);
     }
 
@@ -237,9 +237,8 @@ export class ToolBarComponent extends AppComponentBase {
     initDropDownMenu(item) {
         if (item.widget == 'dxDropDownMenu') {
             item.options['accessKey'] = item.name;
-            item.options['items'].forEach(link => {                
-                link.disabled = link.hasOwnProperty('disabled') ? 
-                    link.disabled: (link.type == 'delimiter');
+            item.options['items'].forEach(link => {
+                link.disabled = link.hasOwnProperty('disabled') ? link.disabled : (link.type == 'delimiter');
                 link.html = this.getDropDownItemTemplate(
                     link, item.options['width']);
                 link.onClick = (event) => {

@@ -543,14 +543,14 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             /** Add the historical and forecast big texts above the charts */
             let chartSeries = event.component.getSeriesByName(period),
                 points = event.component.getSeriesByName(period).getVisiblePoints();
-            if (chartSeries && points.length && event.element.find(`.${period}Label`).length === 0) {
+            if (chartSeries && points.length && !event.element.querySelector(`.${period}Label`)) {
                 let x = points[0].vx || points[0].x || 0,
                     left = x / window.outerWidth * 100,
                     y = 25,
                     firstPoint = points[0],
                     lastPoint = points[points.length - 1],
                     seriesWidth = lastPoint.vx - firstPoint.vx;
-                event.element.append(this.createDivTextBlock({
+                event.element.insertAdjacentHTML('beforeEnd', this.createDivTextBlock({
                     'text': period === 'historical' ? this.l('Periods_Historical') : this.l('Periods_Forecast'),
                     'class': `${period}Label`,
                     'styles': {

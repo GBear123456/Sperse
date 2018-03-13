@@ -142,8 +142,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     this.selectedTransactionCategory = rule.condition.transactionCategoryId;
                     this.selectedTransactionTypes = rule.condition.transactionTypes;
                 }
-            }
-            else if (this.data.transactionIds && this.data.transactionIds.length) {
+            } else if (this.data.transactionIds && this.data.transactionIds.length) {
                 this.bankId = data.bankId;
                 if (this.descriptor = this.getCapitalizedWords(data.standardDescriptor))
                     this.data.title = this.descriptor;
@@ -269,13 +268,11 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                                             updateTransactionCategoryMethod(true);
                                         }
                                     });
-                            }
-                            else {
+                            } else {
                                 updateTransactionCategoryMethod(false);
                             }
                         }
-                    }
-                    else
+                    } else
                         this.close(true);
                 }
             });
@@ -315,7 +312,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
         list.forEach((item, index) => {
             item.id = index;
-            item.conditionValue = 
+            item.conditionValue =
                 this.getCapitalizedWords(item.conditionValue);
         });
         return list;
@@ -323,7 +320,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     getAttributes() {
         let attributes = {};
-        let list = this.attributeList.dataSource.filter((item) => {
+        let dataSource = <any>this.attributeList.dataSource;
+        let list = dataSource.filter((item) => {
             return (item['attributeTypeId'] != 'keyword');
         }).forEach((v) => attributes[v['attributeTypeId']] = ConditionAttributeDto.fromJS(v));
 
@@ -377,7 +375,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     onCategoryChanged($event) {
         this.data.categoryId = $event.selectedRowKeys.pop();
         this.data.categoryCashflowTypeId = $event.selectedCashFlowTypeId;
-        
+
         this.isCategoryValid = true;
     }
 
@@ -453,8 +451,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     updateKeywordList($event) {
         if ($event.key.attributeTypeId != 'keyword' && $event.key.conditionTypeId == 'Exist')
             $event.key.conditionValue = '';
-
-        this.keywords = this.attributeList.dataSource.filter((item) => {
+        let dataSource = <any>this.attributeList.dataSource;
+        this.keywords = this.dataSource.filter((item) => {
             return (item['attributeTypeId'] == 'keyword');
         }).map((item, i) => {
             return {
@@ -513,9 +511,9 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     selectedAttributeValue($event, value) {
         $event.stopPropagation();
         $event.preventDefault();
-        if (this.transactionAttributeTypes[this.descriptor])    
-            this.descriptor = '';  
-        this.descriptor += (this.descriptor ? ' - ': '') + value.name;
+        if (this.transactionAttributeTypes[this.descriptor])
+            this.descriptor = '';
+        this.descriptor += (this.descriptor ? ' - ' : '') + value.name;
     }
 
     getKeyAttribute(typeId) {
@@ -524,6 +522,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     getKeyAttributeValues(typeId) {
         let keyAttribute = this.getKeyAttribute(typeId);
-        return keyAttribute ? keyAttribute.values: [];
+        return keyAttribute ? keyAttribute.values : [];
     }
 }
