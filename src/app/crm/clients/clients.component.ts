@@ -89,6 +89,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         };
 
         this.initToolbarConfig();
+
+        this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email'];
+        this.searchValue = '';
     }
 
     private checkCFOClientAccessPermission() {
@@ -216,13 +219,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         this._appService.toolbarConfig = [
             {
                 location: 'before', items: [
-                    { 
-                        name: 'filters', 
-                        action: (event) => {                            
+                    {
+                        name: 'filters',
+                        action: (event) => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            this._filtersService.fixed = 
+                            this._filtersService.fixed =
                                 !this._filtersService.fixed;
                         },
                         options: {
@@ -235,25 +238,29 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                             mouseout: (event) => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
-                            } 
+                            }
                         },
-                        attr: { 
+                        attr: {
                             'filter-selected': this._filtersService.hasFilterSelected
-                        } 
-                    } 
+                        }
+                    }
                 ]
             },
             {
                 location: 'before',
                 items: [
                     {
-                        name: 'search',   
+                        name: 'search',
                         widget: 'dxTextBox',
                         options: {
+                            value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' 
-                                + this.l('Customers').toLowerCase()
+                            placeholder: this.l('Search') + ' '
+                                + this.l('Customers').toLowerCase(),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
+                            }
                         }
                     }
                 ]
@@ -299,10 +306,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 ]
             },
             {
-                location: 'after', 
+                location: 'after',
                 areItemsDependent: true,
                 items: [
-                    { 
+                    {
                         name: 'box',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
                         options: {
@@ -311,8 +318,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                             },
                         }
                     },
-                    { 
-                        name: 'pipeline', 
+                    {
+                        name: 'pipeline',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
                         options: {
                             checkPressed: () => {
@@ -320,14 +327,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                             },
                         }
                     },
-                    { 
-                        name: 'grid', 
+                    {
+                        name: 'grid',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
                         options: {
                             checkPressed: () => {
                                 return (this.dataLayoutType == DataLayoutType.Grid);
                             },
-                        } 
+                        }
                     }
                 ]
             }
@@ -365,6 +372,23 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             obj[filter.field] = filter.items.active.value ? 'A' : 'I';
             return obj;
         }
+    }
+
+    searchValueChange(e: object) {
+        this.searchValue = e['value'];
+        this.processFilterInternal();
+    }
+
+    processFilterInternal() {
+        this.processODataFilter(this.dataGrid.instance,
+            this.dataSourceURI, this.filters,
+                (filter) => {
+                    let filterMethod = this['filterBy' +
+                        this.capitalize(filter.caption)];
+                    if (filterMethod)
+                        return filterMethod.call(this, filter);
+                }
+        );
     }
 
     ngAfterViewInit(): void {
