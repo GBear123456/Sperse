@@ -1,6 +1,6 @@
 <div *ngIf="!completed && synchData" class="synch-progress-wrapper">
     <div id="synchProgressContainer" class="synch-container" (mouseenter)="toggleTooltip()">
-        <dx-load-indicator class="load-indicator" [class.error]="isFailed"></dx-load-indicator>
+        <div class="loadindicator" [class.error]="isFailed"></div>
         <h3>{{l('Sync_status')}}</h3>
         <dx-progress-bar #progressBar
                          id="progress-bar-status"

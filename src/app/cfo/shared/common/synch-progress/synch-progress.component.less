@@ -4,6 +4,7 @@
     top: 0;
     left: 50%;
     transform: translateX(-50%);
+    height: 100%;
 }
 .synch-container {
     display: flex;
@@ -28,57 +29,41 @@
 }
 
 :host {
-    /deep/ .dx-loadindicator {
-        width: 45px;
-        height: 75px;
-    }
-    
-    /deep/ .dx-progressbar {
-        &::before {
-            content: none;
-        }
-    }
-    /deep/ .dx-loadindicator-icon {
+
+    .loadindicator {
         height: 16px;
         width: 16px;
-        left: 14px;
-        top: 29px;
-    
+        left: -9px;
         border: 2px solid rgba(53,200,168,.9);
         border-left-color: rgba(255,255,255,.2);
         border-bottom-color: rgba(255,255,255,.2);
-    
         border-radius: 50%;
         position: relative;
         -webkit-animation: rotation .6s infinite linear;
         -moz-animation: rotation .6s infinite linear;
         -o-animation: rotation .6s infinite linear;
         animation: rotation .6s infinite linear;
-        
-        * {
-            display: none;
+
+        &.error {
+            border-top-color: red;
+            border-right-color: red;
         }
     }
-    
-    /deep/ .load-indicator.error {
-        .dx-loadindicator-icon {
-            display: none;
-        }
-        
-        .dx-loadindicator-content {
-            background: transparent url(../../../../../assets/common/icons/error-icon.svg) 50% 50% no-repeat;
-            background-size: 50%;
+
+    /deep/ .dx-progressbar {
+        &::before {
+            content: none;
         }
     }
 
     /deep/ .dx-progressbar-wrapper {
         display: flex;
-        
+
         .dx-progressbar-range-container {
             display: block;
             margin-right: 15px;
             position: relative;
-            
+
             .dx-progressbar-container {
                 border: 0;
                 height: 7px;
@@ -86,7 +71,7 @@
                 border-radius: 4px;
                 overflow: hidden;
                 top: 7px;
-                
+
                 .dx-progressbar-range {
                     border: 0;
                     background-color: #35c8a8;
@@ -95,6 +80,7 @@
                 }
             }
         }
+
         .dx-progressbar-status {
             display: block;
             color: #212c36;
@@ -104,7 +90,7 @@
             padding-right: 10px;
         }
     }
-    
+
     /deep/ .dx-button {
         background-color: #048C6E;
         border: 0;
@@ -116,7 +102,7 @@
         line-height: 24px;
         margin-left: auto;
         margin-right: 15px;
-        
+
         &:hover {
             background: lighten(#048C6E, 2%);
         }
