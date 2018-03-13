@@ -2196,7 +2196,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let accountId = e.cell.path[1].slice(2);
             let account = this.bankAccounts.find(account => account.id == accountId);
             if (account && account.accountNumber) {
-                maxCategoryWidth -= 8;
+                maxCategoryWidth -= 7;
                 e.cellElement.append(`<span class="accountNumber">${account.accountNumber}</span>`);
             }
         }
@@ -2252,8 +2252,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** hide long text for row headers and show '...' instead with the hover and long text*/
         if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.path.length !== 1 && e.cell.text && e.cell.text.length > maxCategoryWidth) {
-            e.cellElement.attr('title', e.cell.text);
-            e.cellElement.find('> span:first-of-type').text(_.prune(e.cell.text, maxCategoryWidth));
+            e.cellElement.attr('title', e.cell.text.toUpperCase());
+            e.cellElement.find('> span:first-of-type').text(_.truncate(e.cell.text, maxCategoryWidth));
         }
 
         /** Show descriptors in Italic */
@@ -3651,7 +3651,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     checkCellType(summaryCell, type): boolean {
         return summaryCell.field('row') !== null &&
-            summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + Reconciliation);
+            summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + type);
     }
 
     cellRowIsNotEmpty(summaryCell) {
