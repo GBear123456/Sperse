@@ -876,7 +876,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             };
 
             if (_.some(transactions, x => x.CashFlowTypeId != $event.categoryCashType)) {
-                abp.message.confirm('You are about to change cashflow type for at least one transaction.', 'Are you sure you want to continue?',
+                abp.message.confirm(this.l('RuleDialog_ChangeCashTypeMessage'), this.l('RuleDialog_ChangeCashTypeTitle'),
                     (result) => {
                         if (result) {
                             updateTransactionCategoryMethod(true);

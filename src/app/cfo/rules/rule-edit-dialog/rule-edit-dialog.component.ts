@@ -263,7 +263,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                             };
 
                             if (this.data.categoryCashflowTypeId && _.some(this.data.transactions, x => x.CashFlowTypeId != this.data.categoryCashflowTypeId)) {
-                                abp.message.confirm('At least 1 transaction will reverse cashflow type after the modification.', 'Are you ok with it?',
+                                abp.message.confirm(this.l('RuleDialog_ChangeCashTypeMessage'), this.l('RuleDialog_ChangeCashTypeTitle'),
                                     (result) => {
                                         if (result) {
                                             updateTransactionCategoryMethod(true);
