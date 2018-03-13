@@ -505,9 +505,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onAttributeKeyEnter($event, cell) {
-        if ($event.jQueryEvent.keyCode == 13)
-            this.onCustomAttributeCreating(
-                {value: $event.jQueryEvent.target.value}, cell);
+        this.onCustomAttributeCreating(
+            {value: $event.jQueryEvent.target.value}, cell);
     }
 
     selectedAttributeValue($event, value) {

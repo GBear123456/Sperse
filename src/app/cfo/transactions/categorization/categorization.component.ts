@@ -341,8 +341,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     onContentReady($event) {
         this.initDragAndDropEvents($event);
 
-        this.nameColumnWidth = 
-            Math.round(this.categoryList.instance.element().width() / 3);
+        this.nameColumnWidth =                 
+            Math.round(this.categoryList.instance.element()['width']() / 3);
 
         if (this.filteredRowData) {
             let rowIndex = this.categoryList.instance.getRowIndexByKey(this.filteredRowData.key);
