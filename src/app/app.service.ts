@@ -9,6 +9,8 @@ export class AppService extends AppServiceBase {
     public toolbarConfig: any;
     public toolbarIsAdaptive = false;
     public toolbarIsHidden  = false;
+    
+    public marginLeftEnable: boolean = true;
 
     public showContactInfoPanel = false;
     public contactInfo: any;

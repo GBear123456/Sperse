@@ -147,8 +147,8 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                 break;
         }
 
-        this.dailyStatsAmountInteger = Math.ceil(this.dailyStatsAmount);
-        this.dailyStatsAmountFloat = '.' + this.dailyStatsAmount.toFixed(2).split('.')[1];
         this.dailyStatsText = this.l(this.dailyStatsToggleValues[this.dailyStatsSliderSelected]) + ' ' + this.l('Balance');
+        this.dailyStatsAmountInteger = Math.sign(this.dailyStatsAmount) * Math.floor(Math.abs(this.dailyStatsAmount));
+        this.dailyStatsAmountFloat = '.' + this.dailyStatsAmount.toFixed(2).split('.')[1];
     }
 }

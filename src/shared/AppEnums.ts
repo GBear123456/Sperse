@@ -92,8 +92,7 @@ export class LinkType {
     static LinkedIn = 'L';
     static Pinterest = 'P';
     static Twitter = 'T';
-    static WebSite2 = '2';
-    static WebSite3 = '3';
+    static Website = 'J';
     static Alexa = 'A';
     static BBB = 'B';
     static Crunchbase = 'C';

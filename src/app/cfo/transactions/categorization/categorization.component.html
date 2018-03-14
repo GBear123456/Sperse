@@ -37,6 +37,8 @@
                     [cellTemplate]="'categoryTemplate'"
                     [allowSorting]="true"
                     [sortIndex]="0"
+                    [width]="nameColumnWidth"
+                    [minWidth]="200"
                     [sortingMethod]="sortItem"
                     [calculateSortValue]="calculateSortValue"
                     [sortOrder]="'asc'" dataField="name">
@@ -44,7 +46,8 @@
         <dxi-column [allowSorting]="true"
                     [sortIndex]="1"
                     [sortOrder]="'asc'"
-                    [width]="65"
+                    [alignment]="'left'"
+                    [width]="50"
                     dataField="coAID"
                     [dataType]="number"
                     [caption]="'ID'"
@@ -54,7 +57,8 @@
         <dxi-column dataField="transactionsCount"
                     [cellTemplate]="'transactionsCountTemplate'"
                     [dataType]="number"
-                    [width]="65"
+                    [alignment]="'left'"
+                    [width]="50"
                     [caption]="'Count'"
                     [allowEditing]="false"
                     [visible]="settings.showTC">

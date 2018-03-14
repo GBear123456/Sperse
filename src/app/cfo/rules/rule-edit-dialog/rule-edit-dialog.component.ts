@@ -46,6 +46,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     keyAttributeValues: any = [];
     private transactionAttributeTypes: any;
 
+    availableGridAttributeTypes: any = [];
     transactionTypesAndCategoriesData: TransactionTypesAndCategoriesDto;
     transactionTypes: any;
     transactionCategories: any;
@@ -156,7 +157,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     getCapitalizedWords(value) {
-        return value.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+        return value && value.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
     }
 
     getKeywordsFromString(value: string) {
@@ -173,7 +174,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         if (!attributes || !attributes.length) return [];
 
         return attributes.map((v) => {
-            return {
+            return {                
                 attributeTypeId: v.typeId,
                 conditionTypeId: v.value ? ConditionAttributeDtoConditionTypeId.Equal : ConditionAttributeDtoConditionTypeId.Exist,
                 conditionValue: v.value
@@ -263,7 +264,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                             };
 
                             if (this.data.categoryCashflowTypeId && _.some(this.data.transactions, x => x.CashFlowTypeId != this.data.categoryCashflowTypeId)) {
-                                abp.message.confirm('At least 1 transaction will reverse cashflow type after the modification.', 'Are you ok with it?',
+                                abp.message.confirm(this.l('RuleDialog_ChangeCashTypeMessage'), this.l('RuleDialog_ChangeCashTypeTitle'),
                                     (result) => {
                                         if (result) {
                                             updateTransactionCategoryMethod(true);
@@ -296,6 +297,16 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         });
     }
 
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        setTimeout(() => {
+            let input = this.getElementRef().nativeElement
+                .querySelector('.dx-texteditor-input');
+            input.focus();
+            input.select();
+        }, 100);
+    }
+
     getDescriptionKeywords() {
         return this.keywords.map((row) => {
             return row['keyword'];
@@ -315,8 +326,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
         list.forEach((item, index) => {
             item.id = index;
-            item.conditionValue = 
-                this.getCapitalizedWords(item.conditionValue);
+            item.conditionValue = this.getCapitalizedWords(item.conditionValue);
         });
         return list;
     }
@@ -377,7 +387,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     onCategoryChanged($event) {
         this.data.categoryId = $event.selectedRowKeys.pop();
         this.data.categoryCashflowTypeId = $event.selectedCashFlowTypeId;
-        
         this.isCategoryValid = true;
     }
 
@@ -505,17 +514,16 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onAttributeKeyEnter($event, cell) {
-        if ($event.jQueryEvent.keyCode == 13)
-            this.onCustomAttributeCreating(
-                {value: $event.jQueryEvent.target.value}, cell);
+        this.onCustomAttributeCreating(
+            {value: $event.jQueryEvent.target.value}, cell);
     }
 
     selectedAttributeValue($event, value) {
         $event.stopPropagation();
         $event.preventDefault();
-        if (this.transactionAttributeTypes[this.descriptor])    
-            this.descriptor = '';  
-        this.descriptor += (this.descriptor ? ' - ': '') + value.name;
+        if (this.transactionAttributeTypes[this.descriptor])
+            this.descriptor = '';
+        this.descriptor += (this.descriptor ? ' - ' : '') + value.name;
     }
 
     getKeyAttribute(typeId) {
@@ -526,4 +534,20 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         let keyAttribute = this.getKeyAttribute(typeId);
         return keyAttribute ? keyAttribute.values: [];
     }
+
+    onAttributesContentReady($event) {
+        let list = _.filter(this.gridAttributeTypes, (item) => {
+            return Object.keys(this.getAttributes()).indexOf(item.id) == -1;
+        });
+        if (this.availableGridAttributeTypes.length != list.length)
+            this.availableGridAttributeTypes = list;
+    }
+
+    attributeDisplayValue = ((data) => {
+        let attribute = _.findWhere(this.gridAttributeTypes, 
+                {id: data.attributeTypeId});
+
+        return attribute ? attribute.name: 
+            this.capitalize(data.attributeTypeId);
+    }).bind(this);
 }

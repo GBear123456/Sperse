@@ -98,6 +98,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         };
 
         this.initToolbarConfig();
+
+        this.searchColumns = ['FullName', 'CompanyName', 'Email'];
+        this.searchValue = '';
     }
 
     onContentReady(event) {
@@ -309,13 +312,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 location: 'before',
                 items: [
                     {
-                        name: 'search',   
+                        name: 'search',
                         widget: 'dxTextBox',
                         options: {
+                            value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' 
-                                + this.l('Leads').toLowerCase()
+                            placeholder: this.l('Search') + ' '
+                                + this.l('Leads').toLowerCase(),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
+                            }
                         }
                     }
                 ]
@@ -424,6 +431,23 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
 
         return data;
+    }
+
+    searchValueChange(e: object) {
+        this.searchValue = e['value'];
+        this.processFilterInternal();
+    }
+
+    processFilterInternal() {
+        this.processODataFilter(this.dataGrid.instance,
+            this.dataSourceURI, this.filters,
+                (filter) => {
+                    let filterMethod = this['filterBy' +
+                        this.capitalize(filter.caption)];
+                    if (filterMethod)
+                        return filterMethod.call(this, filter);
+                }
+        );
     }
 
     ngAfterViewInit(): void {

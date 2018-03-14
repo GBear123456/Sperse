@@ -34,10 +34,10 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     currency = 'USD';
     isForecast = false;
     initCallback;
-    historicalIncomeColor = '#00aeef';
-    historicalExpensesColor = '#f05b2a';
-    forecastIncomeColor = '#a9e3f9';
-    forecastExpensesColor = '#fec6b3';
+    historicalCreditColor = '#00aeef';
+    historicalDebitColor = '#f05b2a';
+    forecastCreditColor = '#a9e3f9';
+    forecastDebitColor = '#fec6b3';
     historicalNetChangeColor = '#fab800';
     forecastNetChangeColor = '#a82aba';
     barChartTooltipFields = [
@@ -50,11 +50,11 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             'label': this.l('Stats_Starting_Balance_Adjustments')
         },
         {
-            'name': 'income',
+            'name': 'credit',
             'label': this.l('Stats_Inflows')
         },
         {
-            'name': 'expenses',
+            'name': 'debit',
             'label': this.l('Stats_Outflows')
         },
         {
@@ -74,11 +74,11 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             'label': this.l('Stats_Starting_Balance_Adjustments')
         },
         {
-            'name': 'forecastIncome',
+            'name': 'forecastCredit',
             'label': this.l('Stats_Forecast_Inflows')
         },
         {
-            'name': 'forecastExpenses',
+            'name': 'forecastDebit',
             'label': this.l('Stats_Forecast_Outflows')
         },
         {
@@ -196,7 +196,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                         Object.defineProperty(
                             statsItem,
                             'netChange',
-                            { value: statsItem.income + statsItem.expenses, enumerable: true }
+                            { value: statsItem.credit + statsItem.debit, enumerable: true }
                         );
                         if (statsItem.isForecast) {
                             this.isForecast = true;

@@ -33,8 +33,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     selectedPeriod: any = String(GroupBy['Yearly']).toLowerCase();
     startDate;
     endDate;
-    incomeColor = '#32bef2';
-    expensesColor = '#f75a29';
+    creditColor = '#32bef2';
+    debitColor = '#f75a29';
     netChangeColor = '#35c8a8';
     loading = true;
 
@@ -65,27 +65,31 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         )
             .mergeMap(x => x)
             .scan((prevStatsItem, currentStatsItem) => {
-                let income = Math.abs(currentStatsItem.income) + prevStatsItem.income;
-                let expenses = Math.abs(currentStatsItem.expenses) + prevStatsItem.expenses;
+                let credit = Math.abs(currentStatsItem.credit) + prevStatsItem.credit;
+                let debit = Math.abs(currentStatsItem.debit) + prevStatsItem.debit;
+                let adjustments = currentStatsItem.adjustments + prevStatsItem.adjustments;
+                let startingBalanceAdjustments = currentStatsItem.startingBalanceAdjustments + prevStatsItem.startingBalanceAdjustments;
                 return {
                     'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
                     'endingBalance': currentStatsItem.endingBalance,
-                    'income': income,
-                    'expenses': expenses,
-                    'netChange': Math.abs(income - expenses),
+                    'credit': credit,
+                    'debit': debit,
+                    'adjustments': adjustments,
+                    'startingBalanceAdjustments': startingBalanceAdjustments,
+                    'netChange': Math.abs(credit - debit),
                     'date': currentStatsItem.date
                 };
-            }, { 'income': 0, 'expenses': 0, 'netChange': 0 })
+            }, { 'credit': 0, 'debit': 0, 'netChange': 0, 'adjustments': 0, 'startingBalanceAdjustments': 0 })
             .subscribe(
                 result => {
                     this.totalData = result;
                     let maxValue = Math.max(
-                        Math.abs(result.income),
-                        Math.abs(result.expenses),
+                        Math.abs(result.credit),
+                        Math.abs(result.debit),
                         Math.abs(result.netChange)
                     ) * 1.5;
-                    this.totalData.incomePercent = this.getPercentage(maxValue, result.income);
-                    this.totalData.expensesPercent = this.getPercentage(maxValue, result.expenses);
+                    this.totalData.creditPercent = this.getPercentage(maxValue, result.credit);
+                    this.totalData.debitPercent = this.getPercentage(maxValue, result.debit);
                     this.totalData.netChangePercent = this.getPercentage(maxValue, result.netChange);
                 },
                 e => { this.finishLoading(); },
@@ -156,7 +160,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     customizeText = (pointInfo: any) => {
-        if (this.totalData[0].income - this.totalData[0].expenses < 0) {
+        if (this.totalData[0].credit - this.totalData[0].debit < 0) {
             return '-' + pointInfo.valueText;
         } else {
             return pointInfo.valueText;

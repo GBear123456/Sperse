@@ -351,10 +351,9 @@
                     }
 
                     td {
-                        &:nth-child(2) {
-                            position: absolute;
+                        &:nth-child(2) {                            
                             max-width: 40px;
-                            right: 0px;
+                            padding-left: 30px;
                         }
 
                         .category-hover, .category-drop-area {
@@ -377,6 +376,15 @@
                     }
 
                     &.dx-edit-row {
+                        &[aria-level="2"] {
+                            td:first-child {
+                                &:before {          
+                                    left: -10px;
+                                    margin-top: -5px;
+                                }
+                            }
+                        }
+
                         td:nth-child(2) {
                             visibility: visible !important;
                         }
@@ -396,6 +404,11 @@
 
                     &.dx-edit-row {
                         td {
+                            left: 35px;
+                            position: relative!important;
+                            &:nth-child(2) {
+                                padding-left: 0px!important;
+                            }
                             &.dx-command-edit {
                                 a.dx-link-save, a.dx-link-cancel, a.dx-link-delete {
                                     visibility: visible;
@@ -453,7 +466,7 @@
                         color: #424c56;
 
                         span:not(.dx-treelist-search-text) {
-                            max-width: 210px;
+                            max-width: stretch;
                             display: inline-block;
                             overflow: hidden;
                             text-overflow: ellipsis;
@@ -461,9 +474,12 @@
                     }
 
                     .transactionCount {
+                        position: relative;
+                        left: 30px;
                         border-radius: 10px;
                         background-color: #f0f2f5;
                         min-width: 30px;
+                        max-width: 100px;
                         text-align: center;
                         font-size: 11px;
                         color: #9a9fa4;

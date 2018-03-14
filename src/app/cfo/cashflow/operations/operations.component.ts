@@ -46,9 +46,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     reportPeriodTooltipVisible: boolean = false;
     sliderReportPeriod = { start: 2000, end: 2028 };
     totalCount = 3;
-    tooltipEnabled = {
-        enabled: true
-    };
+
     initToolbarConfig() {
         this._appService.toolbarIsAdaptive = true;
         this._appService.toolbarConfig = [

@@ -68,6 +68,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     categorization: GetCategoryTreeOutput;
     columnClassName = '';
     showSearch = false;
+    nameColumnWidth;
 
     filteredRowData: any;
 
@@ -119,7 +120,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     initToolbarConfig() {
         this.toolbarConfig = [
             {
-                location: 'center', items: [
+                location: 'before', items: [
                     {
                         name: 'find',
                         action: (event) => {
@@ -167,7 +168,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                                 text: this.l('Collapse all'),
                             }]
                         }
-                    },
+                    }
+                ]
+            }, {
+                location: 'after', items: [
                     {
                         name: 'follow',
                         widget: 'dxDropDownMenu',
@@ -336,6 +340,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
     onContentReady($event) {
         this.initDragAndDropEvents($event);
+
+        this.nameColumnWidth =                 
+            Math.round(this.categoryList.instance.element()['width']() / 3);
 
         if (this.filteredRowData) {
             let rowIndex = this.categoryList.instance.getRowIndexByKey(this.filteredRowData.key);
@@ -516,7 +523,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         this.autoExpand = autoExpand;
 
         this._classificationServiceProxy.getCategoryTree(
-            InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
+            InstanceType[this.instanceType], this.instanceId, false).subscribe((data) => {
                 let categories = [];
                 this.categorization = data;
                 if (this.settings.showAT && data.accountingTypes) {

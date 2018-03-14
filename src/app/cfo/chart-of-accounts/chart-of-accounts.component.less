@@ -10,6 +10,19 @@
         padding: 15px 20px;
     }
 
+    /deep/ categorization {
+        table {
+            width: calc(~"100vw - 760px");
+        }
+        td:nth-child(2) {
+            position: static;
+            visibility: visible!important;
+        }
+        .dx-scrollbar-horizontal {
+            visibility: hidden;
+        }
+    }
+
     .right-actions {
         width: 321px;
         height: calc(~"100vh - 150px");
