@@ -1,6 +1,6 @@
-<app-headline [config]="headlineConfig"></app-headline>
 <div [@routerTransition]>
-    <div class="portlet light no-padding margin-bottom-0">
+    <app-headline [config]="headlineConfig"></app-headline>
+    <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
                 <div id="ClientsTable">
@@ -64,3 +64,8 @@
 
     <createOrEditClientModal #createOrEditClientModal (modalSave)="refreshDataGrid()"></createOrEditClientModal>
 </div>
+
+<app-no-data
+    [hidden]="!isDataLoaded || totalRowCount"
+    [showLink]="false">
+</app-no-data>

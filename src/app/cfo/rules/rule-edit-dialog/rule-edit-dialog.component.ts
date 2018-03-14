@@ -326,8 +326,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
         list.forEach((item, index) => {
             item.id = index;
-            item.conditionValue = 
-                this.getCapitalizedWords(item.conditionValue);
+            item.conditionValue = this.getCapitalizedWords(item.conditionValue);
         });
         return list;
     }
@@ -388,7 +387,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     onCategoryChanged($event) {
         this.data.categoryId = $event.selectedRowKeys.pop();
         this.data.categoryCashflowTypeId = $event.selectedCashFlowTypeId;
-        
         this.isCategoryValid = true;
     }
 
@@ -523,9 +521,9 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     selectedAttributeValue($event, value) {
         $event.stopPropagation();
         $event.preventDefault();
-        if (this.transactionAttributeTypes[this.descriptor])    
-            this.descriptor = '';  
-        this.descriptor += (this.descriptor ? ' - ': '') + value.name;
+        if (this.transactionAttributeTypes[this.descriptor])
+            this.descriptor = '';
+        this.descriptor += (this.descriptor ? ' - ' : '') + value.name;
     }
 
     getKeyAttribute(typeId) {

@@ -103,6 +103,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     onContentReady(event) {
+        this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40

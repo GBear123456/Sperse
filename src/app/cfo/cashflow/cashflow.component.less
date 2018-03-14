@@ -246,14 +246,25 @@
                                 font-size: 20px;
                             }
 
-                            &.lowestOpenedCurrent:not(.mtdCell):not(.nextDay) {
+                            &.lowestOpenedCurrent:not(.mtdCell):not(.month) {
                                 background-color: @currentPeriodCellBackgroundColor;
+                            }
+
+                            &.lowestOpenedCurrent.dx-pivotgrid-expanded.month {
+                                position: relative;
+                                &:before {
+                                    content: '';
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    border-top: 3px solid @currentTextColor
+                                }
                             }
 
                             &.month,
                             &.quarter,
-                            &.day,
-                            &.dx-row-total {
+                            &.day {
                                 color: @generalColor;
                                 font-weight: 600;
                                 font-size: 18px;
@@ -643,7 +654,7 @@
                                 background: transparent;
                             }
 
-                            &.lowestOpenedCurrent:not(.mtdCell):not(.nextDay) {
+                            &.lowestOpenedCurrent:not(.mtdCell) {
                                 &.income {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@incomeDataCellBackgroundColor, @incomeDataCellBackgroundColor);
                                 }
@@ -653,7 +664,7 @@
                                 }
                             }
 
-                            &.lowestOpenedCurrent:not(.mtdCell):not(.nextDay) {
+                            &.lowestOpenedCurrent:not(.mtdCell) {
                                 background-color: @currentPeriodCellBackgroundColor;
                             }
 
@@ -708,7 +719,7 @@
                                     background: @startedBalanceDataCellColor;
                                 }
 
-                                &.lowestOpenedCurrent:not(.mtdCell):not(.nextDay) {
+                                &.lowestOpenedCurrent:not(.mtdCell) {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                                 }
                             }
@@ -717,7 +728,7 @@
                                 td {
                                     background: @startedBalanceDataCellColor;
 
-                                    &.lowestOpenedCurrent:not(.mtdCell):not(.nextDay) {
+                                    &.lowestOpenedCurrent:not(.mtdCell) {
                                         background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                                     }
                                 }
@@ -728,7 +739,7 @@
                             td {
                                 background: @grandTotalBackgroundColor;
 
-                                &.lowestOpenedCurrent:not(.mtdCell):not(.nextDay) {
+                                &.lowestOpenedCurrent:not(.mtdCell) {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
                                 }
 
@@ -743,7 +754,7 @@
                                 background: @reconciliationDataCellBackgroundColor;
                                 color: @reconciliationDataCellTextColor;
 
-                                &.lowestOpenedCurrent:not(.mtdCell):not(.nextDay) {
+                                &.lowestOpenedCurrent:not(.mtdCell) {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
                                 }
                             }
