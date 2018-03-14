@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
+import { CommonModule } from '@shared/common/common.module';
 
 import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
 
@@ -48,6 +49,7 @@ import {
 @NgModule({
     imports: [
       FormsModule,
+      ngCommon.CommonModule,
       CommonModule,
       DxDataGridModule,
       DxToolbarModule,

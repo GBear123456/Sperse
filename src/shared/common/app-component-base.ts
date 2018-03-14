@@ -26,6 +26,8 @@ export abstract class AppComponentBase {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
     dataGrid: any;
     dataSource: any;
+    isDataLoaded: boolean = false;
+    totalRowCount: number;
     totalDataSource: any;
     localization: LocalizationService;
     protected permission: PermissionCheckerService;
@@ -132,6 +134,7 @@ export abstract class AppComponentBase {
     }
 
     processODataFilter(grid, uri, filters, getCheckCustom) {
+        this.isDataLoaded = false;
         return this.advancedODataFilter(grid, uri,
             filters.map((filter) => {
                 return getCheckCustom(filter) ||
@@ -248,5 +251,14 @@ export abstract class AppComponentBase {
     protected setTitle(moduleName: string) {
         let rootComponent: any = this.getRootComponent();
         rootComponent.setTitle(this.appSession.tenantName, moduleName);
+    }
+
+    protected setGridDataLoaded() {
+        var gridInstance = this.dataGrid && this.dataGrid.instance;
+        if (gridInstance) {
+            var dataSource = gridInstance.getDataSource(); 
+            this.isDataLoaded = dataSource.isLoaded();
+            this.totalRowCount = dataSource.totalCount();     
+        }
     }
 }

@@ -1,4 +1,4 @@
-<div [@routerTransition]>
+<div [hidden]="isDataLoaded && !totalRowCount" [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
@@ -79,3 +79,8 @@
         </div>
     </div>
 </div>
+
+<app-no-data
+    [hidden]="!isDataLoaded || totalRowCount"
+    [showLink]="false">
+</app-no-data>
