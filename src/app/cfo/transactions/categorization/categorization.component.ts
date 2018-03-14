@@ -523,7 +523,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         this.autoExpand = autoExpand;
 
         this._classificationServiceProxy.getCategoryTree(
-            InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
+            InstanceType[this.instanceType], this.instanceId, false).subscribe((data) => {
                 let categories = [];
                 this.categorization = data;
                 if (this.settings.showAT && data.accountingTypes) {

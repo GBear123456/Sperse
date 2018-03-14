@@ -13,6 +13,9 @@
         <div [hidden]="!totalData" *ngIf="totalData?.hasOwnProperty('startingBalance')">
 
             <div class="starting-balance">{{l('Stats_startingBalance')}}<span>{{ totalData.startingBalance | currency }}</span></div>
+            <div class="starting-balance-entry" *ngIf="totalData.startingBalanceAdjustments !== 0">{{l('Stats_startingBalance')}}<span>{{ totalData.startingBalanceAdjustments | currency }}</span></div>
+
+            <hr class="separator">
 
             <div class="chart-head">{{l('Cash_Inflows')}}<span [ngStyle]="{'color': creditColor}">{{ totalData.credit | currency }}</span></div>
             <div class="chart-line"><div [ngStyle]="{width: totalData.creditPercent + '%', 'background-color': creditColor}"></div></div>
@@ -21,9 +24,21 @@
             <div class="chart-head">{{l('Net_Change')}}<span [ngStyle]="{'color': totalData.credit - totalData.debit > 0 ? netChangeColor : debitColor}">{{ totalData.netChange | currency }}</span></div>
             <div class="chart-line"><div [ngStyle]="{width: totalData.netChangePercent + '%', 'background-color': totalData.credit - totalData.debit > 0 ? netChangeColor : debitColor }"></div></div>
 
-            <div class="ending-balance">{{l('Stats_endingBalance')}}<span>{{ totalData.endingBalance | currency }}</span></div>
+            <div class="ending-balance">
+                <div id="adjustments" *ngIf="totalData.adjustments !== 0"> ! </div>
+                {{l('Stats_endingBalance')}}
+                <span>{{ totalData.endingBalance | currency }}</span>
+            </div>
 
         </div>
         <app-no-data [hidden]="loading || (totalData && totalData?.hasOwnProperty('startingBalance'))"></app-no-data>
     </div>
+    <dx-tooltip target="#adjustments"
+                position="top"
+                showEvent="dxhoverstart"
+                hideEvent="dxhoverend">
+        <div *dxTemplate="let data = data of 'content'">
+            Unreconciled Balance: {{ totalData.adjustments | currency }}
+        </div>
+    </dx-tooltip>
 </section>
