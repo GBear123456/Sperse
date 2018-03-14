@@ -97,7 +97,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     }
 
     getOrganizationWebsiteUrl(organizationContactInfo: OrganizationContactInfoDto) {
-        let links = organizationContactInfo.details.links.filter(item => item.linkTypeId == LinkType.WebSite2 || item.linkTypeId == LinkType.WebSite3 );
+        let links = organizationContactInfo.details.links.filter(item => item.linkTypeId == LinkType.Website);
         return links.length > 0 ? links[0].url : null;
     }
 
