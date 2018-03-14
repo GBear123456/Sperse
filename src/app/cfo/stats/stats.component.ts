@@ -75,6 +75,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             'label': this.l('Stats_Starting_Balance_Adjustments')
         },
         {
+            'name': 'adjustments',
+            'label': this.l('Adjustments')
+        },
+        {
             'name': 'credit',
             'label': this.ls('Platform', 'Stats_Inflows')
         },
@@ -97,6 +101,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         {
             'name': 'forecastStartingBalanceAdjustments',
             'label': this.l('Stats_Starting_Balance_Adjustments')
+        },
+        {
+            'name': 'forecastAdjustments',
+            'label': this.l('Forecast_Adjustments')
         },
         {
             'name': 'forecastCredit',

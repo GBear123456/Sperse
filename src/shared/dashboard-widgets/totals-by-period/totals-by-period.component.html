@@ -13,7 +13,7 @@
         <div [hidden]="!totalData" *ngIf="totalData?.hasOwnProperty('startingBalance')">
 
             <div class="starting-balance">{{l('Stats_startingBalance')}}<span>{{ totalData.startingBalance | currency }}</span></div>
-            <div class="starting-balance-entry" *ngIf="totalData.startingBalanceAdjustments !== 0">{{l('Stats_startingBalance')}}<span>{{ totalData.startingBalanceAdjustments | currency }}</span></div>
+            <div class="starting-balance-entry" *ngIf="totalData.startingBalanceAdjustments !== 0">{{l('Starting_Balance_Entry')}}<span>{{ totalData.startingBalanceAdjustments | currency }}</span></div>
 
             <hr class="separator">
 
@@ -38,7 +38,7 @@
                 showEvent="dxhoverstart"
                 hideEvent="dxhoverend">
         <div *dxTemplate="let data = data of 'content'">
-            Unreconciled Balance: {{ totalData.adjustments | currency }}
+            <span class="title">{{l('Unreconciled_Balance')}}:</span> {{ totalData.adjustments | currency }}
         </div>
     </dx-tooltip>
 </section>
