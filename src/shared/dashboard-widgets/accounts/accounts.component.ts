@@ -31,7 +31,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     dailyStatsAmountFloat: string;
     dailyStatsAmountInteger: number;
     dailyStatsText: string;
-    dailyStatsSliderSelected: number = 1;
+    dailyStatsSliderSelected = 1;
     dailyStatsPeriodSelected: string = this.l('All_Periods');
 
     constructor(
