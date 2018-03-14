@@ -2514,12 +2514,16 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getCategoryTree(instanceType: InstanceType26, instanceId: number): Observable<GetCategoryTreeOutput> {
+    getCategoryTree(instanceType: InstanceType26, instanceId: number, isCashFlowTypeOptional: boolean): Observable<GetCategoryTreeOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetCategoryTree?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (isCashFlowTypeOptional === undefined || isCashFlowTypeOptional === null)
+            throw new Error("The parameter 'isCashFlowTypeOptional' must be defined and cannot be null.");
+        else
+            url_ += "isCashFlowTypeOptional=" + encodeURIComponent("" + isCashFlowTypeOptional) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
