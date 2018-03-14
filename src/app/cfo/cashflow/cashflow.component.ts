@@ -1491,8 +1491,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             } else {
                 if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange) {
                     this.pivotGrid.instance.getDataSource().reload();
-                }
-                else {
+                } else {
                     if (updateWithNetChange) {
                         /** If user choose to show net change - then add stub data to data source */
                         if (result.general.showNetChangeRow) {
@@ -2984,7 +2983,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     isLastDayOfMonth(date: moment.Moment): boolean {
-        return date.isSame(date.endOf('month'), 'day');
+        return date.isSame(moment(date).endOf('month'), 'day');
     }
 
     getDetailFilterFromCell(cellObj) {
