@@ -376,7 +376,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.noRefreshedAfterSync = false;
         this.initHeadlineConfig();
 
+        this.totalDataSource.load();
         this.dataGrid.instance.refresh();
+        this.categorizationComponent.refreshCategories();
     }
 
     searchValueChange(e: object) {
