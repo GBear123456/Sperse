@@ -1,6 +1,16 @@
 :host {
     display: block;
 
+    #adjustments {
+        color: rgb(50, 190, 242);
+        font-weight: bold;
+        font-size: 18px;
+        position: absolute;
+        left: -15px;
+        top: 7px;
+        cursor: pointer;
+    }
+
     .categorization-status {
         height: 100%;
         display: flex;
@@ -21,11 +31,12 @@
         flex: 1 auto;
         display: flex;
         flex-direction: column;
-        padding-top: 20px;
+        padding-top: 5px;
         justify-content: space-between;
 
         .ending-balance,
         .starting-balance,
+        .starting-balance-entry,
         .chart-head {
             display: flex;
             justify-content: space-between;
@@ -57,14 +68,20 @@
             color: #677380;
         }        
       
-        .starting-balance {
+        .starting-balance,
+        .starting-balance-entry {
             padding-bottom: 10px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #E5E9EC;
         }
         .ending-balance {
             padding-top: 10px;
             border-top: 1px solid #E5E9EC;
+            position: relative;
+        }
+        .separator {
+            margin: 0 0 10px;
+            border: 0;
+            background: #E5E9EC;
+            height: 1px;
         }
         .chart-line {
             height: 30px;
