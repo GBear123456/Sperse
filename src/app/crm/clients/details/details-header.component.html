@@ -1,7 +1,7 @@
 <header>
     <div class="avatar">
         <div class="active"></div>
-        <img src="{{ data?.primaryContactInfo.photo ? 'data:image/png;base64,' + data.primaryContactInfo.photo.thumbnail: person.person_photo_url }}" alt="Person Photo">
+        <img src="{{ data?.primaryContactInfo.photo ? 'data:image/png;base64,' + data.primaryContactInfo.photo.thumbnail: person.person_photo_url }}" (click)="showUploadPhotoDialog($event)" alt="Person Photo">
     </div>
     <div class="personal_info">
         <div class="full_name">

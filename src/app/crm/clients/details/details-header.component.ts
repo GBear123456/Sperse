@@ -5,6 +5,7 @@ import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, Instanc
 import { AppConsts } from '@shared/AppConsts';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
+import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 
 @Component({
     selector: 'details-header',
@@ -100,6 +101,15 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
           data: this.data,
           hasBackdrop: false,
           position: this.getDialogPossition(event, 220)
+        });
+        event.stopPropagation();
+    }
+
+    showUploadPhotoDialog(event) {
+        this.dialog.closeAll();
+        this.dialog.open(UploadPhotoDialogComponent, {
+          data: this.data,
+          hasBackdrop: true
         });
         event.stopPropagation();
     }

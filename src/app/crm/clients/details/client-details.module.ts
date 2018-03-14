@@ -29,6 +29,8 @@ import { RequiredDocumentsComponent } from './required-documents/required-docume
 import { ContactInformationComponent } from './contact-information/contact-information.component';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
+import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
+import { ImageCropperComponent } from 'ng2-img-cropper';
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
@@ -58,7 +60,9 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     RequiredDocumentsComponent,
     OperationsWidgetComponent,
     OrganizationDialogComponent,
-    ContactPersonsDialogComponent
+    ContactPersonsDialogComponent,
+    ImageCropperComponent,
+    UploadPhotoDialogComponent
   ],
   imports: [
     FormsModule,
@@ -93,7 +97,8 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     EditContactDialog,
     EditAddressDialog,
     OrganizationDialogComponent,
-    ContactPersonsDialogComponent
+    ContactPersonsDialogComponent,
+    UploadPhotoDialogComponent
   ],
   bootstrap: [
     ClientDetailsComponent
