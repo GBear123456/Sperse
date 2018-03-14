@@ -46,6 +46,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     keyAttributeValues: any = [];
     private transactionAttributeTypes: any;
 
+    availableGridAttributeTypes: any = [];
     transactionTypesAndCategoriesData: TransactionTypesAndCategoriesDto;
     transactionTypes: any;
     transactionCategories: any;
@@ -156,7 +157,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     getCapitalizedWords(value) {
-        return value.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+        return value && value.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
     }
 
     getKeywordsFromString(value: string) {
@@ -173,7 +174,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         if (!attributes || !attributes.length) return [];
 
         return attributes.map((v) => {
-            return {
+            return {                
                 attributeTypeId: v.typeId,
                 conditionTypeId: v.value ? ConditionAttributeDtoConditionTypeId.Equal : ConditionAttributeDtoConditionTypeId.Exist,
                 conditionValue: v.value
@@ -294,6 +295,16 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             if (this.selectedTransactionTypes && this.selectedTransactionTypes.length)
                 this.onTransactionTypesChanged(null);
         });
+    }
+
+    ngAfterViewInit() {
+        super.ngAfterViewInit();
+        setTimeout(() => {
+            let input = this.getElementRef().nativeElement
+                .querySelector('.dx-texteditor-input');
+            input.focus();
+            input.select();
+        }, 100);
     }
 
     getDescriptionKeywords() {
@@ -523,4 +534,20 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         let keyAttribute = this.getKeyAttribute(typeId);
         return keyAttribute ? keyAttribute.values: [];
     }
+
+    onAttributesContentReady($event) {
+        let list = _.filter(this.gridAttributeTypes, (item) => {
+            return Object.keys(this.getAttributes()).indexOf(item.id) == -1;
+        });
+        if (this.availableGridAttributeTypes.length != list.length)
+            this.availableGridAttributeTypes = list;
+    }
+
+    attributeDisplayValue = ((data) => {
+        let attribute = _.findWhere(this.gridAttributeTypes, 
+                {id: data.attributeTypeId});
+
+        return attribute ? attribute.name: 
+            this.capitalize(data.attributeTypeId);
+    }).bind(this);
 }

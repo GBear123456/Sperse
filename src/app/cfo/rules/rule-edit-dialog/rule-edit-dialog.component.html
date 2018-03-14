@@ -24,7 +24,7 @@
             </div>
         </dx-data-grid>
     </div>
-    <div class="rule-container" *ngIf="!showSelectedTransactions">
+    <div class="rule-container" [ngStyle]="{display: showSelectedTransactions ? 'none': 'block'}">
         <div class="warning-box" *ngIf="showOverwriteWarning">
             <div>
                 <h3>{{l('RuleDialog_OverwriteWarningHeader')}}</h3>
@@ -50,7 +50,8 @@
                      (onRowInserted)="updateKeywordList($event)"
                      (onInitNewRow)="onAttributeInitNewRow($event)"
                      (onRowValidating)="onRowValidating($event)"
-                     (onEditorPreparing)="onEditorPreparing($event)">
+                     (onEditorPreparing)="onEditorPreparing($event)"
+                     (onContentReady)="onAttributesContentReady($event)">
                      <dxo-editing
                          mode="row"
                          [allowUpdating]="true"
@@ -64,9 +65,10 @@
                         width="150"
                         dataField="attributeTypeId"
                         [validationRules]="[{ type: 'required' }]"
+                        [calculateDisplayValue]="attributeDisplayValue"
                         [setCellValue]="setCellValue">
                         <dxo-lookup
-                            [dataSource]="gridAttributeTypes"
+                            [dataSource]="availableGridAttributeTypes"
                             displayExpr="name"
                             valueExpr="id">
                         </dxo-lookup>

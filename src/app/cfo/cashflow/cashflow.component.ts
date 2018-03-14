@@ -569,7 +569,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Create parallel operations */
         let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        let getCategoryTreeObservalble = this._classificationServiceProxy.getCategoryTree(InstanceType[this.instanceType], this.instanceId);
+        let getCategoryTreeObservalble = this._classificationServiceProxy.getCategoryTree(InstanceType[this.instanceType], this.instanceId, false);
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservalble, getCashflowGridSettings)
             .subscribe(result => {
@@ -2225,7 +2225,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let accountId = e.cell.path[1].slice(2);
             let account = this.bankAccounts.find(account => account.id == accountId);
             if (account && account.accountNumber) {
-                maxCategoryWidth -= 8;
+                maxCategoryWidth -= 7;
                 e.cellElement.append(`<span class="accountNumber">${account.accountNumber}</span>`);
             }
         }
@@ -2281,8 +2281,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** hide long text for row headers and show '...' instead with the hover and long text*/
         if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.path.length !== 1 && e.cell.text && e.cell.text.length > maxCategoryWidth) {
-            e.cellElement.attr('title', e.cell.text);
-            e.cellElement.find('> span:first-of-type').text(_.prune(e.cell.text, maxCategoryWidth));
+            e.cellElement.attr('title', e.cell.text.toUpperCase());
+            e.cellElement.find('> span:first-of-type').text(_.truncate(e.cell.text, maxCategoryWidth));
         }
 
         /** Show descriptors in Italic */

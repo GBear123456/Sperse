@@ -124,10 +124,6 @@
             }
 
             .dx-pivotgrid-area td {
-                &.month, &.quarter, &.year {
-                    //min-width: 80px;
-                }
-
                 &.hideZeroActivity {
                     border: 0.1px solid #ccc !important;
                     padding: 0 !important;
@@ -406,16 +402,19 @@
                                 font: inherit;
                                 margin-right: 10px;
 
-                                &:before {
-                                    display: none;
+                                .dx-expand {
+
+                                    &::before {
+                                        top: auto;
+                                        left: auto;
+                                        position: relative;
+                                        width: auto;
+                                        margin: auto;
+                                    }
                                 }
 
-                                .dx-expand:before {
-                                    top: auto;
-                                    left: auto;
-                                    position: relative;
-                                    width: auto;
-                                    margin: auto;
+                                &:before {
+                                    display: none;
                                 }
                             }
 
@@ -432,8 +431,8 @@
                                     content: '';
                                     width: 7px;
                                     border-bottom: 2px solid @expendedLineColor;
-                                    margin-left: 8px;
-                                    top: -4px;
+                                    margin-left: 7px;
+                                    top: -6px;
                                 }
 
                                 .dx-expand-icon-container {
@@ -821,9 +820,6 @@
                 min-width: 0;
                 width: auto;
                 color: @generalColor;
-
-                &:after {
-                }
             }
 
             .dx-texteditor-buttons-container {
@@ -863,9 +859,18 @@
     }
 
     /deep/ [class*='chart'] {
-        width: 65px;
+        width: 64px;
         height: 18px;
         float: right;
+    }
+
+    // fix float fo ff
+    /deep/ .dx-pivotgrid-vertical-headers {
+        tr {
+            td {
+                white-space: normal;
+            }
+        }
     }
 
     .cashflow {
@@ -1301,4 +1306,3 @@
 .invisible {
     opacity: 0;
 }
-

@@ -10,6 +10,7 @@ import { environment } from 'environments/environment';
 export abstract class CFOComponentBase extends AppComponentBase implements OnInit, OnDestroy {
 
     private static isZendeskWebwidgetSetup = false;
+    private static showZendeskWebwidgetTimeout: any;
 
     instanceId: number;
     instanceType: string;
@@ -71,14 +72,15 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
     protected static zendeskWebwidgetShow(service: ngxZendeskWebwidgetService) {
         if (environment.zenDeskEnabled) {
             CFOComponentBase.zendeskWebwidgetSetup(service);
-            setTimeout(() => {
+            this.showZendeskWebwidgetTimeout = setTimeout(() => {
                 service.show();
-            }, 1000);
+            }, 2000);
         }
     }
 
     protected static zendeskWebwidgetHide(service: ngxZendeskWebwidgetService) {
         if (environment.zenDeskEnabled) {
+            clearTimeout(this.showZendeskWebwidgetTimeout);
             service.hide();
         }
     }

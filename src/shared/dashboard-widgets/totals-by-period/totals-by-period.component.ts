@@ -67,15 +67,19 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
             .scan((prevStatsItem, currentStatsItem) => {
                 let credit = Math.abs(currentStatsItem.credit) + prevStatsItem.credit;
                 let debit = Math.abs(currentStatsItem.debit) + prevStatsItem.debit;
+                let adjustments = currentStatsItem.adjustments + prevStatsItem.adjustments;
+                let startingBalanceAdjustments = currentStatsItem.startingBalanceAdjustments + prevStatsItem.startingBalanceAdjustments;
                 return {
                     'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
                     'endingBalance': currentStatsItem.endingBalance,
                     'credit': credit,
                     'debit': debit,
+                    'adjustments': adjustments,
+                    'startingBalanceAdjustments': startingBalanceAdjustments,
                     'netChange': Math.abs(credit - debit),
                     'date': currentStatsItem.date
                 };
-            }, { 'credit': 0, 'debit': 0, 'netChange': 0 })
+            }, { 'credit': 0, 'debit': 0, 'netChange': 0, 'adjustments': 0, 'startingBalanceAdjustments': 0 })
             .subscribe(
                 result => {
                     this.totalData = result;
