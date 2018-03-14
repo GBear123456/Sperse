@@ -48,11 +48,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     firstRefresh = false;
-    private rootComponent: any;
     gridDataSource: any = {};
     collection: any;
     showPipeline = true;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
+
+    private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
@@ -103,6 +104,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onContentReady(event) {
+        this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
@@ -265,7 +267,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._filtersService.apply(() => {
             this.initToolbarConfig();
             this.processODataFilter(this.dataGrid.instance,
-                this.dataSourceURI, this.filters, (filter) => {                    
+                this.dataSourceURI, this.filters, (filter) => {
                     let filterMethod = this['filterBy' +
                         this.capitalize(filter.caption)];
                     if (filterMethod)
