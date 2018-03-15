@@ -1081,8 +1081,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             allAccountsIds: Array<number> = [],
             currentAccountsIds = {
                 [StartedBalance]: [],
-                [Total]: [],
-                [Reconciliation]: []
+                [Total]: []
             },
             firstDate, firstInitialDate;
         transactions.forEach(transaction => {
@@ -1491,8 +1490,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             } else {
                 if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange) {
                     this.pivotGrid.instance.getDataSource().reload();
-                }
-                else {
+                } else {
                     if (updateWithNetChange) {
                         /** If user choose to show net change - then add stub data to data source */
                         if (result.general.showNetChangeRow) {
@@ -2984,7 +2982,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     isLastDayOfMonth(date: moment.Moment): boolean {
-        return date.isSame(date.endOf('month'), 'day');
+        return date.isSame(moment(date).endOf('month'), 'day');
     }
 
     getDetailFilterFromCell(cellObj) {
@@ -3567,7 +3565,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             startedBalanceCellValue = startedBalanceCell ? (startedBalanceCell.value(true) || 0) : 0,
             currentCellValue = summaryCell.value() || 0,
             reconciliationTotal = summaryCell.slice(0, CategorizationPrefixes.CashflowType + Reconciliation),
-            reconciliationTotalValue = reconciliationTotal.value() || 0;
+            reconciliationTotalValue = reconciliationTotal && reconciliationTotal.value() || 0;
         return currentCellValue + startedBalanceCellValue + reconciliationTotalValue;
     }
 
