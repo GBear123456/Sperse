@@ -80,6 +80,13 @@ export class EditAddressDialog extends AppComponentBase {
       });
   }
 
+  onAddressChanged (event) {
+    let number = event.address_components[0]['long_name'];
+    let street = event.address_components[1]['long_name'];
+
+    this.address = number ? (number + ' ' + street) : street;
+  }
+
   addressTypesLoad() {
     this._contactAddressService.getAddressUsageTypes().subscribe(result => {
       this.types = result.items;
@@ -87,11 +94,7 @@ export class EditAddressDialog extends AppComponentBase {
   }
 
   onSave(event) {
-    if (!this.googleAutoComplete || !this.data.streetAddress) {
-      this.data.streetAddress = this.address;
-    } else if (this.data.streetNumber) {
-      this.data.streetAddress = this.data.streetNumber + ' ' + this.data.streetAddress;
-    }
+    this.data.streetAddress = this.address;
 
     if (this.validator.validate().isValid && this.data.streetAddress) {
       this.data.countryId = _.findWhere(this.countries, {name: this.data.country})['code'];
