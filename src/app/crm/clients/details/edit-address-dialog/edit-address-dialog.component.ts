@@ -87,8 +87,12 @@ export class EditAddressDialog extends AppComponentBase {
   }
 
   onSave(event) {
-    if (!this.googleAutoComplete || !this.data.streetAddress)
+    if (!this.googleAutoComplete || !this.data.streetAddress) {
       this.data.streetAddress = this.address;
+    } else if (this.data.streetNumber) {
+      this.data.streetAddress = this.data.streetNumber + ' ' + this.data.streetAddress;
+    }
+
     if (this.validator.validate().isValid && this.data.streetAddress) {
       this.data.countryId = _.findWhere(this.countries, {name: this.data.country})['code'];
       if (this.data.state)

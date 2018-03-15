@@ -26,7 +26,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
-import { CommonLookupServiceProxy, InstanceServiceProxy, GetUserInstanceInfoOutputStatus } from '@shared/service-proxies/service-proxies';
+import { CommonLookupServiceProxy, InstanceServiceProxy, GetUserInstanceInfoOutputStatus, CustomersServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -70,7 +70,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy,
-        private _cfoInstanceServiceProxy: InstanceServiceProxy
+        private _cfoInstanceServiceProxy: InstanceServiceProxy,
+        private _customersServiceProxy: CustomersServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -78,6 +79,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
         this.dataSource = {
             store: {
+                key: 'Id',
                 type: 'odata',
                 url: this.getODataURL(this.dataSourceURI),
                 version: this.getODataVersion(),
@@ -273,7 +275,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             },
             {
                 location: 'before', items: [
-                    { name: 'assign' }, { name: 'status' }, { name: 'delete' }
+                    { name: 'assign' }, 
+                    { name: 'status' }, 
+                    { 
+                        name: 'delete',
+                        action: this.deleteClients.bind(this)
+                    }
                 ]
             },
             {
@@ -390,6 +397,17 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                         return filterMethod.call(this, filter);
                 }
         );
+    }
+
+    deleteClients() {
+        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+        if (selectedIds && selectedIds.length) {
+            this._customersServiceProxy.deleteCustomers(selectedIds).subscribe(() => { 
+                this.refreshDataGrid(); 
+            });
+        } else {
+            this.message.warn(this.l("NoRecordsToDelete"));
+        }
     }
 
     ngAfterViewInit(): void {

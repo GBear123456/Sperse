@@ -7,6 +7,8 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
   styleUrls: ['./operations-widget.component.less']
 })
 export class OperationsWidgetComponent implements OnInit {
+  @Output() onDelete: EventEmitter<any> = new EventEmitter();
+
   private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
 
   @Output() print: EventEmitter<any> = new EventEmitter();
@@ -17,10 +19,12 @@ export class OperationsWidgetComponent implements OnInit {
 
   toolbarConfig = [
     {location: 'before', items: [
-      {name: 'back'}
-    ]},
-    {location: 'before', items: [
-      {name: 'assign'}, {name: 'status'}, {name: 'delete'}
+      {name: 'assign'}, 
+      {name: 'status'}, 
+      {
+        name: 'delete',
+        action: this.delete.bind(this)
+      }
     ]},
     {location: 'center', items: [
       {name: 'folder'}, {name: 'pen'}
@@ -64,7 +68,7 @@ export class OperationsWidgetComponent implements OnInit {
     {location: 'after', items: [
       {
           name: 'print', 
-          action: this.print.emit.bind(this.print);
+          action: this.print.emit.bind(this.print)
       }
     ]},
     {location: 'after', items: [
@@ -77,4 +81,7 @@ export class OperationsWidgetComponent implements OnInit {
   ngOnInit() {
   }
 
+  delete() {
+    this.onDelete.emit();
+  }
 }
