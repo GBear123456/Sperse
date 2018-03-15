@@ -26,43 +26,12 @@ export class OperationsWidgetComponent implements OnInit {
         action: this.delete.bind(this)
       }
     ]},
-    {location: 'center', items: [
-      {name: 'folder'}, {name: 'pen'}
-    ]},
-    {location: 'center', items: [
-      {name: 'more'}
-    ]},
     {                
       location: 'after', 
       areItemsDependent: true,
       items: [
-          { 
-              name: 'box',
-              action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
-              options: {
-                  checkPressed: () => {
-                      return (this.dataLayoutType == DataLayoutType.Box);
-                  },
-              }
-          },
-          { 
-              name: 'pipeline', 
-              action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
-              options: {
-                  checkPressed: () => {
-                      return (this.dataLayoutType == DataLayoutType.Pipeline);
-                  },
-              }
-          },
-          { 
-              name: 'grid', 
-              action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
-              options: {
-                  checkPressed: () => {
-                      return (this.dataLayoutType == DataLayoutType.Grid);
-                  },
-              } 
-          }
+        {name: 'folder'}, 
+        {name: 'pen'}
       ]
     },
     {location: 'after', items: [
@@ -70,9 +39,6 @@ export class OperationsWidgetComponent implements OnInit {
           name: 'print', 
           action: this.print.emit.bind(this.print)
       }
-    ]},
-    {location: 'after', items: [
-      {name: 'prev'}, {name: 'next'}
     ]}
   ];
 
