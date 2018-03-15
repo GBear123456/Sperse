@@ -2,7 +2,7 @@
 .bank-accounts-tooltip-container {
     font-size: 15px;
     text-align: start;
-    width: 555px;
+    width: 755px;
 
 
     .actions {
@@ -28,17 +28,48 @@
         float: left;
     }
 
-    .grid-container {
-        width: 100%;
+    .grid-container {        
         font-size: 12px;
+
+        /deep/ .dx-datagrid-rowsview {
+            border: 0;
+        }
+
+        /deep/ .dx-datagrid-rowsview .dx-selection.dx-row > td {
+            border: 0;
+        }
 
         /deep/ tr[aria-selected ="true"] {
             background-color: transparent;
         }
 
+        /deep/ #gridContainer{
+            padding-right: 7px;
+        }
+        /deep/ .dx-master-detail-row {
+            background-color: #f9fbfc;
+
+            #gridContainer .dx-datagrid-headers .dx-datagrid-content {
+                border-bottom: 0;
+            }
+
+            .dx-master-detail-cell {
+                border: 1px solid #ddd;
+            }
+
+            .dx-datagrid-headers {
+                border: 0;
+            }
+
+            .dx-datagrid {
+                background-color: #f9fbfc;
+            }
+        }
+
         /deep/ .dx-master-detail-row .dx-master-detail-cell {
             background-color: transparent;
-            padding: 7px;
+            padding: 0px;
+            padding-right: 7px;
         }
 
         .account-status {
@@ -72,14 +103,71 @@
                     background-color: orange;
                 }
 
-                .status-color.failed{
+                .status-color.failed {
                     background-color: red;
                 }
+            }
+        }
+
+        /deep/.dx-datagrid-rowsview {
+            .dx-datagrid-content tr td.tabular,
+            .dx-datagrid-content tr td.tabular * {
+                font-family: 'Lato' !important;
             }
         }
     }
 
     .bank-accounts-grid-container {
-        width: 100%;
+       
+
+    }
+
+    /deep/.dx-datagrid-rowsview {
+        .dx-column-lines {
+            td {
+                height: 24px !important;
+            }
+
+            table {
+                border-collapse: separate;
+                border-spacing: 0 15px;
+            }
+        }
+    }
+
+    /deep/.dx-checkbox-icon {
+        margin-top: 0;
+    }
+
+    .number-value {
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.21;
+        letter-spacing: 0.3px;
+        color: #677380;
+    }
+
+    /deep/ .bold {
+        font-weight: bold;
+    }
+
+    .expand-div {
+        border: solid #677380;
+        border-width: 0 1px 1px 0;
+        padding: 3px;
+        display: inline-block;
+        margin: 3px;
+        align-self: flex-end;
+        transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+    }
+
+    .sync-date {
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1.42;
+        letter-spacing: 0.2px;
+        color: #afb4bb;
+        text-align: center;
     }
 }
