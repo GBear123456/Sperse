@@ -78,6 +78,17 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
       this._dialog.closeAll();
   }
 
+  printMainArea() {
+      let elm = this.getElementRef(),
+          handel = window.open();
+      handel.document.open();
+      handel.document.write('<h1>' + this.customerInfo.name + '</h1>' + 
+          elm.nativeElement.getElementsByClassName('main-content')[0].innerHTML);
+      handel.document.close();
+      handel.print();
+      handel.close();
+  }
+
   ngOnInit() {
     this.rootComponent.overflowHidden(true);
     this.rootComponent.pageHeaderFixed();

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
 @Component({
@@ -8,6 +8,8 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 })
 export class OperationsWidgetComponent implements OnInit {
   private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
+
+  @Output() print: EventEmitter<any> = new EventEmitter();
   
   toggleDataLayout(dataLayoutType) {
     this.dataLayoutType = dataLayoutType;
@@ -59,6 +61,12 @@ export class OperationsWidgetComponent implements OnInit {
           }
       ]
     },
+    {location: 'after', items: [
+      {
+          name: 'print', 
+          action: this.print.emit.bind(this.print);
+      }
+    ]},
     {location: 'after', items: [
       {name: 'prev'}, {name: 'next'}
     ]}
