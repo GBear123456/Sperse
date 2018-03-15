@@ -22,7 +22,6 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     private readonly LOCAL_STORAGE = 0;
 
     data: SyncAccountBankDto[] = [];
-    selectedBankAccountIds = {};
     tooltipVisible: boolean;
     bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}`;
     allSelected: boolean = false;
@@ -43,20 +42,47 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     }
 
     contentReady(e) {
-        if (!e.component.getSelectedRowKeys().length)
-            e.component.selectRowsByIndexes(0);
+        
+    }
+    masterRowExpandChange(e) {
+        if (e.columnIndex !== 0) {
+            if (e.row.isExpanded) {
+                e.component.collapseRow(e.key);
+            } else {
+                e.component.expandRow(e.key);
+            }
+        }
     }
 
     masterSelectionChanged(e) {
-        e.component.collapseAll(-1);
-        e.component.expandRow(e.currentSelectedRowKeys[0]);
+        let row = e.component.getVisibleRows()[e.component.getRowIndexByKey(e.key)];
+        let isSelected = e.data.selected;
+        row.data.bankAccounts.forEach((bankAccount, i) => {
+            bankAccount['selected'] = isSelected;
+        });
     }
 
     bankAccountSelectionChanged(e) {
-        e.component.getVisibleRows().forEach((row, i) => {
-            row.data['selected'] = row.isSelected;
-            this.selectedBankAccountIds[row.data.id] = row.isSelected;
+        this.mainDataGrid.instance.getVisibleRows().forEach((row, i) => {
+            if (row.rowType !== 'detail') {
+                let selectedBankAccountCount = 0;
+                row.data['bankAccounts'].forEach((bankAccount, i) => {
+                    if (bankAccount['selected'])
+                        selectedBankAccountCount++;
+                });
+
+                if (selectedBankAccountCount === 0) {
+                    row.data['selected'] = false;
+                } else {
+                    if (selectedBankAccountCount === row.data['bankAccounts'].length) {
+                        row.data['selected'] = true;
+                    } else {
+                        row.data['selected'] = undefined;
+                    }
+                }
+            }
         });
+        this.mainDataGrid.instance.refresh();
     }
 
     bankAccountsSelecteAll() {
@@ -66,10 +92,10 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
             let bankAccounts = [];
             syncAccount.bankAccounts.forEach((bankAccount, i) => {
                 bankAccount['selected'] = true;
-                this.selectedBankAccountIds[bankAccount.id] = bankAccount['selected'];
                 bankAccounts.push(bankAccount);
             });
             syncAccount.bankAccounts = bankAccounts;
+            syncAccount['selected'] = true;
             newData.push(syncAccount);
         });
         this.data = newData;
@@ -82,12 +108,24 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         this.data.forEach((syncAccount, i) => {
 
             let bankAccounts = [];
+            let selectedBankAccountCount = 0;
             syncAccount.bankAccounts.forEach((bankAccount, i) => {
-                bankAccount['selected'] = _.contains(bankAccountsIds, bankAccount.id.toString());
-                this.selectedBankAccountIds[bankAccount.id] = bankAccount['selected'];
+                let isBankAccountSelected = _.contains(bankAccountsIds, bankAccount.id.toString());
+                bankAccount['selected'] = isBankAccountSelected;
                 bankAccounts.push(bankAccount);
+                if (isBankAccountSelected)
+                    selectedBankAccountCount++;
             });
             syncAccount.bankAccounts = bankAccounts;
+            if (selectedBankAccountCount === 0) {
+                syncAccount['selected'] = false;
+            } else {
+                if (selectedBankAccountCount === bankAccounts.length) {
+                    syncAccount['selected'] = true;
+                } else {
+                    syncAccount['selected'] = undefined;
+                }
+            }
             newData.push(syncAccount);
         });
         this.data = newData;
@@ -112,15 +150,17 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         let result = [];
         let resultWithBanks = [];
 
-        this.data.forEach((syncAccount, i) => {
-            syncAccount.bankAccounts.forEach((bankAccount, i) => {
-                if (this.selectedBankAccountIds[bankAccount.id] === true) {
-                    result.push(bankAccount.id);
-                    resultWithBanks.push(syncAccount.bankId + ':' + bankAccount.id);
-                }
-            });
+        this.mainDataGrid.instance.getVisibleRows().forEach((row, i) => {
+            if (row.rowType !== 'detail') {
+                row.data['bankAccounts'].forEach((bankAccount, i) => {
+                    if (bankAccount['selected']) {
+                        result.push(bankAccount.id);
+                        resultWithBanks.push(row.data['bankId'] + ':' + bankAccount.id);
+                    }
+                });
+            }
         });
-
+        
         let data = {
             bankAccountIds: result,
             banksWithAccounts: resultWithBanks
@@ -142,9 +182,20 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 this.data = result;
 
                 if (this.useGlobalCache && this._cacheService.exists(this.bankAccountsCacheKey)) {
-                    let bankAccountIds = this.removeBankIds(this._cacheService.get(this.bankAccountsCacheKey));
+                    let resultWithBanks = this._cacheService.get(this.bankAccountsCacheKey);
+                    let bankAccountIds = this.removeBankIds(resultWithBanks);
                     this.refreshSelected(bankAccountIds);
-                    this.bankAccountsSelected();
+
+                    let data = {
+                        bankAccountIds: bankAccountIds,
+                        banksWithAccounts: resultWithBanks
+                    };
+                    if (this.useGlobalCache)
+                        this._cacheService.set(this.bankAccountsCacheKey, data.banksWithAccounts);
+                    this.onBankAccountsSelected.emit(data);
+                }
+                else {
+                    this.refreshSelected([]);
                 }
             });
     }

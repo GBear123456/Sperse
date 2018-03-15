@@ -17398,6 +17398,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     bankId: number;
     name: string;
     balance: number;
+    lastSyncDate: moment.Moment;
     bankAccounts: BankAccountDto[];
     syncAccountStatus: SyncAccountBankDtoSyncAccountStatus;
 
@@ -17416,6 +17417,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
             this.bankId = data["bankId"];
             this.name = data["name"];
             this.balance = data["balance"];
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
             if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
                 this.bankAccounts = [];
                 for (let item of data["bankAccounts"])
@@ -17437,6 +17439,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
         data["bankId"] = this.bankId;
         data["name"] = this.name;
         data["balance"] = this.balance;
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
         if (this.bankAccounts && this.bankAccounts.constructor === Array) {
             data["bankAccounts"] = [];
             for (let item of this.bankAccounts)
@@ -17452,6 +17455,7 @@ export interface ISyncAccountBankDto {
     bankId: number;
     name: string;
     balance: number;
+    lastSyncDate: moment.Moment;
     bankAccounts: BankAccountDto[];
     syncAccountStatus: SyncAccountBankDtoSyncAccountStatus;
 }
@@ -17463,6 +17467,7 @@ export class BankAccountDto implements IBankAccountDto {
     accountNumber: string;
     businessEntityName: string;
     balance: number;
+    syncAccountId: number;
 
     constructor(data?: IBankAccountDto) {
         if (data) {
@@ -17481,6 +17486,7 @@ export class BankAccountDto implements IBankAccountDto {
             this.accountNumber = data["accountNumber"];
             this.businessEntityName = data["businessEntityName"];
             this.balance = data["balance"];
+            this.syncAccountId = data["syncAccountId"];
         }
     }
 
@@ -17498,6 +17504,7 @@ export class BankAccountDto implements IBankAccountDto {
         data["accountNumber"] = this.accountNumber;
         data["businessEntityName"] = this.businessEntityName;
         data["balance"] = this.balance;
+        data["syncAccountId"] = this.syncAccountId;
         return data; 
     }
 }
@@ -17509,6 +17516,7 @@ export interface IBankAccountDto {
     accountNumber: string;
     businessEntityName: string;
     balance: number;
+    syncAccountId: number;
 }
 
 export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
