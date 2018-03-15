@@ -410,6 +410,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         }
     }
 
+    onRowClick($event) {
+        this.showClientDetails($event);
+    }
+
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
