@@ -17,9 +17,6 @@ export class OperationsWidgetComponent implements OnInit {
 
   toolbarConfig = [
     {location: 'before', items: [
-      {name: 'back'}
-    ]},
-    {location: 'before', items: [
       {name: 'assign'}, 
       {name: 'status'}, 
       {
