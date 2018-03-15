@@ -261,4 +261,19 @@ export abstract class AppComponentBase {
             this.totalRowCount = dataSource.totalCount();     
         }
     }
+
+    protected calculateDialogPosition(event, parent, shiftY) {
+        if (parent) {
+            let rect = parent.getBoundingClientRect();
+            return {
+                top: (rect.top + rect.height / 2 - shiftY) + 'px',
+                left: (rect.left + rect.width / 2) + 'px'
+            };
+        } else {
+            return {
+                top: event.clientY - shiftY + 'px',
+                left: event.clientX + 'px'
+            };
+        }
+    }
 }
