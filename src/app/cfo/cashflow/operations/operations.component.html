@@ -3,7 +3,7 @@
                 [(visible)]="reportPeriodTooltipVisible">
         <div *dxTemplate="let data = data of 'content'">
             <div class="report-period-tooltip-container">
-                <div class="actions">
+                <div class="actions clearfix">
                     <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
                     <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
                 </div>
