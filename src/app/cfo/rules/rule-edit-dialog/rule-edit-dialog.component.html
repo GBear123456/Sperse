@@ -230,8 +230,8 @@
 
                         <div *dxTemplate="let item of 'itemTMPL'">
                             <ng-container>
-                                <b>{{ item.name }}</b>
-                                <div *ngFor="let value of item.values">
+                                <span class="attribute-name"><a></a>{{ item.name }}</span>
+                                <div *ngFor="let value of item.values" class="attribute-value-wrapper">
                                     <a class="attribute-value" (click)="selectedAttributeValue($event, value)">{{ value.name }}</a>
                                 </div>
                             </ng-container>
