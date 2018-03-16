@@ -1,7 +1,7 @@
 import { Component, Input, Injector, OnInit, OnDestroy } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CustomersServiceProxy, CustomerInfoDto, PersonContactInfoDto } from '@shared/service-proxies/service-proxies';
+import { CustomersServiceProxy, CustomerInfoDto, PersonContactInfoDto, UpdateCustomerStatusInput } from '@shared/service-proxies/service-proxies';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 
@@ -115,9 +115,33 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
           this._customerService.deleteCustomer(this.customerId).subscribe(() => {
             this.notify.success(this.l('SuccessfullyDeleted'));
             this.close();
-          });    
+          });
         }
       }
     );
+  }
+
+  updateStatus (statusId: string) {
+    this.showConfirmationDialog(statusId);
+  }
+
+  showConfirmationDialog (statusId: string) {
+    this.message.confirm(
+      this.l('ClientUpdateStatusWarningMessage'),
+      this.l('ClientStatusUpdateConfirmationTitle'),
+      isConfirmed => {
+        if (isConfirmed)
+          this.updateStatusInternal(statusId);
+      }
+    );
+  }
+
+  private updateStatusInternal (statusId: string) {
+    this._customerService.updateCustomerStatus(new UpdateCustomerStatusInput({
+      customerId: this.customerId,
+      statusId: statusId
+    })).subscribe(() => {
+      this.notify.success(this.l('StatusSuccessfullyUpdated'));
+    });
   }
 }

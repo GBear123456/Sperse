@@ -8,19 +8,31 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 })
 export class OperationsWidgetComponent implements OnInit {
   @Output() onDelete: EventEmitter<any> = new EventEmitter();
+  @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
 
   private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
 
   @Output() print: EventEmitter<any> = new EventEmitter();
-  
-  toggleDataLayout(dataLayoutType) {
-    this.dataLayoutType = dataLayoutType;
-  }
 
   toolbarConfig = [
     {location: 'before', items: [
-      {name: 'assign'}, 
-      {name: 'status'}, 
+      {name: 'assign'},
+      {
+        name: 'status',
+        widget: 'dxDropDownMenu',
+        options: {
+            hint: 'Status',
+            items: [
+              {
+                  action: this.updateStatus.bind(this, 'A'),
+                  text: 'Active',
+              }, {
+                  action: this.updateStatus.bind(this, 'I'),
+                  text: 'Inactive',
+              }
+          ]
+        }
+      },
       {
         name: 'delete',
         action: this.delete.bind(this)
@@ -42,6 +54,10 @@ export class OperationsWidgetComponent implements OnInit {
     ]}
   ];
 
+  toggleDataLayout(dataLayoutType) {
+    this.dataLayoutType = dataLayoutType;
+  }
+
   constructor() { }
 
   ngOnInit() {
@@ -49,5 +65,9 @@ export class OperationsWidgetComponent implements OnInit {
 
   delete() {
     this.onDelete.emit();
+  }
+
+  updateStatus(statusId: string) {
+    this.onUpdateStatus.emit(statusId);
   }
 }

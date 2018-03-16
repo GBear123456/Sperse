@@ -1,14 +1,41 @@
 /deep/ .dx-selectbox-popup-wrapper {
+    .dx-popup-content {
+        margin-top: 10px;
+    }
     .dx-item {
-        &.dx-state-focused, &.dx-state-active { 
+        &.dx-state-focused, &.dx-state-active {
             background-color: transparent!important;
             color: #333!important;
+        }
+        .attribute-name:first-child {
+            margin-top: 50px;      
+            &:before {
+                position: relative;
+                content: 'Type a descriptive name or select either attribute type or particular values below';
+                font-size: 12px;
+                font-weight: 300;
+                color: #dcdcdc;
+                display: block;
+                top: -6px;
+                letter-spacing: 0.1px;
+            }
+            a {
+                width: 15px;
+                height: 10px;
+                display: inline-block;
+                margin-right: 5px;
+                background: url('../../../../assets/common/icons/check.svg') no-repeat center;
+            }
         }
         .attribute-value {
             margin-left: 30px;
             &:hover {
                 background-color: #dddddd;
             }
+        }
+        .attribute-value-wrapper {
+            float: right;
+            width: 270px;           
         }
     }
 }
@@ -441,8 +468,8 @@
                     margin-bottom: 10px;
                 }
 
-                dx-select-box {
-                    /deep/ input {
+                /deep/ dx-select-box {
+                    input {
                         border: solid 1px #e5e9ec;
                         background-color: #ffffff;
                         border-radius: 4px;

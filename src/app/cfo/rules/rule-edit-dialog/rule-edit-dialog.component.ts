@@ -480,7 +480,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     onDescriptorChanged($event) {
         let attrType = this.transactionAttributeTypes[$event.value];
         $event.component && $event.component.option('inputAttr', {'attribute-selected': Boolean(attrType)});
-
         if (!this.data.title && $event.value)
             this.data.title = attrType && attrType.name || $event.value;
     }
@@ -521,7 +520,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     selectedAttributeValue($event, value) {
         $event.stopPropagation();
         $event.preventDefault();
-        if (this.transactionAttributeTypes[this.descriptor])
+        if (this.transactionAttributeTypes[this.descriptor] || !this.descriptor)
             this.descriptor = '';
         this.descriptor += (this.descriptor ? ' - ' : '') + value.name;
     }
