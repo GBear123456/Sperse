@@ -5,7 +5,14 @@ import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { AppService } from '@app/app.service';
 import { ActivatedRoute } from '@angular/router';
 
-import { TransactionsServiceProxy, BankAccountDto, InstanceType, ClassificationServiceProxy, UpdateTransactionsCategoryInput, BankDto } from '@shared/service-proxies/service-proxies';
+import { TransactionsServiceProxy,
+         BankAccountDto,
+         InstanceType,
+         ClassificationServiceProxy,
+         UpdateTransactionsCategoryInput,
+         BankDto,
+         AutoClassifyDto,
+         ResetClassificationDto } from '@shared/service-proxies/service-proxies';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
@@ -33,6 +40,7 @@ import * as moment from 'moment';
 import query from 'devextreme/data/query';
 import DataSource from 'devextreme/data/data_source';
 import { CategorizationComponent } from 'app/cfo/transactions/categorization/categorization.component';
+import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rules.component';
 
 
 @Component({
@@ -44,6 +52,8 @@ import { CategorizationComponent } from 'app/cfo/transactions/categorization/cat
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
+    resetRules = new ResetClassificationDto();
+    private autoClassifyData = new AutoClassifyDto();
 
     noRefreshedAfterSync: boolean;
     items: any;
@@ -881,6 +891,60 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 updateTransactionCategoryMethod(false);
             }
         }
+    }
+
+
+    autoClassify(param): void {
+        switch (param) {
+            case 'credit':
+                this.toggleCreditDefault();
+                break;
+            case 'debit':
+                this.toggleDebitDefault();
+                break;
+            case 'total':
+                this.toggleTotalDefault();
+                break;
+        }
+        this.notify.info('Auto-classification has started');
+        this._classificationServiceProxy.autoClassify(InstanceType[this.instanceType], this.instanceId, this.autoClassifyData)
+            .subscribe((result) => {
+                this.notify.info('Auto-classification has ended');
+                return result;
+            });
+    }
+
+    openDialog(param): void {
+        switch (param) {
+            case 'credit':
+                this.toggleCreditDefault();
+                break;
+            case 'debit':
+                this.toggleDebitDefault();
+                break;
+            case 'total':
+                this.toggleTotalDefault();
+                break;
+        }
+        let dialogRef = this.dialog.open(ChooseResetRulesComponent, {
+            width: '450px'
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.resetRules = result;
+                this.reset();
+            }
+        });
+    }
+
+    reset(): void {
+        this.notify.info('Reset process has started');
+        this._classificationServiceProxy.reset(InstanceType[this.instanceType], this.instanceId, this.resetRules)
+            .subscribe((result) => {
+                this.notify.info('Reset process has ended');
+                return result;
+            });
     }
 
     ngAfterViewInit(): void {
