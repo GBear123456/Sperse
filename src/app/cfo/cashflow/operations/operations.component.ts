@@ -103,7 +103,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                         action: this.reportPeriodFilter.bind(this),
                         options: {
                             id: 'reportPeriod',
-                            iconSrc: 'assets/common/icons/report-period.png'
+                            icon: 'assets/common/icons/report-period.svg'
                         }
                     },
                     {
@@ -135,7 +135,8 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                         action: this.toggleBankAccountTooltip.bind(this),
                         options: {
                             id: 'bankAccountSelect',
-                            text: this.l('Accounts')
+                            text: this.l('Accounts'),
+                            icon: 'assets/common/icons/accounts.svg'
                         }
                     },
                 ]

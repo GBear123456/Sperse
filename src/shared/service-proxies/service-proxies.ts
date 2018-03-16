@@ -6544,6 +6544,98 @@ export class CustomersServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateCustomerStatus(input: UpdateCustomerStatusInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/UpdateCustomerStatus";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdateCustomerStatus(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateCustomerStatus(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateCustomerStatus(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateCustomerStatuses(input: UpdateCustomerStatusesInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/UpdateCustomerStatuses";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdateCustomerStatuses(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateCustomerStatuses(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateCustomerStatuses(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -27061,6 +27153,92 @@ export class CreateCustomerOutput implements ICreateCustomerOutput {
 export interface ICreateCustomerOutput {
     id: number;
     similarCustomerExists: boolean;
+}
+
+export class UpdateCustomerStatusInput implements IUpdateCustomerStatusInput {
+    customerId: number;
+    statusId: string;
+
+    constructor(data?: IUpdateCustomerStatusInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerId = data["customerId"];
+            this.statusId = data["statusId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCustomerStatusInput {
+        let result = new UpdateCustomerStatusInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        data["statusId"] = this.statusId;
+        return data; 
+    }
+}
+
+export interface IUpdateCustomerStatusInput {
+    customerId: number;
+    statusId: string;
+}
+
+export class UpdateCustomerStatusesInput implements IUpdateCustomerStatusesInput {
+    customerIds: number[] = [];
+    statusId: string;
+
+    constructor(data?: IUpdateCustomerStatusesInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["customerIds"] && data["customerIds"].constructor === Array) {
+                this.customerIds = [];
+                for (let item of data["customerIds"])
+                    this.customerIds.push(item);
+            }
+            this.statusId = data["statusId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCustomerStatusesInput {
+        let result = new UpdateCustomerStatusesInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.customerIds && this.customerIds.constructor === Array) {
+            data["customerIds"] = [];
+            for (let item of this.customerIds)
+                data["customerIds"].push(item);
+        }
+        data["statusId"] = this.statusId;
+        return data; 
+    }
+}
+
+export interface IUpdateCustomerStatusesInput {
+    customerIds: number[];
+    statusId: string;
 }
 
 export class AccountTotals implements IAccountTotals {

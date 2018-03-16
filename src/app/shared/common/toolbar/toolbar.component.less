@@ -293,6 +293,28 @@
                 }
             }
 
+            &[accesskey="status"] {
+                .dx-button-content {
+                    text-align: left;
+                    padding: 6px 20px 6px 11px;
+
+                    &::before {
+                        content: 'Status';
+                        font-weight: 300;
+                        font-size: 13px;
+                        line-height: 1.85;
+                        letter-spacing: 0.3px;
+                        color: #677380;
+                        display: inline-block;
+                        font-family: Montserrat;
+                    }
+
+                    &::after {
+                        right: 8px;
+                    }
+                }
+            }
+
             &[accesskey="expandRows"] {
                 padding: 6px 11px 7px;
 

@@ -282,24 +282,105 @@
 
 .tooltip-wrap {
     text-align: left;
-    max-height: 250px;
+    // max-height: 290px;
     overflow: auto;
     padding: 0 10px;
 
-    .name {
+    header {
+        font-size: 17px;
+        line-height: 1.4;
+        font-weight: 500;
+        padding: 0 0 5px;
+    }
+
+    .classification-list {
+        padding: 0;
+        margin: 10px 0 15px;
+        list-style-type: none;
+    }
+
+    .classification-item {
+        font-size: 15px;
+        font-weight: 500;
+        padding: 5px 0 5px 25px;
+        position: relative;
         cursor: pointer;
-        transition: .2s;
+
+        * {
+            font-family: 'Lato' !important;
+        }
+
+        &.unclassified,
+        &.classified {
+            &::before {
+                content: '';
+                width: 10px;
+                height: 10px;
+                background-color: #f9b74b;
+                border-radius: 50%;
+                display: inline-block;
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        &.classified {
+            &::before {
+                width: 18px;
+                height: 18px;
+                background: transparent url('../../../assets/common/icons/completed-icon.svg') 50% 50% no-repeat;
+            }
+        }
+    }
+
+    .classified-item-title,
+    .unclassified-item-title {
+        width: 85px;
+        margin-right: 8px;
+        display: inline-block;
+    }
+
+    .classified-item-title {
+        .border {
+            border: 0 !important;
+            border-bottom: 1px solid #61c670 !important;
+        }
+    }
+    .unclassified-item-title {
+        .border {
+            border: 0 !important;
+            border-bottom: 1px solid #f9b74b !important;
+        }
+    }
+
+    .classification-item-number {
+        display: inline-block;
+        min-width: 60px;
+        border-radius: 10px;
         font-size: 13px;
-        display: block;
+        text-align: center;
+        margin-right: 8px;
+        background: #EEF1F1;
+        border: 0;
+    }
 
-        + .name {
-            margin-top: 3px;
-        }
+    .classification-item-percent {
+        text-align: right;
+        font-weight: 300;
+        float: right;
+    }
 
-        &:hover {
-            color: darken(#333, 50%);
-            text-decoration: underline;
-        }
+    .btn-layout {
+        color: #fff;
+        font-size: 12px !important;
+        text-align: center;
+        padding: 0 10px;
+        display: inline-block;
+        line-height: 2;
+        height: auto;
+        cursor: pointer;
     }
 }
 

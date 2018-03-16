@@ -8,61 +8,42 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 })
 export class OperationsWidgetComponent implements OnInit {
   @Output() onDelete: EventEmitter<any> = new EventEmitter();
+  @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
 
   private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
 
   @Output() print: EventEmitter<any> = new EventEmitter();
-  
-  toggleDataLayout(dataLayoutType) {
-    this.dataLayoutType = dataLayoutType;
-  }
 
   toolbarConfig = [
     {location: 'before', items: [
-      {name: 'assign'}, 
-      {name: 'status'}, 
+      {name: 'assign'},
+      {
+        name: 'status',
+        widget: 'dxDropDownMenu',
+        options: {
+            hint: 'Status',
+            items: [
+              {
+                  action: this.updateStatus.bind(this, 'A'),
+                  text: 'Active',
+              }, {
+                  action: this.updateStatus.bind(this, 'I'),
+                  text: 'Inactive',
+              }
+          ]
+        }
+      },
       {
         name: 'delete',
         action: this.delete.bind(this)
       }
     ]},
-    {location: 'center', items: [
-      {name: 'folder'}, {name: 'pen'}
-    ]},
-    {location: 'center', items: [
-      {name: 'more'}
-    ]},
     {                
       location: 'after', 
       areItemsDependent: true,
       items: [
-          { 
-              name: 'box',
-              action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
-              options: {
-                  checkPressed: () => {
-                      return (this.dataLayoutType == DataLayoutType.Box);
-                  },
-              }
-          },
-          { 
-              name: 'pipeline', 
-              action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
-              options: {
-                  checkPressed: () => {
-                      return (this.dataLayoutType == DataLayoutType.Pipeline);
-                  },
-              }
-          },
-          { 
-              name: 'grid', 
-              action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
-              options: {
-                  checkPressed: () => {
-                      return (this.dataLayoutType == DataLayoutType.Grid);
-                  },
-              } 
-          }
+        {name: 'folder'}, 
+        {name: 'pen'}
       ]
     },
     {location: 'after', items: [
@@ -70,11 +51,12 @@ export class OperationsWidgetComponent implements OnInit {
           name: 'print', 
           action: this.print.emit.bind(this.print)
       }
-    ]},
-    {location: 'after', items: [
-      {name: 'prev'}, {name: 'next'}
     ]}
   ];
+
+  toggleDataLayout(dataLayoutType) {
+    this.dataLayoutType = dataLayoutType;
+  }
 
   constructor() { }
 
@@ -83,5 +65,9 @@ export class OperationsWidgetComponent implements OnInit {
 
   delete() {
     this.onDelete.emit();
+  }
+
+  updateStatus(statusId: string) {
+    this.onUpdateStatus.emit(statusId);
   }
 }
