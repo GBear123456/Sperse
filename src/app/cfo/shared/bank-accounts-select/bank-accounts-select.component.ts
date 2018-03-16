@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
-import { BankAccountsServiceProxy, InstanceType, SyncAccountBankDto } from 'shared/service-proxies/service-proxies';
+import { BankAccountsServiceProxy, InstanceType, SyncAccountBankDto, BusinessEntityServiceProxy } from 'shared/service-proxies/service-proxies';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 import { CacheService } from 'ng2-cache-service';
@@ -10,7 +10,7 @@ import * as _ from 'underscore';
     selector: 'bank-accounts-select',
     templateUrl: './bank-accounts-select.component.html',
     styleUrls: ['./bank-accounts-select.component.less'],
-    providers: [BankAccountsServiceProxy, CacheService]
+    providers: [BankAccountsServiceProxy, BusinessEntityServiceProxy, CacheService]
 })
 export class BankAccountsSelectComponent extends CFOComponentBase implements OnInit {
     private initSelectedBankAccountsTimeout: any;
@@ -25,10 +25,14 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     tooltipVisible: boolean;
     bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}`;
     allSelected: boolean = false;
+    moreThanOneBusinessEntityExist: boolean = true;
+    selectedBusinessEntities: any[];
+    businessEntities = [];
 
     constructor(
         injector: Injector,
         private _bankAccountsService: BankAccountsServiceProxy,
+        private _businessEntityService: BusinessEntityServiceProxy,
         private _cacheService: CacheService
     ) {
         super(injector);
@@ -39,13 +43,24 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     ngOnInit(): void {
         super.ngOnInit();
         this.getBankAccounts();
+        this.getBusinessEntities();
     }
 
-    contentReady(e) {
-        
+    getBusinessEntities() {
+        this._businessEntityService.getBusinessEntities(InstanceType[this.instanceType], this.instanceId)
+            .subscribe((result) => {
+                this.businessEntities = result;
+                this.moreThanOneBusinessEntityExist = result.length > 1;
+            });
     }
+
+    businessEntitySelectedChange(e) {
+        this.selectedBusinessEntities = e.component._selectedItems;
+        this.getBankAccounts();
+    }
+
     masterRowExpandChange(e) {
-        if (e.columnIndex !== 0) {
+        if (e.columnIndex !== 0 && e.row) {
             if (e.row.isExpanded) {
                 e.component.collapseRow(e.key);
             } else {
@@ -80,9 +95,9 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                         row.data['selected'] = undefined;
                     }
                 }
+                this.mainDataGrid.instance.repaintRows([i]);
             }
-        });
-        this.mainDataGrid.instance.refresh();
+        });        
     }
 
     bankAccountsSelecteAll() {
@@ -177,7 +192,8 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     }
 
     getBankAccounts(): void {
-        this._bankAccountsService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
+        let businessEntityIds = _.map(this.selectedBusinessEntities, function (b) { return b.id; });
+        this._bankAccountsService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD', businessEntityIds)
             .subscribe((result) => {
                 this.data = result;
 
