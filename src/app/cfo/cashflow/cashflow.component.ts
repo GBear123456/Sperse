@@ -1560,7 +1560,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Calculate the amount current cells to cut the current period current cell to change current from
          *  current for year to current for the grouping period */
         let lowestOpenedCurrentInterval = this.getLowestOpenedCurrentInterval();
-        $(`.current${_.capitalize(lowestOpenedCurrentInterval)}`).addClass('lowestOpenedCurrent');
+        $('.lowestOpenedCurrent').removeClass('lowestOpenedCurrent');
+        $(`.current${_.capitalize(lowestOpenedCurrentInterval)}:not(.projectedField)`).addClass('lowestOpenedCurrent');
 
         let lowestOpenedInterval = this.getLowestOpenedInterval();
         this.changeHistoricalColspans(lowestOpenedInterval);
@@ -1745,7 +1746,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Get lowest opened interval
      */
     getLowestOpenedCurrentInterval() {
-        let allIntervals = this.groupbyItems.map(item => item.groupInterval).filter(item => item !== 'day');
+        let allIntervals = this.getColumnFields().filter(item => item.dataType === 'date').map(item => item.groupInterval);
         let lowestInterval = allIntervals[0];
         allIntervals.every(interval => {
             let currentElement = $('.current' + _.capitalize(interval));
@@ -1986,6 +1987,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return cellObj.area === 'data' && (cellObj.cell.rowPath[0].slice(2) === Income || cellObj.cell.rowPath[0].slice(2) === Expense);
     }
 
+    isDayCell(cellObj) {
+       let result = false;
+        if (this.pivotGrid) {
+            let dayIndex = this.pivotGrid.instance.getDataSource().getAreaFields('column', true).find(item => item.dataType === 'date' && item.groupInterval === 'day')['areaIndex'];
+            let path = cellObj.cell.path || cellObj.cell.columnPath;
+            result = path.length === (dayIndex + 1);
+        }
+        return result;
+    }
+
     isMonthHeaderCell(cellObj) {
         let monthIndex = this.pivotGrid.instance.getDataSource().getAreaFields('column', true).find(item => item.dataType === 'date' && item.groupInterval === 'month')['areaIndex'];
         return cellObj.area === 'column' && cellObj.cell.path && cellObj.cell.path.length === (monthIndex + 1);
@@ -2140,6 +2151,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     onCellPrepared(e) {
         let maxCategoryWidth = this.maxCategoriesWidth;
+
+        /** Get cell date from path and add it to the cell object for using */
+        if ((e.area === 'column' || e.area === 'data') && e.cell.text !== undefined) {
+            let path = e.cell.path || e.cell.columnPath;
+            let date = this.getDateByPath(path, this.getColumnFields(), 'day');
+            e.date = date;
+        }
+
+        /** Add day (monday, tuesday etc) to the day cells */
+        if ((e.area === 'column' || e.area === 'data') && this.isDayCell(e)) {
+            this.addWeekendAttribute(e);
+        }
 
         /* added charts near row titles */
         if (e.area === 'row' && e.cell.type === 'D' && e.cell.path.length > 1 && !e.cell.expanded && !e.cell.isWhiteSpace) {
@@ -2705,7 +2728,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let columnNumber = cellObj.cell.path.length ? cellObj.cell.path.length  - 1 : 0;
             let fieldObj = columnFields.find(field => field.areaIndex === columnNumber);
             let fieldGroup = fieldObj.groupInterval ? 'dateField' : fieldObj.caption.toLowerCase() + 'Field';
-
             if (fieldGroup === 'dateField') {
                 fieldName = fieldObj.groupInterval;
                 /** Added 'Total' text to the year and quarter headers */
@@ -2721,16 +2743,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     let dayNumber = cellObj.cell.path.slice(-1)[0],
                         dayEnding = [, 'st', 'nd', 'rd'][ dayNumber % 100 >> 3 ^ 1 && dayNumber % 10] || 'th';
                     cellObj.cellElement.append(`<span class="dayEnding">${dayEnding}</span>`);
+                    /** Add day name */
+                    cellObj.cellElement.append(`<span class="dayName">${cellObj.date.format('ddd').toUpperCase()}</span>`);
                 }
             } else if (fieldGroup === 'historicalField') {
                 fieldName = this.historicalClasses[cellObj.cell.path.slice(-1)[0]];
-            } else if (fieldGroup === 'projected') {
+            } else if (fieldGroup === 'projectedField') {
                 fieldName = cellObj.cell.value === 1 ? 'projected' : 'mtd';
             }
+
+            /** add class to the cell */
             cellObj.cellElement.addClass(`${fieldGroup} ${fieldName}`);
-            if (!cellObj.cellElement.parent().hasClass(`${fieldName}Row`)) {
-                cellObj.cellElement.parent().addClass(`${fieldName}Row`);
-            }
+
             /** hide projected field for not current months for mdk and projected */
             if (fieldGroup === 'projectedField') {
                 /** hide the projected fields if the group interval is */
@@ -2739,7 +2763,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 } else {
                     this.hideProjectedFieldForNotCurrentMonths(cellObj);
                 }
+                fieldName = 'projected';
             }
+
+            /** add class to the whole row */
+            cellObj.cellElement.parent().addClass(`${fieldName}Row`);
         }
     }
 
@@ -2758,7 +2786,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     /**
-     * Added the classes for the current cells such as currentYear, currentQuarter and currentMonth
+     * Add the classes for the current cells such as currentYear, currentQuarter and currentMonth
      */
     addCurrentPeriodsClasses(cellObj) {
         this.getColumnFields().every( (field, index) => {
@@ -2789,6 +2817,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             return true;
         });
+    }
+
+    /**
+     * Add day names to the cell
+     * @param cellObj
+     */
+    addWeekendAttribute(cellObj) {
+        /** if day number is 0 (sunday) or 6 (saturday) */
+        let isWeekend = cellObj.date.day() === 0 || cellObj.date.day() === 6;
+        cellObj.cellElement.attr('data-is-weekend', isWeekend);
     }
 
     /**
@@ -3218,7 +3256,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             return true;
         });
-
         dateFields.forEach(dateField => {
             let method = dateField.groupInterval === 'day' ? 'date' : dateField.groupInterval,
                 fieldValue = path[columnFields.filter(field => field.groupInterval === dateField.groupInterval)[0].areaIndex];

@@ -25,7 +25,8 @@
 @reconciliationVerticalHeaderBackgroundColor: #eff9fe;
 
 /** data cells colors */
-@dataCellBackgroundColor: #f9fbfc;
+@historicalDataCellBackgroundColor: #f9fbfc;
+@forecastDataCellBackgroundColor: #fff;
 @startedBalanceDataCellColor: #d9f0fa;
 @incomeDataCellBackgroundColor: #d9f5f0;
 @expensesDataCellBackgroundColor: #f9e1da;
@@ -33,6 +34,7 @@
 @totalDataCellBackgroundColor: #ecf7fc;
 @reconciliationDataCellTextColor: #a9b2ba;
 @currentPeriodCellBackgroundColor: rgba(250, 184, 0, .04);
+@currentDayCellBackgroundColor: #fffaec;
 @totalsTextColor: #686f76;
 @middleGrayColor: #686f76;
 @dataCellColorForZeroValues: rgba(104, 111, 118, 0.52);
@@ -221,7 +223,8 @@
                         height: auto !important;
                         td {
                             font-size: 10px;
-
+                            position: relative;
+                            background-color: @historicalDataCellBackgroundColor;
                             &.cashflow {
                                 color: #00aeef;
                             }
@@ -246,11 +249,15 @@
                                 font-size: 20px;
                             }
 
-                            &.lowestOpenedCurrent:not(.mtdCell):not(.month) {
+                            &[class*="next"] {
+                                background-color: @forecastDataCellBackgroundColor;
+                            }
+
+                            &.mtdCell {
                                 background-color: @currentPeriodCellBackgroundColor;
                             }
 
-                            &.lowestOpenedCurrent.dx-pivotgrid-expanded.month {
+                            &.lowestOpenedCurrent:not(.year):not([class*='next']) {
                                 position: relative;
                                 &:before {
                                     content: '';
@@ -262,17 +269,16 @@
                                 }
                             }
 
+                            &.currentDay {
+                                background-color: @currentDayCellBackgroundColor;
+                            }
+
                             &.month,
                             &.quarter,
                             &.day {
                                 color: @generalColor;
                                 font-weight: 600;
                                 font-size: 18px;
-
-                                &.current {
-                                    color: #fff;
-                                    background: @currentTextColor;
-                                }
                             }
 
                             &.dataFieldHidden {
@@ -304,6 +310,19 @@
                             span.dayEnding {
                                 font-size: 10px;
                                 position: absolute;
+                            }
+
+                            span.dayName {
+                                font-size: 9px;
+                                color: #8d9297;
+                                position: absolute;
+                                right: 7px;
+                                bottom: 7px;
+                                font-weight: 400;
+                            }
+
+                            &[data-is-weekend='true'] {
+                                background-image: url('../../../assets/common/images/weekend-background.png') !important;
                             }
 
                             &.projectedField.projectedHidden {
@@ -607,7 +626,7 @@
 
                     tr {
                         td {
-                            background: @dataCellBackgroundColor;
+                            background: @historicalDataCellBackgroundColor;
                             color: @middleGrayColor;
                             font-family: Lato !important;
                             letter-spacing: 0.2px;
@@ -654,7 +673,8 @@
                                 background: transparent;
                             }
 
-                            &.lowestOpenedCurrent:not(.mtdCell) {
+                            &.lowestOpenedCurrent:not(.projectedCell) {
+                                background-color: @currentPeriodCellBackgroundColor;
                                 &.income {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@incomeDataCellBackgroundColor, @incomeDataCellBackgroundColor);
                                 }
@@ -664,8 +684,8 @@
                                 }
                             }
 
-                            &.lowestOpenedCurrent:not(.mtdCell) {
-                                background-color: @currentPeriodCellBackgroundColor;
+                            &.currentDay {
+                                background-color: @currentDayCellBackgroundColor;
                             }
 
                             .dx-texteditor-input {
@@ -687,6 +707,10 @@
                                 &.dx-link-delete {
                                     background: url('../../../assets/common/icons/delete-icon.svg') no-repeat center;
                                 }
+                            }
+
+                            &[data-is-weekend='true'] {
+                                background-image: url('../../../assets/common/images/weekend-background.png') !important;
                             }
                         }
 
@@ -737,9 +761,9 @@
 
                         &.endingCashPosition {
                             td {
-                                background: @grandTotalBackgroundColor;
+                                background: @grandTotalBackgroundColor !important;
 
-                                &.lowestOpenedCurrent:not(.mtdCell) {
+                                &.lowestOpenedCurrent:not(.projectedCell) {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
                                 }
 
