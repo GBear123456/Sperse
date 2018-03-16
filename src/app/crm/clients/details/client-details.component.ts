@@ -72,7 +72,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     });
   }
 
-  close(event) {
+  close() {
     this._dialog.closeAll();
     this._router.navigate(['app/crm/clients']);
   }
@@ -114,7 +114,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         if (isConfirmed) {
           this._customerService.deleteCustomer(this.customerId).subscribe(() => {
             this.notify.success(this.l('SuccessfullyDeleted'));
-            this.close(null);
+            this.close();
           });    
         }
       }
