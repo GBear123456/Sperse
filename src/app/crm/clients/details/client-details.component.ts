@@ -1,4 +1,5 @@
 import { Component, Input, Injector, OnInit, OnDestroy } from '@angular/core';
+import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomersServiceProxy, CustomerInfoDto, PersonContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -13,6 +14,7 @@ import { MatDialog } from '@angular/material';
   }
 })
 export class ClientDetailsComponent extends AppComponentBase implements OnInit, OnDestroy {
+  customerId: number;
   customerInfo: CustomerInfoDto;
   primaryContact: PersonContactInfoDto;
 
@@ -52,21 +54,25 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     private _route: ActivatedRoute,
     private _customerService: CustomersServiceProxy
   ) {
-    super(injector);
+    super(injector, AppConsts.localization.CRMLocalizationSourceName);
+
     _customerService['data'] = {customerInfo: null};
     this.rootComponent = this.getRootComponent();
     this.paramsSubscribe = this._route.params.subscribe(params => {
-      _customerService.getCustomerInfo(params['clientId'])
-        .subscribe(responce => {
-          _customerService['data'].customerInfo = responce;
-          this.primaryContact = responce.primaryContactInfo;
-          this.customerInfo = responce;
-        }
-      );
+      this.fillCustomerDetails(params['clientId']);
     });
   }
 
-  close(event) {
+  private fillCustomerDetails(customerId) {
+    this.customerId = customerId;
+    this._customerService.getCustomerInfo(this.customerId).subscribe(responce => {
+      this._customerService['data'].customerInfo = responce;
+      this.primaryContact = responce.primaryContactInfo;
+      this.customerInfo = responce;
+    });
+  }
+
+  close() {
     this._dialog.closeAll();
     this._router.navigate(['app/crm/clients']);
   }
@@ -76,6 +82,17 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
       !event.target.closest('.mat-dialog-container, .dx-popup-wrapper')
     )
       this._dialog.closeAll();
+  }
+
+  printMainArea() {
+      let elm = this.getElementRef(),
+          handel = window.open();
+      handel.document.open();
+      handel.document.write('<h1>' + this.customerInfo.name + '</h1>' + 
+          elm.nativeElement.getElementsByClassName('main-content')[0].innerHTML);
+      handel.document.close();
+      handel.print();
+      handel.close();
   }
 
   ngOnInit() {
@@ -88,5 +105,19 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     this.rootComponent.overflowHidden();
     this.rootComponent.pageHeaderFixed(true);
+  }
+
+  delete() {
+    this.message.confirm(
+      this.l('ClientDeleteWarningMessage', this.customerInfo.name),
+      isConfirmed => {
+        if (isConfirmed) {
+          this._customerService.deleteCustomer(this.customerId).subscribe(() => {
+            this.notify.success(this.l('SuccessfullyDeleted'));
+            this.close();
+          });    
+        }
+      }
+    );
   }
 }

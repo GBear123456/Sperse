@@ -2514,16 +2514,16 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getCategoryTree(instanceType: InstanceType26, instanceId: number, isCashFlowTypeOptional: boolean): Observable<GetCategoryTreeOutput> {
+    getCategoryTree(instanceType: InstanceType26, instanceId: number, includeNonCashflowNodes: boolean): Observable<GetCategoryTreeOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetCategoryTree?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (isCashFlowTypeOptional === undefined || isCashFlowTypeOptional === null)
-            throw new Error("The parameter 'isCashFlowTypeOptional' must be defined and cannot be null.");
+        if (includeNonCashflowNodes === undefined || includeNonCashflowNodes === null)
+            throw new Error("The parameter 'includeNonCashflowNodes' must be defined and cannot be null.");
         else
-            url_ += "isCashFlowTypeOptional=" + encodeURIComponent("" + isCashFlowTypeOptional) + "&"; 
+            url_ += "includeNonCashflowNodes=" + encodeURIComponent("" + includeNonCashflowNodes) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -6452,6 +6452,97 @@ export class CustomersServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<CreateCustomerOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteCustomer(customerId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/DeleteCustomer?";
+        if (customerId === undefined || customerId === null)
+            throw new Error("The parameter 'customerId' must be defined and cannot be null.");
+        else
+            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processDeleteCustomer(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteCustomer(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteCustomer(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @customerIds (optional) 
+     * @return Success
+     */
+    deleteCustomers(customerIds: number[]): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/DeleteCustomers?";
+        if (customerIds !== undefined)
+            customerIds && customerIds.forEach(item => { url_ += "customerIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processDeleteCustomers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteCustomers(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteCustomers(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
     }
 }
 
@@ -17307,6 +17398,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     bankId: number;
     name: string;
     balance: number;
+    lastSyncDate: moment.Moment;
     bankAccounts: BankAccountDto[];
     syncAccountStatus: SyncAccountBankDtoSyncAccountStatus;
 
@@ -17325,6 +17417,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
             this.bankId = data["bankId"];
             this.name = data["name"];
             this.balance = data["balance"];
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
             if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
                 this.bankAccounts = [];
                 for (let item of data["bankAccounts"])
@@ -17346,6 +17439,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
         data["bankId"] = this.bankId;
         data["name"] = this.name;
         data["balance"] = this.balance;
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
         if (this.bankAccounts && this.bankAccounts.constructor === Array) {
             data["bankAccounts"] = [];
             for (let item of this.bankAccounts)
@@ -17361,6 +17455,7 @@ export interface ISyncAccountBankDto {
     bankId: number;
     name: string;
     balance: number;
+    lastSyncDate: moment.Moment;
     bankAccounts: BankAccountDto[];
     syncAccountStatus: SyncAccountBankDtoSyncAccountStatus;
 }
@@ -17372,6 +17467,7 @@ export class BankAccountDto implements IBankAccountDto {
     accountNumber: string;
     businessEntityName: string;
     balance: number;
+    syncAccountId: number;
 
     constructor(data?: IBankAccountDto) {
         if (data) {
@@ -17390,6 +17486,7 @@ export class BankAccountDto implements IBankAccountDto {
             this.accountNumber = data["accountNumber"];
             this.businessEntityName = data["businessEntityName"];
             this.balance = data["balance"];
+            this.syncAccountId = data["syncAccountId"];
         }
     }
 
@@ -17407,6 +17504,7 @@ export class BankAccountDto implements IBankAccountDto {
         data["accountNumber"] = this.accountNumber;
         data["businessEntityName"] = this.businessEntityName;
         data["balance"] = this.balance;
+        data["syncAccountId"] = this.syncAccountId;
         return data; 
     }
 }
@@ -17418,6 +17516,7 @@ export interface IBankAccountDto {
     accountNumber: string;
     businessEntityName: string;
     balance: number;
+    syncAccountId: number;
 }
 
 export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {

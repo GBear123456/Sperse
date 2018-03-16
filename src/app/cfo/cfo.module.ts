@@ -26,6 +26,7 @@ import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
 import { CFOModalDialogComponent } from './shared/common/dialogs/modal/cfo-modal-dialog.component';
+import { ChooseResetRulesComponent } from './transactions/choose-reset-rules/choose-reset-rules.component';
 
 import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
@@ -138,13 +139,15 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         CFOModalDialogComponent,
         BusinessEntitiesComponent,
         ChartOfAccountsComponent,
-        BankAccountsSelectComponent
+        BankAccountsSelectComponent,
+        ChooseResetRulesComponent
     ],
     entryComponents: [
         RuleDialogComponent,
         RuleDeleteDialogComponent,
         CategoryDeleteDialogComponent,
-        PreferencesDialogComponent
+        PreferencesDialogComponent,
+        ChooseResetRulesComponent
     ],
     providers: [
         InstanceServiceProxy,
