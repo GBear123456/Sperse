@@ -522,6 +522,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     copiedCell;
     monthsDaysLoadedPathes = [];
     cashflowDetailsGridSessionIdentifier: string = `cashflow_forecastModel_${abp.session.tenantId}_${abp.session.userId}`;
+    hasDiscrepancyInData: boolean = false;
 
     /** Interval between state saving (ms) */
     public stateSavingTimeout = 1000;
@@ -1084,6 +1085,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 [Total]: []
             },
             firstDate, firstInitialDate;
+        if (this.hasDiscrepancyInData)
+            currentAccountsIds[Reconciliation] = [];
+
         transactions.forEach(transaction => {
             /** get the first real date for stub data */
             if (!firstDate && transaction.date) {
@@ -1164,9 +1168,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.transactionsAverage = 0;
             this.adjustmentsList = [];
             this.cashflowDataTree = [];
+            this.hasDiscrepancyInData = false;
         }
 
         const data = transactions.reduce((result, transactionObj) => {
+            if (!this.hasDiscrepancyInData && transactionObj.cashflowTypeId == Reconciliation)
+                this.hasDiscrepancyInData = true;
             transactionObj.categorization = {};
             transactionObj.initialDate = moment(transactionObj.date);
             transactionObj.date.add(transactionObj.date.toDate().getTimezoneOffset(), 'minutes');
