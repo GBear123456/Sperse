@@ -4068,15 +4068,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let state = this._cacheService.get(this.stateStorageKey);
         if (state && String(state) !== 'undefined') {
             state = JSON.parse(state);
+            if (state.headersAreCollapsed) {
+                this.yearHeadersAreCollapsed = state.headersAreCollapsed.year;
+                this.quarterHeadersAreCollapsed = state.headersAreCollapsed.quarter;
+            }
         } else {
             /** Set default expanded columns */
             state = {};
             state.columnExpandedPaths = this.columnDefaultExpandedPaths;
+            this.yearHeadersAreCollapsed = true;
+            this.quarterHeadersAreCollapsed = true;
         }
         return state;
     }
 
     stateSave = state => {
+        state.headersAreCollapsed = {'year': this.yearHeadersAreCollapsed, 'quarter': this.quarterHeadersAreCollapsed };
         this._cacheService.set(this.stateStorageKey, JSON.stringify(state));
     }
 
