@@ -26,7 +26,8 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
-import { CommonLookupServiceProxy, InstanceServiceProxy, GetUserInstanceInfoOutputStatus, CustomersServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CommonLookupServiceProxy, InstanceServiceProxy, GetUserInstanceInfoOutputStatus, 
+    CustomersServiceProxy, UpdateCustomerStatusesInput } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -276,7 +277,22 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             {
                 location: 'before', items: [
                     { name: 'assign' }, 
-                    { name: 'status' }, 
+                    {
+                        name: 'status',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: 'Status',
+                            items: [
+                              {
+                                  action: this.updateClientStatuses.bind(this, 'A'),
+                                  text: 'Active',
+                              }, {
+                                  action: this.updateClientStatuses.bind(this, 'I'),
+                                  text: 'Inactive',
+                              }
+                          ]
+                        }
+                    },
                     { 
                         name: 'delete',
                         action: this.deleteClients.bind(this)
@@ -419,6 +435,36 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     this.deleteClientsInternal();
             }
         );
+    }
+
+    updateClientStatuses (statusId: string) {
+        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+        if (selectedIds && selectedIds.length) {
+            this.showConfirmationDialog(selectedIds, statusId);
+        } else {
+            this.message.warn('Please, select a record to update');
+        }
+    }
+
+    showConfirmationDialog(selectedIds: number[], statusId: string) {
+        this.message.confirm(
+            this.l('ClientsUpdateStatusWarningMessage'),
+            this.l('ClientStatusUpdateConfirmationTitle'),
+            isConfirmed => {
+                if (isConfirmed)
+                    this.updateClientStatusesInternal(selectedIds, statusId);
+            }
+        );
+    }
+
+    private updateClientStatusesInternal (customerIds: number[], statusId: string) {
+        this._customersServiceProxy.updateCustomerStatuses(new UpdateCustomerStatusesInput({
+            customerIds: customerIds,
+            statusId: statusId
+        })).subscribe(() => {
+            this.refreshDataGrid();
+            this.dataGrid.instance.clearSelection();
+        });
     }
 
     onRowClick($event) {
