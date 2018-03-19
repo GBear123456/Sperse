@@ -3,7 +3,8 @@ import { TenantDashboardServiceProxy } from '@shared/service-proxies/service-pro
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppSalesSummaryDatePeriod } from '@shared/AppEnums';
-declare let d3, Datamap: any;
+import { AppConsts } from '@shared/AppConsts';
+
 import * as _ from 'lodash';
 
 @Component({
@@ -13,6 +14,7 @@ import * as _ from 'lodash';
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     private rootComponent: any;
+    dataEmpty = false;
     public headlineConfig = {
       names: [this.l('Dashboard')],
       text: this.l('statistics and reports'),
@@ -24,7 +26,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         injector: Injector,
         private _dashboardService: TenantDashboardServiceProxy
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
     ngAfterViewInit(): void {
