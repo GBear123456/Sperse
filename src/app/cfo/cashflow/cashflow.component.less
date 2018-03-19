@@ -673,8 +673,10 @@
                             }
 
                             &.currentDroppable {
-                                background: #CBEEFF !important;
-                                cursor: pointer;
+                                &, & > span {
+                                    background: #CBEEFF !important;
+                                    cursor: pointer;
+                                }
                             }
 
                             span {
