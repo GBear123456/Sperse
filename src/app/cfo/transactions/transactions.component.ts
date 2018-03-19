@@ -849,18 +849,32 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         this.refreshDataGrid();
                     } else {
                         let gridItems = this.dataGrid.instance.getDataSource().items().filter((v) => _.some(transactionIds, x => x == v.Id));
+                        let selectedRowIndexes: number[] = [];
+                        let totalTransactionsSource = this.totalDataSource.items()[0];
                         gridItems.forEach(
                             (i) => {
+                                if (!i.CashflowCategoryId) {
+                                    if (i.Amount > 0)
+                                        totalTransactionsSource.classifiedCreditTransactionCount++;
+                                    else
+                                        totalTransactionsSource.classifiedDebitTransactionCount++;
+                                }
+
                                 i.CashflowSubCategoryId = $event.parentId ? $event.categoryId : null;
                                 i.CashflowSubCategoryName = $event.parentId ? $event.categoryName : null;
                                 i.CashflowCategoryId = $event.parentId ? $event.parentId : $event.categoryId;
                                 i.CashflowCategoryName = $event.parentId ? $event.parentName : $event.categoryName;
                                 i.CashFlowTypeId = $event.categoryCashType;
                                 i.CashFlowTypeName = $event.categoryCashType == 'I' ? 'Inflows' : 'Outflows';
+                                
+                                selectedRowIndexes.push(this.dataGrid.instance.getRowIndexByKey(i));
                             }
                         );
-
+                        
+                        this.dataGrid.instance.repaintRows(selectedRowIndexes);
                         this.dataGrid.instance.selectRows(gridItems, false);
+
+                        this.getTotalValues();
                     }
 
                     if ($event.showRuleDialog) {
