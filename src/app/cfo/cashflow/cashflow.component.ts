@@ -2185,7 +2185,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         let rObj = {};
                         let value = allData.values[e.cell.dataSourceIndex][obj.index];
                         rObj['year'] = obj.value;
-                        rObj['value'] = value.length ? Math.abs(value[0]) : Math.abs(value);
+                        rObj['value'] = value.length ? value[0] : value;
                         chartData.push(rObj);
                     });
                 }
