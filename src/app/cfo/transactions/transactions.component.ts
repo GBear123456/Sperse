@@ -851,15 +851,26 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         let gridItems = this.dataGrid.instance.getDataSource().items().filter((v) => _.some(transactionIds, x => x == v.Id));
                         let selectedRowIndexes: number[] = [];
                         let totalTransactionsSource = this.totalDataSource.items()[0];
+                        let categoryTreeTransactionCountSource = this.categorizationComponent.transactionsCountDataSource.items()[0];
                         gridItems.forEach(
                             (i) => {
+                                if (i.CashflowCategoryId) {
+                                    let previousCategory = i.CashflowSubCategoryId || i.CashflowCategoryId;
+                                    if (categoryTreeTransactionCountSource[previousCategory])
+                                        categoryTreeTransactionCountSource[previousCategory]--;
+                                }
+                                if (categoryTreeTransactionCountSource[$event.categoryId])
+                                    categoryTreeTransactionCountSource[$event.categoryId]++;
+                                else
+                                    categoryTreeTransactionCountSource[$event.categoryId] = 1;
+
                                 if (!i.CashflowCategoryId) {
                                     if (i.Amount > 0)
                                         totalTransactionsSource.classifiedCreditTransactionCount++;
                                     else
                                         totalTransactionsSource.classifiedDebitTransactionCount++;
                                 }
-
+                                
                                 i.CashflowSubCategoryId = $event.parentId ? $event.categoryId : null;
                                 i.CashflowSubCategoryName = $event.parentId ? $event.categoryName : null;
                                 i.CashflowCategoryId = $event.parentId ? $event.parentId : $event.categoryId;
@@ -870,11 +881,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 selectedRowIndexes.push(this.dataGrid.instance.getRowIndexByKey(i));
                             }
                         );
-                        
-                        this.dataGrid.instance.repaintRows(selectedRowIndexes);
+
                         this.dataGrid.instance.selectRows(gridItems, false);
+                        this.dataGrid.instance.repaintRows(selectedRowIndexes);
 
                         this.getTotalValues();
+                        this.categorizationComponent.setTransactionsCount();
                     }
 
                     if ($event.showRuleDialog) {
