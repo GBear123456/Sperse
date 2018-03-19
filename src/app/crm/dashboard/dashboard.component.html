@@ -1,9 +1,16 @@
 <div [@routerTransition]>
   <app-headline [config]="headlineConfig"></app-headline>
   <div class="lead-status">
-      <div class="col-lg-6 col-xs-12 col-sm-12">
+      <div class="col-lg-6 col-xs-12 col-sm-12 wrapper">
           <!-- BEGIN PORTLET-->
-          <div class="portlet light" >
+          <div *ngIf="dataEmpty" class="dashboard-stub">
+              <h1>{{l('CRM')}}</h1>
+              <p>{{l('CRM_Long')}}</p>
+              <p>{{l('ManageLeads')}}</p>
+              <p>{{l('StartAddingLead')}}</p>
+          </div>
+
+          <div class="portlet light" *ngIf="!dataEmpty">
               <div class="portlet-title">
                   <div class="caption caption-md">
                       <i class="icon-bar-chart font-green-haze hide"></i>
@@ -13,7 +20,7 @@
                   </div>
               </div>
               <div class="portlet-body" style="height: 271px;">
-                  <leads-stats>Loading...</leads-stats>
+                  <leads-stats (onDataEmpty)="dataEmpty = true">Loading...</leads-stats>
               </div>
           </div>
           <!-- END PORTLET-->
