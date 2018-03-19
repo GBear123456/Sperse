@@ -248,3 +248,61 @@
         }
     }
 }
+
+// filter by periods
+/deep/ .dx-popup-content {
+    white-space: normal !important;
+}
+.report-period-tooltip-container {
+    font-size: 15px;
+    width: 300px;
+    
+    .report-period-title {
+        width: 100%;
+        display: inline-block;
+    }
+    
+    .title {
+        display: block;
+        margin-bottom: 10px;
+    }
+    
+    .start, .end {
+        border: 1px solid #ddd;
+        padding: 0 10px;
+        font-size: 30px;
+        color: #000;
+        margin: 0 10px;
+    }
+    
+    .actions {
+        width: 100%;
+        display: inline-block;
+    }
+    
+    dx-range-slider {
+        margin-top: 15px;
+    }
+    
+    .filter-apply, .filter-clear {
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1.21;
+        letter-spacing: 0.3px;
+        color: #00AEEF;
+        padding: 10px 5px;
+        float: right;
+        
+        &:hover {
+            color: lighten(#00AEEF, 20%);
+        }
+    }
+    
+    /deep/ .dx-slider-bar {
+        height: 2px;
+        
+        .dx-slider-handle {
+            width: 9px;
+        }
+    }
+}
