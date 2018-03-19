@@ -5,6 +5,7 @@ export class AppConsts {
     static readonly googleMapsApiUrl = 'https://maps.googleapis.com/maps/api/js?key={KEY}&libraries=places&language=en';
     static readonly helpLink = 'https://support.sperse.com';
     static readonly isMobile = RegExp('Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini', 'i').test(navigator.userAgent);
+    static readonly defaultErrorMessage = 'No further information available.';
 
     static remoteServiceBaseUrl: string;
     static remoteServiceBaseUrlFormat: string;
