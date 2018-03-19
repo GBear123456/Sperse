@@ -266,14 +266,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
         this._filtersService.apply(() => {
             this.initToolbarConfig();
-            this.processODataFilter(this.dataGrid.instance,
-                this.dataSourceURI, this.filters, (filter) => {
-                    let filterMethod = this['filterBy' +
-                        this.capitalize(filter.caption)];
-                    if (filterMethod)
-                        return filterMethod.call(this, filter);                    
-                }
-            );
+            this.processFilterInternal();
         });
     }
 
@@ -440,13 +433,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     processFilterInternal() {
         this.processODataFilter(this.dataGrid.instance,
-            this.dataSourceURI, this.filters,
-                (filter) => {
-                    let filterMethod = this['filterBy' +
-                        this.capitalize(filter.caption)];
-                    if (filterMethod)
-                        return filterMethod.call(this, filter);
-                }
+            this.dataSourceURI, this.filters, (filter) => {
+                let filterMethod = this['filterBy' +
+                    this.capitalize(filter.caption)];
+                if (filterMethod)
+                    return filterMethod.call(this, filter);
+            }
         );
     }
 
