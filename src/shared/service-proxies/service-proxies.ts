@@ -715,7 +715,7 @@ export class BankAccountsServiceProxy {
      * @businessEntitiesIds (optional) 
      * @return Success
      */
-    getBankAccounts(instanceType: InstanceType, instanceId: number, currency: string, businessEntitiesIds: number[]): Observable<SyncAccountBankDto[]> {
+    getBankAccounts(instanceType: InstanceType, instanceId: number, currency: string, businessEntitiesIds: number[], isActive: boolean): Observable<SyncAccountBankDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetBankAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -727,6 +727,10 @@ export class BankAccountsServiceProxy {
             url_ += "Currency=" + encodeURIComponent("" + currency) + "&"; 
         if (businessEntitiesIds !== undefined)
             businessEntitiesIds && businessEntitiesIds.forEach(item => { url_ += "BusinessEntitiesIds=" + encodeURIComponent("" + item) + "&"; });
+        if (isActive === undefined || isActive === null)
+            throw new Error("The parameter 'isActive' must be defined and cannot be null.");
+        else
+            url_ += "IsActive=" + encodeURIComponent("" + isActive) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {

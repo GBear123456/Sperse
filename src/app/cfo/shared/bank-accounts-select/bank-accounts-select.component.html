@@ -8,9 +8,11 @@
                             <div class="dx-field">
                                 <div class="dx-field-label"><span class="business-entity-test">{{l('All financial accounts for ')}}</span></div>
                                 <div class="dx-field-value">
-                                    <!--<ng-container *ngIf="(!selectedBusinessEntities || !selectedBusinessEntities.length)">
-                                        <span class="tag-value"> {{l('All Entities')}} </span>
-                                    </ng-container>-->
+                                    <ng-container *ngIf="!moreThanOneBusinessEntityExist">
+                                        <div class="label-container">
+                                            <span class="tag-value"> {{l('All Entities')}} </span>
+                                        </div>                                        
+                                    </ng-container>
                                     <ng-container *ngIf="moreThanOneBusinessEntityExist">
                                         <dx-tag-box [items]="businessEntities"
                                                     displayExpr="name"
@@ -36,7 +38,13 @@
                     <span class="filter-clear" (click)="bankAccountsClear()">{{l('Clear')}}</span>
                     <span class="filter-apply" (click)="bankAccountsSelected()">{{l('Apply')}}</span>
                 </div>
-                
+                <br />
+                <div class="filter-actions">
+                    <div class="is-active-filter">
+                        <span>{{isActiveLabel}}</span>
+                        <dx-switch [value]="isActive" (onOptionChanged)="isActiveChanged($event)" [width]="32"></dx-switch>
+                    </div>
+                </div>
                 <dx-scroll-view [showScrollbar]="onHover" [height]="calculateChartsScrolableHeight()">
                     <div class="grid-container">
                         <dx-data-grid id="gridContainer"
@@ -58,7 +66,7 @@
                             </dxo-scrolling>
                             <dxi-column dataField="selected" [width]="30" alignment="center" dataType="boolean"></dxi-column>
                             <dxi-column dataField="name" [width]="240" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
-                            <dxi-column dataField="syncAccountStatus" [width]="155" alignment="left" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
+                            <dxi-column dataField="syncAccountStatus" [width]="155" alignment="center" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
                             <dxi-column dataField="lastSyncDate" alignment="left" [width]="180" [allowEditing]="false" cellTemplate="syncDateTemplate"></dxi-column>
                             <dxi-column dataField="balance" cssClass="tabular" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false"></dxi-column>
                             <dxi-column [width]="30" alignment="right" [allowEditing]="false" cellTemplate="expandTemplate"></dxi-column>
@@ -82,8 +90,8 @@
 
                                         <dxi-column dataField="selected" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
                                         <dxi-column dataField="accountName" [width]="240" alignment="left" [allowEditing]="false"></dxi-column>
-                                        <dxi-column dataField="accountNumber" cssClass="tabular" [width]="190" alignment="left" [allowEditing]="false"></dxi-column>
-                                        <dxi-column dataField="type" [width]="100" alignment="left" [allowEditing]="false"></dxi-column>
+                                        <dxi-column dataField="accountNumber" cssClass="tabular" [width]="170" alignment="left" [allowEditing]="false"></dxi-column>
+                                        <dxi-column dataField="type" [width]="160" alignment="left" [allowEditing]="false"></dxi-column>
                                         <dxi-column dataField="balance" cssClass="tabular" alignment="right" cellTemplate="amountTemplate" [allowEditing]="false"></dxi-column>
                                         <div *dxTemplate="let cell of 'amountTemplate'">
                                             <ng-container *ngIf="(cell.text)">

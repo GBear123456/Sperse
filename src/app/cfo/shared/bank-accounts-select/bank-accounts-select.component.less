@@ -27,10 +27,48 @@
         }
     }
 
+    .filter-actions {
+        width: 100%;
+        display: inline-block;
+    }
+
+    .is-active-filter {
+        float: right;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.21;
+        letter-spacing: 0.3px;
+        color: #677380;
+
+        /deep/ .dx-switch-on,
+        /deep/ .dx-switch-off {
+            color: transparent;
+        }
+
+        /deep/ .dx-switch-container {
+            border-color: #e2f5fe;
+            background-color: #e2f5fe;
+            border-radius: 12px;
+            height: 20px;
+        }
+
+        /deep/ .dx-switch-handle {
+            &::before {
+                background-color: #30bff2;
+                border-radius: 14px;
+                height: 14px;
+            }
+        }
+    }
+
     dx-tag-box {
         height: auto;
     }
-    
+
+    .label-container {
+        padding-top: 7px;
+    }
+
     .business-entity-select {
         float: left;
         max-width: 80%;
@@ -121,7 +159,6 @@
                 font-size: 12px;
                 margin-top: 2px;
                 margin-right: 5px;
-                float: right;
             }
 
             .status-color-container {
