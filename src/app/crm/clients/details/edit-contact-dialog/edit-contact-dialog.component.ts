@@ -83,11 +83,6 @@ export class EditContactDialog extends AppComponentBase {
     }
   }
 
-  blurInput(event) {
-    if (!(event.component._value && event.component._value.trim()))
-      event.component.option({mask: '', value: ''});
-  }
-
   onTypeChanged(event) {
     let type = _.findWhere(this.types, {id: event.value});
     if (type.isSocialNetwork)
