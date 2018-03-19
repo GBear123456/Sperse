@@ -1768,7 +1768,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getLowestOpenedInterval() {
-        let allIntervals = this.groupbyItems.map(item => item.groupInterval);
+        let allIntervals = this.getColumnFields().filter(item => item.dataType === 'date').map(item => item.groupInterval);
         let lowestInterval = allIntervals.shift();
         allIntervals.every(interval => {
             let periodElements = $(`[class*="${_.capitalize(interval)}"]`);
@@ -2437,7 +2437,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         return field.dataType !== 'date' || (field.groupInterval === 'month' ? cashflowItem.initialDate[dateMethod]() + 1 : cashflowItem.initialDate[dateMethod]()) === e.cell.columnPath[index];
                     }));
             });
-            
+
             if (elements.length) {
 
                 let sum = elements.reduce((x, y) => x + y.amount, 0);
@@ -4068,15 +4068,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let state = this._cacheService.get(this.stateStorageKey);
         if (state && String(state) !== 'undefined') {
             state = JSON.parse(state);
+            if (state.headersAreCollapsed) {
+                this.yearHeadersAreCollapsed = state.headersAreCollapsed.year;
+                this.quarterHeadersAreCollapsed = state.headersAreCollapsed.quarter;
+            }
         } else {
             /** Set default expanded columns */
             state = {};
             state.columnExpandedPaths = this.columnDefaultExpandedPaths;
+            this.yearHeadersAreCollapsed = true;
+            this.quarterHeadersAreCollapsed = true;
         }
         return state;
     }
 
     stateSave = state => {
+        state.headersAreCollapsed = {'year': this.yearHeadersAreCollapsed, 'quarter': this.quarterHeadersAreCollapsed };
         this._cacheService.set(this.stateStorageKey, JSON.stringify(state));
     }
 

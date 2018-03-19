@@ -442,7 +442,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         if (selectedIds && selectedIds.length) {
             this.showConfirmationDialog(selectedIds, statusId);
         } else {
-            this.message.warn('Please, select a record to update');
+            this.message.warn(this.l('NoRecordsToUpdate'));
         }
     }
 
@@ -462,6 +462,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             customerIds: customerIds,
             statusId: statusId
         })).subscribe(() => {
+            this.notify.success(this.l('StatusSuccessfullyUpdated'));
             this.refreshDataGrid();
             this.dataGrid.instance.clearSelection();
         });

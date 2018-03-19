@@ -11,7 +11,6 @@ import {ResetClassificationDto} from '@shared/service-proxies/service-proxies';
 })
 export class ChooseResetRulesComponent extends AppComponentBase {
     resetRules = new ResetClassificationDto();
-    isEmpty = false;
 
     constructor(
         injector: Injector,
@@ -19,18 +18,23 @@ export class ChooseResetRulesComponent extends AppComponentBase {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         super(injector, AppConsts.localization.defaultLocalizationSourceName);
+
+        this.resetRules.unclassify = true;
     }
 
     onSave() {
-        if (JSON.stringify(this.resetRules) === JSON.stringify(new ResetClassificationDto())) {
-            this.isEmpty = true;
-        } else {
-            if (this.resetRules.removeCategoryTree) {
-                this.resetRules.removeRules = true;
-                this.resetRules.removeForecasts = true;
-            }
-            this.dialogRef.close(this.resetRules);
+        if (this.resetRules.removeCategoryTree) {
+            this.resetRules.unclassify = true;
+            this.resetRules.removeRules = true;
         }
+        this.dialogRef.close(this.resetRules);
     }
 
+    checkAnyValueIsSet(): boolean {
+        return this.resetRules.unclassify ||
+            this.resetRules.removeRules ||
+            this.resetRules.removeCategoryTree ||
+            this.resetRules.removeForecasts ||
+            this.resetRules.recalculateTransactionAttributes;
+    }
 }

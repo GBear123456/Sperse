@@ -186,10 +186,10 @@
                                             </ul>
                                             <div class="btns-wrap clearfix">
                                                 <a (click)="openDialog('credit');" class="small-button btn-layout">
-                                                    {{l('Reset_Сlassifications')}}
+                                                    {{l('Unclassify_Btn')}}
                                                 </a>
                                                 <a (click)="autoClassify('credit');" class="small-button btn-layout">
-                                                    {{l('Auto_Сlassify')}}
+                                                    {{l('Auto_Сlassify_Btn')}}
                                                 </a>
                                             </div>
                                         </div>
@@ -225,11 +225,11 @@
                                                 </li>
                                             </ul>
                                             <div class="btns-wrap clearfix">
-                                                <a (click)="openDialog('debit');" class="small-button btn-layout">
-                                                    {{l('Reset_Сlassifications')}}
+                                                <a (click)="openDialog('credit');" class="small-button btn-layout">
+                                                    {{l('Unclassify_Btn')}}
                                                 </a>
-                                                <a (click)="autoClassify('debit');" class="small-button btn-layout">
-                                                    {{l('Auto_Сlassify')}}
+                                                <a (click)="autoClassify('credit');" class="small-button btn-layout">
+                                                    {{l('Auto_Сlassify_Btn')}}
                                                 </a>
                                             </div>
                                         </div>
@@ -246,7 +246,7 @@
                                 </h2>
                                 <span class="name" (click)="toggleTotalDefault()">
                                     <span id="adjustments" *ngIf="adjustmentTotal !== 0">!</span> {{l('Net_Amount')}} <span class="name-count">{{transactionCount | number}}</span> <i id="totalDetails" class="arrow"></i>
-                                    
+
                                 </span>
                                 <dx-tooltip target="#adjustments"
                                             position="top"
@@ -274,11 +274,11 @@
                                                 </li>
                                             </ul>
                                             <div class="btns-wrap clearfix">
-                                                <a (click)="openDialog('total');" class="small-button btn-layout">
-                                                    {{l('Reset_Сlassifications')}}
+                                                <a (click)="openDialog('credit');" class="small-button btn-layout">
+                                                    {{l('Unclassify_Btn')}}
                                                 </a>
-                                                <a (click)="autoClassify('total');" class="small-button btn-layout">
-                                                    {{l('Auto_Сlassify')}}
+                                                <a (click)="autoClassify('credit');" class="small-button btn-layout">
+                                                    {{l('Auto_Сlassify_Btn')}}
                                                 </a>
                                             </div>
                                         </div>

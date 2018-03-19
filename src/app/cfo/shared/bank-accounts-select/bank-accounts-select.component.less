@@ -4,6 +4,9 @@
     text-align: start;
     width: 755px;
 
+    .blue {
+        color: #00AEEF;
+    }
 
     .actions {
         width: 100%;
@@ -24,11 +27,51 @@
         }
     }
 
-    .selectAll {
+    dx-tag-box {
+        height: auto;
+    }
+    
+    .business-entity-select {
         float: left;
+        max-width: 80%;
+        width: 77%;
+
+        .dx-field-label {
+            width: 35%;
+            font-size: 15px;
+            font-weight: bold;
+            padding: 5px 5px 9px 0;
+        }
+
+        .dx-field-value {
+            width: 65%;
+            float: left;
+
+            .tag-value,
+            /deep/ .dx-placeholder {
+                font-size: 14px;
+                line-height: 1.21;
+                letter-spacing: 0.3px;
+                color: #00AEEF;
+                padding: 0 5px;
+                height: auto !important;
+                top: 0;
+            }
+
+            /deep/ .dx-texteditor-container {
+                padding-top: 7px;
+            }
+        }
     }
 
-    .grid-container {        
+    /deep/ #gridContainer {
+        .dx-datagrid-headers .dx-datagrid-content,
+        .dx-datagrid-headers .dx-datagrid-table .dx-row > td {
+            border-bottom: 0;
+        }
+    }
+
+    .grid-container {
         font-size: 12px;
 
         /deep/ .dx-datagrid-rowsview {
@@ -43,9 +86,6 @@
             background-color: transparent;
         }
 
-        /deep/ #gridContainer{
-            padding-right: 7px;
-        }
         /deep/ .dx-master-detail-row {
             background-color: #f9fbfc;
 
@@ -55,6 +95,7 @@
 
             .dx-master-detail-cell {
                 border: 1px solid #ddd;
+                border-right-width: 2px;
             }
 
             .dx-datagrid-headers {
@@ -67,9 +108,7 @@
         }
 
         /deep/ .dx-master-detail-row .dx-master-detail-cell {
-            background-color: transparent;
             padding: 0px;
-            padding-right: 7px;
         }
 
         .account-status {
@@ -117,11 +156,6 @@
         }
     }
 
-    .bank-accounts-grid-container {
-       
-
-    }
-
     /deep/.dx-datagrid-rowsview {
         .dx-column-lines {
             td {
@@ -151,7 +185,7 @@
         font-weight: bold;
     }
 
-    .expand-div {
+    /deep/.expand-div {
         border: solid #677380;
         border-width: 0 1px 1px 0;
         padding: 3px;
