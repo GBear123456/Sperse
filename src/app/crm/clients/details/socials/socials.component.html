@@ -1,6 +1,7 @@
 <div class="socials">
   <div class="social">
     <h3 class="lab">{{l('LinksAndSocial')}}</h3>
+    <div *ngIf="isEditAllowed" class="add-contact" (click)="showEditDialog(null, $event)">+</div>
     <ul>
       <li *ngFor="let social of contactInfoData?.links" [ngStyle]="{display: social.isSocialNetwork ? 'inline-block': 'none'}">
         <a href="{{social.url}}" target="_blank">
@@ -19,5 +20,4 @@
       </li>
     </ul>
   </div>
-  <div *ngIf="isEditAllowed" class="add-contact" (click)="showEditDialog(null, $event)">+</div>
 </div>
