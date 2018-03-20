@@ -13,50 +13,112 @@
         display: inline-block;
     }
 
-    .filter-apply, .filter-clear, .selectAll {
+    .filter-apply, .filter-clear {
+        border: 1px solid;
+        border-radius: 15px;
         cursor: pointer;
         font-size: 14px;
         line-height: 1.21;
         letter-spacing: 0.3px;
         color: #00AEEF;
-        padding: 10px 5px;
+        padding: 5px 10px;
+        margin-left: 10px;
         float: right;
+    }
 
-        &:hover {
-            color: lighten(#00AEEF, 20%);
-        }
+    .filter-clear {
+        border-color: #ddd;
+        color: #677380;
+    }
+
+    .filter-apply {
+        border-color: #00AEEF;
+        background-color: #00AEEF;
+        color: white;
     }
 
     .filter-actions {
         width: 100%;
         display: inline-block;
-    }
+        height: 30px;
 
-    .is-active-filter {
-        float: right;
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 1.21;
-        letter-spacing: 0.3px;
-        color: #677380;
+        .filter-by-types {
+            width: 80%;
+            float: left;
+            height: 30px;
 
-        /deep/ .dx-switch-on,
-        /deep/ .dx-switch-off {
-            color: transparent;
+            /deep/.dx-tabs {
+                border: 0;
+                text-align: left;
+                margin-top: -10px;
+            }
+
+            /deep/ .dx-tabs-wrapper {
+                display: inline-block;
+            }
+
+            /deep/.dx-tab {
+                font-size: 14px;
+                font-weight: 400;
+                line-height: 1.21;
+                letter-spacing: 0.3px;
+                color: #677380;
+                padding: 9px;
+                background-color: transparent;
+                padding-left: 0;
+                padding-right: 15px;
+                padding-bottom: 3px;
+            }
+
+            /deep/ .dx-tab.dx-tab-selected {
+                border: 0;
+                font-weight: bold;
+                color: #333;
+
+                .dx-tab-content {
+                    border-bottom: 2px solid #00AEEF;
+                }
+
+                &:after {
+                    border: 0;
+                }
+            }
+
+            /deeep/ .dx-tab {
+                display: inline-block;
+
+                .dx-tab-text {
+                    line-height: 17px;
+                }
+            }
         }
 
-        /deep/ .dx-switch-container {
-            border-color: #e2f5fe;
-            background-color: #e2f5fe;
-            border-radius: 12px;
-            height: 20px;
-        }
+        .is-active-filter {
+            float: right;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.21;
+            letter-spacing: 0.3px;
+            color: #677380;
 
-        /deep/ .dx-switch-handle {
-            &::before {
-                background-color: #30bff2;
-                border-radius: 14px;
-                height: 14px;
+            /deep/ .dx-switch-on,
+            /deep/ .dx-switch-off {
+                color: transparent;
+            }
+
+            /deep/ .dx-switch-container {
+                border-color: #e2f5fe;
+                background-color: #e2f5fe;
+                border-radius: 12px;
+                height: 20px;
+            }
+
+            /deep/ .dx-switch-handle {
+                &::before {
+                    background-color: #30bff2;
+                    border-radius: 14px;
+                    height: 14px;
+                }
             }
         }
     }

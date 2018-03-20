@@ -25,6 +25,7 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
     openDialog: EventEmitter<any> = new EventEmitter();
 
     isEditModeEnabled = false;
+    valueOriginal: string = '';
 
     constructor(
         injector: Injector,

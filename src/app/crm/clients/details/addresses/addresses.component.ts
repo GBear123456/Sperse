@@ -180,6 +180,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
             (this.city != address.city) ||
             (this.state != address.state))
         ) {
+          let state = _.findWhere(states, {name: this.state});
           this.updateDataField(address, {
             id: address.id,
             contactId: this.contactInfoData.contactId,
@@ -192,7 +193,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
             comment: address.comment,
             usageTypeId: address.usageTypeId,
             countryId: countryId,
-            stateId: _.findWhere(states, {name: this.state})['code']
+            stateId: state && state['code']
           });
           this.clearInplaceData();
         }
