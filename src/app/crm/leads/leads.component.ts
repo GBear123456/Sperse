@@ -48,6 +48,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     firstRefresh = false;
+    private rootComponent: any;
     gridDataSource: any = {};
     collection: any;
     showPipeline = true;

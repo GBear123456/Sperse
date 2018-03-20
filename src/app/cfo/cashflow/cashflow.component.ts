@@ -30,9 +30,11 @@ import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.
 import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
 import { OperationsComponent } from './operations/operations.component';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
+
 import { DxPivotGridComponent, DxDataGridComponent } from 'devextreme-angular';
 import TextBox from 'devextreme/ui/text_box';
 import NumberBox from 'devextreme/ui/number_box';
+import Tooltip from 'devextreme/ui/tooltip';
 import SparkLine from 'devextreme/viz/sparkline';
 
 import * as _ from 'underscore.string';
@@ -527,7 +529,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     copiedCell;
     monthsDaysLoadedPathes = [];
     cashflowDetailsGridSessionIdentifier = `cashflow_forecastModel_${abp.session.tenantId}_${abp.session.userId}`;
-    hasDiscrepancyInData: boolean = false;
+    hasDiscrepancyInData = false;
 
     /** Interval between state saving (ms) */
     public stateSavingTimeout = 1000;
@@ -597,7 +599,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         this.initHeadlineConfig();
         this.initFiltering();
-        this.addHeaderExpandClickHandling();
     }
 
     customizeFieldText(cellInfo, emptyText = null): string | null {
@@ -707,33 +708,31 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /**
      * Add the handling of the click on the date header cells in pivot grid
      */
-    addHeaderExpandClickHandling() {
-        window['onHeaderExpanderClick'] = $event => {
-            let clickedElement = $($event.target);
-            if (clickedElement.closest('td').hasClass('dx-pivotgrid-expanded')) {
+    headerExpanderClickHandler = $event => {
+        let clickedElement = $($event.target);
+        if (clickedElement.closest('td').hasClass('dx-pivotgrid-expanded')) {
 
-                let fieldPeriod = clickedElement.closest('td').hasClass('year') ? 'year' : 'quarter';
-                let defaultClick = true;
-                /** Click for decreasing the height of the header */
-                if (
-                    !clickedElement.hasClass('closed-head-cell') &&
-                    !clickedElement.hasClass('totals') &&
-                    /** year or quarter values */
-                    !clickedElement.is('span')
-                ) {
-                    $event.stopPropagation();
-                    defaultClick = false;
-                }
-
-                let cashflowComponent = this;
-                clickedElement.closest('tr').children('.dx-pivotgrid-expanded').each(function() {
-                    let headCellExpandElement = $(this).find('div.head-cell-expand');
-                    headCellExpandElement.toggleClass('closed');
-                    cashflowComponent[`${fieldPeriod}HeadersAreCollapsed`] = headCellExpandElement.hasClass('closed') || defaultClick;
-                });
-                this.synchronizeHeaderHeightWithCashflow();
+            let fieldPeriod = clickedElement.closest('td').hasClass('year') ? 'year' : 'quarter';
+            let defaultClick = true;
+            /** Click for decreasing the height of the header */
+            if (
+                !clickedElement.hasClass('closed-head-cell') &&
+                !clickedElement.hasClass('totals') &&
+                /** year or quarter values */
+                !clickedElement.is('span')
+            ) {
+                $event.stopPropagation();
+                defaultClick = false;
             }
-        };
+
+            let cashflowComponent = this;
+            clickedElement.closest('tr').children('.dx-pivotgrid-expanded').each(function() {
+                let headCellExpandElement = $(this).find('div.head-cell-expand');
+                headCellExpandElement.toggleClass('closed');
+                cashflowComponent[`${fieldPeriod}HeadersAreCollapsed`] = headCellExpandElement.hasClass('closed') || defaultClick;
+            });
+            this.synchronizeHeaderHeightWithCashflow();
+        }
     }
 
     /**
@@ -916,7 +915,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 });
             }
             this.remove();
-        })
+        });
     }
 
     addForecastModel(modelName) {
@@ -1403,7 +1402,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** consider the fitler */
         if (this.requestFilter.startDate && (moment(this.requestFilter.startDate).utc().format(periodFormat) > minDate.format(periodFormat) || !minDate)) minDate = this.requestFilter.startDate;
-        if (this.requestFilter.endDate && (moment(this.requestFilter.startDate).utc().format(periodFormat) < maxDate.format(periodFormat) || !maxDate)) maxDate = this.requestFilter.endDate;
+        if (this.requestFilter.endDate && (moment(this.requestFilter.endDate).utc().format(periodFormat) < maxDate.format(periodFormat) || !maxDate)) maxDate = this.requestFilter.endDate;
 
         /** cycle from started date to ended date */
         /** added fake data for each date that is not already exists in cashflow data */
@@ -2159,7 +2158,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         a.className = 'dx-link dx-link-' + name;
         a.innerText = this.l(this.capitalize(name));
         a.addEventListener('click', callback, false);
-        container.append(a);
+        container.appendChild(a);
     }
 
     /**
@@ -2314,7 +2313,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (underscore.isEqual(e.cell.path, this.fieldPathsToClick[0])) {
                     this.fieldPathsToClick = [];
                     if (!e.cell.expanded) {
-                        e.cellElement.trigger('click');
+                        e.cellElement.click();
                     }
                 }
             }
@@ -2455,19 +2454,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             });
 
             if (elements.length) {
-
                 let sum = elements.reduce((x, y) => x + y.amount, 0);
-                let icon = this.addActionButton('info', e.cellElement, () => {})
-                $('<div>')
-                    .appendTo(e.cellElement)
-                    .dxTooltip(
-                        {
-                            target: icon,
-                            contentTemplate: `<div>New account added: ${this.formatAsCurrencyWithLocale(sum, 'en-EN')}</div>`,
-                            showEvent: { name: 'mouseenter' },
-                            hideEvent: { name: 'mouseleave' }
-                        }
-                    );
+                let icon = this.addActionButton('info', e.cellElement, () => {});
+                let tooltipElement = <any>document.createElement('div');
+                let tooltipInstance = new Tooltip(tooltipElement, {
+                    target: e.cellElement,
+                    contentTemplate: `<div>New account added: ${this.formatAsCurrencyWithLocale(sum, 'en-EN')}</div>`,
+                    showEvent: { name: 'mouseenter' },
+                    hideEvent: { name: 'mouseleave' }
+                });
+                e.cellElement.appendChild(tooltipInstance);
             }
         }
     }
@@ -2644,7 +2640,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (cellType) {
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
             if (isCellMarked && (cellObj.cell.value > -0.01 && cellObj.cell.value <= 0)) {
-                cellObj.cellElement.text('');
+                cellObj.cellElement.innerText = '';
                 cellObj.cellElement.classList.add('hideZeroValues');
             }
         }
@@ -2675,7 +2671,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         //            cellObj.cellElement.click(function(event) {
         //                event.stopImmediatePropagation();
         //            });
-        //            cellObj.cellElement.text('');
+        //            cellObj.cellElement.innerText = '';
         //        }
         //    }
         //}
@@ -2798,7 +2794,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         (fieldName === 'quarter' || cellObj.cellElement.parentElement.children.length >= 6)) ||
                         (fieldName === 'quarter' && this.quarterHeadersAreCollapsed) ||
                         (fieldName === 'year' && this.yearHeadersAreCollapsed);
-                    cellObj.cellElement.setAttribute('onclick', 'onHeaderExpanderClick(event)');
+                    cellObj.cellElement.onclick = this.headerExpanderClickHandler;
                     cellObj.cellElement.innerHTML = this.getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName);
                 }
                 if (fieldName === 'day') {
@@ -2815,7 +2811,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             /** add class to the cell */
-            cellObj.cellElement.classList.add(`${fieldGroup} ${fieldName}`);
+            cellObj.cellElement.classList.add(fieldGroup, fieldName);
 
             /** hide projected field for not current months for mdk and projected */
             if (fieldGroup === 'projectedField') {
@@ -2888,7 +2884,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     addWeekendAttribute(cellObj) {
         /** if day number is 0 (sunday) or 6 (saturday) */
         let isWeekend = cellObj.date.day() === 0 || cellObj.date.day() === 6;
-        cellObj.cellElement.attr('data-is-weekend', isWeekend);
+        cellObj.cellElement.setAttribute('data-is-weekend', isWeekend);
     }
 
     /**
@@ -2911,7 +2907,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             currentMonth = today.getMonth() + 1;
         if (cellObj.cell.path[1] !== today.getFullYear() || cellObj.cell.path[3] !== (currentMonth)) {
             cellObj.cellElement.classList.add('projectedHidden');
-            cellObj.cellElement.text('');
+            cellObj.cellElement.innerText = '';
         }
     }
 
@@ -3210,7 +3206,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let savedCellObj = arguments[0];
         let newValue = event.component.option('value');
         let parentTd = numberInputBlock.parentElement;
-        numberInputBlock.remove();
+        event.component.dispose();
         this.modifyingCelltextBox = null;
         $(parentTd).css('padding', this.oldCellPadding);
         $(parentTd).children().show();

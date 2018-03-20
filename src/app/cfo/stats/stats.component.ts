@@ -229,7 +229,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         action: this.reportPeriodFilter.bind(this),
                         options: {
                             id: 'reportPeriod',
-                            iconSrc: 'assets/common/icons/report-period.png'
+                            icon: 'assets/common/icons/report-period.svg'
                         }
                     },
                     {
