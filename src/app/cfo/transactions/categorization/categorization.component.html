@@ -71,8 +71,10 @@
                 <div class="category-drop-area"></div>
             </ng-container>
         </div>
-        <div *dxTemplate="let cell of 'transactionsCountTemplate'" [ngClass]="{'transactionCount': cell.text}">
-            <span> {{ cell.text }} </span>
+        <div *dxTemplate="let cell of 'transactionsCountTemplate'">
+            <div *ngIf="cell.value" class="transactionCount">
+                <span> {{ cell.text }} </span>
+            </div>
         </div>
 
     </dx-tree-list>

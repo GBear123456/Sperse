@@ -3,8 +3,8 @@ import { ModalDirective } from 'ngx-bootstrap';
 import { CustomersServiceProxy, CreateCustomerInput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { DxDateBoxComponent, DxTextBoxComponent, DxValidatorComponent, DxValidationSummaryComponent, DxButtonComponent } from 'devextreme-angular';
-import * as moment from 'moment';
+import { DxTextBoxComponent, DxValidatorComponent, DxValidationSummaryComponent, DxButtonComponent } from 'devextreme-angular';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'createOrEditClientModal',
@@ -19,24 +19,24 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active: boolean = false;
-    saving: boolean = false;
+    active = false;
+    saving = false;
 
     client: CreateCustomerInput = new CreateCustomerInput();
     profilePicture: string;
 
-    private masks = AppConsts.masks;
     private namePattern = AppConsts.regexPatterns.name;
-    private maxDob = new Date();
-    private minDob = new Date(1900, 0);
+    private validationError: string;
+    readonly INPUT_MASK = {
+        PhoneNumber: AppConsts.masks.phone
+    };
 
     constructor(
         injector: Injector,
-        private _customersService: CustomersServiceProxy
+        private _customersService: CustomersServiceProxy,
+        private _router: Router,
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
-        this.maxDob = new Date(this.maxDob.setFullYear(this.maxDob.getFullYear() - 21));
     }
 
     show(clientId?: number): void {
@@ -60,19 +60,6 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     save(event): void {
         if (!this.validate(event)) return;
 
-        let date = new Date(this.client.dob.toString()),
-            month = date.getMonth() + 1,
-            day = date.getDate();
-
-        this.client.dob = moment(
-            Date.parse(
-                date.getFullYear() + '-' +
-                this.twoDigitsFormat(month) + '-' +
-                this.twoDigitsFormat(day) +
-                'T00:00:00.000Z'
-            )
-        );
-
         this.saving = true;
         this._customersService.createCustomer(this.client)
             .finally(() => { this.saving = false; })
@@ -89,22 +76,20 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
                                         this.client.suppressSimilarContactWarning = false;
                                     })
                                     .subscribe(result => {
-                                        this.closeSuccessfull();
+                                        this.redirectToContactInformation(result.id);
                                     });
                             }
                         }
                     );
                 } else {
-                    this.closeSuccessfull();
+                    this.redirectToContactInformation(result.id);
                 }
             }
         );
     }
 
-    closeSuccessfull() {
-        this.notify.info(this.l('SavedSuccessfully'));
-        this.close();
-        this.modalSave.emit(null);
+    redirectToContactInformation(id: number) {
+        this._router.navigate(['app/crm/client/' + id + '/contact-information']);
     }
 
     close(): void {
@@ -113,22 +98,37 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     }
 
     validate(event): boolean {
+        if (!this.client.emailAddress && !this.client.phoneNumber) {
+            this.validationError = this.l('EmailOrPhoneIsRequired');
+            return false;
+        } else {
+            if (this.client.emailAddress && !this.validateEmailAddress()) {
+                this.validationError = this.l('EmailIsNotValid');
+                return false;
+            }
+
+            if (this.client.phoneNumber && !this.validatePhoneNumber()) {
+                this.validationError = this.l('PhoneFormatError');
+                return false;
+            }
+
+            this.validationError = null;
+        }
+
         if (event.validationGroup.validate().isValid) {
             event.component.option('disabled', true);
             return true;
         }
     }
 
-    focusDateBirth(event) {
-        let value = this.client.dob ? this.client.dob : new Date(1980, 0);
-        setTimeout(function () {
-            event.component._popup._$popupContent.find('.dx-calendar').dxCalendar({
-                zoomLevel: 'decade',
-                value: value
-            });
-        }, 0);
+    validateEmailAddress(): boolean {
+        let regex = AppConsts.regexPatterns.email;
+        return regex.test(this.client.emailAddress);
+    }
 
-        event.component.open();
+    validatePhoneNumber(): boolean {
+        let regex = AppConsts.regexPatterns.phone;
+        return regex.test(this.client.phoneNumber);
     }
 
     twoDigitsFormat(value) {
@@ -138,6 +138,10 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
     focusInput(event) {
         if (!(event.component._value && event.component._value.trim())) {
             let input = event.jQueryEvent.originalEvent.target;
+            event.component.option({
+                mask: this.INPUT_MASK[input.name],
+                isValid: true
+            });
             setTimeout(function () {
                 if (input.createTextRange) {
                     let part = input.createTextRange();
@@ -149,5 +153,10 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
                 input.focus();
             }, 100);
         }
+    }
+
+    blurInput(event) {
+        if (!(event.component._value && event.component._value.trim()))
+            event.component.option({ mask: '', value: '', isValid: true });
     }
 }

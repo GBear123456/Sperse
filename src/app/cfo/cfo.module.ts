@@ -65,7 +65,8 @@ import {
     DxTabsModule,
     DxTagBoxModule,
     DxResizableModule,
-    DxRangeSliderModule
+    DxRangeSliderModule,
+    DxSwitchModule
 } from 'devextreme-angular';
 import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widgets.module';
 
@@ -116,7 +117,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         RoundProgressModule,
         DashboardWidgetsModule,
         ngxZendeskWebwidgetModule.forRoot(ZendeskConfig),
-        DxRangeSliderModule
+        DxRangeSliderModule,
+        DxSwitchModule
     ],
     declarations: [
         StartComponent,

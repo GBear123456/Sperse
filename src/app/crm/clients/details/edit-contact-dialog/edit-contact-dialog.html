@@ -59,7 +59,6 @@
         mask="{{masks.phone}}"
         maskInvalidMessage="{{l('PhoneValidationError')}}"
         [(value)]="data.phoneNumber"
-        (onFocusOut)="blurInput($event)"
         (onFocusIn)="focusInput($event)">
         <dx-validator>
           <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>

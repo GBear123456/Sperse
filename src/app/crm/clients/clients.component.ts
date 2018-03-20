@@ -208,14 +208,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
         this._filtersService.apply(() => {
             this.initToolbarConfig();
-            this.processODataFilter(this.dataGrid.instance,
-                this.dataSourceURI, this.filters, (filter) => {
-                    let filterMethod = this['filterBy' +
-                        this.capitalize(filter.caption)];
-                    if (filterMethod)
-                        return filterMethod.call(this, filter);
-                }
-            );
+            this.processFilterInternal();
         });
     }
 
@@ -405,36 +398,35 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
     processFilterInternal() {
         this.processODataFilter(this.dataGrid.instance,
-            this.dataSourceURI, this.filters,
-                (filter) => {
-                    let filterMethod = this['filterBy' +
-                        this.capitalize(filter.caption)];
-                    if (filterMethod)
-                        return filterMethod.call(this, filter);
-                }
+            this.dataSourceURI, this.filters, (filter) => {
+                let filterMethod = this['filterBy' +
+                    this.capitalize(filter.caption)];
+                if (filterMethod)
+                    return filterMethod.call(this, filter);
+            }
         );
     }
 
-    private deleteClientsInternal(){
-        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        if (selectedIds && selectedIds.length) {
-            this._customersServiceProxy.deleteCustomers(selectedIds).subscribe(() => { 
-                this.notify.success(this.l('SuccessfullyDeleted'));
-                this.refreshDataGrid(); 
-            });
-        } else {
-            this.message.warn(this.l("NoRecordsToDelete"));
-        }
+    private deleteClientsInternal(selectedIds: number[]){
+        this._customersServiceProxy.deleteCustomers(selectedIds).subscribe(() => { 
+            this.notify.success(this.l('SuccessfullyDeleted'));
+            this.refreshDataGrid(); 
+        });
     }
     
     deleteClients() {
-        this.message.confirm(
-            this.l('ClientsDeleteWarningMessage'),
-            isConfirmed => {
-                if (isConfirmed)
-                    this.deleteClientsInternal();
-            }
-        );
+        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+        if (selectedIds && selectedIds.length) {
+            this.message.confirm(
+                this.l('ClientsDeleteWarningMessage'),
+                isConfirmed => {
+                    if (isConfirmed)
+                        this.deleteClientsInternal(selectedIds);
+                }
+            );
+        } else {
+            this.message.warn(this.l("NoRecordsToDelete"));
+        }
     }
 
     updateClientStatuses (statusId: string) {

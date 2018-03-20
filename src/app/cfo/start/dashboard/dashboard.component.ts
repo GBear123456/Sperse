@@ -101,6 +101,11 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.trendByPeriodComponent.filterByBankAccounts(data.bankAccountIds);
     }
 
+    onSyncComplete() {
+        this.accountsComponent.getAccountTotals();
+        this._dashboardService.periodChanged(this.selectedPeriod);
+    }
+
     onPeriodChanged($event) {
         this._dashboardService.periodChanged($event.value);
         this._cacheService.set(this.getCacheKey(this.PERIOD_CACHE_KEY), $event.value);
