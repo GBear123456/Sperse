@@ -7,7 +7,7 @@ import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
 import {
     ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput,
-    GetCategoryTreeOutput, UpdateAccountingTypeInput
+    GetCategoryTreeOutput, UpdateAccountingTypeInput, CreateAccountingTypeInput
 } from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 import { MatDialog } from '@angular/material';
@@ -41,6 +41,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     @Input() showHeader: boolean;
     @Input() showClearSelection: boolean;
     @Input() showFilterIcon: boolean;
+    @Input() showAddEntity: boolean;
     @Input() categoryId: number;
     @Input('dragMode')
     set dragMode(value: boolean) {
@@ -65,6 +66,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
     autoExpand = true;
     categories: any[] = [];
+    types = [
+        { id: 'E', name: 'Outflows' },
+        { id: 'I', name: 'Inflows' }
+    ];
     categorization: GetCategoryTreeOutput;
     columnClassName = '';
     showSearch = false;
@@ -86,6 +91,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             order: 'asc'
         }
     };
+    private currentTypeId: any;
 
     toolbarConfig: any;
 
@@ -118,6 +124,19 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     }
 
     initToolbarConfig() {
+
+        let addEntityItems = [];
+        this.types.forEach(x => {
+            let item = {
+                name: 'type' + x.id,
+                text: this.l(x.name),
+                action: (event) => {
+                    this.addAccountingTypeRow(x.id);
+                }
+            };
+            addEntityItems.push(item);
+        });
+
         this.toolbarConfig = [
             {
                 location: 'before', items: [
@@ -173,6 +192,15 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             }, {
                 location: 'after', items: [
                     {
+                        name: 'addEntity',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            text: this.l('AddEntity'),
+                            visible: this.showAddEntity && this.settings.showAT,
+                            items: addEntityItems
+                        }
+                    },
+                    {
                         name: 'follow',
                         widget: 'dxDropDownMenu',
                         options: {
@@ -194,6 +222,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                                     action: (event) => {
                                         if (event.jQueryEvent.target.tagName == 'INPUT') {
                                             this.settings.showAT = !this.settings.showAT;
+                                            if (this.showAddEntity) {
+                                                this.initToolbarConfig();
+                                            }
                                             this.refreshCategories(false);
                                             this.storeSettings();
                                         }
@@ -679,6 +710,11 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         let parentId = $event.data.parent,
             hasParentCategory = (parseInt(parentId) == parentId);
         $event.element.find('.dx-treelist-focus-overlay').hide();
+        if (this.settings.showAT && parentId === 'root') {
+            this.insertAccountingType(this.currentTypeId, $event.data.name);
+            return;
+        }
+
         this._classificationServiceProxy.createCategory(
             InstanceType[this.instanceType], this.instanceId,
             CreateCategoryInput.fromJS({
@@ -816,5 +852,26 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             this.settings.sorting.field,
             this.settings.sorting.order
         );
+    }
+
+    addAccountingTypeRow(typeId) {
+        if (!this.settings.showAT) { return; }
+
+        this.currentTypeId = typeId;
+        this.categoryList.instance.addRow();
+    }
+
+    insertAccountingType(typeId, name) {
+        this._classificationServiceProxy.createAccountingType(
+            InstanceType[this.instanceType], this.instanceId,
+            CreateAccountingTypeInput.fromJS({
+                cashflowTypeId: typeId,
+                name: name
+            })
+        ).subscribe((id) => {
+            this.refreshCategories(false);
+        }, (error) => {
+            this.refreshCategories(false);
+        });
     }
 }
