@@ -1,6 +1,6 @@
 export class InplaceEditModel {
     id: number;
-    value: any;
+    value: string;
     validationRules: InplaceEditValidationRule[];
     isEditDialogEnabled: boolean;
     lEntityName: string;
