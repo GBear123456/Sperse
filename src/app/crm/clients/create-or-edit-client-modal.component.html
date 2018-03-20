@@ -56,64 +56,24 @@
                         <dx-text-box type="text" name="Email" placeholder="{{l('EmailAddress')}}"
                                      maxlength="256"
                                      [(value)]="client.emailAddress">
-                            <dx-validator>
-                                <dxi-validation-rule type="required"
-                                                     message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
-                                <dxi-validation-rule type="email"
-                                                     message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
-                            </dx-validator>
                         </dx-text-box>
                     </div>
                 </div>
-
                 <div class="dx-field">
                     <div class="dx-field-value">
-                        <dx-date-box class="form-control"
-                                        invalidDateMessage="{{l('InvalidDateOfBirth')}}"
-                                        name="dob"
-                                        type="date"
-                                        placeholder="{{l('DateOfBirth')}}"
-                                        [(value)]="client.dob"
-                                        (onFocusIn)="focusDateBirth($event)">
-                            <dx-validator>
-                                <dxi-validation-rule type="required" message="{{l('DateOfBirthIsRequired')}}."></dxi-validation-rule>
-                                <dxi-validation-rule type="range" [min]="minDob" [max]="maxDob" message="{{l('InvalidDateOfBirth')}}"></dxi-validation-rule>
-                            </dx-validator>
-                        </dx-date-box>
-                    </div>
-                </div>
-
-                <div class="dx-field">
-                    <div class="dx-field-value">
-                        <dx-text-box type="text" name="PhoneNumber" placeholder="{{l('PhoneNumber')}}"
-                                     mask="{{masks.phone}}"
-                                     maskInvalidMessage="{{l('PhoneFormatError')}}"
+                        <dx-text-box type="text" name="PhoneNumber" placeholder="{{l('PhoneNumber')}}"                                     
                                      [(value)]="client.phoneNumber"
-                                     (onFocusIn)="focusInput($event)">
-                            <dx-validator>
-                                <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
-                            </dx-validator>
+                                     (onFocusIn)="focusInput($event)"
+                                     (onFocusOut)="blurInput($event)">
                         </dx-text-box>
                     </div>
                 </div>
-
-                <div class="dx-field">
-                    <div class="dx-field-value">
-                        <dx-text-box type="text"
-                                     name="Ssn"
-                                     mask="{{masks.ssn}}"
-                                     maskInvalidMessage="{{l('SSNFormatError')}}"
-                                     placeholder="{{l('Ssn')}}"
-                                     [(value)]="client.ssn"
-                                     (onFocusIn)="focusInput($event)">
-                            <dx-validator>
-                                <dxi-validation-rule type="required" message="{{l('SSNIsRequired')}}."></dxi-validation-rule>
-                            </dx-validator>
-                        </dx-text-box>
-                    </div>
-                </div>
-
                 <dx-validation-summary class="summary"></dx-validation-summary>
+                <div *ngIf="validationError" class="summary dx-validationsummary dx-widget dx-collection ng-star-inserted">
+                    <div class="dx-item dx-validationsummary-item">
+                        <div class="dx-item-content dx-validationsummary-item-content">{{validationError}}</div>
+                    </div>
+                </div>
             </tab>
         </tabset>
       </div>

@@ -57,7 +57,9 @@ export class AppConsts {
     static readonly otherLinkTypeId = '-';
 
     static readonly regexPatterns = {
-        name: /^[A-Z][a-zA-Z]+$/
+        name: /^[A-Z][a-zA-Z]+$/,
+        email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        phone: /[0-9]{10}/
     };
 }
 
