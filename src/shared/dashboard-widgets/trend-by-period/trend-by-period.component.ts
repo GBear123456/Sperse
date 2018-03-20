@@ -34,10 +34,10 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     currency = 'USD';
     isForecast = false;
     initCallback;
-    historicalIncomeColor = '#00aeef';
-    historicalExpensesColor = '#f05b2a';
-    forecastIncomeColor = '#a9e3f9';
-    forecastExpensesColor = '#fec6b3';
+    historicalInflowsColor = '#00aeef';
+    historicalOutflowsColor = '#f05b2a';
+    forecastInflowsColor = '#a9e3f9';
+    forecastOutflowsColor = '#fec6b3';
     historicalNetChangeColor = '#fab800';
     forecastNetChangeColor = '#a82aba';
     barChartTooltipFields = [
@@ -50,11 +50,11 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             'label': this.l('Stats_Starting_Balance_Adjustments')
         },
         {
-            'name': 'income',
+            'name': 'inflows',
             'label': this.l('Stats_Inflows')
         },
         {
-            'name': 'expenses',
+            'name': 'outflows',
             'label': this.l('Stats_Outflows')
         },
         {
@@ -74,11 +74,11 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             'label': this.l('Stats_Starting_Balance_Adjustments')
         },
         {
-            'name': 'forecastIncome',
+            'name': 'forecastInflows',
             'label': this.l('Stats_Forecast_Inflows')
         },
         {
-            'name': 'forecastExpenses',
+            'name': 'forecastOutflows',
             'label': this.l('Stats_Forecast_Outflows')
         },
         {
@@ -196,7 +196,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                         Object.defineProperty(
                             statsItem,
                             'netChange',
-                            { value: statsItem.income + statsItem.expenses, enumerable: true }
+                            { value: statsItem.inflows + statsItem.outflows, enumerable: true }
                         );
                         if (statsItem.isForecast) {
                             this.isForecast = true;
@@ -212,12 +212,12 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                         }
                     });
                     this.mergeHistoricalAndForecast(historical, forecast)
-                        .subscribe(res => { 
+                        .subscribe(res => {
                             this.trendData = <any>res.map((obj) => {
                                 obj['date'].add(obj['date'].toDate().getTimezoneOffset(), 'minutes');
                                 return obj;
-                            }); 
-                            this.finishLoading(); 
+                            });
+                            this.finishLoading();
                         });
                 } else {
                     console.log('No daily stats');
@@ -294,8 +294,8 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         this.startDate = (period == 'all' ? undefined: startDate.startOf('day'));
         this.endDate = (period == 'all' ? undefined: endDate.endOf('day'));
 
-        this.selectedPeriod = this.periods.find((obj) => { 
-            return obj.name === (period == 'all' ? 'month': period); 
+        this.selectedPeriod = this.periods.find((obj) => {
+            return obj.name === (period == 'all' ? 'month': period);
         });
 
         this.loadStatsData();

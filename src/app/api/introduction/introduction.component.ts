@@ -11,7 +11,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 })
 export class IntroductionComponent extends AppComponentBase implements OnInit {
     public headlineConfig = {
-        names: [this.l("Interactive API Documentation")],
+        names: [this.l('Interactive API Documentation')],
         iconSrc: 'assets/common/icons/api-icon.svg',
         buttons: []
     };

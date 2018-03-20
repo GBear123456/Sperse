@@ -105,27 +105,27 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                         action: this.reportPeriodFilter.bind(this),
                         options: {
                             id: 'reportPeriod',
-                            iconSrc: 'assets/common/icons/report-period.png'
+                            icon: 'assets/common/icons/report-period.png'
                         }
                     },
-                    {
-                        name: 'select-box',
-                        text: this.ls('CFO', 'CashflowToolbar_Group_By'),
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            width: 175,
-                            items: [{
-                                action: this.groupBy.bind(this),
-                                text: 'Years'
-                            }, {
-                                action: this.groupBy.bind(this),
-                                text: 'Quarters'
-                            }, {
-                                action: this.groupBy.bind(this),
-                                text: 'Months'
-                            }]
-                        }
-                    }
+                    // {
+                    //     name: 'select-box',
+                    //     text: this.ls('CFO', 'CashflowToolbar_Group_By'),
+                    //     widget: 'dxDropDownMenu',
+                    //     options: {
+                    //         width: 175,
+                    //         items: [{
+                    //             action: this.groupBy.bind(this),
+                    //             text: 'Years'
+                    //         }, {
+                    //             action: this.groupBy.bind(this),
+                    //             text: 'Quarters'
+                    //         }, {
+                    //             action: this.groupBy.bind(this),
+                    //             text: 'Months'
+                    //         }]
+                    //     }
+                    // }
                 ]
             },
             {

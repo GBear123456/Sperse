@@ -86,8 +86,7 @@ export class SideBarComponent extends AppComponentBase {
     }
 
     hideFilterDialog(event) {
-        let sideBar = this._eref.nativeElement
-            .querySelector('.sidebar-filters');
+        let sideBar = this._eref.nativeElement.querySelector('.sidebar-filters');
         if (sideBar) {
             let rect = sideBar.getBoundingClientRect();
             if (rect.top > event.clientY || rect.bottom < event.clientY ||

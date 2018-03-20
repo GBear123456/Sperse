@@ -283,8 +283,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     creditCount++;
                     if (row.CashflowCategoryId)
                         creditClassifiedCount++;
-                }
-                else {
+                } else {
                     debitTotal += row.Amount;
                     debitCount++;
                     if (row.CashflowCategoryId)
@@ -304,8 +303,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
             this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal;
             this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
-        }
-        else
+        } else
             if (totals && totals.length) {
                 this.creditTransactionTotal = totals[0].creditTotal;
                 this.creditTransactionCount = totals[0].creditCount;
@@ -317,8 +315,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 if (totals[0].bankAccounts) {
                     this.bankAccountCount = totals[0].bankAccounts.length;
                     this.bankAccounts = totals[0].bankAccounts;
-                }
-                else {
+                } else {
                     this.bankAccountCount = 0;
                     this.bankAccounts = [];
                 }
@@ -328,8 +325,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
                 this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal + this.adjustmentTotal + this.adjustmentStartingBalanceTotal;
                 this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
-            }
-            else {
+            } else {
                 this.creditTransactionTotal = 0;
                 this.creditTransactionCount = 0;
 
@@ -429,7 +425,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.filtersService.change(classifiedFilter);
     }
-    
+
     clearClassifiedFilter() {
         let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
         classifiedFilter.items['yes'].setValue(false, classifiedFilter);
@@ -594,7 +590,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     showCompactRowsHeight() {
-        this.dataGrid.instance.element()[0].classList.toggle('grid-compact-view');
+        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
 
     getBankAccountsSource(banks: BankDto[]) {
@@ -751,8 +747,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             ];
             this.clearClassifiedFilter();
             this.processFilterInternal();
-        }
-        else if (this.selectedCashflowCategoryKey) {
+        } else if (this.selectedCashflowCategoryKey) {
             this.cashFlowCategoryFilter = [];
             this.processFilterInternal();
         }
@@ -766,7 +761,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         img.src = 'assets/common/icons/drag-icon.svg';
         if (!initial && (Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length)))
             this.categoriesShowed = true;
-        $event.element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend')
+        let element = <any>$($event.element);
+        element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend')
             .filter('.dx-selection').attr('draggable', true).on('dragstart', (e) => {
                 this.dragInProgress = true;
                 e.originalEvent.dataTransfer.setData('Text', transactionKeys.join(','));
@@ -789,7 +785,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     onCellClick($event) {
         if ($event.rowType === 'data') {
             if (($event.column.dataField == 'CashflowCategoryName' && $event.data.CashflowCategoryId) ||
-                ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryId)){
+                ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryId)) {
                 this.dialog.open(RuleDialogComponent, {
                     panelClass: 'slider',
                     data: {
@@ -809,10 +805,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     onCellPrepared($event) {
         if ($event.rowType === 'data') {
             if ($event.column.dataField == 'CashflowCategoryName' && !$event.data.CashflowCategoryName) {
-                let rowIndex = $event.cellElement.parent().index();
-                $event.cellElement.closest('.dx-datagrid-rowsview').find(`tr:nth-of-type(${rowIndex + 1})`).addClass(`uncategorized`);
+                let parentRow = <HTMLTableRowElement>$event.cellElement.parentElement;
+                if (parentRow) {
+                    let rowIndex = parentRow.rowIndex;
+                    let rows = $event.cellElement.closest('.dx-datagrid-rowsview').querySelectorAll(`tr:nth-of-type(${rowIndex + 1})`);
+                    /** add uncategorized class to both checkbox and row (hack) */
+                    for (let i = 0; i < rows.length; i++) {
+                        rows[i].classList.add(`uncategorized`);
+                    }
+                }
             } else if ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryName) {
-                $event.cellElement.addClass('clickable-item');
+                $event.cellElement.classList.add('clickable-item');
             }
         }
     }
@@ -841,8 +844,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 ).subscribe(() => {
                     if (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey) {
                         this.refreshDataGrid();
-                    }
-                    else {
+                    } else {
                         let gridItems = this.dataGrid.instance.getDataSource().items().filter((v) => _.some(transactionIds, x => x == v.Id));
                         gridItems.forEach(
                             (i) => {
@@ -882,8 +884,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             updateTransactionCategoryMethod(true);
                         }
                     });
-            }
-            else {
+            } else {
                 updateTransactionCategoryMethod(false);
             }
         }

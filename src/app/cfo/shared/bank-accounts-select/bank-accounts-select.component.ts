@@ -137,7 +137,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     }
 
     getBankAccounts(): void {
-        this._bankAccountsService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
+        this._bankAccountsService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD', [])
             .subscribe((result) => {
                 this.data = result;
 

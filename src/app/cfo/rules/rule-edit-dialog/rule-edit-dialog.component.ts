@@ -29,8 +29,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     maxAmount: number;
     bankId: number;
     accountId: number;
-    amountFormat: ConditionDtoCashFlowAmountFormat
-        = ConditionDtoCashFlowAmountFormat.Unspecified;
+    amountFormat: ConditionDtoCashFlowAmountFormat = ConditionDtoCashFlowAmountFormat.Unspecified;
     banks: any;
     accounts: any;
     categories: any = [];
@@ -503,9 +502,9 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onAttributeKeyEnter($event, cell) {
-        if ($event.jQueryEvent.keyCode == 13)
+        if ($event.event.keyCode == 13)
             this.onCustomAttributeCreating(
-                {value: $event.jQueryEvent.target.value}, cell);
+                {value: $event.event.target.value}, cell);
     }
 
     selectedAttributeValue($event, value) {

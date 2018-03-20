@@ -137,7 +137,7 @@ export class CreateOrEditClientModalComponent extends AppComponentBase {
 
     focusInput(event) {
         if (!(event.component._value && event.component._value.trim())) {
-            let input = event.jQueryEvent.originalEvent.target;
+            let input = event.event.originalEvent.target;
             setTimeout(function () {
                 if (input.createTextRange) {
                     let part = input.createTextRange();

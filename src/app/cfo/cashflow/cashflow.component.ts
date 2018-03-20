@@ -550,7 +550,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Create parallel operations */
         let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        let getCategoryTreeObservalble = this._classificationServiceProxy.getCategoryTree(InstanceType[this.instanceType], this.instanceId);
+        let getCategoryTreeObservalble = this._classificationServiceProxy.getCategoryTree(InstanceType[this.instanceType], this.instanceId, true);
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservalble, getCashflowGridSettings)
             .subscribe(result => {
@@ -575,7 +575,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.addHeaderExpandClickHandling();
     }
 
-    customizeFieldText(cellInfo, emptyText = null) {
+    customizeFieldText(cellInfo, emptyText = null): string | null {
 
         let text;
         if (cellInfo.value) {
@@ -831,7 +831,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     {
                         action: this.hideFooterBar.bind(this),
                         options: {
-                            iconSrc: 'assets/common/icons/close.svg'
+                            icon: 'assets/common/icons/close.svg'
                         }
                     }
                 ]
@@ -1440,7 +1440,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     repaintDataGrid() {
-        this.pivotGrid.instance.updateDimensions();
+        let pivotGridInstance = <any>this.pivotGrid.instance;
+        if (this.pivotGrid && this.pivotGrid.instance && pivotGridInstance.$element().children().length) {
+            this.pivotGrid.instance.updateDimensions();
+        }
     }
 
     refreshDataGridWithPreferences(options) {
@@ -1601,7 +1604,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     synchronizeHeaderHeightWithCashflow() {
-        let headerElement = document.getElementsByClassName('dx-area-description-cell')[0].parentElement;
+        let descriptionCellElement = document.querySelector('.dx-area-description-cell');
+        let headerElement = descriptionCellElement ? descriptionCellElement.parentElement : undefined;
         if (headerElement) {
             let headerElementHeight = headerElement.clientHeight;
             let bottomRow = <HTMLElement>document.getElementsByClassName('dx-bottom-row')[0];
@@ -2285,7 +2289,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.cellElement.setAttribute('droppable', 'false');
             let img = new Image();
             img.src = 'assets/common/icons/drag-icon.svg';
-            $(e.cellElement).off('dragstart dragend dragenter dragover drop')
+            let element = <any>$(e.cellElement);
+            element.off('dragstart dragend dragenter dragover drop')
                 .on('mousedown', ev => {
                     e.cellElement.setAttribute('draggable', Boolean(e.cell.value));
                     this.selectedCell = e;
@@ -2295,6 +2300,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 })
                 .on('dragstart', ev => {
                     if (e.cell.value) {
+
                         let targetElement = ev.target;
                         /** add selected class */
                         $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
@@ -2312,7 +2318,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         /** @todo uncomment to handle moving of historical transactions */
                         /* if ($(targetElement).attr('class').indexOf('prev') !== -1) {
                             $(`[droppable]:nth-child(${cellIndex + 1}):not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
-                        } else*/ if ($(targetElement).attr('class').indexOf('next') !== -1) {
+                        } else*/ if (targetElement.getAttribute('class').indexOf('next') !== -1) {
                             $(`[droppable][class*="next"]:not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
                         }
                     }
@@ -2526,10 +2532,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (cellType) {
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
             if (!isCellMarked) {
-                cellObj.cellElement.text(this.formatAsCurrencyWithLocale(Math.round(cellObj.cell.value), 'en-EN', 0));
+                cellObj.cellElement.innerText = this.formatAsCurrencyWithLocale(Math.round(cellObj.cell.value), 'en-EN', 0);
                 /** add title to the cells that has too little value and showen as 0 to show the real value on hover */
                 if (cellObj.cell.value > -1 && cellObj.cell.value < 1 && cellObj.cell.value !== 0 && Math.abs(cellObj.cell.value) >= 0.01) {
-                    cellObj.cellElement.attr('title', this.formatAsCurrencyWithLocale(cellObj.cell.value, 'en-EN', 2));
+                    cellObj.cellElement.setAttribute('title', this.formatAsCurrencyWithLocale(cellObj.cell.value, 'en-EN', 2));
                 }
             }
         }
@@ -3393,7 +3399,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         let possibleIds = [];
                         for (let id of Object.keys(dataSource)) {
                             let cellInfo = {value: value};
-                            if (this.customizeFieldText(cellInfo).toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                            let customizedFieldText = this.customizeFieldText(cellInfo);
+                            if (customizedFieldText && customizedFieldText.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
                                 possibleIds.push(id);
                             }
                         }

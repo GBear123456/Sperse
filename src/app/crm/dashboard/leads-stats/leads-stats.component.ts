@@ -57,7 +57,7 @@ export class LeadsStatsComponent extends AppComponentBase implements OnInit {
                     area: 'data'
                 }],
                 store: result.data
-            }
+            };
         });
     }
     onPivotCellClick(e) {
@@ -79,6 +79,6 @@ export class LeadsStatsComponent extends AppComponentBase implements OnInit {
 
     onCellPrepared(e) {
         if (e.area == 'data')
-            e.cellElement.addClass('leads-reference-link');
+            e.cellElement.classList.add('leads-reference-link');
     }
 }

@@ -34,44 +34,44 @@ export class ToolBarComponent extends AppComponentBase {
         },
         expandTree: {
             text: this.l('Expand'),
-            iconSrc: this.getImgURI('expand-tree-icon')
+            icon: this.getImgURI('expand-tree-icon')
         },
         find: {
             hint: this.l('Find'),
             text: this.l('Find'),
-            iconSrc: this.getImgURI('find-icon')
+            icon: this.getImgURI('find-icon')
         },
         sort: {
             hint: this.l('Sort'),
             text: this.l('Sort'),
-            iconSrc: this.getImgURI('sort-icon-down')
+            icon: this.getImgURI('sort-icon-down')
         },
         follow: {
-            iconSrc: this.getImgURI('follow-icon')
+            icon: this.getImgURI('follow-icon')
         },
         back: {
             hint: this.l('Back'),
-            iconSrc: this.getImgURI('back-arrow')
+            icon: this.getImgURI('back-arrow')
         },
         assign: {
             text: this.l('Assign'),
-            iconSrc: this.getImgURI('assign-icon')
+            icon: this.getImgURI('assign-icon')
         },
         status: {
             text: this.l('Status'),
-            iconSrc: this.getImgURI('status-icon')
+            icon: this.getImgURI('status-icon')
         },
         delete: {
             text: this.l('Delete'),
-            iconSrc: this.getImgURI('delete-icon')
+            icon: this.getImgURI('delete-icon')
         },
         folder: {
             hint: this.l('Folder'),
-            iconSrc: this.getImgURI('folder')
+            icon: this.getImgURI('folder')
         },
         pen: {
             hint: this.l('Pen'),
-            iconSrc: this.getImgURI('pen')
+            icon: this.getImgURI('pen')
         },
         more: {
             text: this.l('More')
@@ -79,17 +79,17 @@ export class ToolBarComponent extends AppComponentBase {
         box: {
             accessKey: 'box',
             hint: this.l('Box'),
-            iconSrc: this.getImgURI('box-icon')
+            icon: this.getImgURI('box-icon')
         },
         pipeline: {
             accessKey: 'pipeline',
             hint: this.l('Pipeline'),
-            iconSrc: this.getImgURI('funnel-icon')
+            icon: this.getImgURI('funnel-icon')
         },
         grid: {
             accessKey: 'grid',
             hint: this.l('Grid'),
-            iconSrc: this.getImgURI('table-icon')
+            icon: this.getImgURI('table-icon')
         },
         prev: {
             hint: this.l('Previous'),
@@ -105,7 +105,7 @@ export class ToolBarComponent extends AppComponentBase {
         },
         download: {
             hint: this.l('Download'),
-            iconSrc: this.getImgURI('download-icon')
+            icon: this.getImgURI('download-icon')
         },
         refresh: {
             hint: this.l('Refresh'),
@@ -113,54 +113,54 @@ export class ToolBarComponent extends AppComponentBase {
         },
         edit: {
             text: this.l('Edit'),
-            iconSrc: this.getImgURI('edit-pencil-icon')
+            icon: this.getImgURI('edit-pencil-icon')
         },
         rules: {
             text: this.ls('CFO', 'CashflowToolbar_User_Preferences'),
-            iconSrc: this.getImgURI('preferences-icon')
+            icon: this.getImgURI('preferences-icon')
         },
         expand: {
             text: this.l('Expand'),
-            iconSrc: this.getImgURI('expand-all-icon')
+            icon: this.getImgURI('expand-all-icon')
         },
         expandRows: {
             text: this.l('Expand rows'),
-            iconSrc: this.getImgURI('expand-rows-icon')
+            icon: this.getImgURI('expand-rows-icon')
         },
         expandCols: {
             text: this.l('Expand cols'),
-            iconSrc: this.getImgURI('expand-cols-icon')
+            icon: this.getImgURI('expand-cols-icon')
         },
         flag: {
             hint: this.l('Flags'),
-            iconSrc: this.getImgURI('flag-icon')
+            icon: this.getImgURI('flag-icon')
         },
         print: {
             hint: this.l('Print'),
-            iconSrc: this.getImgURI('print-icon')
+            icon: this.getImgURI('print-icon')
         },
         comments: {
             hint: this.l('Show/Hide Comments'),
-            iconSrc: this.getImgURI('comments-icon')
+            icon: this.getImgURI('comments-icon')
         },
         fullscreen: {
             hint: this.l('Fullpage'),
-            iconSrc: this.getImgURI('expand-fullscreen-icon')
+            icon: this.getImgURI('expand-fullscreen-icon')
         },
         slider: {
             hint: this.l('Slider')
         },
         forecastModelAdd: {
             hint: this.l('CreateForecastModel'),
-            iconSrc: this.getImgURI('add-button')
+            icon: this.getImgURI('add-button')
         },
         showCompactRowsHeight: {
             hint: this.l('Compact View'),
-            iconSrc: this.getImgURI('ic_format_line_spacing')
+            icon: this.getImgURI('ic_format_line_spacing')
         },
         reportPeriod: {
-            iconSrc: this.getImgURI('report-period'),
-            text: this.ls('CFO','CashflowToolbar_Report_Period')
+            icon: this.getImgURI('report-period'),
+            text: this.ls('CFO', 'CashflowToolbar_Report_Period')
         }
     };
 

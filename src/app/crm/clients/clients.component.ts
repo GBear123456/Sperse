@@ -216,44 +216,42 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         this._appService.toolbarConfig = [
             {
                 location: 'before', items: [
-                    { 
-                        name: 'filters', 
-                        action: (event) => {                            
+                    {
+                        name: 'filters',
+                        action: event => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            this._filtersService.fixed = 
-                                !this._filtersService.fixed;
+                            this._filtersService.fixed = !this._filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
                                 return this._filtersService.fixed;
                             },
-                            mouseover: (event) => {
+                            mouseover: event => {
                                 this._filtersService.enable();
                             },
-                            mouseout: (event) => {
+                            mouseout: event => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
-                            } 
+                            }
                         },
-                        attr: { 
+                        attr: {
                             'filter-selected': this._filtersService.hasFilterSelected
-                        } 
-                    } 
+                        }
+                    }
                 ]
             },
             {
                 location: 'before',
                 items: [
                     {
-                        name: 'search',   
+                        name: 'search',
                         widget: 'dxTextBox',
                         options: {
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' 
-                                + this.l('Customers').toLowerCase()
+                            placeholder: this.l('Search') + ' ' + this.l('Customers').toLowerCase()
                         }
                     }
                 ]
@@ -299,10 +297,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 ]
             },
             {
-                location: 'after', 
+                location: 'after',
                 areItemsDependent: true,
                 items: [
-                    { 
+                    {
                         name: 'box',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
                         options: {
@@ -311,8 +309,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                             },
                         }
                     },
-                    { 
-                        name: 'pipeline', 
+                    {
+                        name: 'pipeline',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
                         options: {
                             checkPressed: () => {
@@ -320,14 +318,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                             },
                         }
                     },
-                    { 
-                        name: 'grid', 
+                    {
+                        name: 'grid',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
                         options: {
                             checkPressed: () => {
                                 return (this.dataLayoutType == DataLayoutType.Grid);
                             },
-                        } 
+                        }
                     }
                 ]
             }
@@ -374,8 +372,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
     ngOnDestroy() {
         this._appService.toolbarConfig = null;
-        this._filtersService.localizationSourceName = 
-            AppConsts.localization.defaultLocalizationSourceName;
+        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }
