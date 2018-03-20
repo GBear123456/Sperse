@@ -5,41 +5,47 @@
             <div class="bank-accounts-tooltip-container">
                 <div class="actions">
                     <div class="business-entity-select">
-                            <div class="dx-field">
-                                <div class="dx-field-label"><span class="business-entity-test">{{l('All financial accounts for ')}}</span></div>
-                                <div class="dx-field-value">
-                                    <ng-container *ngIf="!moreThanOneBusinessEntityExist">
-                                        <div class="label-container">
-                                            <span class="tag-value"> {{l('All Entities')}} </span>
-                                        </div>                                        
-                                    </ng-container>
-                                    <ng-container *ngIf="moreThanOneBusinessEntityExist">
-                                        <dx-tag-box [items]="businessEntities"
-                                                    displayExpr="name"
-                                                    valueExpr="id"
-                                                    placeholder="All Entities"
-                                                    showSelectionControls="true"
-                                                    tagTemplate="customTagTemplate"
-                                                    dropDownButtonTemplate="dropDownButton"
-                                                    (onClosed)="businessEntitySelectedChange($event)">
+                        <div class="dx-field">
+                            <div class="dx-field-label"><span class="business-entity-test">{{l('All financial accounts for ')}}</span></div>
+                            <div class="dx-field-value">
+                                <ng-container *ngIf="!moreThanOneBusinessEntityExist">
+                                    <div class="label-container">
+                                        <span class="tag-value"> {{l('All Entities')}} </span>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="moreThanOneBusinessEntityExist">
+                                    <dx-tag-box [items]="businessEntities"
+                                                displayExpr="name"
+                                                valueExpr="id"
+                                                placeholder="All Entities"
+                                                showSelectionControls="true"
+                                                tagTemplate="customTagTemplate"
+                                                dropDownButtonTemplate="dropDownButton"
+                                                (onClosed)="businessEntitySelectedChange($event)">
 
-                                            <div *dxTemplate="let dd of 'dropDownButton'">
-                                                <div class="expand-div blue"></div>
-                                            </div>
+                                        <div *dxTemplate="let dd of 'dropDownButton'">
+                                            <div class="expand-div blue"></div>
+                                        </div>
 
-                                            <div *dxTemplate="let tag of 'customTagTemplate'">
-                                                <span class="tag-value"> {{tag.name}}  </span>
-                                            </div>
-                                        </dx-tag-box>
-                                    </ng-container>
-                                </div>
-                            </div>                        
+                                        <div *dxTemplate="let tag of 'customTagTemplate'">
+                                            <span class="tag-value"> {{tag.name}}  </span>
+                                        </div>
+                                    </dx-tag-box>
+                                </ng-container>
+                            </div>
+                        </div>
                     </div>
-                    <span class="filter-clear" (click)="bankAccountsClear()">{{l('Clear')}}</span>
                     <span class="filter-apply" (click)="bankAccountsSelected()">{{l('Apply')}}</span>
+                    <span class="filter-clear" (click)="bankAccountsClear()">{{l('Clear')}}</span>
                 </div>
                 <br />
                 <div class="filter-actions">
+                    <div class="filter-by-types">
+                        <dx-tabs [dataSource]="bankAccountTypesForSelect"
+                                 [selectedItem]="selectedBankAccountType"
+                                 (onItemClick)="bankAccountTypeChanged($event)">
+                        </dx-tabs>
+                    </div>
                     <div class="is-active-filter">
                         <span>{{isActiveLabel}}</span>
                         <dx-switch [value]="isActive" (onOptionChanged)="isActiveChanged($event)" [width]="32"></dx-switch>
@@ -49,7 +55,7 @@
                     <div class="grid-container">
                         <dx-data-grid id="gridContainer"
                                       [width]="740"
-                                      [dataSource]="getItems()"
+                                      [dataSource]="syncAccountsDataSource"
                                       [masterDetail]="{ enabled: false, template: 'detail' }"
                                       keyExpr="syncAccountId"
                                       [showColumnHeaders]="false"
@@ -64,9 +70,11 @@
                             </dxo-editing>
                             <dxo-scrolling showScrollbar="never">
                             </dxo-scrolling>
+                            <dxo-filter-row [visible]="false"></dxo-filter-row>
                             <dxi-column dataField="selected" [width]="30" alignment="center" dataType="boolean"></dxi-column>
                             <dxi-column dataField="name" [width]="240" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
                             <dxi-column dataField="syncAccountStatus" [width]="155" alignment="center" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
+                            <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption="" cellTemplate="invisibleTemplate"></dxi-column>
                             <dxi-column dataField="lastSyncDate" alignment="left" [width]="180" [allowEditing]="false" cellTemplate="syncDateTemplate"></dxi-column>
                             <dxi-column dataField="balance" cssClass="tabular" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false"></dxi-column>
                             <dxi-column [width]="30" alignment="right" [allowEditing]="false" cellTemplate="expandTemplate"></dxi-column>
@@ -84,12 +92,12 @@
 
                                         <dxo-editing mode="cell" [allowUpdating]="true">
                                         </dxo-editing>
-                                 
                                         <dxo-selection [deferred]="true">
                                         </dxo-selection>
-
+                                        <dxo-filter-row [visible]="false"></dxo-filter-row>
                                         <dxi-column dataField="selected" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
-                                        <dxi-column dataField="accountName" [width]="240" alignment="left" [allowEditing]="false"></dxi-column>
+                                        <dxi-column dataField="accountName" [width]="238" alignment="left" [allowEditing]="false"></dxi-column>
+                                        <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption="" cellTemplate="invisibleTemplate"></dxi-column>
                                         <dxi-column dataField="accountNumber" cssClass="tabular" [width]="170" alignment="left" [allowEditing]="false"></dxi-column>
                                         <dxi-column dataField="type" [width]="160" alignment="left" [allowEditing]="false"></dxi-column>
                                         <dxi-column dataField="balance" cssClass="tabular" alignment="right" cellTemplate="amountTemplate" [allowEditing]="false"></dxi-column>
@@ -97,6 +105,8 @@
                                             <ng-container *ngIf="(cell.text)">
                                                 <span class="number-value"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}  </span>
                                             </ng-container>
+                                        </div>
+                                        <div *dxTemplate="let cell of 'invisibleTemplate'">
                                         </div>
                                     </dx-data-grid>
                                 </div>
@@ -123,6 +133,8 @@
                                 <ng-container *ngIf="(cell.text)">
                                     <div class="sync-date">Last sync: {{cell.text | date: 'MMM d, y '}}</div>
                                 </ng-container>
+                            </div>
+                            <div *dxTemplate="let cell of 'invisibleTemplate'">
                             </div>
                         </dx-data-grid>
                     </div>
