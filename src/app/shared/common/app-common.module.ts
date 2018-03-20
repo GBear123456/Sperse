@@ -11,7 +11,7 @@ import { MatProgressBarModule } from '@angular/material';
 
 import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule, 
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
-    DxSelectBoxModule } from 'devextreme-angular';
+    DxSelectBoxModule, DxTextAreaModule } from 'devextreme-angular';
 
 import { ContactInfoPanelComponent } from './contact-info-panel/contact-info-panel.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
@@ -54,7 +54,8 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         DxValidationGroupModule, 
         DxValidatorModule,
         DxiValidationRuleModule,
-        DxSelectBoxModule
+        DxSelectBoxModule,
+        DxTextAreaModule
     ],
     declarations: [
         TimeZoneComboComponent,
