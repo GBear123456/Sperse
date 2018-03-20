@@ -10137,7 +10137,7 @@ export class OrganizationContactServiceProxy {
     /**
      * @return Success
      */
-    getOrganizationContactInfo(contactId: number): Observable<OrganizationContactInfoDto> {
+    getOrganizationContactInfo(contactId: number): Observable<ContactInfoBaseDto> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetOrganizationContactInfo?";
         if (contactId === undefined || contactId === null)
             throw new Error("The parameter 'contactId' must be defined and cannot be null.");
@@ -10160,14 +10160,14 @@ export class OrganizationContactServiceProxy {
                 try {
                     return this.processGetOrganizationContactInfo(response_);
                 } catch (e) {
-                    return <Observable<OrganizationContactInfoDto>><any>Observable.throw(e);
+                    return <Observable<ContactInfoBaseDto>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<OrganizationContactInfoDto>><any>Observable.throw(response_);
+                return <Observable<ContactInfoBaseDto>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetOrganizationContactInfo(response: Response): Observable<OrganizationContactInfoDto> {
+    protected processGetOrganizationContactInfo(response: Response): Observable<ContactInfoBaseDto> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -10175,13 +10175,13 @@ export class OrganizationContactServiceProxy {
             const _responseText = response.text();
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? OrganizationContactInfoDto.fromJS(resultData200) : new OrganizationContactInfoDto();
+            result200 = resultData200 ? ContactInfoBaseDto.fromJS(resultData200) : new ContactInfoBaseDto();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<OrganizationContactInfoDto>(<any>null);
+        return Observable.of<ContactInfoBaseDto>(<any>null);
     }
 
     /**
@@ -26826,12 +26826,22 @@ export interface IContactInfoDetailsDto {
 }
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {
-    typeId: string;
+    shortname: string;
     industry: string;
+    annualRevenue: number;
+    ein: string;
+    businessSicCode: number;
     primaryFundingType: string;
     formedCountryId: string;
     formedStateId: string;
+    description: string;
     formedDate: moment.Moment;
+    relationship: string;
+    sizeFrom: number;
+    sizeTo: number;
+    duns: string;
+    ticker: string;
+    productServicesSold: number;
     contactPerson: PersonKeyInfoDto;
 
     constructor(data?: IOrganizationInfoDto) {
@@ -26845,12 +26855,22 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.typeId = data["typeId"];
+            this.shortname = data["shortname"];
             this.industry = data["industry"];
+            this.annualRevenue = data["annualRevenue"];
+            this.ein = data["ein"];
+            this.businessSicCode = data["businessSicCode"];
             this.primaryFundingType = data["primaryFundingType"];
             this.formedCountryId = data["formedCountryId"];
             this.formedStateId = data["formedStateId"];
+            this.description = data["description"];
             this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
+            this.relationship = data["relationship"];
+            this.sizeFrom = data["sizeFrom"];
+            this.sizeTo = data["sizeTo"];
+            this.duns = data["duns"];
+            this.ticker = data["ticker"];
+            this.productServicesSold = data["productServicesSold"];
             this.contactPerson = data["contactPerson"] ? PersonKeyInfoDto.fromJS(data["contactPerson"]) : <any>undefined;
         }
     }
@@ -26863,24 +26883,44 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["typeId"] = this.typeId;
+        data["shortname"] = this.shortname;
         data["industry"] = this.industry;
+        data["annualRevenue"] = this.annualRevenue;
+        data["ein"] = this.ein;
+        data["businessSicCode"] = this.businessSicCode;
         data["primaryFundingType"] = this.primaryFundingType;
         data["formedCountryId"] = this.formedCountryId;
         data["formedStateId"] = this.formedStateId;
+        data["description"] = this.description;
         data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
+        data["relationship"] = this.relationship;
+        data["sizeFrom"] = this.sizeFrom;
+        data["sizeTo"] = this.sizeTo;
+        data["duns"] = this.duns;
+        data["ticker"] = this.ticker;
+        data["productServicesSold"] = this.productServicesSold;
         data["contactPerson"] = this.contactPerson ? this.contactPerson.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IOrganizationInfoDto {
-    typeId: string;
+    shortname: string;
     industry: string;
+    annualRevenue: number;
+    ein: string;
+    businessSicCode: number;
     primaryFundingType: string;
     formedCountryId: string;
     formedStateId: string;
+    description: string;
     formedDate: moment.Moment;
+    relationship: string;
+    sizeFrom: number;
+    sizeTo: number;
+    duns: string;
+    ticker: string;
+    productServicesSold: number;
     contactPerson: PersonKeyInfoDto;
 }
 
@@ -32733,6 +32773,69 @@ export interface IBillingSubscriptionStatusDto {
     name: string;
 }
 
+export class ContactInfoBaseDto implements IContactInfoBaseDto {
+    id: number;
+    fullName: string;
+    jobTitle: string;
+    primaryPhoto: ContactPhotoDto;
+    primaryPhone: ContactPhoneDto;
+    primaryAddress: ContactAddressDto;
+    details: ContactInfoDetailsDto;
+    comment: string;
+
+    constructor(data?: IContactInfoBaseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.fullName = data["fullName"];
+            this.jobTitle = data["jobTitle"];
+            this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
+            this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
+            this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
+            this.details = data["details"] ? ContactInfoDetailsDto.fromJS(data["details"]) : <any>undefined;
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): ContactInfoBaseDto {
+        let result = new ContactInfoBaseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["fullName"] = this.fullName;
+        data["jobTitle"] = this.jobTitle;
+        data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
+        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
+        data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
+        data["details"] = this.details ? this.details.toJSON() : <any>undefined;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IContactInfoBaseDto {
+    id: number;
+    fullName: string;
+    jobTitle: string;
+    primaryPhoto: ContactPhotoDto;
+    primaryPhone: ContactPhoneDto;
+    primaryAddress: ContactAddressDto;
+    details: ContactInfoDetailsDto;
+    comment: string;
+}
+
 export class OrganizationShortInfoDto implements IOrganizationShortInfoDto {
     id: number;
     name: string;
@@ -32774,12 +32877,23 @@ export interface IOrganizationShortInfoDto {
 
 export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput {
     id: number;
-    typeId: string;
+    shortname: string;
     industry: string;
+    annualRevenue: number;
+    ein: string;
+    businessSicCode: number;
     primaryFundingType: string;
     formedCountryId: string;
     formedStateId: string;
+    description: string;
     formedDate: moment.Moment;
+    relationship: string;
+    sizeFrom: number;
+    sizeTo: number;
+    duns: string;
+    ticker: string;
+    productServicesSold: number;
+    contactPerson: PersonKeyInfoDto;
 
     constructor(data?: IUpdateOrganizationInfoInput) {
         if (data) {
@@ -32793,12 +32907,23 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.typeId = data["typeId"];
+            this.shortname = data["shortname"];
             this.industry = data["industry"];
+            this.annualRevenue = data["annualRevenue"];
+            this.ein = data["ein"];
+            this.businessSicCode = data["businessSicCode"];
             this.primaryFundingType = data["primaryFundingType"];
             this.formedCountryId = data["formedCountryId"];
             this.formedStateId = data["formedStateId"];
+            this.description = data["description"];
             this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
+            this.relationship = data["relationship"];
+            this.sizeFrom = data["sizeFrom"];
+            this.sizeTo = data["sizeTo"];
+            this.duns = data["duns"];
+            this.ticker = data["ticker"];
+            this.productServicesSold = data["productServicesSold"];
+            this.contactPerson = data["contactPerson"] ? PersonKeyInfoDto.fromJS(data["contactPerson"]) : <any>undefined;
         }
     }
 
@@ -32811,24 +32936,46 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["typeId"] = this.typeId;
+        data["shortname"] = this.shortname;
         data["industry"] = this.industry;
+        data["annualRevenue"] = this.annualRevenue;
+        data["ein"] = this.ein;
+        data["businessSicCode"] = this.businessSicCode;
         data["primaryFundingType"] = this.primaryFundingType;
         data["formedCountryId"] = this.formedCountryId;
         data["formedStateId"] = this.formedStateId;
+        data["description"] = this.description;
         data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
+        data["relationship"] = this.relationship;
+        data["sizeFrom"] = this.sizeFrom;
+        data["sizeTo"] = this.sizeTo;
+        data["duns"] = this.duns;
+        data["ticker"] = this.ticker;
+        data["productServicesSold"] = this.productServicesSold;
+        data["contactPerson"] = this.contactPerson ? this.contactPerson.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IUpdateOrganizationInfoInput {
     id: number;
-    typeId: string;
+    shortname: string;
     industry: string;
+    annualRevenue: number;
+    ein: string;
+    businessSicCode: number;
     primaryFundingType: string;
     formedCountryId: string;
     formedStateId: string;
+    description: string;
     formedDate: moment.Moment;
+    relationship: string;
+    sizeFrom: number;
+    sizeTo: number;
+    duns: string;
+    ticker: string;
+    productServicesSold: number;
+    contactPerson: PersonKeyInfoDto;
 }
 
 export class OrganizationTypeDto implements IOrganizationTypeDto {

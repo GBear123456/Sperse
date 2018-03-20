@@ -7,7 +7,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatDialog } from '@angular/material';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { ContactEmploymentServiceProxy, OrganizationContactServiceProxy, OrganizationShortInfoDto,
-    ContactEmploymentInfo, UpdateContactEmploymentInput, ContactAddressDto, OrganizationContactInfoDto } from '@shared/service-proxies/service-proxies';
+    ContactEmploymentInfo, UpdateContactEmploymentInput, ContactAddressDto, ContactInfoBaseDto } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -92,21 +92,21 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    getOrganizationPrimaryAddress(organizationContactInfo: OrganizationContactInfoDto) {
+    getOrganizationPrimaryAddress(organizationContactInfo: ContactInfoBaseDto) {
         return organizationContactInfo.primaryAddress;
     }
 
-    getOrganizationWebsiteUrl(organizationContactInfo: OrganizationContactInfoDto) {
+    getOrganizationWebsiteUrl(organizationContactInfo: ContactInfoBaseDto) {
         let links = organizationContactInfo.details.links.filter(item => item.linkTypeId == LinkType.Website);
         return links.length > 0 ? links[0].url : null;
     }
 
-    getOrganizationPrimaryPhoneNumber(organizationContactInfo: OrganizationContactInfoDto) {
+    getOrganizationPrimaryPhoneNumber(organizationContactInfo: ContactInfoBaseDto) {
         let phone = organizationContactInfo.primaryPhone;
         return phone ? phone.phoneNumber : null;
     }
 
-    getOrganizationMobilePhoneNumber(organizationContactInfo: OrganizationContactInfoDto) {
+    getOrganizationMobilePhoneNumber(organizationContactInfo: ContactInfoBaseDto) {
         let phones = organizationContactInfo.details.phones.filter(item => item.usageTypeId == LinkUsageType.Mobile);
         return phones.length > 0 ? phones[0].phoneNumber : null;
     }

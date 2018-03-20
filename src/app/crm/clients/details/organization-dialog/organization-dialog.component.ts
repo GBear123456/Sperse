@@ -46,7 +46,6 @@ export class OrganizationDialogComponent extends AppComponentBase {
         
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
         this.loadCountries();
-        this.loadOrgTypes();
     }
 
     loadCountries() {
@@ -69,15 +68,6 @@ export class OrganizationDialogComponent extends AppComponentBase {
             }
         });
     }
-
-    loadOrgTypes() {
-        this._orgTypeService.getOrganizationTypes().subscribe(result => {
-            this.orgTypes.options = result.map((v, i, a) => { return { id: v.id, name: v.name } });
-            var currentType = this.data.organization.typeId;
-            if (currentType != null)
-                this.orgTypes.value = currentType;
-        });
-    }
     
     countryChanged(countryCode) {
         if (countryCode != this.data.organization.formedCountryId) {
@@ -92,12 +82,6 @@ export class OrganizationDialogComponent extends AppComponentBase {
             this.updateValue(stateCode, "formedStateId");
         }
     }
-
-    orgTypeChanged(typeId) {
-        if (typeId != this.data.organization.typeId) {
-            this.updateValue(typeId, "typeId");
-        }
-    } 
     
     getPropData(value, fieldName, label) {
         let propData = {
