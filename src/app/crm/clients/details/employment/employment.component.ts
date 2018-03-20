@@ -97,7 +97,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     }
 
     getOrganizationWebsiteUrl(organizationContactInfo: OrganizationContactInfoDto) {
-        let links = organizationContactInfo.details.links.filter(item => item.linkTypeId == LinkType.WebSite2 || item.linkTypeId == LinkType.WebSite3 );
+        let links = organizationContactInfo.details.links.filter(item => item.linkTypeId == LinkType.Website);
         return links.length > 0 ? links[0].url : null;
     }
 
@@ -245,19 +245,18 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     }
 
     getDialogPossition(event) {
-        let shift = 245, parent = event.target
-            .closest('.address-wrapper');
+        let shiftY = this.calculateShiftY(event);
+        let parent = event.target.closest('.address-wrapper');
+        return this.calculateDialogPosition(event, parent, shiftY);
+    }
 
-        if (parent) {
-            let rect = parent.getBoundingClientRect();
-            return {
-                top: (rect.top + rect.height / 2 - shift) + 'px',
-                left: (rect.left + rect.width / 2) + 'px'
-            };
-        } else
-            return {
-                top: event.clientY - shift + 'px',
-                left: event.clientX + 'px'
-            };
-      }
+      calculateShiftY(event) {
+        let shift = 245;
+
+        let availableSpaceY = window.innerHeight - event.clientY;
+        if (availableSpaceY < shift + 40)
+            shift += shift - availableSpaceY + 130;
+
+        return shift;
+    }
 }

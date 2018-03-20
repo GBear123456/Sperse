@@ -46,9 +46,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     reportPeriodTooltipVisible: boolean = false;
     sliderReportPeriod = { start: 2000, end: 2028 };
     totalCount = 3;
-    tooltipEnabled = {
-        enabled: true
-    };
+
     initToolbarConfig() {
         this._appService.toolbarIsAdaptive = true;
         this._appService.toolbarConfig = [
@@ -105,27 +103,27 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                         action: this.reportPeriodFilter.bind(this),
                         options: {
                             id: 'reportPeriod',
-                            icon: 'assets/common/icons/report-period.png'
+                            icon: 'assets/common/icons/report-period.svg'
                         }
                     },
-                    // {
-                    //     name: 'select-box',
-                    //     text: this.ls('CFO', 'CashflowToolbar_Group_By'),
-                    //     widget: 'dxDropDownMenu',
-                    //     options: {
-                    //         width: 175,
-                    //         items: [{
-                    //             action: this.groupBy.bind(this),
-                    //             text: 'Years'
-                    //         }, {
-                    //             action: this.groupBy.bind(this),
-                    //             text: 'Quarters'
-                    //         }, {
-                    //             action: this.groupBy.bind(this),
-                    //             text: 'Months'
-                    //         }]
-                    //     }
-                    // }
+                    {
+                        name: 'select-box',
+                        text: this.ls('CFO', 'CashflowToolbar_Group_By'),
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            width: 175,
+                            items: [{
+                                action: this.groupBy.bind(this),
+                                text: 'Years'
+                            }, {
+                                action: this.groupBy.bind(this),
+                                text: 'Quarters'
+                            }, {
+                                action: this.groupBy.bind(this),
+                                text: 'Months'
+                            }]
+                        }
+                    }
                 ]
             },
             {
@@ -137,7 +135,8 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                         action: this.toggleBankAccountTooltip.bind(this),
                         options: {
                             id: 'bankAccountSelect',
-                            text: this.l('Accounts')
+                            text: this.l('Accounts'),
+                            icon: 'assets/common/icons/accounts.svg'
                         }
                     },
                 ]

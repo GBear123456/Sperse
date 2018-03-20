@@ -26,6 +26,8 @@ export abstract class AppComponentBase {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
     dataGrid: any;
     dataSource: any;
+    isDataLoaded: boolean = false;
+    totalRowCount: number;
     totalDataSource: any;
     localization: LocalizationService;
     protected permission: PermissionCheckerService;
@@ -132,6 +134,7 @@ export abstract class AppComponentBase {
     }
 
     processODataFilter(grid, uri, filters, getCheckCustom) {
+        this.isDataLoaded = false;
         return this.advancedODataFilter(grid, uri,
             filters.map((filter) => {
                 return getCheckCustom(filter) ||
@@ -248,5 +251,29 @@ export abstract class AppComponentBase {
     protected setTitle(moduleName: string) {
         let rootComponent: any = this.getRootComponent();
         rootComponent.setTitle(this.appSession.tenantName, moduleName);
+    }
+
+    protected setGridDataLoaded() {
+        var gridInstance = this.dataGrid && this.dataGrid.instance;
+        if (gridInstance) {
+            var dataSource = gridInstance.getDataSource(); 
+            this.isDataLoaded = dataSource.isLoaded();
+            this.totalRowCount = dataSource.totalCount();     
+        }
+    }
+
+    protected calculateDialogPosition(event, parent, shiftY) {
+        if (parent) {
+            let rect = parent.getBoundingClientRect();
+            return {
+                top: (rect.top + rect.height / 2 - shiftY) + 'px',
+                left: (rect.left + rect.width / 2) + 'px'
+            };
+        } else {
+            return {
+                top: event.clientY - shiftY + 'px',
+                left: event.clientX + 'px'
+            };
+        }
     }
 }

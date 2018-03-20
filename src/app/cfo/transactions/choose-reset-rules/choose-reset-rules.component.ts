@@ -18,7 +18,6 @@ export class ChooseResetRulesComponent extends AppComponentBase {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         super(injector, AppConsts.localization.defaultLocalizationSourceName);
-
         this.resetRules.unclassify = true;
     }
 

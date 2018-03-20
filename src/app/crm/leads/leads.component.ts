@@ -48,7 +48,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     firstRefresh = false;
-    private rootComponent: any;
     gridDataSource: any = {};
     collection: any;
     showPipeline = true;
@@ -97,9 +96,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         };
 
         this.initToolbarConfig();
+
+        this.searchColumns = ['FullName', 'CompanyName', 'Email'];
+        this.searchValue = '';
     }
 
     onContentReady(event) {
+        this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
@@ -309,9 +312,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         name: 'search',
                         widget: 'dxTextBox',
                         options: {
+                            value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Leads').toLowerCase()
+                            placeholder: this.l('Search') + ' ' + this.l('Leads').toLowerCase(),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
+                            }
                         }
                     }
                 ]
@@ -420,6 +427,23 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
 
         return data;
+    }
+
+    searchValueChange(e: object) {
+        this.searchValue = e['value'];
+        this.processFilterInternal();
+    }
+
+    processFilterInternal() {
+        this.processODataFilter(this.dataGrid.instance,
+            this.dataSourceURI, this.filters,
+                (filter) => {
+                    let filterMethod = this['filterBy' +
+                        this.capitalize(filter.caption)];
+                    if (filterMethod)
+                        return filterMethod.call(this, filter);
+                }
+        );
     }
 
     ngAfterViewInit(): void {

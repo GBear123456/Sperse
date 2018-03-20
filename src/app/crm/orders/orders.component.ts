@@ -45,8 +45,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     showPipeline = true;
     firstRefresh = false;
     gridDataSource: any = {};
-    private rootComponent: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
+
+    private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Order';
     private filters: FilterModel[];
@@ -94,6 +95,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onContentReady(event) {
+        this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40

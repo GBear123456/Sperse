@@ -51,10 +51,10 @@
             [customizeTooltip]="customizeBarTooltip">
         </dxo-tooltip>
 
-        <dxi-series [color]="historicalInflowsColor" valueField="inflows" name="{{l('Stats_Inflows')}}"></dxi-series>
-        <dxi-series [color]="historicalOutflowsColor" valueField="outflows" name="{{l('Stats_Outflows')}}"></dxi-series>
-        <dxi-series [color]="forecastInflowsColor" valueField="forecastInflows" [showInLegend]="false" name="forecast"></dxi-series>
-        <dxi-series [color]="forecastOutflowsColor" valueField="forecastOutflows" [showInLegend]="false" name="forecastOutflows"></dxi-series>
+        <dxi-series [color]="historicalCreditColor" valueField="credit" name="{{l('Stats_Inflows')}}"></dxi-series>
+        <dxi-series [color]="historicalDebitColor" valueField="debit" name="{{l('Stats_Outflows')}}"></dxi-series>
+        <dxi-series [color]="forecastCreditColor" valueField="forecastCredit" [showInLegend]="false" name="forecast"></dxi-series>
+        <dxi-series [color]="forecastDebitColor" valueField="forecastDebit" [showInLegend]="false" name="forecastDebit"></dxi-series>
         <dxi-series
             type="line"
             [color]="historicalNetChangeColor"

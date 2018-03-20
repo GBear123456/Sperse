@@ -31,7 +31,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     dailyStatsAmountFloat: string;
     dailyStatsAmountInteger: number;
     dailyStatsText: string;
-    dailyStatsSliderSelected: number = 1;
+    dailyStatsSliderSelected = 1;
     dailyStatsPeriodSelected: string = this.l('All_Periods');
 
     constructor(
@@ -147,8 +147,8 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
                 break;
         }
 
-        this.dailyStatsAmountInteger = Math.ceil(this.dailyStatsAmount);
-        this.dailyStatsAmountFloat = '.' + this.dailyStatsAmount.toFixed(2).split('.')[1];
         this.dailyStatsText = this.l(this.dailyStatsToggleValues[this.dailyStatsSliderSelected]) + ' ' + this.l('Balance');
+        this.dailyStatsAmountInteger = (this.dailyStatsAmount < 0 ? -1: 1) * Math.floor(Math.abs(this.dailyStatsAmount));
+        this.dailyStatsAmountFloat = '.' + this.dailyStatsAmount.toFixed(2).split('.')[1];
     }
 }

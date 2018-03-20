@@ -166,11 +166,14 @@
         margin: 0;
 
         &[compact="true"] {
-            padding: 0px!important;
+            padding: 0px!important;                  
             .dx-toolbar-button {
                 padding: 0px 9px!important;
                 .dx-button {
                     border: none!important;
+                    &[group-item-position="single"] {
+                        margin-right: 0px!important;
+                    }
                     .dx-button-content {
                         height: 27px!important;
                         padding: 0px!important;
@@ -275,6 +278,28 @@
 
                     &::before {
                         content: 'More';
+                        font-weight: 300;
+                        font-size: 13px;
+                        line-height: 1.85;
+                        letter-spacing: 0.3px;
+                        color: #677380;
+                        display: inline-block;
+                        font-family: Montserrat;
+                    }
+
+                    &::after {
+                        right: 8px;
+                    }
+                }
+            }
+
+            &[accesskey="status"] {
+                .dx-button-content {
+                    text-align: left;
+                    padding: 6px 20px 6px 11px;
+
+                    &::before {
+                        content: 'Status';
                         font-weight: 300;
                         font-size: 13px;
                         line-height: 1.85;

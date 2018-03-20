@@ -1,6 +1,6 @@
-<app-headline [config]="headlineConfig"></app-headline>
 <div [@routerTransition]>
-    <div class="portlet light no-padding margin-bottom-0">
+    <app-headline [config]="headlineConfig"></app-headline>
+    <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
                 <div id="ClientsTable">
@@ -12,6 +12,7 @@
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
                                   (onContentReady)="onContentReady($event)"
+                                  (onRowClick)="onRowClick($event)"
                                   (onEditingStart)="showClientDetails($event)"
                                   (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                         <dxo-selection selectAllMode="page"
@@ -21,8 +22,8 @@
                         <dxo-editing mode="row" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                        <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="asc"></dxi-column>
-                        <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate"
+                        <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
+                        <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate" [visible]="false" 
                                     [width]="65" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
                             <img [src]="getPhoto(data.data.Photo, data.data.Gender)"
@@ -31,13 +32,12 @@
                                  class="img-circle" />
                         </div>
                         <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
-                        <dxi-column dataField="Status" caption="{{l('Status')}}"></dxi-column>
-                        <dxi-column dataField="FullName" caption="{{l('Contact.FullName')}}"
-                                    [visible]="false"></dxi-column>
-                        <dxi-column dataField="State" caption="{{l('Contact.State')}}"></dxi-column>
+                        <dxi-column dataField="Status" caption="{{l('Status')}}" [visible]="false" ></dxi-column>
+                        <dxi-column dataField="FullName" caption="{{l('Contact.FullName')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="State" caption="{{l('Contact.State')}}" ></dxi-column>
                         <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
-                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell"></dxi-column>
-                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell"></dxi-column>      
+                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" sortOrder="desc" [sortIndex]="1" [visible]="false" cellTemplate="dateCell"></dxi-column>
                         <dxi-column cellTemplate="linkToCFOTemplate" [width]="75" [fixed]="true" [fixedPosition]="'right'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
@@ -64,3 +64,8 @@
 
     <createOrEditClientModal #createOrEditClientModal (modalSave)="refreshDataGrid()"></createOrEditClientModal>
 </div>
+
+<app-no-data
+    [hidden]="!isDataLoaded || totalRowCount"
+    [showLink]="false">
+</app-no-data>

@@ -35,20 +35,19 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
     }
 
     getDialogPossition(event) {
-        let shift = 160, parent =
-            event.target.closest('ul');
+        let shiftY = this.calculateShiftY(event);
+        let parent = event.target.closest('ul');
+        return this.calculateDialogPosition(event, parent, shiftY);
+    }
 
-        if (parent) {
-            let rect = parent.getBoundingClientRect();
-            return {
-                top: (rect.top + rect.height / 2 - shift) + 'px',
-                left: (rect.left + rect.width / 2) + 'px'
-            };
-        } else
-            return {
-                top: event.clientY - shift + 'px',
-                left: event.clientX + 'px'
-            };
+    calculateShiftY(event) {
+        let shift = 160;
+
+        let availableSpaceY = window.innerHeight - event.clientY;
+        if (availableSpaceY < shift + 20)
+            shift += shift - availableSpaceY + 100;
+
+        return shift;
     }
 
     getFieldName(field) {

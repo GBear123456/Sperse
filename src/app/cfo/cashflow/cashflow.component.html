@@ -44,11 +44,14 @@
                            (onContentReady)="onContentReady($event)"
                            (onCellClick)="onCellClick($event)"
                            [wordWrapEnabled]="false">
-                <dxo-scrolling mode="standard"></dxo-scrolling>
                 <dxo-state-storing
+                    [customLoad]="stateLoad"
+                    [customSave]="stateSave"
                     [enabled]="true"
-                    type="sessionStorage">
+                    [savingTimeout]="stateSavingTimeout"
+                    type="custom">
                 </dxo-state-storing>
+                <dxo-scrolling mode="standard"></dxo-scrolling>
             </dx-pivot-grid>
         </div>
     </dx-scroll-view>
@@ -65,6 +68,7 @@
             </div>
             <dx-data-grid id="cashflowGridContainer"
                           [rowAlternationEnabled]="true"
+                          [allowColumnResizing]="true"
                           [dataSource]="statsDetailResult"
                           (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                           (onCellPrepared)="onDetailsCellPrepared($event)"

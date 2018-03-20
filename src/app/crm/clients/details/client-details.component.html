@@ -1,5 +1,5 @@
 <details-header [data]="customerInfo"></details-header>
-<div class="close-details" (click)="close($event)"></div>
+<div class="close-details" (click)="close()"></div>
 <div class="box-shadow-wrapper">
   <div class="under-header">
     <div class="general-links">
@@ -7,7 +7,11 @@
       <i class="fa fa-phone" aria-hidden="true"></i>
       <i class="fa fa-file-text-o" aria-hidden="true"></i>        
     </div>
-    <operations-widget></operations-widget>
+    <operations-widget
+        (print)="printMainArea()"
+        (onDelete)="delete()"
+        (onUpdateStatus)="updateStatus($event)"
+    ></operations-widget>
   </div>
   <mat-sidenav-container>
     <mat-sidenav mode="side" opened="true" align="start">
