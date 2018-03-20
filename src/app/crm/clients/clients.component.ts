@@ -407,26 +407,26 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         );
     }
 
-    private deleteClientsInternal(){
-        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        if (selectedIds && selectedIds.length) {
-            this._customersServiceProxy.deleteCustomers(selectedIds).subscribe(() => { 
-                this.notify.success(this.l('SuccessfullyDeleted'));
-                this.refreshDataGrid(); 
-            });
-        } else {
-            this.message.warn(this.l("NoRecordsToDelete"));
-        }
+    private deleteClientsInternal(selectedIds: number[]){
+        this._customersServiceProxy.deleteCustomers(selectedIds).subscribe(() => { 
+            this.notify.success(this.l('SuccessfullyDeleted'));
+            this.refreshDataGrid(); 
+        });
     }
     
     deleteClients() {
-        this.message.confirm(
-            this.l('ClientsDeleteWarningMessage'),
-            isConfirmed => {
-                if (isConfirmed)
-                    this.deleteClientsInternal();
-            }
-        );
+        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+        if (selectedIds && selectedIds.length) {
+            this.message.confirm(
+                this.l('ClientsDeleteWarningMessage'),
+                isConfirmed => {
+                    if (isConfirmed)
+                        this.deleteClientsInternal(selectedIds);
+                }
+            );
+        } else {
+            this.message.warn(this.l("NoRecordsToDelete"));
+        }
     }
 
     updateClientStatuses (statusId: string) {
