@@ -595,7 +595,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.addHeaderExpandClickHandling();
     }
 
-    customizeFieldText(cellInfo, emptyText = null) {
+    customizeFieldText(cellInfo, emptyText = null): string | null {
 
         let text;
         if (cellInfo.value) {
@@ -3512,7 +3512,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         let possibleIds = [];
                         for (let id in dataSource) {
                             let cellInfo = {value: value};
-                            if (this.customizeFieldText(cellInfo).toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                            let customizedField = this.customizeFieldText(cellInfo);
+                            if (customizedField && customizedField.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
                                 possibleIds.push(id);
                             }
                         }
