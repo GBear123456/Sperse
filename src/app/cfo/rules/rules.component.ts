@@ -108,7 +108,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
         this._ClassificationService.getRules(InstanceType[this.instanceType], this.instanceId, null)
             .subscribe(result => {
                 this.ruleTreeListDataSource = new DataSource({
-                    store: {  
+                    store: {
                         key: 'id',
                         data: result,
                         type: 'array'
@@ -142,8 +142,8 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
             }).afterClosed().subscribe((result) => {
                 if (result) {
                     this.startLoading(true);
-                    this._ClassificationService.deleteRule(InstanceType[this.instanceType], this.instanceId, 
-                        [], ApplyOption[dialogData.reclassify ? 'MatchedAndUnclassified': 'None'], itemId)
+                    this._ClassificationService.deleteRule(InstanceType[this.instanceType], this.instanceId,
+                        [], ApplyOption[dialogData.reclassify ? 'MatchedAndUnclassified' : 'None'], itemId)
                             .subscribe((id) => {
                                 this.lastRemovedItemID = itemId;
                                 $event.component.deleteRow($event.component.getRowIndexByKey(itemId));
@@ -190,15 +190,14 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
         this.filtersService.apply(() => {
             this.initToolbarConfig();
 
-            var dataSourceFilters = [];
+            let dataSourceFilters = [];
             for (let filter of this.filters) {
                 let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
                 if (filterMethod) {
-                    var customFilters: any[] = filterMethod(filter);
+                    let customFilters: any[] = filterMethod(filter);
                     if (customFilters && customFilters.length)
                         customFilters.forEach((v) => dataSourceFilters.push(v));
-                }
-                else {
+                } else {
                     _.pairs(filter.items).forEach((pair) => {
                         let val = pair.pop().value, key = pair.pop(), operator = {};
                         if (val)

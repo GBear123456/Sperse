@@ -86,8 +86,7 @@ export class SideBarComponent extends AppComponentBase {
     }
 
     hideFilterDialog(event) {
-        let sideBar = this._eref.nativeElement
-            .querySelector('.sidebar-filters');
+        let sideBar = this._eref.nativeElement.querySelector('.sidebar-filters');
         if (sideBar) {
             let rect = sideBar.getBoundingClientRect();
             if (rect.top > event.clientY || rect.bottom < event.clientY ||
@@ -110,13 +109,13 @@ export class SideBarComponent extends AppComponentBase {
 
     itemClick(event, filter) {
         filter.showAllSelected = !filter.showAllSelected;
-        let container = $(event.target.parentElement.previousElementSibling);
+        let container = event.target.parentElement.previousElementSibling;
 
         if (filter.showAllSelected) {
-            container.addClass('show-all-elements');
+            container.classList.add('show-all-elements');
             event.target.text = 'show less';
         } else {
-            container.removeClass('show-all-elements');
+            container.classList.remove('show-all-elements');
             event.target.text = '+' + (filter.displayElements.length - 2) + ' more';
         }
     }

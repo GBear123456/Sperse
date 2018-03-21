@@ -65,7 +65,6 @@
                             display: flex;
                             flex-direction: column;
                             align-items: center;
-
                             &:after {
                                 content: '';
                                 display: block;
@@ -87,7 +86,6 @@
 
                             &.closed {
                                 visibility: hidden;
-
                                 .main-head-cell {
                                     display: none;
                                 }
@@ -115,7 +113,6 @@
                         padding: 0 6px;
                         overflow: hidden;
                         text-overflow: ellipsis;
-
                         &:hover {
                             text-decoration: underline;
                         }
@@ -195,13 +192,11 @@
                     vertical-align: top;
                     background-color: #fff;
                     min-width: @left-column-width;
-
                     .sort-options {
                         padding: 0 15px;
                         position: absolute;
                         bottom: 10px;
                     }
-
                     #findInputBlock {
                         position: absolute;
                         font-size: 15px;
@@ -214,7 +209,6 @@
                         border: 1px solid #ddd;
                         bottom: 17px;
                         margin: auto;
-
                         .dx-searchbox .dx-texteditor-input {
                             padding-left: 44px;
                             border-bottom: none;
@@ -224,10 +218,8 @@
                 /** upper right column (historical row and dates rows) */
                 .dx-area-column-cell {
                     background: #fff;
-
                     tr {
                         height: auto !important;
-
                         td {
                             font-size: 10px;
                             position: relative;
@@ -349,14 +341,11 @@
                 /** bottom left column (labels cells) */
                 .dx-area-row-cell table {
                     width: @left-column-width !important;
-
                     tr {
                         position: relative;
-
                         &:first-child td.dx-white-space-column {
                             border-top: 0;
                         }
-
                         td {
                             text-align: left;
                             color: inherit;
@@ -488,11 +477,9 @@
                                     height: 15px;
                                     display: inline-block;
                                     transform: rotate(-90deg);
-
                                     &:before {
                                         bottom: 5px;
                                     }
-
                                     background: url('../../../assets/common/icons/rectangle.svg') no-repeat center;
                                 }
                             }
@@ -506,10 +493,9 @@
                                     display: inline-block;
                                     position: relative;
                                     left: 18px;
-                                    top: 6px;
+                                    top: 11px;
                                     z-index: 1;
                                 }
-
                                 &:before {
                                     content: url('../../../assets/common/icons/rectangle.svg');
                                 }
@@ -521,12 +507,10 @@
                                 span:before {
                                     border-bottom: 2px solid #61c670 !important;
                                 }
-
                                 &:after {
                                     background: #61c670 !important;
                                 }
                             }
-
                             .dx-pivotgrid-collapsed .dx-expand-icon-container {
                                 span {
                                     &:before {
@@ -541,7 +525,6 @@
                                 &:after {
                                     border-right: 2px solid #61c670 !important;
                                 }
-
                                 span {
                                     background: url('../../../assets/common/icons/arrow-down-green.svg') no-repeat center;
                                 }
@@ -553,12 +536,10 @@
                                 span:before {
                                     border-bottom: 2px solid #e7326a !important;
                                 }
-
                                 &:after {
                                     background: #e7326a !important;
                                 }
                             }
-
                             .dx-pivotgrid-collapsed .dx-expand-icon-container {
                                 span {
                                     &:before {
@@ -567,13 +548,11 @@
                                 }
                             }
                         }
-
                         &.expensesChildRow {
                             .dx-white-space-column {
                                 &:after {
                                     border-right: 2px solid #e7326a !important;
                                 }
-
                                 span {
                                     background: url('../../../assets/common/icons/arrow-down-red.svg') no-repeat center;
                                 }
@@ -617,6 +596,7 @@
                         }
                     }
                 }
+
                 /** bottom right column (data cells) */
                 .dx-area-data-cell {
 
@@ -652,7 +632,6 @@
                             letter-spacing: 0.2px;
                             line-height: 23px;
                             padding-left: 19px;
-
                             &.red {
                                 &,
                                 & span {
@@ -790,8 +769,7 @@
 
                         &.endingCashPosition {
                             td {
-                                background: @grandTotalBackgroundColor !important;
-
+                                background: @grandTotalBackgroundColor;
                                 &.lowestOpenedCurrent:not(.projectedCell) {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
                                 }
@@ -817,7 +795,6 @@
                     .dx-scrollable-scrollbar {
                         bottom: -11px;
                         height: 13px;
-
                         &.fixedScrollbar {
                             position: fixed;
                             bottom: 5px;
@@ -1093,11 +1070,9 @@
             z-index: 100;
             right: 5px;
             top: 15px;
-
             .close-btn:hover {
                 background: transparent !important;
             }
-
             .reclassify-btn,
             .showall-btn,
             .close-btn {
@@ -1121,21 +1096,17 @@
                         line-height: 24px;
                         color: #686f76;
                         vertical-align: middle;
-
                         &[aria-sort='none'] {
                             color: @middleGrayColor;
                         }
-
                         .firstLine {
                             text-transform: capitalize;
                             line-height: 11px;
                             font-weight: 500;
-
                             & + div {
                                 color: @generalColor;
                             }
                         }
-
                         &.dx-command-select {
                             padding: 20px 0;
                         }
@@ -1149,7 +1120,6 @@
 
                         .dx-column-indicators {
                             display: none;
-
                             .dx-sort {
                                 color: rgba(103, 115, 128, .5);
                                 font-weight: bold;
@@ -1179,27 +1149,22 @@
                     font-weight: 400;
                     line-height: 24px;
                     padding: 11px 20px;
-
                     &.editable {
                         cursor: cell;
                     }
-
                     &.dx-editor-cell {
                         padding: 0px;
                         line-height: initial;
-
                         input {
                             height: 36px;
-                            display: inline-block;
-                            position: relative;
+                            display:inline-block;
+                            position:relative;
                             background-color: initial;
                             border: solid 1px #e5e9ec;
                         }
                     }
-
                     &.statusField {
                         position: relative;
-
                         &:before {
                             content: '';
                             position: absolute;
@@ -1211,18 +1176,14 @@
                             bottom: 0;
                             margin: auto;
                         }
-
                         &.projected {
                             color: #fe871a;
-
                             &:before {
                                 background-color: #fe871a;
                             }
                         }
-
                         &.completed {
                             color: #a6d7a9;
-
                             &:before {
                                 background-color: #a6d7a9;
                             }
@@ -1233,12 +1194,10 @@
                         color: #61c670;
                         background-color: rgba(97, 198, 112, 0.1);
                     }
-
                     &.outflows div {
                         color: #e7326a;
                         background-color: rgba(231, 50, 106, 0.1);
                     }
-
                     &.inflows,
                     &.outflows {
                         div {
@@ -1259,7 +1218,6 @@
                     td {
                         &:first-child {
                             pointer-events: none;
-
                             .dx-select-checkbox {
                                 display: none;
                             }
@@ -1270,7 +1228,6 @@
                         /** If nth child is forecast date, else - change it */
                         td:nth-child(2) {
                             position: relative;
-
                             &:before {
                                 position: absolute;
                                 content: '!';

@@ -229,7 +229,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         action: this.reportPeriodFilter.bind(this),
                         options: {
                             id: 'reportPeriod',
-                            iconSrc: 'assets/common/icons/report-period.png'
+                            icon: 'assets/common/icons/report-period.svg'
                         }
                     },
                     {
@@ -484,7 +484,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             } else {
                 console.log('No daily stats');
             }
-            
+
             this.sliderReportPeriod.start = this.statsData[0].date.year();
             this.sliderReportPeriod.end = this.statsData[this.statsData.length - 1].date.year();
 
@@ -647,14 +647,14 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             /** Add the historical and forecast big texts above the charts */
             let chartSeries = event.component.getSeriesByName(period),
                 points = event.component.getSeriesByName(period).getVisiblePoints();
-            if (chartSeries && points.length && event.element.find(`.${period}Label`).length === 0) {
+            if (chartSeries && points.length && !event.element.querySelector(`.${period}Label`)) {
                 let x = points[0].vx || points[0].x || 0,
                     left = x / window.outerWidth * 100,
                     y = 25,
                     firstPoint = points[0],
                     lastPoint = points[points.length - 1],
                     seriesWidth = lastPoint.vx - firstPoint.vx;
-                event.element.append(this.createDivTextBlock({
+                event.element.insertAdjacentHTML('beforeEnd', this.createDivTextBlock({
                     'text': period === 'historical' ? this.l('Periods_Historical') : this.l('Periods_Forecast'),
                     'class': `${period}Label`,
                     'styles': {
@@ -664,12 +664,13 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         'pointer-events': 'none'
                     }
                 }));
-                let elementTextWidth = $(`.${period}Label`).width(),
+                let textBlockElement = <HTMLElement>document.querySelector(`.${period}Label`),
+                    elementTextWidth = textBlockElement.clientWidth,
                     newLeft = elementTextWidth > seriesWidth ?
                         x - (elementTextWidth - seriesWidth) / 2 :
                         x + (seriesWidth / 2) - (elementTextWidth / 2);
                     newLeft = newLeft / window.outerWidth * 100;
-                $(`.${period}Label`).css('left', newLeft > 0 ? newLeft + '%' : 0);
+                textBlockElement.style.left = newLeft > 0 ? newLeft + '%' : '0';
             }
         });
     }

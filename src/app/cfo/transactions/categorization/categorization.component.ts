@@ -74,6 +74,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
     transactionsCountDataSource: DataSource;
 
+    private _prevClickDate = new Date();
+    private _selectedKeys = [];
     private readonly MIN_PADDING = 7;
     private readonly MAX_PADDING = 17;
     private settings = {
@@ -124,8 +126,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                     {
                         name: 'find',
                         action: (event) => {
-                            event.jQueryEvent.stopPropagation();
-                            event.jQueryEvent.preventDefault();
+                            event.event.stopPropagation();
+                            event.event.preventDefault();
 
                             this.showSearch = !this.showSearch;
                         }
@@ -182,8 +184,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                                     type: 'header',
                                     text: this.l('Show category info'),
                                     action: (event) => {
-                                        event.jQueryEvent.stopPropagation();
-                                        event.jQueryEvent.preventDefault();
+                                        event.event.stopPropagation();
+                                        event.event.preventDefault();
                                     }
                                 },
                                 {
@@ -192,7 +194,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                                     checked: this.settings.showAT,
                                     text: this.l('Accounting types'),
                                     action: (event) => {
-                                        if (event.jQueryEvent.target.tagName == 'INPUT') {
+                                        if (event.event.target.tagName == 'INPUT') {
                                             this.settings.showAT = !this.settings.showAT;
                                             this.refreshCategories(false);
                                             this.storeSettings();
@@ -208,10 +210,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                                     checked: this.settings.showCID,
                                     text: this.l('Category ID'),
                                     action: (event) => {
-                                        if (event.jQueryEvent.target.tagName == 'INPUT') {
+                                        if (event.event.target.tagName == 'INPUT') {
                                             this.settings.showTC = false;
-                                            event.itemElement.next().find('input')
-                                                .prop('checked', false);
+                                            event.itemElement.nextElementSibling.querySelector('input').checked = false;
                                             this.settings.showCID = !this.settings.showCID;
                                             this.storeSettings();
                                         }
@@ -223,11 +224,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                                     checked: this.settings.showTC,
                                     text: this.l('Transaction Counts'),
                                     action: (event) => {
-                                        let target = event.jQueryEvent.target;
+                                        let target = event.event.target;
                                         if (target.tagName == 'INPUT') {
                                             this.settings.showCID = false;
-                                            event.itemElement.prev().find('input')
-                                                .prop('checked', false);
+                                            event.itemElement.previousElementSibling.querySelector('input').checked = false;
                                             this.settings.showTC = !this.settings.showTC;
                                             this.storeSettings();
                                         }
@@ -270,12 +270,13 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     }
 
     handleSorting(index, event) {
-        event.itemElement.parent().children().each(function () {
-            this.classList.remove('asc', 'desc');
-        });
+        let elementChildren = event.itemElement.parentElement.children;
+        for (let i = 0; i < elementChildren.length; i++) {
+            elementChildren[i].classList.remove('asc', 'desc');
+        }
 
         this.settings.sorting.field = index;
-        event.itemElement.addClass(
+        event.itemElement.classList.add(
             this.settings.sorting.order = this.sortByColumnIndex(index)
         );
 
@@ -283,20 +284,19 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     }
 
     handlePadding(increment, event) {
-        event.jQueryEvent.stopPropagation();
-        event.jQueryEvent.preventDefault();
-
-        event.itemElement[increment ? 'next' : 'prev']()
-            .removeClass('dx-state-disabled');
+        event.event.stopPropagation();
+        event.event.preventDefault();
+        event.itemElement[increment ? 'nextElementSibling' : 'previousElementSibling']
+            .classList.remove('dx-state-disabled');
         this.settings.padding += 2 * [-1, 1][Number(increment)];
         if (this.settings.padding >= this.MAX_PADDING) {
             this.settings.padding = this.MAX_PADDING;
-            event.itemElement.addClass('dx-state-disabled');
+            event.itemElement.classList.add('dx-state-disabled');
         } else if (this.settings.padding <= this.MIN_PADDING) {
             this.settings.padding = this.MIN_PADDING;
-            event.itemElement.addClass('dx-state-disabled');
+            event.itemElement.classList.add('dx-state-disabled');
         } else
-            event.itemElement.removeClass('dx-state-disabled');
+            event.itemElement.classList.remove('dx-state-disabled');
 
         this.storeSettings();
         this.applyPadding();
@@ -340,14 +340,11 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
     onContentReady($event) {
         this.initDragAndDropEvents($event);
-
-        this.nameColumnWidth =                 
-            Math.round(this.categoryList.instance.element()['width']() / 3);
-
+        this.nameColumnWidth = Math.round(this.categoryList.instance.element().clientWidth / 3);
         if (this.filteredRowData) {
             let rowIndex = this.categoryList.instance.getRowIndexByKey(this.filteredRowData.key);
             let row = this.categoryList.instance.getRowElement(rowIndex);
-            if (row) row.addClass('filtered-category');
+            if (row && row[0]) row[0].classList.add('filtered-category');
         }
     }
 
@@ -365,7 +362,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             dragEnterTime = null;
         };
 
-        $event.element.find('.dx-data-row')
+        let element = <any>$($event.element);
+        element.find('.dx-data-row')
             .off('dragstart').off('dragend')
             .on('dragstart', (e) => {
                 sourceCategory = {};
@@ -382,7 +380,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 clearDragAndDrop();
             });
 
-        $event.element.find('.category-drop-area')
+        element.find('.category-drop-area')
             .off('dragenter').off('dragover').off('dragleave').off('drop')
             .on('dragenter', (e) => {
                 e.originalEvent.preventDefault();
@@ -464,8 +462,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             if (sourceCategory.parentId && targetCategory.parentId || //subcategory -> subcategory
                 sourceCategory.parentId && sourceCategory.parentId == targetId || //subcategory -> own parent
                 !sourceCategory.parentId && !targetCategory.parentId || //category -> category
-                !sourceCategory.parentId && targetCategory.parentId) //category -> subcategory
-            {
+                !sourceCategory.parentId && targetCategory.parentId) { //category -> subcategory
                 isMerge = true;
             }
 
@@ -608,12 +605,12 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         }
     }
 
-    addActionButton(name, container, callback) {
-        $('<a>')
-            .text(this.l(this.capitalize(name)))
-            .addClass('dx-link dx-link-' + name)
-            .on('click', callback)
-            .appendTo(container);
+    addActionButton(name, container: HTMLElement, callback) {
+        let buttonElement = document.createElement('a');
+        buttonElement.innerText = this.l(this.capitalize(name));
+        buttonElement.className = 'dx-link dx-link-' + name;
+        buttonElement.addEventListener('click', callback);
+        container.appendChild(buttonElement);
     }
 
     onCellPrepared($event) {
@@ -625,9 +622,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 });
             if (this.showFilterIcon)
                 this.addActionButton('filter', $event.cellElement, (event) => {
-                    let wrapper = $event.cellElement.parent();
-                    if (!this.clearSelection(wrapper.hasClass('filtered-category'))) {
-                        wrapper.addClass('filtered-category');
+                    let wrapper = $event.cellElement.parentElement;
+                    if (!this.clearSelection(wrapper.classList.contains('filtered-category'))) {
+                        wrapper.classList.add('filtered-category');
                         this.filteredRowData = $event.data;
                         this.onFilterSelected.emit($event.data);
                     }
@@ -653,11 +650,11 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     }
 
     onCategoryUpdated($event) {
-        if (isNaN($event.key))
+        if (isNaN($event.key)) {
             this.updateAccountingType($event);
-        else {
+        } else {
             let category = this.categorization.categories[$event.key];
-            $event.element.find('.dx-treelist-focus-overlay').hide();
+            $event.element.querySelector('.dx-treelist-focus-overlay').style.display = '';
             this._classificationServiceProxy.updateCategory(
                 InstanceType[this.instanceType], this.instanceId,
                 UpdateCategoryInput.fromJS({
@@ -678,7 +675,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     onCategoryInserted($event) {
         let parentId = $event.data.parent,
             hasParentCategory = (parseInt(parentId) == parentId);
-        $event.element.find('.dx-treelist-focus-overlay').hide();
+        $event.element.querySelector('.dx-treelist-focus-overlay').style.display = 'none';
         this._classificationServiceProxy.createCategory(
             InstanceType[this.instanceType], this.instanceId,
             CreateCategoryInput.fromJS({
@@ -738,7 +735,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     }
 
     calculateSortValue(data) {
-        let isNumber = (<any>this).dataType == "number",
+        let isNumber = (<any>this).dataType == 'number',
             fieldValue = isNumber ? Number(data.coAID) : data.name;
         if (data.parent == 'root' && data.typeId == 'I')
             fieldValue = ((<any>this).sortOrder == 'asc' ?
@@ -749,18 +746,15 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     }
 
     onKeyDown($event) {
-        if ($event.jQueryEvent.keyCode == 13) {
-            $event.jQueryEvent.preventDefault();
-            $event.jQueryEvent.stopPropagation();
-            $event.element.find('.dx-treelist-focus-overlay').hide();
+        if ($event.event.keyCode == 13) {
+            $event.event.preventDefault();
+            $event.event.stopPropagation();
+            $event.element.querySelector('.dx-treelist-focus-overlay').style.display = 'none';
             $event.component.focus($event.component.getCellElement(0, 0));
             $event.component.saveEditData();
             $event.handled = true;
         }
     }
-
-    private _prevClickDate = new Date();
-    private _selectedKeys = [];
 
     onRowClick($event) {
         if (this._selectedKeys.indexOf($event.key) >= 0)
@@ -769,9 +763,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         if ($event.level >= 0) {
             let nowDate = new Date();
             if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
-                $event.jQueryEvent.originalEvent.preventDefault();
-                $event.jQueryEvent.originalEvent.stopPropagation();
-                $event.element.find('.dx-treelist-focus-overlay').show();
+                $event.event.originalEvent.preventDefault();
+                $event.event.originalEvent.stopPropagation();
+                $event.element.querySelector('.dx-treelist-focus-overlay').style.display = 'none';
                 $event.component.editRow($event.rowIndex);
             }
             this._prevClickDate = nowDate;
@@ -788,8 +782,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     }
 
     onRowPrepared($event) {
-        $event.element.find('.dx-treelist-focus-overlay')
-        [$event.isEditing ? 'show' : 'hide']();
+        $($event.element).find('.dx-treelist-focus-overlay')[$event.isEditing ? 'show' : 'hide']();
 
         if ($event.rowType != 'data' || $event.key.rowIndex)
             return;
@@ -797,12 +790,15 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         let accounting = this.categorization.accountingTypes[
             $event.key >= 0 ? this.categorization.categories[$event.key]
                 .accountingTypeId : parseInt($event.key)];
-        if (accounting)
-            $event.rowElement.addClass(
-                (accounting.typeId == 'I' ? 'inflows' : 'outflows') +
-                (isNaN($event.key) && accounting.isSystem ? ' system-type' : ''));
+        if (accounting) {
+            $event.rowElement.classList.add(accounting.typeId == 'I' ? 'inflows' : 'outflows');
+            if (isNaN($event.key) && accounting.isSystem) {
+                $event.rowElement.classList.add('system-type');
+            }
+        }
+
         if ($event.level > 0) {
-            $event.rowElement.attr('draggable', true);
+            $event.rowElement.setAttribute('draggable', true);
         }
     }
 
