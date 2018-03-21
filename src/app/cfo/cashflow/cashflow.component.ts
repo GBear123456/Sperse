@@ -2463,7 +2463,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     showEvent: { name: 'mouseenter' },
                     hideEvent: { name: 'mouseleave' }
                 });
-                e.cellElement.appendChild(tooltipInstance);
+                e.cellElement.appendChild(tooltipElement);
             }
         }
     }
