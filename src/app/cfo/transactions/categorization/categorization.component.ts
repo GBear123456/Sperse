@@ -73,7 +73,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     categorization: GetCategoryTreeOutput;
     columnClassName = '';
     showSearch = false;
-    nameColumnWidth;
 
     filteredRowData: any;
 
@@ -371,7 +370,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
     onContentReady($event) {
         this.initDragAndDropEvents($event);
-        this.nameColumnWidth = Math.round(this.categoryList.instance.element().clientWidth / 3);
         if (this.filteredRowData) {
             let rowIndex = this.categoryList.instance.getRowIndexByKey(this.filteredRowData.key);
             let row = this.categoryList.instance.getRowElement(rowIndex);

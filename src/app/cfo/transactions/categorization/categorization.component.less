@@ -59,7 +59,7 @@
             text-align: right !important;
 
             a.dx-link {
-                width: 25px;
+                width: 22px;
                 display: inline-block;
                 color: transparent !important;
 
@@ -111,30 +111,31 @@
             border-bottom: none !important;
             overflow: visible !important;
 
-            .dx-toolbar-after {
+            .dx-toolbar-items-container {
+                height: auto;
+            }
+            
+            .dx-toolbar .dx-toolbar-after {
+                width: 100%;
+                padding-left: 0;
                 z-index: 3;
-            }
-        }
 
-        .dx-toolbar .dx-toolbar-after {
-            width: 100%;
-            padding-left: 0;
-
-            .dx-treelist-addrow-button {
-                display: none;
-            }
-
-            .dx-treelist-search-panel {
-                width: 100% !important;
-                margin-left: 0;
-
-                .dx-placeholder {
-                    font-size: 14px;
+                .dx-treelist-addrow-button {
+                    display: none;
                 }
-            }
 
-            .dx-state-focused .dx-placeholder {
-                font-size: 11px;
+                .dx-treelist-search-panel {
+                    width: 100% !important;
+                    margin-left: 0;
+
+                    .dx-placeholder {
+                        font-size: 14px;
+                    }
+                }
+
+                .dx-state-focused .dx-placeholder {
+                    font-size: 11px;
+                }
             }
         }
 
@@ -176,7 +177,7 @@
             }
 
             .dx-treelist-content {
-                margin: 15px;
+                margin-right: 3px;
 
                 .dx-treelist-focus-overlay {
                     border: 1px solid #00aeef;
@@ -189,8 +190,12 @@
                 border-collapse: separate;
 
                 colgroup {
+                    col:nth-child(2) {
+                        width: 51px !important;
+                    }
+
                     col:last-child {
-                        width: 75px !important;
+                        width: 49px !important;
                     }
                 }
 
@@ -199,6 +204,11 @@
                     text-overflow: initial !important;
                     border: none !important;
                     background-color: transaparent !important;
+
+                    &.dx-editor-cell:first-child {
+                        margin-left: 45px;
+                        display: block;
+                    }
 
                     &.column-padding-7 {
                         padding-bottom: 7px;
@@ -342,7 +352,6 @@
 
                         &.dx-command-edit {
                             a.dx-link-filter {
-                                visibility: visible;
                                 display: inline-block;
                             }
 
@@ -353,9 +362,8 @@
                     }
 
                     td {
-                        &:nth-child(2) {                            
+                        &:nth-child(2) {
                             max-width: 40px;
-                            padding-left: 30px;
                         }
 
                         .category-hover, .category-drop-area {
@@ -373,15 +381,14 @@
                         }
 
                         &.dx-command-edit a {
-                            visibility: hidden;
+                            display: none;
                         }
                     }
 
                     &.dx-edit-row {
                         &[aria-level="2"] {
                             td:first-child {
-                                &:before {          
-                                    left: -10px;
+                                &:before {
                                     margin-top: -5px;
                                 }
                             }
@@ -395,7 +402,7 @@
                     &.dx-state-hover {
                         td {
                             &.dx-command-edit a.dx-link-filter {
-                                visibility: visible;
+                                display: inline-block;
                             }
 
                             a.dx-link-delete, a.dx-link-add, a.dx-link-edit {
@@ -406,14 +413,12 @@
 
                     &.dx-edit-row {
                         td {
-                            left: 35px;
-                            position: relative!important;
                             &:nth-child(2) {
-                                padding-left: 0px!important;
+                                padding-left: 0px !important;
                             }
+
                             &.dx-command-edit {
                                 a.dx-link-save, a.dx-link-cancel, a.dx-link-delete {
-                                    visibility: visible;
                                     display: inline-block;
                                 }
 
@@ -428,7 +433,6 @@
                         td {
                             &.dx-command-edit {
                                 a.dx-link-add, a.dx-link-filter {
-                                    visibility: visible;
                                     display: inline-block;
                                 }
 
@@ -472,12 +476,11 @@
                             display: inline-block;
                             overflow: hidden;
                             text-overflow: ellipsis;
+                            width: 83%;
                         }
                     }
 
                     .transactionCount {
-                        position: relative;
-                        left: 30px;
                         border-radius: 10px;
                         background-color: #f0f2f5;
                         min-width: 30px;
