@@ -109,13 +109,13 @@ export class SideBarComponent extends AppComponentBase {
 
     itemClick(event, filter) {
         filter.showAllSelected = !filter.showAllSelected;
-        let container = $(event.target.parentElement.previousElementSibling);
+        let container = event.target.parentElement.previousElementSibling;
 
         if (filter.showAllSelected) {
-            container.addClass('show-all-elements');
+            container.classList.add('show-all-elements');
             event.target.text = 'show less';
         } else {
-            container.removeClass('show-all-elements');
+            container.classList.remove('show-all-elements');
             event.target.text = '+' + (filter.displayElements.length - 2) + ' more';
         }
     }

@@ -23,7 +23,8 @@ import {
     BankAccountDto,
     StatsFilterGroupByPeriod,
     TransactionStatsDtoAdjustmentType,
-    DiscardDiscrepancyInput
+    DiscardDiscrepancyInput,
+    CreateForecastModelInput
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
@@ -936,23 +937,24 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** @todo continue implementing in other task */
     showForecastAddingInput(e) {
-        e.element.append(`<div class="addModel">
-                            <input value="">
-                          </div>`);
+        let inputBlockElement = document.createElement('div');
+        inputBlockElement.className = 'addModel';
+        inputBlockElement.innerHTML = '<input value=""></div>';
         let thisComponent = this;
-        e.itemElement.find('.addModel').focusout(function() {
-            let modelName = $(this).find('input').val();
+        inputBlockElement.addEventListener('focusout', function() {
+            let modelName = this.querySelector('input').value;
             /** Add forecast model */
             if (modelName) {
-                thisComponent.addForecastModel(modelName)
-                    .subscribe(result => {
-
-                    }, error => {
-                        console.log('unable to add forecast model');
-                    });
+                let createForecastModelInput: CreateForecastModelInput = CreateForecastModelInput.fromJS({ name: modelName });
+                thisComponent.addForecastModel(createForecastModelInput)
+                .subscribe(
+                    result => {},
+                    error => { console.log('unable to add forecast model'); }
+                );
             }
             $(this).remove();
         });
+        e.element.appendChild(inputBlockElement);
     }
 
     /**
