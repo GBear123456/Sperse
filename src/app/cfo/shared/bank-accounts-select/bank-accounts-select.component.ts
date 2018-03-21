@@ -121,7 +121,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 }
             }
             this.mainDataGrid.instance.repaintRows([this.mainDataGrid.instance.getRowIndexByKey(syncAccount.syncAccountId)]);
-        });        
+        });
     }
 
     bankAccountsSelecteAll() {
@@ -137,7 +137,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     }
 
     refreshSelected(bankAccountsIds: any[]) {
-        this.syncAccountsDataSource.forEach((syncAccount, i) => {            
+        this.syncAccountsDataSource.forEach((syncAccount, i) => {
             let selectedBankAccountCount = 0;
             syncAccount.bankAccounts.forEach((bankAccount, i) => {
                 let isBankAccountSelected = _.contains(bankAccountsIds, bankAccount.id.toString());
@@ -184,7 +184,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 }
             });
         });
-        
+
         let data = {
             bankAccountIds: result,
             banksWithAccounts: resultWithBanks
@@ -209,7 +209,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 this.getExistBankAccountTypes();
                 this.filterByBankAccountType();
 
-                if (this.useGlobalCache && this._cacheService.exists(this.bankAccountsCacheKey)) {                    
+                if (this.useGlobalCache && this._cacheService.exists(this.bankAccountsCacheKey)) {
                     let resultWithBanks = this._cacheService.get(this.bankAccountsCacheKey)['bankAccounts'];
                     let bankAccountIds = this.removeBankIds(resultWithBanks);
                     this.refreshSelected(bankAccountIds);
@@ -222,10 +222,9 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
 
                         this.onBankAccountsSelected.emit(data);
                     }
-                }
-                else {
+                } else {
                     this.refreshSelected([]);
-                }                
+                }
             });
     }
 

@@ -24,20 +24,14 @@ import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.comp
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
 import { CommonLookupServiceProxy, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import { DxDataGridComponent } from 'devextreme-angular';
-import query from 'devextreme/data/query';
-
 import 'devextreme/data/odata/store';
-
 import * as _ from 'underscore';
-import * as _string from 'underscore.string';
-import * as moment from 'moment';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -283,14 +277,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this._appService.toolbarConfig = [
             {
                 location: 'before', items: [
-                    { 
-                        name: 'filters', 
-                        action: (event) => {  
+                    {
+                        name: 'filters',
+                        action: (event) => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
-                            }, 1000);                          
-                            this._filtersService.fixed = 
-                                !this._filtersService.fixed;
+                            }, 1000);
+                            this._filtersService.fixed = !this._filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
@@ -302,25 +295,24 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             mouseout: (event) => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
-                            } 
+                            }
                         },
-                        attr: { 
+                        attr: {
                             'filter-selected': this._filtersService.hasFilterSelected
-                        } 
-                    } 
+                        }
+                    }
                 ]
             },
             {
                 location: 'before',
                 items: [
                     {
-                        name: 'search',   
+                        name: 'search',
                         widget: 'dxTextBox',
                         options: {
-                            width: '279',                            
+                            width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' 
-                                + this.l('Orders').toLowerCase()
+                            placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase()
                         }
                     }
                 ]
@@ -366,10 +358,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 ]
             },
             {
-                location: 'after', 
+                location: 'after',
                 areItemsDependent: true,
                 items: [
-                    { 
+                    {
                         name: 'box',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
                         options: {
@@ -378,8 +370,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             },
                         }
                     },
-                    { 
-                        name: 'pipeline', 
+                    {
+                        name: 'pipeline',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
                         options: {
                             checkPressed: () => {
@@ -387,14 +379,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             },
                         }
                     },
-                    { 
-                        name: 'grid', 
+                    {
+                        name: 'grid',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
                         options: {
                             checkPressed: () => {
                                 return (this.dataLayoutType == DataLayoutType.Grid);
                             },
-                        } 
+                        }
                     }
                 ]
             }
@@ -438,8 +430,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     ngOnDestroy() {
         this._appService.toolbarConfig = null;
-        this._filtersService.localizationSourceName 
-            = AppConsts.localization.defaultLocalizationSourceName;
+        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }

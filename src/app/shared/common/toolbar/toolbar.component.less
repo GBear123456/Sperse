@@ -166,17 +166,21 @@
         margin: 0;
 
         &[compact="true"] {
-            padding: 0px!important;                  
+            padding: 0px !important;
+
             .dx-toolbar-button {
-                padding: 0px 9px!important;
+                padding: 0px 9px !important;
+
                 .dx-button {
-                    border: none!important;
+                    border: none !important;
+
                     &[group-item-position="single"] {
-                        margin-right: 0px!important;
+                        margin-right: 0px !important;
                     }
+
                     .dx-button-content {
-                        height: 27px!important;
-                        padding: 0px!important;
+                        height: 27px !important;
+                        padding: 0px !important;
                     }
                 }
             }
@@ -379,7 +383,7 @@
                     font-family: Montserrat;
                 }
             }
-            
+
             &[accesskey="follow"] {
                 .dx-button-content {
                     &::after {
@@ -388,11 +392,12 @@
 
                     background: url('../../../../assets/common/icons/follow-icon.svg') no-repeat center;
                 }
-            }            
+            }
 
             &[accesskey="expandTree"] {
                 top: -2px;
                 margin-left: 10px;
+
                 .dx-button-content {
                     display: none;
                 }
@@ -407,6 +412,27 @@
                     display: inline-block;
                     background: url('../../../../assets/common/icons/expand-tree-icon.svg') left center no-repeat;
                     padding-left: 28px;
+                    font-family: Montserrat;
+                }
+            }
+
+            &[accesskey="addEntity"] {
+                padding: 6px 0px;
+
+                .dx-button-content {
+                    display: none;
+                }
+
+                &::before {
+                    content: attr(title);
+                    font-weight: 300;
+                    font-size: 13px;
+                    line-height: 1.85;
+                    letter-spacing: 0.3px;
+                    color: #677380;
+                    display: inline-block;
+                    padding-left: 22px;
+                    padding-right: 0px;
                     font-family: Montserrat;
                 }
             }

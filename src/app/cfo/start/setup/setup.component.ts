@@ -34,12 +34,11 @@ export class SetupComponent extends CFOComponentBase implements OnInit {
 
     ngOnInit(): void {
         super.ngOnInit();
-
         this.headlineConfig = {
             names: [this.l('Setup_Title')],
             iconSrc: 'assets/common/icons/magic-stick-icon.svg',
             buttons: []
-        }
+        };
     }
 
     onStart(): void {

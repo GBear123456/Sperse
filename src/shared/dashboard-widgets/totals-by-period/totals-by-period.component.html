@@ -12,7 +12,10 @@
     <div class="content-wrap">
         <div [hidden]="!totalData" *ngIf="totalData?.hasOwnProperty('startingBalance')">
 
-            <div class="starting-balance">{{l('Stats_startingBalance')}}<span>{{ totalData.startingBalance | currency }}</span></div>
+            <div class="starting-balance" [hidden]="!totalData.startingBalance && currentPeriod == allPeriodLocalizationValue">
+                {{l('Stats_startingBalance')}}
+                <span>{{ totalData.startingBalance | currency }}</span>
+            </div>
             <div class="starting-balance-entry" *ngIf="totalData.startingBalanceAdjustments !== 0">{{l('Stats_Starting_Balance_Adjustments')}}<span>{{ totalData.startingBalanceAdjustments | currency }}</span></div>
 
             <hr class="separator">

@@ -8,44 +8,43 @@ import 'devextreme/data/odata/store';
 import DsataSource from 'devextreme/data/data_source';
 
 @Component({
-  selector: 'chart-of-accounts',
-  templateUrl: './chart-of-accounts.component.html',
-  styleUrls: ['./chart-of-accounts.component.less'],
-  animations: [appModuleAnimation()]
+    selector: 'chart-of-accounts',
+    templateUrl: './chart-of-accounts.component.html',
+    styleUrls: ['./chart-of-accounts.component.less'],
+    animations: [appModuleAnimation()]
 })
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit {
 
-  headlineConfig: any;
-  ActionTitle = "CUSTOM CHART"
-  constructor(
-    injector: Injector,
-    private _router: Router
-  ) {
-    super(injector);
-   }
+    headlineConfig: any;
+    ActionTitle = 'CUSTOM CHART';
 
-  ngOnInit() {
-    super.ngOnInit();
+    constructor(injector: Injector,
+                private _router: Router) {
+        super(injector);
+    }
 
-    this.headlineConfig = {
-        names: [this.l('Setup_Title'), this.l('SetupStep_Chart')],
-      iconSrc: 'assets/common/icons/magic-stick-icon.svg'      
-    };
+    ngOnInit() {
+        super.ngOnInit();
 
-    //this.dataSource = {
-    //  store: {
-    //    type: 'odata',
-    //    url: this.getODataURL(this.dataSourceURI),
-    //    version: this.getODataVersion(),
-    //    beforeSend: function (request) {
-    //      request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-    //      request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
-    //    }
-    //  }
-    //};
-  }
-    
-  locationColumn_calculateCellValue (rowData) {
-    return rowData.StateId + ', ' + rowData.CountryId;
-  }
+        this.headlineConfig = {
+            names: [this.l('Setup_Title'), this.l('SetupStep_Chart')],
+            iconSrc: 'assets/common/icons/magic-stick-icon.svg'
+        };
+
+        //this.dataSource = {
+        //  store: {
+        //    type: 'odata',
+        //    url: this.getODataURL(this.dataSourceURI),
+        //    version: this.getODataVersion(),
+        //    beforeSend: function (request) {
+        //      request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+        //      request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
+        //    }
+        //  }
+        //};
+    }
+
+    locationColumn_calculateCellValue(rowData) {
+        return rowData.StateId + ', ' + rowData.CountryId;
+    }
 }

@@ -46,7 +46,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase {
         this.cropperSettings.minHeight = 115;
 
         this.cropperSettings.rounded = false;
-        this.cropperSettings.keepAspect = false;     
+        this.cropperSettings.keepAspect = false;
         this.cropperSettings.noFileInput = true;
         this.cropperSettings.minWithRelativeToResolution = false;
 
@@ -55,7 +55,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase {
 
         this.imageData = {};
     }
-  
+
     fileChangeListener($event) {
         let image: any = new Image();
         let file: File = $event.target.files[0];
@@ -63,7 +63,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase {
 
         myReader.onloadend = (loadEvent: any) => {
             image.src = loadEvent.target.result;
-            this.cropper.setImage(image);      
+            this.cropper.setImage(image);
         };
 
         myReader.readAsDataURL(file);

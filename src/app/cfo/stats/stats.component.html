@@ -124,7 +124,6 @@
                 </div>
                 <dx-chart id="bar"
                           [dataSource]="statsData"
-                          defaultPane="bottomPane"
                           animation="{easing: 'easeOutCubic',duration: 2000}"
                           [barWidth]="0.5"
                           (onDone)="onDone($event)"
@@ -154,6 +153,7 @@
                                 valueField="forecastNetChange"
                                 name="forecastNetChange">
                     </dxi-series>
+
                     <!-- Bottom axis -->
                     <dxo-argument-axis argumentType="datetime"
                                        visible="true"
@@ -164,6 +164,7 @@
                         </dxo-label>
                         <dxo-tick-interval months="1"></dxo-tick-interval>
                     </dxo-argument-axis>
+
                     <!-- Left axis -->
                     <dxi-value-axis>
                         <dxo-label [customizeText]="customizeAxisValues">

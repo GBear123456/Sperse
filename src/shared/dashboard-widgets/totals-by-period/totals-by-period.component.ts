@@ -1,6 +1,5 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {CFOComponentBase} from '@app/cfo/shared/common/cfo-component-base';
-import {AppConsts} from '@shared/AppConsts';
 import { DashboardService } from '../dashboard.service';
 import {
     BankAccountsServiceProxy,
@@ -19,16 +18,6 @@ import 'rxjs/add/operator/scan';
 })
 export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit {
     bankAccountIds: number[] = [];
-    availablePeriods = [
-        this.l('Today'),
-        this.l('Yesterday'),
-        this.l('This_Week'),
-        this.l('This_Month'),
-        this.l('Last_Month'),
-        this.l('This_Year'),
-        this.l('Last_Year'),
-        this.l('All_Periods')
-    ];
     totalData: any;
     selectedPeriod: any = String(GroupBy['Yearly']).toLowerCase();
     startDate;
@@ -37,6 +26,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     debitColor = '#f75a29';
     netChangeColor = '#35c8a8';
     loading = true;
+    allPeriodLocalizationValue = this.l('All_Periods');
+    currentPeriod: string;
 
     constructor(
         injector: Injector,
@@ -104,6 +95,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     onValueChanged(value): void {
         let period;
         let groupBy;
+        this.currentPeriod = value;
         let startDate = moment().utc();
         let endDate = moment().utc();
         switch (value) {
