@@ -229,9 +229,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
 
     loadMessages(user: ChatFriendDto, callback: any): void {
         this.loadingPreviousUserMessages = true;
-        
         let minMessageId;
-
         if (user.messages && user.messages.length) {
             minMessageId = _.min(_.map(user.messages, m => m.id));
         }
@@ -408,19 +406,18 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         $('.m-messenger-conversation').show(() => {
             this.initConversationScrollbar();
         });
-        $('#m_quick_sidebar_back').removeClass("d-none");
+        $('#m_quick_sidebar_back').removeClass('d-none');
     }
 
     showFriendsPanel(): void {
         $('.m-messenger-friends').show();
         $('.m-messenger-conversation').hide();
-        $('#m_quick_sidebar_back').addClass("d-none");
+        $('#m_quick_sidebar_back').addClass('d-none');
     }
 
     initConversationScrollbar(): void {
-        var $messengerMessages = $('.m-messenger-conversation .m-messenger__messages');
-        var height = $('#m_quick_sidebar').outerHeight(true) - $(".selected-chat-user").outerHeight(true) - $('#ChatMessage').height() - 150;
-        
+        let $messengerMessages = $('.m-messenger-conversation .m-messenger__messages');
+        let height = $('#m_quick_sidebar').outerHeight(true) - $('.selected-chat-user').outerHeight(true) - $('#ChatMessage').height() - 150;
         $messengerMessages.slimScroll({ destroy: true });
         $messengerMessages.slimScroll({
             height: height
@@ -431,7 +428,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         if (!this.chatMessage) {
             return;
         }
-        
+
         this.sendingMessage = true;
         const tenancyName = this._appSessionService.tenant ? this._appSessionService.tenant.tenancyName : null;
         this._chatSignalrService.sendMessage({

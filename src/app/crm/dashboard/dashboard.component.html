@@ -3,14 +3,21 @@
   <div class="lead-status">
       <div class="col-lg-6 col-xs-12 col-sm-12 wrapper">
           <!-- BEGIN PORTLET-->
-          <div *ngIf="dataEmpty" class="dashboard-stub">
-              <h1>{{l('CRM')}}</h1>
-              <p>{{l('CRM_Long')}}</p>
-              <p>{{l('ManageLeadsText')}}</p>
-              <p>{{l('StartAddingLead')}}</p>
+          <div *ngIf="dataEmpty == true" class="dashboard-stub">
+              <div>
+                  <img class="logo-crm" alt="CRM Logo" src="/assets/common/icons/cfo.png" />
+                  <span class="sperse-crm big-gray-text">{{l('CRM')}}</span>
+              </div>
+              <p class="second-line big-gray-text">{{l('CRM_Long')}}</p>
+              <p class="welcome-crm">{{l('CRMDashboard_WelcomeText')}}</p>
+              <p class="text-crm">{{l('CRMDashboard_StartText')}}</p>
+              <p class="manage-crm">{{l('CRMDashboard_ManageText')}} <a [routerLink]="['/app/crm/leads']">{{l('Leads')}}</a>, <a [routerLink]="['/app/crm/clients']">{{l('Clients')}}</a> and <a [routerLink]="['/app/crm/orders']">{{l('Orders')}}</a></p>
+              <!-- p class="last-line"><a [routerLink]="['/app/crm/clients']">{{l('CRMDashboard_AddContact')}}</a> | {{l('CRMDashboard_ImportContact')}}</p -->
+              <button (click)="addClient()" class="btn btn-layout">{{ l('CRMDashboard_AddClient') }}</button>
           </div>
 
-          <div class="portlet light" *ngIf="!dataEmpty">
+
+          <div class="portlet light" [ngStyle]="{display: dataEmpty == false ? 'block': 'none'}">
               <div class="portlet-title">
                   <div class="caption caption-md">
                       <i class="icon-bar-chart font-green-haze hide"></i>
@@ -20,7 +27,7 @@
                   </div>
               </div>
               <div class="portlet-body" style="height: 271px;">
-                  <leads-stats (onDataEmpty)="dataEmpty = true">Loading...</leads-stats>
+                  <leads-stats (onDataLoaded)="checkDataEmpty($event)">Loading...</leads-stats>
               </div>
           </div>
           <!-- END PORTLET-->

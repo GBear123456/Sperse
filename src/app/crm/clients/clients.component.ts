@@ -26,7 +26,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
-import { CommonLookupServiceProxy, InstanceServiceProxy, GetUserInstanceInfoOutputStatus, 
+import { CommonLookupServiceProxy, InstanceServiceProxy, GetUserInstanceInfoOutputStatus,
     CustomersServiceProxy, UpdateCustomerStatusesInput } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
@@ -52,6 +52,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     private filters: FilterModel[];
     private rootComponent: any;
     private formatting = AppConsts.formatting;
+    private subRouteParams: any;
 
     public headlineConfig = {
         names: [this.l('Customers')],
@@ -90,6 +91,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 }
             }
         };
+
+        this.subRouteParams = _activatedRoute.queryParams
+            .subscribe(params => {
+                if ('addNewClient' == params['action'])
+                    setTimeout(() => this.createClient());
+            });
 
         this.initToolbarConfig();
 
@@ -218,21 +225,20 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 location: 'before', items: [
                     {
                         name: 'filters',
-                        action: (event) => {
+                        action: event => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            this._filtersService.fixed =
-                                !this._filtersService.fixed;
+                            this._filtersService.fixed = !this._filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
                                 return this._filtersService.fixed;
                             },
-                            mouseover: (event) => {
+                            mouseover: event => {
                                 this._filtersService.enable();
                             },
-                            mouseout: (event) => {
+                            mouseout: event => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
                             }
@@ -253,8 +259,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                             value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' '
-                                + this.l('Customers').toLowerCase(),
+                            placeholder: this.l('Search') + ' ' + this.l('Customers').toLowerCase(),
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }
@@ -269,7 +274,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             },
             {
                 location: 'before', items: [
-                    { name: 'assign' }, 
+                    { name: 'assign' },
                     {
                         name: 'status',
                         widget: 'dxDropDownMenu',
@@ -286,7 +291,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                           ]
                         }
                     },
-                    { 
+                    {
                         name: 'delete',
                         action: this.deleteClients.bind(this)
                     }
@@ -452,13 +457,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         );
     }
 
-    private deleteClientsInternal(selectedIds: number[]){
-        this._customersServiceProxy.deleteCustomers(selectedIds).subscribe(() => { 
+    private deleteClientsInternal(selectedIds: number[]) {
+        this._customersServiceProxy.deleteCustomers(selectedIds).subscribe(() => {
             this.notify.success(this.l('SuccessfullyDeleted'));
-            this.refreshDataGrid(); 
+            this.refreshDataGrid();
         });
     }
-    
+
     deleteClients() {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
         if (selectedIds && selectedIds.length) {
@@ -470,7 +475,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 }
             );
         } else {
-            this.message.warn(this.l("NoRecordsToDelete"));
+            this.message.warn(this.l('NoRecordsToDelete'));
         }
     }
 
@@ -515,9 +520,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     ngOnDestroy() {
+        this.subRouteParams.unsubscribe();
         this._appService.toolbarConfig = null;
-        this._filtersService.localizationSourceName = 
-            AppConsts.localization.defaultLocalizationSourceName;
+        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }

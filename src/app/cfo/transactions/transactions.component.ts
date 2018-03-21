@@ -601,7 +601,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     showCompactRowsHeight() {
-        this.dataGrid.instance.element()[0].classList.toggle('grid-compact-view');
+        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
 
     getBankAccountsSource(banks: BankDto[]) {
@@ -772,7 +772,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         img.src = 'assets/common/icons/drag-icon.svg';
         if (!initial && (Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length)))
             this.categoriesShowed = true;
-        $event.element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend')
+        let element = <any>$($event.element);
+        element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend')
             .filter('.dx-selection').attr('draggable', true).on('dragstart', (e) => {
                 this.dragInProgress = true;
                 e.originalEvent.dataTransfer.setData('Text', transactionKeys.join(','));
@@ -815,10 +816,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     onCellPrepared($event) {
         if ($event.rowType === 'data') {
             if ($event.column.dataField == 'CashflowCategoryName' && !$event.data.CashflowCategoryName) {
-                let rowIndex = $event.cellElement.parent().index();
-                $event.cellElement.closest('.dx-datagrid-rowsview').find(`tr:nth-of-type(${rowIndex + 1})`).addClass(`uncategorized`);
+                let parentRow = <HTMLTableRowElement>$event.cellElement.parentElement;
+                if (parentRow) {
+                    let rowIndex = parentRow.rowIndex;
+                    let rows = $event.cellElement.closest('.dx-datagrid-rowsview').querySelectorAll(`tr:nth-of-type(${rowIndex + 1})`);
+                    /** add uncategorized class to both checkbox and row (hack) */
+                    for (let i = 0; i < rows.length; i++) {
+                        rows[i].classList.add(`uncategorized`);
+                    }
+                }
             } else if ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryName) {
-                $event.cellElement.addClass('clickable-item');
+                $event.cellElement.classList.add('clickable-item');
             }
         }
     }

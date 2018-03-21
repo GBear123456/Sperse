@@ -212,12 +212,12 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                         }
                     });
                     this.mergeHistoricalAndForecast(historical, forecast)
-                        .subscribe(res => { 
+                        .subscribe(res => {
                             this.trendData = <any>res.map((obj) => {
                                 obj['date'].add(obj['date'].toDate().getTimezoneOffset(), 'minutes');
                                 return obj;
-                            }); 
-                            this.finishLoading(); 
+                            });
+                            this.finishLoading();
                         });
                 } else {
                     console.log('No daily stats');
@@ -291,11 +291,11 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                 break;
         }
 
-        this.startDate = (period == 'all' ? undefined: startDate.startOf('day'));
-        this.endDate = (period == 'all' ? undefined: endDate.endOf('day'));
+        this.startDate = (period == 'all' ? undefined : startDate.startOf('day'));
+        this.endDate = (period == 'all' ? undefined : endDate.endOf('day'));
 
-        this.selectedPeriod = this.periods.find((obj) => { 
-            return obj.name === (period == 'all' ? 'month': period); 
+        this.selectedPeriod = this.periods.find((obj) => {
+            return obj.name === (period == 'all' ? 'month': period);
         });
 
         this.loadStatsData();

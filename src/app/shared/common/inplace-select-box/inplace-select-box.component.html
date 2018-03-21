@@ -3,7 +3,7 @@
         [dataSource]="data.options"
         displayExpr="name"
         valueExpr="id"
-        name="data.name"
+        [name]="data.name"
         [searchEnabled]="true"
         [(value)]="data.value"
         (onValueChanged)="updateValue($event)">

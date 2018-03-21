@@ -141,7 +141,7 @@ export class PreferencesApplier {
         if (cellType) {
             let isCellMarked = this._userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
             if (isCellMarked && cellObj.cell.value < 0) {
-                cellObj.cellElement.addClass('red');
+                cellObj.cellElement.classList.add('red');
             }
         }
     }
@@ -170,7 +170,7 @@ export class PreferencesApplier {
         //     if (isCellMarked) {
         //         let activity = this.columnHasActivity(cellObj, cellPeriod);
         //         if (!activity) {
-        //             //cellObj.cellElement.addClass('hideZeroActivity');
+        //             //cellObj.cellElement.classList.add('hideZeroActivity');
         //             // cellObj.cell.expanded = false;
         //             // cellObj.cellElement.css({
         //             //     'border': 'none !important',

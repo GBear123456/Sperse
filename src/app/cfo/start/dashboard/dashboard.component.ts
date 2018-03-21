@@ -30,7 +30,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     private rootComponent: any;
     private readonly PERIOD_CACHE_KEY = 'selected.period';
     private readonly LOCAL_STORAGE = 0;
-    
+
     headlineConfig;
     availablePeriods = [
         this.l('Today'),
@@ -42,7 +42,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.l('Last_Year'),
         this.l('All_Periods')
     ];
-    selectedPeriod;    
+    selectedPeriod;
 
     linksTo = [
         {name: 'View_Cash_Flow_Report', route: '../cashflow'},
@@ -99,6 +99,11 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.categorizationStatusComponent.filterByBankAccounts(data);
         this.totalsByPeriodComponent.filterByBankAccounts(data.bankAccountIds);
         this.trendByPeriodComponent.filterByBankAccounts(data.bankAccountIds);
+    }
+
+    onSyncComplete() {
+        this.accountsComponent.getAccountTotals();
+        this._dashboardService.periodChanged(this.selectedPeriod);
     }
 
     onPeriodChanged($event) {
