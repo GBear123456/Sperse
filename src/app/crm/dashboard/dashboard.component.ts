@@ -14,7 +14,7 @@ import * as _ from 'lodash';
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     private rootComponent: any;
-    dataEmpty = false;
+    public dataEmpty = true;
     public headlineConfig = {
       names: [this.l('Dashboard')],
       text: this.l('statistics and reports'),
