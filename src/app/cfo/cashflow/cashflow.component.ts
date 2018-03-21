@@ -1469,9 +1469,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     repaintDataGrid() {
-        let pivotGridInstance = <any>this.pivotGrid.instance;
-        if (this.pivotGrid && this.pivotGrid.instance && pivotGridInstance.$element().children().length) {
-            this.pivotGrid.instance.updateDimensions();
+        if (this.pivotGrid) {
+            let pivotGridInstance = <any>this.pivotGrid.instance;
+            if (this.pivotGrid.instance && pivotGridInstance.$element().children().length) {
+                this.pivotGrid.instance.updateDimensions();
+            }
         }
     }
 
