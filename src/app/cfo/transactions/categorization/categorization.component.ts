@@ -785,7 +785,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         if ($event.event.keyCode == 13) {
             $event.event.preventDefault();
             $event.event.stopPropagation();
-            $event.element.querySelector('.dx-treelist-focus-overlay').style.display = 'none';
+            let focusOverlay = $event.element.querySelector('.dx-treelist-focus-overlay');
+            if (focusOverlay)
+                focusOverlay.style.display = 'none';
             $event.component.focus($event.component.getCellElement(0, 0));
             $event.component.saveEditData();
             $event.handled = true;
@@ -801,7 +803,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
                 $event.event.originalEvent.preventDefault();
                 $event.event.originalEvent.stopPropagation();
-                $event.element.querySelector('.dx-treelist-focus-overlay').style.display = 'none';
+                let focusOverlay = $event.element.querySelector('.dx-treelist-focus-overlay');
+                if (focusOverlay)
+                    focusOverlay.style.display = 'none';
                 $event.component.editRow($event.rowIndex);
             }
             this._prevClickDate = nowDate;
