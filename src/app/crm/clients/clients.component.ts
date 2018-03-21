@@ -147,23 +147,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         this._filtersService.setup(
             this.filters = [
                 new FilterModel({
-                    component: FilterStatesComponent,
-                    caption: 'states',
-                    items: {
-                        countryStates: new FilterStatesModel()
-                    }
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'name',
+                    items: { Name: new FilterItemModel()}
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
-                    caption: 'name',
-                    items: {name: new FilterItemModel()}
-                }),
-                new FilterModel({
-                    component: FilterCBoxesComponent,
-                    caption: 'status',
-                    field: 'StatusId',
-                    items: {active: new FilterItemModel(), inactive: new FilterItemModel()}
+                    caption: 'email',
+                    items: { Email: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterCalendarComponent,
@@ -174,34 +167,41 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     options: {method: 'getFilterByDate'}
                 }),
                 new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'email',
-                    items: {email: new FilterItemModel()}
+                    component: FilterCBoxesComponent,
+                    caption: 'status',
+                    field: 'StatusId',
+                    items: {active: new FilterItemModel(), inactive: new FilterItemModel()}
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'phone',
-                    items: {phone: new FilterItemModel()}
+                    items: { Phone: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    component: FilterStatesComponent,
+                    caption: 'states',
+                    items: {
+                        countryStates: new FilterStatesModel()
+                    }
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'city',
-                    items: {}
+                    items: { City: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
-                    caption: 'address',
-                    items: {}
+                    caption: 'streetAddress',
+                    items: { StreetAddress: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'zipCode',
-                    items: {}
+                    items: { ZipCode: new FilterItemModel() }
                 })
             ]
         );
@@ -358,6 +358,33 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         ];
     }
 
+    private filterByAddressPart(filter: FilterModel, partName: string){
+        let filterField = filter.items[partName];
+        let filterValue = filterField && filterField.value;
+        if (!filterValue)
+            return;
+
+        let filterInternal = {};
+        filterInternal[partName] = { contains: filterValue };
+        return {
+            Addresses: {
+                any: filterInternal
+            }
+        };
+    }
+
+    filterByZipCode(filter: FilterModel) {
+        return this.filterByAddressPart(filter, 'ZipCode');
+    }
+
+    filterByCity(filter: FilterModel) {
+        return this.filterByAddressPart(filter, 'City');
+    }
+
+    filterByStreetAddress(filter: FilterModel){
+        return this.filterByAddressPart(filter, 'StreetAddress');
+    }
+
     filterByStates(filter: FilterModel) {
         let filterData = [];
         if (filter.items.countryStates && filter.items.countryStates.value) {
@@ -389,6 +416,24 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             obj[filter.field] = filter.items.active.value ? 'A' : 'I';
             return obj;
         }
+    }
+
+    filterByPhone(filter: FilterModel) {
+        let filterField = filter.items.Phone;
+        let filterValue = filterField && filterField.value;
+        if (filterValue)
+            return {
+                PhoneNumbers: { any: 'contains(p,\'' + filterValue + '\')' }
+            };
+    }
+
+    filterByEmail(filter: FilterModel) {
+        let filterField = filter.items.Email;
+        let filterValue = filterField && filterField.value;
+        if (filterValue)
+            return {
+                EmailAddresses: { any: 'contains(e,\'' + filterValue + '\')' }
+            };
     }
 
     searchValueChange(e: object) {
