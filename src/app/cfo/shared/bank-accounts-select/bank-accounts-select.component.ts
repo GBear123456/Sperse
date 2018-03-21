@@ -116,7 +116,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 }
                 this.mainDataGrid.instance.repaintRows([i]);
             }
-        });        
+        });
     }
 
     bankAccountsSelecteAll() {
@@ -194,7 +194,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 });
             }
         });
-        
+
         let data = {
             bankAccountIds: result,
             banksWithAccounts: resultWithBanks

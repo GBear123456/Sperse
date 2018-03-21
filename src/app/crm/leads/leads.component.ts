@@ -274,14 +274,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._appService.toolbarConfig = [
             {
                 location: 'before', items: [
-                    { 
-                        name: 'filters', 
-                        action: (event) => {                            
+                    {
+                        name: 'filters',
+                        action: (event) => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            this._filtersService.fixed = 
-                                !this._filtersService.fixed;
+                            this._filtersService.fixed = !this._filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
@@ -293,12 +292,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             mouseout: (event) => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
-                            } 
+                            }
                         },
-                        attr: { 
+                        attr: {
                             'filter-selected': this._filtersService.hasFilterSelected
-                        } 
-                    } 
+                        }
+                    }
                 ]
             },
             {
@@ -311,8 +310,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' '
-                                + this.l('Leads').toLowerCase(),
+                            placeholder: this.l('Search') + ' ' + this.l('Leads').toLowerCase(),
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }
@@ -361,10 +359,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 ]
             },
             {
-                location: 'after', 
+                location: 'after',
                 areItemsDependent: true,
                 items: [
-                    { 
+                    {
                         name: 'box',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
                         options: {
@@ -373,8 +371,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             },
                         }
                     },
-                    { 
-                        name: 'pipeline', 
+                    {
+                        name: 'pipeline',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
                         options: {
                             checkPressed: () => {
@@ -382,14 +380,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             },
                         }
                     },
-                    { 
-                        name: 'grid', 
+                    {
+                        name: 'grid',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
                         options: {
                             checkPressed: () => {
                                 return (this.dataLayoutType == DataLayoutType.Grid);
                             },
-                        } 
+                        }
                     }
                 ]
             }
@@ -450,8 +448,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     ngOnDestroy() {
         this._appService.toolbarConfig = null;
-        this._filtersService.localizationSourceName 
-            = AppConsts.localization.defaultLocalizationSourceName;
+        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }

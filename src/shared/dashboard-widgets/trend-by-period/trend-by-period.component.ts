@@ -291,8 +291,8 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                 break;
         }
 
-        this.startDate = (period == 'all' ? undefined: startDate.startOf('day'));
-        this.endDate = (period == 'all' ? undefined: endDate.endOf('day'));
+        this.startDate = (period == 'all' ? undefined : startDate.startOf('day'));
+        this.endDate = (period == 'all' ? undefined : endDate.endOf('day'));
 
         this.selectedPeriod = this.periods.find((obj) => {
             return obj.name === (period == 'all' ? 'month': period);
