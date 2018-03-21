@@ -795,6 +795,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     onRowClick($event) {
         if (this._selectedKeys.indexOf($event.key) >= 0)
             this.categoryList.instance.deselectRows([$event.key]);
+        this.categoryList.instance.cancelEditData();
         this._selectedKeys = this.categoryList.instance.getSelectedRowKeys();
         if ($event.level >= 0) {
             let nowDate = new Date();
