@@ -224,18 +224,21 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         this.data.buttons = [{
             title: this.l(this.data.id ? 'Save' : 'Add rule'),
             class: 'primary',
-            action: () => {
+            action: (event) => {
                 if (this.validate()) {
+                    event.target.disabled = true;
                     if (this.data.id)
                         this._classificationServiceProxy.editRule(
                             InstanceType[this.instanceType], this.instanceId,
                             EditRuleDto.fromJS(this.getDataObject()))
+                        .finally(() => event.target.disabled = false)
                         .subscribe(this.updateDataHandler.bind(this));
                     else
                         this._classificationServiceProxy.createRule(
                             InstanceType[this.instanceType],
                             this.instanceId,
                             CreateRuleDto.fromJS(this.getDataObject()))
+                        .finally(() => event.target.disabled = false)
                         .subscribe(this.updateDataHandler.bind(this));
                 }
             }
@@ -244,9 +247,11 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             this.data.buttons.unshift({
                 title: this.l('Don\'t add'),
                 class: 'default',
-                action: () => {
+                action: (event) => {
                     if (this.data.transactionIds) {
                         if (this.validate(true)) {
+                            event.target.disabled = true;
+
                             let updateTransactionCategoryMethod = (suppressCashflowTypeMismatch: boolean = false) => {
                                 this._classificationServiceProxy.updateTransactionsCategory(
                                     InstanceType[this.instanceType],
@@ -258,7 +263,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                                         descriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
                                         suppressCashflowMismatch: suppressCashflowTypeMismatch
                                     })
-                                ).subscribe(this.updateDataHandler.bind(this));
+                                ).finally(() => event.target.disabled = false)
+                                .subscribe(this.updateDataHandler.bind(this));
                             };
 
                             if (this.data.categoryCashflowTypeId && _.some(this.data.transactions, x => x.CashFlowTypeId != this.data.categoryCashflowTypeId)) {

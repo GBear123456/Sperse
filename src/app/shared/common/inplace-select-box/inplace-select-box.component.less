@@ -3,16 +3,31 @@
         height: 35px;
         display: inline-block;
     
-        /deep/ input {
-            margin: 0px;
-            padding: 0 0 0 5px;
-            font-size: 15px;
-            font-weight: 300;
-            line-height: 1.67;
-            letter-spacing: 0.3px;
-            text-align: left;
-            font-family: Montserrat;
-            border-bottom: 0px;
+        /deep/ dx-select-box {
+            input {
+                margin: 0px;
+                padding: 0px;
+                font-size: 15px;
+                font-weight: 300;
+                line-height: 1.67;
+                letter-spacing: 0.3px;
+                text-align: left;
+                font-family: Montserrat;
+                border-bottom: 0px;
+                padding-right: 35px;
+            }
+            .dx-placeholder {
+                font-size: 14px;
+                font-weight: 400;            
+                &:before {
+                    padding-left: 0px;
+                }
+            }
+            &.dx-state-focused {
+                .dx-placeholder {
+                    top: -25px;
+                }
+            }
         }
     }
 }

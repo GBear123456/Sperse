@@ -21,10 +21,14 @@
 
     .logo {
         text-align: center;
+        cursor: pointer;
+        img {
+            max-height: 120px;
+        }
     }
 
     .short-info {
-        width: 560px;
+        width: 670px;
         padding: 0px;
 
         div.row{
@@ -47,6 +51,25 @@
     .description {
         width: 100%;
         min-height: 50px;
+    }
+
+    .more-fields-button {  
+        text-align: right;
+        display: block;
+        margin-right: 20px;
+        background: url("../../../../../assets/common/icons/arrow-down.svg") no-repeat right center;
+        padding-right: 20px;
+        cursor: pointer;
+        color: #94979A;
+        font-weight: 500;
+        &.collapsed {
+            background: url("../../../../../assets/common/icons/arrow-up.svg") no-repeat right center;
+        }
+    }
+    .more-fields {
+        &.collapsed {
+            display: none;
+        }
     }
 
     inplace-edit {

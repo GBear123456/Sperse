@@ -161,6 +161,10 @@ export class ToolBarComponent extends AppComponentBase {
         reportPeriod: {
             icon: this.getImgURI('report-period'),
             text: this.ls('CFO', 'CashflowToolbar_Report_Period')
+        },
+        addEntity: {
+            hint: this.l('AddEntity'),
+            icon: this.getImgURI('add-button')
         }
     };
 

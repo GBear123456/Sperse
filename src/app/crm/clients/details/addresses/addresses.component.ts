@@ -56,21 +56,21 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
     }
 
-  getDialogPossition(event) {
+    getDialogPossition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('.address-wrapper');
         return this.calculateDialogPosition(event, parent, shiftY);
-  }
+    }
 
-  calculateShiftY(event) {
+    calculateShiftY(event) {
         let shift = 245;
 
         let availableSpaceY = window.innerHeight - event.clientY;
         if (availableSpaceY < shift + 40)
-          shift += shift - availableSpaceY + 130;
+            shift += shift - availableSpaceY + 130;
 
         return shift;
-  }
+    }
 
     showDialog(address, event, index) {
         let dialogData = _.pick(address || {}, 'id', 'city',
@@ -156,7 +156,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         this.clearInplaceData();
         address.inplaceEdit = false;
         this._isInPlaceEditAllowed = true;
-        event.event.stopPropagation();
+        event.jQueryEvent.stopPropagation();
     }
 
     clearInplaceData() {
@@ -180,6 +180,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                         (this.city != address.city) ||
                         (this.state != address.state))
                 ) {
+                    let state = _.findWhere(states, {name: this.state});
                     this.updateDataField(address, {
                         id: address.id,
                         contactId: this.contactInfoData.contactId,
@@ -192,14 +193,14 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                         comment: address.comment,
                         usageTypeId: address.usageTypeId,
                         countryId: countryId,
-                        stateId: _.findWhere(states, {name: this.state})['code']
+                        stateId: state && state['code']
                     });
                     this.clearInplaceData();
                 }
             });
         address.inplaceEdit = false;
         this._isInPlaceEditAllowed = true;
-        event.event.stopPropagation();
+        event.jQueryEvent.stopPropagation();
     }
 
     aggregateAddress(address: ContactAddressDto) {

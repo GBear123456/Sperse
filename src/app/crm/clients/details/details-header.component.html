@@ -21,7 +21,7 @@
     <div *ngIf="data?.organizationContactInfo" class="organization_info">
         <div class="delimiter"></div>
         <div class="organization_logo">
-            <img src="{{ data?.organizationContactInfo.photo ? 'data:image/png;base64,' + data.organizationContactInfo.photo.thumbnail : person.org_photo_url }}" alt="Organization Logo">
+            <img src="{{ data?.organizationContactInfo.photo ? 'data:image/png;base64,' + data.organizationContactInfo.photo.thumbnail : '../../../../../assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
         </div>
         <h2>{{ data?.organizationContactInfo?.fullName }}</h2>
         <div class="info-icon" (click)="showOrganizationDetails($event)">

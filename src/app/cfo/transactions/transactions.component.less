@@ -148,6 +148,12 @@
 
     /deep/ #gridContainer {
         .dx-datagrid-header-panel {
+            .dx-toolbar-items-container {
+                .dx-toolbar-before{
+                    width: auto !important;
+                }
+            }
+
             .dx-toolbar .dx-toolbar-center {
                 margin: 0 !important;
             }
@@ -177,6 +183,12 @@
                                 > .count {
                                     font-weight: 400;
                                 }
+                            }
+                        }
+
+                        &:first-child {
+                            .informer {
+                                border-left: 0;
                             }
                         }
 
