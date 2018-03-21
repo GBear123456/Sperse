@@ -3,7 +3,7 @@
   <div class="lead-status">
       <div class="col-lg-6 col-xs-12 col-sm-12 wrapper">
           <!-- BEGIN PORTLET-->
-          <div *ngIf="dataEmpty" class="dashboard-stub">
+          <div *ngIf="dataEmpty == true" class="dashboard-stub">
               <div>
                   <img class="logo-crm" alt="CRM Logo" src="/assets/common/icons/cfo.png" />
                   <span class="sperse-crm big-gray-text">{{l('CRM')}}</span>
@@ -15,7 +15,7 @@
           </div>
 
 
-          <div class="portlet light" *ngIf="!dataEmpty">
+          <div class="portlet light" [ngStyle]="{display: dataEmpty == false ? 'block': 'none'}">
               <div class="portlet-title">
                   <div class="caption caption-md">
                       <i class="icon-bar-chart font-green-haze hide"></i>
@@ -25,7 +25,7 @@
                   </div>
               </div>
               <div class="portlet-body" style="height: 271px;">
-                  <leads-stats (onDataLoaded)="dataEmpty = false">Loading...</leads-stats>
+                  <leads-stats (onDataLoaded)="checkDataEmpty($event)">Loading...</leads-stats>
               </div>
           </div>
           <!-- END PORTLET-->

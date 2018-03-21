@@ -14,7 +14,7 @@ import * as _ from 'lodash';
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     private rootComponent: any;
-    public dataEmpty = true;
+    public dataEmpty;
     public headlineConfig = {
       names: [this.l('Dashboard')],
       text: this.l('statistics and reports'),
@@ -29,9 +29,15 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
+    checkDataEmpty(data) {      
+        this.dataEmpty = !data.length;
+        this.finishLoading(true);
+    }
+
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+        this.startLoading(true);
     }
 
     ngOnDestroy() {
