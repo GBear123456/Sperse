@@ -52,6 +52,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     private filters: FilterModel[];
     private rootComponent: any;
     private formatting = AppConsts.formatting;
+    private subRouteParams: any;
 
     public headlineConfig = {
         names: [this.l('Customers')],
@@ -90,6 +91,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 }
             }
         };
+
+        this.subRouteParams = _activatedRoute.queryParams
+            .subscribe(params => {
+                if ('addNewClient' == params['action'])
+                    setTimeout(() => this.createClient());
+            });
 
         this.initToolbarConfig();
 
@@ -468,6 +475,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     ngOnDestroy() {
+        this.subRouteParams.unsubscribe();
         this._appService.toolbarConfig = null;
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
