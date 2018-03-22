@@ -10,6 +10,8 @@ import { CategorizationStatusComponent } from 'shared/dashboard-widgets/categori
 import { TotalsByPeriodComponent } from 'shared/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TrendByPeriodComponent } from 'shared/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from 'shared/dashboard-widgets/dashboard.service';
+import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
+import { InstanceType, FinancialInformationServiceProxy } from 'shared/service-proxies/service-proxies';
 
 import { CacheService } from 'ng2-cache-service';
 
@@ -18,7 +20,7 @@ import { CacheService } from 'ng2-cache-service';
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.less'],
     animations: [appModuleAnimation()],
-    providers: [CacheService]
+    providers: [CacheService, FinancialInformationServiceProxy]
 })
 export class DashboardComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
@@ -50,12 +52,16 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         {name: 'View_Financial_Statistics', route: '../stats'},
     ];
 
+    quovoHandler: any;
+
     constructor(
         injector: Injector,
         private _router: Router,
         private _cacheService: CacheService,
         private _dashboardService: DashboardService,
-        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
+        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
+        private _quovoService: QuovoService,
+        private _financialInformationServiceProxy: FinancialInformationServiceProxy
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -78,6 +84,10 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
             iconSrc: 'assets/common/icons/pie-chart.svg',
             buttons: []
         };
+        this._financialInformationServiceProxy.getProviderUIToken(InstanceType[this.instanceType], this.instanceId)
+            .subscribe((data) => {
+                this.quovoHandler = this._quovoService.getQuovoHandler(data.token);
+            });
     }
 
     ngAfterViewInit(): void {
@@ -90,8 +100,10 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
     }
 
-    navigateTo() {
-        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
+    addAccount() {
+        if (this.quovoHandler) {
+            this.quovoHandler.open();
+        }
     }
 
     filterByBankAccounts(data) {
