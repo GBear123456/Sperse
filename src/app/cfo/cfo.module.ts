@@ -37,6 +37,7 @@ import { MatTabsModule, MatDialogModule } from '@angular/material';
 import { CFOService } from './cfo.service';
 import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
+import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
 
 
 import {
@@ -156,7 +157,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         CFOService,
         CustomersServiceProxy,
         ContactServiceProxy,
-        ngxZendeskWebwidgetService
+        ngxZendeskWebwidgetService,
+        QuovoService
     ]
 })
 

@@ -17,7 +17,7 @@
                                        [value]="selectedPeriod"
                                        (onValueChanged)="onPeriodChanged($event)">
                         </dx-select-box>
-                        <a (click)="navigateTo()" class="dashboard-link">+ {{l('Add_account')}}</a>
+                        <a (click)="addAccount()" class="dashboard-link">+ {{l('Add_account')}}</a>
                     </header>
                     <app-accounts (onTotalAccountsMouseenter)="bankAccountSelector.toggleBankAccountTooltip()"></app-accounts>
                     <bank-accounts-select targetBankAccountsTooltip="#totalaccounts"

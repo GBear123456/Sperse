@@ -304,6 +304,7 @@
         line-height: 1.4;
         font-weight: 500;
         padding: 0 0 5px;
+        font-family: 'Lato' !important;
     }
 
     .classification-list {
@@ -343,7 +344,7 @@
             &::before {
                 width: 18px;
                 height: 18px;
-                background: transparent url('../../../assets/common/icons/completed-icon.svg') 50% 50% no-repeat;
+                background: transparent url('../../../assets/common/icons/completed-icon-light-green.svg') 50% 50% no-repeat;
             }
         }
     }
@@ -358,7 +359,7 @@
     .classified-item-title {
         .border {
             border: 0 !important;
-            border-bottom: 1px solid #61c670 !important;
+            border-bottom: 1px solid #8BD553 !important;
         }
     }
     .unclassified-item-title {
@@ -377,16 +378,18 @@
         margin-right: 8px;
         background: #EEF1F1;
         border: 0;
+        line-height: 1;
+        padding: 2px 0 4px;
     }
 
     .classification-item-percent {
         text-align: right;
         font-weight: 300;
         float: right;
+        font-size: 13px;
     }
 
     .btn-layout {
-        color: #fff;
         font-size: 12px !important;
         text-align: center;
         padding: 0 10px;
@@ -394,6 +397,23 @@
         line-height: 2;
         height: auto;
         cursor: pointer;
+
+        border-radius: 13px !important;
+        text-transform: initial !important;
+        letter-spacing: 0.3px;
+        outline: none;
+        border: 1px solid #E5E9EC;
+        color: #677380 !important;
+        width: 140px;
+        -webkit-transition: .25s;
+        transition: .25s;
+        background: transparent;
+
+        &:hover {
+            background: lighten(#00aeef, 5%);
+            border-color: lighten(#00aeef, 5%);
+            color: #fff !important;
+        }
     }
 }
 
