@@ -3752,21 +3752,22 @@ export class ClassificationServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
-     * @transactionIds (optional) 
+     * @input (optional) 
      * @return Success
      */
-    getKeyAttributeValues(instanceType: InstanceType49, instanceId: number, transactionIds: number[]): Observable<AttributeValuesDto[]> {
+    getKeyAttributeValues(instanceType: InstanceType49, instanceId: number, input: GetKeyAttributeValuesInput): Observable<AttributeValuesDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetKeyAttributeValues?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (transactionIds !== undefined)
-            transactionIds && transactionIds.forEach(item => { url_ += "TransactionIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(input);
+
         let options_ : any = {
-            method: "get",
+            body: content_,
+            method: "post",
             headers: new Headers({
                 "Content-Type": "application/json", 
                 "Accept": "application/json"
@@ -21267,6 +21268,49 @@ export interface IChangeCategoryForRulesInput {
     ruleIds: number[];
     categotyId: number;
     reclassifyTransactions: boolean;
+}
+
+export class GetKeyAttributeValuesInput implements IGetKeyAttributeValuesInput {
+    transactionIds: number[];
+
+    constructor(data?: IGetKeyAttributeValuesInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["transactionIds"] && data["transactionIds"].constructor === Array) {
+                this.transactionIds = [];
+                for (let item of data["transactionIds"])
+                    this.transactionIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): GetKeyAttributeValuesInput {
+        let result = new GetKeyAttributeValuesInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.transactionIds && this.transactionIds.constructor === Array) {
+            data["transactionIds"] = [];
+            for (let item of this.transactionIds)
+                data["transactionIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IGetKeyAttributeValuesInput {
+    transactionIds: number[];
 }
 
 export class AttributeValuesDto implements IAttributeValuesDto {
