@@ -9,7 +9,7 @@ import {
     CreateCategoryInput, UpdateCategoryInput,
     CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
-    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType, TransactionTypesAndCategoriesDto, TransactionAttributeDto } from '@shared/service-proxies/service-proxies';
+    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType, TransactionTypesAndCategoriesDto, TransactionAttributeDto, GetKeyAttributeValuesInput } from '@shared/service-proxies/service-proxies';
 
 import { Observable } from 'rxjs/Observable';
 
@@ -77,7 +77,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
         let requests: Observable<any>[] = [
             _transactionsServiceProxy.getTransactionAttributeTypes(InstanceType[this.instanceType], this.instanceId),
-            _classificationServiceProxy.getKeyAttributeValues(InstanceType[this.instanceType], this.instanceId, this.data.transactionIds),
+            _classificationServiceProxy.getKeyAttributeValues(InstanceType[this.instanceType], this.instanceId, new GetKeyAttributeValuesInput({ transactionIds: <number[]>this.data.transactionIds })),
             _cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId)
         ];
 

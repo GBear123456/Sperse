@@ -73,6 +73,9 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     showDialog(address, event, index) {
+        if (!this.contactInfoData)
+            return;
+  
         let dialogData = _.pick(address || {}, 'id', 'city',
             'comment', 'country', 'isActive', 'isConfirmed',
             'state', 'streetAddress', 'usageTypeId', 'zip');

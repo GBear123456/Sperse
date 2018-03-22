@@ -73,7 +73,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     categorization: GetCategoryTreeOutput;
     columnClassName = '';
     showSearch = false;
-    nameColumnWidth;
 
     filteredRowData: any;
 
@@ -371,7 +370,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
     onContentReady($event) {
         this.initDragAndDropEvents($event);
-        this.nameColumnWidth = Math.round(this.categoryList.instance.element().clientWidth / 3);
         if (this.filteredRowData) {
             let rowIndex = this.categoryList.instance.getRowIndexByKey(this.filteredRowData.key);
             let row = this.categoryList.instance.getRowElement(rowIndex);
@@ -785,7 +783,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         if ($event.event.keyCode == 13) {
             $event.event.preventDefault();
             $event.event.stopPropagation();
-            $event.element.querySelector('.dx-treelist-focus-overlay').style.display = 'none';
+            let focusOverlay = $event.element.querySelector('.dx-treelist-focus-overlay');
+            if (focusOverlay)
+                focusOverlay.style.display = 'none';
             $event.component.focus($event.component.getCellElement(0, 0));
             $event.component.saveEditData();
             $event.handled = true;
@@ -795,13 +795,16 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     onRowClick($event) {
         if (this._selectedKeys.indexOf($event.key) >= 0)
             this.categoryList.instance.deselectRows([$event.key]);
+        this.categoryList.instance.cancelEditData();
         this._selectedKeys = this.categoryList.instance.getSelectedRowKeys();
         if ($event.level >= 0) {
             let nowDate = new Date();
             if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
                 $event.event.originalEvent.preventDefault();
                 $event.event.originalEvent.stopPropagation();
-                $event.element.querySelector('.dx-treelist-focus-overlay').style.display = 'none';
+                let focusOverlay = $event.element.querySelector('.dx-treelist-focus-overlay');
+                if (focusOverlay)
+                    focusOverlay.style.display = 'none';
                 $event.component.editRow($event.rowIndex);
             }
             this._prevClickDate = nowDate;

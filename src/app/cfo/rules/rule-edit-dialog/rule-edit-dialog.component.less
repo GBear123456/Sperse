@@ -61,6 +61,7 @@
         width: 1110px;
         max-width: 1111px;
         min-width: 720px;
+
         div.close-transactions {
             position: absolute;
             right: 10px;
@@ -267,41 +268,6 @@
                     font-weight: 400;
                     border-bottom: none !important;
                 }
-                
-                tr:hover td.dx-command-edit a.dx-link {
-                    display: inline-block;
-                }
-
-                td.dx-command-edit {
-                    text-overflow: unset;
-                    text-align: right !important;
-
-                    a.dx-link {
-                        width: 25px;
-                        display: none;
-                        color: transparent !important;                         
-
-                        &.dx-link-add {
-                            background: url('../../../../assets/common/icons/add.svg') no-repeat center;
-                        }
-
-                        &.dx-link-edit {
-                            background: url('../../../../assets/common/icons/edit.svg') no-repeat center;
-                        }
-
-                        &.dx-link-delete {
-                            background: url('../../../../assets/common/icons/delete-icon.svg') no-repeat center;
-                        }
-
-                        &.dx-link-save {
-                            background: url('../../../../assets/common/icons/check.svg') no-repeat center;
-                        }
-
-                        &.dx-link-cancel {
-                            background: url('../../../../assets/common/icons/cancel.svg') no-repeat center;
-                        }
-                    }
-                }
 
                 input {
                     font-size: 15px;
@@ -427,12 +393,15 @@
 
                         .dx-datagrid-content {
                             padding: 10px 24px;
+
                             .dx-datagrid-table {
                                 transform: rotate(180deg);
+
                                 tr {
                                     &.dx-freespace-row {
-                                        display: none!important;
+                                        display: none !important;
                                     }
+
                                     transform: rotate(180deg);
                                 }
                             }
@@ -440,6 +409,41 @@
                             .dx-datagrid-focus-overlay {
                                 height: 35px !important;
                                 border: 1px solid #00aeef;
+                            }
+
+                            td.dx-command-edit {
+                                text-overflow: unset;
+                                text-align: right !important;
+
+                                a.dx-link {
+                                    width: 25px;
+                                    display: none;
+                                    color: transparent !important;
+
+                                    &.dx-link-add {
+                                        background: url('../../../../assets/common/icons/add.svg') no-repeat center;
+                                    }
+
+                                    &.dx-link-edit {
+                                        background: url('../../../../assets/common/icons/edit.svg') no-repeat center;
+                                    }
+
+                                    &.dx-link-delete {
+                                        background: url('../../../../assets/common/icons/delete-icon.svg') no-repeat center;
+                                    }
+
+                                    &.dx-link-save {
+                                        background: url('../../../../assets/common/icons/check.svg') no-repeat center;
+                                    }
+
+                                    &.dx-link-cancel {
+                                        background: url('../../../../assets/common/icons/cancel.svg') no-repeat center;
+                                    }
+                                }
+                            }
+
+                            tr:hover td.dx-command-edit a.dx-link {
+                                display: inline-block;
                             }
                         }
                     }
@@ -473,6 +477,7 @@
                         border: solid 1px #e5e9ec;
                         background-color: #ffffff;
                         border-radius: 4px;
+
                         &[attribute-selected="true"] {
                             font-weight: 600;
                         }

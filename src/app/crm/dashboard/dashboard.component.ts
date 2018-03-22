@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, AfterViewInit, Injector, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { TenantDashboardServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -14,7 +15,7 @@ import * as _ from 'lodash';
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     private rootComponent: any;
-    public dataEmpty = true;
+    public dataEmpty;
     public headlineConfig = {
       names: [this.l('Dashboard')],
       text: this.l('statistics and reports'),
@@ -24,14 +25,25 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     constructor(
         injector: Injector,
+        private _router: Router,
         private _dashboardService: TenantDashboardServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
+    checkDataEmpty(data) {      
+        this.dataEmpty = !data.length;
+        this.finishLoading(true);
+    }
+
+    addClient() {
+        this._router.navigate(['app/crm/clients'], { queryParams: { action: 'addNewClient' } });
+    }
+
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+        this.startLoading(true);
     }
 
     ngOnDestroy() {
