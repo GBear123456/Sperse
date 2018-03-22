@@ -30,24 +30,21 @@
         <dxo-editing mode="row"
                      [texts]="{confirmDeleteMessage: ''}"
                      [allowUpdating]="true"
-                     [allowDeleting]="true"
                      [allowAdding]="true">
         </dxo-editing>
         <dxi-column [cssClass]="columnClassName"
                     [cellTemplate]="'categoryTemplate'"
                     [allowSorting]="true"
                     [sortIndex]="0"
-                    [width]="nameColumnWidth"
-                    [minWidth]="200"
+                    [width]="180"
                     [sortingMethod]="sortItem"
                     [calculateSortValue]="calculateSortValue"
                     [sortOrder]="'asc'" dataField="name">
         </dxi-column>
         <dxi-column [allowSorting]="true"
+                    [alignment]="'left'"
                     [sortIndex]="1"
                     [sortOrder]="'asc'"
-                    [alignment]="'left'"
-                    [width]="50"
                     dataField="coAID"
                     [dataType]="number"
                     [caption]="'ID'"
@@ -58,7 +55,6 @@
                     [cellTemplate]="'transactionsCountTemplate'"
                     [dataType]="number"
                     [alignment]="'left'"
-                    [width]="50"
                     [caption]="'Count'"
                     [allowEditing]="false"
                     [visible]="settings.showTC">

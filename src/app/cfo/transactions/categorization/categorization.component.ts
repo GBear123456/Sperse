@@ -42,6 +42,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     @Input() showClearSelection: boolean;
     @Input() showFilterIcon: boolean;
     @Input() showAddEntity: boolean;
+    @Input() includeNonCashflowNodes = false;
     @Input() categoryId: number;
     @Input('dragMode')
     set dragMode(value: boolean) {
@@ -73,7 +74,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     categorization: GetCategoryTreeOutput;
     columnClassName = '';
     showSearch = false;
-    nameColumnWidth;
 
     filteredRowData: any;
 
@@ -371,7 +371,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
     onContentReady($event) {
         this.initDragAndDropEvents($event);
-        this.nameColumnWidth = Math.round(this.categoryList.instance.element().clientWidth / 3);
         if (this.filteredRowData) {
             let rowIndex = this.categoryList.instance.getRowIndexByKey(this.filteredRowData.key);
             let row = this.categoryList.instance.getRowElement(rowIndex);
@@ -551,7 +550,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         this.autoExpand = autoExpand;
 
         this._classificationServiceProxy.getCategoryTree(
-            InstanceType[this.instanceType], this.instanceId, false).subscribe((data) => {
+            InstanceType[this.instanceType], this.instanceId, this.includeNonCashflowNodes).subscribe((data) => {
                 let categories = [];
                 this.categorization = data;
                 if (this.settings.showAT && data.accountingTypes) {
@@ -797,6 +796,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     onRowClick($event) {
         if (this._selectedKeys.indexOf($event.key) >= 0)
             this.categoryList.instance.deselectRows([$event.key]);
+        this.categoryList.instance.cancelEditData();
         this._selectedKeys = this.categoryList.instance.getSelectedRowKeys();
         if ($event.level >= 0) {
             let nowDate = new Date();

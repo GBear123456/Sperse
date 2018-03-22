@@ -62,7 +62,13 @@ export abstract class AppServiceBase{
         let config = _.clone(this._configs[name.toLowerCase()]);
         config.navigation = config.navigation.map((record) => {
             let clone = record.slice(0);
-            clone[3] = this.replaceParams(record[3], params);
+            clone[3] = this.replaceParams(record[3], params);            
+            if (record[5] && record[5].length) {
+                clone[5] = [];
+                record[5].forEach((el, i) => {
+                    clone[5].push(this.replaceParams(el, params));
+                });
+            }
             return clone;
         });
         this.params = params;

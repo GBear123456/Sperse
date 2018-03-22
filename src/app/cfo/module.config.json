@@ -3,7 +3,14 @@
   "search": false,
   "requiredFeature": "CFO",
   "navigation": [
-    [ "", "", "icon-home", "/app/cfo/:instance/start" ],
+    [
+      "",
+      "",
+      "icon-home",
+      "/app/cfo/:instance/start",
+      "",
+      [ "/app/cfo/:instance/business-entities", "/app/cfo/:instance/chart-of-accounts" ]
+    ],
     [ "Accounts", "", "icon-home", "/app/cfo/:instance/linkaccounts" ],
     [ "Transactions", "", "icon-home", "/app/cfo/:instance/transactions" ],
     [ "Cashflow", "", "icon-home", "/app/cfo/:instance/cashflow" ],
