@@ -52,7 +52,7 @@ export abstract class AppComponentBase {
 
     public defaultGridPagerConfig = {
         showPageSizeSelector: true,
-        allowedPageSizes: [20, 100, 500, 1000, 5000],
+        allowedPageSizes: [20, 100, 500, 1000],
         showInfo: true,
         visible: true
     };
