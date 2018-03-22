@@ -146,6 +146,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         });
     }
 
+    calculateAddressColumnValue(data) {
+        return (data.City || data.State) ? [data.City, data.State].join(", ") : null;
+    }
+
     toggleDataLayout(dataLayoutType) {
         this.dataLayoutType = dataLayoutType;
     }

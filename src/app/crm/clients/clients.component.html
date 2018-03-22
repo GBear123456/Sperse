@@ -34,10 +34,14 @@
                         <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
                         <dxi-column dataField="Status" caption="{{l('Status')}}" [visible]="false" ></dxi-column>
                         <dxi-column dataField="FullName" caption="{{l('Contact.FullName')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="State" caption="{{l('Contact.State')}}" ></dxi-column>
+                        <dxi-column caption="{{l('Contact.CityAndState')}}" [calculateCellValue]="calculateAddressColumnValue"></dxi-column>
                         <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
-                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell"></dxi-column>      
-                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" sortOrder="desc" [sortIndex]="1" [visible]="false" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell"></dxi-column>
+                        <dxi-column dataField="CompanyName" caption="{{l('Customer.Type')}}" cellTemplate="typeCell"></dxi-column>
+                        <div *dxTemplate="let cellData of 'typeCell'">
+                            {{cellData.value ? l('Organization') : l('Person')}}
+                        </div>
+                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
                         <dxi-column cellTemplate="linkToCFOTemplate" [width]="75" [fixed]="true" [fixedPosition]="'right'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
