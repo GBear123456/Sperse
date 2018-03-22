@@ -7478,11 +7478,63 @@ export class FinancialInformationServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @return Success
+     */
+    getProviderUIToken(instanceType: InstanceType63, instanceId: number): Observable<GetProviderUITokenOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetProviderUIToken?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetProviderUIToken(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetProviderUIToken(response_);
+                } catch (e) {
+                    return <Observable<GetProviderUITokenOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetProviderUITokenOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetProviderUIToken(response: Response): Observable<GetProviderUITokenOutput> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetProviderUITokenOutput.fromJS(resultData200) : new GetProviderUITokenOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<GetProviderUITokenOutput>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @css (optional) 
      * @errorPage (optional) 
      * @return Success
      */
-    getSetupAccountsLink(instanceType: InstanceType63, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
+    getSetupAccountsLink(instanceType: InstanceType64, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSetupAccountsLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7538,7 +7590,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAccountsWithQuovo(instanceType: InstanceType64, instanceId: number): Observable<void> {
+    syncAccountsWithQuovo(instanceType: InstanceType65, instanceId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAccountsWithQuovo?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7586,7 +7638,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType65, instanceId: number, syncHistory: boolean, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType66, instanceId: number, syncHistory: boolean, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7646,7 +7698,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType66, instanceId: number): Observable<SyncProgressOutput> {
+    getSyncProgress(instanceType: InstanceType67, instanceId: number): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -8442,7 +8494,7 @@ export class InstanceServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType67, instanceId: number): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType68, instanceId: number): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -8492,7 +8544,7 @@ export class InstanceServiceProxy {
     /**
      * @return Success
      */
-    setup(instanceType: InstanceType68): Observable<SetupOutput> {
+    setup(instanceType: InstanceType69): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType === undefined || instanceType === null)
             throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
@@ -15477,7 +15529,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType69, instanceId: number): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType70, instanceId: number): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -15529,7 +15581,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType70, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType71, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -15581,7 +15633,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType71, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType72, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -28144,6 +28196,41 @@ export interface ICreateOrUpdateEditionDto {
     featureValues: NameValueDto[];
 }
 
+export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
+    token: string;
+
+    constructor(data?: IGetProviderUITokenOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.token = data["token"];
+        }
+    }
+
+    static fromJS(data: any): GetProviderUITokenOutput {
+        let result = new GetProviderUITokenOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["token"] = this.token;
+        return data; 
+    }
+}
+
+export interface IGetProviderUITokenOutput {
+    token: string;
+}
+
 export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
     setupAccountsLink: string;
 
@@ -40155,6 +40242,11 @@ export enum InstanceType66 {
     Main = <any>"Main", 
 }
 
+export enum InstanceType67 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
 export enum IncomeStatisticsDateInterval {
     _1 = 1, 
     _2 = 2, 
@@ -40167,12 +40259,12 @@ export enum IncomeStatisticsDateInterval2 {
     _3 = 3, 
 }
 
-export enum InstanceType67 {
+export enum InstanceType68 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
 
-export enum InstanceType68 {
+export enum InstanceType69 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
@@ -40213,17 +40305,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType69 {
-    User = <any>"User", 
-    Main = <any>"Main", 
-}
-
 export enum InstanceType70 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
 
 export enum InstanceType71 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
+export enum InstanceType72 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
