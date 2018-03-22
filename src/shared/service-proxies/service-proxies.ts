@@ -27444,6 +27444,7 @@ export class AccountTotals implements IAccountTotals {
     syncAccountCount: number;
     bankAccountCount: number;
     totalNetWorth: number;
+    totalPending: number;
     currency: string;
 
     constructor(data?: IAccountTotals) {
@@ -27460,6 +27461,7 @@ export class AccountTotals implements IAccountTotals {
             this.syncAccountCount = data["syncAccountCount"];
             this.bankAccountCount = data["bankAccountCount"];
             this.totalNetWorth = data["totalNetWorth"];
+            this.totalPending = data["totalPending"];
             this.currency = data["currency"];
         }
     }
@@ -27475,6 +27477,7 @@ export class AccountTotals implements IAccountTotals {
         data["syncAccountCount"] = this.syncAccountCount;
         data["bankAccountCount"] = this.bankAccountCount;
         data["totalNetWorth"] = this.totalNetWorth;
+        data["totalPending"] = this.totalPending;
         data["currency"] = this.currency;
         return data; 
     }
@@ -27484,6 +27487,7 @@ export interface IAccountTotals {
     syncAccountCount: number;
     bankAccountCount: number;
     totalNetWorth: number;
+    totalPending: number;
     currency: string;
 }
 
