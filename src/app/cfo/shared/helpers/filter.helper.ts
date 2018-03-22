@@ -34,17 +34,16 @@ export class FilterHelpers {
         }
     }
 
-    static filterByAccount(filter: FilterModel, requestFilter: StatsFilter) {
-        if (filter.items && filter.items.element && filter.items.element.value) {
+    static filterByAccount(filter: FilterModel, requestFilter: StatsFilter) {        
+        if (filter.items && filter.items.element) {
             requestFilter.accountIds = [];
             requestFilter.bankIds = [];
-            filter.items.element.value.forEach((id) => {
-                let parts = id.split(':');
-                if (parts.length == 2) {
-                    requestFilter.accountIds.push(+parts[1]);
-                } else {
-                    requestFilter.bankIds.push(+parts[0]);
-                }
+            filter.items.element['dataSource'].forEach((syncAccount, i) => {
+                syncAccount.bankAccounts.forEach((bankAccount, i) => {
+                    if (bankAccount['selected']) {
+                        requestFilter.accountIds.push(+bankAccount.id);
+                    }
+                });                
             });
         }
     }

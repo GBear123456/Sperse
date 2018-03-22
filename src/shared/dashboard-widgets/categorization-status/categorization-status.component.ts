@@ -79,9 +79,9 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
             }
         };
 
-        if (this.bankAccountFilterData.banksWithAccounts && this.bankAccountFilterData.banksWithAccounts.length) {
+        if (this.bankAccountFilterData.bankAccountIds && this.bankAccountFilterData.bankAccountIds.length) {
             filter['Account'] = {
-                element: this.bankAccountFilterData.banksWithAccounts
+                element: this.bankAccountFilterData.bankAccountIds
             };
         }
 

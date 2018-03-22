@@ -66,6 +66,8 @@ import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/buffer';
+import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
+import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filte.model';
 
 class TransactionStatsDtoExtended extends TransactionStatsDto {
     initialDate: moment.Moment;
@@ -580,10 +582,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
         let getCategoryTreeObservalble = this._classificationServiceProxy.getCategoryTree(InstanceType[this.instanceType], this.instanceId, false);
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
-        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservalble, getCashflowGridSettings)
+        let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD', null, true);
+        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservalble, getCashflowGridSettings, getBankAccountsObservable)
             .subscribe(result => {
                 /** Initial data handling */
-                this.handleCashFlowInitialResult(result[0]);
+                this.handleCashFlowInitialResult(result[0], result[4]);
 
                 /** Forecast models handling */
                 this.handleForecastModelResult(result[1]);
@@ -683,7 +686,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.reportPeriod['end'] = this.defaultReportPeriod['end'];
                 }
                 if (filter.caption.toLowerCase() === 'account') {
-                    this.selectedBankAccounts = filter.items.element.value;
+                    this.selectedBankAccounts = filter.items.element.getSelected();
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -740,24 +743,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Handle the subscription result from getInitialData Observable
      * @param initialDataResult
      */
-    handleCashFlowInitialResult(initialDataResult) {
+    handleCashFlowInitialResult(initialDataResult, bankAccounts) {
         this.initialData = initialDataResult;
         this.cashflowTypes = this.initialData.cashflowTypes;
         this.addCashflowType(Total, this.l('Ending Cash Balance'));
         this.addCashflowType(NetChange, this.l('Net Change'));
-        this.bankAccounts = this.initialData.banks.map(x => x.bankAccounts).reduce((x, y) => x.concat(y));
         this._filtersService.setup(
             this.filters = [
                 new FilterModel({
                     field: 'accountIds',
-                    component: FilterCheckBoxesComponent,
+                    component: BankAccountFilterComponent,
                     caption: 'Account',
                     items: {
-                        element: new FilterCheckBoxesModel(
+                        element: new BankAccountFilterModel(
                             {
-                                dataSource: FilterHelpers.ConvertBanksToTreeSource(initialDataResult.banks),
+                                dataSource: bankAccounts,
                                 nameField: 'name',
-                                parentExpr: 'parentId',
                                 keyExpr: 'id'
                             })
                     }
@@ -4066,8 +4067,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     setBankAccountsFilter(data) {
         let accountFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
 
-        if (data.banksWithAccounts) {
-            accountFilter.items['element'].setValue(data.banksWithAccounts, accountFilter);
+        if (data.bankAccountIds) {
+            accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
         } else {
             accountFilter.items['element'].setValue([], accountFilter);
         }
