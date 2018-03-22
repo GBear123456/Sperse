@@ -42,6 +42,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     @Input() showClearSelection: boolean;
     @Input() showFilterIcon: boolean;
     @Input() showAddEntity: boolean;
+    @Input() includeNonCashflowNodes = false;
     @Input() categoryId: number;
     @Input('dragMode')
     set dragMode(value: boolean) {
@@ -549,7 +550,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         this.autoExpand = autoExpand;
 
         this._classificationServiceProxy.getCategoryTree(
-            InstanceType[this.instanceType], this.instanceId, false).subscribe((data) => {
+            InstanceType[this.instanceType], this.instanceId, this.includeNonCashflowNodes).subscribe((data) => {
                 let categories = [];
                 this.categorization = data;
                 if (this.settings.showAT && data.accountingTypes) {
