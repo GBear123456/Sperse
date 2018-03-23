@@ -748,6 +748,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.cashflowTypes = this.initialData.cashflowTypes;
         this.addCashflowType(Total, this.l('Ending Cash Balance'));
         this.addCashflowType(NetChange, this.l('Net Change'));
+        this.bankAccounts = this.initialData.banks.map(x => x.bankAccounts).reduce((x, y) => x.concat(y));
         this._filtersService.setup(
             this.filters = [
                 new FilterModel({
