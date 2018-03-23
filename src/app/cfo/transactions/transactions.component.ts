@@ -623,7 +623,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.dataSourceURI, this.cashFlowCategoryFilter.concat(this.filters),
             (filter) => {
                 if (filter.caption.toLowerCase() === 'account') {
-                    this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.getSelected());
+                    this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
                 }
                 let filterMethod = this['filterBy' +
                     this.capitalize(filter.caption)];

@@ -686,7 +686,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.reportPeriod['end'] = this.defaultReportPeriod['end'];
                 }
                 if (filter.caption.toLowerCase() === 'account') {
-                    this.selectedBankAccounts = filter.items.element.getSelected();
+                    this.selectedBankAccounts = filter.items.element.value;
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];

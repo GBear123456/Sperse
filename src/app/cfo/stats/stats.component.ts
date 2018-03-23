@@ -365,7 +365,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         this.sliderReportPeriod.end = this.sliderReportPeriod.maxDate;
                 }
                 if (filter.caption.toLowerCase() === 'account') {
-                    this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.getSelected());
+                    this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
