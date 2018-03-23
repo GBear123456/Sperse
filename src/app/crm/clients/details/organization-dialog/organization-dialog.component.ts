@@ -131,7 +131,7 @@ export class OrganizationDialogComponent extends AppComponentBase {
         return {
             id: this.data.id,
             value: value instanceof moment ? 
-                value.format('MMM YYYY'): value
+                value.format('MMM YYYY'): value,
             validationRules: [],
             isEditDialogEnabled: false,
             lEntityName: field,

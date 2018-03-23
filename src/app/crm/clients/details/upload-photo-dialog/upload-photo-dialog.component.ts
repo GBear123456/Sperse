@@ -18,8 +18,9 @@ import {
 export class UploadPhotoDialogComponent extends AppComponentBase {
     @ViewChild('cropper') cropper: ImageCropperComponent;
 
-    imageData: any;
+    imageData: any = {};
     cropperSettings: CropperSettings;
+
     croppedWidth: number;
     croppedHeight: number;
 
@@ -32,28 +33,27 @@ export class UploadPhotoDialogComponent extends AppComponentBase {
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-        this.cropperSettings = new CropperSettings();
-        this.cropperSettings.width = 200;
-        this.cropperSettings.height = 200;
+        this.cropperSettings = this.getCropperSetting();        
+    }
 
-        this.cropperSettings.croppedWidth = 200;
-        this.cropperSettings.croppedHeight = 200;
+    getCropperSetting() {
+        let setting = new CropperSettings();
+        setting.width = 200;
+        setting.height = 200;
+        setting.croppedWidth = 200;
+        setting.croppedHeight = 200;
+        setting.canvasWidth = 500;
+        setting.canvasHeight = 300;
+        setting.minWidth = 115;
+        setting.minHeight = 115;
+        setting.rounded = false;
+        setting.keepAspect = false;
+        setting.noFileInput = true;
+        setting.minWithRelativeToResolution = false;
+        setting.cropperDrawSettings.strokeColor = 'rgba(255,255,255,1)';
+        setting.cropperDrawSettings.strokeWidth = 2;
 
-        this.cropperSettings.canvasWidth = 500;
-        this.cropperSettings.canvasHeight = 300;
-
-        this.cropperSettings.minWidth = 115;
-        this.cropperSettings.minHeight = 115;
-
-        this.cropperSettings.rounded = false;
-        this.cropperSettings.keepAspect = false;
-        this.cropperSettings.noFileInput = true;
-        this.cropperSettings.minWithRelativeToResolution = false;
-
-        this.cropperSettings.cropperDrawSettings.strokeColor = 'rgba(255,255,255,1)';
-        this.cropperSettings.cropperDrawSettings.strokeWidth = 2;
-
-        this.imageData = {};
+        return setting;
     }
 
     fileChangeListener($event) {

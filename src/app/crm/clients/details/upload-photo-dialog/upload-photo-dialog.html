@@ -4,7 +4,7 @@
          {{l("Select photo to apply")}}
          <div class="file-upload">
             <span class="text">{{l('Open')}}</span>
-            <input id="custom-input" type="file" (change)="fileChangeListener($event)">
+            <input id="custom-input" type="file" (change)="fileChangeListener($event)" accept="image/*">
         </div>
     </h3>
     <img-cropper #cropper [image]="imageData" [settings]="cropperSettings" (onCrop)="onCrop($event)"></img-cropper>
