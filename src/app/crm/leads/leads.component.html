@@ -56,13 +56,17 @@
                             <dxi-column dataField="LastTransactionStatus" caption="{{l('LastTransactionStatus')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="LastTransactionAmount" caption="{{l('LastTransactionAmount')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="LastTransactionErrorMessage" caption="{{l('LastTransactionErrorMessage')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
+                            <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"
+                                [editorOptions]="{
+                                    displayFormat: formatting.date
+                                }">
+                            </dxi-column>
                             <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                             <div *dxTemplate="let cellData of 'phoneCell'">
                                 {{cellData.value | phone}}
                             </div>
                             <div *dxTemplate="let cellData of 'dateCell'">
-                                {{cellData.value | date: formatting.date}}
+                                {{cellData.value | date: formatting.dateTime}}
                             </div>
                             <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-sorting mode="multiple"></dxo-sorting>
