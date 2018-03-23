@@ -12,7 +12,7 @@
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
                                   (onContentReady)="onContentReady($event)"
-                                  (onRowClick)="onRowClick($event)"
+                                  (onCellClick)="onCellClick($event)"
                                   (onEditingStart)="showClientDetails($event)"
                                   (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                         <dxo-selection selectAllMode="page"
@@ -42,7 +42,7 @@
                             {{cellData.value ? l('Organization') : l('Person')}}
                         </div>
                         <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
-                        <dxi-column cellTemplate="linkToCFOTemplate" [width]="75" [fixed]="true" [fixedPosition]="'right'"
+                        <dxi-column name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="75" [fixed]="true" [fixedPosition]="'right'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
                             <span *ngIf="isClientCFOAvailable(data.data.UserId)" [class]="'link-to-cfo-column'" (click)="redirectToCFO($event, data.data.UserId)">

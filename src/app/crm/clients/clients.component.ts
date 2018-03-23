@@ -133,8 +133,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     showClientDetails(event) {
+        let clientId = event.data && event.data.Id;
+        if (!clientId)
+            return;
+
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/client', event.data.Id]);
+        this._router.navigate(['app/crm/client', clientId]);
     }
 
     redirectToCFO(event, userId) {
@@ -514,7 +518,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         });
     }
 
-    onRowClick($event) {
+    onCellClick($event) {
+        let col = $event.column;
+        if (col && (col.command || col.name == 'LinkToCFO'))
+            return;
         this.showClientDetails($event);
     }
 
