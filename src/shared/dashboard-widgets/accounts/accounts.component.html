@@ -4,8 +4,13 @@
             target="#valueTotal"
             showEvent="dxhoverstart"
             hideEvent="dxhoverend">     
-            <div *dxTemplate="let data = data of 'content'">  
-                {{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}
+            <div *dxTemplate="let data = data of 'content'">
+                <div class="tooltip-wrap">
+                    <header>{{l('Accounts_BalanceToolTip_Header')}}</header>
+                    <div>{{l('Accounts_BalanceToolTip_WithPendingTransactions')}} <span class="total">{{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</span></div>
+                    <div>{{l('Accounts_BalanceToolTip_PendingTransactions')}} <span>{{accountsData?.totalPending | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</span></div>
+                    <div>{{l('Accounts_BalanceToolTip_WithoutPendingTransactions')}} <span>{{accountsData?.totalNetWorth - accountsData?.totalPending | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</span></div>
+                </div>
             </div>
         </dx-tooltip>
         <div class="value" id="valueTotal">{{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</div>
@@ -18,7 +23,7 @@
                      target="#valueDaily"
                      showEvent="dxhoverstart"
                      hideEvent="dxhoverend">     
-                     <div *dxTemplate="let data = data of 'content'">  
+                     <div *dxTemplate="let data = data of 'content'">
                          {{ dailyStatsAmount | currency: dailyStatsData?.currency : 'symbol' : '1.2-2'}}
                      </div>
                  </dx-tooltip>

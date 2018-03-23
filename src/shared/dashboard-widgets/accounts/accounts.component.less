@@ -1,5 +1,6 @@
 :host {
     display: block;
+
     .accounts-list {
         display: flex;
         flex-flow: row wrap;
@@ -14,9 +15,9 @@
             border-radius: 4px;
             position: relative;
 
-            @media (max-width: 1540px) { 
-                padding-left: 60px!important;
-                background-position: 15px 50%!important;
+            @media (max-width: 1540px) {
+                padding-left: 60px !important;
+                background-position: 15px 50% !important;
             }
 
             &.dailyStats {
@@ -28,7 +29,7 @@
                     color: #677380;
 
                     span {
-                        font-size: 14px;    
+                        font-size: 14px;
                         line-height: 2.4;
                         letter-spacing: 0.2px;
                         vertical-align: top;
@@ -54,7 +55,7 @@
                         line-height: 1.5;
                         border-right: 2px solid transparent;
                         cursor: pointer;
-                        display: block;                        
+                        display: block;
 
                         + li {
                             margin-top: 7px;
@@ -149,6 +150,32 @@
                     color: lighten(#00AEEF, 20%);
                 }
             }
+        }
+    }
+}
+
+.tooltip-wrap {
+    text-align: left;
+    max-height: 290px;
+    min-width: 260px;
+    overflow: auto;
+    padding: 0px 10px;
+
+    header {
+        font-weight: bold;
+        padding: 0 0 5px;
+    }
+
+    div {
+        padding: 5px 0;
+    }
+
+    span {
+        float: right;
+        margin-left: 10px;
+
+        &.total {
+            font-weight: bold;
         }
     }
 }

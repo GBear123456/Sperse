@@ -12,7 +12,8 @@ import { TransactionsServiceProxy,
          UpdateTransactionsCategoryInput,
          BankDto,
          AutoClassifyDto,
-         ResetClassificationDto } from '@shared/service-proxies/service-proxies';
+         ResetClassificationDto,
+         BankAccountsServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
@@ -41,13 +42,15 @@ import query from 'devextreme/data/query';
 import DataSource from 'devextreme/data/data_source';
 import { CategorizationComponent } from 'app/cfo/transactions/categorization/categorization.component';
 import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rules.component';
+import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
+import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filte.model';
 
 
 @Component({
     templateUrl: './transactions.component.html',
     styleUrls: ['./transactions.component.less'],
     animations: [appModuleAnimation()],
-    providers: [TransactionsServiceProxy, ClassificationServiceProxy]
+    providers: [TransactionsServiceProxy, ClassificationServiceProxy, BankAccountsServiceProxy]
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -91,8 +94,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public adjustmentTotal = 0;
     public adjustmentStartingBalanceTotal = 0;
     public adjustmentStartingBalanceTotalCent = 0;
-
-    public bankAccountsSource = {};
+    
     headlineConfig: any;
 
     private _categoriesShowedBefore = true;
@@ -234,6 +236,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private _activatedRoute: ActivatedRoute,
         private _TransactionsServiceProxy: TransactionsServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy,
+        private _bankAccountsServiceProxy: BankAccountsServiceProxy,
         public filtersService: FiltersService
     ) {
         super(injector);
@@ -476,9 +479,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         Observable.forkJoin(
             this._TransactionsServiceProxy.getTransactionTypesAndCategories(),
-            this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId)
+            this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId),
+            this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD', null, true)
         ).subscribe(result => {
-            this.bankAccountsSource = this.getBankAccountsSource(result[1].banks);
 
             this.filtersService.setup(
                 this.filters = [
@@ -491,14 +494,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         options: { method: 'getFilterByDate' }
                     }),
                     new FilterModel({
-                        component: FilterCheckBoxesComponent,
+                        component: BankAccountFilterComponent,
                         caption: 'Account',
                         items: {
-                            element: new FilterCheckBoxesModel(
+                            element: new BankAccountFilterModel(
                                 {
-                                    dataSource: FilterHelpers.ConvertBanksToTreeSource(result[1].banks),
+                                    dataSource: result[2],
                                     nameField: 'name',
-                                    parentExpr: 'parentId',
                                     keyExpr: 'id'
                                 })
                         }
@@ -603,31 +605,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
-
-    getBankAccountsSource(banks: BankDto[]) {
-        let result = {};
-        banks.forEach((bank) => {
-
-            bank.bankAccounts.forEach((acc) => {
-                result[acc.id] = {
-                    id: bank.id + ':' + acc.id,
-                    accountId: acc.id,
-                    parent: bank.name,
-                    parentId: bank.id,
-                    name: acc.accountNumber + ': ' + (acc.accountName ? acc.accountName : 'No name')
-                };
-            });
-        });
-        return result;
-    }
-
-    getBankAccounts() {
-        let result = [];
-        this.bankAccounts.forEach((id) => {
-            result.push(this.bankAccountsSource[id]);
-        });
-        return result;
-    }
+    
     applyTotalBankAccountFilter(bankAccountId) {
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'Account'; });
 
@@ -641,6 +619,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.defaultSubaccountTooltipVisible = false;
         this.filtersService.change(accountFilter);
     }
+
     processFilterInternal() {
         let filterQuery = this.processODataFilter(this.dataGrid.instance,
             this.dataSourceURI, this.cashFlowCategoryFilter.concat(this.filters),
@@ -678,17 +657,16 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     filterByAccount(filter) {
         let data = {};
         if (filter.items.element) {
-            let filterData = [];
-            if (filter.items.element.value) {
-                filter.items.element.value.forEach((id) => {
-                    let parts = id.split(':');
-                    filterData.push(parts.length == 2 ? {
-                        BankId: +parts[0],
-                        BankAccountId: +parts[1]
-                    } : { BankId: +id });
+            let filterData = [];  
+            filter.items.element.dataSource.forEach((syncAccount, i) => {
+                syncAccount.bankAccounts.forEach((bankAccount, i) => {
+                    if (bankAccount['selected']) {
+                        filterData.push({
+                            BankAccountId: + bankAccount.id
+                        });
+                    }
                 });
-            }
-
+            });
             data = {
                 or: filterData
             };

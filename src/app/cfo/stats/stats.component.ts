@@ -31,6 +31,8 @@ import {
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import * as _ from 'underscore';
 import * as moment from 'moment';
+import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
+import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filte.model';
 
 @Component({
     'selector': 'app-stats',
@@ -315,10 +317,11 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         /** Create parallel operations */
         let getCashFlowInitialDataObservable = this._cashflowService.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable)
+        let getBankAccountsObservable = this._bankAccountService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD', null, true);
+        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getBankAccountsObservable)
             .subscribe(result => {
                 /** Initial data handling */
-                this.handleCashFlowInitialResult(result[0]);
+                this.handleCashFlowInitialResult(result[0], result[2]);
 
                 /** Forecast models handling */
                 this.handleForecastModelResult(result[1]);
@@ -350,6 +353,21 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this._filtersService.apply(() => {
 
             for (let filter of this.filters) {
+                if (filter.caption.toLowerCase() === 'date') {
+                    if (filter.items.from.value)
+                        this.sliderReportPeriod.start = filter.items.from.value.getFullYear();
+                    else
+                        this.sliderReportPeriod.start = this.sliderReportPeriod.minDate;             
+
+                    if (filter.items.to.value)
+                        this.sliderReportPeriod.end = filter.items.to.value.getFullYear();
+                    else
+                        this.sliderReportPeriod.end = this.sliderReportPeriod.maxDate;
+                }
+                if (filter.caption.toLowerCase() === 'account') {
+                    this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.getSelected());
+                }
+
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
                 if (filterMethod)
                     filterMethod(filter, this.requestFilter);
@@ -373,7 +391,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         return window.innerHeight - 260;
     }
 
-    handleCashFlowInitialResult(result) {
+    handleCashFlowInitialResult(result, bankAccounts) {
         this._filtersService.setup(
             this.filters = [
                 new FilterModel({
@@ -387,14 +405,13 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 }),
                 new FilterModel({
                     field: 'accountIds',
-                    component: FilterCheckBoxesComponent,
+                    component: BankAccountFilterComponent,
                     caption: 'Account',
                     items: {
-                        element: new FilterCheckBoxesModel(
+                        element: new BankAccountFilterModel(
                             {
-                                dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
+                                dataSource: bankAccounts,
                                 nameField: 'name',
-                                parentExpr: 'parentId',
                                 keyExpr: 'id'
                             })
                     }
@@ -481,12 +498,13 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 /** reinit */
                 this.initHeadlineConfig();
                 this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
+                if (!this.sliderReportPeriod.start || this.sliderReportPeriod.start === this.sliderReportPeriod.minDate)
+                    this.sliderReportPeriod.start = this.statsData[0].date.year();
+                if (!this.sliderReportPeriod.end || this.sliderReportPeriod.end === this.sliderReportPeriod.maxDate)
+                    this.sliderReportPeriod.end = this.statsData[this.statsData.length - 1].date.year();
             } else {
                 console.log('No daily stats');
-            }
-
-            this.sliderReportPeriod.start = this.statsData[0].date.year();
-            this.sliderReportPeriod.end = this.statsData[this.statsData.length - 1].date.year();
+            }          
 
             this.loadingFinished = true;
             abp.ui.clearBusy();
@@ -564,8 +582,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     setBankAccountsFilter(data) {
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-        if (data.banksWithAccounts) {
-            accountFilter.items['element'].setValue(data.banksWithAccounts, accountFilter);
+        if (data.bankAccountIds) {
+            accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
         } else {
             accountFilter.items['element'].setValue([], accountFilter);
         }

@@ -14,6 +14,10 @@ export class FilterItemModel {
         this.value = value;
     }
 
+    getSelected() {
+        return this.value;
+    }
+
     getDisplayElements(key: string): DisplayElement[] {
         let caption = capitalize(key);
         let isBoolValues = typeof (this.value) == 'boolean';

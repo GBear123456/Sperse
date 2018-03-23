@@ -19,6 +19,7 @@ import { FilterMultiselectDropDownComponent } from './multiselect-dropdown/filte
 
 import { DxTreeListModule, DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, 
     DxDateBoxModule, DxDropDownBoxModule, DxDataGridModule } from 'devextreme-angular';
+import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 
 @NgModule({
     imports: [
@@ -43,6 +44,7 @@ import { DxTreeListModule, DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule,
         FilterCBoxesComponent,
         FilterDatesComponent,
         FilterCalendarComponent,
+        BankAccountFilterComponent,
         AdDirective
     ],
     entryComponents: [
@@ -53,7 +55,8 @@ import { DxTreeListModule, DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule,
         FilterCBoxesComponent,
         FilterInputsComponent,
         FilterDatesComponent,
-        FilterCalendarComponent
+        FilterCalendarComponent,
+        BankAccountFilterComponent
     ],
     exports: [
         FilterManagerComponent

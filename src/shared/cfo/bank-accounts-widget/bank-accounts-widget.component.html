@@ -1,0 +1,98 @@
+<div class="bank-account-filter-container">
+    <div class="filter-actions">
+        <div class="filter-by-types">
+            <dx-tabs [dataSource]="bankAccountTypesForSelect"
+                     [selectedItem]="selectedBankAccountType"
+                     (onItemClick)="bankAccountTypeChanged($event)">
+            </dx-tabs>
+        </div>
+    </div>
+    <dx-scroll-view [showScrollbar]="onHover">
+        <div class="grid-container">
+            <dx-data-grid id="gridContainer"
+                          [width]="tableWidth"
+                          [dataSource]="syncAccountsDataSource"
+                          [masterDetail]="{ enabled: false, template: 'detail' }"
+                          keyExpr="syncAccountId"
+                          [showColumnHeaders]="false"
+                          [columnAutoWidth]="true"
+                          [showBorders]="false"
+                          [showColumnLines]="false"
+                          [showRowLines]="false"
+                          (onRowUpdated)="masterSelectionChanged($event)"
+                          (onCellClick)="masterRowExpandChange($event)">
+
+                <dxo-editing mode="cell" [allowUpdating]="true">
+                </dxo-editing>
+                <dxo-scrolling showScrollbar="never">
+                </dxo-scrolling>
+                <dxo-filter-row [visible]="false"></dxo-filter-row>
+                <dxi-column dataField="selected" [width]="30" alignment="center" dataType="boolean"></dxi-column>
+                <dxi-column dataField="name" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
+                <dxi-column dataField="syncAccountStatus" [width]="140" alignment="center" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
+                <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption="" cellTemplate="invisibleTemplate"></dxi-column>
+                <dxi-column dataField="lastSyncDate" alignment="left" [width]="180" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
+                <dxi-column dataField="balance" cssClass="tabular" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
+                <dxi-column [width]="30" alignment="right" [allowEditing]="false" cellTemplate="expandTemplate"></dxi-column>
+
+                <div *dxTemplate="let syncAccount of 'detail'">
+                    <div class="bank-accounts-grid-container">
+                        <dx-data-grid [dataSource]="syncAccount.data.bankAccounts"
+                                      [showBorders]="false"
+                                      [width]="tableWidth"
+                                      [showColumnLines]="false"
+                                      [showRowLines]="false"
+                                      [columnAutoWidth]="true"
+                                      (onRowUpdated)="bankAccountSelectionChanged($event)"
+                                      [selectionFilter]="['selected', '=', true]">
+
+                            <dxo-editing mode="cell" [allowUpdating]="true">
+                            </dxo-editing>
+                            <dxo-selection [deferred]="true">
+                            </dxo-selection>
+                            <dxo-filter-row [visible]="false"></dxo-filter-row>
+                            <dxi-column dataField="selected" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
+                            <dxi-column dataField="accountName" [width]="nameColumnWidth" alignment="left" [allowEditing]="false"></dxi-column>
+                            <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption="" cellTemplate="invisibleTemplate"></dxi-column>
+                            <dxi-column dataField="accountNumber" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="false"></dxi-column>
+                            <dxi-column dataField="type" [width]="160" alignment="left" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
+                            <dxi-column dataField="balance" cssClass="tabular" alignment="right" cellTemplate="amountTemplate" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
+                            <div *dxTemplate="let cell of 'amountTemplate'">
+                                <ng-container *ngIf="(cell.text)">
+                                    <span class="number-value"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}  </span>
+                                </ng-container>
+                            </div>
+                            <div *dxTemplate="let cell of 'invisibleTemplate'">
+                            </div>
+                        </dx-data-grid>
+                    </div>
+                </div>
+                <div *dxTemplate="let cell of 'amountTemplate'">
+                    <ng-container *ngIf="(cell.text)">
+                        <div class="number-value"><span class="bold"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}</span> </div>
+                    </ng-container>
+                </div>
+                <div *dxTemplate="let cell of 'statusTemplate'">
+                    <ng-container *ngIf="(cell.text)">
+                        <div class="account-status">
+                            <div class='status-color-container'>
+                                <div [class]="'status-color ' + cell.text | lowercase"></div>
+                            </div>
+                            <span class="text"> {{cell.text | uppercase}}</span>
+                        </div>
+                    </ng-container>
+                </div>
+                <div *dxTemplate="let cell of 'expandTemplate'">
+                    <div class="expand-div"></div>
+                </div>
+                <div *dxTemplate="let cell of 'syncDateTemplate'">
+                    <ng-container *ngIf="(cell.text)">
+                        <div class="sync-date">Last sync: {{cell.text | date: 'MMM d, y '}}</div>
+                    </ng-container>
+                </div>
+                <div *dxTemplate="let cell of 'invisibleTemplate'">
+                </div>
+            </dx-data-grid>
+        </div>
+    </dx-scroll-view>
+</div>
