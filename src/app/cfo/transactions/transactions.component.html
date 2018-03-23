@@ -150,7 +150,7 @@
                         <div *dxTemplate="let data of 'startBalanceTotal'">
                             <div class="informer starting-balance">
                                 <h2 class="count">
-                                    ${{adjustmentStartingBalanceTotal | number:'1.0-0'}}
+                                    {{adjustmentStartingBalanceTotal  | currency:'USD':'symbol':'1.0-0'}}
                                     <span class="cent">.{{adjustmentStartingBalanceTotalCent | number:'2.0-0'}}</span>
                                 </h2>
                                 <span class="name">{{l('Starting_Balance')}}</span>
@@ -241,7 +241,7 @@
                         <div *dxTemplate="let data of 'transactionTotal'">
                             <div class="informer">
                                 <h2 class="count">
-                                    ${{transactionTotal | number:'1.0-0'}}
+                                    {{transactionTotal  | currency: 'USD' : 'symbol' : '1.0-0'}}
                                     <span class="cent">.{{transactionTotalCent | number:'2.0-0'}}</span>
                                 </h2>
                                 <span class="name" (click)="toggleTotalDefault()">
