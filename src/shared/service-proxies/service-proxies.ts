@@ -21323,6 +21323,7 @@ export interface IChangeCategoryForRulesInput {
 }
 
 export class GetKeyAttributeValuesInput implements IGetKeyAttributeValuesInput {
+    ruleId: number;
     transactionIds: number[];
 
     constructor(data?: IGetKeyAttributeValuesInput) {
@@ -21336,6 +21337,7 @@ export class GetKeyAttributeValuesInput implements IGetKeyAttributeValuesInput {
 
     init(data?: any) {
         if (data) {
+            this.ruleId = data["ruleId"];
             if (data["transactionIds"] && data["transactionIds"].constructor === Array) {
                 this.transactionIds = [];
                 for (let item of data["transactionIds"])
@@ -21352,6 +21354,7 @@ export class GetKeyAttributeValuesInput implements IGetKeyAttributeValuesInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["ruleId"] = this.ruleId;
         if (this.transactionIds && this.transactionIds.constructor === Array) {
             data["transactionIds"] = [];
             for (let item of this.transactionIds)
@@ -21362,6 +21365,7 @@ export class GetKeyAttributeValuesInput implements IGetKeyAttributeValuesInput {
 }
 
 export interface IGetKeyAttributeValuesInput {
+    ruleId: number;
     transactionIds: number[];
 }
 

@@ -80,7 +80,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
         let requests: Observable<any>[] = [
             _transactionsServiceProxy.getTransactionAttributeTypes(InstanceType[this.instanceType], this.instanceId),
-            _classificationServiceProxy.getKeyAttributeValues(InstanceType[this.instanceType], this.instanceId, new GetKeyAttributeValuesInput({ transactionIds: <number[]>this.data.transactionIds })),
+            _classificationServiceProxy.getKeyAttributeValues(InstanceType[this.instanceType], this.instanceId, new GetKeyAttributeValuesInput({ ruleId: this.data.id, transactionIds: <number[] > this.data.transactionIds })),
             _cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId)
         ];
 
