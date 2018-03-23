@@ -492,7 +492,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         }
     }
 
-    showConfirmationDialog(selectedIds: number[], statusId: string) {
+    private showConfirmationDialog(selectedIds: number[], statusId: string) {
         this.message.confirm(
             this.l('ClientsUpdateStatusWarningMessage'),
             this.l('ClientStatusUpdateConfirmationTitle'),

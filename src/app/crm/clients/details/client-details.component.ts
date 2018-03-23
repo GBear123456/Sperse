@@ -128,7 +128,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.showConfirmationDialog(statusId);
     }
 
-    showConfirmationDialog(statusId: string) {
+    private showConfirmationDialog(statusId: string) {
         this.message.confirm(
             this.l('ClientUpdateStatusWarningMessage'),
             this.l('ClientStatusUpdateConfirmationTitle'),
