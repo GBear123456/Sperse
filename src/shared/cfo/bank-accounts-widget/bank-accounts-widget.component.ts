@@ -12,7 +12,7 @@ import * as _ from 'underscore';
 })
 export class BankAccountsWidgetComponent extends AppComponentBase implements OnInit {
     private initBankAccountsTimeout: any;
-    private initBankAccountSelectedTimeout: any;
+    private initBankAccountHighlightedTimeout: any;
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
     @Input() showAdvancedColumns = true;
     @Input() tableWidth = 740;
@@ -25,17 +25,28 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
             this.getExistBankAccountTypes();
             this.filterByBankAccountType();
             this.setSelectedIfNot();
+            this.setHighlighted();
             if (this.mainDataGrid)
                 this.mainDataGrid.instance.refresh();
         }, 300);
     }
-
+    @Input('highlightedBankAccountIds')
+    set highlightedBankAccountIds(highlightedBankAccountIds) {
+        clearTimeout(this.initBankAccountHighlightedTimeout);
+        this.initBankAccountHighlightedTimeout = setTimeout(() => {
+            this.bankAccountIdsForHighlight = highlightedBankAccountIds;
+            this.setHighlighted();
+            if (this.mainDataGrid)
+                this.mainDataGrid.instance.refresh();
+        }, 300);
+    }
     syncAccountsDataSource: SyncAccountBankDto[] = [];
     baseBankAccountTypes = ['Checking', 'Savings', 'Credit Card'];
     allAccountTypesFilter: string;
     bankAccountTypesForSelect = [];
     existBankAccountTypes = [];
     selectedBankAccountType: string = null;
+    bankAccountIdsForHighlight = [];
 
     constructor(
         injector: Injector
@@ -47,6 +58,25 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     }
 
     ngOnInit(): void {
+    }
+
+    rowPrepared(e) {
+        if (e.rowType === 'data' && e.data['highlighted']) {
+            e.rowElement.classList.add('highlighted-row')
+        }
+    }
+
+    setHighlighted() {
+        this.syncAccountsDataSource.forEach((syncAccount, i) => {
+            let highlightedBankAccountExist = false;
+            syncAccount.bankAccounts.forEach((bankAccount, i) => {
+                let isBankAccountHighlighted = _.contains(this.bankAccountIdsForHighlight, bankAccount.id);
+                bankAccount['highlighted'] = isBankAccountHighlighted;
+                if (isBankAccountHighlighted)
+                    highlightedBankAccountExist = true;
+            });
+            syncAccount['highlighted'] = highlightedBankAccountExist;
+        });
     }
 
     refreshGrid() {

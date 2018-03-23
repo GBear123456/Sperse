@@ -18,6 +18,8 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     @ViewChild(BankAccountsWidgetComponent) bankAccountWidget: BankAccountsWidgetComponent;
     @Input() targetBankAccountsTooltip = '';
     @Input() useGlobalCache = false;
+    @Input() highlightedBankAccountIds = [];
+
     @Output() onBankAccountsSelected: EventEmitter<any> = new EventEmitter();
 
     private readonly LOCAL_STORAGE = 0;
