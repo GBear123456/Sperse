@@ -27257,12 +27257,14 @@ export interface IPersonKeyInfoDto {
 }
 
 export class CreateCustomerInput implements ICreateCustomerInput {
+    namePrefix: string;
     firstName: string;
+    middleName: string;
     lastName: string;
-    dob: moment.Moment;
-    emailAddress: string;
-    phoneNumber: string;
-    ssn: string;
+    nameSuffix: string;
+    emailAddresses: CreateContactEmailInput[];
+    phoneNumbers: CreateContactPhoneInput[];
+    address: CreateContactAddressInput;
     suppressSimilarContactWarning: boolean = false;
     organizationUnitId: number;
 
@@ -27277,12 +27279,22 @@ export class CreateCustomerInput implements ICreateCustomerInput {
 
     init(data?: any) {
         if (data) {
+            this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
             this.lastName = data["lastName"];
-            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
-            this.emailAddress = data["emailAddress"];
-            this.phoneNumber = data["phoneNumber"];
-            this.ssn = data["ssn"];
+            this.nameSuffix = data["nameSuffix"];
+            if (data["emailAddresses"] && data["emailAddresses"].constructor === Array) {
+                this.emailAddresses = [];
+                for (let item of data["emailAddresses"])
+                    this.emailAddresses.push(CreateContactEmailInput.fromJS(item));
+            }
+            if (data["phoneNumbers"] && data["phoneNumbers"].constructor === Array) {
+                this.phoneNumbers = [];
+                for (let item of data["phoneNumbers"])
+                    this.phoneNumbers.push(CreateContactPhoneInput.fromJS(item));
+            }
+            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.suppressSimilarContactWarning = data["suppressSimilarContactWarning"] !== undefined ? data["suppressSimilarContactWarning"] : false;
             this.organizationUnitId = data["organizationUnitId"];
         }
@@ -27296,12 +27308,22 @@ export class CreateCustomerInput implements ICreateCustomerInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
         data["lastName"] = this.lastName;
-        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
-        data["emailAddress"] = this.emailAddress;
-        data["phoneNumber"] = this.phoneNumber;
-        data["ssn"] = this.ssn;
+        data["nameSuffix"] = this.nameSuffix;
+        if (this.emailAddresses && this.emailAddresses.constructor === Array) {
+            data["emailAddresses"] = [];
+            for (let item of this.emailAddresses)
+                data["emailAddresses"].push(item.toJSON());
+        }
+        if (this.phoneNumbers && this.phoneNumbers.constructor === Array) {
+            data["phoneNumbers"] = [];
+            for (let item of this.phoneNumbers)
+                data["phoneNumbers"].push(item.toJSON());
+        }
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["suppressSimilarContactWarning"] = this.suppressSimilarContactWarning;
         data["organizationUnitId"] = this.organizationUnitId;
         return data; 
@@ -27309,12 +27331,14 @@ export class CreateCustomerInput implements ICreateCustomerInput {
 }
 
 export interface ICreateCustomerInput {
+    namePrefix: string;
     firstName: string;
+    middleName: string;
     lastName: string;
-    dob: moment.Moment;
-    emailAddress: string;
-    phoneNumber: string;
-    ssn: string;
+    nameSuffix: string;
+    emailAddresses: CreateContactEmailInput[];
+    phoneNumbers: CreateContactPhoneInput[];
+    address: CreateContactAddressInput;
     suppressSimilarContactWarning: boolean;
     organizationUnitId: number;
 }
