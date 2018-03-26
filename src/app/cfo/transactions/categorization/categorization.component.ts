@@ -355,10 +355,14 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             JSON.stringify(this.settings));
     }
 
-    processExpandTree(expandTypes, expandCategories) {
-        _.mapObject(this.categorization.accountingTypes, (item, key) => {
-            this.categoryList.instance[(expandTypes ? 'expand' : 'collapse') + 'Row'](key + item.typeId);
-        });
+    processExpandTree(expandFirstLevel, expandSecondLevel) {
+        if (this.settings.showAT) {
+            _.mapObject(this.categorization.accountingTypes, (item, key) => {
+                this.categoryList.instance[(expandFirstLevel ? 'expand' : 'collapse') + 'Row'](key + item.typeId);
+            });
+        }
+
+        var expandCategories = (expandFirstLevel && !this.settings.showAT) || expandSecondLevel;
         _.mapObject(this.categorization.categories, (item, key) => {
             if (!item.parentId) {
                 let method = this.categoryList.instance[
@@ -469,7 +473,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 sourceCategory.cashType != targetCashType)
                 return false;
         } else {
-            if (targetElement.getAttribute('aria-level') == '0')
+            if (targetElement.classList.contains('accountingType'))
                 return false;
         }
 
@@ -593,7 +597,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
                 this.refreshTransactionsCountDataSource();
             }
-        );
+            );
     }
 
     setTransactionsCount() {
@@ -607,7 +611,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         let parentCategories: any[] = [];
 
         this.categories.forEach(x => {
-            if (x.parent == 'root')
+            if (isNaN(x.key))
                 accountingTypes[x.key] = x;
             else if (parseInt(x.parent) != x.parent)
                 parentCategories[x.key] = x;
@@ -616,15 +620,17 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         this.categories.forEach(x => {
             if (parseInt(x.parent) == x.parent && x.transactionsCount) {
                 let parentCategory = parentCategories[x.parent];
-                if (x.transactionsCount)
+                if (parentCategory && x.transactionsCount)
                     parentCategory.transactionsCount = parentCategory.transactionsCount ? parentCategory.transactionsCount + x.transactionsCount : x.transactionsCount;
             }
         });
-        parentCategories.forEach(x => {
-            let accountingType = accountingTypes[x.parent];
-            if (x.transactionsCount)
-                accountingType.transactionsCount = accountingType.transactionsCount ? accountingType.transactionsCount + x.transactionsCount : x.transactionsCount;
-        });
+
+        if (this.settings.showAT)
+            parentCategories.forEach(x => {
+                let accountingType = accountingTypes[x.parent];
+                if (x.transactionsCount)
+                    accountingType.transactionsCount = accountingType.transactionsCount ? accountingType.transactionsCount + x.transactionsCount : x.transactionsCount;
+            });
     }
 
     refreshTransactionsCountDataSource() {
@@ -836,7 +842,14 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             }
         }
 
-        if ($event.level > 0) {
+        if (isNaN($event.key))
+            $event.rowElement.classList.add('accountingType');
+        else if (isNaN($event.data.parent))
+            $event.rowElement.classList.add('parentCategory');
+        else
+            $event.rowElement.classList.add('subCategory');
+
+        if (!isNaN($event.key)) {
             $event.rowElement.setAttribute('draggable', true);
         }
     }
