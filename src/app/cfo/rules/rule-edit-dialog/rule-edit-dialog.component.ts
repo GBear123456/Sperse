@@ -331,7 +331,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
         list.forEach((item, index) => {
             item.id = index;
-            item.conditionValue = item.conditionValue;
         });
         return list;
     }
