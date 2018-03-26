@@ -75,6 +75,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     showSearch = false;
 
     filteredRowData: any;
+    noDataText: string;
 
     transactionsCountDataSource: DataSource;
 
@@ -548,6 +549,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     }
 
     refreshCategories(expandInitial: boolean = false) {
+        this.startLoading();
         this._classificationServiceProxy.getCategoryTree(
             InstanceType[this.instanceType], this.instanceId, this.includeNonCashflowNodes).subscribe((data) => {
                 let categories = [];
@@ -596,6 +598,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 }
 
                 this.refreshTransactionsCountDataSource();
+                setTimeout(() => this.finishLoading());
+                if (!this.categories.length) this.noDataText = this.ls('Platform', 'NoData');
             }
             );
     }
