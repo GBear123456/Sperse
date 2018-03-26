@@ -46,7 +46,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     keyAttributeValuesDataSource: any = [];
     private transactionAttributeTypes: any;
     private attributeEnterTimeout: any;
-    private attributeEditMode = false;
+    private attributeEditData: any;
 
     availableGridAttributeTypes: any = [];
     transactionTypesAndCategoriesData: TransactionTypesAndCategoriesDto;
@@ -466,7 +466,6 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     updateKeywordList($event) {
-        this.attributeEditMode = false;
         if ($event.key.attributeTypeId != 'keyword' && $event.key.conditionTypeId == 'Exist')
             $event.key.conditionValue = '';
         let dataSource = <any>this.attributeList.dataSource;
@@ -497,26 +496,35 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         this.attributeList.instance
             .option('elementAttr', { invalid: false });
         $event.data.id = this.attributesAndKeywords.length;
-        this.attributeEditMode = true;
+        this.attributeEditData = $event.data;
     }
 
-    customizeAttributeValue($event) {
-        return $event.value;
-    }
-    
-    onEditorPreparing($event) {
-        this.attributeEditMode = true;
-        let attrId = $event.editorOptions.value;
-        if ($event.dataField == 'attributeTypeId' && attrId != 'keyword') {
-            this.keyAttributeValuesDataSource = this.getKeyAttributeValues(attrId);
+    attributeGridDropDownInitialized($event, cell) {
+        let attrId = cell.value;
+        if (attrId != 'keyword') {
             if (!_.findWhere(this.availableGridAttributeTypes, {id: attrId})) {
                 let list = this.availableGridAttributeTypes.slice();
-                list.push(
+                list.unshift(
                     _.findWhere(this.gridAttributeTypes, {id: attrId})
                 );
                 this.availableGridAttributeTypes = list;
             }
         }
+
+    }
+
+    attributeGridDropDownValueChanged($event, cell) {
+        this.keyAttributeValuesDataSource = 
+            this.getKeyAttributeValues(cell.value);
+        this.onCustomAttributeCreating($event, cell);
+    }
+
+    attributeGridDropDownDisposing($event, cell) {
+        this.attributeEditData = null;
+    }
+    
+    onEditorPreparing($event) {
+        this.attributeEditData = $event.row.data;
     }
 
     onCustomDescriptorCreating($event) {
@@ -526,13 +534,12 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onCustomAttributeCreating($event, cell) {
-        //cell.value = $event.value;
         cell.setValue($event.value);
     }
 
     onAttributeKeyEnter($event, cell) {
         if ($event.keyCode == 13)
-            this.attributeEditMode = false;
+            this.attributeEditData = null;
         clearTimeout(this.attributeEnterTimeout);
         this.attributeEnterTimeout = setTimeout(() => {
             this.attributeEnterTimeout = null;
@@ -549,6 +556,11 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         this.descriptor += (this.descriptor ? ' - ' : '') + value.name;
     }
 
+    selectedGridAttributeValue($event, value) {
+        this.attributeEditData.conditionTypeId = 'Equal';
+        this.attributeEditData.conditionValue = value.name;
+    }
+
     getKeyAttribute(typeId) {
         return _.findWhere(this.keyAttributeValues, {key: typeId});
     }
@@ -559,7 +571,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onAttributesContentReady($event) {
-        if (this.attributeEditMode)
+        if (this.attributeEditData)
             return ;
 
         let list = _.filter(this.gridAttributeTypes, (item) => {
@@ -575,5 +587,13 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
         return attribute ? attribute.name:
             this.capitalize(data.attributeTypeId);
+    }).bind(this);
+
+    conditionDisplayValue = ((data) => {
+        return {  
+            Equal: '='
+            //Exist: '\u2203'
+        }[data.conditionTypeId] || 
+            data.conditionTypeId;
     }).bind(this);
 }

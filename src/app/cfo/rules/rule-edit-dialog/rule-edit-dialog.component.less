@@ -82,7 +82,7 @@
                 transform: rotate(-45deg);
             }
         }
-
+    
         /deep/ dx-data-grid {
             .dx-datagrid-headers {
                 /deep/ * {
@@ -387,8 +387,13 @@
 
                             .dx-datagrid-table {
                                 transform: rotate(180deg);
-
+                                colgroup col:last-child {
+                                    width: 56px!important;
+                                }
                                 tr {
+                                    /deep/ dx-select-box[ng-reflect-access-key="attributeTypesSelect"] input {
+                                          width: 135px!important;
+                                    }
                                     &.dx-freespace-row {
                                         display: none !important;
                                     }
