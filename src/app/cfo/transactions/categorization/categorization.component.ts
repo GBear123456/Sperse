@@ -1,7 +1,7 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Input, Output, EventEmitter, Injector, OnInit, ViewChild, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -64,7 +64,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         this.refreshTransactionsCountDataSource();
     }
     private _transactionsFilterQuery: any[];
-    
+
     categories: any[] = [];
     types = [
         { id: 'E', name: 'Outflows' },
@@ -573,7 +573,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                             });
                         }
                     });
-                
+
                 this.categories = categories;
 
                 if (expandInitial) {

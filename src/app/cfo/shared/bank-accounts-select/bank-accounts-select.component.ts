@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BankAccountsServiceProxy, InstanceType, SyncAccountBankDto, BusinessEntityServiceProxy } from 'shared/service-proxies/service-proxies';
 
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -27,12 +27,12 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     syncAccountsDataSource: SyncAccountBankDto[] = [];
     tooltipVisible: boolean;
     bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}`;
-    allSelected: boolean = false;
-    moreThanOneBusinessEntityExist: boolean = true;
+    allSelected = false;
+    moreThanOneBusinessEntityExist = true;
     selectedBusinessEntities: any[];
     businessEntities = [];
-    isActive: boolean = true;
-    isActiveLabel: string;   
+    isActive = true;
+    isActiveLabel: string;
 
     constructor(
         injector: Injector,
@@ -115,7 +115,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         if (this.bankAccountWidget)
             this.bankAccountWidget.refreshGrid();
     }
-    
+
     bankAccountsClear() {
         this.refreshSelected([]);
 
@@ -175,12 +175,12 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 }
             });
     }
-    
+
     getItems() {
         return this.syncAccountsDataSource;
     }
-    
+
     setSelectedBankAccounts(bankAccountIds) {
         this.refreshSelected(bankAccountIds);
-    }    
+    }
 }

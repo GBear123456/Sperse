@@ -34,7 +34,7 @@ import { OperationsComponent } from './cashflow/operations/operations.component'
 
 import { MatTabsModule, MatDialogModule } from '@angular/material';
 
-import { CFOService } from './cfo.service';
+import { CFOService } from '@shared/cfo/cfo.service';
 import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
@@ -69,7 +69,7 @@ import {
     DxRangeSliderModule,
     DxSwitchModule
 } from 'devextreme-angular';
-import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widgets.module';
+import {DashboardWidgetsModule} from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 
 import { ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 

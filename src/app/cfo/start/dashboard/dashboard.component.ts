@@ -1,17 +1,16 @@
-import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { AppConsts } from 'shared/AppConsts';
 import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { Router } from '@angular/router';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
-import { AccountsComponent } from 'shared/dashboard-widgets/accounts/accounts.component';
-import { CategorizationStatusComponent } from 'shared/dashboard-widgets/categorization-status/categorization-status.component';
-import { TotalsByPeriodComponent } from 'shared/dashboard-widgets/totals-by-period/totals-by-period.component';
-import { TrendByPeriodComponent } from 'shared/dashboard-widgets/trend-by-period/trend-by-period.component';
-import { DashboardService } from 'shared/dashboard-widgets/dashboard.service';
-import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
-import { InstanceType, FinancialInformationServiceProxy } from 'shared/service-proxies/service-proxies';
+import { AccountsComponent } from '@shared/cfo/dashboard-widgets/accounts/accounts.component';
+import { CategorizationStatusComponent } from '@shared/cfo/dashboard-widgets/categorization-status/categorization-status.component';
+import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by-period/totals-by-period.component';
+import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
+import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
+import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
+import { InstanceType, FinancialInformationServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import { CacheService } from 'ng2-cache-service';
 

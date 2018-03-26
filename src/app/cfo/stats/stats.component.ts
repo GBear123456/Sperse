@@ -1,5 +1,5 @@
 import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
-import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
 import { AppService } from '@app/app.service';
@@ -28,11 +28,11 @@ import {
     CashFlowForecastServiceProxy,
     InstanceType
 } from '@shared/service-proxies/service-proxies';
-import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import * as _ from 'underscore';
 import * as moment from 'moment';
-import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
-import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filte.model';
+import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
+import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filte.model';
 
 @Component({
     'selector': 'app-stats',
@@ -357,7 +357,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                     if (filter.items.from.value)
                         this.sliderReportPeriod.start = filter.items.from.value.getFullYear();
                     else
-                        this.sliderReportPeriod.start = this.sliderReportPeriod.minDate;             
+                        this.sliderReportPeriod.start = this.sliderReportPeriod.minDate;
 
                     if (filter.items.to.value)
                         this.sliderReportPeriod.end = filter.items.to.value.getFullYear();
@@ -504,7 +504,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                     this.sliderReportPeriod.end = this.statsData[this.statsData.length - 1].date.year();
             } else {
                 console.log('No daily stats');
-            }          
+            }
 
             this.loadingFinished = true;
             abp.ui.clearBusy();

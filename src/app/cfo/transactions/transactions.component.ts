@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 import { AppService } from '@app/app.service';
 import { ActivatedRoute } from '@angular/router';
@@ -96,7 +96,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public adjustmentTotal = 0;
     public adjustmentStartingBalanceTotal = 0;
     public adjustmentStartingBalanceTotalCent = 0;
-    
     headlineConfig: any;
 
     private _categoriesShowedBefore = true;
@@ -607,7 +606,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
-    
+
     applyTotalBankAccountFilter(data) {
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
         if (data.bankAccountIds) {
@@ -658,7 +657,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     filterByAccount(filter) {
         let data = {};
         if (filter.items.element) {
-            let filterData = [];  
+            let filterData = [];
             filter.items.element.dataSource.forEach((syncAccount, i) => {
                 syncAccount.bankAccounts.forEach((bankAccount, i) => {
                     if (bankAccount['selected']) {
@@ -857,14 +856,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                     else
                                         totalTransactionsSource.classifiedDebitTransactionCount++;
                                 }
-                                
+
                                 i.CashflowSubCategoryId = $event.parentId ? $event.categoryId : null;
                                 i.CashflowSubCategoryName = $event.parentId ? $event.categoryName : null;
                                 i.CashflowCategoryId = $event.parentId ? $event.parentId : $event.categoryId;
                                 i.CashflowCategoryName = $event.parentId ? $event.parentName : $event.categoryName;
                                 i.CashFlowTypeId = $event.categoryCashType;
                                 i.CashFlowTypeName = $event.categoryCashType == 'I' ? 'Inflows' : 'Outflows';
-                                
+
                                 selectedRowIndexes.push(this.dataGrid.instance.getRowIndexByKey(i));
                             }
                         );
@@ -959,7 +958,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 return result;
             });
     }
-    
+
     ngAfterViewInit(): void {
         this.showCompactRowsHeight();
 

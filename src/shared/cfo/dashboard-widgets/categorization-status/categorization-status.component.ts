@@ -1,5 +1,5 @@
 import { Component, Injector, OnInit } from '@angular/core';
-import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardServiceProxy, ClassificationServiceProxy, InstanceType, AutoClassifyDto, ResetClassificationDto } from 'shared/service-proxies/service-proxies';
 import { Router } from '@angular/router';
 import {MatDialog} from '@angular/material';
@@ -89,7 +89,7 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
             filter.classified.yes = true;
         else
             filter.classified.no = true;
-        
+
         this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/transactions'], { queryParams: { filters: encodeURIComponent(JSON.stringify(filter)) } });
     }
 

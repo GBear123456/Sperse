@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import * as ngCommon from '@angular/common';
-import {CommonModule} from '../common/common.module';
+import {CommonModule} from '@shared/common/common.module';
 import {AccountsComponent} from './accounts/accounts.component';
 import {CategorizationStatusComponent} from './categorization-status/categorization-status.component';
 import {AccountsSynchStatusComponent} from './accounts-synch-status/accounts-synch-status.component';

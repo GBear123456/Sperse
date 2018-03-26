@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { Router } from '@angular/router';
 
 @Component({
