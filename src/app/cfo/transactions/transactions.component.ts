@@ -621,7 +621,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         let filterQuery = this.processODataFilter(this.dataGrid.instance,
             this.dataSourceURI, this.cashFlowCategoryFilter.concat(this.filters),
             (filter) => {
-                if (filter.caption.toLowerCase() === 'account') {
+                if (filter.caption && filter.caption.toLowerCase() === 'account') {
                     this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
                 }
                 let filterMethod = this['filterBy' +
