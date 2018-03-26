@@ -20,6 +20,8 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     @Input() useGlobalCache = false;
     @Input() highlightedBankAccountIds = [];
     @Input() highlightUsedRows = false;
+    @Input() showBusinessEntitiesFilter = true;
+    @Input() showIsActiveFilter = true;
 
     @Output() onBankAccountsSelected: EventEmitter<any> = new EventEmitter();
 
@@ -124,24 +126,29 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
             this._cacheService.set(this.bankAccountsCacheKey, {});
 
         this.onBankAccountsSelected.emit({
-            bankAccountIds: []
+            bankAccountIds: [],
+            usedBankAccountIds: []
         });
         this.tooltipVisible = false;
     }
 
     bankAccountsSelected() {
         let result = [];
-
+        let usedResult = [];
         this.syncAccountsDataSource.forEach((syncAccount, i) => {
             syncAccount.bankAccounts.forEach((bankAccount, i) => {
                 if (bankAccount['selected']) {
                     result.push(bankAccount.id);
                 }
+                if (bankAccount.isUsed) {
+                    usedResult.push(bankAccount.id);
+                }
             });
         });
 
         let data = {
-            bankAccountIds: result
+            bankAccountIds: result,
+            usedBankAccountIds: usedResult
         };
         if (this.useGlobalCache)
             this._cacheService.set(this.bankAccountsCacheKey, { 'bankAccounts': data.bankAccountIds, 'isActive': this.isActive });
