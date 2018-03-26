@@ -17676,6 +17676,7 @@ export class BankAccountDto implements IBankAccountDto {
     businessEntityName: string;
     balance: number;
     syncAccountId: number;
+    isUsed: boolean;
 
     constructor(data?: IBankAccountDto) {
         if (data) {
@@ -17695,6 +17696,7 @@ export class BankAccountDto implements IBankAccountDto {
             this.businessEntityName = data["businessEntityName"];
             this.balance = data["balance"];
             this.syncAccountId = data["syncAccountId"];
+            this.isUsed = data["isUsed"];
         }
     }
 
@@ -17713,6 +17715,7 @@ export class BankAccountDto implements IBankAccountDto {
         data["businessEntityName"] = this.businessEntityName;
         data["balance"] = this.balance;
         data["syncAccountId"] = this.syncAccountId;
+        data["isUsed"] = this.isUsed;
         return data; 
     }
 }
@@ -17725,6 +17728,7 @@ export interface IBankAccountDto {
     businessEntityName: string;
     balance: number;
     syncAccountId: number;
+    isUsed: boolean;
 }
 
 export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {

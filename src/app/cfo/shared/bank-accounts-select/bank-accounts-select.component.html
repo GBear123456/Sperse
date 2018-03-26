@@ -1,5 +1,5 @@
 <div>
-    <dx-tooltip [target]="targetBankAccountsTooltip"
+    <dx-tooltip [(target)]="targetBankAccountsTooltip"
                 [(visible)]="tooltipVisible">
         <div *dxTemplate="let data = data of 'content'">
             <div class="bank-accounts-tooltip-container">
@@ -47,7 +47,8 @@
                 </div>
                 <bank-accounts-widget [dataSource]="syncAccountsDataSource"
                                       [showAdvancedColumns]="true"
-                                      [highlightedBankAccountIds]="highlightedBankAccountIds">
+                                      [highlightedBankAccountIds]="highlightedBankAccountIds"
+                                      [highlightUsedRows]="highlightUsedRows">
                 </bank-accounts-widget> 
             </div>
         </div>

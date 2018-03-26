@@ -19,6 +19,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     @Input() targetBankAccountsTooltip = '';
     @Input() useGlobalCache = false;
     @Input() highlightedBankAccountIds = [];
+    @Input() highlightUsedRows = false;
 
     @Output() onBankAccountsSelected: EventEmitter<any> = new EventEmitter();
 
