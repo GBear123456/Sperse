@@ -5,7 +5,7 @@
 
 <platform-select></platform-select>
 
-<div class="top-bar-nav" *ngIf="!showAdaptiveMenu">
+<div class="top-bar-nav" [hidden]="showAdaptiveMenu">
   <dx-nav-bar
     height="74px"
     [hoverStateEnabled]="true"
@@ -28,7 +28,7 @@
   </dx-nav-bar>
 </div>
 
-<div class="adaptive-menu" *ngIf="showAdaptiveMenu">
+<div class="adaptive-menu" [hidden]="!showAdaptiveMenu">
   <dx-menu
     [accessKey]="nav-menu"
     [dataSource]="menu.items"
