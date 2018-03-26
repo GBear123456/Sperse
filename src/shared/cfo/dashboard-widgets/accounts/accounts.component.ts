@@ -1,7 +1,7 @@
 import { Component, Injector, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardService } from '../dashboard.service';
-import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardServiceProxy, InstanceType, GetDailyBalanceStatsOutput } from 'shared/service-proxies/service-proxies';
 import { Router } from '@angular/router';
 import * as moment from 'moment';

@@ -1,6 +1,5 @@
-import {AppConsts} from "@shared/AppConsts";
 import { Component, OnInit, Injector } from '@angular/core';
-import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import {
     BankAccountsServiceProxy,
     BankAccountDailyStatDto,

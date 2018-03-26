@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 import { AppService } from '@app/app.service';
 import { ActivatedRoute } from '@angular/router';
@@ -44,6 +44,7 @@ import { CategorizationComponent } from 'app/cfo/transactions/categorization/cat
 import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rules.component';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filte.model';
+import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 
 
 @Component({
@@ -55,6 +56,7 @@ import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
+    @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();
 
@@ -94,7 +96,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public adjustmentTotal = 0;
     public adjustmentStartingBalanceTotal = 0;
     public adjustmentStartingBalanceTotalCent = 0;
-    
     headlineConfig: any;
 
     private _categoriesShowedBefore = true;
@@ -605,18 +606,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
-    
-    applyTotalBankAccountFilter(bankAccountId) {
-        let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'Account'; });
 
-        if (bankAccountId) {
-            let val = [];
-            val.push(bankAccountId);
-            accountFilter.items['element'].setValue(val, accountFilter);
+    applyTotalBankAccountFilter(data) {
+        let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
+        if (data.bankAccountIds) {
+            accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
         } else {
             accountFilter.items['element'].setValue([], accountFilter);
         }
-        this.defaultSubaccountTooltipVisible = false;
         this.filtersService.change(accountFilter);
     }
 
@@ -624,6 +621,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         let filterQuery = this.processODataFilter(this.dataGrid.instance,
             this.dataSourceURI, this.cashFlowCategoryFilter.concat(this.filters),
             (filter) => {
+                if (filter.caption.toLowerCase() === 'account') {
+                    this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
+                }
                 let filterMethod = this['filterBy' +
                     this.capitalize(filter.caption)];
                 if (filterMethod)
@@ -657,7 +657,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     filterByAccount(filter) {
         let data = {};
         if (filter.items.element) {
-            let filterData = [];  
+            let filterData = [];
             filter.items.element.dataSource.forEach((syncAccount, i) => {
                 syncAccount.bankAccounts.forEach((bankAccount, i) => {
                     if (bankAccount['selected']) {
@@ -856,14 +856,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                     else
                                         totalTransactionsSource.classifiedDebitTransactionCount++;
                                 }
-                                
+
                                 i.CashflowSubCategoryId = $event.parentId ? $event.categoryId : null;
                                 i.CashflowSubCategoryName = $event.parentId ? $event.categoryName : null;
                                 i.CashflowCategoryId = $event.parentId ? $event.parentId : $event.categoryId;
                                 i.CashflowCategoryName = $event.parentId ? $event.parentName : $event.categoryName;
                                 i.CashFlowTypeId = $event.categoryCashType;
                                 i.CashFlowTypeName = $event.categoryCashType == 'I' ? 'Inflows' : 'Outflows';
-                                
+
                                 selectedRowIndexes.push(this.dataGrid.instance.getRowIndexByKey(i));
                             }
                         );

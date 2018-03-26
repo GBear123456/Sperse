@@ -49,7 +49,7 @@
                             </span>
                         </div>
                         <div *dxTemplate="let cellData of 'dateCell'">
-                            {{cellData.value | date: formatting.date}}
+                            {{cellData.value | date: formatting.dateTime}}
                         </div>
                         <div *dxTemplate="let cellData of 'phoneCell'">
                             {{cellData.value | phone}}

@@ -28,7 +28,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
-import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { OperationsComponent } from './operations/operations.component';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 
@@ -686,7 +686,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.reportPeriod['end'] = this.defaultReportPeriod['end'];
                 }
                 if (filter.caption.toLowerCase() === 'account') {
-                    this.selectedBankAccounts = filter.items.element.getSelected();
+                    this.selectedBankAccounts = filter.items.element.value;
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -2204,29 +2204,31 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     });
                 }
             }
-            let spanChart = document.createElement('div');
-            spanChart.className = 'chart';
-            e.cellElement.append(spanChart);
-            let chartOptions = {
-                dataSource: chartData,
-                type: 'area',
-                argumentField: 'year',
-                valueField: 'value',
-                lineWidth: 1,
-                lineColor: '#fab800',
-                showMinMax: false,
-                showFirstLast: false,
-                tooltip: {
-                    enabled: false
+            if (chartData.length > 1) {
+                let spanChart = document.createElement('div');
+                spanChart.className = 'chart';
+                e.cellElement.append(spanChart);
+                let chartOptions = {
+                    dataSource: chartData,
+                    type: 'area',
+                    argumentField: 'year',
+                    valueField: 'value',
+                    lineWidth: 1,
+                    lineColor: '#fab800',
+                    showMinMax: false,
+                    showFirstLast: false,
+                    tooltip: {
+                        enabled: false
+                    }
+                };
+                if (e.cell.path[0] === 'CTI') {
+                    chartOptions.lineColor = '#61c670';
                 }
-            };
-            if (e.cell.path[0] === 'CTI') {
-                chartOptions.lineColor = '#61c670';
+                if (e.cell.path[0] === 'CTE') {
+                    chartOptions.lineColor = '#e7326a';
+                }
+                let sparkLineInstance = new SparkLine(spanChart, chartOptions);
             }
-            if (e.cell.path[0] === 'CTE') {
-                chartOptions.lineColor = '#e7326a';
-            }
-            let sparkLineInstance = new SparkLine(spanChart, chartOptions);
         }
 
         /** added css class to start balance row */

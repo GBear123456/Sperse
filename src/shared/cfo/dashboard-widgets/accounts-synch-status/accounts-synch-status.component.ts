@@ -1,6 +1,5 @@
 import {Component, Injector, OnInit} from '@angular/core';
-import {CFOComponentBase} from 'app/cfo/shared/common/cfo-component-base';
-import {AppConsts} from "@shared/AppConsts";
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 @Component({
     selector: 'app-accounts-synch-status',

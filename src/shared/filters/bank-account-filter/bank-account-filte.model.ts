@@ -13,7 +13,20 @@ export class BankAccountFilterModel extends FilterItemModel {
         Object.assign(this, init);
     }
 
-    setValue(value: any, filter: FilterModel) {
+    get value(): any {
+        let result = [];
+        this.dataSource.forEach((syncAccount, i) => {
+            syncAccount.bankAccounts.forEach((bankAccount, i) => {
+                if (bankAccount['selected']) {
+                    result.push(bankAccount.id);
+                }
+            });
+        });
+        this._value = result;
+        return result;
+    }
+    set value(value: any) {
+        this._value = value;
         value = (value && value.length) ? value : [];
         this.dataSource.forEach((syncAccount, i) => {
             let selectedBankAccountCount = 0;
@@ -35,18 +48,10 @@ export class BankAccountFilterModel extends FilterItemModel {
         });
     }
 
-    getSelected() {
-        let result = [];
-        this.dataSource.forEach((syncAccount, i) => {
-            syncAccount.bankAccounts.forEach((bankAccount, i) => {
-                if (bankAccount['selected']) {
-                    result.push(bankAccount.id);
-                }
-            });
-        });
-        return result;
+    setValue(value: any, filter: FilterModel) {
+        this.value = value;
     }
-
+    
     getDisplayElements(): DisplayElement[] {
         let result: DisplayElement[] = [];
         this.dataSource.forEach((syncAccount, i) => {
@@ -87,6 +92,6 @@ export class BankAccountFilterModel extends FilterItemModel {
             });
         }
         else
-            this.value = [];
+            this.setValue([], filter);
     }
 }

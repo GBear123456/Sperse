@@ -20,13 +20,15 @@
                           [showColumnLines]="false"
                           [showRowLines]="false"
                           (onRowUpdated)="masterSelectionChanged($event)"
-                          (onCellClick)="masterRowExpandChange($event)">
+                          (onCellClick)="masterRowExpandChange($event)"
+                          (onRowPrepared)="rowPrepared($event)">
 
                 <dxo-editing mode="cell" [allowUpdating]="true">
                 </dxo-editing>
                 <dxo-scrolling showScrollbar="never">
                 </dxo-scrolling>
                 <dxo-filter-row [visible]="false"></dxo-filter-row>
+                <dxi-column dataField="highlighted" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
                 <dxi-column dataField="selected" [width]="30" alignment="center" dataType="boolean"></dxi-column>
                 <dxi-column dataField="name" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
                 <dxi-column dataField="syncAccountStatus" [width]="140" alignment="center" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
@@ -44,13 +46,15 @@
                                       [showRowLines]="false"
                                       [columnAutoWidth]="true"
                                       (onRowUpdated)="bankAccountSelectionChanged($event)"
-                                      [selectionFilter]="['selected', '=', true]">
+                                      [selectionFilter]="['selected', '=', true]"
+                                      (onRowPrepared)="rowPrepared($event)">
 
                             <dxo-editing mode="cell" [allowUpdating]="true">
                             </dxo-editing>
                             <dxo-selection [deferred]="true">
                             </dxo-selection>
                             <dxo-filter-row [visible]="false"></dxo-filter-row>
+                            <dxi-column dataField="highlighted" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
                             <dxi-column dataField="selected" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
                             <dxi-column dataField="accountName" [width]="nameColumnWidth" alignment="left" [allowEditing]="false"></dxi-column>
                             <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption="" cellTemplate="invisibleTemplate"></dxi-column>

@@ -1,7 +1,7 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Input, Output, EventEmitter, Injector, OnInit, ViewChild, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -65,7 +65,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     }
     private _transactionsFilterQuery: any[];
 
-    autoExpand = true;
     categories: any[] = [];
     types = [
         { id: 'E', name: 'Outflows' },
@@ -76,11 +75,13 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     showSearch = false;
 
     filteredRowData: any;
+    noDataText: string;
 
     transactionsCountDataSource: DataSource;
 
     private _prevClickDate = new Date();
     private _selectedKeys = [];
+    private _expandedRowKeys = [];
     private readonly MIN_PADDING = 7;
     private readonly MAX_PADDING = 17;
     private settings = {
@@ -108,7 +109,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
     ngOnInit() {
         this.initSettings();
-        this.refreshCategories();
+        this.refreshCategories(true);
         this.initToolbarConfig();
 
         this.transactionsCountDataSource = new DataSource({
@@ -227,7 +228,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                                             if (this.showAddEntity) {
                                                 this.initToolbarConfig();
                                             }
-                                            this.refreshCategories(false);
+                                            this.refreshCategories();
                                             this.storeSettings();
                                         }
                                     }
@@ -355,16 +356,19 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             JSON.stringify(this.settings));
     }
 
-    processExpandTree(expandTypes, expandCategories) {
-        _.mapObject(this.categorization.accountingTypes, (item, key) => {
-            this.categoryList.instance[(expandTypes ? 'expand' : 'collapse') + 'Row'](key + item.typeId);
-        });
+    processExpandTree(expandFirstLevel, expandSecondLevel) {
+        if (this.settings.showAT) {
+            _.mapObject(this.categorization.accountingTypes, (item, key) => {
+                this.categoryList.instance[(expandFirstLevel ? 'expand' : 'collapse') + 'Row'](key + item.typeId);
+            });
+        }
+
+        var expandCategories = (expandFirstLevel && !this.settings.showAT) || expandSecondLevel;
         _.mapObject(this.categorization.categories, (item, key) => {
             if (!item.parentId) {
                 let method = this.categoryList.instance[
                     (expandCategories ? 'expand' : 'collapse') + 'Row'];
                 method(parseInt(key));
-                method(key);
             }
         });
     }
@@ -470,7 +474,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 sourceCategory.cashType != targetCashType)
                 return false;
         } else {
-            if (targetElement.getAttribute('aria-level') == '0')
+            if (targetElement.classList.contains('accountingType'))
                 return false;
         }
 
@@ -515,10 +519,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                         this.instanceId,
                         moveToId, false, sourceId)
                         .subscribe((id) => {
-                            this.refreshCategories(false);
+                            this.refreshCategories();
                             this.onCategoriesChanged.emit();
                         }, (error) => {
-                            this.refreshCategories(false);
+                            this.refreshCategories();
                         });
                 }
             });
@@ -536,19 +540,16 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                             coAID: sourceCategory.coAID,
                         })
                     ).subscribe((result) => {
-                        this.refreshCategories(false);
+                        this.refreshCategories();
                         this.onCategoriesChanged.emit();
                     });
-
-                    this.onCategoriesChanged.emit();
                 }
             });
         }
     }
 
-    refreshCategories(autoExpand: boolean = true) {
-        this.autoExpand = autoExpand;
-
+    refreshCategories(expandInitial: boolean = false) {
+        this.startLoading();
         this._classificationServiceProxy.getCategoryTree(
             InstanceType[this.instanceType], this.instanceId, this.includeNonCashflowNodes).subscribe((data) => {
                 let categories = [];
@@ -581,16 +582,24 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
                 this.categories = categories;
 
+                if (expandInitial) {
+                    this.processExpandTree(true, false);
+                }
+
                 if (this.categoryId) {
                     this.categoryList.instance.focus();
                     let category = data.categories[this.categoryId];
                     this.categoryList.instance.expandRow(category.accountingTypeId + data.accountingTypes[category.accountingTypeId].typeId);
+                    if (category.parentId)
+                        this.categoryList.instance.expandRow(category.parentId);
                     setTimeout(() => {
                         this.categoryList.instance.selectRows([this.categoryId], true);
                     }, 0);
                 }
 
                 this.refreshTransactionsCountDataSource();
+                setTimeout(() => this.finishLoading());
+                if (!this.categories.length) this.noDataText = this.ls('Platform', 'NoData');
             }
             );
     }
@@ -606,7 +615,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         let parentCategories: any[] = [];
 
         this.categories.forEach(x => {
-            if (x.parent == 'root')
+            if (isNaN(x.key))
                 accountingTypes[x.key] = x;
             else if (parseInt(x.parent) != x.parent)
                 parentCategories[x.key] = x;
@@ -615,17 +624,17 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         this.categories.forEach(x => {
             if (parseInt(x.parent) == x.parent && x.transactionsCount) {
                 let parentCategory = parentCategories[x.parent];
-                if (x.transactionsCount)
+                if (parentCategory && x.transactionsCount)
                     parentCategory.transactionsCount = parentCategory.transactionsCount ? parentCategory.transactionsCount + x.transactionsCount : x.transactionsCount;
             }
         });
-        parentCategories.forEach(x => {
-            let accountingType = accountingTypes[x.parent];
-            if (x.transactionsCount)
-                accountingType.transactionsCount = accountingType.transactionsCount ? accountingType.transactionsCount + x.transactionsCount : x.transactionsCount;
-        });
 
-        this.categoryList.instance.refresh();
+        if (this.settings.showAT)
+            parentCategories.forEach(x => {
+                let accountingType = accountingTypes[x.parent];
+                if (x.transactionsCount)
+                    accountingType.transactionsCount = accountingType.transactionsCount ? accountingType.transactionsCount + x.transactionsCount : x.transactionsCount;
+            });
     }
 
     refreshTransactionsCountDataSource() {
@@ -673,9 +682,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 cashflowTypeId: accounting.typeId
             })
         ).subscribe((id) => {
-            this.refreshCategories(false);
+            this.refreshCategories();
         }, (error) => {
-            this.refreshCategories(false);
+            this.refreshCategories();
         });
     }
 
@@ -695,9 +704,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                     parentId: category.parentId
                 })
             ).subscribe((id) => {
-                this.refreshCategories(false);
+                this.refreshCategories();
             }, (error) => {
-                this.refreshCategories(false);
+                this.refreshCategories();
             });
         }
     }
@@ -721,9 +730,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 name: $event.data.name
             })
         ).subscribe((id) => {
-            this.refreshCategories(false);
+            this.refreshCategories();
         }, (error) => {
-            this.refreshCategories(false);
+            this.refreshCategories();
         });
     }
 
@@ -749,9 +758,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                     this.instanceId,
                     dialogData.categoryId, dialogData.deleteAllReferences, parseInt(itemId))
                     .subscribe((id) => {
-                        this.refreshCategories(false);
+                        this.refreshCategories();
                     }, (error) => {
-                        this.refreshCategories(false);
+                        this.refreshCategories();
                     });
         });
     }
@@ -837,7 +846,14 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             }
         }
 
-        if ($event.level > 0) {
+        if (isNaN($event.key))
+            $event.rowElement.classList.add('accountingType');
+        else if (isNaN($event.data.parent))
+            $event.rowElement.classList.add('parentCategory');
+        else
+            $event.rowElement.classList.add('subCategory');
+
+        if (!isNaN($event.key)) {
             $event.rowElement.setAttribute('draggable', true);
         }
     }
@@ -869,9 +885,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 name: name
             })
         ).subscribe((id) => {
-            this.refreshCategories(false);
+            this.refreshCategories();
         }, (error) => {
-            this.refreshCategories(false);
+            this.refreshCategories();
         });
     }
 }

@@ -1,7 +1,7 @@
 import {Component, OnInit, Injector, EventEmitter, Output, OnDestroy, ViewChild} from '@angular/core';
 import { FinancialInformationServiceProxy, SyncProgressOutput, InstanceType } from 'shared/service-proxies/service-proxies';
 import { AppConsts } from 'shared/AppConsts';
-import { CFOComponentBase } from 'app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 @Component({
     templateUrl: './synch-progress.component.html',

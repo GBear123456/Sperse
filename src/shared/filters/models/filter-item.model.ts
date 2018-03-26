@@ -4,20 +4,23 @@ import * as moment from 'moment';
 let capitalize = require('underscore.string/capitalize');
 
 export class FilterItemModel {
-    value: any = '';
+    protected _value: any = '';
 
     public constructor(value?: any) {
         if (value) this.value = value;
+    }
+    
+    get value(): any {
+        return this._value;
+    }
+    set value(value: any) {
+        this._value = value;
     }
 
     setValue(value: any, filter: FilterModel) {
         this.value = value;
     }
-
-    getSelected() {
-        return this.value;
-    }
-
+    
     getDisplayElements(key: string): DisplayElement[] {
         let caption = capitalize(key);
         let isBoolValues = typeof (this.value) == 'boolean';

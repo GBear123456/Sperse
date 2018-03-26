@@ -1,5 +1,5 @@
 import {Component, Injector, OnInit} from '@angular/core';
-import {CFOComponentBase} from '@app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardService } from '../dashboard.service';
 import {
     BankAccountsServiceProxy,
