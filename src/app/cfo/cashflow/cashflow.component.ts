@@ -2204,29 +2204,31 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     });
                 }
             }
-            let spanChart = document.createElement('div');
-            spanChart.className = 'chart';
-            e.cellElement.append(spanChart);
-            let chartOptions = {
-                dataSource: chartData,
-                type: 'area',
-                argumentField: 'year',
-                valueField: 'value',
-                lineWidth: 1,
-                lineColor: '#fab800',
-                showMinMax: false,
-                showFirstLast: false,
-                tooltip: {
-                    enabled: false
+            if (chartData.length > 1) {
+                let spanChart = document.createElement('div');
+                spanChart.className = 'chart';
+                e.cellElement.append(spanChart);
+                let chartOptions = {
+                    dataSource: chartData,
+                    type: 'area',
+                    argumentField: 'year',
+                    valueField: 'value',
+                    lineWidth: 1,
+                    lineColor: '#fab800',
+                    showMinMax: false,
+                    showFirstLast: false,
+                    tooltip: {
+                        enabled: false
+                    }
+                };
+                if (e.cell.path[0] === 'CTI') {
+                    chartOptions.lineColor = '#61c670';
                 }
-            };
-            if (e.cell.path[0] === 'CTI') {
-                chartOptions.lineColor = '#61c670';
+                if (e.cell.path[0] === 'CTE') {
+                    chartOptions.lineColor = '#e7326a';
+                }
+                let sparkLineInstance = new SparkLine(spanChart, chartOptions);
             }
-            if (e.cell.path[0] === 'CTE') {
-                chartOptions.lineColor = '#e7326a';
-            }
-            let sparkLineInstance = new SparkLine(spanChart, chartOptions);
         }
 
         /** added css class to start balance row */
