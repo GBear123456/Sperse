@@ -3,7 +3,7 @@
         <i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog($event)"></i>
         <i class="delete fa fa-times" aria-hidden="true" (click)="deleteItem($event)"></i>
     </div>
-    <li (click)="setEditModeEnabled(true)">{{data.value || l(data?.lEditPlaceholder)}}</li>
+    <span (click)="setEditModeEnabled(true)">{{data.value || l(data?.lEditPlaceholder)}}</span>
 </div>
 <div *ngIf="isEditModeEnabled" class="inplace-edit-edit-mode">
     <dx-validation-group>        

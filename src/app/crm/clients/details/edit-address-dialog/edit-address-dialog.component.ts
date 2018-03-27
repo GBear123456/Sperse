@@ -53,7 +53,6 @@ export class EditAddressDialog extends AppComponentBase {
             this.action = 'Create';
 
         this.googleAutoComplete = Boolean(window['google']);
-        console.log(this.googleAutoComplete);
 
         this.addressTypesLoad();
         this.countriesStateLoad();

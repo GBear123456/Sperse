@@ -1,0 +1,142 @@
+:host {
+    /deep/ .mat-dialog-header {
+        padding: 0px 10px 0px 130px!important;
+    }
+
+    /deep/ .main_sidenav {
+        position: static!important;
+        .tab-content {
+            display: flex;
+            flex-direction: column;
+            padding: 30px 50px;
+            height: 700px;
+
+            .field {
+                margin-bottom: 20px;
+         
+                label {
+                    font-size: 12px;
+                    line-height: 1.67;
+                    letter-spacing: 0.7px;
+                    color: #677380;
+                    font-weight: 400;
+                    width: 150px;
+                    margin-right: 40px;
+                    text-transform: uppercase;
+                }
+                p {
+                    width: 590px;
+                    padding-left: 195px;
+                    span {  
+                        width: 20px;
+                        height: 20px;
+                        float: right;
+                        cursor: pointer;
+                        background: url('../../../assets/common/icons/delete-icon.svg') no-repeat center;                        
+                    }
+                }
+                input[name="Address"] {
+                    width: 260px;
+                    height: 35px;
+                    font-size: 14px;
+                    font-weight: 300;
+                    line-height: 1.79;
+                    letter-spacing: 0.3px;
+                    color: #424c56;
+                    padding: 0px;
+                    vertical-align: top;
+                }
+                .add-contact {
+                    color: #00aeef;
+                    font-size: 32px;
+                    font-weight: 100;
+                    margin: 0px 15px;
+                    cursor: pointer;
+                }
+                &.email {
+                    background: url("../../../assets/common/icons/email.svg") no-repeat 160px 10px;
+                }
+                &.phone {
+                  &.H, &.P {
+                      background: url("../../../assets/common/icons/phone.svg") no-repeat 160px 10px;
+                  }
+
+                  &.W {
+                      background: url("../../../assets/common/icons/phone-work.svg") no-repeat 160px 10px;
+                  }
+
+                  &.M {
+                      background: url("../../../assets/common/icons/phone-mobile.svg") no-repeat 160px 10px;
+                  }
+                }
+                &.address {
+                    &.P {
+                        background: url("../../../assets/common/icons/address-primary.png") no-repeat 160px 10px;
+                    }
+                    &.H {
+                        background: url("../../../assets/common/icons/address-home.png") no-repeat 160px 10px;
+                    }
+                    &.S, &.W {
+                        background: url("../../../assets/common/icons/address-shipping.png") no-repeat 160px 10px;
+                    }
+                }
+                dx-text-box, dx-number-box, dx-text-area, dx-select-box {
+                    display: inline-block;
+                    &.dx-state-focused {
+                        .dx-placeholder {
+                            top: -30px;
+                        }
+                    }
+                    .dx-placeholder, input, textarea {                        
+                        font-size: 14px;
+                        font-weight: 300;
+                        line-height: 1.79;
+                        letter-spacing: 0.3px;
+                        color: #424c56;
+                        padding: 0px;
+                    }    
+                }
+                dx-select-box[name="state"] {
+                    &[name="state"], &[name="country"] {
+                        input {
+                            width: 360px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .photo-area {
+        top: 30px;
+        width: 110px;
+        height: 110px;
+        cursor: pointer;
+        position: absolute;
+        background-color: #F4F4F4;
+        z-index: 9999999;
+        border-radius: 50%;
+        margin-left: 20px;
+
+        &:before {
+            content: '';
+            display: block;
+            width: 10px;
+            background-color: #DBDCDD;
+            height: 40px;
+            top: 35px;
+            left: 50px;
+            position: relative;
+        }
+        &:after {
+           content: '';
+           display: block;
+           width: 40px;
+           background-color: #DBDCDD;
+           height: 10px;
+           top: 10px;
+           left: 35px;
+           position: relative;
+        }
+    }
+}
