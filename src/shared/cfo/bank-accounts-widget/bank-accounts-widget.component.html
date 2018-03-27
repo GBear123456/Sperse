@@ -7,8 +7,8 @@
             </dx-tabs>
         </div>
     </div>
-    <dx-scroll-view [showScrollbar]="onHover">
-        <div class="grid-container">
+    <dx-scroll-view [showScrollbar]="onHover" [height]="calculateTooltipHeight()">
+        <div class="grid-container {{highlightUsedRows ? 'highlight-used-rows' : '' }}">
             <dx-data-grid id="gridContainer"
                           [width]="tableWidth"
                           [dataSource]="syncAccountsDataSource"
@@ -23,10 +23,8 @@
                           (onCellClick)="masterRowExpandChange($event)"
                           (onRowPrepared)="rowPrepared($event)">
 
-                <dxo-editing mode="cell" [allowUpdating]="true">
-                </dxo-editing>
-                <dxo-scrolling showScrollbar="never">
-                </dxo-scrolling>
+                <dxo-editing mode="cell" [allowUpdating]="true"></dxo-editing>
+                <dxo-scrolling showScrollbar="never"></dxo-scrolling>
                 <dxo-filter-row [visible]="false"></dxo-filter-row>
                 <dxi-column dataField="highlighted" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
                 <dxi-column dataField="selected" [width]="30" alignment="center" dataType="boolean"></dxi-column>
@@ -34,7 +32,7 @@
                 <dxi-column dataField="syncAccountStatus" [width]="140" alignment="center" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
                 <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption="" cellTemplate="invisibleTemplate"></dxi-column>
                 <dxi-column dataField="lastSyncDate" alignment="left" [width]="180" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
-                <dxi-column dataField="balance" cssClass="tabular" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
+                <dxi-column dataField="balance" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
                 <dxi-column [width]="30" alignment="right" [allowEditing]="false" cellTemplate="expandTemplate"></dxi-column>
 
                 <div *dxTemplate="let syncAccount of 'detail'">
@@ -48,7 +46,7 @@
                                       (onRowUpdated)="bankAccountSelectionChanged($event)"
                                       [selectionFilter]="['selected', '=', true]"
                                       (onRowPrepared)="rowPrepared($event)">
-
+                            <dxo-scrolling showScrollbar="never"></dxo-scrolling>
                             <dxo-editing mode="cell" [allowUpdating]="true">
                             </dxo-editing>
                             <dxo-selection [deferred]="true">
@@ -57,23 +55,28 @@
                             <dxi-column dataField="highlighted" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
                             <dxi-column dataField="selected" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
                             <dxi-column dataField="accountName" [width]="nameColumnWidth" alignment="left" [allowEditing]="false"></dxi-column>
-                            <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption="" cellTemplate="invisibleTemplate"></dxi-column>
+                            <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption=""
+                                        cellTemplate="invisibleTemplate"></dxi-column>
                             <dxi-column dataField="accountNumber" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="false"></dxi-column>
-                            <dxi-column dataField="type" [width]="160" alignment="left" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
-                            <dxi-column dataField="balance" cssClass="tabular" alignment="right" cellTemplate="amountTemplate" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
+                            <dxi-column dataField="type" cssClass="type-container" [width]="160" alignment="left" [allowEditing]="false"
+                                        cellTemplate="typeTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
+                            <dxi-column dataField="balance" cssClass="tabular" alignment="right" cellTemplate="amountTemplate"
+                                        [(visible)]="showAdvancedColumns" [allowEditing]="false"></dxi-column>
                             <div *dxTemplate="let cell of 'amountTemplate'">
                                 <ng-container *ngIf="(cell.text)">
                                     <span class="number-value"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}  </span>
                                 </ng-container>
                             </div>
-                            <div *dxTemplate="let cell of 'invisibleTemplate'">
+                            <div *dxTemplate="let cell of 'typeTemplate'">
+                                <span [attr.data-text]="cell.text | lowercase">{{cell.text}}</span>
                             </div>
+                            <div *dxTemplate="let cell of 'invisibleTemplate'"></div>
                         </dx-data-grid>
                     </div>
                 </div>
                 <div *dxTemplate="let cell of 'amountTemplate'">
                     <ng-container *ngIf="(cell.text)">
-                        <div class="number-value"><span class="bold"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}</span> </div>
+                        <div class="number-value">{{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}</div>
                     </ng-container>
                 </div>
                 <div *dxTemplate="let cell of 'statusTemplate'">

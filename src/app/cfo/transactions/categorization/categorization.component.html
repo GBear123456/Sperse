@@ -1,4 +1,4 @@
-<div>
+<div [ngClass]="{'show-search':showSearch}">
     <div class="tree-header" *ngIf="showHeader">
         <h3 *ngIf="showTitle">
             {{l('ClassifyTransactions')}}
@@ -64,7 +64,9 @@
             <ng-container>
                 <div class="category-hover"></div>
                 <span> {{ cell.text }} </span>
-                <div class="category-drop-area"></div>
+                <div class="category-drop-area">
+                    <div class="category-drop-add-rule">Add Rule</div>
+                </div>
             </ng-container>
         </div>
         <div *dxTemplate="let cell of 'transactionsCountTemplate'">

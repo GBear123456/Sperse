@@ -14,8 +14,8 @@
                     <span class="end">{{sliderReportPeriod.end}}</span>
                 </div>
 
-                <dx-range-slider [min]="2000"
-                                 [max]="2028"
+                <dx-range-slider [min]="sliderReportPeriod.minDate"
+                                 [max]="sliderReportPeriod.maxDate"
                                  [(start)]="sliderReportPeriod.start"
                                  [(end)]="sliderReportPeriod.end"
                                  [step]="1">
@@ -24,7 +24,7 @@
         </div>
     </dx-tooltip>
 
-    <bank-accounts-select targetBankAccountsTooltip="[aria-label='Accounts']"
+    <bank-accounts-select targetBankAccountsTooltip="[custaccesskey='bankAccountSelect']"
                           (onBankAccountsSelected)="filterByBankAccounts($event)">
     </bank-accounts-select>
 </div>
