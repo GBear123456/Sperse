@@ -100,7 +100,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
         this.initToolbarConfig();
 
-        this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email'];
+        this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email', 'Phone', 'City', 'State'];
         this.searchValue = '';
     }
 
