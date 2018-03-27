@@ -15,6 +15,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     private initBankAccountHighlightedTimeout: any;
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
     @Input() showAdvancedColumns = true;
+    @Input() highlightUsedRows = false;
     @Input() tableWidth = 740;
     @Input() nameColumnWidth = 240;
     @Input('dataSource')
@@ -61,8 +62,14 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     }
 
     rowPrepared(e) {
-        if (e.rowType === 'data' && e.data['highlighted']) {
-            e.rowElement.classList.add('highlighted-row')
+        if (e.rowType === 'data') {
+            if (e.data['highlighted']) {
+                e.rowElement.classList.add('highlighted-row');
+            }
+
+            if (e.data['isUsed']) {
+                e.rowElement.classList.add('used-row');
+            }
         }
     }
 

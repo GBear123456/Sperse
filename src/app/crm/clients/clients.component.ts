@@ -100,7 +100,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
         this.initToolbarConfig();
 
-        this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email'];
+        this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email', 'Phone', 'City', 'State', 'StateId'];
         this.searchValue = '';
     }
 
@@ -151,7 +151,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     calculateAddressColumnValue(data) {
-        return (data.City || data.State) ? [data.City, data.State].join(", ") : null;
+        return (data.City || data.StateId) ? [data.City, data.StateId].join(", ") : null;
     }
 
     toggleDataLayout(dataLayoutType) {

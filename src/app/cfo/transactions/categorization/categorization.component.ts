@@ -75,6 +75,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     showSearch = false;
 
     filteredRowData: any;
+    noDataText: string;
 
     transactionsCountDataSource: DataSource;
 
@@ -355,10 +356,14 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             JSON.stringify(this.settings));
     }
 
-    processExpandTree(expandTypes, expandCategories) {
-        _.mapObject(this.categorization.accountingTypes, (item, key) => {
-            this.categoryList.instance[(expandTypes ? 'expand' : 'collapse') + 'Row'](key + item.typeId);
-        });
+    processExpandTree(expandFirstLevel, expandSecondLevel) {
+        if (this.settings.showAT) {
+            _.mapObject(this.categorization.accountingTypes, (item, key) => {
+                this.categoryList.instance[(expandFirstLevel ? 'expand' : 'collapse') + 'Row'](key + item.typeId);
+            });
+        }
+
+        var expandCategories = (expandFirstLevel && !this.settings.showAT) || expandSecondLevel;
         _.mapObject(this.categorization.categories, (item, key) => {
             if (!item.parentId) {
                 let method = this.categoryList.instance[
@@ -382,13 +387,11 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         img.src = 'assets/common/icons/drag-icon.svg';
 
         let sourceCategory = null;
-        let dragEnterTime: number;
 
         let clearDragAndDrop = () => {
             sourceCategory = null;
             $('.drag-hover').removeClass('drag-hover');
             $('dx-tree-list .dx-data-row').removeClass('droppable');
-            dragEnterTime = null;
         };
 
         let element = <any>$($event.element);
@@ -418,9 +421,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 let targetTableRow = e.currentTarget.closest('tr');
                 if (!this.checkCanDrop(targetTableRow, sourceCategory))
                     return;
-
-                dragEnterTime = new Date().getTime();
+                
                 targetTableRow.classList.add('drag-hover');
+                e.target.classList.add('element-drag-hover');
             }).on('dragover', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
@@ -432,29 +435,33 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
 
-                dragEnterTime = null;
+                e.target.classList.remove('element-drag-hover');                
+                if (e.relatedTarget && (e.relatedTarget.classList.contains('category-drop-add-rule') || e.relatedTarget.classList.contains('category-drop-area')))
+                    return;
+
                 e.currentTarget.closest('tr').classList.remove('drag-hover');
             }).on('drop', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
-
+                
                 if (sourceCategory) {
                     let source = e.originalEvent.dataTransfer.getData('Text');
                     let target = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);
-
+                    
                     this.handleCategoryDrop(source, target);
                 } else {
                     let categoryId = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);
                     let category = this.categorization.categories[categoryId];
                     let parentCategory = this.categorization.categories[category.parentId];
 
+                    let showRuleDialog: boolean = e.target.classList.contains('category-drop-add-rule');
                     this.onTransactionDrop.emit({
                         categoryId: categoryId,
                         categoryName: category.name,
                         parentId: category.parentId,
                         parentName: parentCategory ? parentCategory.name : null,
                         categoryCashType: this.categorization.accountingTypes[category.accountingTypeId].typeId,
-                        showRuleDialog: dragEnterTime ? (new Date().getTime() - dragEnterTime) > 1000 : true
+                        showRuleDialog: showRuleDialog
                     });
                 }
 
@@ -469,7 +476,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 sourceCategory.cashType != targetCashType)
                 return false;
         } else {
-            if (targetElement.getAttribute('aria-level') == '0')
+            if (targetElement.classList.contains('accountingType'))
                 return false;
         }
 
@@ -544,6 +551,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     }
 
     refreshCategories(expandInitial: boolean = false) {
+        this.startLoading();
         this._classificationServiceProxy.getCategoryTree(
             InstanceType[this.instanceType], this.instanceId, this.includeNonCashflowNodes).subscribe((data) => {
                 let categories = [];
@@ -592,8 +600,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 }
 
                 this.refreshTransactionsCountDataSource();
+                setTimeout(() => this.finishLoading());
+                if (!this.categories.length) this.noDataText = this.ls('Platform', 'NoData');
             }
-        );
+            );
     }
 
     setTransactionsCount() {
@@ -607,7 +617,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         let parentCategories: any[] = [];
 
         this.categories.forEach(x => {
-            if (x.parent == 'root')
+            if (isNaN(x.key))
                 accountingTypes[x.key] = x;
             else if (parseInt(x.parent) != x.parent)
                 parentCategories[x.key] = x;
@@ -616,15 +626,17 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         this.categories.forEach(x => {
             if (parseInt(x.parent) == x.parent && x.transactionsCount) {
                 let parentCategory = parentCategories[x.parent];
-                if (x.transactionsCount)
+                if (parentCategory && x.transactionsCount)
                     parentCategory.transactionsCount = parentCategory.transactionsCount ? parentCategory.transactionsCount + x.transactionsCount : x.transactionsCount;
             }
         });
-        parentCategories.forEach(x => {
-            let accountingType = accountingTypes[x.parent];
-            if (x.transactionsCount)
-                accountingType.transactionsCount = accountingType.transactionsCount ? accountingType.transactionsCount + x.transactionsCount : x.transactionsCount;
-        });
+
+        if (this.settings.showAT)
+            parentCategories.forEach(x => {
+                let accountingType = accountingTypes[x.parent];
+                if (x.transactionsCount)
+                    accountingType.transactionsCount = accountingType.transactionsCount ? accountingType.transactionsCount + x.transactionsCount : x.transactionsCount;
+            });
     }
 
     refreshTransactionsCountDataSource() {
@@ -836,7 +848,14 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             }
         }
 
-        if ($event.level > 0) {
+        if (isNaN($event.key))
+            $event.rowElement.classList.add('accountingType');
+        else if (isNaN($event.data.parent))
+            $event.rowElement.classList.add('parentCategory');
+        else
+            $event.rowElement.classList.add('subCategory');
+
+        if (!isNaN($event.key)) {
             $event.rowElement.setAttribute('draggable', true);
         }
     }
