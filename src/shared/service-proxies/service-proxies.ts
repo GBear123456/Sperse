@@ -6586,8 +6586,9 @@ export class CustomersServiceProxy {
      * @middleName (optional) 
      * @lastName (optional) 
      * @nameSuffix (optional) 
-     * @emailAddress (optional) 
-     * @phoneNumber (optional) 
+     * @companyName (optional) 
+     * @emailAddresses (optional) 
+     * @phoneNumbers (optional) 
      * @streetAddress (optional) 
      * @city (optional) 
      * @stateId (optional) 
@@ -6595,7 +6596,7 @@ export class CustomersServiceProxy {
      * @countryId (optional) 
      * @return Success
      */
-    getSimilarCustomers(namePrefix: string, firstName: string, middleName: string, lastName: string, nameSuffix: string, emailAddress: string, phoneNumber: string, streetAddress: string, city: string, stateId: string, zip: string, countryId: string): Observable<SimilarCustomerInfo[]> {
+    getSimilarCustomers(namePrefix: string, firstName: string, middleName: string, lastName: string, nameSuffix: string, companyName: string, emailAddresses: string[], phoneNumbers: string[], streetAddress: string, city: string, stateId: string, zip: string, countryId: string): Observable<SimilarCustomerInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Customers/GetSimilarCustomers?";
         if (namePrefix !== undefined)
             url_ += "NamePrefix=" + encodeURIComponent("" + namePrefix) + "&"; 
@@ -6607,10 +6608,12 @@ export class CustomersServiceProxy {
             url_ += "LastName=" + encodeURIComponent("" + lastName) + "&"; 
         if (nameSuffix !== undefined)
             url_ += "NameSuffix=" + encodeURIComponent("" + nameSuffix) + "&"; 
-        if (emailAddress !== undefined)
-            url_ += "EmailAddress=" + encodeURIComponent("" + emailAddress) + "&"; 
-        if (phoneNumber !== undefined)
-            url_ += "PhoneNumber=" + encodeURIComponent("" + phoneNumber) + "&"; 
+        if (companyName !== undefined)
+            url_ += "CompanyName=" + encodeURIComponent("" + companyName) + "&"; 
+        if (emailAddresses !== undefined)
+            emailAddresses && emailAddresses.forEach(item => { url_ += "EmailAddresses=" + encodeURIComponent("" + item) + "&"; });
+        if (phoneNumbers !== undefined)
+            phoneNumbers && phoneNumbers.forEach(item => { url_ += "PhoneNumbers=" + encodeURIComponent("" + item) + "&"; });
         if (streetAddress !== undefined)
             url_ += "StreetAddress=" + encodeURIComponent("" + streetAddress) + "&"; 
         if (city !== undefined)
