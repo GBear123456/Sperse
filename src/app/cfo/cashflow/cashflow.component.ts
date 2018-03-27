@@ -4269,7 +4269,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     setSliderReportPeriodFilterData(start, end) {
-        let dateFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
+        let dateFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
         if (dateFilter) {
             if (!dateFilter.items['from'].value)
                 this.sliderReportPeriod.start = start;
