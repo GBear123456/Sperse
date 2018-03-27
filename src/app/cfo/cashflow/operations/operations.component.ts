@@ -28,7 +28,11 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
         clearTimeout(this.initSelectedBankAccountsTimeout);
         this.initSelectedBankAccountsTimeout = setTimeout(() => {
             this.bankAccountSelector.setSelectedBankAccounts(selectedBankAccounts);
-            this.bankAccountCount = selectedBankAccounts.length;
+            if (!selectedBankAccounts.length)
+                this.bankAccountCount = '';
+            else
+                this.bankAccountCount = selectedBankAccounts.length;
+            this.initToolbarConfig();
         }, 300);
     }
     @Output() repaintCashflow: EventEmitter<any> = new EventEmitter();
@@ -42,7 +46,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     @Output() onReportPeriodChange: EventEmitter<any> = new EventEmitter();
     @Output() onSelectedBankAccountsChange: EventEmitter<any> = new EventEmitter();
 
-    bankAccountCount: any;
+    bankAccountCount = '';
     reportPeriodTooltipVisible: boolean = false;
     sliderReportPeriod = { start: 2000, end: 2028 };
     totalCount = 3;
@@ -137,6 +141,10 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                             id: 'bankAccountSelect',
                             text: this.l('Accounts'),
                             icon: 'assets/common/icons/accounts.svg'
+                        },
+                        attr: {
+                            'custaccesskey': 'bankAccountSelect',
+                            'accountCount': this.bankAccountCount
                         }
                     },
                 ]

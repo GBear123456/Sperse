@@ -709,4 +709,23 @@
             float: right;
         }
     }
+
+    /deep/ [custaccesskey="bankAccountSelect"] {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+
+        &:after {
+            content: attr(accountcount) "";
+            font-family: Montserrat;
+            letter-spacing: 0.3px;
+            padding-right: 10px;
+            margin-left: -7px;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.71;
+            color: #212c36;
+        }
+    }
 }
