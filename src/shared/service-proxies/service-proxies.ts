@@ -27611,6 +27611,7 @@ export interface ICreateCustomerOutput {
 export class SimilarCustomerInfo implements ISimilarCustomerInfo {
     id: number;
     name: string;
+    jobTitle: string;
     score: number;
 
     constructor(data?: ISimilarCustomerInfo) {
@@ -27626,6 +27627,7 @@ export class SimilarCustomerInfo implements ISimilarCustomerInfo {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.jobTitle = data["jobTitle"];
             this.score = data["score"];
         }
     }
@@ -27640,6 +27642,7 @@ export class SimilarCustomerInfo implements ISimilarCustomerInfo {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["jobTitle"] = this.jobTitle;
         data["score"] = this.score;
         return data; 
     }
@@ -27648,6 +27651,7 @@ export class SimilarCustomerInfo implements ISimilarCustomerInfo {
 export interface ISimilarCustomerInfo {
     id: number;
     name: string;
+    jobTitle: string;
     score: number;
 }
 
