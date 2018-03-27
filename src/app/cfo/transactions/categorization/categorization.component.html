@@ -11,6 +11,7 @@
                   height="{{height}}"
                   keyExpr="key"
                   parentIdExpr="parent"
+                  [noDataText]="noDataText"
                   [hoverStateEnabled]="true"
                   [(dataSource)]="categories"
                   [selection]="{allowSelectAll: false, mode: 'single'}"
@@ -63,7 +64,9 @@
             <ng-container>
                 <div class="category-hover"></div>
                 <span> {{ cell.text }} </span>
-                <div class="category-drop-area"></div>
+                <div class="category-drop-area">
+                    <div class="category-drop-add-rule">Add Rule</div>
+                </div>
             </ng-container>
         </div>
         <div *dxTemplate="let cell of 'transactionsCountTemplate'">

@@ -1,11 +1,12 @@
 :host {
+    
     h3 {
         width: 340px;
         font-size: 16px;
         line-height: 1.38;
         letter-spacing: 0.3px;
         font-weight: 500;
-        padding: 20px 0px 0px 20px;
+        padding: 20px 0 0 20px;
 
         .clearAll {
             font-size: 11px;
@@ -30,7 +31,7 @@
 
             &:after, &:before {
                 position: absolute;
-                top: 0px;
+                top: 0;
                 left: 8px;
                 content: ' ';
                 height: 20px;
@@ -143,6 +144,24 @@
 
                 .category-drop-area {
                     display: block !important;
+
+                    .category-drop-add-rule {
+                        display: inline-block !important;
+                        opacity: 0;
+                        transition: .3s;
+                    }
+                }
+
+                &.drag-hover .category-drop-add-rule {
+                    opacity: 1;
+                }
+
+                &.dx-selection .category-drop-add-rule {
+                    background-color: #F0FAFE;
+                }
+
+                &.filtered-category .category-drop-add-rule {
+                    background-color: #f0fef1;
                 }
             }
         }
@@ -375,8 +394,25 @@
 
                         .category-drop-area {
                             z-index: 1000;
-                            margin-top: -26px;
+                            margin-top: -29px;
                             display: none;
+                            text-align: right;
+
+                            .category-drop-add-rule {
+                                display: none;
+                                position: relative;
+                                top: 4px;
+                                right: 1px;
+                                padding: 3px 7px;
+                                border-radius: 11px;
+                                font-size: 10px;
+                                color: orange;
+                                font-weight: 500;
+
+                                &.element-drag-hover {
+                                    border: 1px solid orange;
+                                }
+                            }
                         }
 
                         &.dx-command-edit a {

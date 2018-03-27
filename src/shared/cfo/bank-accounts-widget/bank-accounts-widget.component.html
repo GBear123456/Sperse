@@ -8,7 +8,7 @@
         </div>
     </div>
     <dx-scroll-view [showScrollbar]="onHover">
-        <div class="grid-container">
+        <div class="grid-container {{highlightUsedRows ? 'highlight-used-rows' : '' }}">
             <dx-data-grid id="gridContainer"
                           [width]="tableWidth"
                           [dataSource]="syncAccountsDataSource"

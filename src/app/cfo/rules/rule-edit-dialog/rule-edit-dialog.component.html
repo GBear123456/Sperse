@@ -62,19 +62,16 @@
                     <dxi-column dataField="id" [visible]="false" sortOrder="desc">
                     </dxi-column>
                     <dxi-column
-                        width="150"
                         dataField="attributeTypeId"
                         [validationRules]="[{ type: 'required' }]"
                         [calculateDisplayValue]="attributeDisplayValue"
+                        [editCellTemplate]="'attributeTemplate'"
                         [setCellValue]="setCellValue">
-                        <dxo-lookup
-                            [dataSource]="availableGridAttributeTypes"
-                            displayExpr="name"
-                            valueExpr="id">
-                        </dxo-lookup>
                     </dxi-column>
-                    <dxi-column dataField="conditionTypeId"
+                    <dxi-column dataField="conditionTypeId" 
+                        [width]="80"
                         [setCellValue]="setCellValue"
+                        [calculateDisplayValue]="conditionDisplayValue"
                         [validationRules]="[{ type: 'required' }]">
                         <dxo-lookup
                             [dataSource]="conditionTypes"
@@ -83,12 +80,42 @@
                         </dxo-lookup>
                     </dxi-column>
                     <dxi-column dataField="conditionValue"
+                        [width]="220"
                         [editCellTemplate]="'valueTemplate'"
                         [validationRules]="[{ type: 'required' }]">
                     </dxi-column>
 
+                        <div *dxTemplate="let cell of 'attributeTemplate'">
+                            <dx-select-box [accessKey]="'attributeTypesSelect'"
+                                           [width]="'515px'"
+                                           [hoverStateEnabled]="false"
+                                           [activeStateEnabled]="false"
+                                           [focusStateEnabled]="false"
+                                           [acceptCustomValue]="false"
+                                           [dropDownButtonTemplate]="''"
+                                           [itemTemplate]="'itemTMPL'"
+                                           [dataSource]="availableGridAttributeTypes"
+                                           (onValueChanged)="attributeGridDropDownValueChanged($event, cell)"
+                                           (onInitialized)="attributeGridDropDownInitialized($event, cell)"
+                                           (onDisposing)="attributeGridDropDownDisposing($event, cell)"
+                                           valueExpr="id"
+                                           displayExpr="name"
+                                           [value]="cell.value">
+
+                                <div *dxTemplate="let item of 'itemTMPL'">
+                                    <ng-container>
+                                        <span class="attribute-name-grid"><a></a>{{ item.name }}</span>
+                                        <div *ngFor="let value of getKeyAttributeValues(item.id)" class="attribute-value-wrapper">
+                                            <a class="attribute-value" (click)="selectedGridAttributeValue($event, value)">{{ value.name }}</a>
+                                        </div>
+                                    </ng-container>
+                                </div>
+
+                            </dx-select-box>
+                        </div>
+
                         <div *dxTemplate="let cell of 'valueTemplate'">
-                            <dx-select-box
+                            <dx-select-box 
                                            [placeholder]="l('Enter_Value')"
                                            [hoverStateEnabled]="false"
                                            [activeStateEnabled]="false"

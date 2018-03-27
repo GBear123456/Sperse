@@ -1,7 +1,6 @@
 :host {
     position: relative;
     top: 75px;
-
     .content-wrap {
         display: flex;
     }
@@ -11,13 +10,17 @@
     }
 
     /deep/ categorization {
+        display: block;
+        
         table {
             width: calc(~"100vw - 760px");
         }
+        
         td:nth-child(2) {
             position: static;
-            visibility: visible!important;
+            visibility: visible !important;
         }
+        
         .dx-scrollbar-horizontal {
             visibility: hidden;
         }
