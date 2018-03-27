@@ -72,6 +72,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     chartsWidth;
     isForecast = false;
     reportPeriodTooltipVisible = false;
+    bankAccountCount = '';
     barChartTooltipFields = [
         {
             'name': 'startingBalance',
@@ -144,6 +145,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
+    private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
     constructor(
         injector: Injector,
         private _appService: AppService,
@@ -161,7 +163,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
-    initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null }) {
+    initToolbarConfig() {
         this._appService.toolbarConfig = <any>[
             {
                 location: 'before',
@@ -209,8 +211,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         options: {
                             hint: this.l('Scenario'),
                             accessKey: 'statsForecastSwitcher',
-                            items: forecastModelsObj.items,
-                            selectedIndex: forecastModelsObj.selectedItemIndex,
+                            items: this.forecastModelsObj.items,
+                            selectedIndex: this.forecastModelsObj.selectedItemIndex,
                             height: 39,
                             width: 243,
                             onSelectionChanged: (e) => {
@@ -241,6 +243,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         options: {
                             id: 'bankAccountSelect',
                             text: this.l('Accounts')
+                        },
+                        attr: {
+                            'custaccesskey': 'bankAccountSelect',
+                            'accountCount': this.bankAccountCount
                         }
                     }
                 ]
@@ -366,6 +372,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 }
                 if (filter.caption.toLowerCase() === 'account') {
                     this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
+                    this.setBankAccountCount(filter.items.element.value);
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -376,7 +383,15 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             }
 
             this.loadStatsData();
+            this.initToolbarConfig();
         });
+    }
+
+    setBankAccountCount(bankAccountIds) {
+        if (!bankAccountIds || !bankAccountIds.length)
+            this.bankAccountCount = '';
+        else
+            this.bankAccountCount = bankAccountIds.length;
     }
 
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
@@ -434,11 +449,11 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             cachedForecastModel :
             items[0];
         let selectedForecastModelIndex = items.findIndex(item => item.id === this.selectedForecastModel.id);
-        let forecastModelsObj = {
+        this.forecastModelsObj = {
             items: items,
             selectedItemIndex: selectedForecastModelIndex
         };
-        this.initToolbarConfig(forecastModelsObj);
+        this.initToolbarConfig();
     }
 
     /**
