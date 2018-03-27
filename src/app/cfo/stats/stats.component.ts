@@ -134,8 +134,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     sliderReportPeriod = {
         start: null,
         end: null,
-        minDate: moment().utc().subtract(6, 'year').year(),
-        maxDate: moment().utc().add(2, 'year').year()
+        minDate: moment().utc().subtract(10, 'year').year(),
+        maxDate: moment().utc().add(10, 'year').year()
     };
     leftSideBarItems = [
         { caption: 'leftSideBarMonthlyTrendCharts' },
@@ -242,7 +242,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         action: this.toggleBankAccountTooltip.bind(this),
                         options: {
                             id: 'bankAccountSelect',
-                            text: this.l('Accounts')
+                            text: this.l('Accounts'),
+                            icon: 'assets/common/icons/accounts.svg'
                         },
                         attr: {
                             'custaccesskey': 'bankAccountSelect',
@@ -513,10 +514,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 /** reinit */
                 this.initHeadlineConfig();
                 this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
-                if (!this.sliderReportPeriod.start || this.sliderReportPeriod.start === this.sliderReportPeriod.minDate)
-                    this.sliderReportPeriod.start = this.statsData[0].date.year();
-                if (!this.sliderReportPeriod.end || this.sliderReportPeriod.end === this.sliderReportPeriod.maxDate)
-                    this.sliderReportPeriod.end = this.statsData[this.statsData.length - 1].date.year();
+
+                this.setSliderReportPeriodFilterData(this.statsData[0].date.year(), this.statsData[this.statsData.length - 1].date.year());
             } else {
                 console.log('No daily stats');
             }
@@ -593,6 +592,16 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         }
         // debugger;
         this._filtersService.change(dateFilter);
+    }
+
+    setSliderReportPeriodFilterData(start, end) {
+        let dateFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
+        if (dateFilter) {
+            if (!dateFilter.items['from'].value)
+                this.sliderReportPeriod.start = start;
+            if (!dateFilter.items['to'].value)
+                this.sliderReportPeriod.end = end;
+        }       
     }
 
     setBankAccountsFilter(data) {
