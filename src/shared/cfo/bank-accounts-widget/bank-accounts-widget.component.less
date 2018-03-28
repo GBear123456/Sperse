@@ -1,9 +1,12 @@
-
 .bank-account-filter-container {
     text-align: start;
 
     .blue {
         color: #00AEEF;
+    }
+    
+    /deep/ .bold {
+        font-weight: 600;
     }
 
     .filter-actions {
@@ -27,16 +30,17 @@
 
             /deep/.dx-tab {
                 font-size: 12px;
-                font-weight: 400;
+                font-weight: 500;
                 line-height: 1.21;
                 letter-spacing: 0.3px;
                 color: #677380;
-                padding: 9px;
+                padding: 9px 10px 3px 0;
                 background-color: transparent;
-                padding-left: 0;
-                padding-right: 10px;
-                padding-bottom: 3px;
-
+                
+                .dx-tab-content {
+                    border-bottom: 2px solid transparent;
+                }
+                
                 .dx-tab-text {
                     font-size: 14px;
                 }
@@ -44,11 +48,11 @@
 
             /deep/ .dx-tab.dx-tab-selected {
                 border: 0;
-                font-weight: bold;
-                color: #333;
+                font-weight: 600;
+                color: #202b35;
 
                 .dx-tab-content {
-                    border-bottom: 2px solid #00AEEF;
+                    border-bottom-color: #00AEEF;
                 }
 
                 &:after {
@@ -67,7 +71,7 @@
     }
 
     /deep/ .highlighted-row {
-        background-color: #effffc;
+        background-color: #f3fff7;
     }
 
     dx-tag-box {
@@ -80,11 +84,36 @@
 
 
     /deep/ #gridContainer {
+        height: 100% !important;
+        
         .dx-datagrid-headers .dx-datagrid-content,
         .dx-datagrid-headers .dx-datagrid-table .dx-row > td {
             border-bottom: 0;
         }
+        
+        .dx-datagrid-content {
+            > .dx-datagrid-table {
+                border-spacing: 0 8px;
+                border-collapse: separate;
+        
+                .dx-row.dx-data-row {
+                    box-shadow: inset 0 0 0 1px #e5e9ec;
+                    border-radius: 4px;
+                    
+                    td {
+                        padding: 10px 8px;
+                        vertical-align: middle;
+                        
+                        .dx-checkbox-icon {
+                            margin-top: 4px;
+                        }
+                    }
+                }
+            }
+        }
     }
+    
+    
 
     .grid-container {
         font-size: 12px;
@@ -102,15 +131,37 @@
         }
 
         /deep/ .dx-master-detail-row {
-            background-color: #f9fbfc;
+            background-color: #f3f7fa;
+            position: relative;
+            
+            .dx-header-row {
+                td {
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    color: rgba(104, 111, 118, 0.6);
+                    font-size: 13px;
+                    letter-spacing: 0.5px;
+                }
+            }
+            
+            .dx-master-detail-cell {
+                border-radius: 4px;
+            }
 
             #gridContainer .dx-datagrid-headers .dx-datagrid-content {
                 border-bottom: 0;
             }
+    
+            .dx-datagrid-focus-overlay {
+                border: 0;
+            }
+            
+            .dx-scrollable-content {
+                display: inline-flex;
+            }
 
             .dx-master-detail-cell {
                 border: 1px solid #ddd;
-                border-right-width: 2px;
             }
 
             .dx-datagrid-headers {
@@ -118,12 +169,42 @@
             }
 
             .dx-datagrid {
-                background-color: #f9fbfc;
+                background-color: #f3f7fa;
             }
-        }
-
-        /deep/ .dx-master-detail-row .dx-master-detail-cell {
-            padding: 0px;
+            
+            .dx-master-detail-cell {
+                padding: 0;
+            }
+    
+            table.dx-datagrid-table {
+                border-collapse: collapse !important;
+                border-spacing: 0 0 !important;
+                
+                .dx-row.dx-data-row {
+                    border: 0 !important;
+                    box-shadow: none !important;
+                    
+                    td {
+                        padding: 3px 8px !important;
+                        font-weight: 500;
+                        color: #67737f;
+                    }
+                }
+            }
+            
+            .type-container {
+                [data-text="checking"] {
+                    color: #3dbff0 !important;
+                }
+    
+                [data-text="savings"] {
+                    color: #b55db2 !important;
+                }
+    
+                [data-text="credit card"] {
+                    color: #8fc447 !important;
+                }
+            }
         }
 
         .account-status {
@@ -134,8 +215,9 @@
 
             .text {
                 font-size: 12px;
-                margin-top: 2px;
                 margin-right: 5px;
+                position: relative;
+                top: 2px;
             }
 
             .status-color-container {
@@ -162,10 +244,9 @@
             }
         }
 
-        /deep/.dx-datagrid-rowsview {
-            .dx-datagrid-content tr td.tabular,
-            .dx-datagrid-content tr td.tabular * {
-                font-family: 'Lato' !important;
+        /deep/ .dx-datagrid-rowsview {
+            .dx-datagrid-content tr td.tabular {
+                font-family: 'Lato', sans-serif !important;
             }
         }
     }
@@ -189,17 +270,13 @@
 
     .number-value {
         font-size: 14px;
-        font-weight: 300;
+        font-weight: 500;
         line-height: 1.21;
         letter-spacing: 0.3px;
         color: #677380;
     }
 
-    /deep/ .bold {
-        font-weight: bold;
-    }
-
-    /deep/.expand-div {
+    /deep/ .expand-div {
         border: solid #677380;
         border-width: 0 1px 1px 0;
         padding: 3px;
@@ -221,7 +298,7 @@
 
     .highlight-used-rows {
         /deep/ .used-row {
-            background-color: #e6e4e1;
+            background-color: darken(#f3f7fa, 4%);
         }
     }
 }

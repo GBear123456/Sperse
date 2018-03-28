@@ -3,7 +3,7 @@
 </app-headline>
 
 <cashflow-operations
-    [reportPeriod]="reportPeriod"
+    [reportPeriod]="sliderReportPeriod"
     [selectedBankAccounts]="selectedBankAccounts"
     (repaintCashflow)="repaintDataGrid()"
     (onGroupBy)="changeGroupBy($event)"

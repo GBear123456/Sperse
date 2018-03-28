@@ -21,11 +21,12 @@
         border: 1px solid;
         border-radius: 15px;
         cursor: pointer;
-        font-size: 14px;
-        line-height: 1.21;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1.4;
         letter-spacing: 0.3px;
         color: #00AEEF;
-        padding: 5px 10px;
+        padding: 5px 20px;
         margin-left: 10px;
         float: right;
     }
@@ -42,21 +43,17 @@
     }
 
     .filter-actions-is-active {
-        width: 100%;
-        display: inline-block;
-        height: 0;
-
+        margin-top: 5px;
 
         .is-active-filter {
-            float: right;
-            font-size: 14px;
-            font-weight: 400;
+            font-size: 13px;
+            font-weight: 500;
             line-height: 1.21;
             letter-spacing: 0.3px;
             color: #677380;
 
             position: absolute;
-            right: 15px;
+            right: 17px;
             z-index: 10;
 
             /deep/ .dx-switch-on,
@@ -91,33 +88,41 @@
 
     .business-entity-select {
         float: left;
-        max-width: 80%;
-        width: 77%;
+        max-width: 75%;
+        width: 75%;
 
         .dx-field-label {
-            width: 35%;
-            font-size: 15px;
-            font-weight: bold;
-            padding: 5px 5px 9px 0;
+            width: 36%;
+            font-size: 17px;
+            font-weight: 500;
+            padding: 6px 5px 8px 0;
+            color: #202b35;
         }
 
         .dx-field-value {
-            width: 65%;
+            width: 64%;
             float: left;
 
             .tag-value,
             /deep/ .dx-placeholder {
-                font-size: 14px;
+                font-size: 17px;
                 line-height: 1.21;
                 letter-spacing: 0.3px;
                 color: #00AEEF;
                 padding: 0 5px;
                 height: auto !important;
+                font-weight: 500;
                 top: 0;
             }
 
             /deep/ .dx-texteditor-container {
                 padding-top: 7px;
+                
+                .dx-tag {
+                    display: block;
+                    float: left;
+                    margin-right: 8px;
+                }
             }
         }
     }

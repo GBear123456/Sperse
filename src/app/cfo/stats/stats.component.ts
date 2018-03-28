@@ -72,6 +72,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     chartsWidth;
     isForecast = false;
     reportPeriodTooltipVisible = false;
+    bankAccountCount = '';
     barChartTooltipFields = [
         {
             'name': 'startingBalance',
@@ -133,8 +134,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     sliderReportPeriod = {
         start: null,
         end: null,
-        minDate: moment().utc().subtract(6, 'year').year(),
-        maxDate: moment().utc().add(2, 'year').year()
+        minDate: moment().utc().subtract(10, 'year').year(),
+        maxDate: moment().utc().add(10, 'year').year()
     };
     leftSideBarItems = [
         { caption: 'leftSideBarMonthlyTrendCharts' },
@@ -144,6 +145,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
+    private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
     constructor(
         injector: Injector,
         private _appService: AppService,
@@ -161,7 +163,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
-    initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null }) {
+    initToolbarConfig() {
         this._appService.toolbarConfig = <any>[
             {
                 location: 'before',
@@ -209,8 +211,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         options: {
                             hint: this.l('Scenario'),
                             accessKey: 'statsForecastSwitcher',
-                            items: forecastModelsObj.items,
-                            selectedIndex: forecastModelsObj.selectedItemIndex,
+                            items: this.forecastModelsObj.items,
+                            selectedIndex: this.forecastModelsObj.selectedItemIndex,
                             height: 39,
                             width: 243,
                             onSelectionChanged: (e) => {
@@ -240,7 +242,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         action: this.toggleBankAccountTooltip.bind(this),
                         options: {
                             id: 'bankAccountSelect',
-                            text: this.l('Accounts')
+                            text: this.l('Accounts'),
+                            icon: 'assets/common/icons/accounts.svg'
+                        },
+                        attr: {
+                            'custaccesskey': 'bankAccountSelect',
+                            'accountCount': this.bankAccountCount
                         }
                     }
                 ]
@@ -366,6 +373,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 }
                 if (filter.caption.toLowerCase() === 'account') {
                     this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
+                    this.setBankAccountCount(filter.items.element.value);
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -376,7 +384,15 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             }
 
             this.loadStatsData();
+            this.initToolbarConfig();
         });
+    }
+
+    setBankAccountCount(bankAccountIds) {
+        if (!bankAccountIds || !bankAccountIds.length)
+            this.bankAccountCount = '';
+        else
+            this.bankAccountCount = bankAccountIds.length;
     }
 
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
@@ -434,11 +450,11 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             cachedForecastModel :
             items[0];
         let selectedForecastModelIndex = items.findIndex(item => item.id === this.selectedForecastModel.id);
-        let forecastModelsObj = {
+        this.forecastModelsObj = {
             items: items,
             selectedItemIndex: selectedForecastModelIndex
         };
-        this.initToolbarConfig(forecastModelsObj);
+        this.initToolbarConfig();
     }
 
     /**
@@ -498,10 +514,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 /** reinit */
                 this.initHeadlineConfig();
                 this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
-                if (!this.sliderReportPeriod.start || this.sliderReportPeriod.start === this.sliderReportPeriod.minDate)
-                    this.sliderReportPeriod.start = this.statsData[0].date.year();
-                if (!this.sliderReportPeriod.end || this.sliderReportPeriod.end === this.sliderReportPeriod.maxDate)
-                    this.sliderReportPeriod.end = this.statsData[this.statsData.length - 1].date.year();
+
+                this.setSliderReportPeriodFilterData(this.statsData[0].date.year(), this.statsData[this.statsData.length - 1].date.year());
             } else {
                 console.log('No daily stats');
             }
@@ -578,6 +592,16 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         }
         // debugger;
         this._filtersService.change(dateFilter);
+    }
+
+    setSliderReportPeriodFilterData(start, end) {
+        let dateFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
+        if (dateFilter) {
+            if (!dateFilter.items['from'].value)
+                this.sliderReportPeriod.start = start;
+            if (!dateFilter.items['to'].value)
+                this.sliderReportPeriod.end = end;
+        }       
     }
 
     setBankAccountsFilter(data) {

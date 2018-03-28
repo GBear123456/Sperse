@@ -125,8 +125,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
     @ViewChild(OperationsComponent) operations: OperationsComponent;
     selectedBankAccounts = [];
-    reportPeriod = {};
-    defaultReportPeriod = {};
+    sliderReportPeriod = {
+        start: null,
+        end: null,
+        minDate: moment().utc().subtract(10, 'year').year(),
+        maxDate: moment().utc().add(10, 'year').year()
+    };
     showAllDisabled = true;
     noRefreshedAfterSync: boolean;
     headlineConfig: any;
@@ -799,14 +803,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (filter.caption.toLowerCase() === 'date') {
                     this.monthsDaysLoadedPathes = [];
                     if (filter.items.from.value)
-                        this.reportPeriod['start'] = filter.items.from.value.getFullYear();
+                        this.sliderReportPeriod.start = filter.items.from.value.getFullYear();
                     else
-                        this.reportPeriod['start'] = this.defaultReportPeriod['start'];
+                        this.sliderReportPeriod.start = this.sliderReportPeriod.minDate;
 
                     if (filter.items.to.value)
-                        this.reportPeriod['end'] = filter.items.to.value.getFullYear();
+                        this.sliderReportPeriod.end = filter.items.to.value.getFullYear();
                     else
-                        this.reportPeriod['end'] = this.defaultReportPeriod['end'];
+                        this.sliderReportPeriod.end = this.sliderReportPeriod.maxDate;
                 }
                 if (filter.caption.toLowerCase() === 'account') {
                     this.selectedBankAccounts = filter.items.element.value;
@@ -1183,12 +1187,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         stubCashflowDataForAllDays
                     );
 
-                    this.defaultReportPeriod['start'] = underscore.min(this.cashflowData, function (val) { return val.date; }).date.year();
-                    this.defaultReportPeriod['end'] = underscore.max(this.cashflowData, function (val) { return val.date; }).date.year();
-                    if (!this.reportPeriod['start'] )
-                        this.reportPeriod['start'] = this.defaultReportPeriod['start'];
-                    if (!this.reportPeriod['end'])
-                        this.reportPeriod['end'] = this.defaultReportPeriod['end'];
+                    let start = underscore.min(this.cashflowData, function (val) { return val.date; }).date.year();
+                    let end = underscore.max(this.cashflowData, function (val) { return val.date; }).date.year();
+                    this.setSliderReportPeriodFilterData(start, end);
                     /**
                      * Override the native array push method for the cashflow that will add the total and netChange objects before pushing the income or expense objects
                      * @type {Object}
@@ -1535,10 +1536,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** consider the fitler */
         if (this.requestFilter.startDate && (!minDate || moment(this.requestFilter.startDate).utc().isAfter(minDate))) minDate = this.requestFilter.startDate;
-        if (this.requestFilter.endDate && (!maxDate || moment(this.requestFilter.endDate).utc().isBefore(maxDate))) maxDate = this.requestFilter.endDate;
+        if (this.requestFilter.endDate && (!maxDate || moment(this.requestFilter.endDate).utc().isAfter(maxDate))) maxDate = this.requestFilter.endDate;
 
         let startDate = moment.utc(minDate);
         let endDate = moment.utc(maxDate);
+
 
         /** cycle from started date to ended date */
         /** added fake data for each date that is not already exists in cashflow data */
@@ -4293,6 +4295,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         this._filtersService.change(dateFilter);
+    }
+
+    setSliderReportPeriodFilterData(start, end) {
+        let dateFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
+        if (dateFilter) {
+            if (!dateFilter.items['from'].value)
+                this.sliderReportPeriod.start = start;
+            if (!dateFilter.items['to'].value)
+                this.sliderReportPeriod.end = end;
+        }
     }
 
     setBankAccountsFilter(data) {

@@ -11,7 +11,9 @@ import {
 import { AppConsts } from '@shared/AppConsts';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CreateOrEditClientModalComponent } from './create-or-edit-client-modal.component';
+
+import { CreateClientDialogComponent } from './create-client-dialog.component';
+import { MatDialog } from '@angular/material';
 
 import { AppService } from '@app/app.service';
 
@@ -44,7 +46,6 @@ import * as moment from 'moment';
     providers: [ InstanceServiceProxy ]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('createOrEditClientModal') createOrEditClientModal: CreateOrEditClientModalComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
@@ -67,6 +68,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     };
 
     constructor(injector: Injector,
+        public dialog: MatDialog,
         private _router: Router,
         private _appService: AppService,
         private _filtersService: FiltersService,
@@ -100,7 +102,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
         this.initToolbarConfig();
 
-        this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email'];
+        this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email', 'Phone', 'City', 'State', 'StateId'];
         this.searchValue = '';
     }
 
@@ -125,7 +127,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     createClient() {
-        this.createOrEditClientModal.show();
+        this.dialog.open(CreateClientDialogComponent, {
+            panelClass: 'slider',
+            data: {}
+        }).afterClosed().subscribe(() => this.refreshDataGrid())
     }
 
     isClientCFOAvailable(userId) {
@@ -151,7 +156,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     calculateAddressColumnValue(data) {
-        return (data.City || data.State) ? [data.City, data.State].join(", ") : null;
+        return (data.City || data.StateId) ? [data.City, data.StateId].join(", ") : null;
     }
 
     toggleDataLayout(dataLayoutType) {
