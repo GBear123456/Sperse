@@ -191,7 +191,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             text: this.l('Search All')
                         },
                         attr: {
-                            'filter-selected': this.filtersService.hasFilterSelected,
+                            'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey) )? true : false,
                             'custaccesskey': 'search-container'
                         }
                     }
@@ -394,10 +394,16 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.searchValue = e['value'];
 
         this.processFilterInternal();
+        this.initToolbarConfig();
     }
 
     searchAllClick() {
+        this.cashFlowCategoryFilter = [];
+        this.categorizationComponent.clearSelection(false);
+
         this.filtersService.clearAllFilters();
+        this.selectedCashflowCategoryKey = null;
+        this.initToolbarConfig();
     }
 
     toggleCreditDefault() {
@@ -742,6 +748,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
 
         this.selectedCashflowCategoryKey = data && data.key;
+        this.initToolbarConfig();
     }
 
     onSelectionChanged($event, initial = false) {
