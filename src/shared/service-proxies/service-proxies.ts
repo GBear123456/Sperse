@@ -27502,6 +27502,10 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     emailAddresses: CreateContactEmailInput[];
     phoneNumbers: CreateContactPhoneInput[];
     address: CreateContactAddressInput;
+    companyName: string;
+    organizationEmailAddresses: CreateContactEmailInput[];
+    organizationPhoneNumbers: CreateContactPhoneInput[];
+    organizationAddress: CreateContactAddressInput;
     organizationUnitId: number;
 
     constructor(data?: ICreateCustomerInput) {
@@ -27531,6 +27535,18 @@ export class CreateCustomerInput implements ICreateCustomerInput {
                     this.phoneNumbers.push(CreateContactPhoneInput.fromJS(item));
             }
             this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
+            this.companyName = data["companyName"];
+            if (data["organizationEmailAddresses"] && data["organizationEmailAddresses"].constructor === Array) {
+                this.organizationEmailAddresses = [];
+                for (let item of data["organizationEmailAddresses"])
+                    this.organizationEmailAddresses.push(CreateContactEmailInput.fromJS(item));
+            }
+            if (data["organizationPhoneNumbers"] && data["organizationPhoneNumbers"].constructor === Array) {
+                this.organizationPhoneNumbers = [];
+                for (let item of data["organizationPhoneNumbers"])
+                    this.organizationPhoneNumbers.push(CreateContactPhoneInput.fromJS(item));
+            }
+            this.organizationAddress = data["organizationAddress"] ? CreateContactAddressInput.fromJS(data["organizationAddress"]) : <any>undefined;
             this.organizationUnitId = data["organizationUnitId"];
         }
     }
@@ -27559,6 +27575,18 @@ export class CreateCustomerInput implements ICreateCustomerInput {
                 data["phoneNumbers"].push(item.toJSON());
         }
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["companyName"] = this.companyName;
+        if (this.organizationEmailAddresses && this.organizationEmailAddresses.constructor === Array) {
+            data["organizationEmailAddresses"] = [];
+            for (let item of this.organizationEmailAddresses)
+                data["organizationEmailAddresses"].push(item.toJSON());
+        }
+        if (this.organizationPhoneNumbers && this.organizationPhoneNumbers.constructor === Array) {
+            data["organizationPhoneNumbers"] = [];
+            for (let item of this.organizationPhoneNumbers)
+                data["organizationPhoneNumbers"].push(item.toJSON());
+        }
+        data["organizationAddress"] = this.organizationAddress ? this.organizationAddress.toJSON() : <any>undefined;
         data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
@@ -27573,6 +27601,10 @@ export interface ICreateCustomerInput {
     emailAddresses: CreateContactEmailInput[];
     phoneNumbers: CreateContactPhoneInput[];
     address: CreateContactAddressInput;
+    companyName: string;
+    organizationEmailAddresses: CreateContactEmailInput[];
+    organizationPhoneNumbers: CreateContactPhoneInput[];
+    organizationAddress: CreateContactAddressInput;
     organizationUnitId: number;
 }
 
