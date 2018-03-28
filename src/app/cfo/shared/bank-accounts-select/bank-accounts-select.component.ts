@@ -2,7 +2,6 @@ import { Component, OnInit, Injector, Input, ViewChild, Output, EventEmitter } f
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BankAccountsServiceProxy, InstanceType, SyncAccountBankDto, BusinessEntityServiceProxy } from 'shared/service-proxies/service-proxies';
 
-import { DxDataGridComponent } from 'devextreme-angular';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
 import { BankAccountsWidgetComponent } from 'shared/cfo/bank-accounts-widget/bank-accounts-widget.component';
@@ -14,7 +13,6 @@ import { BankAccountsWidgetComponent } from 'shared/cfo/bank-accounts-widget/ban
     providers: [BankAccountsServiceProxy, BusinessEntityServiceProxy, CacheService]
 })
 export class BankAccountsSelectComponent extends CFOComponentBase implements OnInit {
-    private initSelectedBankAccountsTimeout: any;
     @ViewChild(BankAccountsWidgetComponent) bankAccountWidget: BankAccountsWidgetComponent;
     @Input() targetBankAccountsTooltip = '';
     @Input() useGlobalCache = false;
@@ -30,7 +28,6 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     syncAccountsDataSource: SyncAccountBankDto[] = [];
     tooltipVisible: boolean;
     bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}`;
-    allSelected = false;
     moreThanOneBusinessEntityExist = true;
     selectedBusinessEntities: any[];
     businessEntities = [];
@@ -52,7 +49,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         super.ngOnInit();
         let initIsActive = true;
         if (this.useGlobalCache && this._cacheService.exists(this.bankAccountsCacheKey)) {
-            var cacheData = this._cacheService.get(this.bankAccountsCacheKey);
+            let cacheData = this._cacheService.get(this.bankAccountsCacheKey);
             initIsActive = cacheData['isActive'] ? true : false;
         }
         this.setIsActive(initIsActive);
@@ -103,18 +100,6 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 }
             }
         });
-        if (this.bankAccountWidget)
-            this.bankAccountWidget.refreshGrid();
-    }
-
-    bankAccountsSelecteAll() {
-        this.syncAccountsDataSource.forEach((syncAccount, i) => {
-            syncAccount.bankAccounts.forEach((bankAccount, i) => {
-                bankAccount['selected'] = true;
-            });
-            syncAccount['selected'] = true;
-        });
-
         if (this.bankAccountWidget)
             this.bankAccountWidget.refreshGrid();
     }

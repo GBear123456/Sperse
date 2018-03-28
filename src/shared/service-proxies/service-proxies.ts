@@ -27179,7 +27179,6 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
     duns: string;
     ticker: string;
     productServicesSold: number;
-    contactPerson: PersonKeyInfoDto;
 
     constructor(data?: IOrganizationInfoDto) {
         if (data) {
@@ -27208,7 +27207,6 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
             this.duns = data["duns"];
             this.ticker = data["ticker"];
             this.productServicesSold = data["productServicesSold"];
-            this.contactPerson = data["contactPerson"] ? PersonKeyInfoDto.fromJS(data["contactPerson"]) : <any>undefined;
         }
     }
 
@@ -27236,7 +27234,6 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
         data["productServicesSold"] = this.productServicesSold;
-        data["contactPerson"] = this.contactPerson ? this.contactPerson.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -27258,7 +27255,6 @@ export interface IOrganizationInfoDto {
     duns: string;
     ticker: string;
     productServicesSold: number;
-    contactPerson: PersonKeyInfoDto;
 }
 
 export class UserKeyInfoDto implements IUserKeyInfoDto {
@@ -27448,49 +27444,6 @@ export interface IContactLinkDto {
     confirmationDate: moment.Moment;
     confirmedByUserId: number;
     confirmedByUser: UserKeyInfoDto;
-}
-
-export class PersonKeyInfoDto implements IPersonKeyInfoDto {
-    contactId: number;
-    firstName: string;
-    lastName: string;
-
-    constructor(data?: IPersonKeyInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.firstName = data["firstName"];
-            this.lastName = data["lastName"];
-        }
-    }
-
-    static fromJS(data: any): PersonKeyInfoDto {
-        let result = new PersonKeyInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        return data; 
-    }
-}
-
-export interface IPersonKeyInfoDto {
-    contactId: number;
-    firstName: string;
-    lastName: string;
 }
 
 export class CreateCustomerInput implements ICreateCustomerInput {
@@ -33364,7 +33317,6 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
     duns: string;
     ticker: string;
     productServicesSold: number;
-    contactPerson: PersonKeyInfoDto;
 
     constructor(data?: IUpdateOrganizationInfoInput) {
         if (data) {
@@ -33394,7 +33346,6 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
             this.duns = data["duns"];
             this.ticker = data["ticker"];
             this.productServicesSold = data["productServicesSold"];
-            this.contactPerson = data["contactPerson"] ? PersonKeyInfoDto.fromJS(data["contactPerson"]) : <any>undefined;
         }
     }
 
@@ -33423,7 +33374,6 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
         data["productServicesSold"] = this.productServicesSold;
-        data["contactPerson"] = this.contactPerson ? this.contactPerson.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -33446,7 +33396,6 @@ export interface IUpdateOrganizationInfoInput {
     duns: string;
     ticker: string;
     productServicesSold: number;
-    contactPerson: PersonKeyInfoDto;
 }
 
 export class OrganizationTypeDto implements IOrganizationTypeDto {

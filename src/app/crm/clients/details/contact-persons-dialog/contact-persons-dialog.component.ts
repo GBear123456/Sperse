@@ -44,11 +44,13 @@ export class ContactPersonsDialogComponent extends AppComponentBase {
         primaryContactInfo.id = contactPerson.id;
         primaryContactInfo.primaryPhoto = contactPerson.photo;
 
-        let contactDetails = primaryContactInfo.details;
-        contactDetails.emails = contactPerson.emails;
-        contactDetails.phones = contactPerson.phones;
-        contactDetails.addresses = contactPerson.addresses;
-        contactDetails.links = contactPerson.links;
+        let primaryContactDetails = primaryContactInfo.details;
+        let contactPersonDetails = contactPerson.details;
+        primaryContactDetails.contactId = contactPerson.id;
+        primaryContactDetails.emails = contactPersonDetails.emails;
+        primaryContactDetails.phones = contactPersonDetails.phones;
+        primaryContactDetails.addresses = contactPersonDetails.addresses;
+        primaryContactDetails.links = contactPersonDetails.links;
 
         this.dialogRef.close();
     }

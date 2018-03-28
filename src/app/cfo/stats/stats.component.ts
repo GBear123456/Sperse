@@ -492,6 +492,19 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             GroupBy.Monthly
         ).subscribe(result => {
             if (result) {
+
+                let lastStats = result[result.length - 1];
+                if (lastStats.isForecast) {
+                    let nextDate = lastStats.date.clone();
+                    
+                    while (moment(this.requestFilter.endDate).utc().isAfter(nextDate)) {
+                        let st = _.clone(lastStats);
+                        nextDate = nextDate.clone().add(1, 'M');
+                        st.date = nextDate;
+                        result.push(st);
+                    }
+                }
+
                 let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
                 minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
                 this.statsData = result.map(statsItem => {
