@@ -122,6 +122,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     save(event): void {
+/*
         if (!this.validate(event)) return;
 
         this._customersService.createCustomer(this.client)
@@ -149,6 +150,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 }
             }
         );
+*/
     }
 
     redirectToContactInformation(id: number) {
@@ -156,6 +158,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     validate(event): boolean {
+        return false;
+/*
         if (!this.client.emailAddress && !this.client.phoneNumber) {
             this.validationError = this.l('EmailOrPhoneIsRequired');
             return false;
@@ -177,8 +181,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             event.component.option('disabled', true);
             return true;
         }
+*/
     }
 
+/*
     validateEmailAddress(): boolean {
         let regex = AppConsts.regexPatterns.email;
         return regex.test(this.client.emailAddress);
@@ -188,7 +194,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         let regex = AppConsts.regexPatterns.phone;
         return regex.test(this.client.phoneNumber);
     }
-
+*/
     twoDigitsFormat(value) {
         return ('0' + value).slice(-2);
     }
