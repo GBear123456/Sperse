@@ -349,10 +349,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             area: 'column',
             showTotals: false,
             selector: function(dataItem) {
-                if (!dataItem.initialDate.isSame(moment(), 'month')) {
+                if (dataItem.initialDate.format('MM.YYYY') !== moment().format('MM.YYYY')) {
                     return null;
                 }
-                return dataItem.initialDate.isAfter(moment().startOf('day')) ? 1 : 0;
+                return dataItem.initialDate.format('DD.MM.YYYY') > moment().format('DD.MM.YYYY') ? 1 : 0;
             },
             customizeText: cellInfo => {
                 let projectedKey = cellInfo.value === 1 ? 'Projected' : 'Mtd';
@@ -537,16 +537,30 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private cachedColumnActivity: Map<string, boolean> = new Map();
     private cachedRowsFitsToFilter: Map<string, boolean> = new Map();
     private cachedRowsSparkLines: Map<string, SparkLine> = new Map();
-    transactionsTotal = 0;
-    transactionsAmount = 0;
-    transactionsAverage = 0;
-    startDataLoading = false;
-    filteredLoad = false;
-    contentReady = false;
-    adjustmentsList = [];
-    modifyingCelltextBox: HTMLElement;
-    currentCellOperationType: string;
-    oldCellPadding: string;
+
+    /** Total amount of transactions */
+    private transactionsTotal = 0;
+
+    /** Amount of transactions */
+    private transactionsAmount = 0;
+
+    /** Avereage amount of all transcations */
+    private transactionsAverage = 0;
+
+    /** Marker that change its value after content is fully rendering on cashflow */
+    private contentReady = false;
+
+    /** List of adjustments on cashflow */
+    private adjustmentsList = [];
+
+    /** Text box for modifying of the cell*/
+    private modifyingCelltextBox: HTMLElement;
+
+    /** Type of operation with the cell */
+    private currentCellOperationType: 'add' | 'update' | 'delete';
+
+    /** Cell input padding */
+    private oldCellPadding: string;
 
     /** Detail of clicked cell from server */
     private clickedRowResult: CashFlowStatsDetailDto;
@@ -637,6 +651,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** Interval between state saving (ms) */
     public stateSavingTimeout = 1000;
+
+    /** Whether the data started loading */
+    startDataLoading = false;
+
+    /** Whether the loading of data was performed with filter */
+    filteredLoad = false;
 
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
@@ -3146,7 +3166,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                 this.adjustmentsList.splice(this.cashflowData.indexOf(item), 1);
                             }
                         });
-                        moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
 
                         /** Update cashflow data with the daily transactions */
                         transactions = this.getCashflowDataFromTransactions(transactions, false);
@@ -3194,6 +3213,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             this.pivotGrid.instance.getDataSource().expandAll(10);
                         }
 
+                        moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
                     });
             }
         }
@@ -3510,7 +3530,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     getDateByPath(path, columnFields, lowestInterval ?: string) {
         lowestInterval = lowestInterval || this.getLowestIntervalFromPath(path, columnFields);
-        let date = moment.unix(0);
+        let date = moment.unix(0).tz('UTC');
         let dateFields = this.getDateFields(columnFields, lowestInterval);
         dateFields.forEach(dateField => {
             let method = dateField.groupInterval === 'day' ? 'date' : dateField.groupInterval,
@@ -3554,7 +3574,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     formattingDate(cellObj, path) {
         let columnFields = {};
         cellObj.columnFields.forEach(function(item) {
-            columnFields[item.groupInterval] = item.areaIndex;
+            columnFields[item.caption.toLowerCase()] = item.areaIndex;
         });
 
         let startDate: moment.Moment = moment.utc('1970-01-01');
@@ -3563,6 +3583,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let quarter = path[columnFields['quarter']];
         let month = path[columnFields['month']];
         let day = path[columnFields['day']];
+        let projected = path[columnFields['projected']];
 
         startDate.year(year);
         endDate.year(year).endOf('year');
@@ -3578,6 +3599,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             startDate.date(day);
             endDate.date(day).endOf('day');
         }
+        /** Exclude projected */
+        if (projected === 0) {
+            endDate.date(moment().date());
+        /** or mtd dates */
+        } else if (projected === 1) {
+            startDate.date(moment().date() + 1)
+        }
+
         return {startDate: startDate, endDate: endDate};
     }
 
