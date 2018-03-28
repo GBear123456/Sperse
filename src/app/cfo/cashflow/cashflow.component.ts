@@ -3289,7 +3289,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         /** If column of cell is date column */
                         columnFields.find(field => field.areaIndex === cellObj.cell.columnPath.length - 1)['caption'] === 'Day' &&
                         /** check the date - if it is mtd date - disallow editing, if projected - welcome on board */
-                        cellDate.format('DD.MM.YYYY') > moment().format('DD.MM.YYYY')
+                        cellDate.format('YYYY.MM.DD') > moment().format('YYYY.MM.DD')
                     ) &&
                     /** allow adding only for empty cells */
                     result.length === 0 &&
