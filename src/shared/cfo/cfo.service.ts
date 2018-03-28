@@ -1,15 +1,13 @@
-import { Injectable, Input } from "@angular/core";
-import { AppService } from "@app/app.service";
-import { LayoutService } from "@app/shared/layout/layout.service";
-import { CFOServiceBase } from "shared/cfo/cfo-service-base";
-import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, CustomersServiceProxy, ContactServiceProxy } from "shared/service-proxies/service-proxies";
-import { ActivatedRoute } from "@angular/router";
+import { Injectable } from '@angular/core';
+import { AppService } from '@app/app.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
+import { CFOServiceBase } from 'shared/cfo/cfo-service-base';
+import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, ContactServiceProxy } from 'shared/service-proxies/service-proxies';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
-    
+
     constructor(
-        protected _route: ActivatedRoute,
         private _appService: AppService,
         private _layoutService: LayoutService,
         private _instanceServiceProxy: InstanceServiceProxy,
@@ -34,7 +32,7 @@ export class CFOService extends CFOServiceBase {
             this._appService.contactInfo = response;
         });
     }
-    
+
     instanceChangeProcess(callback: any = null) {
         if (this.instanceId != null) {
             this._appService.setContactInfoVisibility(true);
@@ -49,15 +47,11 @@ export class CFOService extends CFOServiceBase {
                 .forEach((item, i) => {
                     if (i == 0) {
                         item.text = this.initialized ? 'Dashboard' : 'Setup';
-                    }
-                    else {
-                        if (i == 1) {
-                            item.disabled = !this.initialized;
-                        }
-                        else {
-                            if (i !== this._appService.topMenu.items.length - 1) {
-                                item.disabled = !this.hasTransactions;
-                            }
+                    } else if (i == 1) {
+                        item.disabled = !this.initialized;
+                    } else {
+                        if (i !== this._appService.topMenu.items.length - 1) {
+                            item.disabled = !this.hasTransactions;
                         }
                     }
                 });

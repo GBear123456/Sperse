@@ -7,11 +7,11 @@
                     <ng-container *ngIf="showBusinessEntitiesFilter">
                         <div class="business-entity-select">
                             <div class="dx-field">
-                                <div class="dx-field-label"><span class="business-entity-test">{{l('All financial accounts for ')}}</span></div>
+                                <div class="dx-field-label"><span class="business-entity-test">{{l('Financial_Accounts_For')}}</span></div>
                                 <div class="dx-field-value">
                                     <ng-container *ngIf="!moreThanOneBusinessEntityExist">
                                         <div class="label-container">
-                                            <span class="tag-value"> {{l('All Entities')}} </span>
+                                            <span class="tag-value"> {{l('All_Entities')}} </span>
                                         </div>
                                     </ng-container>
                                     <ng-container *ngIf="moreThanOneBusinessEntityExist">
@@ -48,7 +48,7 @@
                             <dx-switch [value]="isActive" (onOptionChanged)="isActiveChanged($event)" [width]="32"></dx-switch>
                         </div>
                     </div>
-                </ng-container>                
+                </ng-container>
                 <bank-accounts-widget [dataSource]="syncAccountsDataSource"
                                       [showAdvancedColumns]="true"
                                       [highlightedBankAccountIds]="highlightedBankAccountIds"
