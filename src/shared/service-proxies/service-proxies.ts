@@ -6581,6 +6581,95 @@ export class CustomersServiceProxy {
     }
 
     /**
+     * @namePrefix (optional) 
+     * @firstName (optional) 
+     * @middleName (optional) 
+     * @lastName (optional) 
+     * @nameSuffix (optional) 
+     * @companyName (optional) 
+     * @emailAddresses (optional) 
+     * @phoneNumbers (optional) 
+     * @streetAddress (optional) 
+     * @city (optional) 
+     * @stateId (optional) 
+     * @zip (optional) 
+     * @countryId (optional) 
+     * @return Success
+     */
+    getSimilarCustomers(namePrefix: string, firstName: string, middleName: string, lastName: string, nameSuffix: string, companyName: string, emailAddresses: string[], phoneNumbers: string[], streetAddress: string, city: string, stateId: string, zip: string, countryId: string): Observable<SimilarCustomerInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetSimilarCustomers?";
+        if (namePrefix !== undefined)
+            url_ += "NamePrefix=" + encodeURIComponent("" + namePrefix) + "&"; 
+        if (firstName !== undefined)
+            url_ += "FirstName=" + encodeURIComponent("" + firstName) + "&"; 
+        if (middleName !== undefined)
+            url_ += "MiddleName=" + encodeURIComponent("" + middleName) + "&"; 
+        if (lastName !== undefined)
+            url_ += "LastName=" + encodeURIComponent("" + lastName) + "&"; 
+        if (nameSuffix !== undefined)
+            url_ += "NameSuffix=" + encodeURIComponent("" + nameSuffix) + "&"; 
+        if (companyName !== undefined)
+            url_ += "CompanyName=" + encodeURIComponent("" + companyName) + "&"; 
+        if (emailAddresses !== undefined)
+            emailAddresses && emailAddresses.forEach(item => { url_ += "EmailAddresses=" + encodeURIComponent("" + item) + "&"; });
+        if (phoneNumbers !== undefined)
+            phoneNumbers && phoneNumbers.forEach(item => { url_ += "PhoneNumbers=" + encodeURIComponent("" + item) + "&"; });
+        if (streetAddress !== undefined)
+            url_ += "StreetAddress=" + encodeURIComponent("" + streetAddress) + "&"; 
+        if (city !== undefined)
+            url_ += "City=" + encodeURIComponent("" + city) + "&"; 
+        if (stateId !== undefined)
+            url_ += "StateId=" + encodeURIComponent("" + stateId) + "&"; 
+        if (zip !== undefined)
+            url_ += "Zip=" + encodeURIComponent("" + zip) + "&"; 
+        if (countryId !== undefined)
+            url_ += "CountryId=" + encodeURIComponent("" + countryId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetSimilarCustomers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetSimilarCustomers(response_);
+                } catch (e) {
+                    return <Observable<SimilarCustomerInfo[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<SimilarCustomerInfo[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetSimilarCustomers(response: Response): Observable<SimilarCustomerInfo[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(SimilarCustomerInfo.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<SimilarCustomerInfo[]>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     deleteCustomer(customerId: number): Observable<void> {
@@ -27405,13 +27494,14 @@ export interface IPersonKeyInfoDto {
 }
 
 export class CreateCustomerInput implements ICreateCustomerInput {
+    namePrefix: string;
     firstName: string;
+    middleName: string;
     lastName: string;
-    dob: moment.Moment;
-    emailAddress: string;
-    phoneNumber: string;
-    ssn: string;
-    suppressSimilarContactWarning: boolean = false;
+    nameSuffix: string;
+    emailAddresses: CreateContactEmailInput[];
+    phoneNumbers: CreateContactPhoneInput[];
+    address: CreateContactAddressInput;
     organizationUnitId: number;
 
     constructor(data?: ICreateCustomerInput) {
@@ -27425,13 +27515,22 @@ export class CreateCustomerInput implements ICreateCustomerInput {
 
     init(data?: any) {
         if (data) {
+            this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
             this.lastName = data["lastName"];
-            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
-            this.emailAddress = data["emailAddress"];
-            this.phoneNumber = data["phoneNumber"];
-            this.ssn = data["ssn"];
-            this.suppressSimilarContactWarning = data["suppressSimilarContactWarning"] !== undefined ? data["suppressSimilarContactWarning"] : false;
+            this.nameSuffix = data["nameSuffix"];
+            if (data["emailAddresses"] && data["emailAddresses"].constructor === Array) {
+                this.emailAddresses = [];
+                for (let item of data["emailAddresses"])
+                    this.emailAddresses.push(CreateContactEmailInput.fromJS(item));
+            }
+            if (data["phoneNumbers"] && data["phoneNumbers"].constructor === Array) {
+                this.phoneNumbers = [];
+                for (let item of data["phoneNumbers"])
+                    this.phoneNumbers.push(CreateContactPhoneInput.fromJS(item));
+            }
+            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.organizationUnitId = data["organizationUnitId"];
         }
     }
@@ -27444,32 +27543,41 @@ export class CreateCustomerInput implements ICreateCustomerInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
         data["lastName"] = this.lastName;
-        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
-        data["emailAddress"] = this.emailAddress;
-        data["phoneNumber"] = this.phoneNumber;
-        data["ssn"] = this.ssn;
-        data["suppressSimilarContactWarning"] = this.suppressSimilarContactWarning;
+        data["nameSuffix"] = this.nameSuffix;
+        if (this.emailAddresses && this.emailAddresses.constructor === Array) {
+            data["emailAddresses"] = [];
+            for (let item of this.emailAddresses)
+                data["emailAddresses"].push(item.toJSON());
+        }
+        if (this.phoneNumbers && this.phoneNumbers.constructor === Array) {
+            data["phoneNumbers"] = [];
+            for (let item of this.phoneNumbers)
+                data["phoneNumbers"].push(item.toJSON());
+        }
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
 
 export interface ICreateCustomerInput {
+    namePrefix: string;
     firstName: string;
+    middleName: string;
     lastName: string;
-    dob: moment.Moment;
-    emailAddress: string;
-    phoneNumber: string;
-    ssn: string;
-    suppressSimilarContactWarning: boolean;
+    nameSuffix: string;
+    emailAddresses: CreateContactEmailInput[];
+    phoneNumbers: CreateContactPhoneInput[];
+    address: CreateContactAddressInput;
     organizationUnitId: number;
 }
 
 export class CreateCustomerOutput implements ICreateCustomerOutput {
     id: number;
-    similarCustomerExists: boolean;
 
     constructor(data?: ICreateCustomerOutput) {
         if (data) {
@@ -27483,7 +27591,6 @@ export class CreateCustomerOutput implements ICreateCustomerOutput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.similarCustomerExists = data["similarCustomerExists"];
         }
     }
 
@@ -27496,14 +27603,59 @@ export class CreateCustomerOutput implements ICreateCustomerOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["similarCustomerExists"] = this.similarCustomerExists;
         return data; 
     }
 }
 
 export interface ICreateCustomerOutput {
     id: number;
-    similarCustomerExists: boolean;
+}
+
+export class SimilarCustomerInfo implements ISimilarCustomerInfo {
+    id: number;
+    name: string;
+    jobTitle: string;
+    score: number;
+
+    constructor(data?: ISimilarCustomerInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.jobTitle = data["jobTitle"];
+            this.score = data["score"];
+        }
+    }
+
+    static fromJS(data: any): SimilarCustomerInfo {
+        let result = new SimilarCustomerInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["jobTitle"] = this.jobTitle;
+        data["score"] = this.score;
+        return data; 
+    }
+}
+
+export interface ISimilarCustomerInfo {
+    id: number;
+    name: string;
+    jobTitle: string;
+    score: number;
 }
 
 export class UpdateCustomerStatusInput implements IUpdateCustomerStatusInput {
