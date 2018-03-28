@@ -1,7 +1,7 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, InstanceServiceProxy, SetupInput } from '@shared/service-proxies/service-proxies';
+import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, InstanceServiceProxy, SetupInput, TenantHostType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
@@ -55,6 +55,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                 if (isConfirmed) {
                     let request = new ActivateUserForContactInput();
                     request.contactId = this.data.primaryContactInfo.id;
+                    request.tenantHostType = <any>TenantHostType.PlatformUi;
                     this.userServiceProxy.activateUserForContact(request).subscribe(result => {
                         let setupInput = new SetupInput({ userId: result.userId });
                         this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(result => {

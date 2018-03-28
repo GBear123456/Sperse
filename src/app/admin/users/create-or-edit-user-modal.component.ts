@@ -1,6 +1,6 @@
 import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
-import { UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput, OrganizationUnitDto, UserRoleDto, PasswordComplexitySetting } from '@shared/service-proxies/service-proxies';
+import { UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput, OrganizationUnitDto, UserRoleDto, PasswordComplexitySetting, TenantHostType } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { OrganizationUnitsTreeComponent, IOrganizationUnitsTreeComponentData } from '../shared/organization-unit-tree.component';
@@ -155,6 +155,7 @@ export class CreateOrEditUserModalComponent extends AppComponentBase {
         input.organizationUnits = this.organizationUnitTree.getSelectedOrganizations();
 
         this.saving = true;
+        input.tenantHostType = <any>TenantHostType.PlatformUi;
         this._userService.createOrUpdateUser(input)
             .finally(() => { this.saving = false; })
             .subscribe(() => {

@@ -1,6 +1,6 @@
 import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
-import { TenantServiceProxy, ProfileServiceProxy, CreateTenantInput, CommonLookupServiceProxy, PasswordComplexitySetting } from '@shared/service-proxies/service-proxies';
+import { TenantServiceProxy, ProfileServiceProxy, CreateTenantInput, CommonLookupServiceProxy, PasswordComplexitySetting, TenantHostType } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import * as moment from 'moment';
@@ -129,6 +129,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
             this.tenant.subscriptionEndDateUtc = null;
         }
 
+        this.tenant.tenantHostType = <any>TenantHostType.PlatformUi;
         this._tenantService.createTenant(this.tenant)
             .finally(() => this.saving = false)
             .subscribe(() => {
