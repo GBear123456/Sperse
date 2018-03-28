@@ -130,16 +130,27 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     save(event): void {
+        if (!this.addressValidator.validate().isValid || 
+            !this.emailComponent.instance.option('isValid') || 
+            !this.phoneComponent.instance.option('isValid')
+        )
+            return ;
+
         let nameParts = this.data.title && 
             this.data.title.split(' ');
         if (!nameParts || nameParts.length < 2) {
             this.data.isTitleValid = false;
-            return this.notify.error(this.l('Client first name and last name is required'));
+            return this.notify.error(this.l('Client first and last name is required'));
         }
-//      this.client.namePrefix: string;
-//      this.client.middleName: string;
-//      this.client.nameSuffix: string;
-//      this.client.organizationUnitId: number;
+
+        if (!this.contacts.emails.length)
+            this.contacts.emails.push(this.emailAddress);
+        if (!this.contacts.phones.length)      
+            this.contacts.phones.push({ 
+                type: this.phoneType,
+                number: this.phoneNumber,
+                ext: this.phoneExtension
+            });
 
         this._customersService.createCustomer(
             CreateCustomerInput.fromJS({
@@ -169,27 +180,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                     isActive: true,
                     comment: this.notes,
                     usageTypeId: this.addressType
-                } as CreateContactAddressInput;
+                } as CreateContactAddressInput
             })
         ).finally(() => {  })
             .subscribe(result => {
-                if (result.similarCustomerExists) {
-                    abp.message.confirm(
-                        'Similar customer already exists',
-                        'Are you sure?',
-                        (isConfirmed) => {
-                            if (isConfirmed) {
-                                this._customersService.createCustomer(this.client)
-                                    .subscribe(result => {
-                                        this.redirectToContactInformation(result.id);
-                                    });
-                            }
-                        }
-                    );
-                } else {
                     this.redirectToContactInformation(result.id);
-                    this.close();
-                }
             }
         );
     }
