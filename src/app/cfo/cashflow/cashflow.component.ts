@@ -1541,7 +1541,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let startDate = moment.utc(minDate);
         let endDate = moment.utc(maxDate);
 
-
         /** cycle from started date to ended date */
         /** added fake data for each date that is not already exists in cashflow data */
         let stubCashflowData = this.createStubsForPeriod(startDate, endDate, 'month', existingPeriods);
@@ -3183,7 +3182,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                      moment(this.requestFilter.endDate) :
                                      endDayOfMonth;
 
-                        let stubCashflowDataForAllDays = this.createStubsForPeriod(startDay, endDay, 'day');
+                        let existingPeriods = [];
+                        transactions.forEach(transaction => {
+                            /** Move the year to the years array if it is unique */
+                            let date = transaction.initialDate;
+                            let transactionYear = date.year();
+                            let formattedDate = date.utc().format('YYYY-MM-DD');
+                            if (existingPeriods.indexOf(formattedDate) === -1) existingPeriods.push(formattedDate);
+                        });
+
+                        let stubCashflowDataForAllDays = this.createStubsForPeriod(startDay, endDay, 'day', existingPeriods);
                         let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(transactions);
 
                         /** concat initial data and stubs from the different hacks */
@@ -3280,8 +3288,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     (
                         /** If column of cell is date column */
                         columnFields.find(field => field.areaIndex === cellObj.cell.columnPath.length - 1)['caption'] === 'Day' &&
-                        /** checke the date - if it is mtd date - disallow editing, if projected - welcome on board */
-                        cellDate.isAfter(moment())
+                        /** check the date - if it is mtd date - disallow editing, if projected - welcome on board */
+                        cellDate.format('DD.MM.YYYY') > moment().format('DD.MM.YYYY')
                     ) &&
                     /** allow adding only for empty cells */
                     result.length === 0 &&
@@ -3600,13 +3608,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (day) {
             startDate.date(day);
             endDate.date(day).endOf('day');
-        }
-        /** Exclude projected */
-        if (projected === 0) {
-            endDate.date(moment().date());
-        /** or mtd dates */
-        } else if (projected === 1) {
-            startDate.date(moment().date() + 1)
+        } else {
+            /** Exclude projected */
+            if (projected === 0) {
+                endDate.date(moment().date());
+                /** or mtd dates */
+            } else if (projected === 1) {
+                startDate.date(moment().date() + 1)
+            }
         }
 
         return {startDate: startDate, endDate: endDate};
