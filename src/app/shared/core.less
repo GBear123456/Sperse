@@ -194,20 +194,6 @@ button {
         color: #ffffff;
         background-color: #00aeef;
     }
-    /*
-	  &:after {
-		content: '';
-		width: 42px;
-		height: 100%;
-		background-color: #00a0dc;
-		border-top-right-radius: 21px;
-		border-bottom-right-radius: 21px;
-		display: block;
-		right: 0;
-		position: absolute;
-		top: 0;
-	  }
-	*/
 }
 
 .btn-default {
@@ -221,6 +207,7 @@ button {
 }
 
 .button-layout {
+    position: relative;
     border-radius: 18px;
     font-size: 15px;
     line-height: 1.6;
@@ -234,6 +221,33 @@ button {
     &:hover {
         background: darken(#00aeef, 10%);
         cursor: pointer;
+    }
+
+	  &.menu {
+        padding: 0px 50px 0px 30px;  
+        &:before { 
+        		content: '';
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #fff;
+            display: block;
+            position: absolute;
+            right: 12px;
+            z-index: 1;
+            top: 16px;            
+        }
+        &:after {
+        		content: '';
+        		width: 30px;
+        		height: 100%;
+        		background-color: #00a0dc;
+        		border-top-right-radius: 21px;
+        		border-bottom-right-radius: 21px;
+        		display: block;
+        		right: 0;
+        		position: absolute;
+        		top: 0;
+    	  }
     }
 }
 
@@ -846,10 +860,10 @@ button {
             border-color: #00AEEF !important;
             &::before {
                 content: '' !important;
-                width: 12px !important;
-                height: 12px!important;
-                left: 3px;
-                top: 3px;
+                width: 8px !important;
+                height: 8px !important;
+                left: 5px;
+                top: 5px;
                 background-color: #00aeef;
             }
         }

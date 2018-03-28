@@ -16,8 +16,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
     @Input() showAdvancedColumns = true;
     @Input() highlightUsedRows = false;
-    @Input() tableWidth = 740;
-    @Input() nameColumnWidth = 240;
+    @Input() tableWidth = 755;
+    @Input() nameColumnWidth = 170;
     @Input('dataSource')
     set dataSource(dataSource) {
         clearTimeout(this.initBankAccountsTimeout);
@@ -53,7 +53,6 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
         injector: Injector
     ) {
         super(injector);
-        
         this.allAccountTypesFilter = this.l('All Accounts');
         this.selectedBankAccountType = this.allAccountTypesFilter;
     }
@@ -113,7 +112,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
         this.syncAccountsDataSource.forEach((syncAccount, i) => {
             let selectedBankAccountCount = 0;
             syncAccount.bankAccounts.forEach((bankAccount, i) => {
-                if (bankAccount['selected']) 
+                if (bankAccount['selected'])
                     selectedBankAccountCount++;
             });
 
@@ -145,7 +144,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     setSelectedIfNot() {
         this.syncAccountsDataSource.forEach((syncAccount, i) => {
             let selectedBankAccountCount = 0;
-            syncAccount.bankAccounts.forEach((bankAccount, i) => {  
+            syncAccount.bankAccounts.forEach((bankAccount, i) => {
                 if (!bankAccount['selected'])
                     bankAccount['selected'] = false;
                 else
@@ -223,5 +222,9 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
             if (this.mainDataGrid)
                 this.mainDataGrid.instance.refresh();
         }
-    } 
+    }
+
+    calculateTooltipHeight() {
+        return window.innerHeight / 2;
+    }
 }

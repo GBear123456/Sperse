@@ -1,4 +1,4 @@
-<div>
+<div [ngClass]="{'show-search':showSearch}">
     <div class="tree-header" *ngIf="showHeader">
         <h3 *ngIf="showTitle">
             {{l('ClassifyTransactions')}}

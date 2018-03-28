@@ -48,7 +48,12 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
 
     bankAccountCount = '';
     reportPeriodTooltipVisible: boolean = false;
-    sliderReportPeriod = { start: 2000, end: 2028 };
+    sliderReportPeriod = {
+        start: null,
+        end: null,
+        minDate: null,
+        maxDate: null
+    };
     totalCount = 3;
 
     initToolbarConfig() {
