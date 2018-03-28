@@ -26,11 +26,41 @@
                 }
                 p {
                     width: 590px;
+                    position: relative;
                     padding-left: 195px;
+                    padding-right: 32px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    &.phone {
+                        &.H, &.P {
+                            background: url("../../../assets/common/icons/phone.svg") no-repeat 160px 0px;
+                        }
+
+                        &.W {
+                            background: url("../../../assets/common/icons/phone-work.svg") no-repeat 160px 0px;
+                        }
+
+                        &.M {
+                            background: url("../../../assets/common/icons/phone-mobile.svg") no-repeat 160px 0px;
+                        }
+                    }
+                    &.address {
+                        &.P {
+                            background: url("../../../assets/common/icons/address-primary.png") no-repeat 160px 0px;
+                        }
+                        &.H {
+                            background: url("../../../assets/common/icons/address-home.png") no-repeat 160px 0px;
+                        }
+                        &.S, &.W {
+                            background: url("../../../assets/common/icons/address-shipping.png") no-repeat 160px 0px;
+                        }
+                    }
                     span {  
+                        right: 0;
+                        position: absolute;
                         width: 20px;
                         height: 20px;
-                        float: right;
                         cursor: pointer;
                         background: url('../../../assets/common/icons/delete-icon.svg') no-repeat center;                        
                     }
@@ -117,8 +147,8 @@
         z-index: 9999999;
         border-radius: 50%;
         margin-left: 20px;
-        background-size: 133px 133px;
-        background: url('../../../assets/common/images/no-photo-male.png') no-repeat center;                        
+        background-size: cover;
+        background-image: url('../../../assets/common/images/no-photo.png');
 
         &:before {
             display: block;
