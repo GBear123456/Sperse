@@ -53,7 +53,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
         injector: Injector
     ) {
         super(injector);
-        this.allAccountTypesFilter = this.l('All Accounts');
+        this.allAccountTypesFilter = this.l('AllAccounts');
         this.selectedBankAccountType = this.allAccountTypesFilter;
     }
 
@@ -165,7 +165,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     getExistBankAccountTypes() {
         this.existBankAccountTypes = [];
         this.syncAccountsDataSource.forEach(syncAccount => {
-            let types = _.uniq(_.map(syncAccount.bankAccounts, function (bankAccount) { return bankAccount.type; }));
+            let types = _.uniq(_.map(syncAccount.bankAccounts, bankAccount => bankAccount.type));
             this.existBankAccountTypes = _.union(this.existBankAccountTypes, types);
         });
         this.bankAccountTypesForSelect = [];
@@ -176,7 +176,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
             }
         });
 
-        let otherExist = _.difference(this.existBankAccountTypes, this.baseBankAccountTypes).length ? true : false;
+        let otherExist = _.some(this.existBankAccountTypes, x => !_.contains(this.baseBankAccountTypes, x));
         if (otherExist)
             this.bankAccountTypesForSelect.push(this.l('Other'));
     }
