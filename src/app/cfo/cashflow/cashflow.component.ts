@@ -1278,49 +1278,47 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     handleDailyCashflowData(transactions, startDate, endDate) {
-        if (transactions && transactions.length) {
 
-            /** Remove old month transactions */
-            if (this.cashflowData && this.cashflowData.length) {
-                this.cashflowData.slice().forEach(item => {
-                    if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                        item.adjustmentStartingBalanceTotal !== TransactionStatsDtoAdjustmentType._2) {
-                        this.cashflowData.splice(this.cashflowData.indexOf(item), 1);
-                    }
-                });
-            }
-
-            if (this.adjustmentsList && this.adjustmentsList.length) {
-                this.adjustmentsList.slice().forEach(item => {
-                    if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                        item.adjustmentStartingBalanceTotal !== TransactionStatsDtoAdjustmentType._2) {
-                        this.adjustmentsList.splice(this.cashflowData.indexOf(item), 1);
-                    }
-                });
-            }
-
-            transactions = this.getCashflowDataFromTransactions(transactions, false);
-            let existingPeriods = [];
-            transactions.forEach(transaction => {
-                /** Move the year to the years array if it is unique */
-                let formattedDate = transaction.initialDate.format('YYYY-MM-DD');
-                if (existingPeriods.indexOf(formattedDate) === -1) existingPeriods.push(formattedDate);
-            });
-
-            let stubCashflowDataForAllDays = this.createStubsForPeriod(startDate, endDate, 'day', existingPeriods);
-            let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(transactions);
-
-            /** concat initial data and stubs from the different hacks */
-            transactions = transactions.concat(
-                stubCashflowDataForAccounts,
-                stubCashflowDataForAllDays
-            );
-
-            /** Simple arrays concat doesn't work with reload, so forEach is used*/
-            transactions.forEach(transaction => {
-                this.cashflowData.push(transaction);
+        /** Remove old month transactions */
+        if (this.cashflowData && this.cashflowData.length) {
+            this.cashflowData.slice().forEach(item => {
+                if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
+                    item.adjustmentStartingBalanceTotal !== TransactionStatsDtoAdjustmentType._2) {
+                    this.cashflowData.splice(this.cashflowData.indexOf(item), 1);
+                }
             });
         }
+
+        if (this.adjustmentsList && this.adjustmentsList.length) {
+            this.adjustmentsList.slice().forEach(item => {
+                if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
+                    item.adjustmentStartingBalanceTotal !== TransactionStatsDtoAdjustmentType._2) {
+                    this.adjustmentsList.splice(this.cashflowData.indexOf(item), 1);
+                }
+            });
+        }
+
+        transactions = this.getCashflowDataFromTransactions(transactions, false);
+        let existingPeriods = [];
+        transactions.forEach(transaction => {
+            /** Move the year to the years array if it is unique */
+            let formattedDate = transaction.initialDate.format('YYYY-MM-DD');
+            if (existingPeriods.indexOf(formattedDate) === -1) existingPeriods.push(formattedDate);
+        });
+
+        let stubCashflowDataForAllDays = this.createStubsForPeriod(startDate, endDate, 'day', existingPeriods);
+        let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(transactions);
+
+        /** concat initial data and stubs from the different hacks */
+        transactions = transactions.concat(
+            stubCashflowDataForAccounts,
+            stubCashflowDataForAllDays
+        );
+
+        /** Simple arrays concat doesn't work with reload, so forEach is used*/
+        transactions.forEach(transaction => {
+            this.cashflowData.push(transaction);
+        });
     }
 
     /**
