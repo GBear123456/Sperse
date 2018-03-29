@@ -370,12 +370,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (dataItem.initialDate.format('MM.YYYY') !== moment().format('MM.YYYY')) {
                     result = Projected.Total;
                 } else {
-                    let itemDate = dataItem.initialDate.format('DD.MM.YYYY');
-                    let currentDate = moment().format('DD.MM.YYYY');
+                    let itemDate = dataItem.initialDate.format('YYYY.MM.DD');
+                    let currentDate = moment().format('YYYY.MM.DD');
                     if (itemDate === currentDate) {
                         result = Projected.Today;
                     } else if (itemDate > currentDate) {
-                        result = Projected.Forecast
+                        result = Projected.Forecast;
                     } else if (itemDate < currentDate) {
                         result = Projected.Mtd;
                     }
@@ -1217,6 +1217,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Monthly cashflow data observer */
         let monthlyStatsObservers = [this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.requestFilter)];
 
+        moment.tz.setDefault(undefined);
+
         /** If we have some expanded months in state - we should also load daily data */
         let dailyStatsObservers = [];
         let dailyStatsFilters = [];
@@ -1252,6 +1254,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.initFooterToolbar();
                 }
                 this.finishLoading();
+                moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
             });
     }
 
