@@ -32,7 +32,6 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     selectedBusinessEntities: any[];
     businessEntities = [];
     isActive = true;
-    isActiveLabel: string;
 
     constructor(
         injector: Injector,
@@ -52,22 +51,15 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
             let cacheData = this._cacheService.get(this.bankAccountsCacheKey);
             initIsActive = cacheData['isActive'] ? true : false;
         }
-        this.setIsActive(initIsActive);
-
+        this.isActive = initIsActive;
         this.getBankAccounts(true);
         this.getBusinessEntities();
     }
 
-    isActiveChanged(e) {
-        this.setIsActive(e.value);
+    isActiveChanged(e) {        
         this.getBankAccounts();
     }
-
-    setIsActive(val) {
-        this.isActiveLabel = val ? this.l('Active') : this.l('Disabled');
-        this.isActive = val;
-    }
-
+    
     getBusinessEntities() {
         this._businessEntityService.getBusinessEntities(InstanceType[this.instanceType], this.instanceId)
             .subscribe((result) => {
