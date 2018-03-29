@@ -23354,6 +23354,7 @@ export class AddressInfo implements IAddressInfo {
     zip: string;
     countryId: string;
     country: string;
+    usageTypeId: string;
 
     constructor(data?: IAddressInfo) {
         if (data) {
@@ -23373,6 +23374,7 @@ export class AddressInfo implements IAddressInfo {
             this.zip = data["zip"];
             this.countryId = data["countryId"];
             this.country = data["country"];
+            this.usageTypeId = data["usageTypeId"];
         }
     }
 
@@ -23391,6 +23393,7 @@ export class AddressInfo implements IAddressInfo {
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
         data["country"] = this.country;
+        data["usageTypeId"] = this.usageTypeId;
         return data; 
     }
 }
@@ -23403,6 +23406,7 @@ export interface IAddressInfo {
     zip: string;
     countryId: string;
     country: string;
+    usageTypeId: string;
 }
 
 export class ContactLinkInfo implements IContactLinkInfo {
