@@ -1,5 +1,5 @@
 import { AppConsts } from '@shared/AppConsts';
-import { Component, Inject, Injector, ElementRef, ViewChild } from '@angular/core';
+import { Component, Inject, Injector, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ImageCropperComponent, CropperSettings, Bounds } from 'ng2-img-cropper';
@@ -15,7 +15,7 @@ import {
   templateUrl: 'upload-photo-dialog.html',
   styleUrls: ['upload-photo-dialog.less']
 })
-export class UploadPhotoDialogComponent extends AppComponentBase {
+export class UploadPhotoDialogComponent extends AppComponentBase implements AfterViewInit {
     @ViewChild('cropper') cropper: ImageCropperComponent;
 
     imageData: any = {};
@@ -34,6 +34,14 @@ export class UploadPhotoDialogComponent extends AppComponentBase {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.cropperSettings = this.getCropperSetting();        
+    }
+
+    ngAfterViewInit() {
+        if (this.data.source) {
+            let image: any = new Image();
+            image.src = this.data.source;
+            this.cropper.setImage(image);
+        }
     }
 
     getCropperSetting() {
@@ -75,6 +83,6 @@ export class UploadPhotoDialogComponent extends AppComponentBase {
     }
 
     onSave(event) {
-        //!!VP Store Base64 -> this.imageData.image
+        this.dialogRef.close(this.imageData.image);
     }
 }

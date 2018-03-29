@@ -1,38 +1,59 @@
-<div class="photo-area" (click)="showUploadPhoto($event)"></div>
+<div class="photo-area" (click)="showUploadPhoto($event)" [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 <modal-dialog>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <mat-sidenav class="main_sidenav" mode="side" align="end" opened="true">
       <mat-tab-group>
-        <mat-tab label="{{l('Personal') | uppercase}}">
+        <mat-tab *ngFor="let type of ['personal', 'bussines']" label="{{l(type) | uppercase}}">
           <div class="tab-content">
-              <div class="field email">
-                  <label>{{l('Email')}}</label>
-                  <dx-text-box #emailComponent
-                    name="email"
+              <div class="field" *ngIf="type == 'bussines'">
+                  <label>{{l('Company')}}</label>
+                  <dx-text-box #companyComponent
+                    name="company"
                     [width]="'360px'"
-                    [(value)]="emailAddress">
-                    <dx-validator>
-                      <dxi-validation-rule type="required" message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
-                      <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
-                    </dx-validator>
+                    [(value)]="company">
                   </dx-text-box>
-                  <span class="add-contact" (click)="addContact('emails')">+</span>
               </div>
-              <div class="field" *ngFor="let email of contacts.emails; index as i">
-                  <p>{{email}}<span (click)="removeContact('emails', i)"></span></p>
+              <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidator')">
+                  <div class="field email">
+                      <label>{{l('Email')}}</label>
+                      <dx-text-box #emailComponent
+                        name="email"
+                        [width]="'260px'"
+                        (onKeyUp)="onEmailKeyUp($event)"
+                        [(value)]="emailAddress"
+                        (onInitialized)="onComponentInitialized($event, 'emails', type)">
+                        <dx-validator>
+                          <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-text-box>
+                      <dx-select-box
+                        width="100px"
+                        name="emailType"
+                        placeholder="{{l('Type')}}"
+                        [dataSource]="emailTypes"
+                        [disabled]="!showEmailAddButton"
+                        displayExpr="name"
+                        valueExpr="id"
+                        [value]="emailType"
+                        (onValueChanged)="onTypeChanged($event, 'email')">
+                      </dx-select-box>
+                      <span class="add-contact" (click)="addContact('emails', type)" *ngIf="showEmailAddButton">+</span>
+                  </div>
+              </dx-validation-group>
+              <div class="field" *ngFor="let email of contacts.emails[type]; index as i">
+                  <p class="{{email.type}}">{{email.email}}<span (click)="removeContact('emails', type, i)"></span></p>
               </div>
               <div class="field phone H">
                   <label>{{l('Phone')}}</label>
-                  <dx-text-box #phoneComponent
+                  <dx-text-box
                     name="phone"
                     maskInvalidMessage="{{l('PhoneValidationError')}}"
                     [mask]="masks.phone"
                     [width]="'205px'"
                     [(value)]="phoneNumber"
-                    (onFocusIn)="focusInput($event)">
-                    <dx-validator>
-                      <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
-                    </dx-validator>
+                    (onKeyUp)="onPhoneKeyUp($event)"
+                    (onFocusIn)="focusInput($event)"
+                    (onInitialized)="onComponentInitialized($event, 'phones', type)">
                   </dx-text-box>
                   <dx-number-box
                     name="phoneExtension"
@@ -43,6 +64,7 @@
                   <dx-select-box
                     width="100px"
                     name="phoneType"
+                    [disabled]="!showPhoneAddButton"
                     placeholder="{{l('Type')}}"
                     [dataSource]="phoneTypes"
                     displayExpr="name"
@@ -50,31 +72,31 @@
                     [value]="phoneType"
                     (onValueChanged)="onTypeChanged($event, 'phone')">
                   </dx-select-box>
-                  <span class="add-contact" (click)="addContact('phones')">+</span>
+                  <span class="add-contact" (click)="addContact('phones', type)" *ngIf="showPhoneAddButton">+</span>
               </div>
-              <div class="field" *ngFor="let phone of contacts.phones; index as i">
-                  <p class="phone {{phone.type}}">{{phone.number | phone}}&nbsp;&nbsp;{{phone.ext ? 'ext: ' + phone.ext: '' }}<span (click)="removeContact('phones', i)"></span></p>
+              <div class="field" *ngFor="let phone of contacts.phones[type]; index as i">
+                  <p class="phone {{phone.type}}">{{phone.number | phone}}&nbsp;&nbsp;{{phone.ext ? 'ext: ' + phone.ext: '' }}<span (click)="removeContact('phones', type, i)"></span></p>
               </div>
-              <dx-validation-group (onInitialized)="initAddressValidationGroup($event)">
+              <dx-validation-group (onInitialized)="initValidationGroup($event, 'addressValidator')">
                   <div class="field address H">
                       <label>{{l('Address')}}</label>                   
                       <input *ngIf="!googleAutoComplete" type="text"
                           name="Address"
                           placeholder="{{l('Street')}}"
-                          [(ngModel)]="address"
+                          [(ngModel)]="contacts.addresses[type].address"
                           class="dx-texteditor-input"/>
                       <input *ngIf="googleAutoComplete" type="text"
                           name="Address"
                           placeholder="{{l('Street')}}"
-                          [(ngModel)]="address"
+                          [(ngModel)]="contacts.addresses[type].address"
                           class="dx-texteditor-input"
-                          (country)="country=$event"
-                          (street_number)='streetNumber=$event'
-                          (street)='streetAddress=$event'
-                          (city)='city=$event'
-                          (state)='state=$event'
-                          (postal_code)='zip=$event'
-                          (setAddress)="onAddressChanged($event)"
+                          (country)="contacts.addresses[type].country=$event"
+                          (street_number)='contacts.addresses[type].streetNumber=$event'
+                          (street)='contacts.addresses[type].streetAddress=$event'
+                          (city)='contacts.addresses[type].city=$event'
+                          (state)='contacts.addresses[type].state=$event'
+                          (postal_code)='contacts.addresses[type].zip=$event'
+                          (setAddress)="onAddressChanged($event, type)"
                           ng2-google-place-autocomplete/>
                       <dx-select-box
                         width="100px"
@@ -83,10 +105,10 @@
                         [dataSource]="addressTypes"
                         displayExpr="name"
                         valueExpr="id"
-                        [value]="addressType"
+                        [disabled]="!contacts.addresses[type].address"
+                        [value]="contacts.addresses[type].addressType"
                         (onValueChanged)="onTypeChanged($event, 'address')">
                       </dx-select-box>
-                      <!-- span class="add-contact" (click)="addContact('addresses')">+</span -->
                   </div>
                   <div class="field">
                       <label></label>                   
@@ -94,8 +116,9 @@
                           name="city"
                           maxLength="50"
                           placeholder="{{l('City')}}"
+                          [disabled]="!contacts.addresses[type].address"
                           [width]="'360px'"
-                          [(value)]="city">
+                          [(value)]="contacts.addresses[type].city">
                           <dx-validator>
                               <dxi-validation-rule type="required" message="{{l('CityRequired')}}"></dxi-validation-rule>
                           </dx-validator>
@@ -109,9 +132,10 @@
                           valueExpr="name"
                           name="state"
                           placeholder="{{l('State')}}"
+                          [disabled]="!contacts.addresses[type].address"
                           [width]="'360px'"
                           [searchEnabled]="true"
-                          [(value)]="state">
+                          [(value)]="contacts.addresses[type].state">
                           <dx-validator>
                               <dxi-validation-rule type="required" message="{{l('StateRequired')}}"></dxi-validation-rule>
                           </dx-validator>
@@ -123,8 +147,9 @@
                           name="zip"
                           maxLength="5"
                           placeholder="{{l('Zip')}}"
+                          [disabled]="!contacts.addresses[type].address"
                           [width]="'360px'"
-                          [(value)]="zip">
+                          [(value)]="contacts.addresses[type].zip">
                           <dx-validator>
                               <dxi-validation-rule type="required" message="{{l('ZipIsRequired')}}"></dxi-validation-rule>
                           </dx-validator>
@@ -138,32 +163,28 @@
                           valueExpr="name"
                           name="country"
                           placeholder="{{l('Country')}}"
+                          [disabled]="!contacts.addresses[type].address"
                           [width]="'360px'"
                           [searchEnabled]="true"
-                          [(value)]="country"
+                          [(value)]="contacts.addresses[type].country"
                           (onValueChanged)="onCountryChange($event)">
                           <dx-validator>
                               <dxi-validation-rule type="required" message="{{l('CountryRequired')}}"></dxi-validation-rule>
                           </dx-validator>
                       </dx-select-box>
                   </div>
-                  <!-- div class="field" *ngFor="let address of contacts.addresses; index as i">
-                      <p class="address {{address.addressType}}">{{address.streetAddress}}, {{address.city}}, {{address.state}}, {{address.zip}}, {{address.country}}<span (click)="removeContact('addresses', i)"></span></p>
-                  </div -->
                   <div class="field">
                       <label>{{l('Notes')}}</label>
                       <dx-text-area
-                        name="notes"
+                        name="comment"
                         [width]="'360px'"
                         [height]="'100px'"
-                        [(value)]="notes">
+                        [disabled]="!contacts.addresses[type].address"
+                        [(value)]="contacts.addresses[type].comment">
                       </dx-text-area>
                   </div>
               </dx-validation-group>
           </div>
-        </mat-tab>
-        <mat-tab label="{{l('Bussines') | uppercase}}">
-            EMPTY
         </mat-tab>
       </mat-tab-group>
     </mat-sidenav>

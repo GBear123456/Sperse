@@ -1,55 +1,71 @@
 import { Component, OnInit, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
-import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput, CreateContactPhoneInput,
-    CreateContactAddressInput, ContactPhoneServiceProxy, CountryServiceProxy, CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
+import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput, 
+    CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactPhotoInput, CreateContactAddressInput, ContactEmailServiceProxy,
+    ContactPhoneServiceProxy, CountryServiceProxy, CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { DxTextBoxComponent, DxValidatorComponent, DxValidationSummaryComponent, DxButtonComponent } from 'devextreme-angular';
 import { Router, ActivatedRoute } from '@angular/router';
 
+import { MatDialog } from '@angular/material';
 import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
+import { UploadPhotoDialogComponent } from './details/upload-photo-dialog/upload-photo-dialog.component';
 
 import * as _ from 'underscore';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
     styleUrls: ['create-client-dialog.component.less'],
-    providers: [ CustomersServiceProxy ]
+    providers: [ CustomersServiceProxy, ContactPhotoServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit {
-    @ViewChild('emailComponent') emailComponent: DxTextBoxComponent;
-    @ViewChild('phoneComponent') phoneComponent: DxTextBoxComponent;
+    emailsPersonal: any;
+    emailsBussines: any;
+    phonesPersonal: any;
+    phonesBussines: any;
 
     masks = AppConsts.masks;
+    phoneRegEx = AppConsts.regexPatterns.phone;
 
-    address: any;
-    city: string;
-    state: string;
-    zip: string;
-    country: string;
-    streetNumber: string;
-    streetAddress: string;
-    addressType: string = 'H';
+    company: string;
+
     addressTypes: any = [];
     addressValidator: any;
+    emailValidator: any;
+    phoneValidator: any;
 
-    notes: string;
-    profilePicture: string;
     emailAddress: string;
-    phoneType: string = 'H';
+    emailType: string;
+    emailTypes: any = [];
+    phoneType: string;
     phoneNumber: string;
     phoneExtension: number;
-    googleAutoComplete: boolean;
     phoneTypes: any = [];
     states: any;
     countries: any;
 
+    googleAutoComplete: boolean;
+    photoOriginalData: string;
+    photoThumbnailData: string;
+
+    showEmailAddButton = false;
+    showPhoneAddButton = false;
+
     contacts: any = {
-        emails: [],
-        phones: [],
-        addresses: [],
-        notes: ''
+        emails: {
+            personal: [],
+            bussines: []  
+        },
+        phones: {
+            personal: [],
+            bussines: []  
+        },
+        addresses: {
+            personal: {},
+            bussines: {}
+        }
     };
 
     toolbarConfig = [
@@ -93,9 +109,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         private _countryService: CountryServiceProxy,
         private _customersService: CustomersServiceProxy,
+        private _photoUploadService: ContactPhotoServiceProxy,
         private _contactPhoneService: ContactPhoneServiceProxy,
+        private _contactEmailService: ContactEmailServiceProxy,
         private _contactAddressService: ContactAddressServiceProxy,
         private _router: Router
     ) {
@@ -107,13 +126,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.countriesStateLoad();
         this.addressTypesLoad();
         this.phoneTypesLoad();
+        this.emailTypesLoad();
     }
 
     ngOnInit() {
         super.ngOnInit();
 
         this.data.editTitle = true;
-        this.data.placeholder = this.l('Enter the client name');
+        this.data.placeholder = this.l('Contact.FullName');
         this.data.buttons = [{
             title: this.l('Save'),
             class: 'primary menu',
@@ -130,63 +150,69 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     save(event): void {
-        if (!this.addressValidator.validate().isValid || 
-            !this.emailComponent.instance.option('isValid') || 
-            !this.phoneComponent.instance.option('isValid')
-        )
+        if (!this.addressValidator.validate().isValid)
             return ;
 
         let nameParts = this.data.title && 
             this.data.title.split(' ');
         if (!nameParts || nameParts.length < 2) {
             this.data.isTitleValid = false;
-            return this.notify.error(this.l('Client first and last name is required'));
+            return this.notify.error(this.l('FullNameIsRequired'));
         }
-
-        if (!this.contacts.emails.length)
-            this.contacts.emails.push(this.emailAddress);
-        if (!this.contacts.phones.length)      
-            this.contacts.phones.push({ 
-                type: this.phoneType,
-                number: this.phoneNumber,
-                ext: this.phoneExtension
-            });
 
         this._customersService.createCustomer(
             CreateCustomerInput.fromJS({
                 firstName: nameParts[0],
                 lastName: nameParts.slice(1).join(' '),
-                emailAddresses: this.contacts.emails.map((val) => {
-                    return {
-                        emailAddress: val,
-                        isActive: true
-                    } as CreateContactEmailInput;
-                }),
-                phoneNumbers: this.contacts.phones.map((val) => {
-                    return {
-                        phoneNumber: val.number,
-                        phoneExtension: val.ext,
-                        isActive: true,
-                        usageTypeId: val.type      
-                    } as CreateContactPhoneInput;
-                }),
-                address: {
-                    streetAddress: this.streetNumber + 
-                        ' ' + this.streetAddress,
-                    city: this.city,
-                    stateId: this.getStateCode(this.state),
-                    zip: this.zip,
-                    countryId: this.getCountryCode(this.country),
-                    isActive: true,
-                    comment: this.notes,
-                    usageTypeId: this.addressType
-                } as CreateContactAddressInput
+                emailAddresses: this.getEmailContactInput('personal'),
+                phoneNumbers: this.getPhoneContactInput('personal'), 
+                address: this.getAddressContactInput('personal'), 
+                companyName: this.company,
+                organizationEmailAddresses: this.getEmailContactInput('bussines'),
+                organizationPhoneNumbers: this.getPhoneContactInput('bussines'),
+                organizationAddress: this.getAddressContactInput('bussines')
             })
         ).finally(() => {  })
             .subscribe(result => {
-                    this.redirectToContactInformation(result.id);
+                this.redirectToContactInformation(result.id);
             }
         );
+    }
+
+    getEmailContactInput(type) {
+        return this.contacts.emails[type].map((val) => {
+            return {
+                emailAddress: val.email,
+                usageTypeId: val.type,
+                isActive: true
+            } as CreateContactEmailInput;
+        });
+    }
+
+    getPhoneContactInput(type) {
+        return this.contacts.phones[type].map((val) => {
+            return {
+                phoneNumber: val.number,
+                phoneExtension: val.ext,
+                isActive: true,
+                usageTypeId: val.type      
+            } as CreateContactPhoneInput;
+        });
+    }
+
+    getAddressContactInput(type) {
+        let address = this.contacts.addresses[type];
+        return {
+            streetAddress: address.streetNumber + 
+                ' ' + address.streetAddress,
+            city: address.city,
+            stateId: this.getStateCode(address.state),
+            zip: address.zip,
+            countryId: this.getCountryCode(address.country),
+            isActive: true,
+            comment: address.comment,
+            usageTypeId: address.addressType
+        } as CreateContactAddressInput;
     }
 
     redirectToContactInformation(id: number) {
@@ -219,21 +245,17 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             event.component.option({ mask: '', value: '', isValid: true });
     }
 
-    onAddressChanged(event) {
+    onAddressChanged(event, type) {
         let number = event.address_components[0]['long_name'];
         let street = event.address_components[1]['long_name'];
 
-        this.address = number ? (number + ' ' + street) : street;
+        this.contacts.addresses[type].address = number ? (number + ' ' + street) : street;
     }
 
     countriesStateLoad(): void {
         this._countryService.getCountries()
             .subscribe(result => {
                 this.countries = result;
-                if (this.country)
-                    this.onCountryChange({
-                        value: this.country
-                    });
             });
     }
 
@@ -249,6 +271,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         });
     }
 
+    emailTypesLoad() {
+        this._contactEmailService.getEmailUsageTypes().subscribe(result => {
+            this.emailTypes = result.items;
+        });
+    }
+
     onCountryChange(event) {
         let country = _.findWhere(this.countries, {name: event.value});
         country && this._countryService
@@ -258,42 +286,55 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             });
     }
 
-    addContact(field) {
-        let value = this.getValidateFieldValue(field);
-        if (value && this.contacts[field].every((val) => {
+    addContact(field, type) {
+        let value = this.getValidateFieldValue(field, type);
+        if (value && this.contacts[field][type].every((val) => {
             return JSON.stringify(value) != JSON.stringify(val);
         }))
-            this.contacts[field].push(value);
+            this.contacts[field][type].push(value);
     }
 
-    removeContact(field, index) {
-        this.contacts[field].splice(index, 1);
+    removeContact(field, type, index) {
+        this.contacts[field][type].splice(index, 1);
     }
 
-    getValidateFieldValue(field) {
+    getValidateFieldValue(field, type) {
         let value;
-        if (field == 'emails' && this.emailComponent.instance.option('isValid')) {
-            value = this.emailAddress;
-        } else if (field == 'phones' && this.phoneComponent.instance.option('isValid')) {
+        if (field == 'emails') {
+            value = {
+                type: this.emailType,
+                email: this.emailAddress
+            };
+            this.showEmailAddButton = false;
+        } else if (field == 'phones') {
             value = { 
                 type: this.phoneType,
                 number: this.phoneNumber,
                 ext: this.phoneExtension
-            }
-        } else if (field == 'addresses' && this.addressValidator.validate().isValid) {
-            value = {
-              type: this.addressType,
-              address: this.address,
-              city: this.city,
-              state: this.state,
-              zip: this.zip,
-              country: this.country,
-              streetNumber: this.streetNumber,
-              streetAddress: this.streetAddress,
-              addressType: this.addressType
-            }            
+            };
+            this.phoneExtension = undefined;
+            this.showPhoneAddButton = false;
+            this.resetComponent(
+                this['phones' + (type == 'personal'
+                    ? 'Bussines': 'Personal')]);
         }
+        this.resetComponent(
+            this[field + this.capitalize(type)]);
+
         return value;
+    }
+
+    resetComponent(component) {
+        component.reset();
+        component.option('isValid', true);
+    }
+
+    validateEmailAddress(value): boolean {
+        return AppConsts.regexPatterns.email.test(value);
+    }
+
+    validatePhoneNumber(value): boolean {
+        return this.phoneRegEx.test(value);
     }
 
     onTypeChanged($event, field) {
@@ -302,10 +343,33 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this[field + 'Type'] = $event.value;
     }
 
-    initAddressValidationGroup($event) {
-        this.addressValidator = $event.component;
+    initValidationGroup($event, validator) {
+        this[validator] = $event.component;
+    }
+
+    onEmailKeyUp($event) {        
+        this.showEmailAddButton = this.validateEmailAddress(
+            $event.element.getElementsByTagName('input')[0].value);
+    }
+
+    onPhoneKeyUp($event) {        
+        this.showPhoneAddButton = this.validatePhoneNumber(
+            $event.element.getElementsByTagName('input')[0].value);
     }
 
     showUploadPhoto($event) {
+        this.dialog.open(UploadPhotoDialogComponent, {
+            data: {
+                source: this.photoOriginalData
+            },
+            hasBackdrop: true
+        }).afterClosed().subscribe((result) => {
+            this.photoOriginalData = result;
+        });
+        $event.stopPropagation();
+    }
+
+    onComponentInitialized($event, field, type) {
+        this[field + this.capitalize(type)] = $event.component;
     }
 }

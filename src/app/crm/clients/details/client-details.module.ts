@@ -88,6 +88,7 @@ import { PhoneFormatPipe } from './phone-format.pipe';
     DxValidationGroupModule
   ],
   exports: [
+    UploadPhotoDialogComponent,
     ClientDetailsComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent,
