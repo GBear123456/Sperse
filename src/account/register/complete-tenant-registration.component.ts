@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit, } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { TenantRegistrationServiceProxy, CompleteTenantRegistrationInput, CompleteTenantRegistrationOutput } from '@shared/service-proxies/service-proxies';
+import { TenantRegistrationServiceProxy, CompleteTenantRegistrationInput, CompleteTenantRegistrationOutput, TenantHostType } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
@@ -45,6 +45,7 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
     registerTenant(): void {
 
         this.model.adminPassword = this.generatePassword();
+        this.model.tenantHostType = <any>TenantHostType.PlatformUi;
 
         this.saving = true;
         this.startLoading();

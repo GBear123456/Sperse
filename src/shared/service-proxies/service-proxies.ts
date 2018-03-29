@@ -17027,6 +17027,7 @@ export class RegisterInput implements IRegisterInput {
     emailAddress: string;
     password: string;
     captchaResponse: string;
+    tenantHostType: RegisterInputTenantHostType;
 
     constructor(data?: IRegisterInput) {
         if (data) {
@@ -17045,6 +17046,7 @@ export class RegisterInput implements IRegisterInput {
             this.emailAddress = data["emailAddress"];
             this.password = data["password"];
             this.captchaResponse = data["captchaResponse"];
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -17062,6 +17064,7 @@ export class RegisterInput implements IRegisterInput {
         data["emailAddress"] = this.emailAddress;
         data["password"] = this.password;
         data["captchaResponse"] = this.captchaResponse;
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -17073,6 +17076,7 @@ export interface IRegisterInput {
     emailAddress: string;
     password: string;
     captchaResponse: string;
+    tenantHostType: RegisterInputTenantHostType;
 }
 
 export class RegisterOutput implements IRegisterOutput {
@@ -17114,6 +17118,7 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
     emailAddress: string;
     autoDetectTenancy: boolean = false;
     features: string[];
+    tenantHostType: SendPasswordResetCodeInputTenantHostType;
 
     constructor(data?: ISendPasswordResetCodeInput) {
         if (data) {
@@ -17133,6 +17138,7 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
                 for (let item of data["features"])
                     this.features.push(item);
             }
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -17151,6 +17157,7 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
             for (let item of this.features)
                 data["features"].push(item);
         }
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -17159,6 +17166,7 @@ export interface ISendPasswordResetCodeInput {
     emailAddress: string;
     autoDetectTenancy: boolean;
     features: string[];
+    tenantHostType: SendPasswordResetCodeInputTenantHostType;
 }
 
 export class SendPasswordResetCodeOutput implements ISendPasswordResetCodeOutput {
@@ -17339,6 +17347,7 @@ export interface IResetPasswordOutput {
 
 export class SendEmailActivationLinkInput implements ISendEmailActivationLinkInput {
     emailAddress: string;
+    tenantHostType: SendEmailActivationLinkInputTenantHostType;
 
     constructor(data?: ISendEmailActivationLinkInput) {
         if (data) {
@@ -17352,6 +17361,7 @@ export class SendEmailActivationLinkInput implements ISendEmailActivationLinkInp
     init(data?: any) {
         if (data) {
             this.emailAddress = data["emailAddress"];
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -17364,12 +17374,14 @@ export class SendEmailActivationLinkInput implements ISendEmailActivationLinkInp
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["emailAddress"] = this.emailAddress;
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
 
 export interface ISendEmailActivationLinkInput {
     emailAddress: string;
+    tenantHostType: SendEmailActivationLinkInputTenantHostType;
 }
 
 export class ActivateEmailInput implements IActivateEmailInput {
@@ -32575,6 +32587,7 @@ export interface IPaymentAuthorizeResponseDto {
 
 export class RegisterMemberRequest implements IRegisterMemberRequest {
     password: string;
+    tenantHostType: RegisterMemberRequestTenantHostType;
     registrationId: string;
     name: string;
     surname: string;
@@ -32600,6 +32613,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     init(data?: any) {
         if (data) {
             this.password = data["password"];
+            this.tenantHostType = data["tenantHostType"];
             this.registrationId = data["registrationId"];
             this.name = data["name"];
             this.surname = data["surname"];
@@ -32624,6 +32638,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["password"] = this.password;
+        data["tenantHostType"] = this.tenantHostType;
         data["registrationId"] = this.registrationId;
         data["name"] = this.name;
         data["surname"] = this.surname;
@@ -32642,6 +32657,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
 
 export interface IRegisterMemberRequest {
     password: string;
+    tenantHostType: RegisterMemberRequestTenantHostType;
     registrationId: string;
     name: string;
     surname: string;
@@ -35690,6 +35706,7 @@ export class CreateTenancyInput implements ICreateTenancyInput {
     adminPassword: string;
     shouldChangePasswordOnNextLogin: boolean;
     sendActivationEmail: boolean;
+    tenantHostType: CreateTenancyInputTenantHostType;
     tenancyName: string;
     name: string;
     connectionString: string;
@@ -35716,6 +35733,7 @@ export class CreateTenancyInput implements ICreateTenancyInput {
             this.adminPassword = data["adminPassword"];
             this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
             this.sendActivationEmail = data["sendActivationEmail"];
+            this.tenantHostType = data["tenantHostType"];
             this.tenancyName = data["tenancyName"];
             this.name = data["name"];
             this.connectionString = data["connectionString"];
@@ -35741,6 +35759,7 @@ export class CreateTenancyInput implements ICreateTenancyInput {
         data["adminPassword"] = this.adminPassword;
         data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
         data["sendActivationEmail"] = this.sendActivationEmail;
+        data["tenantHostType"] = this.tenantHostType;
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
         data["connectionString"] = this.connectionString;
@@ -35760,6 +35779,7 @@ export interface ICreateTenancyInput {
     adminPassword: string;
     shouldChangePasswordOnNextLogin: boolean;
     sendActivationEmail: boolean;
+    tenantHostType: CreateTenancyInputTenantHostType;
     tenancyName: string;
     name: string;
     connectionString: string;
@@ -36046,6 +36066,7 @@ export class CreateTenantInput implements ICreateTenantInput {
     isActive: boolean;
     subscriptionEndDateUtc: moment.Moment;
     isInTrialPeriod: boolean;
+    tenantHostType: CreateTenantInputTenantHostType;
 
     constructor(data?: ICreateTenantInput) {
         if (data) {
@@ -36072,6 +36093,7 @@ export class CreateTenantInput implements ICreateTenantInput {
             this.isActive = data["isActive"];
             this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
             this.isInTrialPeriod = data["isInTrialPeriod"];
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -36097,6 +36119,7 @@ export class CreateTenantInput implements ICreateTenantInput {
         data["isActive"] = this.isActive;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
         data["isInTrialPeriod"] = this.isInTrialPeriod;
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -36116,6 +36139,7 @@ export interface ICreateTenantInput {
     isActive: boolean;
     subscriptionEndDateUtc: moment.Moment;
     isInTrialPeriod: boolean;
+    tenantHostType: CreateTenantInputTenantHostType;
 }
 
 export class TenantEditDto implements ITenantEditDto {
@@ -37169,6 +37193,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
     editionId: number;
     paymentPeriodType: CompleteTenantRegistrationInputPaymentPeriodType;
     leadInterests: LeadInterestDto[];
+    tenantHostType: CompleteTenantRegistrationInputTenantHostType;
 
     constructor(data?: ICompleteTenantRegistrationInput) {
         if (data) {
@@ -37193,6 +37218,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
                 for (let item of data["leadInterests"])
                     this.leadInterests.push(LeadInterestDto.fromJS(item));
             }
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -37216,6 +37242,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
             for (let item of this.leadInterests)
                 data["leadInterests"].push(item.toJSON());
         }
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -37229,6 +37256,7 @@ export interface ICompleteTenantRegistrationInput {
     editionId: number;
     paymentPeriodType: CompleteTenantRegistrationInputPaymentPeriodType;
     leadInterests: LeadInterestDto[];
+    tenantHostType: CompleteTenantRegistrationInputTenantHostType;
 }
 
 export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistrationOutput {
@@ -37296,6 +37324,7 @@ export class RegisterTenantInput implements IRegisterTenantInput {
     gateway: RegisterTenantInputGateway;
     editionId: number;
     paymentId: string;
+    tenantHostType: RegisterTenantInputTenantHostType;
 
     constructor(data?: IRegisterTenantInput) {
         if (data) {
@@ -37317,6 +37346,7 @@ export class RegisterTenantInput implements IRegisterTenantInput {
             this.gateway = data["gateway"];
             this.editionId = data["editionId"];
             this.paymentId = data["paymentId"];
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -37337,6 +37367,7 @@ export class RegisterTenantInput implements IRegisterTenantInput {
         data["gateway"] = this.gateway;
         data["editionId"] = this.editionId;
         data["paymentId"] = this.paymentId;
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -37351,6 +37382,7 @@ export interface IRegisterTenantInput {
     gateway: RegisterTenantInputGateway;
     editionId: number;
     paymentId: string;
+    tenantHostType: RegisterTenantInputTenantHostType;
 }
 
 export class RegisterTenantOutput implements IRegisterTenantOutput {
@@ -39176,6 +39208,7 @@ export interface IUiCustomizationFooterSettingsEditDto {
 
 export class ActivateUserForContactInput implements IActivateUserForContactInput {
     contactId: number;
+    tenantHostType: ActivateUserForContactInputTenantHostType;
 
     constructor(data?: IActivateUserForContactInput) {
         if (data) {
@@ -39189,6 +39222,7 @@ export class ActivateUserForContactInput implements IActivateUserForContactInput
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -39201,12 +39235,14 @@ export class ActivateUserForContactInput implements IActivateUserForContactInput
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
 
 export interface IActivateUserForContactInput {
     contactId: number;
+    tenantHostType: ActivateUserForContactInputTenantHostType;
 }
 
 export class ActivateUserForContactOutput implements IActivateUserForContactOutput {
@@ -39757,6 +39793,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
     sendActivationEmail: boolean;
     setRandomPassword: boolean;
     organizationUnits: number[];
+    tenantHostType: CreateOrUpdateUserInputTenantHostType;
 
     constructor(data?: ICreateOrUpdateUserInput) {
         if (data) {
@@ -39782,6 +39819,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
                 for (let item of data["organizationUnits"])
                     this.organizationUnits.push(item);
             }
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -39806,6 +39844,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
             for (let item of this.organizationUnits)
                 data["organizationUnits"].push(item);
         }
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -39816,6 +39855,7 @@ export interface ICreateOrUpdateUserInput {
     sendActivationEmail: boolean;
     setRandomPassword: boolean;
     organizationUnits: number[];
+    tenantHostType: CreateOrUpdateUserInputTenantHostType;
 }
 
 export class LinkToUserInput implements ILinkToUserInput {
@@ -40576,15 +40616,15 @@ export enum SalesSummaryDatePeriod2 {
 }
 
 export enum TenantHostType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum TenantHostType2 {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum DefaultTimezoneScope {
@@ -40613,6 +40653,24 @@ export enum IsTenantAvailableOutputState {
     _1 = 1, 
     _2 = 2, 
     _3 = 3, 
+}
+
+export enum RegisterInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
+export enum SendPasswordResetCodeInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
+export enum SendEmailActivationLinkInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum SyncAccountBankDtoSyncAccountStatus {
@@ -40828,6 +40886,12 @@ export enum MemberInfoDtoGender {
     _1 = 1, 
 }
 
+export enum RegisterMemberRequestTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
 export enum RegisterMemberRequestGender {
     _0 = 0, 
     _1 = 1, 
@@ -40930,39 +40994,57 @@ export enum TenantLoginInfoDtoPaymentPeriodType {
     _365 = 365, 
 }
 
+export enum CreateTenancyInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
+export enum CreateTenantInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
 export enum CheckHostNameDnsMappingInputTenantHostType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum TenantSslBindingInfoHostType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum AddSslBindingInputTenantHostType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum UpdateSslBindingCertificateInputTenantHostType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum UpdateSslBindingIsActiveInputTenantHostType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum CompleteTenantRegistrationInputPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum CompleteTenantRegistrationInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum RegisterTenantInputSubscriptionStartType {
@@ -40973,6 +41055,24 @@ export enum RegisterTenantInputSubscriptionStartType {
 
 export enum RegisterTenantInputGateway {
     _1 = 1, 
+}
+
+export enum RegisterTenantInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
+export enum ActivateUserForContactInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
+export enum CreateOrUpdateUserInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export class SwaggerException extends Error {
