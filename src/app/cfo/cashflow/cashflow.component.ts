@@ -3188,12 +3188,21 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (cellField.dataType === 'date') {
                 let currentDate = moment();
                 let method = fieldCaption === 'day' ? 'date' : fieldCaption;
-                let currentPeriodValue = fieldCaption === 'month' ? currentDate[method]() + 1 : currentDate[method]();
-                if (cellValue === currentPeriodValue) {
+                let periodFormat;
+                switch (fieldCaption) {
+                    case 'year'    : periodFormat = 'YYYY'; break;
+                    case 'quarter' : periodFormat = 'YYYY.QQ'; break;
+                    case 'month'   : periodFormat = 'YYYY.MM'; break;
+                    case 'day'     : periodFormat = 'YYYY.MM.DD'; break;
+                }
+                let cellDate = this.getDateByPath(path, this.getColumnFields(), fieldCaption);
+                let cellDateFormated = cellDate.format(periodFormat);
+                let currentDateFormated = currentDate.format(periodFormat);
+                if (cellDateFormated === currentDateFormated) {
                     className = `current${_.capitalize(fieldCaption)}`;
-                } else if (cellValue < currentPeriodValue) {
+                } else if (cellDateFormated < currentDateFormated) {
                     className = `prev${_.capitalize(fieldCaption)}`;
-                } else if (cellValue > currentPeriodValue) {
+                } else if (cellDateFormated > currentDateFormated) {
                     className = `next${_.capitalize(fieldCaption)}`;
                 }
             } else if (fieldCaption === 'projected') {
