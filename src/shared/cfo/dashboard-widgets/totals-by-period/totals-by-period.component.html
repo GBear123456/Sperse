@@ -38,7 +38,7 @@
 
             <div class="chart-head">
                 {{l('Net_Change')}}
-                <span [ngStyle]="{'color': totalData.credit - totalData.debit > 0 ? netChangeColor : debitColor}">
+                <span [ngStyle]="{'color': totalData.netChange > 0 ? netChangeColor : debitColor}">
                     <ng-container *ngIf="totalData.netChange > 0"><span class="plus">+</span></ng-container>
                     {{ totalData.netChange | currency }}
                 </span>
