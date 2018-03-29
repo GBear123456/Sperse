@@ -357,11 +357,21 @@
                         }
                     }
 
-                    &.filtered-category td {
+                    &.filtered-category.outflows td {
+                        .category-hover {
+                            border: 1px solid #f7b6ca !important;
+                            background-color: #fff5f7 !important;
+                        }
+                    }
+
+                    &.filtered-category.inflows td {
                         .category-hover {
                             border: 1px solid #d8f9ea !important;
                             background-color: #f0fef1 !important;
                         }
+                    }
+
+                    &.filtered-category td {
 
                         &:nth-child(2) {
                             position: static;

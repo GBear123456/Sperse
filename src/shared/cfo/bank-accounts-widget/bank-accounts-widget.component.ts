@@ -53,7 +53,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
         injector: Injector
     ) {
         super(injector);
-        this.allAccountTypesFilter = this.l('All Accounts');
+        this.allAccountTypesFilter = this.l('AllAccounts');
         this.selectedBankAccountType = this.allAccountTypesFilter;
     }
 
@@ -73,9 +73,9 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     }
 
     setHighlighted() {
-        this.syncAccountsDataSource.forEach((syncAccount, i) => {
+        this.syncAccountsDataSource.forEach(syncAccount => {
             let highlightedBankAccountExist = false;
-            syncAccount.bankAccounts.forEach((bankAccount, i) => {
+            syncAccount.bankAccounts.forEach(bankAccount => {
                 let isBankAccountHighlighted = _.contains(this.bankAccountIdsForHighlight, bankAccount.id);
                 bankAccount['highlighted'] = isBankAccountHighlighted;
                 if (isBankAccountHighlighted)
@@ -103,15 +103,15 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     masterSelectionChanged(e) {
         let row = e.component.getVisibleRows()[e.component.getRowIndexByKey(e.key)];
         let isSelected = e.data.selected;
-        row.data.bankAccounts.forEach((bankAccount, i) => {
+        row.data.bankAccounts.forEach(bankAccount => {
             bankAccount['selected'] = isSelected;
         });
     }
 
     bankAccountSelectionChanged(e) {
-        this.syncAccountsDataSource.forEach((syncAccount, i) => {
+        this.syncAccountsDataSource.forEach(syncAccount => {
             let selectedBankAccountCount = 0;
-            syncAccount.bankAccounts.forEach((bankAccount, i) => {
+            syncAccount.bankAccounts.forEach(bankAccount => {
                 if (bankAccount['selected'])
                     selectedBankAccountCount++;
             });
@@ -130,8 +130,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     }
 
     bankAccountsSelecteAll() {
-        this.syncAccountsDataSource.forEach((syncAccount, i) => {
-            syncAccount.bankAccounts.forEach((bankAccount, i) => {
+        this.syncAccountsDataSource.forEach(syncAccount => {
+            syncAccount.bankAccounts.forEach(bankAccount => {
                 bankAccount['selected'] = true;
             });
             syncAccount['selected'] = true;
@@ -142,9 +142,9 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     }
     
     setSelectedIfNot() {
-        this.syncAccountsDataSource.forEach((syncAccount, i) => {
+        this.syncAccountsDataSource.forEach(syncAccount => {
             let selectedBankAccountCount = 0;
-            syncAccount.bankAccounts.forEach((bankAccount, i) => {
+            syncAccount.bankAccounts.forEach(bankAccount => {
                 if (!bankAccount['selected'])
                     bankAccount['selected'] = false;
                 else
@@ -164,46 +164,46 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
 
     getExistBankAccountTypes() {
         this.existBankAccountTypes = [];
-        this.syncAccountsDataSource.forEach((syncAccount, i) => {
-            let types = _.uniq(_.map(syncAccount.bankAccounts, function (bankAccount) { return bankAccount.type; }));
+        this.syncAccountsDataSource.forEach(syncAccount => {
+            let types = _.uniq(_.map(syncAccount.bankAccounts, bankAccount => bankAccount.type));
             this.existBankAccountTypes = _.union(this.existBankAccountTypes, types);
         });
         this.bankAccountTypesForSelect = [];
         this.bankAccountTypesForSelect.push(this.allAccountTypesFilter);
-        this.baseBankAccountTypes.forEach((type, i) => {
+        this.baseBankAccountTypes.forEach(type => {
             if (_.contains(this.existBankAccountTypes, type)) {
                 this.bankAccountTypesForSelect.push(type);
             }
         });
 
-        let otherExist = _.difference(this.existBankAccountTypes, this.baseBankAccountTypes).length ? true : false;
+        let otherExist = _.some(this.existBankAccountTypes, x => !_.contains(this.baseBankAccountTypes, x));
         if (otherExist)
             this.bankAccountTypesForSelect.push(this.l('Other'));
     }
 
     filterByBankAccountType() {
         if (this.selectedBankAccountType === this.allAccountTypesFilter) {
-            this.syncAccountsDataSource.forEach((syncAccount, i) => {
-                syncAccount.bankAccounts.forEach((bankAccount, i) => {
+            this.syncAccountsDataSource.forEach(syncAccount => {
+                syncAccount.bankAccounts.forEach(bankAccount => {
                     bankAccount['visible'] = true;
                 });
                 syncAccount['visible'] = true;
             });
         } else if (this.selectedBankAccountType === this.l('Other')) {
-            this.syncAccountsDataSource.forEach((syncAccount, i) => {
+            this.syncAccountsDataSource.forEach(syncAccount => {
                 let visibleBankAccountsExist = false;
-                syncAccount.bankAccounts.forEach((bankAccount, i) => {
+                syncAccount.bankAccounts.forEach(bankAccount => {
                     let isBankAccountVisible = !_.contains(this.bankAccountTypesForSelect, bankAccount.type);
                     bankAccount['visible'] = isBankAccountVisible;
                     if (isBankAccountVisible)
-                        visibleBankAccountsExist = true;;
+                        visibleBankAccountsExist = true;
                 });
                 syncAccount['visible'] = visibleBankAccountsExist;
             });
         } else {
-            this.syncAccountsDataSource.forEach((syncAccount, i) => {
+            this.syncAccountsDataSource.forEach(syncAccount => {
                 let visibleBankAccountsExist = false;
-                syncAccount.bankAccounts.forEach((bankAccount, i) => {
+                syncAccount.bankAccounts.forEach(bankAccount => {
                     let isBankAccountVisible = this.selectedBankAccountType === bankAccount.type;
                     bankAccount['visible'] = isBankAccountVisible;
                     if (isBankAccountVisible)

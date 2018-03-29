@@ -33,22 +33,30 @@
         flex-direction: column;
         padding-top: 5px;
         justify-content: space-between;
+        height: 100%;
+    
+        .align-data {
+            display: flex;
+            height: 100%;
+            flex-direction: column;
+            justify-content: space-evenly;
+        }
 
         .ending-balance,
         .starting-balance,
         .starting-balance-entry,
+        .adjustments,
         .chart-head {
             display: flex;
             justify-content: space-between;
 
-            span {
+            > span {
                 float: right;
                 font-size: 14px;
                 font-weight: normal;
                 font-style: normal;
                 font-stretch: normal;
                 letter-spacing: 0.3px;
-                text-shadow: 0px 5px 25px rgba(29, 32, 37, 0.21);
             }
         }
 
@@ -60,23 +68,38 @@
         .ending-balance,
         .starting-balance,
         .starting-balance-entry,
+        .adjustments,
         .chart-head {
             font-size: 14px;
-            font-weight: 300;
+            font-weight: 400;
             font-style: normal;
             font-stretch: normal;
             letter-spacing: 0.3px;
             color: #677380;
+            
+            span {
+                font-weight: 500;
+            }
+            
+            .plus {
+                position: relative;
+                right: -4px;
+            }
         }
 
         .starting-balance,
         .starting-balance-entry {
             padding-bottom: 10px;
         }
+        .adjustments {
+            padding-bottom: 5px;
+            padding-top: 10px;
+        }
         .ending-balance {
             padding-top: 10px;
             border-top: 1px solid #E5E9EC;
             position: relative;
+            margin-top: 5px;
         }
         .separator {
             margin: 0 0 10px;
@@ -85,13 +108,12 @@
             height: 1px;
         }
         .chart-line {
-            height: 30px;
             width: 100%;
-            padding-bottom: 10px;
+            padding-bottom: 15px;
             div {
-                height: 16px;
-                display: inline-block;
-                border-radius: 2px;
+                height: 8px;
+                border-radius: 6px;
+                
             }
         }
     }
@@ -154,29 +176,10 @@
         }
     }
 
-    app-dashboard-no-data {
-        padding-top: 20px;
-    }
-
-    .positive {
-        color: #35c8a8;
-    }
-    .negative {
-        color: #f05b2a;
-        &::before {
-            content: '-';
-        }
-    }
-
-    .summary {
-        padding-top: 20px;
-        padding-bottom: 10px;
-        font-weight: 500;
-    }
-
     .no-data {
         padding-top: 20px;
         padding-bottom: 10px;
         font-weight: 500;
     }
 }
+
