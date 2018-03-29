@@ -22,8 +22,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     selectedPeriod: any = String(GroupBy['Yearly']).toLowerCase();
     startDate;
     endDate;
-    creditColor = '#32bef2';
-    debitColor = '#f75a29';
+    creditColor = '#35bd9f';
+    debitColor = '#f2526a';
     netChangeColor = '#35c8a8';
     loading = true;
     allPeriodLocalizationValue = this.l('All_Periods');
@@ -56,8 +56,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         )
             .mergeMap(x => x)
             .scan((prevStatsItem, currentStatsItem) => {
-                let credit = Math.abs(currentStatsItem.credit) + prevStatsItem.credit;
-                let debit = Math.abs(currentStatsItem.debit) + prevStatsItem.debit;
+                let credit = currentStatsItem.credit + prevStatsItem.credit;
+                let debit = currentStatsItem.debit + prevStatsItem.debit;
                 let adjustments = currentStatsItem.adjustments + prevStatsItem.adjustments;
                 let startingBalanceAdjustments = currentStatsItem.startingBalanceAdjustments + prevStatsItem.startingBalanceAdjustments;
                 return {
@@ -67,7 +67,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                     'debit': debit,
                     'adjustments': adjustments,
                     'startingBalanceAdjustments': startingBalanceAdjustments,
-                    'netChange': Math.abs(credit - debit),
+                    'netChange': credit - Math.abs(debit),
                     'date': currentStatsItem.date
                 };
             }, { 'credit': 0, 'debit': 0, 'netChange': 0, 'adjustments': 0, 'startingBalanceAdjustments': 0 })
@@ -78,7 +78,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                         Math.abs(result.credit),
                         Math.abs(result.debit),
                         Math.abs(result.netChange)
-                    ) * 1.5;
+                    );
                     this.totalData.creditPercent = this.getPercentage(maxValue, result.credit);
                     this.totalData.debitPercent = this.getPercentage(maxValue, result.debit);
                     this.totalData.netChangePercent = this.getPercentage(maxValue, result.netChange);
@@ -89,7 +89,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     getPercentage(maxValue, currValue) {
-        return maxValue ? Math.round(currValue / maxValue * 100) : 0;
+        return maxValue ? Math.round(Math.abs(currValue) / maxValue * 100) : 0;
     }
 
     onValueChanged(value): void {
