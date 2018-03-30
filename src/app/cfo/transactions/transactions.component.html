@@ -32,10 +32,10 @@
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
                                   [columnResizingMode]="'widget'"
-                                  [pager]="defaultGridPagerConfig"
                                   (onContentReady)="onContentReady($event)"
                                   (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                                   (onSelectionChanged)="onSelectionChanged($event)"
+                                  (onCellClick)="onCellClick($event)"
                                   (onCellPrepared)="onCellPrepared($event)"
                                   (onToolbarPreparing)="onToolbarPreparing($event)">
                         <dxo-selection selectAllMode="page"
@@ -67,6 +67,9 @@
                         <dxi-column dataField="Id" cssClass="tabular id-column" caption="{{l('Transactions_Id')}}" sortOrder="desc" sortIndex="0" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankCode" caption="{{l('Transactions_BankCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="IsPending" caption="{{l('Transactions_IsPending')}}" [visible]="false" cellTemplate="isPendingTemplate"></dxi-column>
+                        <dxi-column dataField="MonthYear" caption="{{l('Transactions_MonthYear')}}" cellTemplate="dateMonthYear" groupCellTemplate="dateMonthYear" calculateSortValue="Date" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Debit" cssClass="tabular" name="Debit" caption="{{l('Transactions_Debit')}}" cellTemplate="amountTemplate" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Credit" cssClass="tabular" name="Credit" caption="{{l('Transactions_Credit')}}" cellTemplate="amountTemplate" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankAccountTypeName" caption="{{l('Transactions_BankAccountType')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="Currency" caption="{{l('Transactions_Currency')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="BankAccountBankName" caption="{{l('Transactions_BankName')}}" [visible]="false"></dxi-column>
@@ -77,7 +80,7 @@
                         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
 
                         <div *dxTemplate="let cell of 'amountTemplate'">
-                            <ng-container *ngIf="(cell.text) && (cell.column.name == 'Amount') ">
+                            <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit'))">
                                 <span [ngClass]="cell.value < 0 ? 'negative-values' : 'positive-values'"> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
                             </ng-container>
                         </div>
@@ -91,14 +94,14 @@
                         </div>
                         <div *dxTemplate="let cell of 'endBalanceTemplate'">
                             <ng-container *ngIf="cell.text">
-                                <span class="end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ cell.text | number:'1.2-2' }} </span>
+                                <span class="end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
                             </ng-container>
                         </div>
 
                         <div *dxTemplate="let data of 'CashflowCategoryNameTemplate'">
                             <span [ngClass]="{'uncategorized': !data.value}">
                                 <ng-container *ngIf="data.value">
-                                    <span> {{data.value}} </span>
+                                    <span class="clickable-item"> {{data.value}} </span>
                                 </ng-container>
                                 <ng-container *ngIf="!data.value">
                                     <span> {{l('Unclassified')}} </span>
@@ -114,36 +117,31 @@
                             {{cellData.value | date: 'MM/dd/yyyy'}}
                         </div>
 
+                        <div *dxTemplate="let cellData of 'dateMonthYear'">
+                            {{cellData.value | date: 'MMM yyyy'}}
+                        </div>
+
                         <dxo-paging [pageSize]="20"></dxo-paging>
 
                         <div *dxTemplate="let data of 'bankAccountTotal'">
-                            <div class="informer" (click)="toggleSubaccountsDetails()">
-                                <h2 class="count">{{bankAccountCount| number}}</h2>
+                            <div class="informer" (click)="bankAccountSelector.toggleBankAccountTooltip()">
+                                <h2 class="count">{{bankAccountCount | number}}</h2>
                                 <span class="name">
                                     {{l('Accounts')}}
                                     <i id="subaccountsDetails" class="arrow"></i>
                                 </span>
 
-                                <dx-tooltip target="#subaccountsDetails"
-                                            [(visible)]="defaultSubaccountTooltipVisible">
-                                    <div *dxTemplate="let data = data of 'content'">
-                                        <div class="tooltip-wrap">
-                                            <div *ngFor="let bankAccount of getBankAccounts()">
-                                                <span class="name" (click)="applyTotalBankAccountFilter(bankAccount.id)">
-                                                    {{ bankAccount.name }}
-                                                </span>
-                                                <br />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </dx-tooltip>
+                                <bank-accounts-select targetBankAccountsTooltip="#subaccountsDetails"
+                                                      [highlightedBankAccountIds]="bankAccounts"
+                                                      (onBankAccountsSelected)="applyTotalBankAccountFilter($event)">
+                                </bank-accounts-select>
                             </div>
                         </div>
 
                         <div *dxTemplate="let data of 'startBalanceTotal'">
                             <div class="informer starting-balance">
                                 <h2 class="count">
-                                    ${{adjustmentStartingBalanceTotal | number:'1.0-0'}}
+                                    {{adjustmentStartingBalanceTotal  | currency:'USD':'symbol':'1.0-0'}}
                                     <span class="cent">.{{adjustmentStartingBalanceTotalCent | number:'2.0-0'}}</span>
                                 </h2>
                                 <span class="name">{{l('Starting_Balance')}}</span>
@@ -163,13 +161,29 @@
                                 <dx-tooltip target="#creditDetails"
                                             [(visible)]="defaultCreditTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
-                                        <div class="tooltip-wrap">
-                                            <span class="name" (click)="applyTotalFilters(false, true, false)">
-                                                {{l('Unclassified')}} ({{creditTransactionCount - creditClassifiedTransactionCount | number}})
-                                            </span><br />
-                                            <span class="name" (click)="applyTotalFilters(true, true, false)">
-                                                {{l('Classified')}} ({{creditClassifiedTransactionCount | number}})
-                                            </span>
+                                        <div class="tooltip-wrap classification-status">
+                                            <header>{{l('Classification_Status')}}</header>
+                                            <ul class="classification-list">
+
+                                                <li class="classification-item classified" (click)="applyTotalFilters(true, true, false)">
+                                                    <span class="classified-item-title"><span class="border">{{l('Classified')}}</span></span>
+                                                    <span class="classification-item-number">{{creditClassifiedTransactionCount | number}}</span>
+                                                    <span class="classification-item-percent">{{creditClassifiedTransactionCount / creditTransactionCount | percent}}</span>
+                                                </li>
+                                                <li class="classification-item unclassified" (click)="applyTotalFilters(false, true, false)">
+                                                    <span class="unclassified-item-title"><span class="border">{{l('Unclassified')}}</span></span>
+                                                    <span class="classification-item-number">{{creditTransactionCount - creditClassifiedTransactionCount}}</span>
+                                                    <span class="classification-item-percent">{{(creditTransactionCount - creditClassifiedTransactionCount) / creditTransactionCount | percent}}</span>
+                                                </li>
+                                            </ul>
+                                            <div class="btns-wrap clearfix">
+                                                <a (click)="openDialog('credit');" class="small-button btn-layout">
+                                                    {{l('Unclassify_Btn')}}
+                                                </a>
+                                                <a (click)="autoClassify('credit');" class="small-button btn-layout">
+                                                    {{l('Auto_Classify_Btn')}}
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </dx-tooltip>
@@ -188,13 +202,28 @@
                                 <dx-tooltip target="#debitDetails"
                                             [(visible)]="defaultDebitTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
-                                        <div class="tooltip-wrap">
-                                            <span class="name" (click)="applyTotalFilters(false, false, true)">
-                                                {{l('Unclassified')}} ({{debitTransactionCount - debitClassifiedTransactionCount | number}})
-                                            </span><br />
-                                            <span class="name" (click)="applyTotalFilters(true, false, true)">
-                                                {{l('Classified')}} ({{debitClassifiedTransactionCount | number}})
-                                            </span>
+                                        <div class="tooltip-wrap classification-status">
+                                            <header>{{l('Classification_Status')}}</header>
+                                            <ul class="classification-list">
+                                                <li class="classification-item classified" (click)="applyTotalFilters(true, false, true)">
+                                                    <span class="classified-item-title"><span class="border">{{l('Classified')}}</span></span>
+                                                    <span class="classification-item-number">{{debitClassifiedTransactionCount | number}}</span>
+                                                    <span class="classification-item-percent">{{debitClassifiedTransactionCount / debitTransactionCount | percent}}</span>
+                                                </li>
+                                                <li class="classification-item unclassified" (click)="applyTotalFilters(false, false, true)">
+                                                    <span class="unclassified-item-title"><span class="border">{{l('Unclassified')}}</span></span>
+                                                    <span class="classification-item-number">{{debitTransactionCount - debitClassifiedTransactionCount}}</span>
+                                                    <span class="classification-item-percent">{{(debitTransactionCount - debitClassifiedTransactionCount) / debitTransactionCount | percent}}</span>
+                                                </li>
+                                            </ul>
+                                            <div class="btns-wrap clearfix">
+                                                <a (click)="openDialog('debit');" class="small-button btn-layout">
+                                                    {{l('Unclassify_Btn')}}
+                                                </a>
+                                                <a (click)="autoClassify('debit');" class="small-button btn-layout">
+                                                    {{l('Auto_Classify_Btn')}}
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </dx-tooltip>
@@ -204,22 +233,46 @@
                         <div *dxTemplate="let data of 'transactionTotal'">
                             <div class="informer">
                                 <h2 class="count">
-                                    ${{transactionTotal | number:'1.0-0'}}
+                                    {{transactionTotal  | currency: 'USD' : 'symbol' : '1.0-0'}}
                                     <span class="cent">.{{transactionTotalCent | number:'2.0-0'}}</span>
                                 </h2>
                                 <span class="name" (click)="toggleTotalDefault()">
-                                    {{l('Net_Amount')}} <span class="name-count">{{transactionCount | number}}</span> <i id="totalDetails" class="arrow"></i>
+                                    <span id="adjustments" *ngIf="adjustmentTotal !== 0">!</span> {{l('Net_Amount')}} <span class="name-count">{{transactionCount | number}}</span> <i id="totalDetails" class="arrow"></i>
+
                                 </span>
+                                <dx-tooltip target="#adjustments"
+                                            position="top"
+                                            showEvent="dxhoverstart"
+                                            hideEvent="dxhoverend">
+                                    <div *dxTemplate="let data = data of 'content'">
+                                        <span class="title">{{ls('Platform', 'Unreconciled_Balance')}}:</span> {{adjustmentTotal | currency: 'USD' : 'symbol' : '1.2-2'}}
+                                    </div>
+                                </dx-tooltip>
                                 <dx-tooltip target="#totalDetails"
                                             [(visible)]="defaultTotalTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
-                                        <div class="tooltip-wrap">
-                                            <span class="name" (click)="applyTotalFilters(false, false, false)">
-                                                {{l('Unclassified')}} ({{transactionCount - (debitClassifiedTransactionCount + creditClassifiedTransactionCount) | number}})
-                                            </span><br />
-                                            <span class="name" (click)="applyTotalFilters(true, false, false)">
-                                                {{l('Classified')}} ({{debitClassifiedTransactionCount + creditClassifiedTransactionCount | number}})
-                                            </span>
+                                        <div class="tooltip-wrap classification-status">
+                                            <header>{{l('Classification_Status')}}</header>
+                                            <ul class="classification-list">
+                                                <li class="classification-item classified" (click)="applyTotalFilters(true, false, false)">
+                                                    <span class="classified-item-title"><span class="border">{{l('Classified')}}</span></span>
+                                                    <span class="classification-item-number">{{debitClassifiedTransactionCount + creditClassifiedTransactionCount | number}}</span>
+                                                    <span class="classification-item-percent">{{(debitClassifiedTransactionCount + creditClassifiedTransactionCount) / transactionCount | percent}}</span>
+                                                </li>
+                                                <li class="classification-item unclassified" (click)="applyTotalFilters(false, false, false)">
+                                                    <span class="unclassified-item-title"><span class="border">{{l('Unclassified')}}</span></span>
+                                                    <span class="classification-item-number">{{transactionCount - (debitClassifiedTransactionCount + creditClassifiedTransactionCount)}}</span>
+                                                    <span class="classification-item-percent">{{(transactionCount - (debitClassifiedTransactionCount + creditClassifiedTransactionCount)) / transactionCount | percent}}</span>
+                                                </li>
+                                            </ul>
+                                            <div class="btns-wrap clearfix">
+                                                <a (click)="openDialog('total');" class="small-button btn-layout">
+                                                    {{l('Unclassify_Btn')}}
+                                                </a>
+                                                <a (click)="autoClassify('total');" class="small-button btn-layout">
+                                                    {{l('Auto_Classify_Btn')}}
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </dx-tooltip>

@@ -5,6 +5,10 @@ export class AppConsts {
     static readonly googleMapsApiUrl = 'https://maps.googleapis.com/maps/api/js?key={KEY}&libraries=places&language=en';
     static readonly helpLink = 'https://support.sperse.com';
     static readonly isMobile = RegExp('Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini', 'i').test(navigator.userAgent);
+    static readonly defaultErrorMessage = 'No further information available.';
+
+    static readonly thumbWidth  = 44;
+    static readonly thumbHeight = 44;
 
     static remoteServiceBaseUrl: string;
     static remoteServiceBaseUrlFormat: string;
@@ -50,7 +54,16 @@ export class AppConsts {
     };
 
     static readonly formatting = {
-        date: 'MM/dd/yyyy hh:mm a'
+        date: 'MM/dd/yyyy',
+        dateTime: 'MM/dd/yyyy hh:mm a'
+    };
+
+    static readonly otherLinkTypeId = '-';
+
+    static readonly regexPatterns = {
+        name: /^[A-Z][a-zA-Z]+$/,
+        email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        phone: /[0-9]{10}/
     };
 }
 

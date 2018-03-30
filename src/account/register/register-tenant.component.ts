@@ -8,7 +8,8 @@ import {
     PasswordComplexitySetting,
     ProfileServiceProxy,
     EditionSelectDto,
-    PaymentServiceProxy
+    PaymentServiceProxy,
+    TenantHostType
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
@@ -88,6 +89,7 @@ export class RegisterTenantComponent extends AppComponentBase implements OnInit,
         }
 
         this.saving = true;
+        this.model.tenantHostType = <any>TenantHostType.PlatformUi;
         this._tenantRegistrationService.registerTenant(this.model)
             .finally(() => { this.saving = false; })
             .subscribe((result: RegisterTenantOutput) => {

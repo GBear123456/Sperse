@@ -2,7 +2,6 @@ import { Injectable, Injector  } from '@angular/core';
 import { CacheService } from 'ng2-cache-service';
 import { CashFlowGridSettingsDto } from '@shared/service-proxies/service-proxies';
 
-
 @Injectable()
 export class UserPreferencesService {
     cacheKey = `UserPreferences_${abp.session.userId}`;

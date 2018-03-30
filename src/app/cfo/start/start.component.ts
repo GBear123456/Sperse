@@ -1,8 +1,8 @@
-import { CFOComponentBase } from "@app/cfo/shared/common/cfo-component-base";
-import { Injector, Component } from "@angular/core";
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { Injector, Component } from '@angular/core';
 import { SetupComponent } from './setup/setup.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { appModuleAnimation } from "@shared/animations/routerTransition";
+import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 @Component({
     selector: 'start',

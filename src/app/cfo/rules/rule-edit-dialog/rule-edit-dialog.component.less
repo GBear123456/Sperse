@@ -1,14 +1,40 @@
+:host {
+    categorization {
+        display: block;
+    }
+}
+
 /deep/ .dx-selectbox-popup-wrapper {
+    .dx-popup-content {
+        margin-top: 10px;
+    }
     .dx-item {
-        &.dx-state-focused, &.dx-state-active { 
+        &.dx-state-focused, &.dx-state-active {
             background-color: transparent!important;
             color: #333!important;
+        }
+        &:first-child .attribute-name{
+            margin-top: 50px;
+            &:before {
+                position: relative;
+                content: 'Type a descriptive name or select either attribute type or particular values below';
+                font-size: 12px;
+                font-weight: 300;
+                color: #dcdcdc;
+                display: block;
+                top: -6px;
+                letter-spacing: 0.1px;
+            }
         }
         .attribute-value {
             margin-left: 30px;
             &:hover {
                 background-color: #dddddd;
             }
+        }
+        .attribute-value-wrapper {
+            float: right;
+            width: 270px;
         }
     }
 }
@@ -34,6 +60,7 @@
         width: 1110px;
         max-width: 1111px;
         min-width: 720px;
+
         div.close-transactions {
             position: absolute;
             right: 10px;
@@ -61,7 +88,7 @@
                 transform: rotate(-45deg);
             }
         }
-
+    
         /deep/ dx-data-grid {
             .dx-datagrid-headers {
                 /deep/ * {
@@ -240,41 +267,6 @@
                     font-weight: 400;
                     border-bottom: none !important;
                 }
-                
-                tr:hover td.dx-command-edit a.dx-link {
-                    display: inline-block;
-                }
-
-                td.dx-command-edit {
-                    text-overflow: unset;
-                    text-align: right !important;
-
-                    a.dx-link {
-                        width: 25px;
-                        display: none;
-                        color: transparent !important;                         
-
-                        &.dx-link-add {
-                            background: url('../../../../assets/common/icons/add.svg') no-repeat center;
-                        }
-
-                        &.dx-link-edit {
-                            background: url('../../../../assets/common/icons/edit.svg') no-repeat center;
-                        }
-
-                        &.dx-link-delete {
-                            background: url('../../../../assets/common/icons/delete-icon.svg') no-repeat center;
-                        }
-
-                        &.dx-link-save {
-                            background: url('../../../../assets/common/icons/check.svg') no-repeat center;
-                        }
-
-                        &.dx-link-cancel {
-                            background: url('../../../../assets/common/icons/cancel.svg') no-repeat center;
-                        }
-                    }
-                }
 
                 input {
                     font-size: 15px;
@@ -390,8 +382,6 @@
 
                         .dx-datagrid-nodata {
                             width: 100%;
-                            left: 0px;
-                            top: 22px;
                             margin-top: 0px !important;
                             margin-right: 0px !important;
                             margin-left: 0px !important;
@@ -400,12 +390,20 @@
 
                         .dx-datagrid-content {
                             padding: 10px 24px;
+
                             .dx-datagrid-table {
                                 transform: rotate(180deg);
+                                colgroup col:last-child {
+                                    width: 56px!important;
+                                }
                                 tr {
-                                    &.dx-freespace-row {
-                                        display: none!important;
+                                    /deep/ dx-select-box[ng-reflect-access-key="attributeTypesSelect"] input {
+                                          width: 135px!important;
                                     }
+                                    &.dx-freespace-row {
+                                        display: none !important;
+                                    }
+
                                     transform: rotate(180deg);
                                 }
                             }
@@ -413,6 +411,41 @@
                             .dx-datagrid-focus-overlay {
                                 height: 35px !important;
                                 border: 1px solid #00aeef;
+                            }
+
+                            td.dx-command-edit {
+                                text-overflow: unset;
+                                text-align: right !important;
+
+                                a.dx-link {
+                                    width: 25px;
+                                    display: none;
+                                    color: transparent !important;
+
+                                    &.dx-link-add {
+                                        background: url('../../../../assets/common/icons/add.svg') no-repeat center;
+                                    }
+
+                                    &.dx-link-edit {
+                                        background: url('../../../../assets/common/icons/edit.svg') no-repeat center;
+                                    }
+
+                                    &.dx-link-delete {
+                                        background: url('../../../../assets/common/icons/delete-icon.svg') no-repeat center;
+                                    }
+
+                                    &.dx-link-save {
+                                        background: url('../../../../assets/common/icons/check.svg') no-repeat center;
+                                    }
+
+                                    &.dx-link-cancel {
+                                        background: url('../../../../assets/common/icons/cancel.svg') no-repeat center;
+                                    }
+                                }
+                            }
+
+                            tr:hover td.dx-command-edit a.dx-link {
+                                display: inline-block;
                             }
                         }
                     }
@@ -441,11 +474,12 @@
                     margin-bottom: 10px;
                 }
 
-                dx-select-box {
-                    /deep/ input {
+                /deep/ dx-select-box {
+                    input {
                         border: solid 1px #e5e9ec;
                         background-color: #ffffff;
                         border-radius: 4px;
+
                         &[attribute-selected="true"] {
                             font-weight: 600;
                         }

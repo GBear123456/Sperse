@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { TokenAuthServiceProxy, AuthenticateModel, AuthenticateResultModel, ExternalLoginProviderInfoModel, ExternalAuthenticateModel, ExternalAuthenticateResultModel, SendPasswordResetCodeInput, AccountServiceProxy, SendPasswordResetCodeOutput  } from '@shared/service-proxies/service-proxies';
+import {
+    TokenAuthServiceProxy, AuthenticateModel, AuthenticateResultModel, ExternalLoginProviderInfoModel, ExternalAuthenticateModel, ExternalAuthenticateResultModel,
+    SendPasswordResetCodeInput, AccountServiceProxy, SendPasswordResetCodeOutput, TenantHostType
+} from '@shared/service-proxies/service-proxies';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -90,7 +93,7 @@ export class LoginService {
         finallyCallback = finallyCallback || (() => { });
 
         this.resetPasswordModel.autoDetectTenancy = autoDetectTenancy;
-
+        this.resetPasswordModel.tenantHostType = <any>TenantHostType.PlatformUi;
         this._accountService
             .sendPasswordResetCode(this.resetPasswordModel)
             .finally(finallyCallback)

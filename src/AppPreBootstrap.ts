@@ -15,7 +15,7 @@ export class AppPreBootstrap {
     static run(callback: () => void, resolve: any, reject: any): void {
         let abpAjax: any = abp.ajax;
         if (abpAjax.defaultError) {
-            abpAjax.defaultError.details = 'No further information available.';
+            abpAjax.defaultError.details = AppConsts.defaultErrorMessage;
         }
 
         AppPreBootstrap.getApplicationConfig(() => {

@@ -712,9 +712,10 @@ export class BankAccountsServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @businessEntitiesIds (optional) 
      * @return Success
      */
-    getBankAccounts(instanceType: InstanceType, instanceId: number, currency: string): Observable<SyncAccountBankDto[]> {
+    getBankAccounts(instanceType: InstanceType, instanceId: number, currency: string, businessEntitiesIds: number[], isActive: boolean): Observable<SyncAccountBankDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetBankAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -724,6 +725,12 @@ export class BankAccountsServiceProxy {
             throw new Error("The parameter 'currency' must be defined and cannot be null.");
         else
             url_ += "Currency=" + encodeURIComponent("" + currency) + "&"; 
+        if (businessEntitiesIds !== undefined)
+            businessEntitiesIds && businessEntitiesIds.forEach(item => { url_ += "BusinessEntitiesIds=" + encodeURIComponent("" + item) + "&"; });
+        if (isActive === undefined || isActive === null)
+            throw new Error("The parameter 'isActive' must be defined and cannot be null.");
+        else
+            url_ += "IsActive=" + encodeURIComponent("" + isActive) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -821,13 +828,14 @@ export class BankAccountsServiceProxy {
      * @instanceType (optional) 
      * @instanceId (optional) 
      * @forecastModelId (optional) 
+     * @banks (optional) 
      * @accounts (optional) 
      * @startDate (optional) 
      * @endDate (optional) 
      * @maxCount (optional) 
      * @return Success
      */
-    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
+    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, banks: number[], accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -839,6 +847,8 @@ export class BankAccountsServiceProxy {
             url_ += "Currency=" + encodeURIComponent("" + currency) + "&"; 
         if (forecastModelId !== undefined)
             url_ += "ForecastModelId=" + encodeURIComponent("" + forecastModelId) + "&"; 
+        if (banks !== undefined)
+            banks && banks.forEach(item => { url_ += "Banks=" + encodeURIComponent("" + item) + "&"; });
         if (accounts !== undefined)
             accounts && accounts.forEach(item => { url_ += "Accounts=" + encodeURIComponent("" + item) + "&"; });
         if (startDate !== undefined)
@@ -995,6 +1005,186 @@ export class BaseCommercePushNotificationHandlerServiceProxy {
     }
 
     protected processHandle(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class BusinessEntityServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    getBusinessEntities(instanceType: InstanceType5, instanceId: number): Observable<BusinessEntityDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/BusinessEntity/GetBusinessEntities?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetBusinessEntities(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetBusinessEntities(response_);
+                } catch (e) {
+                    return <Observable<BusinessEntityDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<BusinessEntityDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetBusinessEntities(response: Response): Observable<BusinessEntityDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(BusinessEntityDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<BusinessEntityDto[]>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    getBankAccounts(instanceType: InstanceType6, instanceId: number, businessEntityId: number): Observable<BusinessEntityBankAccountDto[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/BusinessEntity/GetBankAccounts?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (businessEntityId === undefined || businessEntityId === null)
+            throw new Error("The parameter 'businessEntityId' must be defined and cannot be null.");
+        else
+            url_ += "businessEntityId=" + encodeURIComponent("" + businessEntityId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetBankAccounts(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetBankAccounts(response_);
+                } catch (e) {
+                    return <Observable<BusinessEntityBankAccountDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<BusinessEntityBankAccountDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetBankAccounts(response: Response): Observable<BusinessEntityBankAccountDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(BusinessEntityBankAccountDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<BusinessEntityBankAccountDto[]>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    updateBankAccounts(instanceType: InstanceType7, instanceId: number, input: BusinessEntityUpdateBankAccountsInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/BusinessEntity/UpdateBankAccounts?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdateBankAccounts(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateBankAccounts(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateBankAccounts(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -1172,7 +1362,7 @@ export class CashflowServiceProxy {
      * @filter (optional) 
      * @return Success
      */
-    getStats(instanceType: InstanceType5, instanceId: number, filter: StatsFilter): Observable<CashFlowStatsDto> {
+    getStats(instanceType: InstanceType8, instanceId: number, filter: StatsFilter): Observable<CashFlowStatsDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1227,7 +1417,7 @@ export class CashflowServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getCashFlowInitialData(instanceType: InstanceType6, instanceId: number): Observable<CashFlowInitialData> {
+    getCashFlowInitialData(instanceType: InstanceType9, instanceId: number): Observable<CashFlowInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetCashFlowInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1280,7 +1470,7 @@ export class CashflowServiceProxy {
      * @filter (optional) 
      * @return Success
      */
-    getStatsDetails(instanceType: InstanceType7, instanceId: number, filter: StatsDetailFilter): Observable<CashFlowStatsDetailDto[]> {
+    getStatsDetails(instanceType: InstanceType10, instanceId: number, filter: StatsDetailFilter): Observable<CashFlowStatsDetailDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetStatsDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1339,7 +1529,7 @@ export class CashflowServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getCashFlowGridSettings(instanceType: InstanceType8, instanceId: number): Observable<CashFlowGridSettingsDto> {
+    getCashFlowGridSettings(instanceType: InstanceType11, instanceId: number): Observable<CashFlowGridSettingsDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/GetCashFlowGridSettings?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1392,7 +1582,7 @@ export class CashflowServiceProxy {
      * @settings (optional) 
      * @return Success
      */
-    saveCashFlowGridSettings(instanceType: InstanceType9, instanceId: number, settings: CashFlowGridSettingsDto): Observable<void> {
+    saveCashFlowGridSettings(instanceType: InstanceType12, instanceId: number, settings: CashFlowGridSettingsDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Cashflow/SaveCashFlowGridSettings?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1455,7 +1645,7 @@ export class CashFlowForecastServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getModels(instanceType: InstanceType10, instanceId: number): Observable<ForecastModelDto[]> {
+    getModels(instanceType: InstanceType13, instanceId: number): Observable<ForecastModelDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetModels?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1512,7 +1702,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    addForecast(instanceType: InstanceType11, instanceId: number, input: AddForecastInput): Observable<number> {
+    addForecast(instanceType: InstanceType14, instanceId: number, input: AddForecastInput): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/AddForecast?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1568,7 +1758,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createForecasts(instanceType: InstanceType12, instanceId: number, input: CreateForecastsInput): Observable<number[]> {
+    createForecasts(instanceType: InstanceType15, instanceId: number, input: CreateForecastsInput): Observable<number[]> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/CreateForecasts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1628,7 +1818,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateForecast(instanceType: InstanceType13, instanceId: number, input: UpdateForecastInput): Observable<void> {
+    updateForecast(instanceType: InstanceType16, instanceId: number, input: UpdateForecastInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/UpdateForecast?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1680,7 +1870,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateForecasts(instanceType: InstanceType14, instanceId: number, input: UpdateForecastsInput): Observable<void> {
+    updateForecasts(instanceType: InstanceType17, instanceId: number, input: UpdateForecastsInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/UpdateForecasts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1731,7 +1921,7 @@ export class CashFlowForecastServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteForecast(instanceType: InstanceType15, instanceId: number, id: number): Observable<void> {
+    deleteForecast(instanceType: InstanceType18, instanceId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/DeleteForecast?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1784,7 +1974,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createForecastSchedule(instanceType: InstanceType16, instanceId: number, input: CreateForecastScheduleDto): Observable<number> {
+    createForecastSchedule(instanceType: InstanceType19, instanceId: number, input: CreateForecastScheduleDto): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/CreateForecastSchedule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1840,7 +2030,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateForecastSchedule(instanceType: InstanceType17, instanceId: number, input: UpdateForecastScheduleInput): Observable<void> {
+    updateForecastSchedule(instanceType: InstanceType20, instanceId: number, input: UpdateForecastScheduleInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/UpdateForecastSchedule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1891,7 +2081,7 @@ export class CashFlowForecastServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteForecastSchedule(instanceType: InstanceType18, instanceId: number, id: number): Observable<void> {
+    deleteForecastSchedule(instanceType: InstanceType21, instanceId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/DeleteForecastSchedule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1943,7 +2133,7 @@ export class CashFlowForecastServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getForecastSchedule(instanceType: InstanceType19, instanceId: number, id: number): Observable<ForecastScheduleDto> {
+    getForecastSchedule(instanceType: InstanceType22, instanceId: number, id: number): Observable<ForecastScheduleDto> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetForecastSchedule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -1999,7 +2189,7 @@ export class CashFlowForecastServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getForecastSchedules(instanceType: InstanceType20, instanceId: number): Observable<ForecastScheduleDto[]> {
+    getForecastSchedules(instanceType: InstanceType23, instanceId: number): Observable<ForecastScheduleDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/GetForecastSchedules?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2056,7 +2246,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createForecastModel(instanceType: InstanceType21, instanceId: number, input: CreateForecastModelInput): Observable<number> {
+    createForecastModel(instanceType: InstanceType24, instanceId: number, input: CreateForecastModelInput): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/CreateForecastModel?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2112,7 +2302,7 @@ export class CashFlowForecastServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    renameForecastModel(instanceType: InstanceType22, instanceId: number, input: RenameForecastModelInput): Observable<void> {
+    renameForecastModel(instanceType: InstanceType25, instanceId: number, input: RenameForecastModelInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/RenameForecastModel?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2163,7 +2353,7 @@ export class CashFlowForecastServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteForecastModel(instanceType: InstanceType23, instanceId: number, id: number): Observable<void> {
+    deleteForecastModel(instanceType: InstanceType26, instanceId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CashFlowForecast/DeleteForecastModel?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2387,12 +2577,16 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getCategoryTree(instanceType: InstanceType24, instanceId: number): Observable<GetCategoryTreeOutput> {
+    getCategoryTree(instanceType: InstanceType27, instanceId: number, includeNonCashflowNodes: boolean): Observable<GetCategoryTreeOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetCategoryTree?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (includeNonCashflowNodes === undefined || includeNonCashflowNodes === null)
+            throw new Error("The parameter 'includeNonCashflowNodes' must be defined and cannot be null.");
+        else
+            url_ += "includeNonCashflowNodes=" + encodeURIComponent("" + includeNonCashflowNodes) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -2440,7 +2634,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    getRules(instanceType: InstanceType25, instanceId: number, input: any): Observable<RuleDto[]> {
+    getRules(instanceType: InstanceType28, instanceId: number, input: any): Observable<RuleDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetRules?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2499,7 +2693,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createRule(instanceType: InstanceType26, instanceId: number, input: CreateRuleDto): Observable<void> {
+    createRule(instanceType: InstanceType29, instanceId: number, input: CreateRuleDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateRule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2550,7 +2744,7 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getRuleForEdit(instanceType: InstanceType27, instanceId: number, id: number): Observable<EditRuleDto> {
+    getRuleForEdit(instanceType: InstanceType30, instanceId: number, id: number): Observable<EditRuleDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetRuleForEdit?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2607,7 +2801,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    editRule(instanceType: InstanceType28, instanceId: number, input: EditRuleDto): Observable<void> {
+    editRule(instanceType: InstanceType31, instanceId: number, input: EditRuleDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/EditRule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2659,7 +2853,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    moveRule(instanceType: InstanceType29, instanceId: number, input: MoveRuleDto): Observable<void> {
+    moveRule(instanceType: InstanceType32, instanceId: number, input: MoveRuleDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/MoveRule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2711,7 +2905,7 @@ export class ClassificationServiceProxy {
      * @sourceTransactionList (optional) 
      * @return Success
      */
-    deleteRule(instanceType: InstanceType30, instanceId: number, sourceTransactionList: number[], applyOption: ApplyOption, id: number): Observable<void> {
+    deleteRule(instanceType: InstanceType33, instanceId: number, sourceTransactionList: number[], applyOption: ApplyOption, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteRule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2770,7 +2964,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    addMapping(instanceType: InstanceType31, instanceId: number, input: AddMappingDto): Observable<void> {
+    addMapping(instanceType: InstanceType34, instanceId: number, input: AddMappingDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/AddMapping?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2821,7 +3015,7 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteMapping(instanceType: InstanceType32, instanceId: number, name: string): Observable<void> {
+    deleteMapping(instanceType: InstanceType35, instanceId: number, name: string): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteMapping?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2874,7 +3068,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createCategory(instanceType: InstanceType33, instanceId: number, input: CreateCategoryInput): Observable<number> {
+    createCategory(instanceType: InstanceType36, instanceId: number, input: CreateCategoryInput): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateCategory?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2930,7 +3124,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateCategory(instanceType: InstanceType34, instanceId: number, input: UpdateCategoryInput): Observable<void> {
+    updateCategory(instanceType: InstanceType37, instanceId: number, input: UpdateCategoryInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategory?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -2982,7 +3176,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateCategoryStatus(instanceType: InstanceType35, instanceId: number, input: UpdateCategoryStatusInput): Observable<void> {
+    updateCategoryStatus(instanceType: InstanceType38, instanceId: number, input: UpdateCategoryStatusInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategoryStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3034,7 +3228,7 @@ export class ClassificationServiceProxy {
      * @moveToCategoryId (optional) 
      * @return Success
      */
-    deleteCategory(instanceType: InstanceType36, instanceId: number, moveToCategoryId: number, deleteAllReferences: boolean, id: number): Observable<void> {
+    deleteCategory(instanceType: InstanceType39, instanceId: number, moveToCategoryId: number, deleteAllReferences: boolean, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteCategory?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3093,7 +3287,7 @@ export class ClassificationServiceProxy {
      * @recategorizeInput (optional) 
      * @return Success
      */
-    reclassify(instanceType: InstanceType37, instanceId: number, recategorizeInput: RecategorizeInput): Observable<void> {
+    reclassify(instanceType: InstanceType40, instanceId: number, recategorizeInput: RecategorizeInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/Reclassify?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3144,7 +3338,7 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    resetToDefaults(instanceType: InstanceType38, instanceId: number): Observable<void> {
+    resetToDefaults(instanceType: InstanceType41, instanceId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/ResetToDefaults?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3193,7 +3387,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    importAccountingTree(instanceType: InstanceType39, instanceId: number, input: AccountingCategoryDto[]): Observable<void> {
+    importAccountingTree(instanceType: InstanceType42, instanceId: number, input: AccountingCategoryDto[]): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/ImportAccountingTree?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3245,7 +3439,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    reset(instanceType: InstanceType40, instanceId: number, input: ResetClassificationDto): Observable<void> {
+    reset(instanceType: InstanceType43, instanceId: number, input: ResetClassificationDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/Reset?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3297,7 +3491,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateTransactionsCategory(instanceType: InstanceType41, instanceId: number, input: UpdateTransactionsCategoryInput): Observable<void> {
+    updateTransactionsCategory(instanceType: InstanceType44, instanceId: number, input: UpdateTransactionsCategoryInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategory?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3349,7 +3543,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateTransactionsCategoryWithFilter(instanceType: InstanceType42, instanceId: number, input: UpdateTransactionsCategoryWithFilterInput): Observable<void> {
+    updateTransactionsCategoryWithFilter(instanceType: InstanceType45, instanceId: number, input: UpdateTransactionsCategoryWithFilterInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategoryWithFilter?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3401,7 +3595,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    getTransactionCommonDetails(instanceType: InstanceType43, instanceId: number, input: GetTransactionCommonDetailsInput): Observable<TransactionCommonDetailsDto> {
+    getTransactionCommonDetails(instanceType: InstanceType46, instanceId: number, input: GetTransactionCommonDetailsInput): Observable<TransactionCommonDetailsDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetTransactionCommonDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3457,7 +3651,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    autoClassify(instanceType: InstanceType44, instanceId: number, input: AutoClassifyDto): Observable<void> {
+    autoClassify(instanceType: InstanceType47, instanceId: number, input: AutoClassifyDto): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/AutoClassify?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3509,7 +3703,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    changeCategoryForRules(instanceType: InstanceType45, instanceId: number, input: ChangeCategoryForRulesInput): Observable<void> {
+    changeCategoryForRules(instanceType: InstanceType48, instanceId: number, input: ChangeCategoryForRulesInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/ChangeCategoryForRules?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3558,21 +3752,22 @@ export class ClassificationServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
-     * @transactionIds (optional) 
+     * @input (optional) 
      * @return Success
      */
-    getKeyAttributeValues(instanceType: InstanceType46, instanceId: number, transactionIds: number[]): Observable<AttributeValuesDto[]> {
+    getKeyAttributeValues(instanceType: InstanceType49, instanceId: number, input: GetKeyAttributeValuesInput): Observable<AttributeValuesDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetKeyAttributeValues?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (transactionIds !== undefined)
-            transactionIds && transactionIds.forEach(item => { url_ += "TransactionIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(input);
+
         let options_ : any = {
-            method: "get",
+            body: content_,
+            method: "post",
             headers: new Headers({
                 "Content-Type": "application/json", 
                 "Accept": "application/json"
@@ -3620,7 +3815,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createAccountingType(instanceType: InstanceType47, instanceId: number, input: CreateAccountingTypeInput): Observable<void> {
+    createAccountingType(instanceType: InstanceType50, instanceId: number, input: CreateAccountingTypeInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateAccountingType?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3672,7 +3867,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateAccountingType(instanceType: InstanceType48, instanceId: number, input: UpdateAccountingTypeInput): Observable<void> {
+    updateAccountingType(instanceType: InstanceType51, instanceId: number, input: UpdateAccountingTypeInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateAccountingType?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3724,7 +3919,7 @@ export class ClassificationServiceProxy {
      * @moveToAccountingTypeId (optional) 
      * @return Success
      */
-    deleteAccountingType(instanceType: InstanceType49, instanceId: number, moveToAccountingTypeId: number, deleteAllReferences: boolean, id: number): Observable<void> {
+    deleteAccountingType(instanceType: InstanceType52, instanceId: number, moveToAccountingTypeId: number, deleteAllReferences: boolean, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteAccountingType?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3794,7 +3989,7 @@ export class CommentServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getComments(instanceType: InstanceType50, instanceId: number, threadId: number): Observable<CommentDto[]> {
+    getComments(instanceType: InstanceType53, instanceId: number, threadId: number): Observable<CommentDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/GetComments?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3855,7 +4050,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createComment(instanceType: InstanceType51, instanceId: number, input: CreateCommentInput): Observable<CreateCommentOutput> {
+    createComment(instanceType: InstanceType54, instanceId: number, input: CreateCommentInput): Observable<CreateCommentOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3911,7 +4106,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateComment(instanceType: InstanceType52, instanceId: number, input: UpdateCommentInput): Observable<void> {
+    updateComment(instanceType: InstanceType55, instanceId: number, input: UpdateCommentInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/UpdateComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3962,7 +4157,7 @@ export class CommentServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteComment(instanceType: InstanceType53, instanceId: number, commentId: number): Observable<void> {
+    deleteComment(instanceType: InstanceType56, instanceId: number, commentId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/DeleteComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4015,7 +4210,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createTransactionCommentThread(instanceType: InstanceType54, instanceId: number, input: CreateTransactionCommentThreadInput): Observable<CreateTransactionCommentThreadOutput> {
+    createTransactionCommentThread(instanceType: InstanceType57, instanceId: number, input: CreateTransactionCommentThreadInput): Observable<CreateTransactionCommentThreadOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateTransactionCommentThread?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4071,7 +4266,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createCashFlowCommentThread(instanceType: InstanceType55, instanceId: number, input: CreateCashFlowCommentThreadInput): Observable<CreateCashFlowCommentThreadOutput> {
+    createCashFlowCommentThread(instanceType: InstanceType58, instanceId: number, input: CreateCashFlowCommentThreadInput): Observable<CreateCashFlowCommentThreadOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateCashFlowCommentThread?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4127,7 +4322,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    setResolved(instanceType: InstanceType56, instanceId: number, input: SetResolvedInput): Observable<void> {
+    setResolved(instanceType: InstanceType59, instanceId: number, input: SetResolvedInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/SetResolved?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4346,7 +4541,7 @@ export class ContactServiceProxy {
     /**
      * @return Success
      */
-    getContactInfoByUser(userId: number): Observable<ContactInfoBaseDto> {
+    getContactInfoByUser(userId: number): Observable<ContactShortInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactInfoByUser?";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined and cannot be null.");
@@ -4369,14 +4564,14 @@ export class ContactServiceProxy {
                 try {
                     return this.processGetContactInfoByUser(response_);
                 } catch (e) {
-                    return <Observable<ContactInfoBaseDto>><any>Observable.throw(e);
+                    return <Observable<ContactShortInfoDto>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<ContactInfoBaseDto>><any>Observable.throw(response_);
+                return <Observable<ContactShortInfoDto>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetContactInfoByUser(response: Response): Observable<ContactInfoBaseDto> {
+    protected processGetContactInfoByUser(response: Response): Observable<ContactShortInfoDto> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -4384,13 +4579,13 @@ export class ContactServiceProxy {
             const _responseText = response.text();
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ContactInfoBaseDto.fromJS(resultData200) : new ContactInfoBaseDto();
+            result200 = resultData200 ? ContactShortInfoDto.fromJS(resultData200) : new ContactShortInfoDto();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<ContactInfoBaseDto>(<any>null);
+        return Observable.of<ContactShortInfoDto>(<any>null);
     }
 }
 
@@ -5715,6 +5910,68 @@ export class ContactPhoneServiceProxy {
 }
 
 @Injectable()
+export class ContactPhotoServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    createContactPhoto(input: CreateContactPhotoInput): Observable<CreateContactPhotoOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactPhoto/CreateContactPhoto";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processCreateContactPhoto(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateContactPhoto(response_);
+                } catch (e) {
+                    return <Observable<CreateContactPhotoOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateContactPhotoOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateContactPhoto(response: Response): Observable<CreateContactPhotoOutput> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateContactPhotoOutput.fromJS(resultData200) : new CreateContactPhotoOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<CreateContactPhotoOutput>(<any>null);
+    }
+}
+
+@Injectable()
 export class CountryServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -6322,6 +6579,278 @@ export class CustomersServiceProxy {
         }
         return Observable.of<CreateCustomerOutput>(<any>null);
     }
+
+    /**
+     * @namePrefix (optional) 
+     * @firstName (optional) 
+     * @middleName (optional) 
+     * @lastName (optional) 
+     * @nameSuffix (optional) 
+     * @companyName (optional) 
+     * @emailAddresses (optional) 
+     * @phoneNumbers (optional) 
+     * @streetAddress (optional) 
+     * @city (optional) 
+     * @stateId (optional) 
+     * @zip (optional) 
+     * @countryId (optional) 
+     * @return Success
+     */
+    getSimilarCustomers(namePrefix: string, firstName: string, middleName: string, lastName: string, nameSuffix: string, companyName: string, emailAddresses: string[], phoneNumbers: string[], streetAddress: string, city: string, stateId: string, zip: string, countryId: string): Observable<SimilarCustomerInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetSimilarCustomers?";
+        if (namePrefix !== undefined)
+            url_ += "NamePrefix=" + encodeURIComponent("" + namePrefix) + "&"; 
+        if (firstName !== undefined)
+            url_ += "FirstName=" + encodeURIComponent("" + firstName) + "&"; 
+        if (middleName !== undefined)
+            url_ += "MiddleName=" + encodeURIComponent("" + middleName) + "&"; 
+        if (lastName !== undefined)
+            url_ += "LastName=" + encodeURIComponent("" + lastName) + "&"; 
+        if (nameSuffix !== undefined)
+            url_ += "NameSuffix=" + encodeURIComponent("" + nameSuffix) + "&"; 
+        if (companyName !== undefined)
+            url_ += "CompanyName=" + encodeURIComponent("" + companyName) + "&"; 
+        if (emailAddresses !== undefined)
+            emailAddresses && emailAddresses.forEach(item => { url_ += "EmailAddresses=" + encodeURIComponent("" + item) + "&"; });
+        if (phoneNumbers !== undefined)
+            phoneNumbers && phoneNumbers.forEach(item => { url_ += "PhoneNumbers=" + encodeURIComponent("" + item) + "&"; });
+        if (streetAddress !== undefined)
+            url_ += "StreetAddress=" + encodeURIComponent("" + streetAddress) + "&"; 
+        if (city !== undefined)
+            url_ += "City=" + encodeURIComponent("" + city) + "&"; 
+        if (stateId !== undefined)
+            url_ += "StateId=" + encodeURIComponent("" + stateId) + "&"; 
+        if (zip !== undefined)
+            url_ += "Zip=" + encodeURIComponent("" + zip) + "&"; 
+        if (countryId !== undefined)
+            url_ += "CountryId=" + encodeURIComponent("" + countryId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetSimilarCustomers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetSimilarCustomers(response_);
+                } catch (e) {
+                    return <Observable<SimilarCustomerInfo[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<SimilarCustomerInfo[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetSimilarCustomers(response: Response): Observable<SimilarCustomerInfo[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(SimilarCustomerInfo.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<SimilarCustomerInfo[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteCustomer(customerId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/DeleteCustomer?";
+        if (customerId === undefined || customerId === null)
+            throw new Error("The parameter 'customerId' must be defined and cannot be null.");
+        else
+            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processDeleteCustomer(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteCustomer(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteCustomer(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @customerIds (optional) 
+     * @return Success
+     */
+    deleteCustomers(customerIds: number[]): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/DeleteCustomers?";
+        if (customerIds !== undefined)
+            customerIds && customerIds.forEach(item => { url_ += "customerIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processDeleteCustomers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteCustomers(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteCustomers(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateCustomerStatus(input: UpdateCustomerStatusInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/UpdateCustomerStatus";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdateCustomerStatus(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateCustomerStatus(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateCustomerStatus(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateCustomerStatuses(input: UpdateCustomerStatusesInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/UpdateCustomerStatuses";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdateCustomerStatuses(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateCustomerStatuses(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateCustomerStatuses(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -6341,7 +6870,7 @@ export class DashboardServiceProxy {
      * @bankAccountIds (optional) 
      * @return Success
      */
-    getAccountTotals(instanceType: InstanceType57, instanceId: number, bankAccountIds: number[]): Observable<AccountTotals> {
+    getAccountTotals(instanceType: InstanceType60, instanceId: number, bankAccountIds: number[]): Observable<AccountTotals> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetAccountTotals?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6396,7 +6925,7 @@ export class DashboardServiceProxy {
      * @bankAccountIds (optional) 
      * @return Success
      */
-    getCategorizationStatus(instanceType: InstanceType58, instanceId: number, bankAccountIds: number[]): Observable<CategorizationStatus> {
+    getCategorizationStatus(instanceType: InstanceType61, instanceId: number, bankAccountIds: number[]): Observable<CategorizationStatus> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetCategorizationStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -6452,7 +6981,7 @@ export class DashboardServiceProxy {
      * @startDate (optional) 
      * @return Success
      */
-    getDailyBalanceStats(instanceType: InstanceType59, instanceId: number, bankAccountIds: number[], startDate: moment.Moment, endDate: moment.Moment): Observable<GetDailyBalanceStatsOutput> {
+    getDailyBalanceStats(instanceType: InstanceType62, instanceId: number, bankAccountIds: number[], startDate: moment.Moment, endDate: moment.Moment): Observable<GetDailyBalanceStatsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetDailyBalanceStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7100,11 +7629,63 @@ export class FinancialInformationServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @return Success
+     */
+    getProviderUIToken(instanceType: InstanceType63, instanceId: number): Observable<GetProviderUITokenOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetProviderUIToken?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetProviderUIToken(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetProviderUIToken(response_);
+                } catch (e) {
+                    return <Observable<GetProviderUITokenOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetProviderUITokenOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetProviderUIToken(response: Response): Observable<GetProviderUITokenOutput> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetProviderUITokenOutput.fromJS(resultData200) : new GetProviderUITokenOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<GetProviderUITokenOutput>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @css (optional) 
      * @errorPage (optional) 
      * @return Success
      */
-    getSetupAccountsLink(instanceType: InstanceType60, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
+    getSetupAccountsLink(instanceType: InstanceType64, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSetupAccountsLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7160,7 +7741,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAccountsWithQuovo(instanceType: InstanceType61, instanceId: number): Observable<void> {
+    syncAccountsWithQuovo(instanceType: InstanceType65, instanceId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAccountsWithQuovo?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -7208,16 +7789,12 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType62, instanceId: number, syncHistory: boolean, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType66, instanceId: number, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (syncHistory === undefined || syncHistory === null)
-            throw new Error("The parameter 'syncHistory' must be defined and cannot be null.");
-        else
-            url_ += "syncHistory=" + encodeURIComponent("" + syncHistory) + "&"; 
         if (forcedSync === undefined || forcedSync === null)
             throw new Error("The parameter 'forcedSync' must be defined and cannot be null.");
         else
@@ -7268,7 +7845,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType63, instanceId: number): Observable<SyncProgressOutput> {
+    getSyncProgress(instanceType: InstanceType67, instanceId: number): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -8064,7 +8641,7 @@ export class InstanceServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType64, instanceId: number): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType68, instanceId: number): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -8114,7 +8691,7 @@ export class InstanceServiceProxy {
     /**
      * @return Success
      */
-    setup(instanceType: InstanceType65): Observable<SetupOutput> {
+    setup(instanceType: InstanceType69): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType === undefined || instanceType === null)
             throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
@@ -9141,6 +9718,52 @@ export class LeadServiceProxy {
         }
         return Observable.of<LeadBusinessInfoOutput[]>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getFiltersInitialData(): Observable<LeadFiltersInitialData> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetFiltersInitialData";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetFiltersInitialData(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetFiltersInitialData(response_);
+                } catch (e) {
+                    return <Observable<LeadFiltersInitialData>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<LeadFiltersInitialData>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetFiltersInitialData(response: Response): Observable<LeadFiltersInitialData> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? LeadFiltersInitialData.fromJS(resultData200) : new LeadFiltersInitialData();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<LeadFiltersInitialData>(<any>null);
+    }
 }
 
 @Injectable()
@@ -9714,7 +10337,7 @@ export class OrganizationContactServiceProxy {
     /**
      * @return Success
      */
-    getOrganizationContactInfo(contactId: number): Observable<OrganizationContactInfoDto> {
+    getOrganizationContactInfo(contactId: number): Observable<ContactInfoBaseDto> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetOrganizationContactInfo?";
         if (contactId === undefined || contactId === null)
             throw new Error("The parameter 'contactId' must be defined and cannot be null.");
@@ -9737,14 +10360,14 @@ export class OrganizationContactServiceProxy {
                 try {
                     return this.processGetOrganizationContactInfo(response_);
                 } catch (e) {
-                    return <Observable<OrganizationContactInfoDto>><any>Observable.throw(e);
+                    return <Observable<ContactInfoBaseDto>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<OrganizationContactInfoDto>><any>Observable.throw(response_);
+                return <Observable<ContactInfoBaseDto>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetOrganizationContactInfo(response: Response): Observable<OrganizationContactInfoDto> {
+    protected processGetOrganizationContactInfo(response: Response): Observable<ContactInfoBaseDto> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -9752,13 +10375,13 @@ export class OrganizationContactServiceProxy {
             const _responseText = response.text();
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? OrganizationContactInfoDto.fromJS(resultData200) : new OrganizationContactInfoDto();
+            result200 = resultData200 ? ContactInfoBaseDto.fromJS(resultData200) : new ContactInfoBaseDto();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<OrganizationContactInfoDto>(<any>null);
+        return Observable.of<ContactInfoBaseDto>(<any>null);
     }
 
     /**
@@ -9860,7 +10483,7 @@ export class OrganizationContactServiceProxy {
     /**
      * @return Success
      */
-    getContactInfoByUser(userId: number): Observable<ContactInfoBaseDto> {
+    getContactInfoByUser(userId: number): Observable<ContactShortInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetContactInfoByUser?";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined and cannot be null.");
@@ -9883,14 +10506,14 @@ export class OrganizationContactServiceProxy {
                 try {
                     return this.processGetContactInfoByUser(response_);
                 } catch (e) {
-                    return <Observable<ContactInfoBaseDto>><any>Observable.throw(e);
+                    return <Observable<ContactShortInfoDto>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<ContactInfoBaseDto>><any>Observable.throw(response_);
+                return <Observable<ContactShortInfoDto>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetContactInfoByUser(response: Response): Observable<ContactInfoBaseDto> {
+    protected processGetContactInfoByUser(response: Response): Observable<ContactShortInfoDto> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -9898,13 +10521,13 @@ export class OrganizationContactServiceProxy {
             const _responseText = response.text();
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ContactInfoBaseDto.fromJS(resultData200) : new ContactInfoBaseDto();
+            result200 = resultData200 ? ContactShortInfoDto.fromJS(resultData200) : new ContactShortInfoDto();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<ContactInfoBaseDto>(<any>null);
+        return Observable.of<ContactShortInfoDto>(<any>null);
     }
 }
 
@@ -10839,9 +11462,55 @@ export class PersonContactServiceProxy {
     }
 
     /**
+     * @input (optional) 
      * @return Success
      */
-    getContactInfoByUser(userId: number): Observable<ContactInfoBaseDto> {
+    updatePersonInfo(input: UpdatePersonInfoInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonContact/UpdatePersonInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdatePersonInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdatePersonInfo(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdatePersonInfo(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getContactInfoByUser(userId: number): Observable<ContactShortInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonContact/GetContactInfoByUser?";
         if (userId === undefined || userId === null)
             throw new Error("The parameter 'userId' must be defined and cannot be null.");
@@ -10864,14 +11533,14 @@ export class PersonContactServiceProxy {
                 try {
                     return this.processGetContactInfoByUser(response_);
                 } catch (e) {
-                    return <Observable<ContactInfoBaseDto>><any>Observable.throw(e);
+                    return <Observable<ContactShortInfoDto>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<ContactInfoBaseDto>><any>Observable.throw(response_);
+                return <Observable<ContactShortInfoDto>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetContactInfoByUser(response: Response): Observable<ContactInfoBaseDto> {
+    protected processGetContactInfoByUser(response: Response): Observable<ContactShortInfoDto> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -10879,13 +11548,13 @@ export class PersonContactServiceProxy {
             const _responseText = response.text();
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ContactInfoBaseDto.fromJS(resultData200) : new ContactInfoBaseDto();
+            result200 = resultData200 ? ContactShortInfoDto.fromJS(resultData200) : new ContactShortInfoDto();
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<ContactInfoBaseDto>(<any>null);
+        return Observable.of<ContactShortInfoDto>(<any>null);
     }
 }
 
@@ -15053,7 +15722,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType66, instanceId: number): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType70, instanceId: number): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -15105,7 +15774,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType67, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType71, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -15157,7 +15826,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType68, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType72, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -16404,6 +17073,7 @@ export class RegisterInput implements IRegisterInput {
     emailAddress: string;
     password: string;
     captchaResponse: string;
+    tenantHostType: RegisterInputTenantHostType;
 
     constructor(data?: IRegisterInput) {
         if (data) {
@@ -16422,6 +17092,7 @@ export class RegisterInput implements IRegisterInput {
             this.emailAddress = data["emailAddress"];
             this.password = data["password"];
             this.captchaResponse = data["captchaResponse"];
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -16439,6 +17110,7 @@ export class RegisterInput implements IRegisterInput {
         data["emailAddress"] = this.emailAddress;
         data["password"] = this.password;
         data["captchaResponse"] = this.captchaResponse;
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -16450,6 +17122,7 @@ export interface IRegisterInput {
     emailAddress: string;
     password: string;
     captchaResponse: string;
+    tenantHostType: RegisterInputTenantHostType;
 }
 
 export class RegisterOutput implements IRegisterOutput {
@@ -16491,6 +17164,7 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
     emailAddress: string;
     autoDetectTenancy: boolean = false;
     features: string[];
+    tenantHostType: SendPasswordResetCodeInputTenantHostType;
 
     constructor(data?: ISendPasswordResetCodeInput) {
         if (data) {
@@ -16510,6 +17184,7 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
                 for (let item of data["features"])
                     this.features.push(item);
             }
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -16528,6 +17203,7 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
             for (let item of this.features)
                 data["features"].push(item);
         }
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -16536,6 +17212,7 @@ export interface ISendPasswordResetCodeInput {
     emailAddress: string;
     autoDetectTenancy: boolean;
     features: string[];
+    tenantHostType: SendPasswordResetCodeInputTenantHostType;
 }
 
 export class SendPasswordResetCodeOutput implements ISendPasswordResetCodeOutput {
@@ -16716,6 +17393,7 @@ export interface IResetPasswordOutput {
 
 export class SendEmailActivationLinkInput implements ISendEmailActivationLinkInput {
     emailAddress: string;
+    tenantHostType: SendEmailActivationLinkInputTenantHostType;
 
     constructor(data?: ISendEmailActivationLinkInput) {
         if (data) {
@@ -16729,6 +17407,7 @@ export class SendEmailActivationLinkInput implements ISendEmailActivationLinkInp
     init(data?: any) {
         if (data) {
             this.emailAddress = data["emailAddress"];
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -16741,12 +17420,14 @@ export class SendEmailActivationLinkInput implements ISendEmailActivationLinkInp
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["emailAddress"] = this.emailAddress;
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
 
 export interface ISendEmailActivationLinkInput {
     emailAddress: string;
+    tenantHostType: SendEmailActivationLinkInputTenantHostType;
 }
 
 export class ActivateEmailInput implements IActivateEmailInput {
@@ -17130,6 +17811,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     bankId: number;
     name: string;
     balance: number;
+    lastSyncDate: moment.Moment;
     bankAccounts: BankAccountDto[];
     syncAccountStatus: SyncAccountBankDtoSyncAccountStatus;
 
@@ -17148,6 +17830,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
             this.bankId = data["bankId"];
             this.name = data["name"];
             this.balance = data["balance"];
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
             if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
                 this.bankAccounts = [];
                 for (let item of data["bankAccounts"])
@@ -17169,6 +17852,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
         data["bankId"] = this.bankId;
         data["name"] = this.name;
         data["balance"] = this.balance;
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
         if (this.bankAccounts && this.bankAccounts.constructor === Array) {
             data["bankAccounts"] = [];
             for (let item of this.bankAccounts)
@@ -17184,6 +17868,7 @@ export interface ISyncAccountBankDto {
     bankId: number;
     name: string;
     balance: number;
+    lastSyncDate: moment.Moment;
     bankAccounts: BankAccountDto[];
     syncAccountStatus: SyncAccountBankDtoSyncAccountStatus;
 }
@@ -17195,6 +17880,8 @@ export class BankAccountDto implements IBankAccountDto {
     accountNumber: string;
     businessEntityName: string;
     balance: number;
+    syncAccountId: number;
+    isUsed: boolean;
 
     constructor(data?: IBankAccountDto) {
         if (data) {
@@ -17213,6 +17900,8 @@ export class BankAccountDto implements IBankAccountDto {
             this.accountNumber = data["accountNumber"];
             this.businessEntityName = data["businessEntityName"];
             this.balance = data["balance"];
+            this.syncAccountId = data["syncAccountId"];
+            this.isUsed = data["isUsed"];
         }
     }
 
@@ -17230,6 +17919,8 @@ export class BankAccountDto implements IBankAccountDto {
         data["accountNumber"] = this.accountNumber;
         data["businessEntityName"] = this.businessEntityName;
         data["balance"] = this.balance;
+        data["syncAccountId"] = this.syncAccountId;
+        data["isUsed"] = this.isUsed;
         return data; 
     }
 }
@@ -17241,16 +17932,20 @@ export interface IBankAccountDto {
     accountNumber: string;
     businessEntityName: string;
     balance: number;
+    syncAccountId: number;
+    isUsed: boolean;
 }
 
 export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
     date: moment.Moment;
     startingBalance: number;
     startingBalanceAdjustments: number;
-    income: number;
-    expenses: number;
+    inflows: number;
+    outflows: number;
     adjustments: number;
     endingBalance: number;
+    debit: number;
+    credit: number;
     period: BankAccountDailyStatDtoPeriod;
     isForecast: boolean;
 
@@ -17268,10 +17963,12 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.startingBalance = data["startingBalance"];
             this.startingBalanceAdjustments = data["startingBalanceAdjustments"];
-            this.income = data["income"];
-            this.expenses = data["expenses"];
+            this.inflows = data["inflows"];
+            this.outflows = data["outflows"];
             this.adjustments = data["adjustments"];
             this.endingBalance = data["endingBalance"];
+            this.debit = data["debit"];
+            this.credit = data["credit"];
             this.period = data["period"];
             this.isForecast = data["isForecast"];
         }
@@ -17288,10 +17985,12 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["startingBalance"] = this.startingBalance;
         data["startingBalanceAdjustments"] = this.startingBalanceAdjustments;
-        data["income"] = this.income;
-        data["expenses"] = this.expenses;
+        data["inflows"] = this.inflows;
+        data["outflows"] = this.outflows;
         data["adjustments"] = this.adjustments;
         data["endingBalance"] = this.endingBalance;
+        data["debit"] = this.debit;
+        data["credit"] = this.credit;
         data["period"] = this.period;
         data["isForecast"] = this.isForecast;
         return data; 
@@ -17302,16 +18001,20 @@ export interface IBankAccountDailyStatDto {
     date: moment.Moment;
     startingBalance: number;
     startingBalanceAdjustments: number;
-    income: number;
-    expenses: number;
+    inflows: number;
+    outflows: number;
     adjustments: number;
     endingBalance: number;
+    debit: number;
+    credit: number;
     period: BankAccountDailyStatDtoPeriod;
     isForecast: boolean;
 }
 
 export class DiscardDiscrepancyInput implements IDiscardDiscrepancyInput {
+    bankIds: number[];
     bankAccountIds: number[];
+    currencyId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     adjustmentId: number;
@@ -17327,11 +18030,17 @@ export class DiscardDiscrepancyInput implements IDiscardDiscrepancyInput {
 
     init(data?: any) {
         if (data) {
+            if (data["bankIds"] && data["bankIds"].constructor === Array) {
+                this.bankIds = [];
+                for (let item of data["bankIds"])
+                    this.bankIds.push(item);
+            }
             if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
                 this.bankAccountIds = [];
                 for (let item of data["bankAccountIds"])
                     this.bankAccountIds.push(item);
             }
+            this.currencyId = data["currencyId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.adjustmentId = data["adjustmentId"];
@@ -17346,11 +18055,17 @@ export class DiscardDiscrepancyInput implements IDiscardDiscrepancyInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        if (this.bankIds && this.bankIds.constructor === Array) {
+            data["bankIds"] = [];
+            for (let item of this.bankIds)
+                data["bankIds"].push(item);
+        }
         if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
             data["bankAccountIds"] = [];
             for (let item of this.bankAccountIds)
                 data["bankAccountIds"].push(item);
         }
+        data["currencyId"] = this.currencyId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["adjustmentId"] = this.adjustmentId;
@@ -17359,10 +18074,157 @@ export class DiscardDiscrepancyInput implements IDiscardDiscrepancyInput {
 }
 
 export interface IDiscardDiscrepancyInput {
+    bankIds: number[];
     bankAccountIds: number[];
+    currencyId: string;
     startDate: moment.Moment;
     endDate: moment.Moment;
     adjustmentId: number;
+}
+
+export class BusinessEntityDto implements IBusinessEntityDto {
+    id: number;
+    name: string;
+
+    constructor(data?: IBusinessEntityDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): BusinessEntityDto {
+        let result = new BusinessEntityDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IBusinessEntityDto {
+    id: number;
+    name: string;
+}
+
+export class BusinessEntityBankAccountDto implements IBusinessEntityBankAccountDto {
+    bankAccountId: number;
+    bankName: string;
+    accountName: string;
+    accountNumber: string;
+    isLinked: boolean;
+    isUsed: boolean;
+
+    constructor(data?: IBusinessEntityBankAccountDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.bankAccountId = data["bankAccountId"];
+            this.bankName = data["bankName"];
+            this.accountName = data["accountName"];
+            this.accountNumber = data["accountNumber"];
+            this.isLinked = data["isLinked"];
+            this.isUsed = data["isUsed"];
+        }
+    }
+
+    static fromJS(data: any): BusinessEntityBankAccountDto {
+        let result = new BusinessEntityBankAccountDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["bankAccountId"] = this.bankAccountId;
+        data["bankName"] = this.bankName;
+        data["accountName"] = this.accountName;
+        data["accountNumber"] = this.accountNumber;
+        data["isLinked"] = this.isLinked;
+        data["isUsed"] = this.isUsed;
+        return data; 
+    }
+}
+
+export interface IBusinessEntityBankAccountDto {
+    bankAccountId: number;
+    bankName: string;
+    accountName: string;
+    accountNumber: string;
+    isLinked: boolean;
+    isUsed: boolean;
+}
+
+export class BusinessEntityUpdateBankAccountsInput implements IBusinessEntityUpdateBankAccountsInput {
+    businessEntityId: number;
+    bankAccountIds: number[] = [];
+    isLinked: boolean;
+
+    constructor(data?: IBusinessEntityUpdateBankAccountsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.businessEntityId = data["businessEntityId"];
+            if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
+                this.bankAccountIds = [];
+                for (let item of data["bankAccountIds"])
+                    this.bankAccountIds.push(item);
+            }
+            this.isLinked = data["isLinked"];
+        }
+    }
+
+    static fromJS(data: any): BusinessEntityUpdateBankAccountsInput {
+        let result = new BusinessEntityUpdateBankAccountsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["businessEntityId"] = this.businessEntityId;
+        if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
+            data["bankAccountIds"] = [];
+            for (let item of this.bankAccountIds)
+                data["bankAccountIds"].push(item);
+        }
+        data["isLinked"] = this.isLinked;
+        return data; 
+    }
+}
+
+export interface IBusinessEntityUpdateBankAccountsInput {
+    businessEntityId: number;
+    bankAccountIds: number[];
+    isLinked: boolean;
 }
 
 export class ListResultDtoOfCacheDto implements IListResultDtoOfCacheDto {
@@ -17930,45 +18792,6 @@ export interface IBankDto {
     id: number;
     name: string;
     bankAccounts: BankAccountDto[];
-}
-
-export class BusinessEntityDto implements IBusinessEntityDto {
-    id: number;
-    name: string;
-
-    constructor(data?: IBusinessEntityDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): BusinessEntityDto {
-        let result = new BusinessEntityDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IBusinessEntityDto {
-    id: number;
-    name: string;
 }
 
 export class BankAccountBalanceDto implements IBankAccountBalanceDto {
@@ -20708,6 +21531,53 @@ export interface IChangeCategoryForRulesInput {
     reclassifyTransactions: boolean;
 }
 
+export class GetKeyAttributeValuesInput implements IGetKeyAttributeValuesInput {
+    ruleId: number;
+    transactionIds: number[];
+
+    constructor(data?: IGetKeyAttributeValuesInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.ruleId = data["ruleId"];
+            if (data["transactionIds"] && data["transactionIds"].constructor === Array) {
+                this.transactionIds = [];
+                for (let item of data["transactionIds"])
+                    this.transactionIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): GetKeyAttributeValuesInput {
+        let result = new GetKeyAttributeValuesInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["ruleId"] = this.ruleId;
+        if (this.transactionIds && this.transactionIds.constructor === Array) {
+            data["transactionIds"] = [];
+            for (let item of this.transactionIds)
+                data["transactionIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IGetKeyAttributeValuesInput {
+    ruleId: number;
+    transactionIds: number[];
+}
+
 export class AttributeValuesDto implements IAttributeValuesDto {
     attributeTypeId: string;
     attributeValues: string[];
@@ -21577,20 +22447,12 @@ export interface IGetDefaultEditionNameOutput {
     name: string;
 }
 
-export class ContactInfoBaseDto implements IContactInfoBaseDto {
+export class ContactShortInfoDto implements IContactShortInfoDto {
     id: number;
     fullName: string;
-    jobTitle: string;
     photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
-    primaryPhone: ContactPhoneDto;
-    primaryAddress: ContactAddressDto;
-    comment: string;
 
-    constructor(data?: IContactInfoBaseDto) {
+    constructor(data?: IContactShortInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -21603,36 +22465,12 @@ export class ContactInfoBaseDto implements IContactInfoBaseDto {
         if (data) {
             this.id = data["id"];
             this.fullName = data["fullName"];
-            this.jobTitle = data["jobTitle"];
             this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
-            if (data["emails"] && data["emails"].constructor === Array) {
-                this.emails = [];
-                for (let item of data["emails"])
-                    this.emails.push(ContactEmailDto.fromJS(item));
-            }
-            if (data["phones"] && data["phones"].constructor === Array) {
-                this.phones = [];
-                for (let item of data["phones"])
-                    this.phones.push(ContactPhoneDto.fromJS(item));
-            }
-            if (data["addresses"] && data["addresses"].constructor === Array) {
-                this.addresses = [];
-                for (let item of data["addresses"])
-                    this.addresses.push(ContactAddressDto.fromJS(item));
-            }
-            if (data["links"] && data["links"].constructor === Array) {
-                this.links = [];
-                for (let item of data["links"])
-                    this.links.push(ContactLinkDto.fromJS(item));
-            }
-            this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
-            this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
-            this.comment = data["comment"];
         }
     }
 
-    static fromJS(data: any): ContactInfoBaseDto {
-        let result = new ContactInfoBaseDto();
+    static fromJS(data: any): ContactShortInfoDto {
+        let result = new ContactShortInfoDto();
         result.init(data);
         return result;
     }
@@ -21641,47 +22479,15 @@ export class ContactInfoBaseDto implements IContactInfoBaseDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["fullName"] = this.fullName;
-        data["jobTitle"] = this.jobTitle;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
-        if (this.emails && this.emails.constructor === Array) {
-            data["emails"] = [];
-            for (let item of this.emails)
-                data["emails"].push(item.toJSON());
-        }
-        if (this.phones && this.phones.constructor === Array) {
-            data["phones"] = [];
-            for (let item of this.phones)
-                data["phones"].push(item.toJSON());
-        }
-        if (this.addresses && this.addresses.constructor === Array) {
-            data["addresses"] = [];
-            for (let item of this.addresses)
-                data["addresses"].push(item.toJSON());
-        }
-        if (this.links && this.links.constructor === Array) {
-            data["links"] = [];
-            for (let item of this.links)
-                data["links"].push(item.toJSON());
-        }
-        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
-        data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
-        data["comment"] = this.comment;
         return data; 
     }
 }
 
-export interface IContactInfoBaseDto {
+export interface IContactShortInfoDto {
     id: number;
     fullName: string;
-    jobTitle: string;
     photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
-    primaryPhone: ContactPhoneDto;
-    primaryAddress: ContactAddressDto;
-    comment: string;
 }
 
 export class ContactPhotoDto implements IContactPhotoDto {
@@ -21725,365 +22531,6 @@ export interface IContactPhotoDto {
     thumbnail: string;
     source: string;
     comment: string;
-}
-
-export class ContactEmailDto implements IContactEmailDto {
-    usageTypeId: string;
-    emailAddress: string;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-
-    constructor(data?: IContactEmailDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.usageTypeId = data["usageTypeId"];
-            this.emailAddress = data["emailAddress"];
-            this.isActive = data["isActive"];
-            this.comment = data["comment"];
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ContactEmailDto {
-        let result = new ContactEmailDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["usageTypeId"] = this.usageTypeId;
-        data["emailAddress"] = this.emailAddress;
-        data["isActive"] = this.isActive;
-        data["comment"] = this.comment;
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IContactEmailDto {
-    usageTypeId: string;
-    emailAddress: string;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-}
-
-export class ContactPhoneDto implements IContactPhoneDto {
-    usageTypeId: string;
-    phoneNumber: string;
-    phoneExtension: string;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-
-    constructor(data?: IContactPhoneDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.usageTypeId = data["usageTypeId"];
-            this.phoneNumber = data["phoneNumber"];
-            this.phoneExtension = data["phoneExtension"];
-            this.isActive = data["isActive"];
-            this.comment = data["comment"];
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ContactPhoneDto {
-        let result = new ContactPhoneDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["usageTypeId"] = this.usageTypeId;
-        data["phoneNumber"] = this.phoneNumber;
-        data["phoneExtension"] = this.phoneExtension;
-        data["isActive"] = this.isActive;
-        data["comment"] = this.comment;
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IContactPhoneDto {
-    usageTypeId: string;
-    phoneNumber: string;
-    phoneExtension: string;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-}
-
-export class ContactAddressDto implements IContactAddressDto {
-    usageTypeId: string;
-    streetAddress: string;
-    city: string;
-    state: string;
-    country: string;
-    zip: string;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-
-    constructor(data?: IContactAddressDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.usageTypeId = data["usageTypeId"];
-            this.streetAddress = data["streetAddress"];
-            this.city = data["city"];
-            this.state = data["state"];
-            this.country = data["country"];
-            this.zip = data["zip"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.isActive = data["isActive"];
-            this.comment = data["comment"];
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ContactAddressDto {
-        let result = new ContactAddressDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["usageTypeId"] = this.usageTypeId;
-        data["streetAddress"] = this.streetAddress;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["country"] = this.country;
-        data["zip"] = this.zip;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["isActive"] = this.isActive;
-        data["comment"] = this.comment;
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IContactAddressDto {
-    usageTypeId: string;
-    streetAddress: string;
-    city: string;
-    state: string;
-    country: string;
-    zip: string;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-}
-
-export class ContactLinkDto implements IContactLinkDto {
-    linkTypeId: string;
-    url: string;
-    isSocialNetwork: boolean;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-
-    constructor(data?: IContactLinkDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.linkTypeId = data["linkTypeId"];
-            this.url = data["url"];
-            this.isSocialNetwork = data["isSocialNetwork"];
-            this.isActive = data["isActive"];
-            this.comment = data["comment"];
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ContactLinkDto {
-        let result = new ContactLinkDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["linkTypeId"] = this.linkTypeId;
-        data["url"] = this.url;
-        data["isSocialNetwork"] = this.isSocialNetwork;
-        data["isActive"] = this.isActive;
-        data["comment"] = this.comment;
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IContactLinkDto {
-    linkTypeId: string;
-    url: string;
-    isSocialNetwork: boolean;
-    isActive: boolean;
-    comment: string;
-    contactId: number;
-    id: number;
-    isConfirmed: boolean;
-    confirmationDate: moment.Moment;
-    confirmedByUserId: number;
-    confirmedByUser: UserKeyInfoDto;
-}
-
-export class UserKeyInfoDto implements IUserKeyInfoDto {
-    id: number;
-    userName: string;
-    fullName: string;
-
-    constructor(data?: IUserKeyInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.userName = data["userName"];
-            this.fullName = data["fullName"];
-        }
-    }
-
-    static fromJS(data: any): UserKeyInfoDto {
-        let result = new UserKeyInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["userName"] = this.userName;
-        data["fullName"] = this.fullName;
-        return data; 
-    }
-}
-
-export interface IUserKeyInfoDto {
-    id: number;
-    userName: string;
-    fullName: string;
 }
 
 export class CreateContactAddressInput implements ICreateContactAddressInput {
@@ -22953,6 +23400,7 @@ export class AddressInfo implements IAddressInfo {
     zip: string;
     countryId: string;
     country: string;
+    usageTypeId: string;
 
     constructor(data?: IAddressInfo) {
         if (data) {
@@ -22972,6 +23420,7 @@ export class AddressInfo implements IAddressInfo {
             this.zip = data["zip"];
             this.countryId = data["countryId"];
             this.country = data["country"];
+            this.usageTypeId = data["usageTypeId"];
         }
     }
 
@@ -22990,6 +23439,7 @@ export class AddressInfo implements IAddressInfo {
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
         data["country"] = this.country;
+        data["usageTypeId"] = this.usageTypeId;
         return data; 
     }
 }
@@ -23002,6 +23452,7 @@ export interface IAddressInfo {
     zip: string;
     countryId: string;
     country: string;
+    usageTypeId: string;
 }
 
 export class ContactLinkInfo implements IContactLinkInfo {
@@ -24619,6 +25070,92 @@ export interface IPhoneUsageTypeDto {
     name: string;
 }
 
+export class CreateContactPhotoInput implements ICreateContactPhotoInput {
+    contactId: number;
+    originalImage: string;
+    thumbnail: string;
+    photoSourceId: string;
+    comment: string;
+
+    constructor(data?: ICreateContactPhotoInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.originalImage = data["originalImage"];
+            this.thumbnail = data["thumbnail"];
+            this.photoSourceId = data["photoSourceId"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactPhotoInput {
+        let result = new CreateContactPhotoInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["originalImage"] = this.originalImage;
+        data["thumbnail"] = this.thumbnail;
+        data["photoSourceId"] = this.photoSourceId;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface ICreateContactPhotoInput {
+    contactId: number;
+    originalImage: string;
+    thumbnail: string;
+    photoSourceId: string;
+    comment: string;
+}
+
+export class CreateContactPhotoOutput implements ICreateContactPhotoOutput {
+    id: number;
+
+    constructor(data?: ICreateContactPhotoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactPhotoOutput {
+        let result = new CreateContactPhotoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateContactPhotoOutput {
+    id: number;
+}
+
 export class CountryDto implements ICountryDto {
     code: string;
     name: string;
@@ -26123,7 +26660,6 @@ export interface IScoreSimulatorDto {
 }
 
 export class CustomerInfoDto implements ICustomerInfoDto {
-    name: string;
     status: string;
     score: number;
     primaryContactInfo: PersonContactInfoDto;
@@ -26144,7 +26680,6 @@ export class CustomerInfoDto implements ICustomerInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.name = data["name"];
             this.status = data["status"];
             this.score = data["score"];
             this.primaryContactInfo = data["primaryContactInfo"] ? PersonContactInfoDto.fromJS(data["primaryContactInfo"]) : <any>undefined;
@@ -26168,7 +26703,6 @@ export class CustomerInfoDto implements ICustomerInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
         data["status"] = this.status;
         data["score"] = this.score;
         data["primaryContactInfo"] = this.primaryContactInfo ? this.primaryContactInfo.toJSON() : <any>undefined;
@@ -26186,7 +26720,6 @@ export class CustomerInfoDto implements ICustomerInfoDto {
 }
 
 export interface ICustomerInfoDto {
-    name: string;
     status: string;
     score: number;
     primaryContactInfo: PersonContactInfoDto;
@@ -26202,13 +26735,10 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     id: number;
     fullName: string;
     jobTitle: string;
-    photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
+    primaryPhoto: ContactPhotoDto;
     primaryPhone: ContactPhoneDto;
     primaryAddress: ContactAddressDto;
+    details: ContactInfoDetailsDto;
     comment: string;
 
     constructor(data?: IPersonContactInfoDto) {
@@ -26226,29 +26756,10 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
             this.id = data["id"];
             this.fullName = data["fullName"];
             this.jobTitle = data["jobTitle"];
-            this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
-            if (data["emails"] && data["emails"].constructor === Array) {
-                this.emails = [];
-                for (let item of data["emails"])
-                    this.emails.push(ContactEmailDto.fromJS(item));
-            }
-            if (data["phones"] && data["phones"].constructor === Array) {
-                this.phones = [];
-                for (let item of data["phones"])
-                    this.phones.push(ContactPhoneDto.fromJS(item));
-            }
-            if (data["addresses"] && data["addresses"].constructor === Array) {
-                this.addresses = [];
-                for (let item of data["addresses"])
-                    this.addresses.push(ContactAddressDto.fromJS(item));
-            }
-            if (data["links"] && data["links"].constructor === Array) {
-                this.links = [];
-                for (let item of data["links"])
-                    this.links.push(ContactLinkDto.fromJS(item));
-            }
+            this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
             this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
             this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
+            this.details = data["details"] ? ContactInfoDetailsDto.fromJS(data["details"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -26265,29 +26776,10 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["jobTitle"] = this.jobTitle;
-        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
-        if (this.emails && this.emails.constructor === Array) {
-            data["emails"] = [];
-            for (let item of this.emails)
-                data["emails"].push(item.toJSON());
-        }
-        if (this.phones && this.phones.constructor === Array) {
-            data["phones"] = [];
-            for (let item of this.phones)
-                data["phones"].push(item.toJSON());
-        }
-        if (this.addresses && this.addresses.constructor === Array) {
-            data["addresses"] = [];
-            for (let item of this.addresses)
-                data["addresses"].push(item.toJSON());
-        }
-        if (this.links && this.links.constructor === Array) {
-            data["links"] = [];
-            for (let item of this.links)
-                data["links"].push(item.toJSON());
-        }
+        data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
         data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
         data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
+        data["details"] = this.details ? this.details.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
@@ -26298,13 +26790,10 @@ export interface IPersonContactInfoDto {
     id: number;
     fullName: string;
     jobTitle: string;
-    photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
+    primaryPhoto: ContactPhotoDto;
     primaryPhone: ContactPhoneDto;
     primaryAddress: ContactAddressDto;
+    details: ContactInfoDetailsDto;
     comment: string;
 }
 
@@ -26313,13 +26802,10 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
     id: number;
     fullName: string;
     jobTitle: string;
-    photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
+    primaryPhoto: ContactPhotoDto;
     primaryPhone: ContactPhoneDto;
     primaryAddress: ContactAddressDto;
+    details: ContactInfoDetailsDto;
     comment: string;
 
     constructor(data?: IOrganizationContactInfoDto) {
@@ -26337,29 +26823,10 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
             this.id = data["id"];
             this.fullName = data["fullName"];
             this.jobTitle = data["jobTitle"];
-            this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
-            if (data["emails"] && data["emails"].constructor === Array) {
-                this.emails = [];
-                for (let item of data["emails"])
-                    this.emails.push(ContactEmailDto.fromJS(item));
-            }
-            if (data["phones"] && data["phones"].constructor === Array) {
-                this.phones = [];
-                for (let item of data["phones"])
-                    this.phones.push(ContactPhoneDto.fromJS(item));
-            }
-            if (data["addresses"] && data["addresses"].constructor === Array) {
-                this.addresses = [];
-                for (let item of data["addresses"])
-                    this.addresses.push(ContactAddressDto.fromJS(item));
-            }
-            if (data["links"] && data["links"].constructor === Array) {
-                this.links = [];
-                for (let item of data["links"])
-                    this.links.push(ContactLinkDto.fromJS(item));
-            }
+            this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
             this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
             this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
+            this.details = data["details"] ? ContactInfoDetailsDto.fromJS(data["details"]) : <any>undefined;
             this.comment = data["comment"];
         }
     }
@@ -26376,29 +26843,10 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["jobTitle"] = this.jobTitle;
-        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
-        if (this.emails && this.emails.constructor === Array) {
-            data["emails"] = [];
-            for (let item of this.emails)
-                data["emails"].push(item.toJSON());
-        }
-        if (this.phones && this.phones.constructor === Array) {
-            data["phones"] = [];
-            for (let item of this.phones)
-                data["phones"].push(item.toJSON());
-        }
-        if (this.addresses && this.addresses.constructor === Array) {
-            data["addresses"] = [];
-            for (let item of this.addresses)
-                data["addresses"].push(item.toJSON());
-        }
-        if (this.links && this.links.constructor === Array) {
-            data["links"] = [];
-            for (let item of this.links)
-                data["links"].push(item.toJSON());
-        }
+        data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
         data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
         data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
+        data["details"] = this.details ? this.details.toJSON() : <any>undefined;
         data["comment"] = this.comment;
         return data; 
     }
@@ -26409,13 +26857,10 @@ export interface IOrganizationContactInfoDto {
     id: number;
     fullName: string;
     jobTitle: string;
-    photo: ContactPhotoDto;
-    emails: ContactEmailDto[];
-    phones: ContactPhoneDto[];
-    addresses: ContactAddressDto[];
-    links: ContactLinkDto[];
+    primaryPhoto: ContactPhotoDto;
     primaryPhone: ContactPhoneDto;
     primaryAddress: ContactAddressDto;
+    details: ContactInfoDetailsDto;
     comment: string;
 }
 
@@ -26522,14 +26967,276 @@ export interface IPersonInfoDto {
     lastName: string;
 }
 
+export class ContactPhoneDto implements IContactPhoneDto {
+    usageTypeId: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+
+    constructor(data?: IContactPhoneDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.usageTypeId = data["usageTypeId"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactPhoneDto {
+        let result = new ContactPhoneDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["usageTypeId"] = this.usageTypeId;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactPhoneDto {
+    usageTypeId: string;
+    phoneNumber: string;
+    phoneExtension: string;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+}
+
+export class ContactAddressDto implements IContactAddressDto {
+    usageTypeId: string;
+    streetAddress: string;
+    city: string;
+    state: string;
+    country: string;
+    zip: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+
+    constructor(data?: IContactAddressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.usageTypeId = data["usageTypeId"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.country = data["country"];
+            this.zip = data["zip"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactAddressDto {
+        let result = new ContactAddressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["usageTypeId"] = this.usageTypeId;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["country"] = this.country;
+        data["zip"] = this.zip;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactAddressDto {
+    usageTypeId: string;
+    streetAddress: string;
+    city: string;
+    state: string;
+    country: string;
+    zip: string;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+}
+
+export class ContactInfoDetailsDto implements IContactInfoDetailsDto {
+    contactId: number;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+
+    constructor(data?: IContactInfoDetailsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            if (data["emails"] && data["emails"].constructor === Array) {
+                this.emails = [];
+                for (let item of data["emails"])
+                    this.emails.push(ContactEmailDto.fromJS(item));
+            }
+            if (data["phones"] && data["phones"].constructor === Array) {
+                this.phones = [];
+                for (let item of data["phones"])
+                    this.phones.push(ContactPhoneDto.fromJS(item));
+            }
+            if (data["addresses"] && data["addresses"].constructor === Array) {
+                this.addresses = [];
+                for (let item of data["addresses"])
+                    this.addresses.push(ContactAddressDto.fromJS(item));
+            }
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(ContactLinkDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ContactInfoDetailsDto {
+        let result = new ContactInfoDetailsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        if (this.emails && this.emails.constructor === Array) {
+            data["emails"] = [];
+            for (let item of this.emails)
+                data["emails"].push(item.toJSON());
+        }
+        if (this.phones && this.phones.constructor === Array) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item.toJSON());
+        }
+        if (this.addresses && this.addresses.constructor === Array) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IContactInfoDetailsDto {
+    contactId: number;
+    emails: ContactEmailDto[];
+    phones: ContactPhoneDto[];
+    addresses: ContactAddressDto[];
+    links: ContactLinkDto[];
+}
+
 export class OrganizationInfoDto implements IOrganizationInfoDto {
-    typeId: string;
+    shortname: string;
     industry: string;
+    annualRevenue: number;
+    ein: string;
+    businessSicCode: number;
     primaryFundingType: string;
     formedCountryId: string;
     formedStateId: string;
+    description: string;
     formedDate: moment.Moment;
-    contactPerson: PersonKeyInfoDto;
+    relationship: string;
+    sizeFrom: number;
+    sizeTo: number;
+    duns: string;
+    ticker: string;
+    productServicesSold: number;
 
     constructor(data?: IOrganizationInfoDto) {
         if (data) {
@@ -26542,13 +27249,22 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.typeId = data["typeId"];
+            this.shortname = data["shortname"];
             this.industry = data["industry"];
+            this.annualRevenue = data["annualRevenue"];
+            this.ein = data["ein"];
+            this.businessSicCode = data["businessSicCode"];
             this.primaryFundingType = data["primaryFundingType"];
             this.formedCountryId = data["formedCountryId"];
             this.formedStateId = data["formedStateId"];
+            this.description = data["description"];
             this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
-            this.contactPerson = data["contactPerson"] ? PersonKeyInfoDto.fromJS(data["contactPerson"]) : <any>undefined;
+            this.relationship = data["relationship"];
+            this.sizeFrom = data["sizeFrom"];
+            this.sizeTo = data["sizeTo"];
+            this.duns = data["duns"];
+            this.ticker = data["ticker"];
+            this.productServicesSold = data["productServicesSold"];
         }
     }
 
@@ -26560,33 +27276,51 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["typeId"] = this.typeId;
+        data["shortname"] = this.shortname;
         data["industry"] = this.industry;
+        data["annualRevenue"] = this.annualRevenue;
+        data["ein"] = this.ein;
+        data["businessSicCode"] = this.businessSicCode;
         data["primaryFundingType"] = this.primaryFundingType;
         data["formedCountryId"] = this.formedCountryId;
         data["formedStateId"] = this.formedStateId;
+        data["description"] = this.description;
         data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
-        data["contactPerson"] = this.contactPerson ? this.contactPerson.toJSON() : <any>undefined;
+        data["relationship"] = this.relationship;
+        data["sizeFrom"] = this.sizeFrom;
+        data["sizeTo"] = this.sizeTo;
+        data["duns"] = this.duns;
+        data["ticker"] = this.ticker;
+        data["productServicesSold"] = this.productServicesSold;
         return data; 
     }
 }
 
 export interface IOrganizationInfoDto {
-    typeId: string;
+    shortname: string;
     industry: string;
+    annualRevenue: number;
+    ein: string;
+    businessSicCode: number;
     primaryFundingType: string;
     formedCountryId: string;
     formedStateId: string;
+    description: string;
     formedDate: moment.Moment;
-    contactPerson: PersonKeyInfoDto;
+    relationship: string;
+    sizeFrom: number;
+    sizeTo: number;
+    duns: string;
+    ticker: string;
+    productServicesSold: number;
 }
 
-export class PersonKeyInfoDto implements IPersonKeyInfoDto {
-    contactId: number;
-    firstName: string;
-    lastName: string;
+export class UserKeyInfoDto implements IUserKeyInfoDto {
+    id: number;
+    userName: string;
+    fullName: string;
 
-    constructor(data?: IPersonKeyInfoDto) {
+    constructor(data?: IUserKeyInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -26597,41 +27331,193 @@ export class PersonKeyInfoDto implements IPersonKeyInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.contactId = data["contactId"];
-            this.firstName = data["firstName"];
-            this.lastName = data["lastName"];
+            this.id = data["id"];
+            this.userName = data["userName"];
+            this.fullName = data["fullName"];
         }
     }
 
-    static fromJS(data: any): PersonKeyInfoDto {
-        let result = new PersonKeyInfoDto();
+    static fromJS(data: any): UserKeyInfoDto {
+        let result = new UserKeyInfoDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
+        data["id"] = this.id;
+        data["userName"] = this.userName;
+        data["fullName"] = this.fullName;
         return data; 
     }
 }
 
-export interface IPersonKeyInfoDto {
+export interface IUserKeyInfoDto {
+    id: number;
+    userName: string;
+    fullName: string;
+}
+
+export class ContactEmailDto implements IContactEmailDto {
+    usageTypeId: string;
+    emailAddress: string;
+    isActive: boolean;
+    comment: string;
     contactId: number;
-    firstName: string;
-    lastName: string;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+
+    constructor(data?: IContactEmailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.usageTypeId = data["usageTypeId"];
+            this.emailAddress = data["emailAddress"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactEmailDto {
+        let result = new ContactEmailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["usageTypeId"] = this.usageTypeId;
+        data["emailAddress"] = this.emailAddress;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactEmailDto {
+    usageTypeId: string;
+    emailAddress: string;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+}
+
+export class ContactLinkDto implements IContactLinkDto {
+    linkTypeId: string;
+    url: string;
+    isSocialNetwork: boolean;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
+
+    constructor(data?: IContactLinkDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.linkTypeId = data["linkTypeId"];
+            this.url = data["url"];
+            this.isSocialNetwork = data["isSocialNetwork"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactLinkDto {
+        let result = new ContactLinkDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["linkTypeId"] = this.linkTypeId;
+        data["url"] = this.url;
+        data["isSocialNetwork"] = this.isSocialNetwork;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactLinkDto {
+    linkTypeId: string;
+    url: string;
+    isSocialNetwork: boolean;
+    isActive: boolean;
+    comment: string;
+    contactId: number;
+    id: number;
+    isConfirmed: boolean;
+    confirmationDate: moment.Moment;
+    confirmedByUserId: number;
+    confirmedByUser: UserKeyInfoDto;
 }
 
 export class CreateCustomerInput implements ICreateCustomerInput {
+    namePrefix: string;
     firstName: string;
+    middleName: string;
     lastName: string;
-    dob: moment.Moment;
-    emailAddress: string;
-    phoneNumber: string;
-    ssn: string;
-    suppressSimilarContactWarning: boolean = false;
+    nameSuffix: string;
+    emailAddresses: CreateContactEmailInput[];
+    phoneNumbers: CreateContactPhoneInput[];
+    address: CreateContactAddressInput;
+    companyName: string;
+    organizationEmailAddresses: CreateContactEmailInput[];
+    organizationPhoneNumbers: CreateContactPhoneInput[];
+    organizationAddress: CreateContactAddressInput;
+    photo: ContactPhotoInput;
     organizationUnitId: number;
 
     constructor(data?: ICreateCustomerInput) {
@@ -26645,13 +27531,35 @@ export class CreateCustomerInput implements ICreateCustomerInput {
 
     init(data?: any) {
         if (data) {
+            this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
             this.lastName = data["lastName"];
-            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
-            this.emailAddress = data["emailAddress"];
-            this.phoneNumber = data["phoneNumber"];
-            this.ssn = data["ssn"];
-            this.suppressSimilarContactWarning = data["suppressSimilarContactWarning"] !== undefined ? data["suppressSimilarContactWarning"] : false;
+            this.nameSuffix = data["nameSuffix"];
+            if (data["emailAddresses"] && data["emailAddresses"].constructor === Array) {
+                this.emailAddresses = [];
+                for (let item of data["emailAddresses"])
+                    this.emailAddresses.push(CreateContactEmailInput.fromJS(item));
+            }
+            if (data["phoneNumbers"] && data["phoneNumbers"].constructor === Array) {
+                this.phoneNumbers = [];
+                for (let item of data["phoneNumbers"])
+                    this.phoneNumbers.push(CreateContactPhoneInput.fromJS(item));
+            }
+            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
+            this.companyName = data["companyName"];
+            if (data["organizationEmailAddresses"] && data["organizationEmailAddresses"].constructor === Array) {
+                this.organizationEmailAddresses = [];
+                for (let item of data["organizationEmailAddresses"])
+                    this.organizationEmailAddresses.push(CreateContactEmailInput.fromJS(item));
+            }
+            if (data["organizationPhoneNumbers"] && data["organizationPhoneNumbers"].constructor === Array) {
+                this.organizationPhoneNumbers = [];
+                for (let item of data["organizationPhoneNumbers"])
+                    this.organizationPhoneNumbers.push(CreateContactPhoneInput.fromJS(item));
+            }
+            this.organizationAddress = data["organizationAddress"] ? CreateContactAddressInput.fromJS(data["organizationAddress"]) : <any>undefined;
+            this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
             this.organizationUnitId = data["organizationUnitId"];
         }
     }
@@ -26664,32 +27572,106 @@ export class CreateCustomerInput implements ICreateCustomerInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
         data["lastName"] = this.lastName;
-        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
-        data["emailAddress"] = this.emailAddress;
-        data["phoneNumber"] = this.phoneNumber;
-        data["ssn"] = this.ssn;
-        data["suppressSimilarContactWarning"] = this.suppressSimilarContactWarning;
+        data["nameSuffix"] = this.nameSuffix;
+        if (this.emailAddresses && this.emailAddresses.constructor === Array) {
+            data["emailAddresses"] = [];
+            for (let item of this.emailAddresses)
+                data["emailAddresses"].push(item.toJSON());
+        }
+        if (this.phoneNumbers && this.phoneNumbers.constructor === Array) {
+            data["phoneNumbers"] = [];
+            for (let item of this.phoneNumbers)
+                data["phoneNumbers"].push(item.toJSON());
+        }
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["companyName"] = this.companyName;
+        if (this.organizationEmailAddresses && this.organizationEmailAddresses.constructor === Array) {
+            data["organizationEmailAddresses"] = [];
+            for (let item of this.organizationEmailAddresses)
+                data["organizationEmailAddresses"].push(item.toJSON());
+        }
+        if (this.organizationPhoneNumbers && this.organizationPhoneNumbers.constructor === Array) {
+            data["organizationPhoneNumbers"] = [];
+            for (let item of this.organizationPhoneNumbers)
+                data["organizationPhoneNumbers"].push(item.toJSON());
+        }
+        data["organizationAddress"] = this.organizationAddress ? this.organizationAddress.toJSON() : <any>undefined;
+        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
 }
 
 export interface ICreateCustomerInput {
+    namePrefix: string;
     firstName: string;
+    middleName: string;
     lastName: string;
-    dob: moment.Moment;
-    emailAddress: string;
-    phoneNumber: string;
-    ssn: string;
-    suppressSimilarContactWarning: boolean;
+    nameSuffix: string;
+    emailAddresses: CreateContactEmailInput[];
+    phoneNumbers: CreateContactPhoneInput[];
+    address: CreateContactAddressInput;
+    companyName: string;
+    organizationEmailAddresses: CreateContactEmailInput[];
+    organizationPhoneNumbers: CreateContactPhoneInput[];
+    organizationAddress: CreateContactAddressInput;
+    photo: ContactPhotoInput;
     organizationUnitId: number;
+}
+
+export class ContactPhotoInput implements IContactPhotoInput {
+    originalImage: string;
+    thumbnail: string;
+    photoSourceId: string;
+    comment: string;
+
+    constructor(data?: IContactPhotoInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.originalImage = data["originalImage"];
+            this.thumbnail = data["thumbnail"];
+            this.photoSourceId = data["photoSourceId"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): ContactPhotoInput {
+        let result = new ContactPhotoInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["originalImage"] = this.originalImage;
+        data["thumbnail"] = this.thumbnail;
+        data["photoSourceId"] = this.photoSourceId;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IContactPhotoInput {
+    originalImage: string;
+    thumbnail: string;
+    photoSourceId: string;
+    comment: string;
 }
 
 export class CreateCustomerOutput implements ICreateCustomerOutput {
     id: number;
-    similarCustomerExists: boolean;
 
     constructor(data?: ICreateCustomerOutput) {
         if (data) {
@@ -26703,7 +27685,6 @@ export class CreateCustomerOutput implements ICreateCustomerOutput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.similarCustomerExists = data["similarCustomerExists"];
         }
     }
 
@@ -26716,20 +27697,152 @@ export class CreateCustomerOutput implements ICreateCustomerOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["similarCustomerExists"] = this.similarCustomerExists;
         return data; 
     }
 }
 
 export interface ICreateCustomerOutput {
     id: number;
-    similarCustomerExists: boolean;
+}
+
+export class SimilarCustomerInfo implements ISimilarCustomerInfo {
+    id: number;
+    name: string;
+    jobTitle: string;
+    score: number;
+
+    constructor(data?: ISimilarCustomerInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.jobTitle = data["jobTitle"];
+            this.score = data["score"];
+        }
+    }
+
+    static fromJS(data: any): SimilarCustomerInfo {
+        let result = new SimilarCustomerInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["jobTitle"] = this.jobTitle;
+        data["score"] = this.score;
+        return data; 
+    }
+}
+
+export interface ISimilarCustomerInfo {
+    id: number;
+    name: string;
+    jobTitle: string;
+    score: number;
+}
+
+export class UpdateCustomerStatusInput implements IUpdateCustomerStatusInput {
+    customerId: number;
+    statusId: string;
+
+    constructor(data?: IUpdateCustomerStatusInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerId = data["customerId"];
+            this.statusId = data["statusId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCustomerStatusInput {
+        let result = new UpdateCustomerStatusInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        data["statusId"] = this.statusId;
+        return data; 
+    }
+}
+
+export interface IUpdateCustomerStatusInput {
+    customerId: number;
+    statusId: string;
+}
+
+export class UpdateCustomerStatusesInput implements IUpdateCustomerStatusesInput {
+    customerIds: number[] = [];
+    statusId: string;
+
+    constructor(data?: IUpdateCustomerStatusesInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["customerIds"] && data["customerIds"].constructor === Array) {
+                this.customerIds = [];
+                for (let item of data["customerIds"])
+                    this.customerIds.push(item);
+            }
+            this.statusId = data["statusId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCustomerStatusesInput {
+        let result = new UpdateCustomerStatusesInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.customerIds && this.customerIds.constructor === Array) {
+            data["customerIds"] = [];
+            for (let item of this.customerIds)
+                data["customerIds"].push(item);
+        }
+        data["statusId"] = this.statusId;
+        return data; 
+    }
+}
+
+export interface IUpdateCustomerStatusesInput {
+    customerIds: number[];
+    statusId: string;
 }
 
 export class AccountTotals implements IAccountTotals {
     syncAccountCount: number;
     bankAccountCount: number;
     totalNetWorth: number;
+    totalPending: number;
     currency: string;
 
     constructor(data?: IAccountTotals) {
@@ -26746,6 +27859,7 @@ export class AccountTotals implements IAccountTotals {
             this.syncAccountCount = data["syncAccountCount"];
             this.bankAccountCount = data["bankAccountCount"];
             this.totalNetWorth = data["totalNetWorth"];
+            this.totalPending = data["totalPending"];
             this.currency = data["currency"];
         }
     }
@@ -26761,6 +27875,7 @@ export class AccountTotals implements IAccountTotals {
         data["syncAccountCount"] = this.syncAccountCount;
         data["bankAccountCount"] = this.bankAccountCount;
         data["totalNetWorth"] = this.totalNetWorth;
+        data["totalPending"] = this.totalPending;
         data["currency"] = this.currency;
         return data; 
     }
@@ -26770,6 +27885,7 @@ export interface IAccountTotals {
     syncAccountCount: number;
     bankAccountCount: number;
     totalNetWorth: number;
+    totalPending: number;
     currency: string;
 }
 
@@ -27480,6 +28596,41 @@ export class CreateOrUpdateEditionDto implements ICreateOrUpdateEditionDto {
 export interface ICreateOrUpdateEditionDto {
     edition: EditionEditDto;
     featureValues: NameValueDto[];
+}
+
+export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
+    token: string;
+
+    constructor(data?: IGetProviderUITokenOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.token = data["token"];
+        }
+    }
+
+    static fromJS(data: any): GetProviderUITokenOutput {
+        let result = new GetProviderUITokenOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["token"] = this.token;
+        return data; 
+    }
+}
+
+export interface IGetProviderUITokenOutput {
+    token: string;
 }
 
 export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
@@ -30844,6 +31995,257 @@ export interface ILeadBusinessInfoOutput {
     errorMessage: string;
 }
 
+export class LeadFiltersInitialData implements ILeadFiltersInitialData {
+    pipelines: PipelineDto[];
+    leadTypes: LeadTypeDto[];
+
+    constructor(data?: ILeadFiltersInitialData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["pipelines"] && data["pipelines"].constructor === Array) {
+                this.pipelines = [];
+                for (let item of data["pipelines"])
+                    this.pipelines.push(PipelineDto.fromJS(item));
+            }
+            if (data["leadTypes"] && data["leadTypes"].constructor === Array) {
+                this.leadTypes = [];
+                for (let item of data["leadTypes"])
+                    this.leadTypes.push(LeadTypeDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): LeadFiltersInitialData {
+        let result = new LeadFiltersInitialData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.pipelines && this.pipelines.constructor === Array) {
+            data["pipelines"] = [];
+            for (let item of this.pipelines)
+                data["pipelines"].push(item.toJSON());
+        }
+        if (this.leadTypes && this.leadTypes.constructor === Array) {
+            data["leadTypes"] = [];
+            for (let item of this.leadTypes)
+                data["leadTypes"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ILeadFiltersInitialData {
+    pipelines: PipelineDto[];
+    leadTypes: LeadTypeDto[];
+}
+
+export class PipelineDto implements IPipelineDto {
+    id: number;
+    name: string;
+    purpose: string;
+    stages: StageDto[];
+
+    constructor(data?: IPipelineDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.purpose = data["purpose"];
+            if (data["stages"] && data["stages"].constructor === Array) {
+                this.stages = [];
+                for (let item of data["stages"])
+                    this.stages.push(StageDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PipelineDto {
+        let result = new PipelineDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["purpose"] = this.purpose;
+        if (this.stages && this.stages.constructor === Array) {
+            data["stages"] = [];
+            for (let item of this.stages)
+                data["stages"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPipelineDto {
+    id: number;
+    name: string;
+    purpose: string;
+    stages: StageDto[];
+}
+
+export class LeadTypeDto implements ILeadTypeDto {
+    id: number;
+    name: string;
+
+    constructor(data?: ILeadTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): LeadTypeDto {
+        let result = new LeadTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ILeadTypeDto {
+    id: number;
+    name: string;
+}
+
+export class StageDto implements IStageDto {
+    id: number;
+    name: string;
+    color: string;
+    accessibleActions: ActionDto[];
+
+    constructor(data?: IStageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.color = data["color"];
+            if (data["accessibleActions"] && data["accessibleActions"].constructor === Array) {
+                this.accessibleActions = [];
+                for (let item of data["accessibleActions"])
+                    this.accessibleActions.push(ActionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): StageDto {
+        let result = new StageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["color"] = this.color;
+        if (this.accessibleActions && this.accessibleActions.constructor === Array) {
+            data["accessibleActions"] = [];
+            for (let item of this.accessibleActions)
+                data["accessibleActions"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IStageDto {
+    id: number;
+    name: string;
+    color: string;
+    accessibleActions: ActionDto[];
+}
+
+export class ActionDto implements IActionDto {
+    id: number;
+    name: string;
+    sysId: string;
+    targetStageId: number;
+
+    constructor(data?: IActionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.sysId = data["sysId"];
+            this.targetStageId = data["targetStageId"];
+        }
+    }
+
+    static fromJS(data: any): ActionDto {
+        let result = new ActionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["sysId"] = this.sysId;
+        data["targetStageId"] = this.targetStageId;
+        return data; 
+    }
+}
+
+export interface IActionDto {
+    id: number;
+    name: string;
+    sysId: string;
+    targetStageId: number;
+}
+
 export class SelectPackageResponseDto implements ISelectPackageResponseDto {
     registrationId: string;
     memberInfo: MemberInfoDto;
@@ -31282,6 +32684,7 @@ export interface IPaymentAuthorizeResponseDto {
 
 export class RegisterMemberRequest implements IRegisterMemberRequest {
     password: string;
+    tenantHostType: RegisterMemberRequestTenantHostType;
     registrationId: string;
     name: string;
     surname: string;
@@ -31307,6 +32710,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     init(data?: any) {
         if (data) {
             this.password = data["password"];
+            this.tenantHostType = data["tenantHostType"];
             this.registrationId = data["registrationId"];
             this.name = data["name"];
             this.surname = data["surname"];
@@ -31331,6 +32735,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["password"] = this.password;
+        data["tenantHostType"] = this.tenantHostType;
         data["registrationId"] = this.registrationId;
         data["name"] = this.name;
         data["surname"] = this.surname;
@@ -31349,6 +32754,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
 
 export interface IRegisterMemberRequest {
     password: string;
+    tenantHostType: RegisterMemberRequestTenantHostType;
     registrationId: string;
     name: string;
     surname: string;
@@ -31865,61 +33271,6 @@ export interface IOrderFiltersInitialData {
     subscriptionStatuses: BillingSubscriptionStatusDto[];
 }
 
-export class PipelineDto implements IPipelineDto {
-    id: number;
-    name: string;
-    purpose: string;
-    stages: StageDto[];
-
-    constructor(data?: IPipelineDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.purpose = data["purpose"];
-            if (data["stages"] && data["stages"].constructor === Array) {
-                this.stages = [];
-                for (let item of data["stages"])
-                    this.stages.push(StageDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): PipelineDto {
-        let result = new PipelineDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["purpose"] = this.purpose;
-        if (this.stages && this.stages.constructor === Array) {
-            data["stages"] = [];
-            for (let item of this.stages)
-                data["stages"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IPipelineDto {
-    id: number;
-    name: string;
-    purpose: string;
-    stages: StageDto[];
-}
-
 export class BillingSubscriptionStatusDto implements IBillingSubscriptionStatusDto {
     id: string;
     name: string;
@@ -31959,13 +33310,17 @@ export interface IBillingSubscriptionStatusDto {
     name: string;
 }
 
-export class StageDto implements IStageDto {
+export class ContactInfoBaseDto implements IContactInfoBaseDto {
     id: number;
-    name: string;
-    color: string;
-    accessibleActions: ActionDto[];
+    fullName: string;
+    jobTitle: string;
+    primaryPhoto: ContactPhotoDto;
+    primaryPhone: ContactPhoneDto;
+    primaryAddress: ContactAddressDto;
+    details: ContactInfoDetailsDto;
+    comment: string;
 
-    constructor(data?: IStageDto) {
+    constructor(data?: IContactInfoBaseDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -31977,18 +33332,18 @@ export class StageDto implements IStageDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.name = data["name"];
-            this.color = data["color"];
-            if (data["accessibleActions"] && data["accessibleActions"].constructor === Array) {
-                this.accessibleActions = [];
-                for (let item of data["accessibleActions"])
-                    this.accessibleActions.push(ActionDto.fromJS(item));
-            }
+            this.fullName = data["fullName"];
+            this.jobTitle = data["jobTitle"];
+            this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
+            this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
+            this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
+            this.details = data["details"] ? ContactInfoDetailsDto.fromJS(data["details"]) : <any>undefined;
+            this.comment = data["comment"];
         }
     }
 
-    static fromJS(data: any): StageDto {
-        let result = new StageDto();
+    static fromJS(data: any): ContactInfoBaseDto {
+        let result = new ContactInfoBaseDto();
         result.init(data);
         return result;
     }
@@ -31996,69 +33351,26 @@ export class StageDto implements IStageDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["name"] = this.name;
-        data["color"] = this.color;
-        if (this.accessibleActions && this.accessibleActions.constructor === Array) {
-            data["accessibleActions"] = [];
-            for (let item of this.accessibleActions)
-                data["accessibleActions"].push(item.toJSON());
-        }
+        data["fullName"] = this.fullName;
+        data["jobTitle"] = this.jobTitle;
+        data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
+        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
+        data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
+        data["details"] = this.details ? this.details.toJSON() : <any>undefined;
+        data["comment"] = this.comment;
         return data; 
     }
 }
 
-export interface IStageDto {
+export interface IContactInfoBaseDto {
     id: number;
-    name: string;
-    color: string;
-    accessibleActions: ActionDto[];
-}
-
-export class ActionDto implements IActionDto {
-    id: number;
-    name: string;
-    sysId: string;
-    targetStageId: number;
-
-    constructor(data?: IActionDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.sysId = data["sysId"];
-            this.targetStageId = data["targetStageId"];
-        }
-    }
-
-    static fromJS(data: any): ActionDto {
-        let result = new ActionDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["sysId"] = this.sysId;
-        data["targetStageId"] = this.targetStageId;
-        return data; 
-    }
-}
-
-export interface IActionDto {
-    id: number;
-    name: string;
-    sysId: string;
-    targetStageId: number;
+    fullName: string;
+    jobTitle: string;
+    primaryPhoto: ContactPhotoDto;
+    primaryPhone: ContactPhoneDto;
+    primaryAddress: ContactAddressDto;
+    details: ContactInfoDetailsDto;
+    comment: string;
 }
 
 export class OrganizationShortInfoDto implements IOrganizationShortInfoDto {
@@ -32102,12 +33414,22 @@ export interface IOrganizationShortInfoDto {
 
 export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput {
     id: number;
-    typeId: string;
+    shortname: string;
     industry: string;
+    annualRevenue: number;
+    ein: string;
+    businessSicCode: number;
     primaryFundingType: string;
     formedCountryId: string;
     formedStateId: string;
+    description: string;
     formedDate: moment.Moment;
+    relationship: string;
+    sizeFrom: number;
+    sizeTo: number;
+    duns: string;
+    ticker: string;
+    productServicesSold: number;
 
     constructor(data?: IUpdateOrganizationInfoInput) {
         if (data) {
@@ -32121,12 +33443,22 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.typeId = data["typeId"];
+            this.shortname = data["shortname"];
             this.industry = data["industry"];
+            this.annualRevenue = data["annualRevenue"];
+            this.ein = data["ein"];
+            this.businessSicCode = data["businessSicCode"];
             this.primaryFundingType = data["primaryFundingType"];
             this.formedCountryId = data["formedCountryId"];
             this.formedStateId = data["formedStateId"];
+            this.description = data["description"];
             this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
+            this.relationship = data["relationship"];
+            this.sizeFrom = data["sizeFrom"];
+            this.sizeTo = data["sizeTo"];
+            this.duns = data["duns"];
+            this.ticker = data["ticker"];
+            this.productServicesSold = data["productServicesSold"];
         }
     }
 
@@ -32139,24 +33471,44 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["typeId"] = this.typeId;
+        data["shortname"] = this.shortname;
         data["industry"] = this.industry;
+        data["annualRevenue"] = this.annualRevenue;
+        data["ein"] = this.ein;
+        data["businessSicCode"] = this.businessSicCode;
         data["primaryFundingType"] = this.primaryFundingType;
         data["formedCountryId"] = this.formedCountryId;
         data["formedStateId"] = this.formedStateId;
+        data["description"] = this.description;
         data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
+        data["relationship"] = this.relationship;
+        data["sizeFrom"] = this.sizeFrom;
+        data["sizeTo"] = this.sizeTo;
+        data["duns"] = this.duns;
+        data["ticker"] = this.ticker;
+        data["productServicesSold"] = this.productServicesSold;
         return data; 
     }
 }
 
 export interface IUpdateOrganizationInfoInput {
     id: number;
-    typeId: string;
+    shortname: string;
     industry: string;
+    annualRevenue: number;
+    ein: string;
+    businessSicCode: number;
     primaryFundingType: string;
     formedCountryId: string;
     formedStateId: string;
+    description: string;
     formedDate: moment.Moment;
+    relationship: string;
+    sizeFrom: number;
+    sizeTo: number;
+    duns: string;
+    ticker: string;
+    productServicesSold: number;
 }
 
 export class OrganizationTypeDto implements IOrganizationTypeDto {
@@ -33225,6 +34577,65 @@ export interface IFlatPermissionWithLevelDto {
     displayName: string;
     description: string;
     isGrantedByDefault: boolean;
+}
+
+export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
+    id: number;
+    namePrefix: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    nameSuffix: string;
+    nickName: string;
+
+    constructor(data?: IUpdatePersonInfoInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.namePrefix = data["namePrefix"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
+            this.nameSuffix = data["nameSuffix"];
+            this.nickName = data["nickName"];
+        }
+    }
+
+    static fromJS(data: any): UpdatePersonInfoInput {
+        let result = new UpdatePersonInfoInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["namePrefix"] = this.namePrefix;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
+        data["nameSuffix"] = this.nameSuffix;
+        data["nickName"] = this.nickName;
+        return data; 
+    }
+}
+
+export interface IUpdatePersonInfoInput {
+    id: number;
+    namePrefix: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    nameSuffix: string;
+    nickName: string;
 }
 
 export class PipelineData implements IPipelineData {
@@ -34451,6 +35862,7 @@ export class CreateTenancyInput implements ICreateTenancyInput {
     adminPassword: string;
     shouldChangePasswordOnNextLogin: boolean;
     sendActivationEmail: boolean;
+    tenantHostType: CreateTenancyInputTenantHostType;
     tenancyName: string;
     name: string;
     connectionString: string;
@@ -34477,6 +35889,7 @@ export class CreateTenancyInput implements ICreateTenancyInput {
             this.adminPassword = data["adminPassword"];
             this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
             this.sendActivationEmail = data["sendActivationEmail"];
+            this.tenantHostType = data["tenantHostType"];
             this.tenancyName = data["tenancyName"];
             this.name = data["name"];
             this.connectionString = data["connectionString"];
@@ -34502,6 +35915,7 @@ export class CreateTenancyInput implements ICreateTenancyInput {
         data["adminPassword"] = this.adminPassword;
         data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
         data["sendActivationEmail"] = this.sendActivationEmail;
+        data["tenantHostType"] = this.tenantHostType;
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
         data["connectionString"] = this.connectionString;
@@ -34521,6 +35935,7 @@ export interface ICreateTenancyInput {
     adminPassword: string;
     shouldChangePasswordOnNextLogin: boolean;
     sendActivationEmail: boolean;
+    tenantHostType: CreateTenancyInputTenantHostType;
     tenancyName: string;
     name: string;
     connectionString: string;
@@ -34807,6 +36222,7 @@ export class CreateTenantInput implements ICreateTenantInput {
     isActive: boolean;
     subscriptionEndDateUtc: moment.Moment;
     isInTrialPeriod: boolean;
+    tenantHostType: CreateTenantInputTenantHostType;
 
     constructor(data?: ICreateTenantInput) {
         if (data) {
@@ -34833,6 +36249,7 @@ export class CreateTenantInput implements ICreateTenantInput {
             this.isActive = data["isActive"];
             this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
             this.isInTrialPeriod = data["isInTrialPeriod"];
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -34858,6 +36275,7 @@ export class CreateTenantInput implements ICreateTenantInput {
         data["isActive"] = this.isActive;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
         data["isInTrialPeriod"] = this.isInTrialPeriod;
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -34877,6 +36295,7 @@ export interface ICreateTenantInput {
     isActive: boolean;
     subscriptionEndDateUtc: moment.Moment;
     isInTrialPeriod: boolean;
+    tenantHostType: CreateTenantInputTenantHostType;
 }
 
 export class TenantEditDto implements ITenantEditDto {
@@ -35930,6 +37349,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
     editionId: number;
     paymentPeriodType: CompleteTenantRegistrationInputPaymentPeriodType;
     leadInterests: LeadInterestDto[];
+    tenantHostType: CompleteTenantRegistrationInputTenantHostType;
 
     constructor(data?: ICompleteTenantRegistrationInput) {
         if (data) {
@@ -35954,6 +37374,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
                 for (let item of data["leadInterests"])
                     this.leadInterests.push(LeadInterestDto.fromJS(item));
             }
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -35977,6 +37398,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
             for (let item of this.leadInterests)
                 data["leadInterests"].push(item.toJSON());
         }
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -35990,6 +37412,7 @@ export interface ICompleteTenantRegistrationInput {
     editionId: number;
     paymentPeriodType: CompleteTenantRegistrationInputPaymentPeriodType;
     leadInterests: LeadInterestDto[];
+    tenantHostType: CompleteTenantRegistrationInputTenantHostType;
 }
 
 export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistrationOutput {
@@ -36057,6 +37480,7 @@ export class RegisterTenantInput implements IRegisterTenantInput {
     gateway: RegisterTenantInputGateway;
     editionId: number;
     paymentId: string;
+    tenantHostType: RegisterTenantInputTenantHostType;
 
     constructor(data?: IRegisterTenantInput) {
         if (data) {
@@ -36078,6 +37502,7 @@ export class RegisterTenantInput implements IRegisterTenantInput {
             this.gateway = data["gateway"];
             this.editionId = data["editionId"];
             this.paymentId = data["paymentId"];
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -36098,6 +37523,7 @@ export class RegisterTenantInput implements IRegisterTenantInput {
         data["gateway"] = this.gateway;
         data["editionId"] = this.editionId;
         data["paymentId"] = this.paymentId;
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -36112,6 +37538,7 @@ export interface IRegisterTenantInput {
     gateway: RegisterTenantInputGateway;
     editionId: number;
     paymentId: string;
+    tenantHostType: RegisterTenantInputTenantHostType;
 }
 
 export class RegisterTenantOutput implements IRegisterTenantOutput {
@@ -37937,6 +39364,7 @@ export interface IUiCustomizationFooterSettingsEditDto {
 
 export class ActivateUserForContactInput implements IActivateUserForContactInput {
     contactId: number;
+    tenantHostType: ActivateUserForContactInputTenantHostType;
 
     constructor(data?: IActivateUserForContactInput) {
         if (data) {
@@ -37950,6 +39378,7 @@ export class ActivateUserForContactInput implements IActivateUserForContactInput
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -37962,12 +39391,14 @@ export class ActivateUserForContactInput implements IActivateUserForContactInput
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
 
 export interface IActivateUserForContactInput {
     contactId: number;
+    tenantHostType: ActivateUserForContactInputTenantHostType;
 }
 
 export class ActivateUserForContactOutput implements IActivateUserForContactOutput {
@@ -38518,6 +39949,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
     sendActivationEmail: boolean;
     setRandomPassword: boolean;
     organizationUnits: number[];
+    tenantHostType: CreateOrUpdateUserInputTenantHostType;
 
     constructor(data?: ICreateOrUpdateUserInput) {
         if (data) {
@@ -38543,6 +39975,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
                 for (let item of data["organizationUnits"])
                     this.organizationUnits.push(item);
             }
+            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -38567,6 +40000,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
             for (let item of this.organizationUnits)
                 data["organizationUnits"].push(item);
         }
+        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -38577,6 +40011,7 @@ export interface ICreateOrUpdateUserInput {
     sendActivationEmail: boolean;
     setRandomPassword: boolean;
     organizationUnits: number[];
+    tenantHostType: CreateOrUpdateUserInputTenantHostType;
 }
 
 export class LinkToUserInput implements ILinkToUserInput {
@@ -39105,13 +40540,6 @@ export enum InstanceType30 {
     Main = <any>"Main", 
 }
 
-export enum ApplyOption {
-    None = <any>"None", 
-    MatchedAndUnclassified = <any>"MatchedAndUnclassified", 
-    SelectedOnly = <any>"SelectedOnly", 
-    AllExisting = <any>"AllExisting", 
-}
-
 export enum InstanceType31 {
     User = <any>"User", 
     Main = <any>"Main", 
@@ -39125,6 +40553,13 @@ export enum InstanceType32 {
 export enum InstanceType33 {
     User = <any>"User", 
     Main = <any>"Main", 
+}
+
+export enum ApplyOption {
+    None = <any>"None", 
+    MatchedAndUnclassified = <any>"MatchedAndUnclassified", 
+    SelectedOnly = <any>"SelectedOnly", 
+    AllExisting = <any>"AllExisting", 
 }
 
 export enum InstanceType34 {
@@ -39277,6 +40712,26 @@ export enum InstanceType63 {
     Main = <any>"Main", 
 }
 
+export enum InstanceType64 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
+export enum InstanceType65 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
+export enum InstanceType66 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
+export enum InstanceType67 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
 export enum IncomeStatisticsDateInterval {
     _1 = 1, 
     _2 = 2, 
@@ -39289,12 +40744,12 @@ export enum IncomeStatisticsDateInterval2 {
     _3 = 3, 
 }
 
-export enum InstanceType64 {
+export enum InstanceType68 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
 
-export enum InstanceType65 {
+export enum InstanceType69 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
@@ -39317,15 +40772,15 @@ export enum SalesSummaryDatePeriod2 {
 }
 
 export enum TenantHostType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum TenantHostType2 {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum DefaultTimezoneScope {
@@ -39335,17 +40790,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType66 {
+export enum InstanceType70 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
 
-export enum InstanceType67 {
+export enum InstanceType71 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
 
-export enum InstanceType68 {
+export enum InstanceType72 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
@@ -39354,6 +40809,24 @@ export enum IsTenantAvailableOutputState {
     _1 = 1, 
     _2 = 2, 
     _3 = 3, 
+}
+
+export enum RegisterInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
+export enum SendPasswordResetCodeInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
+export enum SendEmailActivationLinkInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum SyncAccountBankDtoSyncAccountStatus {
@@ -39569,6 +41042,12 @@ export enum MemberInfoDtoGender {
     _1 = 1, 
 }
 
+export enum RegisterMemberRequestTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
 export enum RegisterMemberRequestGender {
     _0 = 0, 
     _1 = 1, 
@@ -39671,39 +41150,57 @@ export enum TenantLoginInfoDtoPaymentPeriodType {
     _365 = 365, 
 }
 
+export enum CreateTenancyInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
+export enum CreateTenantInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
 export enum CheckHostNameDnsMappingInputTenantHostType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum TenantSslBindingInfoHostType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum AddSslBindingInputTenantHostType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum UpdateSslBindingCertificateInputTenantHostType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum UpdateSslBindingIsActiveInputTenantHostType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum CompleteTenantRegistrationInputPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum CompleteTenantRegistrationInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export enum RegisterTenantInputSubscriptionStartType {
@@ -39714,6 +41211,24 @@ export enum RegisterTenantInputSubscriptionStartType {
 
 export enum RegisterTenantInputGateway {
     _1 = 1, 
+}
+
+export enum RegisterTenantInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
+export enum ActivateUserForContactInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
+}
+
+export enum CreateOrUpdateUserInputTenantHostType {
+    PlatformApi = <any>"PlatformApi", 
+    PlatformUi = <any>"PlatformUi", 
+    FundingUi = <any>"FundingUi", 
 }
 
 export class SwaggerException extends Error {

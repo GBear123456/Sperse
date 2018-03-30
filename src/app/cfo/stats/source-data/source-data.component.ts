@@ -27,7 +27,7 @@ export class SourceDataComponent extends AppComponentBase implements OnInit {
         moment.tz.setDefault(undefined);
         date = moment(date, null, abp.localization.currentLanguage.name);
         moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
-        return date.format('MMM D, Y');
+        return date.format('MMM, Y');
     }
 
     emitClosingSourceData() {

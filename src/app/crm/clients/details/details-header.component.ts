@@ -1,10 +1,16 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, InstanceServiceProxy, SetupInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
+import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
+import { PersonDialogComponent } from './person-dialog/person-dialog.component';
+import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, InstanceServiceProxy, 
+    SetupInput, TenantHostType, PersonContactServiceProxy, UpdatePersonInfoInput } from '@shared/service-proxies/service-proxies';
+
+import * as _ from 'underscore';
+import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 
 @Component({
     selector: 'details-header',
@@ -35,7 +41,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         public dialog: MatDialog,
         private userServiceProxy: UserServiceProxy,
-        private instanceServiceProxy: InstanceServiceProxy
+        private instanceServiceProxy: InstanceServiceProxy,
+        private personContactServiceProxy: PersonContactServiceProxy,
+        private nameParserService: NameParserService
     ) {
         super(injector);
 
@@ -54,6 +62,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                 if (isConfirmed) {
                     let request = new ActivateUserForContactInput();
                     request.contactId = this.data.primaryContactInfo.id;
+                    request.tenantHostType = <any>TenantHostType.PlatformUi;
                     this.userServiceProxy.activateUserForContact(request).subscribe(result => {
                         let setupInput = new SetupInput({ userId: result.userId });
                         this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(result => {
@@ -65,20 +74,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         );
     }
 
-    getDialogPossition(event, shift) {
-        let parent = event.target.closest('div');
-
-        if (parent) {
-          let rect = parent.getBoundingClientRect();
-          return {
-            top: (rect.top + rect.height + 8) + 'px',
-            left: (rect.left + rect.width / 2 - shift) + 'px'
-          };
-        } else
-          return {
-            top: event.clientY + 'px',
-            left: event.clientX - shift  + 'px'
-          };
+    getDialogPossition(event, shiftX) {
+        return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
     showOrganizationDetails(event) {
@@ -99,8 +96,52 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this.dialog.open(ContactPersonsDialogComponent, {
           data: this.data,
           hasBackdrop: false,
-          position: this.getDialogPossition(event, 220)
+          position: this.getDialogPossition(event, 170)
         });
         event.stopPropagation();
+    }
+
+    showUploadPhotoDialog(event) {
+        this.dialog.closeAll();
+        this.dialog.open(UploadPhotoDialogComponent, {
+          data: this.data,
+          hasBackdrop: true
+        });
+        event.stopPropagation();
+    }
+
+    getNameInplaceEditData() {
+        var primaryContactInfo = this.data && this.data.primaryContactInfo;
+        if (primaryContactInfo)
+            return {
+                id: primaryContactInfo.id,
+                value: primaryContactInfo.fullName,
+                validationRules: [],
+                isEditDialogEnabled: true,
+                lEntityName: "Name",
+                lEditPlaceholder: 'Enter value'
+            };
+    }
+
+    showEditPersonDialog(event) {
+        this.dialog.closeAll();
+        this.dialog.open(PersonDialogComponent, {
+            data: this.data.primaryContactInfo.person,
+            hasBackdrop: false,
+            position: this.getDialogPossition(event, 200)
+        });
+        event.stopPropagation();        
+    }
+
+    updatePrimaryContactName(value) {
+        this.data.primaryContactInfo.fullName = value;
+        
+        var person = this.data.primaryContactInfo.person;
+        this.nameParserService.parseIntoPerson(value, person);
+        
+        this.personContactServiceProxy.updatePersonInfo(
+            UpdatePersonInfoInput.fromJS(
+                _.extend({id:  person.contactId},  person))
+        ).subscribe(result => {});
     }
 }

@@ -26,13 +26,40 @@
         h1 {
             color: #202b35;
             margin-top: -2px;
+            margin-bottom: 0;
             font-size: 28px !important;
             font-weight: 400;
             line-height: 1;
+
+            inplace-edit {
+                /deep/ .inplace-edit-view-mode {
+                    height: 35px;
+
+                    .actions i {
+                        padding: 0 0 2px 7px;
+                        vertical-align: middle;
+                    }
+                }
+
+                /deep/ .inplace-edit-edit-mode {
+                    dx-text-box {
+                        .dx-texteditor-input{
+                            background: #f3f7fa;
+                            color: #202b35;
+                            font-size: 28px !important;
+                            font-weight: 400;
+                        }
+                    }
+                    dx-button {
+                        background: inherit;
+                    }
+                }
+            }           
         }
     }
 
     .avatar {
+        cursor: pointer;
         position: absolute;
         margin: 42px 24px 24px 24px;
         z-index: 1;
@@ -66,7 +93,8 @@
     }
 
     .personal_info {
-        margin: 28px 200px 0 150px;
+        margin: 28px 100px 0 150px;
+        width: 450px;
 
         .rating {
             display: flex;

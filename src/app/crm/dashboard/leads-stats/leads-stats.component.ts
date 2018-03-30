@@ -1,4 +1,4 @@
-import { Component, Injector, Input, OnInit, AfterViewInit } from '@angular/core';
+import { Component, Injector, Input, Output, OnInit, EventEmitter, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
@@ -19,6 +19,7 @@ export class LeadsStatsComponent extends AppComponentBase implements OnInit {
     types: string[] = new Array<string>();
     pipelines: string[] = new Array<string>();
     stages: string[] = new Array<string>();
+    @Output() onDataLoaded = new EventEmitter();
 
     constructor(injector: Injector,
         private _router: Router,
@@ -28,6 +29,7 @@ export class LeadsStatsComponent extends AppComponentBase implements OnInit {
 
     ngOnInit(): void {
         this._leadService.getLeadStats().subscribe(result => {
+            this.onDataLoaded.emit(result.data);
             result.types.forEach((val, i, arr) => this.types[val.key] = val.value);
             result.pipelines.forEach((val, i, arr) => this.pipelines[val.key] = val.value);
             result.stages.forEach((val, i, arr) => this.stages[val.key] = val.value);
@@ -57,7 +59,7 @@ export class LeadsStatsComponent extends AppComponentBase implements OnInit {
                     area: 'data'
                 }],
                 store: result.data
-            }
+            };
         });
     }
     onPivotCellClick(e) {
@@ -79,6 +81,6 @@ export class LeadsStatsComponent extends AppComponentBase implements OnInit {
 
     onCellPrepared(e) {
         if (e.area == 'data')
-            e.cellElement.addClass('leads-reference-link');
+            e.cellElement.classList.add('leads-reference-link');
     }
 }

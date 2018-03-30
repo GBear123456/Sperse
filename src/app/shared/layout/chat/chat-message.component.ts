@@ -38,7 +38,6 @@ export class ChatMessageComponent implements OnInit {
 
         } else if (this.message.message.startsWith('[file]')) {
             this.chatMessageType = 'file';
-
             let file = JSON.parse(this.message.message.substring('[file]'.length));
             this.chatMessage = AppConsts.remoteServiceBaseUrl +
                 '/Chat/GetUploadedObject?fileId=' +
@@ -46,16 +45,12 @@ export class ChatMessageComponent implements OnInit {
                 '&contentType=' +
                 file.contentType;
             this.fileName = file.name;
-
         } else if (this.message.message.startsWith('[link]')) {
             this.chatMessageType = 'link';
-
             let linkMessage = JSON.parse(this.message.message.substring('[link]'.length));
-
             this.chatMessage = linkMessage.message == null ? '' : linkMessage.message;
         } else {
             this.chatMessageType = 'text';
-
             this.chatMessage = this.message.message;
         }
     }

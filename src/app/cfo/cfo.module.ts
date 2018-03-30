@@ -26,6 +26,7 @@ import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
 import { CFOModalDialogComponent } from './shared/common/dialogs/modal/cfo-modal-dialog.component';
+import { ChooseResetRulesComponent } from './transactions/choose-reset-rules/choose-reset-rules.component';
 
 import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
@@ -33,9 +34,10 @@ import { OperationsComponent } from './cashflow/operations/operations.component'
 
 import { MatTabsModule, MatDialogModule } from '@angular/material';
 
-import { CFOService } from './cfo.service';
+import { CFOService } from '@shared/cfo/cfo.service';
 import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
+import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
 
 
 import {
@@ -45,7 +47,6 @@ import {
     DxDateBoxModule,
     DxDropDownBoxModule,
     DxFileUploaderModule,
-    DxLoadIndicatorModule,
     DxPivotGridModule,
     DxSelectBoxModule,
     DxTemplateModule,
@@ -64,9 +65,10 @@ import {
     DxTabsModule,
     DxTagBoxModule,
     DxResizableModule,
-    DxRangeSliderModule
+    DxRangeSliderModule,
+    DxSwitchModule
 } from 'devextreme-angular';
-import {DashboardWidgetsModule} from '@shared/dashboard-widgets/dashboard-widgets.module';
+import {DashboardWidgetsModule} from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 
 import { ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 
@@ -90,7 +92,6 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         DxDateBoxModule,
         DxDropDownBoxModule,
         DxFileUploaderModule,
-        DxLoadIndicatorModule,
         DxPivotGridModule,
         DxSelectBoxModule,
         DxTemplateModule,
@@ -115,7 +116,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         RoundProgressModule,
         DashboardWidgetsModule,
         ngxZendeskWebwidgetModule.forRoot(ZendeskConfig),
-        DxRangeSliderModule
+        DxRangeSliderModule,
+        DxSwitchModule
     ],
     declarations: [
         StartComponent,
@@ -138,20 +140,23 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         CFOModalDialogComponent,
         BusinessEntitiesComponent,
         ChartOfAccountsComponent,
-        BankAccountsSelectComponent
+        BankAccountsSelectComponent,
+        ChooseResetRulesComponent
     ],
     entryComponents: [
         RuleDialogComponent,
         RuleDeleteDialogComponent,
         CategoryDeleteDialogComponent,
-        PreferencesDialogComponent
+        PreferencesDialogComponent,
+        ChooseResetRulesComponent
     ],
     providers: [
         InstanceServiceProxy,
         CFOService,
         CustomersServiceProxy,
         ContactServiceProxy,
-        ngxZendeskWebwidgetService
+        ngxZendeskWebwidgetService,
+        QuovoService
     ]
 })
 

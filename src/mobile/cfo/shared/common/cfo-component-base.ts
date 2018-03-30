@@ -1,9 +1,9 @@
-import { AppComponentBase } from "@shared/common/app-component-base";
-import { OnInit, OnDestroy, Injector } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { InstanceType } from "@shared/service-proxies/service-proxies";
-import { CFOService } from '../../cfo.service'
-import { AppConsts } from "shared/AppConsts";
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { OnInit, OnDestroy, Injector } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { InstanceType } from '@shared/service-proxies/service-proxies';
+import { CFOService } from '../../cfo.service';
+import { AppConsts } from 'shared/AppConsts';
 
 export abstract class CFOComponentBase extends AppComponentBase implements OnInit, OnDestroy {
     instanceId: number;
@@ -51,14 +51,14 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
         url += (url.indexOf('?') == -1 ? '?' : '&');
 
         if (this.instanceType !== undefined && InstanceType[this.instanceType] !== undefined) {
-            url += "instanceType=" + encodeURIComponent("" + InstanceType[this.instanceType]) + "&";
+            url += 'instanceType=' + encodeURIComponent('' + InstanceType[this.instanceType]) + '&';
         }
 
         if (this.instanceId !== undefined) {
-            url += "instanceId=" + encodeURIComponent("" + this.instanceId) + "&";
+            url += 'instanceId=' + encodeURIComponent('' + this.instanceId) + '&';
         }
 
-        url = url.replace(/[?&]$/, "");
+        url = url.replace(/[?&]$/, '');
 
         return url;
     }

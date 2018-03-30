@@ -1,0 +1,181 @@
+:host {
+    display: block;
+
+    .accounts-list {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-between;
+
+        .account-item {
+            max-width: 32%;
+            width: 100%;
+            padding: 5px 20px 5px 110px;
+            border: 1px solid #E5E9EC;
+            background: #FFFFFF url('../../../../assets/common/icons/total-icon.svg') 45px 50% no-repeat;
+            border-radius: 4px;
+            position: relative;
+
+            @media (max-width: 1540px) {
+                padding-left: 60px !important;
+                background-position: 15px 50% !important;
+            }
+
+            &.dailyStats {
+                background-image: url('../../../../assets/common/icons/coins-icon-2.svg');
+
+                .value {
+                    font-size: 24px;
+                    font-weight: 400;
+                    color: #677380;
+
+                    span {
+                        font-size: 14px;
+                        line-height: 2.4;
+                        letter-spacing: 0.2px;
+                        vertical-align: top;
+                        display: inline-block;
+                        margin-top: -1px;
+                    }
+                }
+
+                ul {
+                    width: 60px;
+                    float: right;
+                    padding: 0;
+                    list-style-type: none;
+                    margin: 0;
+
+                    li {
+                        padding-right: 8px;
+                        text-transform: uppercase;
+                        font-size: 10px;
+                        font-weight: 300;
+                        letter-spacing: 0.2px;
+                        color: #afb4bb;
+                        line-height: 1.5;
+                        border-right: 2px solid transparent;
+                        cursor: pointer;
+                        display: block;
+
+                        + li {
+                            margin-top: 7px;
+                        }
+
+                        &.selected {
+                            font-weight: 600;
+                            border-right: 2px solid #32bef2;
+                            color: #656a6f;
+                        }
+                    }
+                }
+
+                /deep/ dx-select-box {
+                    border-radius: 0;
+                    background-color: transparent;
+                    float: right;
+                    width: 101px;
+
+                    .dx-texteditor-input, input.form-control {
+                        color: #677380;
+                        font-size: 14px;
+                        font-weight: 300;
+                        letter-spacing: 0.2px;
+                        line-height: 24px;
+                        padding: 0 16px 0 0;
+                        background-color: transparent;
+                        min-height: 24px;
+                        border: 0;
+                    }
+
+                    .dx-dropdowneditor-button {
+                        width: 10px;
+                        padding: 0;
+                        border-radius: 0;
+
+                        .dx-dropdowneditor-icon {
+                            background-color: transparent !important;
+
+                            &::before {
+                                content: '\f107';
+                                font-family: FontAwesome !important;
+                            }
+                        }
+                    }
+                }
+            }
+
+            &.networth {
+                background-image: url('../../../../assets/common/icons/coins-icon.svg');
+            }
+
+            .value {
+                color: #212C36;
+                font-size: 26px;
+                font-weight: 500;
+                cursor: pointer;
+                display: block;
+                padding-right: 20px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .name {
+                color: #677380;
+                font-size: 14px;
+                font-weight: 300;
+                letter-spacing: 0.2px;
+                line-height: 20px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+
+                .filtered {
+                    color: red;
+                }
+            }
+
+            .view-details {
+                position: absolute;
+                right: 18px;
+                top: 5px;
+                color: #00AEEF;
+                font-size: 12px;
+                font-weight: 300;
+                line-height: 24px;
+                cursor: pointer;
+                transition: .2s;
+
+                &:hover {
+                    color: lighten(#00AEEF, 20%);
+                }
+            }
+        }
+    }
+}
+
+.tooltip-wrap {
+    text-align: left;
+    max-height: 290px;
+    min-width: 260px;
+    overflow: auto;
+    padding: 0px 10px;
+
+    header {
+        font-weight: bold;
+        padding: 0 0 5px;
+    }
+
+    div {
+        padding: 5px 0;
+    }
+
+    span {
+        float: right;
+        margin-left: 10px;
+
+        &.total {
+            font-weight: bold;
+        }
+    }
+}

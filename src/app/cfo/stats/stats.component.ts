@@ -1,5 +1,5 @@
 import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
-import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
 import { AppService } from '@app/app.service';
@@ -28,6 +28,11 @@ import {
     CashFlowForecastServiceProxy,
     InstanceType
 } from '@shared/service-proxies/service-proxies';
+import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import * as _ from 'underscore';
+import * as moment from 'moment';
+import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
+import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filte.model';
 
 @Component({
     'selector': 'app-stats',
@@ -36,6 +41,7 @@ import {
     'styleUrls': ['./stats.component.less']
 })
 export class StatsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild('linearChart') private linearChart: DxChartComponent;
     @ViewChild('barChart') private barChart: DxChartComponent;
     statsData: Array<BankAccountDailyStatDto>;
@@ -49,10 +55,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     labelNegativeBackgroundColor = '#f05b2a';
     historicalEndingBalanceColor = '#00aeef';
     forecastEndingBalanceColor = '#f9ba4e';
-    historicalIncomeColor = '#00aeef';
-    historicalExpensesColor = '#f05b2a';
-    forecastIncomeColor = '#a9e3f9';
-    forecastExpensesColor = '#fec6b3';
+    historicalCreditColor = '#00aeef';
+    historicalDebitColor = '#f05b2a';
+    forecastCreditColor = '#a9e3f9';
+    forecastDebitColor = '#fec6b3';
     historicalShadowStartedColor = 'rgba(0, 174, 239, .5)';
     forecastShadowStartedColor = 'rgba(249, 186, 78, .5)';
     historicalNetChangeColor = '#fab800';
@@ -65,6 +71,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     chartsHeight = 400;
     chartsWidth;
     isForecast = false;
+    reportPeriodTooltipVisible = false;
+    bankAccountCount = '';
     barChartTooltipFields = [
         {
             'name': 'startingBalance',
@@ -75,11 +83,15 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             'label': this.l('Stats_Starting_Balance_Adjustments')
         },
         {
-            'name': 'income',
+            'name': 'adjustments',
+            'label': this.l('Adjustments')
+        },
+        {
+            'name': 'credit',
             'label': this.ls('Platform', 'Stats_Inflows')
         },
         {
-            'name': 'expenses',
+            'name': 'debit',
             'label': this.ls('Platform', 'Stats_Outflows')
         },
         {
@@ -99,11 +111,15 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             'label': this.l('Stats_Starting_Balance_Adjustments')
         },
         {
-            'name': 'forecastIncome',
+            'name': 'forecastAdjustments',
+            'label': this.l('Forecast_Adjustments')
+        },
+        {
+            'name': 'forecastCredit',
             'label': this.l('Stats_Forecast_Inflows')
         },
         {
-            'name': 'forecastExpenses',
+            'name': 'forecastDebit',
             'label': this.l('Stats_Forecast_Outflows')
         },
         {
@@ -115,6 +131,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             'label': this.l('Stats_endingBalance')
         }
     ];
+    sliderReportPeriod = {
+        start: null,
+        end: null,
+        minDate: moment().utc().subtract(10, 'year').year(),
+        maxDate: moment().utc().add(10, 'year').year()
+    };
     leftSideBarItems = [
         { caption: 'leftSideBarMonthlyTrendCharts' },
         { caption: 'leftSideBarDailyTrendCharts' },
@@ -123,6 +145,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
+    private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
     constructor(
         injector: Injector,
         private _appService: AppService,
@@ -135,12 +158,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
     ) {
         super(injector);
-
+        this._appService.marginLeftEnable = false;
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
-    initToolbarConfig(forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null }) {
+    initToolbarConfig() {
         this._appService.toolbarConfig = <any>[
             {
                 location: 'before',
@@ -181,15 +204,15 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             {
                 location: 'before',
                 items: [
-            {
+                    {
                         name: 'select-box',
                         text: '',
                         widget: 'dxDropDownMenu',
                         options: {
                             hint: this.l('Scenario'),
                             accessKey: 'statsForecastSwitcher',
-                            items: forecastModelsObj.items,
-                            selectedIndex: forecastModelsObj.selectedItemIndex,
+                            items: this.forecastModelsObj.items,
+                            selectedIndex: this.forecastModelsObj.selectedItemIndex,
                             height: 39,
                             width: 243,
                             onSelectionChanged: (e) => {
@@ -203,16 +226,30 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 ]
             },
             {
-                location: 'after',
+                location: 'before',
                 items: [
-                    { name: 'flag' },
                     {
-                        name: 'pen',
+                        name: 'reportPeriod',
+                        action: this.reportPeriodFilter.bind(this),
                         options: {
-                            hint: this.l('Label')
+                            id: 'reportPeriod',
+                            icon: 'assets/common/icons/report-period.svg'
                         }
                     },
-                    { name: 'more' }
+                    {
+                        name: 'bankAccountSelect',
+                        widget: 'dxButton',
+                        action: this.toggleBankAccountTooltip.bind(this),
+                        options: {
+                            id: 'bankAccountSelect',
+                            text: this.l('Accounts'),
+                            icon: 'assets/common/icons/accounts.svg'
+                        },
+                        attr: {
+                            'custaccesskey': 'bankAccountSelect',
+                            'accountCount': this.bankAccountCount
+                        }
+                    }
                 ]
             },
             {
@@ -268,14 +305,17 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         super.ngOnInit();
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
+        this.requestFilter.startDate = moment().utc().subtract(2, 'year');
+        this.requestFilter.endDate = moment().utc();
 
         /** Create parallel operations */
         let getCashFlowInitialDataObservable = this._cashflowService.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable)
+        let getBankAccountsObservable = this._bankAccountService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD', null, true);
+        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getBankAccountsObservable)
             .subscribe(result => {
                 /** Initial data handling */
-                this.handleCashFlowInitialResult(result[0]);
+                this.handleCashFlowInitialResult(result[0], result[2]);
 
                 /** Forecast models handling */
                 this.handleForecastModelResult(result[1]);
@@ -307,6 +347,22 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this._filtersService.apply(() => {
 
             for (let filter of this.filters) {
+                if (filter.caption.toLowerCase() === 'date') {
+                    if (filter.items.from.value)
+                        this.sliderReportPeriod.start = filter.items.from.value.getFullYear();
+                    else
+                        this.sliderReportPeriod.start = this.sliderReportPeriod.minDate;
+
+                    if (filter.items.to.value)
+                        this.sliderReportPeriod.end = filter.items.to.value.getFullYear();
+                    else
+                        this.sliderReportPeriod.end = this.sliderReportPeriod.maxDate;
+                }
+                if (filter.caption.toLowerCase() === 'account') {
+                    this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
+                    this.setBankAccountCount(filter.items.element.value);
+                }
+
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
                 if (filterMethod)
                     filterMethod(filter, this.requestFilter);
@@ -315,7 +371,15 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             }
 
             this.loadStatsData();
+            this.initToolbarConfig();
         });
+    }
+
+    setBankAccountCount(bankAccountIds) {
+        if (!bankAccountIds || !bankAccountIds.length)
+            this.bankAccountCount = '';
+        else
+            this.bankAccountCount = bankAccountIds.length;
     }
 
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
@@ -330,25 +394,27 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         return window.innerHeight - 260;
     }
 
-    handleCashFlowInitialResult(result) {
+    handleCashFlowInitialResult(result, bankAccounts) {
         this._filtersService.setup(
             this.filters = [
                 new FilterModel({
                     component: FilterCalendarComponent,
                     caption: 'Date',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: {method: 'getFilterByDate'}
+                    items: {from: new FilterItemModel(), to: new FilterItemModel()},
+                    options: {
+                        allowFutureDates: true,
+                        endDate: moment(new Date()).add(10, 'years').toDate()
+                    }
                 }),
                 new FilterModel({
                     field: 'accountIds',
-                    component: FilterCheckBoxesComponent,
+                    component: BankAccountFilterComponent,
                     caption: 'Account',
                     items: {
-                        element: new FilterCheckBoxesModel(
+                        element: new BankAccountFilterModel(
                             {
-                                dataSource: FilterHelpers.ConvertBanksToTreeSource(result.banks),
+                                dataSource: bankAccounts,
                                 nameField: 'name',
-                                parentExpr: 'parentId',
                                 keyExpr: 'id'
                             })
                     }
@@ -371,11 +437,11 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             cachedForecastModel :
             items[0];
         let selectedForecastModelIndex = items.findIndex(item => item.id === this.selectedForecastModel.id);
-        let forecastModelsObj = {
+        this.forecastModelsObj = {
             items: items,
             selectedItemIndex: selectedForecastModelIndex
         };
-        this.initToolbarConfig(forecastModelsObj);
+        this.initToolbarConfig();
     }
 
     /**
@@ -399,12 +465,13 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     /** load stats data from api */
     loadStatsData() {
         abp.ui.setBusy();
-        let { startDate, endDate, accountIds = [] } = this.requestFilter;
+        let { startDate, endDate, accountIds = [], bankIds = [] } = this.requestFilter;
         this._bankAccountService.getStats(
             InstanceType[this.instanceType],
             this.instanceId,
             'USD',
             this.selectedForecastModel.id,
+            bankIds,
             accountIds,
             startDate,
             endDate,
@@ -412,12 +479,24 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             GroupBy.Monthly
         ).subscribe(result => {
             if (result) {
+
+                let lastStats = result[result.length - 1];
+                if (lastStats.isForecast) {
+                    let nextDate = lastStats.date.clone();
+                    while (moment(this.requestFilter.endDate).utc().isAfter(nextDate)) {
+                        let st = _.clone(lastStats);
+                        nextDate = nextDate.clone().add(1, 'M');
+                        st.date = nextDate;
+                        result.push(st);
+                    }
+                }
+
                 let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
                 minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
                 this.statsData = result.map(statsItem => {
                     statsItem.date.add(statsItem.date.toDate().getTimezoneOffset(), 'minutes');
                     Object.defineProperties(statsItem, {
-                        'netChange': { value: statsItem.income + statsItem.expenses, enumerable: true },
+                        'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
                         'minRange': { value: minRange, enumerable: true }
                     });
                     if (statsItem.isForecast) {
@@ -434,9 +513,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 /** reinit */
                 this.initHeadlineConfig();
                 this.maxLabelCount = this.calcMaxLabelCount(this.labelWidth);
+
+                this.setSliderReportPeriodFilterData(this.statsData[0].date.year(), this.statsData[this.statsData.length - 1].date.year());
             } else {
                 console.log('No daily stats');
             }
+
             this.loadingFinished = true;
             abp.ui.clearBusy();
         },
@@ -483,6 +565,70 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     customizeBottomAxis(elem) {
         return `${elem.valueText.substring(0, 3).toUpperCase()}<br/><div class="yearArgument">${elem.value.getFullYear().toString().substr(-2)}</div>`;
+    }
+
+    reportPeriodFilter() {
+        this.reportPeriodTooltipVisible = !this.reportPeriodTooltipVisible;
+    }
+
+    setReportPeriodFilter(period) {
+        let dateFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
+
+        if (period.start) {
+            let from = new Date(period.start + '-01-01');
+            from.setTime(from.getTime() + from.getTimezoneOffset() * 60 * 1000);
+            dateFilter.items['from'].setValue(from, dateFilter);
+        } else {
+            dateFilter.items['from'].setValue('', dateFilter);
+        }
+
+        if (period.end) {
+            let end = new Date(period.end + '-12-31');
+            end.setTime(end.getTime() + end.getTimezoneOffset() * 60 * 1000);
+            dateFilter.items['to'].setValue(end, dateFilter);
+        } else {
+            dateFilter.items['to'].setValue('', dateFilter);
+        }
+        // debugger;
+        this._filtersService.change(dateFilter);
+    }
+
+    setSliderReportPeriodFilterData(start, end) {
+        let dateFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'date'; });
+        if (dateFilter) {
+            if (!dateFilter.items['from'].value)
+                this.sliderReportPeriod.start = start;
+            if (!dateFilter.items['to'].value)
+                this.sliderReportPeriod.end = end;
+        }
+    }
+
+    setBankAccountsFilter(data) {
+        let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
+        if (data.bankAccountIds) {
+            accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
+        } else {
+            accountFilter.items['element'].setValue([], accountFilter);
+        }
+        this._filtersService.change(accountFilter);
+    }
+
+    apply() {
+        let period = {
+            start: this.sliderReportPeriod.start,
+            end: this.sliderReportPeriod.end
+        };
+        this.setReportPeriodFilter(period);
+        this.reportPeriodTooltipVisible = false;
+    }
+
+    clear() {
+        this.setReportPeriodFilter({});
+        this.reportPeriodTooltipVisible = false;
+    }
+
+    toggleBankAccountTooltip() {
+        this.bankAccountSelector.toggleBankAccountTooltip();
     }
 
     /** Different styles for labels for positive and negative values */
@@ -542,14 +688,14 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             /** Add the historical and forecast big texts above the charts */
             let chartSeries = event.component.getSeriesByName(period),
                 points = event.component.getSeriesByName(period).getVisiblePoints();
-            if (chartSeries && points.length && event.element.find(`.${period}Label`).length === 0) {
+            if (chartSeries && points.length && !event.element.querySelector(`.${period}Label`)) {
                 let x = points[0].vx || points[0].x || 0,
                     left = x / window.outerWidth * 100,
                     y = 25,
                     firstPoint = points[0],
                     lastPoint = points[points.length - 1],
                     seriesWidth = lastPoint.vx - firstPoint.vx;
-                event.element.append(this.createDivTextBlock({
+                event.element.insertAdjacentHTML('beforeEnd', this.createDivTextBlock({
                     'text': period === 'historical' ? this.l('Periods_Historical') : this.l('Periods_Forecast'),
                     'class': `${period}Label`,
                     'styles': {
@@ -559,12 +705,13 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         'pointer-events': 'none'
                     }
                 }));
-                let elementTextWidth = $(`.${period}Label`).width(),
+                let textBlockElement = <HTMLElement>document.querySelector(`.${period}Label`),
+                    elementTextWidth = textBlockElement.clientWidth,
                     newLeft = elementTextWidth > seriesWidth ?
                         x - (elementTextWidth - seriesWidth) / 2 :
                         x + (seriesWidth / 2) - (elementTextWidth / 2);
                     newLeft = newLeft / window.outerWidth * 100;
-                $(`.${period}Label`).css('left', newLeft > 0 ? newLeft + '%' : 0);
+                textBlockElement.style.left = newLeft > 0 ? newLeft + '%' : '0';
             }
         });
     }

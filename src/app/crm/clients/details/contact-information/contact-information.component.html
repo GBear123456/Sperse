@@ -1,31 +1,39 @@
 <mat-tab-group>
-  <mat-tab label="Personal">        
+  <mat-tab label="Personal"> 
     <dx-scroll-view showScrollbar="onHover">
       <div class="row">
-        <div class="col-md-6">
-          <contacts [contactInfoData]="data?.customerInfo?.primaryContactInfo"></contacts>
-          <socials [contactInfoData]="data?.customerInfo?.primaryContactInfo"></socials>
-        </div>
-        <div class="col-md-6">
-          <addresses [contactInfoData]="data?.customerInfo?.primaryContactInfo"></addresses>
+        <div class="col-md-12">
+          <contacts [contactInfoData]="data?.customerInfo?.primaryContactInfo.details"></contacts>
         </div>
       </div>
-    </dx-scroll-view>
-  </mat-tab>    
-  <mat-tab label="Business" *ngIf="data?.customerInfo?.organizationContactInfo">
-    <dx-scroll-view showScrollbar="onHover">
       <div class="row">
         <div class="col-md-6">
-          <contacts [contactInfoData]="data?.customerInfo?.organizationContactInfo"></contacts>
-          <socials [contactInfoData]="data?.customerInfo?.organizationContactInfo"></socials>
+          <addresses [contactInfoData]="data?.customerInfo?.primaryContactInfo.details"></addresses>
         </div>
         <div class="col-md-6">
-          <addresses [contactInfoData]="data?.customerInfo?.organizationContactInfo"></addresses>
+          <socials [contactInfoData]="data?.customerInfo?.primaryContactInfo.details"></socials>
         </div>
       </div>
     </dx-scroll-view>
   </mat-tab>
-  <mat-tab label="Employment">
+  <mat-tab label="Business" *ngIf="data?.customerInfo?.organizationContactInfo">
+    <dx-scroll-view showScrollbar="onHover">
+      <div class="row">
+        <div class="col-md-12">
+          <contacts [contactInfoData]="data?.customerInfo?.organizationContactInfo.details"></contacts>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <addresses [contactInfoData]="data?.customerInfo?.organizationContactInfo.details"></addresses>
+        </div>
+        <div class="col-md-6">
+          <socials [contactInfoData]="data?.customerInfo?.organizationContactInfo.details"></socials>
+        </div>
+      </div>
+    </dx-scroll-view>
+  </mat-tab>
+  <mat-tab label="Employment" *ngIf="data?.customerInfo?.primaryContactInfo?.jobTitle">
     <dx-scroll-view showScrollbar="onHover">
       <employment [contactId]="data?.customerInfo?.primaryContactInfo?.id"></employment>
     </dx-scroll-view>

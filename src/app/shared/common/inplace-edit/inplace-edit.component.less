@@ -1,43 +1,81 @@
 :host {
     .inplace-edit-view-mode {
+        cursor: pointer;
         display: inline-block;
+
+        .actions  {
+            float: right;
+            bottom: 2px;
+            left: 5px;
+            visibility: hidden;
+      
+            i {
+                font-size: 18px;
+                padding: 7px;
+                cursor: pointer;
+            }
+      
+            i.edit {
+                color: #00aeef;
+            }
+          
+            i.delete {
+                color: #f44336;
+            }
+        }      
+
+        &:hover {
+            .actions {
+                visibility: visible;
+            }      
+        }
+
+        .placeholder {
+            font-style: italic;
+            font-size: 12px;
+            font-weight: 200;
+        }
     }
 
     .inplace-edit-edit-mode {
         height: 35px;
         display: inline-block;
     
-        /deep/ input {
-            margin: 0px;
-            padding: 0 0 0 5px;
-            font-size: 15px;
-            font-weight: 300;
-            line-height: 1.67;
-            letter-spacing: 0.3px;
-            text-align: left;
-            font-family: Montserrat;
-        }
-    
-        dx-text-box, dx-button {
+        /deep/ dx-text-box {
             display: inline-block;
+            input {
+                margin: 0px;
+                padding: 0 0 0 5px;
+                font-size: 15px;
+                font-weight: 300;
+                line-height: 1.67;
+                letter-spacing: 0.3px;
+                text-align: left;
+                font-family: Montserrat;
+            }
+
+            .dx-placeholder {
+                font-size: 14px;
+                font-weight: 400;            
+            }
+            &.dx-state-focused {
+                .dx-placeholder {
+                    top: -25px;
+                }
+            }
         }
-        // dx-text-box {
-        //     min-width: 230px;
-        //     width: 70%;
-        // }
-        dx-button {
+        /deep/ dx-button {
             border: none;
             position: relative;
             top: -14px;
-            // width: 14px;
-            // height: 12px;
-        }
+            display: inline-block;
 
-        /deep/ .button-update i {
-            color: #00aeef;
+            &.button-update i {
+                color: #00aeef;
+            }
+            &.button-exit i {
+                color: #f44336;
+            }
         }
-        /deep/ .button-exit i {
-            color: #f44336;
-        }
-}
+    }
 }

@@ -1,12 +1,13 @@
 import { AppConsts } from '@shared/AppConsts';
+import { LinkType, LinkUsageType } from '@shared/AppEnums';
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/takeWhile';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatDialog } from '@angular/material';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
-import { ContactEmploymentServiceProxy, OrganizationContactServiceProxy, ContactInfoBaseDto, OrganizationShortInfoDto,
-    ContactEmploymentInfo, UpdateContactEmploymentInput, ContactAddressDto, OrganizationContactInfoDto } from '@shared/service-proxies/service-proxies';
+import { ContactEmploymentServiceProxy, OrganizationContactServiceProxy, OrganizationShortInfoDto,
+    ContactEmploymentInfo, UpdateContactEmploymentInput, ContactAddressDto, ContactInfoBaseDto } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -41,6 +42,8 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     private _selectedOrgName: string;
     private _selectedOrgId: number;
 
+    private _isInPlaceEditAllowed = true;
+
     constructor(
         injector: Injector,
         private _сontactEmploymentService: ContactEmploymentServiceProxy,
@@ -62,12 +65,12 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
             if (contactId) {
                 this._сontactEmploymentService.get(contactId).subscribe(response => {
                     this.contactEmploymentInfo = response.contactEmploymentInfo;
-
-                    let orgId = this.contactEmploymentInfo.orgId;
-                    this.isEditOrgDetailsAllowed = orgId == null;
-
-                    if (orgId) {
-                        this.setOrganizationContactInfo(orgId);
+                    if (this.contactEmploymentInfo) {
+                        let orgId = this.contactEmploymentInfo.orgId;
+                        this.isEditOrgDetailsAllowed = orgId == null;
+                        if (orgId) {
+                            this.setOrganizationContactInfo(orgId);
+                        }
                     }
                 });
             }
@@ -89,27 +92,27 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    getOrganizationPrimaryAddress(organizationContactInfo: OrganizationContactInfoDto) {
+    getOrganizationPrimaryAddress(organizationContactInfo: ContactInfoBaseDto) {
         return organizationContactInfo.primaryAddress;
     }
 
-    getOrganizationWebsiteUrl(organizationContactInfo: OrganizationContactInfoDto) {
-        let links = organizationContactInfo.links.filter(item => item.linkTypeId == '2' || item.linkTypeId == '3' ); //Website 2, Website 3
+    getOrganizationWebsiteUrl(organizationContactInfo: ContactInfoBaseDto) {
+        let links = organizationContactInfo.details.links.filter(item => item.linkTypeId == LinkType.Website);
         return links.length > 0 ? links[0].url : null;
     }
 
-    getOrganizationPrimaryPhoneNumber(organizationContactInfo: OrganizationContactInfoDto) {
+    getOrganizationPrimaryPhoneNumber(organizationContactInfo: ContactInfoBaseDto) {
         let phone = organizationContactInfo.primaryPhone;
         return phone ? phone.phoneNumber : null;
     }
 
-    getOrganizationMobilePhoneNumber(organizationContactInfo: OrganizationContactInfoDto) {
-        let phones = organizationContactInfo.phones.filter(item => item.usageTypeId == 'M'); //Mobile
+    getOrganizationMobilePhoneNumber(organizationContactInfo: ContactInfoBaseDto) {
+        let phones = organizationContactInfo.details.phones.filter(item => item.usageTypeId == LinkUsageType.Mobile);
         return phones.length > 0 ? phones[0].phoneNumber : null;
     }
 
     inPlaceEdit(field, contactEmploymentData, isActionAllowed = true) {
-        if (this._isEditAllowed && isActionAllowed) {
+        if (this._isEditAllowed && isActionAllowed && this._isInPlaceEditAllowed) {
             contactEmploymentData.inplaceEditField = field;
             this._originalData[field] = contactEmploymentData[field];
         }
@@ -118,10 +121,15 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     closeInPlaceEdit(field, contactEmploymentData) {
         contactEmploymentData.inplaceEditField = null;
         contactEmploymentData[field] = this._originalData[field];
+        this._isInPlaceEditAllowed = true;
+    }
+
+    valueChanged(field) {
+        this._isInPlaceEditAllowed = this.contactEmploymentInfo[field] == this._originalData[field];
     }
 
     inPlaceEditOrganization(contactEmploymentData) {
-        if (this._isEditAllowed) {
+        if (this._isEditAllowed && this._isInPlaceEditAllowed) {
             let orgNameField = 'orgName', orgIdField = 'orgId';
             contactEmploymentData.inplaceEditField = orgNameField;
             this._originalData[orgNameField] = contactEmploymentData[orgNameField];
@@ -133,6 +141,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
         contactEmploymentData.inplaceEditField = null;
         this._selectedOrgName = this._originalData['orgName'];
         this._selectedOrgId = this._originalData['orgId'];
+        this._isInPlaceEditAllowed = true;
     }
 
     updateDataField(field, contactEmploymentData, event) {
@@ -142,6 +151,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
             }
 
             contactEmploymentData.inplaceEditField = null;
+            this._isInPlaceEditAllowed = true;
         }
     }
 
@@ -165,6 +175,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
         }
 
         contactEmploymentData.inplaceEditField = null;
+        this._isInPlaceEditAllowed = true;
     }
 
     clearPersonEmploymentContacts() {
@@ -192,6 +203,8 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
             this._selectedOrgName = event.selectedItem;
             this._selectedOrgId = null;
         }
+
+        this._isInPlaceEditAllowed = this._selectedOrgName == this._originalData['orgName'];
     }
 
     updateContactEmployment(contactEmploymentData) {
@@ -232,19 +245,18 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     }
 
     getDialogPossition(event) {
-        let shift = 245, parent = event.target
-            .closest('.address-wrapper');
+        let shiftY = this.calculateShiftY(event);
+        let parent = event.target.closest('.address-wrapper');
+        return this.calculateDialogPosition(event, parent, 0, shiftY);
+    }
 
-        if (parent) {
-            let rect = parent.getBoundingClientRect();
-            return {
-                top: (rect.top + rect.height / 2 - shift) + 'px',
-                left: (rect.left + rect.width / 2) + 'px'
-            };
-        } else
-            return {
-                top: event.clientY - shift + 'px',
-                left: event.clientX + 'px'
-            };
-      }
+    calculateShiftY(event) {
+        let shift = 245;
+
+        let availableSpaceY = window.innerHeight - event.clientY;
+        if (availableSpaceY < shift + 40)
+            shift += shift - availableSpaceY + 130;
+
+        return shift;
+    }
 }

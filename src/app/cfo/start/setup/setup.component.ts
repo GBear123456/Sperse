@@ -1,9 +1,8 @@
 import { Component, OnInit, Injector, ViewChild } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
-import { CFOComponentBase } from '@app/cfo/shared/common/cfo-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { SetupStepComponent } from '../../shared/common/setup-steps/setup-steps.component';
+import { SetupStepComponent } from '@app/cfo/shared/common/setup-steps/setup-steps.component';
 import { Router } from '@angular/router';
 import { InstanceServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { AppService } from 'app/app.service';
@@ -34,12 +33,11 @@ export class SetupComponent extends CFOComponentBase implements OnInit {
 
     ngOnInit(): void {
         super.ngOnInit();
-
         this.headlineConfig = {
             names: [this.l('Setup_Title')],
             iconSrc: 'assets/common/icons/magic-stick-icon.svg',
             buttons: []
-        }
+        };
     }
 
     onStart(): void {

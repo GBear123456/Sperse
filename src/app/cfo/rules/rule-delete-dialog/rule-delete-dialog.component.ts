@@ -1,8 +1,5 @@
-import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
-
 import * as _ from 'underscore';
 
 @Component({
@@ -20,7 +17,7 @@ export class RuleDeleteDialogComponent extends ConfirmDialogComponent implements
     ngOnInit() {
         this.data.reclassify = false;
     }
-        
+
     confirm($event) {
         this.dialogRef.close(true);
     }

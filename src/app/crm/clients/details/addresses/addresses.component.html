@@ -1,5 +1,6 @@
 <div class="addresses">
   <h3 class="lab">{{l('Addresses')}}</h3>
+  <div *ngIf="isEditAllowed" class="add-address" (click)="showDialog(null, $event)">+</div>
   <div *ngFor="let address of contactInfoData?.addresses; let i = index" class="address-wrapper" (click)="inPlaceEdit(address, $event, i)">
     <div *ngIf="isEditAllowed" class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog(address, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteAddress(address, $event, i)"></i></div>
     <i class="icons type-{{address.usageTypeId || 'H'}}"></i>
@@ -25,7 +26,5 @@
         <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit(address, $event)"></dx-button>
       </div>
     </div>
-  </div>
-  <div *ngIf="isEditAllowed" class="add-address" (click)="showDialog(null, $event)">+</div>
-  <h3 class="other-info">+ Other Info</h3>
+  </div>  
 </div>

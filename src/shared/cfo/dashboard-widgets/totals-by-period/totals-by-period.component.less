@@ -1,0 +1,185 @@
+:host {
+    display: block;
+
+    #adjustments {
+        color: rgb(50, 190, 242);
+        font-weight: bold;
+        font-size: 18px;
+        position: absolute;
+        left: -15px;
+        top: 7px;
+        cursor: pointer;
+    }
+
+    .categorization-status {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    header {
+        display: inline-block;
+        width: 100%;
+    }
+
+    app-no-data {
+        border-top: 0;
+        padding-top: 30px;
+    }
+
+    .content-wrap {
+        flex: 1 auto;
+        display: flex;
+        flex-direction: column;
+        padding-top: 5px;
+        justify-content: space-between;
+        height: 100%;
+    
+        .align-data {
+            display: flex;
+            height: 100%;
+            flex-direction: column;
+            justify-content: space-evenly;
+        }
+
+        .ending-balance,
+        .starting-balance,
+        .starting-balance-entry,
+        .adjustments,
+        .chart-head {
+            display: flex;
+            justify-content: space-between;
+
+            > span {
+                float: right;
+                font-size: 14px;
+                font-weight: normal;
+                font-style: normal;
+                font-stretch: normal;
+                letter-spacing: 0.3px;
+            }
+        }
+
+        .chart-head,
+        .chart-line {
+            padding-left: 15px;
+        }
+
+        .ending-balance,
+        .starting-balance,
+        .starting-balance-entry,
+        .adjustments,
+        .chart-head {
+            font-size: 14px;
+            font-weight: 400;
+            font-style: normal;
+            font-stretch: normal;
+            letter-spacing: 0.3px;
+            color: #677380;
+            
+            span {
+                font-weight: 500;
+            }
+            
+            .plus {
+                position: relative;
+                right: -4px;
+            }
+        }
+
+        .starting-balance,
+        .starting-balance-entry {
+            padding-bottom: 10px;
+        }
+        .adjustments {
+            padding-bottom: 5px;
+            padding-top: 10px;
+        }
+        .ending-balance {
+            padding-top: 10px;
+            border-top: 1px solid #E5E9EC;
+            position: relative;
+            margin-top: 5px;
+        }
+        .separator {
+            margin: 0 0 10px;
+            border: 0;
+            background: #E5E9EC;
+            height: 1px;
+        }
+        .chart-line {
+            width: 100%;
+            padding-bottom: 15px;
+            div {
+                height: 8px;
+                border-radius: 6px;
+                
+            }
+        }
+    }
+
+    .labels {
+        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
+        height: 162px;
+        padding: 26px 0 28px;
+    }
+
+    .title {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: normal;
+        color: #212c36;
+        float: left;
+        margin-bottom: 0;
+        line-height: 34px;
+    }
+
+    .select-box-wrap {
+        float: right;
+        width: 110px;
+        margin-top: 5px;
+
+        /deep/ dx-select-box {
+            float: right;
+            border-radius: 0;
+            background-color: transparent;
+
+            .dx-texteditor-input, input.form-control {
+                color: #677380;
+                font-size: 14px;
+                font-weight: 300;
+                letter-spacing: 0.2px;
+                line-height: 24px;
+                padding: 0 16px 0 0 ;
+                background-color: transparent;
+                min-height: 24px;
+                text-align: right;
+                border: 0;
+            }
+
+            .dx-dropdowneditor-button {
+                width: 10px;
+                padding: 0;
+                border-radius: 0;
+
+                .dx-dropdowneditor-icon {
+                    background-color: transparent !important;
+
+                    &::before {
+                        content: '\f107';
+                        font-family: FontAwesome !important;
+                    }
+                }
+            }
+        }
+    }
+
+    .no-data {
+        padding-top: 20px;
+        padding-bottom: 10px;
+        font-weight: 500;
+    }
+}
+

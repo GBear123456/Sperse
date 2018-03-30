@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>{{l("Dashboard_Unclassify_Choose_Reset_Options")}}</h2>
+<div mat-dialog-content>
+    <div class="dx-fieldset">
+        <div class="dx-field">
+            <div class="dx-field-label">{{l("Dashboard_Unclassify_Unclassify_Only")}}</div>
+            <div class="dx-field-value">
+                <dx-check-box [(value)]="resetRules.removeCategoryTree ? true : resetRules.unclassify" [disabled]="resetRules.removeCategoryTree"></dx-check-box>
+            </div>
+        </div>
+        <div class="dx-field">
+            <div class="dx-field-label">{{l("Dashboard_Unclassify_Remove_Rules")}}</div>
+            <div class="dx-field-value">
+                <dx-check-box [(value)]="resetRules.removeCategoryTree ? true : resetRules.removeRules" [disabled]="resetRules.removeCategoryTree"></dx-check-box>
+            </div>
+        </div>
+        <div class="dx-field">
+            <div class="dx-field-label">{{l("Dashboard_Unclassify_Remove_Category_Tree")}}</div>
+            <div class="dx-field-value">
+                <dx-check-box [(value)]="resetRules.removeCategoryTree"></dx-check-box>
+            </div>
+        </div>
+        <div class="dx-field">
+            <div class="dx-field-label">{{l("Dashboard_Unclassify_Remove_Forecasts")}}</div>
+            <div class="dx-field-value">
+                <dx-check-box [(value)]="resetRules.removeForecasts"></dx-check-box>
+            </div>
+        </div>
+        <div class="dx-field">
+            <div class="dx-field-label">{{l("Dashboard_Unclassify_Recalculate_Transaction_Attributes")}}</div>
+            <div class="dx-field-value">
+                <dx-check-box [(value)]="resetRules.recalculateTransactionAttributes"></dx-check-box>
+            </div>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
+    <button mat-button class="button-layout button-primary" (click)="onSave()" [disabled]="!checkAnyValueIsSet()">{{l('Reset')}}</button>
+</div>

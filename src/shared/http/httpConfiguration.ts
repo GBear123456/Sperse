@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { AppConsts } from '@shared/AppConsts';
 
 import { AbpHttpConfiguration } from '@abp/abpHttp';
 import { MessageService } from '@abp/message/message.service';
@@ -14,7 +15,7 @@ export class httpConfiguration extends AbpHttpConfiguration {
         _logService: LogService) {
         super(_messageService, _logService);
 
-        this.defaultError.details = 'No further information available.';
+        this.defaultError.details = AppConsts.defaultErrorMessage;
     }
 
     handleUnAuthorizedRequest(messagePromise: any, targetUrl?: string) {

@@ -1,11 +1,13 @@
 <header>
     <div class="avatar">
         <div class="active"></div>
-        <img src="{{ data?.primaryContactInfo.photo ? 'data:image/png;base64,' + data.primaryContactInfo.photo.thumbnail: person.person_photo_url }}" alt="Person Photo">
+        <img src="{{ data?.primaryContactInfo.photo ? 'data:image/png;base64,' + data.primaryContactInfo.photo.thumbnail: person.person_photo_url }}" (click)="showUploadPhotoDialog($event)" alt="Person Photo">
     </div>
     <div class="personal_info">
         <div class="full_name">
-            <h1 *ngIf="data && data?.name; else loading">{{ data?.name }}</h1>
+            <h1 *ngIf="data && data?.primaryContactInfo?.fullName; else loading">
+                <inplace-edit [data]="getNameInplaceEditData()" (valueChanged)="updatePrimaryContactName($event)" (openDialog)="showEditPersonDialog($event)"></inplace-edit>
+            </h1>
             <div *ngIf="data?.contactPersons?.length > 1" class="contact-persons-info" (click)="showContactPersons($event)">
                 <img src="../../../../assets/common/icons/down-arrow-icon.svg" alt="Contact Persons">
             </div>
@@ -21,7 +23,7 @@
     <div *ngIf="data?.organizationContactInfo" class="organization_info">
         <div class="delimiter"></div>
         <div class="organization_logo">
-            <img src="{{ data?.organizationContactInfo.photo ? 'data:image/png;base64,' + data.organizationContactInfo.photo.thumbnail : person.org_photo_url }}" alt="Organization Logo">
+            <img src="{{ data?.organizationContactInfo.photo ? 'data:image/png;base64,' + data.organizationContactInfo.photo.thumbnail : '../../../../../assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
         </div>
         <h2>{{ data?.organizationContactInfo?.fullName }}</h2>
         <div class="info-icon" (click)="showOrganizationDetails($event)">

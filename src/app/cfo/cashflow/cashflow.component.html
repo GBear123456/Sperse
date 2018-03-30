@@ -3,7 +3,7 @@
 </app-headline>
 
 <cashflow-operations
-    [reportPeriod]="reportPeriod"
+    [reportPeriod]="sliderReportPeriod"
     [selectedBankAccounts]="selectedBankAccounts"
     (repaintCashflow)="repaintDataGrid()"
     (onGroupBy)="changeGroupBy($event)"
@@ -21,7 +21,7 @@
     <div class="sort-options" [hidden]="!contentReady">
         <app-toolbar [config]="categoryToolbarConfig" [compact]="true" ></app-toolbar>
     </div>
-    <dx-scroll-view>
+    <dx-scroll-view (onScroll)="onScroll($event)">
         <div class="pivot-grid-wrapper">
             <dx-pivot-grid *ngIf="cashflowData && cashflowData.length" id="operations"
                            class="pivot-grid invisible"
@@ -44,6 +44,13 @@
                            (onContentReady)="onContentReady($event)"
                            (onCellClick)="onCellClick($event)"
                            [wordWrapEnabled]="false">
+                <dxo-state-storing
+                    [customLoad]="stateLoad"
+                    [customSave]="stateSave"
+                    [enabled]="true"
+                    [savingTimeout]="stateSavingTimeout"
+                    type="custom">
+                </dxo-state-storing>
                 <dxo-scrolling mode="standard"></dxo-scrolling>
             </dx-pivot-grid>
         </div>
@@ -61,6 +68,7 @@
             </div>
             <dx-data-grid id="cashflowGridContainer"
                           [rowAlternationEnabled]="true"
+                          [allowColumnResizing]="true"
                           [dataSource]="statsDetailResult"
                           (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                           (onCellPrepared)="onDetailsCellPrepared($event)"
@@ -80,8 +88,9 @@
                             dataType="date"
                             cellTemplate="dateCell"
                             headerCellTemplate="twoRowsHeaderCellTemplate"
-                            alignment="right"
-                            [caption]="this.l('DetailsHeaders_ForecastDate')">
+                            alignment="left"
+                            [caption]="this.l('DetailsHeaders_ForecastDate')"
+                            [minWidth]="130">
                     <dxi-validation-rule type="required"></dxi-validation-rule>
                     <dxi-validation-rule type="custom" [validationCallback]="validateForecastDate"></dxi-validation-rule>
                 </dxi-column>
@@ -89,15 +98,17 @@
                             dataType="date"
                             cellTemplate="dateCell"
                             headerCellTemplate="twoRowsHeaderCellTemplate"
-                            alignment="right"
+                            alignment="left"
                             [caption]="this.l('DetailsHeaders_ActualDate')"
-                            [allowEditing]="false">
+                            [allowEditing]="false"
+                            [minWidth]="120">
                 </dxi-column>
                 <dxi-column dataField="status"
                             headerCellTemplate="twoRowsHeaderCellTemplate"
                             alignment="left"
                             [caption]="this.l('DetailsHeaders_CurrentStatus')"
-                            [allowEditing]="false">
+                            [allowEditing]="false"
+                            [minWidth]="130">
                 </dxi-column>
                 <dxi-column dataField="description" [width]="detailsDescriptionColumnWidth()" [caption]="this.l('DetailsHeaders_Description')">
                     <dxo-header-filter [visible]="true"></dxo-header-filter>

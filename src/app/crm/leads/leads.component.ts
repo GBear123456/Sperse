@@ -27,7 +27,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
-import { CommonLookupServiceProxy, PipelineServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CommonLookupServiceProxy, LeadServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -41,18 +41,19 @@ import * as moment from 'moment';
 @Component({
     templateUrl: './leads.component.html',
     styleUrls: ['./leads.component.less'],
-    providers: [PipelineServiceProxy],
+    providers: [LeadServiceProxy],
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     firstRefresh = false;
-    private rootComponent: any;
     gridDataSource: any = {};
     collection: any;
     showPipeline = true;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
+
+    private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
@@ -77,7 +78,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private _appService: AppService,
         private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy,
-        private _pipelineService: PipelineServiceProxy) {
+        private _leadService: LeadServiceProxy) {
         super(injector);
 
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
@@ -97,9 +98,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         };
 
         this.initToolbarConfig();
+
+        this.searchColumns = ['FullName', 'CompanyName', 'Email'];
+        this.searchValue = '';
     }
 
     onContentReady(event) {
+        this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
@@ -127,7 +132,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     ngOnInit(): void {
-        this._pipelineService.getPipelinesFullData('L').subscribe(result => {
+        this._leadService.getFiltersInitialData().subscribe(result => {
             this._filtersService.setup(this.filters = [
                 new FilterModel({
                     component: FilterCheckBoxesComponent,
@@ -135,9 +140,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource: FilterHelpers.ConvertPipelinesToTreeSource(result),
+                                dataSource: FilterHelpers.ConvertPipelinesToTreeSource(result.pipelines),
                                 nameField: 'name',
-                                parentExpr: 'parentId',
+                                keyExpr: 'id'
+                            })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    caption: 'LeadType',
+                    field: 'LeadTypeId',
+                    items: {
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource: result.leadTypes,
+                                nameField: 'name',
                                 keyExpr: 'id'
                             })
                     }
@@ -249,14 +266,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
         this._filtersService.apply(() => {
             this.initToolbarConfig();
-            this.processODataFilter(this.dataGrid.instance,
-                this.dataSourceURI, this.filters, (filter) => {                    
-                    let filterMethod = this['filterBy' +
-                        this.capitalize(filter.caption)];
-                    if (filterMethod)
-                        return filterMethod.call(this, filter);                    
-                }
-            );
+            this.processFilterInternal();
         });
     }
 
@@ -264,14 +274,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._appService.toolbarConfig = [
             {
                 location: 'before', items: [
-                    { 
-                        name: 'filters', 
-                        action: (event) => {                            
+                    {
+                        name: 'filters',
+                        action: (event) => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
-                            this._filtersService.fixed = 
-                                !this._filtersService.fixed;
+                            this._filtersService.fixed = !this._filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
@@ -283,25 +292,28 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             mouseout: (event) => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
-                            } 
+                            }
                         },
-                        attr: { 
+                        attr: {
                             'filter-selected': this._filtersService.hasFilterSelected
-                        } 
-                    } 
+                        }
+                    }
                 ]
             },
             {
                 location: 'before',
                 items: [
                     {
-                        name: 'search',   
+                        name: 'search',
                         widget: 'dxTextBox',
                         options: {
+                            value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' 
-                                + this.l('Leads').toLowerCase()
+                            placeholder: this.l('Search') + ' ' + this.l('Leads').toLowerCase(),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
+                            }
                         }
                     }
                 ]
@@ -347,10 +359,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 ]
             },
             {
-                location: 'after', 
+                location: 'after',
                 areItemsDependent: true,
                 items: [
-                    { 
+                    {
                         name: 'box',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
                         options: {
@@ -359,8 +371,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             },
                         }
                     },
-                    { 
-                        name: 'pipeline', 
+                    {
+                        name: 'pipeline',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
                         options: {
                             checkPressed: () => {
@@ -368,14 +380,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             },
                         }
                     },
-                    { 
-                        name: 'grid', 
+                    {
+                        name: 'grid',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
                         options: {
                             checkPressed: () => {
                                 return (this.dataLayoutType == DataLayoutType.Grid);
                             },
-                        } 
+                        }
                     }
                 ]
             }
@@ -394,6 +406,40 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         return data;
     }
 
+    filterByLeadType(filter: FilterModel) {
+        let data = {};
+        let element = filter.items.element;
+        if (element && element.value) {
+            let filterData = _.map(element.value, x => {
+                let el = {};
+                el[filter.field] = x;
+                return el;
+            });
+
+            data = {
+                or: filterData
+            };
+        }
+
+        return data;
+    }
+
+    searchValueChange(e: object) {
+        this.searchValue = e['value'];
+        this.processFilterInternal();
+    }
+
+    processFilterInternal() {
+        this.processODataFilter(this.dataGrid.instance,
+            this.dataSourceURI, this.filters, (filter) => {
+                let filterMethod = this['filterBy' +
+                    this.capitalize(filter.caption)];
+                if (filterMethod)
+                    return filterMethod.call(this, filter);
+            }
+        );
+    }
+
     ngAfterViewInit(): void {
         this.gridDataSource = this.dataGrid.instance.getDataSource();
         this.rootComponent = this.getRootComponent();
@@ -402,8 +448,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     ngOnDestroy() {
         this._appService.toolbarConfig = null;
-        this._filtersService.localizationSourceName 
-            = AppConsts.localization.defaultLocalizationSourceName;
+        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }

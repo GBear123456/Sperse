@@ -2,84 +2,128 @@
 .bank-accounts-tooltip-container {
     font-size: 15px;
     text-align: start;
-    width: 555px;
+    width: 755px;
 
+    /deep/ dx-scroll-view {
+        height: 520px;
+    }
+
+    .blue {
+        color: #00AEEF;
+    }
 
     .actions {
         width: 100%;
         display: inline-block;
     }
 
-    .filter-apply, .filter-clear, .selectAll {
+    .filter-apply, .filter-clear {
+        border: 1px solid;
+        border-radius: 15px;
         cursor: pointer;
-        font-size: 14px;
-        line-height: 1.21;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1.4;
         letter-spacing: 0.3px;
         color: #00AEEF;
-        padding: 10px 5px;
+        padding: 5px 20px;
+        margin-left: 10px;
         float: right;
+    }
 
-        &:hover {
-            color: lighten(#00AEEF, 20%);
+    .filter-clear {
+        border-color: #ddd;
+        color: #677380;
+    }
+
+    .filter-apply {
+        border-color: #00AEEF;
+        background-color: #00AEEF;
+        color: white;
+    }
+
+    .filter-actions-is-active {
+        margin-top: 5px;
+
+        .is-active-filter {
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.21;
+            letter-spacing: 0.3px;
+            color: #677380;
+
+            position: absolute;
+            right: 17px;
+            z-index: 10;
+
+            /deep/ .dx-switch-on,
+            /deep/ .dx-switch-off {
+                color: transparent;
+            }
+
+            /deep/ .dx-switch-container {
+                border-color: #e2f5fe;
+                background-color: #e2f5fe;
+                border-radius: 12px;
+                height: 20px;
+            }
+
+            /deep/ .dx-switch-handle {
+                &::before {
+                    background-color: #30bff2;
+                    border-radius: 14px;
+                    height: 14px;
+                }
+            }
         }
     }
 
-    .selectAll {
+    dx-tag-box {
+        height: auto;
+    }
+
+    .label-container {
+        padding-top: 7px;
+    }
+
+    .business-entity-select {
         float: left;
-    }
+        max-width: 75%;
+        width: 75%;
 
-    .grid-container {
-        width: 100%;
-        font-size: 12px;
-
-        /deep/ tr[aria-selected ="true"] {
-            background-color: transparent;
+        .dx-field-label {
+            width: 36%;
+            font-size: 17px;
+            font-weight: 500;
+            padding: 6px 5px 8px 0;
+            color: #202b35;
         }
 
-        /deep/ .dx-master-detail-row .dx-master-detail-cell {
-            background-color: transparent;
-            padding: 7px;
-        }
+        .dx-field-value {
+            width: 64%;
+            float: left;
 
-        .account-status {
-            width: 100%;
-            border-radius: 15px;
-            background-color: #e8ecf2;
-            display: inline-block;
-
-            .text {
-                font-size: 12px;
-                margin-top: 2px;
-                margin-right: 5px;
-                float: right;
+            .tag-value,
+            /deep/ .dx-placeholder {
+                font-size: 17px;
+                line-height: 1.21;
+                letter-spacing: 0.3px;
+                color: #00AEEF;
+                padding: 0 5px;
+                height: auto !important;
+                font-weight: 500;
+                top: 0;
             }
 
-            .status-color-container {
-
-                .status-color {
+            /deep/ .dx-texteditor-container {
+                padding-top: 7px;
+                
+                .dx-tag {
+                    display: block;
                     float: left;
-                    width: 6px;
-                    height: 6px;
-                    border-radius: 4px;
-                    margin: 8px;
-                }
-
-                .status-color.completed {
-                    background-color: green;
-                }
-
-                .status-color.inprogress {
-                    background-color: orange;
-                }
-
-                .status-color.failed{
-                    background-color: red;
+                    margin-right: 8px;
                 }
             }
         }
-    }
-
-    .bank-accounts-grid-container {
-        width: 100%;
     }
 }

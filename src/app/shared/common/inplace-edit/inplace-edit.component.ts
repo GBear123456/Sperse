@@ -1,15 +1,19 @@
-import { Component, Injector, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, Input, Output, ViewChild, AfterViewInit, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { InplaceEditModel } from './inplace-edit.model';
+
+import { DxTextBoxComponent } from 'devextreme-angular';
 
 @Component({
     selector: 'inplace-edit',
     templateUrl: './inplace-edit.component.html',
     styleUrls: ['./inplace-edit.component.less']
 })
-export class InplaceEditComponent extends AppComponentBase {
+export class InplaceEditComponent extends AppComponentBase implements AfterViewInit {
+    @ViewChild(DxTextBoxComponent) textBox: DxTextBoxComponent;
+
     @Input()
     data: InplaceEditModel;
 
@@ -20,14 +24,18 @@ export class InplaceEditComponent extends AppComponentBase {
     @Output()
     openDialog: EventEmitter<any> = new EventEmitter();
 
-    private _valueOriginal;
     isEditModeEnabled = false;
+    valueOriginal: string = '';
 
     constructor(
         injector: Injector,
         public dialog: MatDialog
     ) {
-        super(injector);
+        super(injector);        
+    }
+
+    ngAfterViewInit() {
+        this.valueOriginal = this.data.value;
     }
 
     deleteItem(event) {
@@ -46,20 +54,20 @@ export class InplaceEditComponent extends AppComponentBase {
         event.stopPropagation();      
     }
 
-    updateItem(event, newValue) {
+    updateItem(event) {
         if(!event.validationGroup || event.validationGroup.validate().isValid) {
-            if (newValue != this._valueOriginal && this.valueChanged)
-                this.valueChanged.emit(newValue);
+            if (this.data.value != this.valueOriginal && this.valueChanged)
+                this.valueChanged.emit(this.valueOriginal);
             this.isEditModeEnabled = false;
         }      
     }
 
     setEditModeEnabled(isEnabled: boolean) {
-        this.isEditModeEnabled = isEnabled;
-        if (isEnabled)
-            this._valueOriginal = this.data.value;
-        else
-            this.data.value = this._valueOriginal;
+        if (this.isEditModeEnabled = isEnabled) {
+            this.valueOriginal = this.data.value;
+            setTimeout(() => this.textBox.instance.focus());
+        } else
+            this.data.value = this.valueOriginal;
     }
 
     showDialog(event) {

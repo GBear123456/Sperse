@@ -14,6 +14,7 @@ import 'core-js/es6/regexp';
 import 'core-js/es6/map';
 import 'core-js/es6/set';
 import 'core-js/es6/reflect';
+import 'dom4/build/dom4.js';
 
 import 'core-js/es7/reflect';
 import 'zone.js/dist/zone';

@@ -7,7 +7,8 @@ import {PermissionCheckerService} from '@abp/auth/permission-checker.service';
 import {AppComponentBase} from '@shared/common/app-component-base';
 
 import {AppSessionService} from '@shared/common/session/app-session.service';
-import {AppService} from '@app/app.service';
+import { AppService } from '@app/app.service';
+import * as _ from 'underscore';
 
 @Component({
     templateUrl: './top-bar.component.html',
@@ -36,7 +37,8 @@ export class TopBarComponent extends AppComponentBase {
             if (event instanceof NavigationEnd) {
                 setTimeout(() => {
                     this.menu.items.forEach((item, i) => {
-                        if (this.router.url.split('?')[0] == item.route)
+                        let route = this.router.url.split('?')[0];
+                        if (route === item.route || _.contains(item.alterRoutes, route))
                             this.selectedIndex = i;
                     });
                     this.toogleNavMenu();
@@ -60,10 +62,10 @@ export class TopBarComponent extends AppComponentBase {
         let navList: PanelMenuItem[] = [];
         config.forEach((val) => {
             let value = val.slice(0);
-            if (val.length === 6)
+            if (val.length === 7)
                 value.push(this.initMenu(value.pop(), ++level));
             let item = new PanelMenuItem(this.l(value[0]),
-                value[1], value[2], value[3], value[4], value[5]);
+                value[1], value[2], value[3], value[4], value[5], value[6]);
             item.visible = this.showMenuItem(item);
             if (!level && item.visible)
                 this.visibleMenuItemsWidth += (item.text.length * 10 + 32);

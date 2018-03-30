@@ -124,7 +124,6 @@
                 </div>
                 <dx-chart id="bar"
                           [dataSource]="statsData"
-                          defaultPane="bottomPane"
                           animation="{easing: 'easeOutCubic',duration: 2000}"
                           [barWidth]="0.5"
                           (onDone)="onDone($event)"
@@ -140,10 +139,10 @@
                                  zIndex="1"
                                  [customizeTooltip]="customizeBarTooltip">
                     </dxo-tooltip>
-                    <dxi-series [color]="historicalIncomeColor" valueField="income" name="historical"></dxi-series>
-                    <dxi-series [color]="historicalExpensesColor" valueField="expenses" name="historicalExpenses"></dxi-series>
-                    <dxi-series [color]="forecastIncomeColor" valueField="forecastIncome" name="forecast"></dxi-series>
-                    <dxi-series [color]="forecastExpensesColor" valueField="forecastExpenses" name="forecastExpenses"></dxi-series>
+                    <dxi-series [color]="historicalCreditColor" valueField="credit" name="historical"></dxi-series>
+                    <dxi-series [color]="historicalDebitColor" valueField="debit" name="historicalDebit"></dxi-series>
+                    <dxi-series [color]="forecastCreditColor" valueField="forecastCredit" name="forecast"></dxi-series>
+                    <dxi-series [color]="forecastDebitColor" valueField="forecastDebit" name="forecastDebit"></dxi-series>
                     <dxi-series type="line"
                                 [color]="historicalNetChangeColor"
                                 valueField="netChange"
@@ -154,6 +153,7 @@
                                 valueField="forecastNetChange"
                                 name="forecastNetChange">
                     </dxi-series>
+
                     <!-- Bottom axis -->
                     <dxo-argument-axis argumentType="datetime"
                                        visible="true"
@@ -164,6 +164,7 @@
                         </dxo-label>
                         <dxo-tick-interval months="1"></dxo-tick-interval>
                     </dxo-argument-axis>
+
                     <!-- Left axis -->
                     <dxi-value-axis>
                         <dxo-label [customizeText]="customizeAxisValues">
@@ -200,6 +201,35 @@
         </linearGradient>
     </svg>
 </div>
+
+<dx-tooltip target="[aria-label='Report Period']"
+            [(visible)]="reportPeriodTooltipVisible">
+    <div *dxTemplate="let data = data of 'content'">
+        <div class="report-period-tooltip-container">
+            <div class="actions">
+                <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
+                <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
+            </div>
+            <div class="report-period-title">
+                <span class="title">{{ls('CFO','CashflowToolbar_Report_Period_Title')}}</span>
+                <span class="start">{{sliderReportPeriod.start}}</span>
+                to
+                <span class="end">{{sliderReportPeriod.end}}</span>
+            </div>
+
+            <dx-range-slider [min]="sliderReportPeriod.minDate"
+                             [max]="sliderReportPeriod.maxDate"
+                             [(start)]="sliderReportPeriod.start"
+                             [(end)]="sliderReportPeriod.end"
+                             [step]="1">
+            </dx-range-slider>
+        </div>
+    </div>
+</dx-tooltip>
+
+<bank-accounts-select targetBankAccountsTooltip="[custaccesskey='bankAccountSelect']"
+                      (onBankAccountsSelected)="setBankAccountsFilter($event)">
+</bank-accounts-select>
 
 <app-no-data
     *ngIf="loadingFinished && (!statsData || !statsData.length)"

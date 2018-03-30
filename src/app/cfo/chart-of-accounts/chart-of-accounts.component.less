@@ -1,13 +1,29 @@
 :host {
     position: relative;
     top: 75px;
-
     .content-wrap {
         display: flex;
     }
 
     .grid-wrapper {
         padding: 15px 20px;
+    }
+
+    /deep/ categorization {
+        display: block;
+        
+        table {
+            width: calc(~"100vw - 760px");
+        }
+        
+        td:nth-child(2) {
+            position: static;
+            visibility: visible !important;
+        }
+        
+        .dx-scrollbar-horizontal {
+            visibility: hidden;
+        }
     }
 
     .right-actions {

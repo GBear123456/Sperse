@@ -26,6 +26,8 @@ export abstract class AppComponentBase {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
     dataGrid: any;
     dataSource: any;
+    isDataLoaded = false;
+    totalRowCount: number;
     totalDataSource: any;
     localization: LocalizationService;
     protected permission: PermissionCheckerService;
@@ -42,7 +44,7 @@ export abstract class AppComponentBase {
 
     public searchValue: string;
     public searchColumns: string[];
-   
+
     private _elementRef: ElementRef;
     private _applicationRef: ApplicationRef;
     public _exportService: ExportService;
@@ -50,7 +52,7 @@ export abstract class AppComponentBase {
 
     public defaultGridPagerConfig = {
         showPageSizeSelector: true,
-        allowedPageSizes: [20, 100, 500, 1000, 5000],
+        allowedPageSizes: [20, 100, 500, 1000],
         showInfo: true,
         visible: true
     };
@@ -132,10 +134,11 @@ export abstract class AppComponentBase {
     }
 
     processODataFilter(grid, uri, filters, getCheckCustom) {
+        this.isDataLoaded = false;
         return this.advancedODataFilter(grid, uri,
             filters.map((filter) => {
                 return getCheckCustom(filter) ||
-                    filter.getODataFilterObject();                    
+                    filter.getODataFilterObject();
             })
         );
     }
@@ -171,7 +174,7 @@ export abstract class AppComponentBase {
 
         return data;
     }
-     
+
     isFeatureEnable(featureName: string): boolean {
         return !abp.session.tenantId || !featureName || this.feature.isEnabled(featureName);
     }
@@ -235,18 +238,40 @@ export abstract class AppComponentBase {
 
     startLoading(globally = false) {
         this.loading = true;
-        abp.ui.setBusy(globally ? undefined: 
-            this.getElementRef().nativeElement);
+        abp.ui.setBusy(globally ? undefined : this.getElementRef().nativeElement);
     }
 
     finishLoading(globally = false) {
-        abp.ui.clearBusy(globally ? undefined: 
-            this.getElementRef().nativeElement);
+        abp.ui.clearBusy(globally ? undefined : this.getElementRef().nativeElement);
         this.loading = false;
     }
 
     protected setTitle(moduleName: string) {
         let rootComponent: any = this.getRootComponent();
         rootComponent.setTitle(this.appSession.tenantName, moduleName);
+    }
+
+    protected setGridDataLoaded() {
+        let gridInstance = this.dataGrid && this.dataGrid.instance;
+        if (gridInstance) {
+            let dataSource = gridInstance.getDataSource();
+            this.isDataLoaded = dataSource.isLoaded();
+            this.totalRowCount = dataSource.totalCount();
+        }
+    }
+
+    protected calculateDialogPosition(event, parent, shiftX, shiftY) {
+        if (parent) {
+            let rect = parent.getBoundingClientRect();
+            return {
+                top: (rect.top + rect.height / 2 - shiftY) + 'px',
+                left: (rect.left + rect.width / 2 - shiftX) + 'px'
+            };
+        } else {
+            return {
+                top: event.clientY - shiftY + 'px',
+                left: event.clientX - shiftX + 'px'
+            };
+        }
     }
 }

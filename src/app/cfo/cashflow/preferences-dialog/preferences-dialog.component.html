@@ -70,8 +70,7 @@
                         </dx-check-box>
                     </div>
                     <div class="col-xs-1">
-                        <dx-check-box [disabled]="true"
-                                      [value]="model.general.showBalanceDiscrepancy"
+                        <dx-check-box [value]="model.general.showBalanceDiscrepancy"
                                       (onValueChanged)="model.general.showBalanceDiscrepancy = !model.general.showBalanceDiscrepancy">
                         </dx-check-box>
                     </div>
@@ -138,7 +137,7 @@
                 <div class="dx-field right-field">
                     <div class="dx-field-label">{{l("CashFlowGrid_UserPrefs_Currency")}}</div>
                     <div class="dx-field-value">
-                        <dx-select-box [items]="currencies" [value]="currencies[0]">
+                        <dx-select-box [items]="currencies" displayExpr="text" [value]="currencies[0]">
                         </dx-select-box>
                     </div>
                 </div>

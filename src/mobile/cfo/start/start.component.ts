@@ -1,7 +1,7 @@
-import { Injector, Component, OnInit } from "@angular/core";
+import { Injector, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { appModuleAnimation } from "@shared/animations/routerTransition";
-import { CFOComponentBase } from "../shared/common/cfo-component-base"
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { CFOComponentBase } from '../shared/common/cfo-component-base';
 import { SetupComponent } from './setup/setup.component';
 
 @Component({
@@ -20,9 +20,8 @@ export class StartComponent extends CFOComponentBase implements OnInit {
     ngOnInit() {
         super.ngOnInit();
 
-        if (this._cfoService.initialized === true)
-        {
-            this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);            
+        if (this._cfoService.initialized === true) {
+            this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
         }
     }
 }

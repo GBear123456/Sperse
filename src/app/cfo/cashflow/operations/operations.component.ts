@@ -16,13 +16,11 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     private initTimeout: any;
     private initReportPeriodTimeout: any;
     private initSelectedBankAccountsTimeout: any;
-    
-   
     @Input('reportPeriod')
     set reportPeriod(reportPeriod) {
         clearTimeout(this.initReportPeriodTimeout);
         this.initReportPeriodTimeout = setTimeout(() => {
-            this.sliderReportPeriod = reportPeriod
+            this.sliderReportPeriod = reportPeriod;
         }, 300);
     }
     @Input('selectedBankAccounts')
@@ -30,7 +28,11 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
         clearTimeout(this.initSelectedBankAccountsTimeout);
         this.initSelectedBankAccountsTimeout = setTimeout(() => {
             this.bankAccountSelector.setSelectedBankAccounts(selectedBankAccounts);
-            this.bankAccountCount = selectedBankAccounts.length;
+            if (!selectedBankAccounts.length)
+                this.bankAccountCount = '';
+            else
+                this.bankAccountCount = selectedBankAccounts.length;
+            this.initToolbarConfig();
         }, 300);
     }
     @Output() repaintCashflow: EventEmitter<any> = new EventEmitter();
@@ -44,13 +46,16 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     @Output() onReportPeriodChange: EventEmitter<any> = new EventEmitter();
     @Output() onSelectedBankAccountsChange: EventEmitter<any> = new EventEmitter();
 
-    bankAccountCount: any;
+    bankAccountCount = '';
     reportPeriodTooltipVisible: boolean = false;
-    sliderReportPeriod = { start: 2000, end: 2028 };
-    totalCount = 3;
-    tooltipEnabled = {
-        enabled: true
+    sliderReportPeriod = {
+        start: null,
+        end: null,
+        minDate: null,
+        maxDate: null
     };
+    totalCount = 3;
+
     initToolbarConfig() {
         this._appService.toolbarIsAdaptive = true;
         this._appService.toolbarConfig = [
@@ -103,11 +108,11 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 location: 'before',
                 items: [
                     {
-                        name: 'reportPeriod',                       
+                        name: 'reportPeriod',
                         action: this.reportPeriodFilter.bind(this),
                         options: {
                             id: 'reportPeriod',
-                            iconSrc: 'assets/common/icons/report-period.png'
+                            icon: 'assets/common/icons/report-period.svg'
                         }
                     },
                     {
@@ -127,7 +132,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                                 text: 'Months'
                             }]
                         }
-                    }                    
+                    }
                 ]
             },
             {
@@ -139,16 +144,21 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                         action: this.toggleBankAccountTooltip.bind(this),
                         options: {
                             id: 'bankAccountSelect',
-                            text: this.l('Accounts')
+                            text: this.l('Accounts'),
+                            icon: 'assets/common/icons/accounts.svg'
+                        },
+                        attr: {
+                            'custaccesskey': 'bankAccountSelect',
+                            'accountCount': this.bankAccountCount
                         }
                     },
                 ]
-            },          
+            },
             {
                 location: 'before',
                 items: [
                     //{
-                    //    name: 'expandRows',                        
+                    //    name: 'expandRows',
                     //    options: {
                     //        hint: this.l('Expand rows'),
                     //        items: [{
@@ -318,7 +328,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     refresh() {
         this.onRefresh.emit();
     }
-    
+
     reportPeriodFilter() {
         this.reportPeriodTooltipVisible = !this.reportPeriodTooltipVisible;
     }
@@ -331,7 +341,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
 
         this.onReportPeriodChange.emit(period);
     }
-    
+
     clear() {
         this.onReportPeriodChange.emit({});
         this.reportPeriodTooltipVisible = false;

@@ -2,7 +2,7 @@
     <div class="transactions-container" *ngIf="showSelectedTransactions">
         <div class="close-transactions" (click)="showSelectedTransactions=false"></div>
         <dx-data-grid class="grid-layout"
-                      [noDataText]="'No Transactions'"
+                      [noDataText]="l('No_Transactions')"
                       [dataSource]="data.transactions"
                       [showColumnHeaders]="true"
                       [showColumnLines]="false"
@@ -24,7 +24,7 @@
             </div>
         </dx-data-grid>
     </div>
-    <div class="rule-container" *ngIf="!showSelectedTransactions">
+    <div class="rule-container" [ngStyle]="{display: showSelectedTransactions ? 'none': 'block'}">
         <div class="warning-box" *ngIf="showOverwriteWarning">
             <div>
                 <h3>{{l('RuleDialog_OverwriteWarningHeader')}}</h3>
@@ -38,7 +38,7 @@
                     <h3>{{l('Original transactions Descriptors')}}</h3>
                 </div>
                 <dx-data-grid #attributesComponent
-                     [noDataText]="'No Attributes'"
+                     [noDataText]="l('No_Attributes')"
                      [dataSource]="attributesAndKeywords"
                      [showColumnHeaders]="false"
                      [showColumnLines]="false"
@@ -50,7 +50,8 @@
                      (onRowInserted)="updateKeywordList($event)"
                      (onInitNewRow)="onAttributeInitNewRow($event)"
                      (onRowValidating)="onRowValidating($event)"
-                     (onEditorPreparing)="onEditorPreparing($event)">
+                     (onEditorPreparing)="onEditorPreparing($event)"
+                     (onContentReady)="onAttributesContentReady($event)">
                      <dxo-editing
                          mode="row"
                          [allowUpdating]="true"
@@ -61,18 +62,16 @@
                     <dxi-column dataField="id" [visible]="false" sortOrder="desc">
                     </dxi-column>
                     <dxi-column
-                        width="150"
                         dataField="attributeTypeId"
                         [validationRules]="[{ type: 'required' }]"
+                        [calculateDisplayValue]="attributeDisplayValue"
+                        [editCellTemplate]="'attributeTemplate'"
                         [setCellValue]="setCellValue">
-                        <dxo-lookup
-                            [dataSource]="gridAttributeTypes"
-                            displayExpr="name"
-                            valueExpr="id">
-                        </dxo-lookup>
                     </dxi-column>
-                    <dxi-column dataField="conditionTypeId"
+                    <dxi-column dataField="conditionTypeId" 
+                        [width]="80"
                         [setCellValue]="setCellValue"
+                        [calculateDisplayValue]="conditionDisplayValue"
                         [validationRules]="[{ type: 'required' }]">
                         <dxo-lookup
                             [dataSource]="conditionTypes"
@@ -81,21 +80,50 @@
                         </dxo-lookup>
                     </dxi-column>
                     <dxi-column dataField="conditionValue"
+                        [width]="220"
                         [editCellTemplate]="'valueTemplate'"
                         [validationRules]="[{ type: 'required' }]">
                     </dxi-column>
 
-                        <div *dxTemplate="let cell of 'valueTemplate'">
-                            <dx-select-box
-                                           placeholder="Enter Value"
+                        <div *dxTemplate="let cell of 'attributeTemplate'">
+                            <dx-select-box [accessKey]="'attributeTypesSelect'"
+                                           [width]="'515px'"
                                            [hoverStateEnabled]="false"
                                            [activeStateEnabled]="false"
                                            [focusStateEnabled]="false"
-                                           [acceptCustomValue]="true"   
+                                           [acceptCustomValue]="false"
+                                           [dropDownButtonTemplate]="''"
+                                           [itemTemplate]="'itemTMPL'"
+                                           [dataSource]="availableGridAttributeTypes"
+                                           (onValueChanged)="attributeGridDropDownValueChanged($event, cell)"
+                                           (onInitialized)="attributeGridDropDownInitialized($event, cell)"
+                                           (onDisposing)="attributeGridDropDownDisposing($event, cell)"
+                                           valueExpr="id"
+                                           displayExpr="name"
+                                           [value]="cell.value">
+
+                                <div *dxTemplate="let item of 'itemTMPL'">
+                                    <ng-container>
+                                        <span class="attribute-name-grid"><a></a>{{ item.name }}</span>
+                                        <div *ngFor="let value of getKeyAttributeValues(item.id)" class="attribute-value-wrapper">
+                                            <a class="attribute-value" (click)="selectedGridAttributeValue($event, value)">{{ value.name }}</a>
+                                        </div>
+                                    </ng-container>
+                                </div>
+
+                            </dx-select-box>
+                        </div>
+
+                        <div *dxTemplate="let cell of 'valueTemplate'">
+                            <dx-select-box 
+                                           [placeholder]="l('Enter_Value')"
+                                           [hoverStateEnabled]="false"
+                                           [activeStateEnabled]="false"
+                                           [focusStateEnabled]="false"
+                                           [acceptCustomValue]="true"
                                            [noDataText]="''"
                                            [dropDownButtonTemplate]="''"
-                                           [dataSource]="getKeyAttributeValues(cell.data.attributeTypeId)"
-                                           (onCustomItemCreating)="onCustomAttributeCreating($event, cell)"
+                                           [dataSource]="keyAttributeValuesDataSource"
                                            (onValueChanged)="onCustomAttributeCreating($event, cell)"
                                            (onKeyDown)="onAttributeKeyEnter($event, cell)"
                                            valueExpr="name"
@@ -135,7 +163,7 @@
                            [(value)]="accountId">
                        </dx-select-box>
                     </div>
-                </div>      
+                </div>
 
                 <h3>{{l('Transaction Type')}}</h3>
                 <div class="fields-row">
@@ -228,8 +256,8 @@
 
                         <div *dxTemplate="let item of 'itemTMPL'">
                             <ng-container>
-                                <b>{{ item.name }}</b>
-                                <div *ngFor="let value of item.values">
+                                <span class="attribute-name"><a></a>{{ item.name }}</span>
+                                <div *ngFor="let value of item.values" class="attribute-value-wrapper">
                                     <a class="attribute-value" (click)="selectedAttributeValue($event, value)">{{ value.name }}</a>
                                 </div>
                             </ng-container>
@@ -239,11 +267,11 @@
                 </div>
 
                 <h3>{{l('Assign transaction(s) to the following category')}}</h3>
-                <categorization 
+                <categorization
                     [width]="'100%'"
                     [height]="'570px'"
                     [showTitle]="false"
-                    [showHeader]="false"
+                    [showHeader]="true"
                     [dragMode]="false"
                     [instanceType]="instanceType"
                     [instanceId]="instanceId"

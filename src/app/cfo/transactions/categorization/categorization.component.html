@@ -1,4 +1,4 @@
-<div>
+<div [ngClass]="{'show-search':showSearch}">
     <div class="tree-header" *ngIf="showHeader">
         <h3 *ngIf="showTitle">
             {{l('ClassifyTransactions')}}
@@ -11,12 +11,12 @@
                   height="{{height}}"
                   keyExpr="key"
                   parentIdExpr="parent"
+                  [noDataText]="noDataText"
                   [hoverStateEnabled]="true"
                   [(dataSource)]="categories"
                   [selection]="{allowSelectAll: false, mode: 'single'}"
                   [searchPanel]="{visible: showSearch, placeholder: l('Find by ID or name')}"
                   [rootValue]="'root'"
-                  [autoExpandAll]="autoExpand"
                   (onKeyDown)="onKeyDown($event)"
                   (onCellPrepared)="onCellPrepared($event)"
                   (onRowClick)="onRowClick($event)"
@@ -30,21 +30,21 @@
         <dxo-editing mode="row"
                      [texts]="{confirmDeleteMessage: ''}"
                      [allowUpdating]="true"
-                     [allowDeleting]="true"
                      [allowAdding]="true">
         </dxo-editing>
         <dxi-column [cssClass]="columnClassName"
                     [cellTemplate]="'categoryTemplate'"
                     [allowSorting]="true"
                     [sortIndex]="0"
+                    [width]="180"
                     [sortingMethod]="sortItem"
                     [calculateSortValue]="calculateSortValue"
                     [sortOrder]="'asc'" dataField="name">
         </dxi-column>
         <dxi-column [allowSorting]="true"
+                    [alignment]="'left'"
                     [sortIndex]="1"
                     [sortOrder]="'asc'"
-                    [width]="65"
                     dataField="coAID"
                     [dataType]="number"
                     [caption]="'ID'"
@@ -54,7 +54,7 @@
         <dxi-column dataField="transactionsCount"
                     [cellTemplate]="'transactionsCountTemplate'"
                     [dataType]="number"
-                    [width]="65"
+                    [alignment]="'left'"
                     [caption]="'Count'"
                     [allowEditing]="false"
                     [visible]="settings.showTC">
@@ -64,11 +64,15 @@
             <ng-container>
                 <div class="category-hover"></div>
                 <span> {{ cell.text }} </span>
-                <div class="category-drop-area"></div>
+                <div class="category-drop-area">
+                    <div class="category-drop-add-rule">Add Rule</div>
+                </div>
             </ng-container>
         </div>
-        <div *dxTemplate="let cell of 'transactionsCountTemplate'" [ngClass]="{'transactionCount': cell.text}">
-            <span> {{ cell.text }} </span>
+        <div *dxTemplate="let cell of 'transactionsCountTemplate'">
+            <div *ngIf="cell.value" class="transactionCount">
+                <span> {{ cell.text }} </span>
+            </div>
         </div>
 
     </dx-tree-list>

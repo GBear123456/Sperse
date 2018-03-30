@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
+import { CommonModule } from '@shared/common/common.module';
 
 import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
 
@@ -13,7 +14,7 @@ import { ClientDetailsModule } from './clients/details/client-details.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 
 import { ClientsComponent } from './clients/clients.component';
-import { CreateOrEditClientModalComponent } from './clients/create-or-edit-client-modal.component';
+import { CreateClientDialogComponent } from './clients/create-client-dialog.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { EditionsComponent } from './editions/editions.component';
@@ -31,6 +32,10 @@ import { FeatureTreeComponent } from './shared/feature-tree.component';
 import { DataTableModule } from 'primeng/primeng';
 import { PaginatorModule } from 'primeng/primeng';
 
+import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
+import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
+  MatDialogRef, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
+
 import {
     DxDataGridModule,
     DxToolbarModule,
@@ -39,27 +44,45 @@ import {
     DxTextBoxModule,
     DxValidatorModule,
     DxValidationSummaryModule,
+    DxValidationGroupModule,
     DxButtonModule,
     DxFileUploaderModule,
     DxSelectBoxModule,
-    DxPivotGridModule
+    DxPivotGridModule,
+    DxNumberBoxModule,
+    DxScrollViewModule,
+    DxTextAreaModule
 } from 'devextreme-angular';
 
 @NgModule({
     imports: [
       FormsModule,
+      ngCommon.CommonModule,
       CommonModule,
+      AppCommonModule,
       DxDataGridModule,
       DxToolbarModule,
       DxTemplateModule,
       DxDateBoxModule,
       DxTextBoxModule,
       DxValidatorModule,
+      DxValidationGroupModule,
       DxValidationSummaryModule,
       DxButtonModule,
       DxFileUploaderModule,
       DxSelectBoxModule,
       DxPivotGridModule,
+      DxNumberBoxModule,
+      DxScrollViewModule,
+      DxTextAreaModule,
+
+      MatSidenavModule,
+      MatProgressBarModule,
+      MatTabsModule,
+      MatDialogModule,
+      MatProgressSpinnerModule,
+      MatSelectModule,
+      GooglePlaceModule,
 
       ClientDetailsModule,
       FileUploadModule,
@@ -69,7 +92,6 @@ import {
       PopoverModule.forRoot(),
       CrmRoutingModule,
       UtilsModule,
-      AppCommonModule,
       FiltersModule,
       PipelineModule,
       DataTableModule,
@@ -77,7 +99,7 @@ import {
     ],
     declarations: [
       ClientsComponent,
-      CreateOrEditClientModalComponent,
+      CreateClientDialogComponent,
       LeadsComponent,
       OrdersComponent,
       EditionsComponent,
@@ -90,6 +112,9 @@ import {
       EditionComboComponent,
       DashboardComponent,
       LeadsStatsComponent
+    ],
+    entryComponents: [
+        CreateClientDialogComponent
     ]
 })
 export class CrmModule {
