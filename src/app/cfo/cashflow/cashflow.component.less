@@ -132,7 +132,7 @@
                 }
 
                 &.chosenFilterForCashFlow {
-                    border: 1px solid #f9b83a !important;
+                    border: 1px double #f9b83a !important;
                     background-color: #fbf3e4 !important;
                     color: #333 !important;
 
@@ -252,13 +252,12 @@
                                 background-color: @forecastDataCellBackgroundColor;
                             }
 
-                            &.mtdCell {
+                            &.currentProjected {
                                 background-color: @currentPeriodCellBackgroundColor;
                             }
 
                             &.lowestOpenedCurrent:not(.year):not([class*='next']) {
                                 position: relative;
-
                                 &:before {
                                     content: '';
                                     position: absolute;
@@ -267,6 +266,11 @@
                                     width: 100%;
                                     border-top: 3px solid @currentTextColor
                                 }
+                            }
+
+                            &.lowestOpenedCurrent {
+                                border-left: 1px double @currentTextColor !important;
+                                border-right: 1px double @currentTextColor !important;
                             }
 
                             &.currentDay {
@@ -327,6 +331,7 @@
 
                             &.projectedField.projectedHidden {
                                 border: none;
+                                cursor: default;
                                 padding: 0;
                             }
                         }
@@ -675,8 +680,11 @@
                                 background: transparent;
                             }
 
-                            &.lowestOpenedCurrent:not(.projectedCell) {
+                            &.lowestOpenedCurrent {
                                 background-color: @currentPeriodCellBackgroundColor;
+                                border-left: 1px double @currentTextColor;
+                                border-right: 1px double @currentTextColor;
+
                                 &.income {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@incomeDataCellBackgroundColor, @incomeDataCellBackgroundColor);
                                 }
@@ -699,8 +707,7 @@
                             }
 
                             a.dx-link {
-                                width: 15px;
-                                height: 22px;
+                                width: 18px;
                                 display: none;
                                 color: transparent !important;
                                 position: relative;
@@ -751,7 +758,7 @@
                                     background: @startedBalanceDataCellColor;
                                 }
 
-                                &.lowestOpenedCurrent:not(.mtdCell) {
+                                &.lowestOpenedCurrent:not(.mtdCell):not(.chosenFilterForCashFlow) {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                                 }
                             }
@@ -760,7 +767,7 @@
                                 td {
                                     background: @startedBalanceDataCellColor;
 
-                                    &.lowestOpenedCurrent:not(.mtdCell) {
+                                    &.lowestOpenedCurrent:not(.mtdCell):not(.chosenFilterForCashFlow) {
                                         background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                                     }
                                 }
@@ -770,7 +777,7 @@
                         &.endingCashPosition {
                             td {
                                 background: @grandTotalBackgroundColor;
-                                &.lowestOpenedCurrent:not(.projectedCell) {
+                                &.lowestOpenedCurrent:not(.projectedCell):not(.lowestOpenedCurrent) {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
                                 }
 
@@ -789,6 +796,10 @@
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
                                 }
                             }
+                        }
+
+                        &:last-child td.lowestOpenedCurrent {
+                            border-bottom: 1px double @currentTextColor !important;
                         }
                     }
 

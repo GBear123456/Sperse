@@ -91,6 +91,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     DxValidationGroupModule
   ],
   exports: [
+    UploadPhotoDialogComponent,
     ClientDetailsComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent,

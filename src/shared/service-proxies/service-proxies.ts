@@ -23400,6 +23400,7 @@ export class AddressInfo implements IAddressInfo {
     zip: string;
     countryId: string;
     country: string;
+    usageTypeId: string;
 
     constructor(data?: IAddressInfo) {
         if (data) {
@@ -23419,6 +23420,7 @@ export class AddressInfo implements IAddressInfo {
             this.zip = data["zip"];
             this.countryId = data["countryId"];
             this.country = data["country"];
+            this.usageTypeId = data["usageTypeId"];
         }
     }
 
@@ -23437,6 +23439,7 @@ export class AddressInfo implements IAddressInfo {
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
         data["country"] = this.country;
+        data["usageTypeId"] = this.usageTypeId;
         return data; 
     }
 }
@@ -23449,6 +23452,7 @@ export interface IAddressInfo {
     zip: string;
     countryId: string;
     country: string;
+    usageTypeId: string;
 }
 
 export class ContactLinkInfo implements IContactLinkInfo {
@@ -25068,9 +25072,9 @@ export interface IPhoneUsageTypeDto {
 
 export class CreateContactPhotoInput implements ICreateContactPhotoInput {
     contactId: number;
-    photoSourceId: string;
     originalImage: string;
     thumbnail: string;
+    photoSourceId: string;
     comment: string;
 
     constructor(data?: ICreateContactPhotoInput) {
@@ -25085,9 +25089,9 @@ export class CreateContactPhotoInput implements ICreateContactPhotoInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            this.photoSourceId = data["photoSourceId"];
             this.originalImage = data["originalImage"];
             this.thumbnail = data["thumbnail"];
+            this.photoSourceId = data["photoSourceId"];
             this.comment = data["comment"];
         }
     }
@@ -25101,9 +25105,9 @@ export class CreateContactPhotoInput implements ICreateContactPhotoInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        data["photoSourceId"] = this.photoSourceId;
         data["originalImage"] = this.originalImage;
         data["thumbnail"] = this.thumbnail;
+        data["photoSourceId"] = this.photoSourceId;
         data["comment"] = this.comment;
         return data; 
     }
@@ -25111,9 +25115,9 @@ export class CreateContactPhotoInput implements ICreateContactPhotoInput {
 
 export interface ICreateContactPhotoInput {
     contactId: number;
-    photoSourceId: string;
     originalImage: string;
     thumbnail: string;
+    photoSourceId: string;
     comment: string;
 }
 
@@ -27513,6 +27517,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     organizationEmailAddresses: CreateContactEmailInput[];
     organizationPhoneNumbers: CreateContactPhoneInput[];
     organizationAddress: CreateContactAddressInput;
+    photo: ContactPhotoInput;
     organizationUnitId: number;
 
     constructor(data?: ICreateCustomerInput) {
@@ -27554,6 +27559,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
                     this.organizationPhoneNumbers.push(CreateContactPhoneInput.fromJS(item));
             }
             this.organizationAddress = data["organizationAddress"] ? CreateContactAddressInput.fromJS(data["organizationAddress"]) : <any>undefined;
+            this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
             this.organizationUnitId = data["organizationUnitId"];
         }
     }
@@ -27594,6 +27600,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
                 data["organizationPhoneNumbers"].push(item.toJSON());
         }
         data["organizationAddress"] = this.organizationAddress ? this.organizationAddress.toJSON() : <any>undefined;
+        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
@@ -27612,7 +27619,55 @@ export interface ICreateCustomerInput {
     organizationEmailAddresses: CreateContactEmailInput[];
     organizationPhoneNumbers: CreateContactPhoneInput[];
     organizationAddress: CreateContactAddressInput;
+    photo: ContactPhotoInput;
     organizationUnitId: number;
+}
+
+export class ContactPhotoInput implements IContactPhotoInput {
+    originalImage: string;
+    thumbnail: string;
+    photoSourceId: string;
+    comment: string;
+
+    constructor(data?: IContactPhotoInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.originalImage = data["originalImage"];
+            this.thumbnail = data["thumbnail"];
+            this.photoSourceId = data["photoSourceId"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): ContactPhotoInput {
+        let result = new ContactPhotoInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["originalImage"] = this.originalImage;
+        data["thumbnail"] = this.thumbnail;
+        data["photoSourceId"] = this.photoSourceId;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IContactPhotoInput {
+    originalImage: string;
+    thumbnail: string;
+    photoSourceId: string;
+    comment: string;
 }
 
 export class CreateCustomerOutput implements ICreateCustomerOutput {
