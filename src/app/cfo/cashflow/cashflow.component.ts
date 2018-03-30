@@ -1823,7 +1823,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         $(`.current${_.capitalize(lowestOpenedCurrentInterval)}`).addClass('lowestOpenedCurrent');
 
         let lowestOpenedInterval = this.getLowestOpenedInterval();
-        this.changeHistoricalColspans(lowestOpenedCurrentInterval);
+        this.changeHistoricalColspans(lowestOpenedInterval, lowestOpenedCurrentInterval);
 
         if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
             this.finishLoading();
@@ -1949,11 +1949,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * and historical classes that added in onCellPrepared to the dates that belongs to the current periods like
      * currentYear, currentQuarter, currentMonth or currentDay
      */
-    changeHistoricalColspans(lowestOpenedInterval) {
+    changeHistoricalColspans(lowestOpenedInterval, lowestOpenedCurrentInterval) {
         /** Get the colspans values for the prev, current and forecast historical td that should be counted to
          * correctly display different historical periods */
         let colspanAmountForPrevious = this.getIntervalColspansAmount(lowestOpenedInterval, 'prev');
-        let colspanAmountForCurrent =  this.getIntervalColspansAmountForCurrent(lowestOpenedInterval);
+        let colspanAmountForCurrent =  this.getIntervalColspansAmountForCurrent(lowestOpenedCurrentInterval);
         let colspanAmountForForecast = this.getIntervalColspansAmount(lowestOpenedInterval, 'next');
 
         /** Hide current cell if there is no current opened lowest period and change the colspan */
