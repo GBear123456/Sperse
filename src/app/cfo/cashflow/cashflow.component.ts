@@ -3527,7 +3527,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let height = this._cacheService.get(this.cashflowDetailsGridSessionIdentifier);
             if (height) {
                 let cashflowWrapElement = <HTMLElement>document.querySelector('.cashflow-wrap');
-                cashflowWrapElement.style.height = height;
+                cashflowWrapElement.style.height = height + "px";
             }
         }, 0);
     }
