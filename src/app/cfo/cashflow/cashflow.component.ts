@@ -35,6 +35,7 @@ import { OperationsComponent } from './operations/operations.component';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 
 import { DxPivotGridComponent, DxDataGridComponent } from 'devextreme-angular';
+
 import TextBox from 'devextreme/ui/text_box';
 import NumberBox from 'devextreme/ui/number_box';
 import Tooltip from 'devextreme/ui/tooltip';
@@ -1828,8 +1829,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.finishLoading();
         }
 
-        this.synchronizeHeaderHeightWithCashflow();
-        this.handleBottomHorizontalScrollPosition();
+        this.hideProjectedFields();
 
         /** Clear cache with columns activity */
         this.cachedColumnActivity.clear();
@@ -1863,7 +1863,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 nextElement = null;
             }
         });
-        //this.hideProjectedFields();
+
+        this.synchronizeHeaderHeightWithCashflow();
+        this.handleBottomHorizontalScrollPosition();
     }
 
     onScroll(e) {
@@ -2206,7 +2208,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param cellObj - the object that pivot grid passes to the onCellPrepared event
      * return {boolean}
      */
-    isStartingBalanceDataColumn(cellObj) {
+    isStartingBalanceDataColumn(cellObj): boolean {
         return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined &&
             cellObj.cell.rowPath[0] === PSB;
     }
@@ -2216,25 +2218,38 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param cellObj - the object that pivot grid passes to the onCellPrepared event
      * return {boolean}
      */
-    isStartingBalanceTotalDataColumn(cellObj) {
+    isStartingBalanceTotalDataColumn(cellObj): boolean {
         return cellObj.area === 'data' && cellObj.cell.rowPath !== undefined &&
             cellObj.cell.rowPath[0] === PSB &&
             (cellObj.cell.rowType === PT || cellObj.cell.rowPath.length === 1);
     }
 
     /**
-     * whether or not the cell is income or expenses header cell
+     * whether cell is cashflow type header cell
      * @param cellObj - the object that pivot grid passes to the onCellPrepared event
      * return {boolean}
      */
-    isIncomeOrExpensesHeaderCell(cellObj) {
-        return cellObj.area === 'row' && cellObj.cell.type === Total &&
-            cellObj.cell.path.length === 1 &&
-            (cellObj.cell.path[0] === PI || cellObj.cell.path[0] === PE);
+    isCashflowTypeRowTotal(cellObj): boolean {
+        let result = false;
+        if (cellObj.area === 'row' || cellObj.area === 'data') {
+            let path = cellObj.cell.path || cellObj.cell.rowPath;
+            result = path && !cellObj.cell.isWhiteSpace ? path.length === 1 : false;
+        }
+        return result;
     }
 
     /**
-     * whether or not the cell is net change header cell
+     * whether the cell is income or expenses header cell
+     * @param cellObj - the object that pivot grid passes to the onCellPrepared event
+     * return {boolean}
+     */
+    isIncomeOrExpensesChildHeaderCell(cellObj): boolean {
+        return cellObj.area === 'row' && cellObj.cell.path && cellObj.cell.path.length > 1 &&
+               (cellObj.cell.path[0] === PI || cellObj.cell.path[0] === PE);
+    }
+
+    /**
+     * whether the cell is net change header cell
      * @param cellObj - the object that pivot grid passes to the onCellPrepared event
      * return {boolean}
      */
@@ -2243,7 +2258,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return cellObj.cell[pathProperty] && !cellObj.cell.isWhiteSpace && cellObj.cell[pathProperty].length === 1 && cellObj.cell[pathProperty][0] === PNC;
     }
 
-    isAccountHeaderCell(cellObj) {
+    isAccountHeaderCell(cellObj): boolean {
         return cellObj.area === 'row' && cellObj.cell.path && cellObj.cell.path[1] && cellObj.cell.path[1].slice(0, 2) === CategorizationPrefixes.AccountName;
     }
 
@@ -2270,8 +2285,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return isMonthHeaderCell;
     }
 
-    isEmptyProjectedField(cellObj) {
-        return this.isProjectedHeaderCell(cellObj) && cellObj.cell.path.slice(-1)[0] === Projected.Total;
+    isTodayProjectedField(cellObj) {
+        return this.isProjectedHeaderCell(cellObj) && cellObj.cell.path.slice(-1)[0] === Projected.Today;
     }
 
     isProjectedHeaderCell(cellObj) {
@@ -2329,28 +2344,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE);
     }
 
-    /**
-     * whether or not the cell is income or expenses total cell
-     * @param cellObj - the object that pivot grid passes to the onCellPrepared event
-     * return {boolean}
-     */
-    isIncomeOrExpensesTotalHeaderCell(cellObj) {
-        return cellObj.area === 'row' && !cellObj.cell.isWhiteSpace && cellObj.cell.path !== undefined &&
-            (cellObj.cell.path[0] === PI || cellObj.cell.path[0] === (PE));
-    }
-
     /** Whether the cell is the ending cash position header cell */
     isTotalEndingHeaderCell(cellObj) {
         return cellObj.cell.path !== undefined &&
                cellObj.cell.path.length === 1 &&
                cellObj.cell.path[0] === PT &&
                !cellObj.cell.isWhiteSpace;
-    }
-
-    isIncomeOrExpenseWhiteSpace(cellObj) {
-        return cellObj.cell.isWhiteSpace &&
-               cellObj.cell.path.length === 1 &&
-               (cellObj.cell.path[0] === PI || cellObj.cell.path[0] === PE);
     }
 
     isStartingBalanceWhiteSpace(cellObj) {
@@ -2371,49 +2370,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                (cellObj.cell.rowPath[0] === PT || cellObj.cell.rowPath[0] === PNC);
     }
 
-    isTotalRows(cellObj) {
-        return cellObj.cell.rowPath !== undefined &&
-               cellObj.cell.type === 'Total';
-    }
-
-    /** @todo check */
-    isSubtotalRows(cellObj) {
-        return cellObj.cell.rowPath !== undefined && cellObj.cell.type === 'Total';
-    }
-
     isTransactionRows(cellObj) {
         return cellObj.cell.rowPath !== undefined &&
                cellObj.cell.rowPath.length !== 1 &&
                (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE);
     }
 
-    /** Whether the cell is the reconciliation header cell */
-    isReconciliationHeaderCell(cellObj) {
-        return cellObj.cell.path !== undefined &&
-            cellObj.cell.path.length === 1 &&
-            cellObj.cell.path[0] === PR &&
-            !cellObj.cell.isWhiteSpace;
-    }
-
-    /** Whether the cell is the reconciliation data cell */
-    isReconciliationDataCell(cellObj) {
-        return cellObj.cell.rowPath !== undefined &&
-            cellObj.cell.rowPath.length === 1 &&
-            (cellObj.cell.rowPath[0] === CategorizationPrefixes.CashflowType + Reconciliation);
-    }
-
     isReconciliationRows(cellObj) {
         return cellObj.cell.rowPath !== undefined &&
             (cellObj.cell.rowPath[0] === (PR));
-    }
-
-    /**
-     * whether or not the cell is data cell
-     * @param cellObj
-     * @returns {boolean}
-     */
-    isDataCell(cellObj) {
-        return cellObj.area === 'data';
     }
 
     /**
@@ -2452,7 +2417,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.date = date;
         }
 
-        /** Add day (monday, tuesday etc) to the day cells */
+        /** Add day (MON, TUE etc) to the day header cells */
         if ((e.area === 'column' || e.area === 'data') && e.cell.text !== undefined && this.isDayCell(e)) {
             this.addWeekendAttribute(e);
         }
@@ -2508,42 +2473,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
 
-        /** added css class to start balance row */
-        if (this.isStartingBalanceHeaderColumn(e) || this.isStartingBalanceTotalDataColumn(e)) {
-            e.cellElement.parentElement.classList.add('startedBalance');
-        }
-
-        /** added css class to ending position row */
-        if (this.isTotalEndingHeaderCell(e) || this.isTotalEndingDataCell(e)) {
-            e.cellElement.parentElement.classList.add('endingCashPosition');
-        }
-
         if (this.isStartingBalanceWhiteSpace(e)) {
             e.cellElement.classList.add('startedBalanceWhiteSpace');
         }
 
-        /** added css class to the income and outcomes columns */
-        if (this.isIncomeOrExpensesHeaderCell(e) ||
-            this.isIncomeOrExpensesDataCell(e) ||
-            this.isIncomeOrExpensesTotalHeaderCell(e)
-        ) {
-            let isDataCell = this.isIncomeOrExpensesDataCell(e);
-            let level = e.cell.path && e.cell.path.length - 1;
-            let pathProp = isDataCell ? 'rowPath' : 'path';
-            let cssClass = (e.cell[pathProp] !== undefined &&
-            e.cell[pathProp][0] === PI ? 'income' : 'expenses')  + (level ? 'Child' : '');
-            e.cellElement.classList.add(cssClass);
-            e.cellElement.parentElement.classList.add(cssClass + 'Row');
-            /** disable collapsing for income and expenses columns */
-            if (this.isIncomeOrExpensesHeaderCell(e) && !level) {
-                e.cellElement.classList.add('uppercase');
-            }
-        }
-
-        /** add css classes to net change rows */
-        if (this.isNetChangeTotalCell(e)) {
-            e.cellElement.classList.add('netChange');
-            e.cellElement.parentElement.classList.add('netChangeRow');
+        /** If cell is cashflow type header total row - add css classes to parent tr */
+        if (this.isCashflowTypeRowTotal(e)) {
+            let path = e.cell.path || e.cell.rowPath;
+            e.cellElement.parentElement.classList.add(path[0].slice(2).toLowerCase() + 'Row', 'totalRow');
         }
 
         /** add account number to the cell */
@@ -2657,10 +2594,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     elementIsDataCell(element: HTMLElement): boolean {
         return Boolean(element.closest('.dx-area-data-cell'));
-    }
-
-    elementIsStartingBalanceCell(element: HTMLElement): boolean {
-        return Boolean(element.closest('.startedBalance'));
     }
 
     getCellElementFromTarget(target: Element): HTMLTableCellElement | null {
@@ -3243,23 +3176,19 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     /**
-     * Hide projected field if they all are expanded
+     * Hide projected row if all projected columns are expanded (except current)
      * @param cellObj
      */
     hideProjectedFields() {
         let projectedFields = this.getElementRef().nativeElement.querySelectorAll('.projectedField');
         if (projectedFields && projectedFields.length) {
-
-            let projectedFieldsAreAllExpanded = Array.prototype.every.call(projectedFields, projectedCell => {
+            let allProjectedFieldsAreExpanded: boolean = Array.prototype.every.call(projectedFields, projectedCell => {
                 return projectedCell.classList.contains('dx-pivotgrid-expanded');
             });
-
-            if (projectedFieldsAreAllExpanded) {
-                /** if current month and year are not corresponding to the year and month of projected field - then add hide class */
-                Array.prototype.forEach.call(projectedFields, projectedCell => {
-                    projectedCell.classList.add('projectedHidden');
-                    projectedCell.innerHTML = '';
-                });
+            if (allProjectedFieldsAreExpanded) {
+                /** Hide projected row */
+                projectedFields[0].parentElement.classList.add('hidden');
+                projectedFields[0].parentElement.nextElementSibling.querySelector('.currentDay').classList.add('topBorder');
             }
         }
     }
@@ -3290,50 +3219,67 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     onCellClick(cellObj) {
 
-        /** Dissallow collapsing of empty projected field and historical fields */
-        if (/*(this.isEmptyProjectedField(cellObj) && cellObj.cellElement.classList.contains('dx-pivotgrid-expanded')) || */this.isHistoricalCell(cellObj)) {
+        /** Disallow collapsing of empty projected field and historical fields if it collapse by user */
+        if ((this.isTodayProjectedField(cellObj) || this.isHistoricalCell(cellObj)) && cellObj.event.isTrusted) {
             cellObj.cancel = true;
         }
 
         /** If user click to the month header - then sent new getStats request for this month to load data for that month */
         let isMonthHeaderCell = this.isMonthHeaderCell(cellObj);
-        if (isMonthHeaderCell && !cellObj.cell.expanded) {
-            let pathForMonth = isMonthHeaderCell ? cellObj.cell.path : cellObj.cell.path.slice(0, -1);
-            if (!this.monthsDaysLoadedPathes.some(arr => arr.toString() === pathForMonth.toString())) {
-                moment.tz.setDefault(undefined);
-                abp.ui.setBusy();
-                /** Prevent default expanding */
-                cellObj.cancel = true;
-                let requestFilter = this.getRequestFilterFromPath(cellObj.cell.path);
-                this._cashflowServiceProxy
-                    .getStats(InstanceType[this.instanceType], this.instanceId, requestFilter)
-                    .pluck('transactionStats')
-                    .subscribe( (transactions: any) => {
+        if (isMonthHeaderCell) {
+            let requestFilter = this.getRequestFilterFromPath(cellObj.cell.path);
+            let monthIsCurrent = requestFilter.startDate.format('MM.YYYY') === moment().format('MM.YYYY');
+            let pathCopy = cellObj.cell.path.slice();
+            if (!cellObj.cell.expanded) {
+                let pathForMonth = isMonthHeaderCell ? cellObj.cell.path : cellObj.cell.path.slice(0, -1);
+                if (!this.monthsDaysLoadedPathes.some(arr => arr.toString() === pathForMonth.toString())) {
+                    moment.tz.setDefault(undefined);
+                    abp.ui.setBusy();
+                    /** Prevent default expanding */
+                    cellObj.cancel = true;
+                    this._cashflowServiceProxy
+                        .getStats(InstanceType[this.instanceType], this.instanceId, requestFilter)
+                        .pluck('transactionStats')
+                        .subscribe((transactions: any) => {
 
-                        /** Update cashflow data with the daily transactions */
-                        this.handleDailyCashflowData(transactions, requestFilter.startDate, requestFilter.endDate);
+                            /** Update cashflow data with the daily transactions */
+                            this.handleDailyCashflowData(transactions, requestFilter.startDate, requestFilter.endDate);
 
-                        /** Reload the cashflow */
-                        this.pivotGrid.instance.getDataSource().reload();
+                            /** Reload the cashflow */
+                            this.pivotGrid.instance.getDataSource().reload();
 
-                        /** Mark the month as already expanded to avoid double data loading */
-                        this.monthsDaysLoadedPathes.push(pathForMonth);
+                            /** Mark the month as already expanded to avoid double data loading */
+                            this.monthsDaysLoadedPathes.push(pathForMonth);
 
-                        /** Expand month into days */
-                        this.pivotGrid.instance.getDataSource().expandHeaderItem('column', cellObj.cell.path);
+                            /** Expand month into days */
+                            this.pivotGrid.instance.getDataSource().expandHeaderItem('column', cellObj.cell.path);
 
-                        /** If month is not current month or the month has only mtd days - then expand it into days instead of projected or mtd */
-                        let monthIsCurrent = requestFilter.startDate.format('MM.YYYY') === moment().format('MM.YYYY');
-                        let todayIsLastDayOfTheMonth = this.isLastDayOfMonth(moment());
-                        if (!monthIsCurrent || todayIsLastDayOfTheMonth) {
+                            /** If month is not current month or the month has only mtd days - then expand it into days instead of projected or mtd */
+                            let todayIsLastDayOfTheMonth = this.isLastDayOfMonth(moment());
                             let pathCopy = cellObj.cell.path.slice();
-                            let projectedValue = monthIsCurrent && todayIsLastDayOfTheMonth ? Projected.Mtd : Projected.Total;
-                            pathCopy.push(projectedValue);
-                            this.fieldPathsToClick.push(pathCopy);
-                        }
+                            if (!monthIsCurrent || todayIsLastDayOfTheMonth) {
 
-                        moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
-                    });
+                                let projectedValue = monthIsCurrent && todayIsLastDayOfTheMonth ? Projected.Mtd : Projected.Total;
+                                this.fieldPathsToClick.push(pathCopy.concat([projectedValue]));
+                            }
+
+                            moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
+                        });
+                }
+
+                if (monthIsCurrent) {
+                    this.fieldPathsToClick.push(pathCopy.concat([Projected.Today]));
+                }
+
+            } else {
+                /** If we collapse month and all projected field is hidden - collapse current projected to show them after next expand of the month */
+                if (monthIsCurrent) {
+                    if (cellObj.cellElement.parentElement.nextElementSibling.classList.contains('hidden')) {
+                        /** Collapse projected fields */
+                        this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', pathCopy.concat([Projected.Mtd]));
+                        this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', pathCopy.concat([Projected.Forecast]));
+                    }
+                }
             }
         }
 
@@ -3378,7 +3324,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             this.handleDoubleSingleClick(cellObj, null, this.handleDataCellDoubleClick.bind(this));
         }
-
     }
 
     handleDataCellDoubleClick(cellObj) {
@@ -3715,12 +3660,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             startDate.date(day);
             endDate.date(day).endOf('day');
         } else {
+            let currentDate = moment().date();
             /** Exclude projected */
             if (projected === Projected.Forecast) {
-                endDate.date(moment().date());
+                startDate.date(currentDate + 1);
                 /** or mtd dates */
             } else if (projected === Projected.Mtd) {
-                startDate.date(moment().date() + 1);
+                endDate.date(currentDate - 1);
+            } else if (projected === Projected.Today) {
+                startDate.date(currentDate);
+                endDate.date(currentDate);
             }
         }
 
