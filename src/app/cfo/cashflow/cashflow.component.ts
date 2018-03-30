@@ -2422,7 +2422,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @returns {boolean}
      */
     isHistoricalCell(cellObj) {
-        return cellObj.rowIndex === 0;
+        return cellObj.area === 'column' && cellObj.rowIndex === 0;
     }
 
     addActionButton(name, container: HTMLElement, attributes: object = {}) {
