@@ -2,7 +2,8 @@ export class InplaceEditModel {
     id: number;
     value: string;
     validationRules: InplaceEditValidationRule[];
-    isEditDialogEnabled: boolean;
+    isEditDialogEnabled: boolean = false;
+    isDeleteEnabled: boolean = false;
     lEntityName: string;
     lEditPlaceholder: string;
     lDeleteConfirmTitle: string;

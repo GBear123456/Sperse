@@ -1,6 +1,40 @@
 :host {
     .inplace-edit-view-mode {
+        cursor: pointer;
         display: inline-block;
+
+        .actions  {
+            float: right;
+            bottom: 2px;
+            left: 5px;
+            visibility: hidden;
+      
+            i {
+                font-size: 18px;
+                padding: 7px;
+                cursor: pointer;
+            }
+      
+            i.edit {
+                color: #00aeef;
+            }
+          
+            i.delete {
+                color: #f44336;
+            }
+        }      
+
+        &:hover {
+            .actions {
+                visibility: visible;
+            }      
+        }
+
+        .placeholder {
+            font-style: italic;
+            font-size: 12px;
+            font-weight: 200;
+        }
     }
 
     .inplace-edit-edit-mode {

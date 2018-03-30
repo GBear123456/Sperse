@@ -11462,6 +11462,52 @@ export class PersonContactServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    updatePersonInfo(input: UpdatePersonInfoInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonContact/UpdatePersonInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdatePersonInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdatePersonInfo(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdatePersonInfo(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getContactInfoByUser(userId: number): Observable<ContactShortInfoDto> {
@@ -26610,7 +26656,6 @@ export interface IScoreSimulatorDto {
 }
 
 export class CustomerInfoDto implements ICustomerInfoDto {
-    name: string;
     status: string;
     score: number;
     primaryContactInfo: PersonContactInfoDto;
@@ -26631,7 +26676,6 @@ export class CustomerInfoDto implements ICustomerInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.name = data["name"];
             this.status = data["status"];
             this.score = data["score"];
             this.primaryContactInfo = data["primaryContactInfo"] ? PersonContactInfoDto.fromJS(data["primaryContactInfo"]) : <any>undefined;
@@ -26655,7 +26699,6 @@ export class CustomerInfoDto implements ICustomerInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
         data["status"] = this.status;
         data["score"] = this.score;
         data["primaryContactInfo"] = this.primaryContactInfo ? this.primaryContactInfo.toJSON() : <any>undefined;
@@ -26673,7 +26716,6 @@ export class CustomerInfoDto implements ICustomerInfoDto {
 }
 
 export interface ICustomerInfoDto {
-    name: string;
     status: string;
     score: number;
     primaryContactInfo: PersonContactInfoDto;
@@ -34480,6 +34522,65 @@ export interface IFlatPermissionWithLevelDto {
     displayName: string;
     description: string;
     isGrantedByDefault: boolean;
+}
+
+export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
+    id: number;
+    namePrefix: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    nameSuffix: string;
+    nickName: string;
+
+    constructor(data?: IUpdatePersonInfoInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.namePrefix = data["namePrefix"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
+            this.nameSuffix = data["nameSuffix"];
+            this.nickName = data["nickName"];
+        }
+    }
+
+    static fromJS(data: any): UpdatePersonInfoInput {
+        let result = new UpdatePersonInfoInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["namePrefix"] = this.namePrefix;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
+        data["nameSuffix"] = this.nameSuffix;
+        data["nickName"] = this.nickName;
+        return data; 
+    }
+}
+
+export interface IUpdatePersonInfoInput {
+    id: number;
+    namePrefix: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    nameSuffix: string;
+    nickName: string;
 }
 
 export class PipelineData implements IPipelineData {

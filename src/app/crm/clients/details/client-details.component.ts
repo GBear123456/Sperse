@@ -75,6 +75,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         });
     }
 
+    private getCustomerName() {
+        return this.customerInfo.primaryContactInfo.fullName;
+    }
+
     close() {
         this._dialog.closeAll();
         this._router.navigate(['app/crm/clients']);
@@ -91,7 +95,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         let elm = this.getElementRef(),
             handel = window.open();
         handel.document.open();
-        handel.document.write('<h1>' + this.customerInfo.name + '</h1>' +
+        handel.document.write('<h1>' + this.getCustomerName() + '</h1>' +
             elm.nativeElement.getElementsByClassName('main-content')[0].innerHTML);
         handel.document.close();
         handel.print();
@@ -112,7 +116,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     delete() {
         this.message.confirm(
-            this.l('ClientDeleteWarningMessage', this.customerInfo.name),
+            this.l('ClientDeleteWarningMessage', this.getCustomerName()),
             isConfirmed => {
                 if (isConfirmed) {
                     this._customerService.deleteCustomer(this.customerId).subscribe(() => {

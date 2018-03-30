@@ -1,9 +1,9 @@
 <div *ngIf="!isEditModeEnabled" class="inplace-edit-view-mode">
-    <div class="actions" *ngIf="data?.isEditDialogEnabled">
-        <i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog($event)"></i>
-        <i class="delete fa fa-times" aria-hidden="true" (click)="deleteItem($event)"></i>
+    <div class="actions">
+        <i *ngIf="data?.isEditDialogEnabled" class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog($event)"></i>
+        <i *ngIf="data?.isDeleteEnabled" class="delete fa fa-times" aria-hidden="true" (click)="deleteItem($event)"></i>
     </div>
-    <span (click)="setEditModeEnabled(true)">{{data.value || l(data?.lEditPlaceholder)}}</span>
+    <span [ngClass]="{ 'placeholder': !data?.value }" (click)="setEditModeEnabled(true)">{{data?.value || l(data?.lEditPlaceholder)}}</span>
 </div>
 <div *ngIf="isEditModeEnabled" class="inplace-edit-edit-mode">
     <dx-validation-group>        

@@ -247,10 +247,10 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     getDialogPossition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('.address-wrapper');
-        return this.calculateDialogPosition(event, parent, shiftY);
+        return this.calculateDialogPosition(event, parent, 0, shiftY);
     }
 
-      calculateShiftY(event) {
+    calculateShiftY(event) {
         let shift = 245;
 
         let availableSpaceY = window.innerHeight - event.clientY;
