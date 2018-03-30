@@ -3188,7 +3188,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (allProjectedFieldsAreExpanded) {
                 /** Hide projected row */
                 projectedFields[0].parentElement.classList.add('hidden');
-                projectedFields[0].parentElement.nextElementSibling.querySelector('.currentDay').classList.add('topBorder');
+                let dayRowElement = projectedFields[0].parentElement.nextElementSibling;
+                if (dayRowElement) {
+                    let currentDayElement = dayRowElement.querySelector('.currentDay');
+                    if (currentDayElement) {
+                        currentDayElement.classList.add('topBorder');
+                    }
+                }
             }
         }
     }
@@ -3274,7 +3280,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             } else {
                 /** If we collapse month and all projected field is hidden - collapse current projected to show them after next expand of the month */
                 if (monthIsCurrent) {
-                    if (cellObj.cellElement.parentElement.nextElementSibling.classList.contains('hidden')) {
+                    let projectedRow = cellObj.cellElement.parentElement.nextElementSibling;
+                    if (projectedRow && projectedRow.classList.contains('hidden')) {
                         /** Collapse projected fields */
                         this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', pathCopy.concat([Projected.Mtd]));
                         this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', pathCopy.concat([Projected.Forecast]));
