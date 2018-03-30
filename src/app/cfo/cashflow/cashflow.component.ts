@@ -2,7 +2,6 @@ import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, HostL
 import { AppConsts } from '@shared/AppConsts';
 import { IGroupbyItem } from './models/groupbyItem';
 import { IEventDescription } from './models/event-description';
-
 import {
     CashflowServiceProxy,
     StatsFilter,
@@ -35,7 +34,7 @@ import { OperationsComponent } from './operations/operations.component';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 
 import { DxPivotGridComponent, DxDataGridComponent } from 'devextreme-angular';
-
+import DevExpress from 'devextreme/bundles/dx.all';
 import TextBox from 'devextreme/ui/text_box';
 import NumberBox from 'devextreme/ui/number_box';
 import Tooltip from 'devextreme/ui/tooltip';
@@ -1230,8 +1229,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (columnPath.length === monthIndex + 1) {
                     this.monthsDaysLoadedPathes.push(columnPath);
                     let requestFilter = this.getRequestFilterFromPath(columnPath);
-                    dailyStatsFilters.push(requestFilter);
-                    dailyStatsObservers.push(this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, requestFilter));
+                    if (requestFilter) {
+                        dailyStatsFilters.push(requestFilter);
+                        dailyStatsObservers.push(this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, requestFilter));
+                    }
                 }
             });
         }
@@ -3735,7 +3736,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      *  @return {number}
      */
     calculateSummaryValue() {
-        return summaryCell => {
+        return (summaryCell: DevExpress.ui.dxPivotGridSummaryCell )=> {
 
             if (!this.cashflowGridSettings.general.showBalanceDiscrepancy && this.isCellDiscrapencyCell(summaryCell)) {
                 return null;
