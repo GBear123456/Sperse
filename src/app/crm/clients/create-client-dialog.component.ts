@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Injector, Output, EventEmitter, ElementRe
 import { ModalDirective } from 'ngx-bootstrap';
 import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput, 
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactPhotoInput, CreateContactAddressInput, ContactEmailServiceProxy,
-    ContactPhoneServiceProxy, CountryServiceProxy, CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
+    ContactPhotoInput, ContactPhoneServiceProxy, CountryServiceProxy, CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
@@ -142,11 +142,13 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     getCountryCode(name) {
-        return _.findWhere(this.countries, {name: name})['code'];
+        let country = _.findWhere(this.countries, {name: name});
+        return country && country['code'];
     }
 
     getStateCode(name) {
-        return _.findWhere(this.states, {name: name})['code'];
+        let state = _.findWhere(this.states, {name: name});
+        return state && state['code'];
     }
 
     save(event): void {
@@ -170,13 +172,22 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 companyName: this.company,
                 organizationEmailAddresses: this.getEmailContactInput('bussines'),
                 organizationPhoneNumbers: this.getPhoneContactInput('bussines'),
-                organizationAddress: this.getAddressContactInput('bussines')
+                organizationAddress: this.getAddressContactInput('bussines'),
+                photo: ContactPhotoInput.fromJS({
+                    originalImage: this.getBase64(this.photoOriginalData),
+                    thumbnail: this.getBase64(this.photoThumbnailData)
+                })
             })
         ).finally(() => {  })
             .subscribe(result => {
                 this.redirectToContactInformation(result.id);
             }
         );
+    }
+
+    getBase64(data) {
+        let prefix = ';base64,';
+        return data.slice(data.indexOf(prefix) + prefix.length);
     }
 
     getEmailContactInput(type) {
@@ -202,9 +213,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     getAddressContactInput(type) {
         let address = this.contacts.addresses[type];
-        return {
-            streetAddress: address.streetNumber + 
-                ' ' + address.streetAddress,
+        let streetAddress = !address.streetNumber &&
+          !address.streetAddress ? undefined: 
+          address.streetNumber + ' ' + address.streetAddress;
+        return streetAddress ? {
+            streetAddress: streetAddress,
             city: address.city,
             stateId: this.getStateCode(address.state),
             zip: address.zip,
@@ -212,16 +225,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             isActive: true,
             comment: address.comment,
             usageTypeId: address.addressType
-        } as CreateContactAddressInput;
+        } as CreateContactAddressInput: undefined;
     }
 
     redirectToContactInformation(id: number) {
         this._router.navigate(['app/crm/client/' + id + '/contact-information']);
         this.close();
-    }
-
-    twoDigitsFormat(value) {
-        return ('0' + value).slice(-2);
     }
 
     focusInput(event) {
@@ -364,7 +373,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             },
             hasBackdrop: true
         }).afterClosed().subscribe((result) => {
-            this.photoOriginalData = result;
+            this.photoOriginalData = result.origImage;
+            this.photoThumbnailData = result.thumImage;
         });
         $event.stopPropagation();
     }

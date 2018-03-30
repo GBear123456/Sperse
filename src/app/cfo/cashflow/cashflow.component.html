@@ -88,8 +88,9 @@
                             dataType="date"
                             cellTemplate="dateCell"
                             headerCellTemplate="twoRowsHeaderCellTemplate"
-                            alignment="right"
-                            [caption]="this.l('DetailsHeaders_ForecastDate')">
+                            alignment="left"
+                            [caption]="this.l('DetailsHeaders_ForecastDate')"
+                            [minWidth]="130">
                     <dxi-validation-rule type="required"></dxi-validation-rule>
                     <dxi-validation-rule type="custom" [validationCallback]="validateForecastDate"></dxi-validation-rule>
                 </dxi-column>
@@ -97,15 +98,17 @@
                             dataType="date"
                             cellTemplate="dateCell"
                             headerCellTemplate="twoRowsHeaderCellTemplate"
-                            alignment="right"
+                            alignment="left"
                             [caption]="this.l('DetailsHeaders_ActualDate')"
-                            [allowEditing]="false">
+                            [allowEditing]="false"
+                            [minWidth]="120">
                 </dxi-column>
                 <dxi-column dataField="status"
                             headerCellTemplate="twoRowsHeaderCellTemplate"
                             alignment="left"
                             [caption]="this.l('DetailsHeaders_CurrentStatus')"
-                            [allowEditing]="false">
+                            [allowEditing]="false"
+                            [minWidth]="130">
                 </dxi-column>
                 <dxi-column dataField="description" [width]="detailsDescriptionColumnWidth()" [caption]="this.l('DetailsHeaders_Description')">
                     <dxo-header-filter [visible]="true"></dxo-header-filter>

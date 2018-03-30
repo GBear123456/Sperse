@@ -54,7 +54,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
     getDialogPossition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('li');
-        return this.calculateDialogPosition(event, parent, shiftY);
+        return this.calculateDialogPosition(event, parent, 0, shiftY);
     }
 
     calculateShiftY(event) {

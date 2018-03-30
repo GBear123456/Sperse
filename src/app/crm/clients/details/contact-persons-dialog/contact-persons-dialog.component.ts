@@ -38,9 +38,8 @@ export class ContactPersonsDialogComponent extends AppComponentBase {
     }
 
     selectContactPerson(contactPerson): void {
-        this.data.name = contactPerson.fullName;
-
         let primaryContactInfo = this.data.primaryContactInfo;
+        primaryContactInfo.fullName = contactPerson.fullName;
         primaryContactInfo.id = contactPerson.id;
         primaryContactInfo.primaryPhoto = contactPerson.photo;
 
