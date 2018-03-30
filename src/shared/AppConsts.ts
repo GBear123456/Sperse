@@ -7,6 +7,9 @@ export class AppConsts {
     static readonly isMobile = RegExp('Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini', 'i').test(navigator.userAgent);
     static readonly defaultErrorMessage = 'No further information available.';
 
+    static readonly thumbWidth  = 44;
+    static readonly thumbHeight = 44;
+
     static remoteServiceBaseUrl: string;
     static remoteServiceBaseUrlFormat: string;
     static appBaseUrl: string;
