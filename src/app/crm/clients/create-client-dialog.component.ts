@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Injector, Output, EventEmitter, ElementRe
 import { ModalDirective } from 'ngx-bootstrap';
 import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput, 
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactPhotoInput, CreateContactAddressInput, ContactEmailServiceProxy,
-    ContactPhotoInput, ContactPhoneServiceProxy, CountryServiceProxy, CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
+    ContactPhoneServiceProxy, CountryServiceProxy, CountryStateDto, CountryDto, SimilarCustomerInfo, ContactPhotoInput } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
@@ -12,6 +12,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from './details/upload-photo-dialog/upload-photo-dialog.component';
+import { SimilarCustomersDialogComponent } from './details/similar-customers-dialog/similar-customers-dialog.component';
 
 import * as _ from 'underscore';
 
@@ -67,6 +68,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             bussines: {}
         }
     };
+
+    phoneCurrentValue: string;
+    emailCurrentValue: string;
+    similarCustomers: SimilarCustomerInfo[];
+    similarCustomersDialog: any;
 
     toolbarConfig = [
         {
@@ -233,6 +239,77 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.close();
     }
 
+    showSimilarCustomers(event) {
+        if (this.similarCustomersDialog)
+            this.similarCustomersDialog.close();
+
+        this.similarCustomersDialog = this.dialog.open(SimilarCustomersDialogComponent, {
+          data: {
+              similarCustomers: this.similarCustomers,
+              componentRef: this
+          },
+          hasBackdrop: false,
+          position: this.getDialogPossition(event, 170)
+        });
+        event.stopPropagation();
+    }
+
+    getDialogPossition(event, shiftX) {
+        return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
+    }
+
+    checkSimilarCustomers (fieldName = null, $event = null) {
+        if (fieldName && $event)
+            this[fieldName + 'CurrentValue'] = this.getInputElementValue($event);
+
+        let emails = this.getEmailsForCriterias();
+        let phones = this.getPhonesForCriterias();
+        this._customersService.getSimilarCustomers(null, null, null, null, null, null, emails, phones, null, null, null, null, null)
+        .subscribe(response => {
+            if (response) {
+                this.similarCustomers = response;
+            }
+        });
+    }
+
+    getEmailsForCriterias() {
+        let emails = [];
+
+        this.contacts.emails.personal.forEach(element => {
+            emails.push(element.email);
+        });
+
+        this.contacts.emails.bussines.forEach(element => {
+            emails.push(element.email);
+        });
+
+        if (this.emailCurrentValue)
+            emails.push(this.emailCurrentValue);
+
+        return emails;
+    }
+
+    getPhonesForCriterias() {
+        let phones = [];
+
+        this.contacts.phones.personal.forEach(element => {
+            phones.push(element.number);
+        });
+
+        this.contacts.phones.bussines.forEach(element => {
+            phones.push(element.number);
+        });
+
+        if (this.phoneCurrentValue)
+            phones.push(this.phoneCurrentValue);
+
+        return phones;
+    }
+
+    getInputElementValue(event) {
+        return event.element.getElementsByTagName('input')[0].value;
+    }
+
     focusInput(event) {
         if (!(event.component._value && event.component._value.trim())) {
             let input = event.event.originalEvent.target;
@@ -305,6 +382,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     removeContact(field, type, index) {
         this.contacts[field][type].splice(index, 1);
+
+        this.checkSimilarCustomers();
     }
 
     getValidateFieldValue(field, type) {
@@ -356,14 +435,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this[validator] = $event.component;
     }
 
-    onEmailKeyUp($event) {        
-        this.showEmailAddButton = this.validateEmailAddress(
-            $event.element.getElementsByTagName('input')[0].value);
+    onEmailKeyUp($event) {
+        this.showEmailAddButton = this.validateEmailAddress(this.getInputElementValue($event));
     }
 
-    onPhoneKeyUp($event) {        
-        this.showPhoneAddButton = this.validatePhoneNumber(
-            $event.element.getElementsByTagName('input')[0].value);
+    onPhoneKeyUp($event) {
+        this.showPhoneAddButton = this.validatePhoneNumber(this.getInputElementValue($event));
     }
 
     showUploadPhoto($event) {

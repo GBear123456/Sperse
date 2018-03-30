@@ -1,6 +1,7 @@
 <div class="photo-area" (click)="showUploadPhoto($event)" [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 <modal-dialog>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <div *ngIf="similarCustomers?.length" class="similar-clients-message" (click)="showSimilarCustomers($event)">Similar records found. Click here for details</div>
     <mat-sidenav class="main_sidenav" mode="side" align="end" opened="true">
       <mat-tab-group>
         <mat-tab *ngFor="let type of ['personal', 'bussines']" label="{{l(type) | uppercase}}">
@@ -19,7 +20,7 @@
                       <dx-text-box #emailComponent
                         name="email"
                         [width]="'260px'"
-                        (onKeyUp)="onEmailKeyUp($event)"
+                        (onKeyUp)="onEmailKeyUp($event);checkSimilarCustomers('email', $event)"
                         [(value)]="emailAddress"
                         (onInitialized)="onComponentInitialized($event, 'emails', type)">
                         <dx-validator>
@@ -51,7 +52,7 @@
                     [mask]="masks.phone"
                     [width]="'205px'"
                     [(value)]="phoneNumber"
-                    (onKeyUp)="onPhoneKeyUp($event)"
+                    (onKeyUp)="onPhoneKeyUp($event);checkSimilarCustomers('phone', $event)"
                     (onFocusIn)="focusInput($event)"
                     (onInitialized)="onComponentInitialized($event, 'phones', type)">
                   </dx-text-box>
