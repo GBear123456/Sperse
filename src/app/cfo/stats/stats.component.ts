@@ -255,19 +255,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             {
                 location: 'after',
                 items: [
-                    { name: 'flag' },
-                    {
-                        name: 'pen',
-                        options: {
-                            hint: this.l('Label')
-                        }
-                    },
-                    { name: 'more' }
-                ]
-            },
-            {
-                location: 'after',
-                items: [
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',
@@ -496,7 +483,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 let lastStats = result[result.length - 1];
                 if (lastStats.isForecast) {
                     let nextDate = lastStats.date.clone();
-                    
                     while (moment(this.requestFilter.endDate).utc().isAfter(nextDate)) {
                         let st = _.clone(lastStats);
                         nextDate = nextDate.clone().add(1, 'M');
@@ -614,7 +600,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 this.sliderReportPeriod.start = start;
             if (!dateFilter.items['to'].value)
                 this.sliderReportPeriod.end = end;
-        }       
+        }
     }
 
     setBankAccountsFilter(data) {
