@@ -164,12 +164,13 @@
                                         <div class="tooltip-wrap classification-status">
                                             <header>{{l('Classification_Status')}}</header>
                                             <ul class="classification-list">
-                                                <li class="classification-item classified" (click)="applyTotalFilters(true, false, true)">
+
+                                                <li class="classification-item classified" (click)="applyTotalFilters(true, true, false)">
                                                     <span class="classified-item-title"><span class="border">{{l('Classified')}}</span></span>
                                                     <span class="classification-item-number">{{creditClassifiedTransactionCount | number}}</span>
                                                     <span class="classification-item-percent">{{creditClassifiedTransactionCount / creditTransactionCount | percent}}</span>
                                                 </li>
-                                                <li class="classification-item unclassified" (click)="applyTotalFilters(false, false, true)">
+                                                <li class="classification-item unclassified" (click)="applyTotalFilters(false, true, false)">
                                                     <span class="unclassified-item-title"><span class="border">{{l('Unclassified')}}</span></span>
                                                     <span class="classification-item-number">{{creditTransactionCount - creditClassifiedTransactionCount}}</span>
                                                     <span class="classification-item-percent">{{(creditTransactionCount - creditClassifiedTransactionCount) / creditTransactionCount | percent}}</span>
@@ -253,12 +254,12 @@
                                         <div class="tooltip-wrap classification-status">
                                             <header>{{l('Classification_Status')}}</header>
                                             <ul class="classification-list">
-                                                <li class="classification-item classified" (click)="applyTotalFilters(true, false, true)">
+                                                <li class="classification-item classified" (click)="applyTotalFilters(true, false, false)">
                                                     <span class="classified-item-title"><span class="border">{{l('Classified')}}</span></span>
                                                     <span class="classification-item-number">{{debitClassifiedTransactionCount + creditClassifiedTransactionCount | number}}</span>
                                                     <span class="classification-item-percent">{{(debitClassifiedTransactionCount + creditClassifiedTransactionCount) / transactionCount | percent}}</span>
                                                 </li>
-                                                <li class="classification-item unclassified" (click)="applyTotalFilters(false, false, true)">
+                                                <li class="classification-item unclassified" (click)="applyTotalFilters(false, false, false)">
                                                     <span class="unclassified-item-title"><span class="border">{{l('Unclassified')}}</span></span>
                                                     <span class="classification-item-number">{{transactionCount - (debitClassifiedTransactionCount + creditClassifiedTransactionCount)}}</span>
                                                     <span class="classification-item-percent">{{(transactionCount - (debitClassifiedTransactionCount + creditClassifiedTransactionCount)) / transactionCount | percent}}</span>
