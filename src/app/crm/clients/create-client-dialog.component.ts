@@ -288,14 +288,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     checkSimilarCustomers () {
-        let emails = this.getCurrentEmails();
-        let phones = this.getCurrentPhones();
-        this._customersService.getSimilarCustomers(null, null, null, null, null, 
-            this.company, emails, phones, null, null, null, null, null)
+        this._customersService.getSimilarCustomers(null, null, null, null, null, this.company, 
+            this.getCurrentEmails(), this.getCurrentPhones(), null, null, null, null, null)
         .subscribe(response => {
-            if (response) {
+            if (response)
                 this.similarCustomers = response;
-            }
         });
     }
 
@@ -451,13 +448,19 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     onEmailKeyUp($event, type) {                
-        if (this.showEmailAddButton[type] = this.validateEmailAddress(this.getInputElementValue($event)))
+        let value = this.getInputElementValue($event);
+        if (this.showEmailAddButton[type] = this.validateEmailAddress(value)) {
+            this.emailAddress[type] = value;
             this.checkSimilarCustomers();
+        }
     }
 
     onPhoneKeyUp($event, type) {        
-        if (this.showPhoneAddButton[type] = this.validatePhoneNumber(this.getInputElementValue($event)))
+        let value = this.getInputElementValue($event);
+        if (this.showPhoneAddButton[type] = this.validatePhoneNumber(value)) {
+            this.phoneNumber[type] = value;
             this.checkSimilarCustomers();
+        }
     }
 
     showUploadPhoto($event) {
