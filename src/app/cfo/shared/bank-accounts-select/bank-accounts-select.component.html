@@ -9,24 +9,19 @@
                             <div class="dx-field">
                                 <div class="dx-field-label"><span class="business-entity-test">{{l('Financial_Accounts_For')}}</span></div>
                                 <div class="dx-field-value">
-                                    <ng-container *ngIf="!moreThanOneBusinessEntityExist">
+                                    <ng-container *ngIf="!businessEntityExist">
                                         <div class="label-container">
                                             <span class="tag-value"> {{l('All_Entities')}} </span>
                                         </div>
                                     </ng-container>
-                                    <ng-container *ngIf="moreThanOneBusinessEntityExist">
+                                    <ng-container *ngIf="businessEntityExist">
                                         <dx-tag-box [items]="businessEntities"
                                                     displayExpr="name"
                                                     valueExpr="id"
                                                     placeholder="All Entities"
                                                     showSelectionControls="true"
                                                     tagTemplate="customTagTemplate"
-                                                    dropDownButtonTemplate="dropDownButton"
                                                     (onClosed)="businessEntitySelectedChange($event)">
-
-                                            <div *dxTemplate="let dd of 'dropDownButton'">
-                                                <div class="expand-div blue"></div>
-                                            </div>
 
                                             <div *dxTemplate="let tag of 'customTagTemplate'">
                                                 <span class="tag-value"> {{tag.name}}  </span>

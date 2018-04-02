@@ -102,7 +102,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
         this.initToolbarConfig();
 
-        this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email', 'Phone', 'City', 'State', 'StateId'];
+        this.searchColumns = ['FullName', 'CompanyName', 'Email', 'Phone', 'City', 'State', 'StateId'];
         this.searchValue = '';
     }
 
@@ -170,7 +170,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'name',
-                    items: { Name: new FilterItemModel()}
+                    items: { FullName: new FilterItemModel()}
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,

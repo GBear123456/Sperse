@@ -33,7 +33,7 @@
 @reconciliationDataCellBackgroundColor: #ecf7fc;
 @totalDataCellBackgroundColor: #ecf7fc;
 @reconciliationDataCellTextColor: #a9b2ba;
-@currentPeriodCellBackgroundColor: rgba(250, 184, 0, .04);
+@currentPeriodCellBackgroundColor: rgba(249,175,7, 0.08);
 @currentDayCellBackgroundColor: #fffaec;
 @totalsTextColor: #686f76;
 @middleGrayColor: #686f76;
@@ -157,12 +157,7 @@
                 &.dx-area-column-cell,
                 &.dx-area-data-cell {
                     tr {
-                        &.startedBalance,
-                        &.incomeRow,
-                        &.expensesRow,
-                        &.netChangeRow,
-                        &.endingCashPosition,
-                        &.reconciliation,
+                        &.totalRow,
                         &.yearRow {
                             td {
                                 background: rgba(221, 221, 221, .32) !important;
@@ -170,11 +165,9 @@
                             }
                         }
 
-                        &.endingCashPosition {
-                            td {
-                                &, & span {
-                                    color: inherit;
-                                }
+                        &.tRow {
+                            td, td span {
+                                color: inherit;
                             }
                         }
                     }
@@ -184,7 +177,7 @@
             & > tr:nth-child(3) {
                 position: fixed;
                 z-index: 2;
-                border-top: 1px solid #ddd;
+                border-top: 1px solid @tableBorderColor;
                 margin-top: -1px;
                 background: #fff;
                 /** upper left column */
@@ -206,7 +199,7 @@
                         color: #424c56;
                         z-index: 2;
                         left: 11px;
-                        border: 1px solid #ddd;
+                        border: 1px solid @tableBorderColor;
                         bottom: 17px;
                         margin: auto;
                         .dx-searchbox .dx-texteditor-input {
@@ -223,6 +216,7 @@
                         td {
                             font-size: 10px;
                             position: relative;
+                            background-clip: padding-box;
                             background-color: @historicalDataCellBackgroundColor;
                             &.cashflow {
                                 color: #00aeef;
@@ -243,7 +237,7 @@
 
                             &.year {
                                 color: @yearTextColor;
-                                background: @incomeVerticalHeaderBackgroundColor;
+                                background-color: @incomeVerticalHeaderBackgroundColor;
                                 font-weight: 600;
                                 font-size: 20px;
                             }
@@ -252,29 +246,43 @@
                                 background-color: @forecastDataCellBackgroundColor;
                             }
 
+                            &.lowestOpenedCurrent,
                             &.currentProjected {
-                                background-color: @currentPeriodCellBackgroundColor;
-                            }
-
-                            &.lowestOpenedCurrent:not(.year):not([class*='next']) {
                                 position: relative;
-                                &:before {
+
+                                background-color: @currentPeriodCellBackgroundColor;
+                                &:before,
+                                &:after {
                                     content: '';
                                     position: absolute;
-                                    top: 0;
-                                    left: 0;
-                                    width: 100%;
-                                    border-top: 3px solid @currentTextColor
+                                    height: calc(~'100% + 1px');
+                                    top: -1px;
+                                }
+
+                                &:before {
+                                    left: -1px;
+                                    width: calc(~'100% + 1px');
+                                    border-top: 4px solid @currentTextColor;
+                                    border-left: 1px solid @currentTextColor;
+                                }
+
+                                &:after {
+                                    right: -1px;
+                                    width: 1px;
+                                    border-right: 1px solid @currentTextColor
+                                }
+
+                                &.currentDay:before {
+                                    border-top: none;
                                 }
                             }
 
-                            &.lowestOpenedCurrent {
-                                border-left: 1px double @currentTextColor !important;
-                                border-right: 1px double @currentTextColor !important;
+                            &.currentProjected {
+                                cursor: default;
                             }
 
-                            &.currentDay {
-                                background-color: @currentDayCellBackgroundColor;
+                            &.currentDay.topBorder {
+                                border-top: 4px solid @currentTextColor;
                             }
 
                             &.month,
@@ -283,12 +291,6 @@
                                 color: @generalColor;
                                 font-weight: 600;
                                 font-size: 18px;
-                            }
-
-                            &.dataFieldHidden {
-                                padding: 0;
-                                height: 0;
-                                max-height: 0;
                             }
 
                             &.historicalField {
@@ -303,6 +305,7 @@
 
                                 &.current {
                                     background: @currentTextColor;
+                                    border: 1px double @currentTextColor;
                                     color: #fff;
                                 }
 
@@ -311,18 +314,20 @@
                                 }
                             }
 
-                            span.dayEnding {
-                                font-size: 10px;
-                                position: absolute;
-                            }
+                            span {
+                                &.dayEnding {
+                                    font-size: 10px;
+                                    position: absolute;
+                                }
 
-                            span.dayName {
-                                font-size: 9px;
-                                color: #8d9297;
-                                position: absolute;
-                                right: 7px;
-                                bottom: 7px;
-                                font-weight: 400;
+                                &.dayName {
+                                    font-size: 9px;
+                                    color: #8d9297;
+                                    position: absolute;
+                                    right: 7px;
+                                    bottom: 7px;
+                                    font-weight: 400;
+                                }
                             }
 
                             &[data-is-weekend='true'] {
@@ -334,6 +339,10 @@
                                 cursor: default;
                                 padding: 0;
                             }
+                        }
+
+                        &.projectedRow.hidden {
+                            display: none;
                         }
                     }
                 }
@@ -393,14 +402,6 @@
                                 &.startedBalanceWhiteSpace {
                                     border-top: none
                                 }
-                            }
-
-                            &.income {
-                                background: @incomeVerticalHeaderBackgroundColor;
-                            }
-
-                            &.expenses {
-                                background: @expensesVerticalHeaderBackgroundColor;
                             }
 
                             &.emptyChildren {
@@ -475,7 +476,7 @@
                             }
                         }
 
-                        &.incomeRow, &.incomeChildRow, &.expensesRow, &.expensesChildRow {
+                        &.iRow, &.incomeChildRow, &.eRow, &.expensesChildRow {
                             .dx-pivotgrid-collapsed .dx-expand-icon-container {
                                 span {
                                     width: 15px;
@@ -507,7 +508,11 @@
                             }
                         }
 
-                        &.incomeRow, &.incomeChildRow {
+                        &.iRow td {
+                            background: @incomeVerticalHeaderBackgroundColor;
+                        }
+
+                        &.iRow, &.incomeChildRow {
                             .dx-pivotgrid-expanded .dx-expand-icon-container {
                                 span:before {
                                     border-bottom: 2px solid #61c670 !important;
@@ -536,7 +541,11 @@
                             }
                         }
 
-                        &.expensesRow, &.expensesChildRow {
+                        &.eRow td {
+                            background: @expensesVerticalHeaderBackgroundColor;
+                        }
+
+                        &.eRow, &.expensesChildRow {
                             .dx-pivotgrid-expanded .dx-expand-icon-container {
                                 span:before {
                                     border-bottom: 2px solid #e7326a !important;
@@ -564,40 +573,32 @@
                             }
                         }
 
-                        &.startedBalance,
-                        &.incomeRow,
-                        &.expensesRow,
-                        &.netChangeRow,
-                        &.endingCashPosition {
-                            td {
-                                letter-spacing: 0.8px;
-                                font-weight: 600;
-                            }
+                        &.totalRow td {
+                            letter-spacing: 0.8px;
+                            font-weight: 600;
+                            text-align: left;
+                            text-transform: uppercase;
                         }
 
-                        &.startedBalance td {
+                        &.bRow td {
                             background: @startedBalanceBackgroundColor;
                         }
 
-                        &.netChangeRow td {
+                        &.ncRow td {
                             background: transparent;
                         }
 
-                        &.endingCashPosition {
-                            td {
-                                background: #00aff0;
-                                color: #fff;
-                                padding-left: 22px;
-                            }
+                        &.tRow td {
+                            background: #00aff0;
+                            color: #fff;
+                            padding-left: 22px;
                         }
 
-                        &.reconciliation {
-                            td {
-                                letter-spacing: 0.2px;
-                                padding-left: 22px;
-                                font-weight: 600;
-                                background: @reconciliationVerticalHeaderBackgroundColor;
-                            }
+                        &.dRow td {
+                            letter-spacing: 0.2px;
+                            padding-left: 22px;
+                            font-weight: 600;
+                            background: @reconciliationVerticalHeaderBackgroundColor;
                         }
                     }
                 }
@@ -637,6 +638,11 @@
                             letter-spacing: 0.2px;
                             line-height: 23px;
                             padding-left: 19px;
+
+                            &[class*="next"] {
+                                background: @forecastDataCellBackgroundColor;
+                            }
+
                             &.red {
                                 &,
                                 & span {
@@ -668,30 +674,10 @@
                                 color: @middleGrayColor;
                             }
 
-                            &.income {
-                                background: @incomeDataCellBackgroundColor;
-                            }
-
-                            &.expenses {
-                                background: @expensesDataCellBackgroundColor;
-                            }
-
-                            &.netChange {
-                                background: transparent;
-                            }
-
                             &.lowestOpenedCurrent {
                                 background-color: @currentPeriodCellBackgroundColor;
                                 border-left: 1px double @currentTextColor;
                                 border-right: 1px double @currentTextColor;
-
-                                &.income {
-                                    background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@incomeDataCellBackgroundColor, @incomeDataCellBackgroundColor);
-                                }
-
-                                &.expenses {
-                                    background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@expensesDataCellBackgroundColor, @expensesDataCellBackgroundColor);
-                                }
                             }
 
                             &.currentDay {
@@ -729,36 +715,43 @@
                             }
                         }
 
-                        &.startedBalance,
-                        &.incomeRow,
-                        &.expensesRow,
-                        &.netChangeRow,
-                        &.endingCashPosition,
-                        &.reconciliation {
-                            td {
+                        &.iRow td {
+                            background: @incomeDataCellBackgroundColor;
+                            &.lowestOpenedCurrent {
+                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@incomeDataCellBackgroundColor, @incomeDataCellBackgroundColor);
+                            }
+                        }
+
+                        &.eRow td {
+                            background: @expensesDataCellBackgroundColor;
+                            &.lowestOpenedCurrent {
+                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@expensesDataCellBackgroundColor, @expensesDataCellBackgroundColor);
+                            }
+                        }
+
+                        &.totalRow td {
+                            &,
+                            & span {
+                                color: @totalsTextColor;
+                                font-weight: 600;
+                            }
+
+                            &.zeroValue {
                                 &,
                                 & span {
-                                    color: @totalsTextColor;
-                                    font-weight: 600;
-                                }
-
-                                &.zeroValue {
-                                    &,
-                                    & span {
-                                        color: @dataCellColorForZeroValues;
-                                        font-weight: 300;
-                                    }
+                                    color: @dataCellColorForZeroValues;
+                                    font-weight: 300;
                                 }
                             }
                         }
 
-                        &.startedBalance {
+                        &.bRow {
                             td {
                                 &.dx-total {
                                     background: @startedBalanceDataCellColor;
                                 }
 
-                                &.lowestOpenedCurrent:not(.mtdCell):not(.chosenFilterForCashFlow) {
+                                &.lowestOpenedCurrent:not(.chosenFilterForCashFlow) {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                                 }
                             }
@@ -767,34 +760,34 @@
                                 td {
                                     background: @startedBalanceDataCellColor;
 
-                                    &.lowestOpenedCurrent:not(.mtdCell):not(.chosenFilterForCashFlow) {
+                                    &.lowestOpenedCurrent:not(.chosenFilterForCashFlow) {
                                         background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                                     }
                                 }
                             }
                         }
 
-                        &.endingCashPosition {
-                            td {
-                                background: @grandTotalBackgroundColor;
-                                &.lowestOpenedCurrent:not(.projectedCell):not(.lowestOpenedCurrent) {
-                                    background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
-                                }
+                        &.tRow td {
+                            background: @grandTotalBackgroundColor;
+                            &.lowestOpenedCurrent:not(.lowestOpenedCurrent) {
+                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@grandTotalBackgroundColor, @grandTotalBackgroundColor);
+                            }
 
-                                span {
-                                    color: @grandTotalTextColor;
-                                }
+                            span {
+                                color: @grandTotalTextColor;
                             }
                         }
 
-                        &.reconciliation {
-                            td {
-                                background: @reconciliationDataCellBackgroundColor;
-                                color: @reconciliationDataCellTextColor;
+                        &.ncRow td:not(.lowestOpenedCurrent) {
+                            background: transparent;
+                        }
 
-                                &.lowestOpenedCurrent:not(.mtdCell) {
-                                    background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
-                                }
+                        &.dRow td {
+                            background: @reconciliationDataCellBackgroundColor;
+                            color: @reconciliationDataCellTextColor;
+
+                            &.lowestOpenedCurrent {
+                                background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@reconciliationDataCellBackgroundColor, @reconciliationDataCellBackgroundColor);
                             }
                         }
 
@@ -1056,8 +1049,8 @@
         width: 100%;
         bottom: 0;
         right: 0;
-        border-top: 1px solid #ddd;
-        border-left: 1px solid #ddd;
+        border-top: 1px solid @tableBorderColor;
+        border-left: 1px solid @tableBorderColor;
         padding: 0 15px;
         background: #fff;
         z-index: 2;
@@ -1322,20 +1315,6 @@
         letter-spacing: 0.3px;
         float: right;
         position: relative;
-        //padding-right: 42px;
-        //&::after {
-        //    content: '';
-        //    background: no-repeat 47% 50% url("/assets/icons/arrow_2.svg") ;
-        //    width: 42px;
-        //    height: 100%;
-        //    background-color: #00a0dc;
-        //    border-top-right-radius: 21px;
-        //    border-bottom-right-radius: 21px;
-        //    display: block;
-        //    right: 0;
-        //    position: absolute;
-        //    top: 0;
-        //}
     }
 }
 .pivot-grid-wrapper {

@@ -1,6 +1,7 @@
 <div class="photo-area" (click)="showUploadPhoto($event)" [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 <modal-dialog>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <div *ngIf="similarCustomers?.length" class="similar-clients-message" (click)="showSimilarCustomers($event)">Similar records found. Click here for details</div>
     <mat-sidenav class="main_sidenav" mode="side" align="end" opened="true">
       <mat-tab-group>
         <mat-tab *ngFor="let type of ['personal', 'business']" label="{{l(type) | uppercase}}">
@@ -10,6 +11,7 @@
                   <dx-text-box #companyComponent
                     name="company"
                     [width]="'360px'"
+                    (onKeyUp)="checkSimilarCustomers('name', type, $event)"
                     [(value)]="company">
                   </dx-text-box>
               </div>
