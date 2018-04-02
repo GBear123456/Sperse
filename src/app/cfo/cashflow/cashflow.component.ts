@@ -166,6 +166,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
     statsDetailResult: any;
 
+    private filterByChangeTimeout: any;
     /** Filter by string */
     private filterBy: string;
 
@@ -525,11 +526,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             let textBoxInstance = new TextBox(searchInputBlock.children[0], {
                                 showClearButton: true,
                                 mode: 'search',
-                                onValueChanged: e => {
+                                onFocusOut: e => {
                                     searchInputBlock.style.display = 'none';
-                                    this.cachedRowsFitsToFilter.clear();
-                                    this.filterBy = e.element.querySelector('input').value;
-                                    this.pivotGrid.instance.getDataSource().reload();
+                                },
+                                onInput: e => {
+                                    clearTimeout(this.filterByChangeTimeout);
+                                    this.filterByChangeTimeout = setTimeout(() => {
+                                        this.cachedRowsFitsToFilter.clear();
+                                        this.filterBy = e.element.querySelector('input').value;
+                                        this.pivotGrid.instance.getDataSource().reload();
+                                        this.pivotGrid.instance.updateDimensions();
+                                    }, 300);                                    
                                 }
                             });
                             toolbarElement.appendChild(searchInputBlock);
@@ -2502,7 +2509,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if ((e.area === 'column' || e.area === 'data') && e.cell.text !== undefined && this.isDayCell(e)) {
             this.addWeekendAttribute(e);
         }
-
+        
         /** added charts near row titles */
         if (e.area === 'row' && e.cell.type === 'D' && e.cell.path.length > 1 && !e.cell.expanded && !e.cell.isWhiteSpace) {
             let rowKey = e.cell.path.toString();
@@ -2666,6 +2673,30 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 });
             }
         }
+
+
+        if (this.filterBy && this.filterBy.length && e.area === 'row' && e.cell.text && e.cell.isLast) {
+            let filterByLower = this.filterBy.toLocaleLowerCase();
+            let cellText = e.cell.text.toLocaleLowerCase();
+            if (cellText.includes(filterByLower)) {
+                let resultElement = '';
+                let usedPosition = 0;
+                let position = cellText.indexOf(filterByLower);
+                while (position > -1) {
+                    resultElement = resultElement + e.cell.text.substr(usedPosition, position) 
+                        + '<span class="filter-text">' + e.cell.text.substr(usedPosition + position, filterByLower.length) + '</span>';
+                    usedPosition = usedPosition + position + filterByLower.length;
+                    cellText = cellText.substr(position + filterByLower.length);
+                    position = cellText.indexOf(filterByLower);
+                }
+                resultElement = resultElement + e.cell.text.substr(usedPosition);
+
+                $(e.cellElement).find('> span:first-of-type').text('');
+                $(e.cellElement).find('> span:first-of-type').before(resultElement);
+            }
+
+        }
+
     }
 
     /**
