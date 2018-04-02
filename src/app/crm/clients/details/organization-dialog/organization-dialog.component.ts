@@ -140,8 +140,10 @@ export class OrganizationDialogComponent extends AppComponentBase {
     }
 
     getCompanySize() {
-        return this.data.organization['sizeFrom'] + ' - ' + 
+        let companySizeStr = this.data.organization['sizeFrom'] + ' - ' + 
             this.data.organization['sizeTo'];
+        let item = this.companySizeList.find(x => x.name == companySizeStr);
+        return item ? item.id : null;
     }
 
     updateValue(value, field) {
