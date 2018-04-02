@@ -52,8 +52,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     photoOriginalData: string;
     photoThumbnailData: string;
 
-    showEmailAddButton = {};
-    showPhoneAddButton = {};
+    addButtonVisible = {
+        personal: {},
+        business: {}        
+    };
+    clearButtonVisible = {
+        personal: {},
+        business: {}        
+    }
 
     contacts: any = {
         emails: {
@@ -404,22 +410,22 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     getValidateFieldValue(field, type) {
         let value;
-        if (field == 'emails') {
+        if (field == 'emails')
             value = {
                 type: this.emailType[type],
                 email: this.emailAddress[type]
             };
-            this.showEmailAddButton[type] = false;
-        } else if (field == 'phones') {
+        else if (field == 'phones') {
             value = { 
                 type: this.phoneType[type],
                 number: this.phoneNumber[type],
                 ext: this.phoneExtension[type]
             };
             this.phoneExtension[type] = undefined;
-            this.showPhoneAddButton[type] = false;
         }
+
         this.resetComponent(this[field + this.capitalize(type)]);        
+        this.addButtonVisible[type][field] = false;
 
         return value;
     }
@@ -449,15 +455,18 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     onEmailKeyUp($event, type) {                
         let value = this.getInputElementValue($event);
-        if (this.showEmailAddButton[type] = this.validateEmailAddress(value)) {
+        if (this.addButtonVisible[type]['emails'] = this.validateEmailAddress(value)) {
             this.emailAddress[type] = value;
             this.checkSimilarCustomers();
         }
+        this.clearButtonVisible[type]['emails'] = value 
+            && !this.addButtonVisible[type]['emails'];
     }
 
     onPhoneKeyUp($event, type) {        
         let value = this.getInputElementValue($event);
-        if (this.showPhoneAddButton[type] = this.validatePhoneNumber(value)) {
+        this.clearButtonVisible[type]['phones'] = value;
+        if (this.addButtonVisible[type]['phones'] = this.validatePhoneNumber(value)) {
             this.phoneNumber[type] = value;
             this.checkSimilarCustomers();
         }
@@ -480,5 +489,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     onComponentInitialized($event, field, type) {
         this[field + this.capitalize(type)] = $event.component;
+    }
+
+    emptyInput(field, type) {
+        this[field + this.capitalize(type)].reset();
     }
 }
