@@ -23,7 +23,7 @@ import {
     BankAccountDto,
     StatsFilterGroupByPeriod,
     TransactionStatsDtoAdjustmentType,
-    DiscardDiscrepancyInput,
+    DiscardDiscrepanciesInput,
     CreateForecastModelInput,
     CashFlowStatsDetailDto
 } from '@shared/service-proxies/service-proxies';
@@ -4513,7 +4513,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.dialog.closeAll();
 
                 let filterDetails = this.statsDetailFilter;
-                let discardDiscrepancyInput = DiscardDiscrepancyInput.fromJS({
+                let discardDiscrepanciesInput = DiscardDiscrepanciesInput.fromJS({
                     bankIds: filterDetails.bankIds,
                     bankAccountIds: filterDetails.accountIds,
                     currencyId: filterDetails.currencyId,
@@ -4521,7 +4521,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     endDate: filterDetails.endDate
                 });
 
-                this._bankAccountsServiceProxy.discardDiscrepancy(InstanceType[this.instanceType], this.instanceId, discardDiscrepancyInput)
+                this._bankAccountsServiceProxy.discardDiscrepancies(InstanceType[this.instanceType], this.instanceId, discardDiscrepanciesInput)
                     .subscribe((result) => { this.refreshDataGrid(); });
             }
             document.documentElement.scrollTop = 0;
