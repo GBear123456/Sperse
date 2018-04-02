@@ -22,27 +22,28 @@ import * as _ from 'underscore';
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit {
     emailsPersonal: any;
-    emailsBussines: any;
+    emailsBusiness: any;
     phonesPersonal: any;
-    phonesBussines: any;
+    phonesBusiness: any;
 
     masks = AppConsts.masks;
     phoneRegEx = AppConsts.regexPatterns.phone;
 
     company: string;
+    notes = {};
 
     addressTypes: any = [];
     addressValidator: any;
     emailValidator: any;
     phoneValidator: any;
 
-    emailAddress: string;
-    emailType: string;
-    emailTypes: any = [];
-    phoneType: string;
-    phoneNumber: string;
-    phoneExtension: number;
+    emailAddress = {};
+    emailType = {};
+    phoneType = {};
+    phoneNumber = {};
+    phoneExtension = {};
     phoneTypes: any = [];
+    emailTypes: any = [];
     states: any;
     countries: any;
 
@@ -50,21 +51,21 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     photoOriginalData: string;
     photoThumbnailData: string;
 
-    showEmailAddButton = false;
-    showPhoneAddButton = false;
+    showEmailAddButton = {};
+    showPhoneAddButton = {};
 
     contacts: any = {
         emails: {
             personal: [],
-            bussines: []  
+            business: []  
         },
         phones: {
             personal: [],
-            bussines: []  
+            business: []  
         },
         addresses: {
             personal: {},
-            bussines: {}
+            business: {}
         }
     };
 
@@ -155,12 +156,21 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (!this.addressValidator.validate().isValid)
             return ;
 
+        if (!this.photoOriginalData)
+            return this.notify.error(this.l('PhotoIsRequired'));
+
         let nameParts = this.data.title && 
             this.data.title.split(' ');
         if (!nameParts || nameParts.length < 2) {
             this.data.isTitleValid = false;
             return this.notify.error(this.l('FullNameIsRequired'));
         }
+
+        this.checkAddContactByField('email');
+        this.checkAddContactByField('phone');
+
+        if (!this.validateBusinessTab())
+            return ;
 
         this._customersService.createCustomer(
             CreateCustomerInput.fromJS({
@@ -170,9 +180,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 phoneNumbers: this.getPhoneContactInput('personal'), 
                 address: this.getAddressContactInput('personal'), 
                 companyName: this.company,
-                organizationEmailAddresses: this.getEmailContactInput('bussines'),
-                organizationPhoneNumbers: this.getPhoneContactInput('bussines'),
-                organizationAddress: this.getAddressContactInput('bussines'),
+                organizationEmailAddresses: this.getEmailContactInput('business'),
+                organizationPhoneNumbers: this.getPhoneContactInput('business'),
+                organizationAddress: this.getAddressContactInput('business'),
                 photo: ContactPhotoInput.fromJS({
                     originalImage: this.getBase64(this.photoOriginalData),
                     thumbnail: this.getBase64(this.photoThumbnailData)
@@ -185,9 +195,27 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         );
     }
 
+    validateBusinessTab() {
+        if ((this.contacts.emails.business.length 
+            || this.contacts.phones.business.length 
+            || this.contacts.addresses.business.streetAddress 
+            || this.contacts.addresses.business.streetNumber) && !this.company
+        )
+            return this.notify.error(this.l('CompanyNameIsRequired'));
+        return true;            
+    }
+
+    checkAddContactByField(field) {
+        _.mapObject(this['show' + this.capitalize(field) + 'AddButton'], 
+            (val, type) => {
+                val && this.addContact(field + 's', type);
+            }
+        );
+    }
+
     getBase64(data) {
         let prefix = ';base64,';
-        return data.slice(data.indexOf(prefix) + prefix.length);
+        return data && data.slice(data.indexOf(prefix) + prefix.length);
     }
 
     getEmailContactInput(type) {
@@ -213,9 +241,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     getAddressContactInput(type) {
         let address = this.contacts.addresses[type];
-        let streetAddress = !address.streetNumber &&
-          !address.streetAddress ? undefined: 
-          address.streetNumber + ' ' + address.streetAddress;
+        let streetAddressParts = [];
+          if (address.streetAddress)
+              streetAddressParts.push(address.streetAddress);
+          if (address.streetNumber)
+              streetAddressParts.push(address.streetNumber);
+        let streetAddress = streetAddressParts.join(' ');
         return streetAddress ? {
             streetAddress: streetAddress,
             city: address.city,
@@ -311,21 +342,18 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         let value;
         if (field == 'emails') {
             value = {
-                type: this.emailType,
-                email: this.emailAddress
+                type: this.emailType[type],
+                email: this.emailAddress[type]
             };
-            this.showEmailAddButton = false;
+            this.showEmailAddButton[type] = false;
         } else if (field == 'phones') {
             value = { 
-                type: this.phoneType,
-                number: this.phoneNumber,
-                ext: this.phoneExtension
+                type: this.phoneType[type],
+                number: this.phoneNumber[type],
+                ext: this.phoneExtension[type]
             };
-            this.phoneExtension = undefined;
-            this.showPhoneAddButton = false;
-            this.resetComponent(
-                this['phones' + (type == 'personal'
-                    ? 'Bussines': 'Personal')]);
+            this.phoneExtension[type] = undefined;
+            this.showPhoneAddButton[type] = false;
         }
         this.resetComponent(
             this[field + this.capitalize(type)]);
@@ -346,23 +374,23 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         return this.phoneRegEx.test(value);
     }
 
-    onTypeChanged($event, field) {
+    onTypeChanged($event, field, type) {
         $event.element.parentNode.classList
-            .replace(this[field + 'Type'], $event.value);
-        this[field + 'Type'] = $event.value;
+            .replace(this[field + 'Type'][type], $event.value);
+        this[field + 'Type'][type] = $event.value;
     }
 
     initValidationGroup($event, validator) {
         this[validator] = $event.component;
     }
 
-    onEmailKeyUp($event) {        
-        this.showEmailAddButton = this.validateEmailAddress(
+    onEmailKeyUp($event, type) {        
+        this.showEmailAddButton[type] = this.validateEmailAddress(
             $event.element.getElementsByTagName('input')[0].value);
     }
 
-    onPhoneKeyUp($event) {        
-        this.showPhoneAddButton = this.validatePhoneNumber(
+    onPhoneKeyUp($event, type) {        
+        this.showPhoneAddButton[type] = this.validatePhoneNumber(
             $event.element.getElementsByTagName('input')[0].value);
     }
 
@@ -373,8 +401,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             },
             hasBackdrop: true
         }).afterClosed().subscribe((result) => {
-            this.photoOriginalData = result.origImage;
-            this.photoThumbnailData = result.thumImage;
+            if (result) {
+                this.photoOriginalData = result.origImage;
+                this.photoThumbnailData = result.thumImage;
+            }
         });
         $event.stopPropagation();
     }
