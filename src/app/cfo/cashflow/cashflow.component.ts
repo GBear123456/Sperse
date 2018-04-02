@@ -4248,6 +4248,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
+    addLocalTimezoneOffset(date) {
+        if (date) {
+            let offset = new Date(date).getTimezoneOffset();
+            date.add(-offset, 'minutes');
+        }
+    }
+
     showPreferencesDialog() {
         this.dialog.open(PreferencesDialogComponent, {
             panelClass: 'slider',
@@ -4418,6 +4425,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 id: e.key.id,
                 [paramNameForUpdateInput]: paramValue
             };
+            if (data['date']) {
+                let momentDate = moment(data['date']);
+                this.addLocalTimezoneOffset(momentDate);
+                data['date'] = momentDate.toDate();
+            }
             this._cashFlowForecastServiceProxy
                 .updateForecast(
                     InstanceType10[this.instanceType],
