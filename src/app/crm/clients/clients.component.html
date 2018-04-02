@@ -23,10 +23,10 @@
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
-                        <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate" [visible]="false" 
-                                    [width]="65" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                        <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate"
+                                    [width]="50" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
-                            <img [src]="getPhoto(data.data.Photo, data.data.Gender)"
+                            <img [src]="getPhoto(data.data.Photo)"
                                  alt="{{l('AltPersonPhoto')}}"
                                  width="38"
                                  class="img-circle" />
