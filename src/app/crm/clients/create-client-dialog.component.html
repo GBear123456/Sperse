@@ -1,15 +1,17 @@
 <div class="photo-area" (click)="showUploadPhoto($event)" [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 <modal-dialog>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <div *ngIf="similarCustomers?.length" class="similar-clients-message" (click)="showSimilarCustomers($event)">Similar records found. Click here for details</div>
     <mat-sidenav class="main_sidenav" mode="side" align="end" opened="true">
       <mat-tab-group>
-        <mat-tab *ngFor="let type of ['personal', 'bussines']" label="{{l(type) | uppercase}}">
+        <mat-tab *ngFor="let type of contactTypes" label="{{l(type) | uppercase}}">
           <div class="tab-content">
-              <div class="field" *ngIf="type == 'bussines'">
+              <div class="field" *ngIf="type == 'business'">
                   <label>{{l('Company')}}</label>
                   <dx-text-box #companyComponent
                     name="company"
                     [width]="'360px'"
+                    (onKeyUp)="checkSimilarCustomers('name', type, $event)"
                     [(value)]="company">
                   </dx-text-box>
               </div>
@@ -19,7 +21,7 @@
                       <dx-text-box #emailComponent
                         name="email"
                         [width]="'260px'"
-                        (onKeyUp)="onEmailKeyUp($event)"
+                        (onKeyUp)="onEmailKeyUp($event);checkSimilarCustomers('email', type, $event)"
                         [(value)]="emailAddress"
                         (onInitialized)="onComponentInitialized($event, 'emails', type)">
                         <dx-validator>
@@ -51,7 +53,7 @@
                     [mask]="masks.phone"
                     [width]="'205px'"
                     [(value)]="phoneNumber"
-                    (onKeyUp)="onPhoneKeyUp($event)"
+                    (onKeyUp)="onPhoneKeyUp($event);checkSimilarCustomers('phone', type, $event)"
                     (onFocusIn)="focusInput($event)"
                     (onInitialized)="onComponentInitialized($event, 'phones', type)">
                   </dx-text-box>
@@ -174,7 +176,7 @@
                       </dx-select-box>
                   </div>
                   <div class="field">
-                      <label>{{l('Notes')}}</label>
+                      <label class="comment">{{l('Notes')}}</label>
                       <dx-text-area
                         name="comment"
                         [width]="'360px'"

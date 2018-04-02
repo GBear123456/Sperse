@@ -6596,7 +6596,7 @@ export class CustomersServiceProxy {
      * @countryId (optional) 
      * @return Success
      */
-    getSimilarCustomers(namePrefix: string, firstName: string, middleName: string, lastName: string, nameSuffix: string, companyName: string, emailAddresses: string[], phoneNumbers: string[], streetAddress: string, city: string, stateId: string, zip: string, countryId: string): Observable<SimilarCustomerInfo[]> {
+    getSimilarCustomers(namePrefix: string, firstName: string, middleName: string, lastName: string, nameSuffix: string, companyName: string, emailAddresses: string[], phoneNumbers: string[], streetAddress: string, city: string, stateId: string, zip: string, countryId: string): Observable<SimilarCustomerOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Customers/GetSimilarCustomers?";
         if (namePrefix !== undefined)
             url_ += "NamePrefix=" + encodeURIComponent("" + namePrefix) + "&"; 
@@ -6641,14 +6641,14 @@ export class CustomersServiceProxy {
                 try {
                     return this.processGetSimilarCustomers(response_);
                 } catch (e) {
-                    return <Observable<SimilarCustomerInfo[]>><any>Observable.throw(e);
+                    return <Observable<SimilarCustomerOutput[]>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<SimilarCustomerInfo[]>><any>Observable.throw(response_);
+                return <Observable<SimilarCustomerOutput[]>><any>Observable.throw(response_);
         });
     }
 
-    protected processGetSimilarCustomers(response: Response): Observable<SimilarCustomerInfo[]> {
+    protected processGetSimilarCustomers(response: Response): Observable<SimilarCustomerOutput[]> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -6659,14 +6659,14 @@ export class CustomersServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(SimilarCustomerInfo.fromJS(item));
+                    result200.push(SimilarCustomerOutput.fromJS(item));
             }
             return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<SimilarCustomerInfo[]>(<any>null);
+        return Observable.of<SimilarCustomerOutput[]>(<any>null);
     }
 
     /**
@@ -27705,13 +27705,15 @@ export interface ICreateCustomerOutput {
     id: number;
 }
 
-export class SimilarCustomerInfo implements ISimilarCustomerInfo {
+export class SimilarCustomerOutput implements ISimilarCustomerOutput {
     id: number;
     name: string;
+    photo: string;
+    companyName: string;
     jobTitle: string;
     score: number;
 
-    constructor(data?: ISimilarCustomerInfo) {
+    constructor(data?: ISimilarCustomerOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -27724,13 +27726,15 @@ export class SimilarCustomerInfo implements ISimilarCustomerInfo {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.photo = data["photo"];
+            this.companyName = data["companyName"];
             this.jobTitle = data["jobTitle"];
             this.score = data["score"];
         }
     }
 
-    static fromJS(data: any): SimilarCustomerInfo {
-        let result = new SimilarCustomerInfo();
+    static fromJS(data: any): SimilarCustomerOutput {
+        let result = new SimilarCustomerOutput();
         result.init(data);
         return result;
     }
@@ -27739,15 +27743,19 @@ export class SimilarCustomerInfo implements ISimilarCustomerInfo {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["photo"] = this.photo;
+        data["companyName"] = this.companyName;
         data["jobTitle"] = this.jobTitle;
         data["score"] = this.score;
         return data; 
     }
 }
 
-export interface ISimilarCustomerInfo {
+export interface ISimilarCustomerOutput {
     id: number;
     name: string;
+    photo: string;
+    companyName: string;
     jobTitle: string;
     score: number;
 }

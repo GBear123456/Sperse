@@ -24,12 +24,14 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
     croppedWidth: number;
     croppedHeight: number;
 
+    private thumbData: string;
+
     constructor(
         injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private elementRef: ElementRef,
-        public dialogRef: MatDialogRef<UploadPhotoDialogComponent>,
         private _contactPhoneService: ContactPhoneServiceProxy,
+        public dialogRef: MatDialogRef<UploadPhotoDialogComponent>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -48,8 +50,8 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         let setting = new CropperSettings();
         setting.width = 200;
         setting.height = 200;
-        setting.croppedWidth = 200;
-        setting.croppedHeight = 200;
+        setting.croppedWidth = 100;
+        setting.croppedHeight = 100;
         setting.canvasWidth = 500;
         setting.canvasHeight = 300;
         setting.minWidth = 115;
@@ -57,7 +59,8 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         setting.rounded = false;
         setting.keepAspect = false;
         setting.noFileInput = true;
-        setting.minWithRelativeToResolution = false;
+        setting.preserveSize = true;
+        setting.minWithRelativeToResolution = true;
         setting.cropperDrawSettings.strokeColor = 'rgba(255,255,255,1)';
         setting.cropperDrawSettings.strokeWidth = 2;
 
@@ -77,12 +80,44 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         myReader.readAsDataURL(file);
     }
 
+    imgResize = function () {
+        let image = new Image(),
+            canvas = document.createElement("canvas"),
+            ctx = canvas.getContext("2d");
+
+        image.onload = () => {
+            canvas.width = AppConsts.thumbWidth;
+            canvas.height = canvas.width * (this.croppedHeight / this.croppedWidth);
+
+            let oc = document.createElement('canvas'),
+                octx = oc.getContext('2d');
+
+            oc.width = image.width * 0.9;
+            oc.height = image.height * 0.9;
+            octx.drawImage(image, 0, 0, oc.width, oc.height);
+
+            octx.drawImage(oc, 0, 0, oc.width * 0.9, oc.height * 0.9);
+
+            ctx.drawImage(oc, 0, 0, 
+                oc.width * 0.9, oc.height * 0.9,
+                0, 0, canvas.width, canvas.height);
+
+            this.thumbData = canvas.toDataURL();
+        }
+        image.src = this.imageData.image;
+    }
+
     onCrop(bounds: Bounds) {
         this.croppedHeight = bounds.bottom-bounds.top;
         this.croppedWidth = bounds.right-bounds.left;
+
+        this.imgResize();
     }
 
     onSave(event) {
-        this.dialogRef.close(this.imageData.image);
+        this.dialogRef.close({
+            origImage: this.imageData.image,
+            thumImage: this.thumbData
+        });
     }
 }

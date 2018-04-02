@@ -13,7 +13,7 @@
               <p class="text-crm">{{l('CRMDashboard_StartText')}}</p>
               <p class="manage-crm">{{l('CRMDashboard_ManageText')}} <a [routerLink]="['/app/crm/leads']">{{l('Leads')}}</a>, <a [routerLink]="['/app/crm/clients']">{{l('Clients')}}</a> and <a [routerLink]="['/app/crm/orders']">{{l('Orders')}}</a></p>
               <!-- p class="last-line"><a [routerLink]="['/app/crm/clients']">{{l('CRMDashboard_AddContact')}}</a> | {{l('CRMDashboard_ImportContact')}}</p -->
-              <button (click)="addClient()" class="btn btn-layout">{{ l('CRMDashboard_AddClient') }}</button>
+              <button (click)="addClient()" class="btn btn-layout add-client">{{ l('CRMDashboard_AddClient') }}</button>
           </div>
 
 
