@@ -72,10 +72,10 @@
                     width: 260px;
                     height: 34px;
                     font-size: 14px;
-                    font-weight: 300;
+                    font-weight: 400;
                     line-height: 1.79;
                     letter-spacing: 0.3px;
-                    color: #424c56;
+                    color: #424c56;                    
                     padding: 0px;
                     vertical-align: top;
                 }
@@ -126,6 +126,11 @@
                 }
                 dx-text-box, dx-number-box, dx-text-area, dx-select-box {
                     display: inline-block;
+                    &.dx-invalid {
+                        input {
+                            color: #d9534f!important;
+                        }
+                    }
                     &.dx-state-focused {
                         .dx-placeholder {
                             top: -30px;
@@ -133,7 +138,7 @@
                     }
                     .dx-placeholder, input, textarea {                        
                         font-size: 14px;
-                        font-weight: 300;
+                        font-weight: 400;
                         line-height: 1.79;
                         letter-spacing: 0.3px;
                         color: #424c56;
