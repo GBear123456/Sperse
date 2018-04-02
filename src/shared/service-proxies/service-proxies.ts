@@ -22491,6 +22491,7 @@ export interface IContactShortInfoDto {
 }
 
 export class ContactPhotoDto implements IContactPhotoDto {
+    original: string;
     thumbnail: string;
     source: string;
     comment: string;
@@ -22506,6 +22507,7 @@ export class ContactPhotoDto implements IContactPhotoDto {
 
     init(data?: any) {
         if (data) {
+            this.original = data["original"];
             this.thumbnail = data["thumbnail"];
             this.source = data["source"];
             this.comment = data["comment"];
@@ -22520,6 +22522,7 @@ export class ContactPhotoDto implements IContactPhotoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["original"] = this.original;
         data["thumbnail"] = this.thumbnail;
         data["source"] = this.source;
         data["comment"] = this.comment;
@@ -22528,6 +22531,7 @@ export class ContactPhotoDto implements IContactPhotoDto {
 }
 
 export interface IContactPhotoDto {
+    original: string;
     thumbnail: string;
     source: string;
     comment: string;
