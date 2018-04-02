@@ -23,7 +23,7 @@ import {
     BankAccountDto,
     StatsFilterGroupByPeriod,
     TransactionStatsDtoAdjustmentType,
-    DiscardDiscrepancyInput,
+    DiscardDiscrepanciesInput,
     CreateForecastModelInput,
     CashFlowStatsDetailDto
 } from '@shared/service-proxies/service-proxies';
@@ -39,6 +39,7 @@ import TextBox from 'devextreme/ui/text_box';
 import NumberBox from 'devextreme/ui/number_box';
 import Tooltip from 'devextreme/ui/tooltip';
 import SparkLine from 'devextreme/viz/sparkline';
+import ScrollView from 'devextreme/ui/scroll_view';
 
 import * as _ from 'underscore.string';
 import * as underscore from 'underscore';
@@ -165,6 +166,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
     statsDetailResult: any;
 
+    private filterByChangeTimeout: any;
     /** Filter by string */
     private filterBy: string;
 
@@ -524,11 +526,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             let textBoxInstance = new TextBox(searchInputBlock.children[0], {
                                 showClearButton: true,
                                 mode: 'search',
-                                onValueChanged: e => {
+                                onFocusOut: e => {
                                     searchInputBlock.style.display = 'none';
-                                    this.cachedRowsFitsToFilter.clear();
-                                    this.filterBy = e.element.querySelector('input').value;
-                                    this.pivotGrid.instance.getDataSource().reload();
+                                },
+                                onInput: e => {
+                                    clearTimeout(this.filterByChangeTimeout);
+                                    this.filterByChangeTimeout = setTimeout(() => {
+                                        this.cachedRowsFitsToFilter.clear();
+                                        this.filterBy = e.element.querySelector('input').value;
+                                        this.pivotGrid.instance.getDataSource().reload();
+                                        this.pivotGrid.instance.updateDimensions();
+                                    }, 300);                                    
                                 }
                             });
                             toolbarElement.appendChild(searchInputBlock);
@@ -688,6 +696,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             handler: this.onMouseOut.bind(this)
         }
     ];
+    
+    keyDownEventHandler = this.keyDownListener.bind(this);
 
     /** Interval between state saving (ms) */
     public stateSavingTimeout = 1000;
@@ -1853,41 +1863,86 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.cachedColumnActivity.clear();
         this.applyUserPreferencesForAreas();
 
-        $('.dx-pivotgrid-area-data').off('keydown').on('keydown', e => {
-            if (this.selectedCell) {
-                let nextElement;
-                switch (e.keyCode) {
-                    case 37: //left
-                        nextElement = this.selectedCell.cellElement.previousElementSibling;
-                        break;
-                    case 38: //up
-                        let prevSibling = this.selectedCell.cellElement.parentElement.previousElementSibling;
-                            nextElement = prevSibling ? prevSibling .querySelector(`td:nth-child(${this.selectedCell.columnIndex + 1})`) : undefined;
-                        break;
-                    case 39: //right
-                        nextElement = this.selectedCell.cellElement.nextElementSibling;
-                        break;
-                    case 40: //down
-                        let nextSibling = this.selectedCell.cellElement.parentElement.nextElementSibling;
-                        nextElement = nextSibling ? nextSibling.querySelector(`td:nth-child(${this.selectedCell.columnIndex + 1})`) : undefined;
-                        break;
-                }
-
-                if (nextElement) {
-                    this.pivotGrid.instance['clickCount'] = 0;
-                    nextElement.click();
-                    this.pivotGrid.instance['clickCount'] = 0;
-                }
-                nextElement = null;
-            }
-        });
-
+        let pivotDataArea: HTMLElement = this.getElementRef().nativeElement.querySelector('.dx-pivotgrid-area-data');
+        pivotDataArea.removeEventListener("keydown", this.keyDownEventHandler);
+        pivotDataArea.addEventListener("keydown", this.keyDownEventHandler, true);
+        
         this.synchronizeHeaderHeightWithCashflow();
         this.handleBottomHorizontalScrollPosition();
 
         if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
             this.finishLoading();
         }
+    }
+
+    keyDownListener(e) {
+        if (e.target.nodeName == 'INPUT')
+            return;
+
+        if (this.selectedCell) {
+            let nextElement: HTMLElement;
+            let direction: string;
+            switch (e.keyCode) {
+                case 37: //left
+                    nextElement = this.selectedCell.cellElement.previousElementSibling;
+                    direction = 'left';
+                    break;
+                case 38: //up
+                    let prevSibling = this.selectedCell.cellElement.parentElement.previousElementSibling;
+                    nextElement = prevSibling ? prevSibling.querySelector(`td:nth-child(${this.selectedCell.columnIndex + 1})`) : undefined;
+                    direction = 'up';
+                    break;
+                case 39: //right
+                    nextElement = this.selectedCell.cellElement.nextElementSibling;
+                    direction = 'right';
+                    break;
+                case 40: //down
+                    let nextSibling = this.selectedCell.cellElement.parentElement.nextElementSibling;
+                    nextElement = nextSibling ? nextSibling.querySelector(`td:nth-child(${this.selectedCell.columnIndex + 1})`) : undefined;
+                    direction = 'down';
+                    break;
+                default:
+                    return;
+            }
+
+            e.stopPropagation();
+            if (nextElement) {
+                let scrollValue = this.calculateScrollValue(this.selectedCell.cellElement, nextElement, direction);
+                if (scrollValue) {
+                    let scrollable = direction == 'up' || direction == 'down'
+                        ? ScrollView.getInstance(this.getElementRef().nativeElement.querySelector(".cashflow .cashflow-scroll"))
+                        : this.pivotGrid.instance['$element']().find('.dx-scrollable').last().dxScrollable("instance");
+
+                    scrollable.scrollBy(scrollValue);
+                }
+
+                this.pivotGrid.instance['clickCount'] = 0;
+                nextElement.click();
+                this.pivotGrid.instance['clickCount'] = 0;
+            }
+        }
+    }
+
+    calculateScrollValue(cell: HTMLElement, nextCell: HTMLElement, direction: string): number {
+        var parentRect: ClientRect;
+        var cellRect: ClientRect = cell.getBoundingClientRect();
+
+        switch (direction) {
+            case 'right':
+                parentRect = this.getElementRef().nativeElement.querySelector(".dx-pivotgrid-area-data").getBoundingClientRect();
+                return cellRect.right + cell.offsetWidth > parentRect.right ? nextCell.offsetWidth : 0;
+            case 'left':
+                parentRect = this.getElementRef().nativeElement.querySelector(".dx-pivotgrid-area-data").getBoundingClientRect();
+                return cellRect.left - cell.offsetWidth < parentRect.left ? -nextCell.offsetWidth : 0;;
+            case 'up':
+                parentRect = this.getElementRef().nativeElement.querySelector('.dx-area-column-cell').getBoundingClientRect();
+                return cellRect.top - cell.offsetHeight < parentRect.bottom ? -nextCell.offsetHeight : 0;
+            case 'down':
+                parentRect = document.body.getBoundingClientRect();
+                return cellRect.bottom + cell.offsetHeight * 2 > parentRect.bottom ? nextCell.offsetHeight : 0;
+        }
+
+        return 0;
     }
 
     onScroll(e) {
@@ -2454,7 +2509,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if ((e.area === 'column' || e.area === 'data') && e.cell.text !== undefined && this.isDayCell(e)) {
             this.addWeekendAttribute(e);
         }
-
+        
         /** added charts near row titles */
         if (e.area === 'row' && e.cell.type === 'D' && e.cell.path.length > 1 && !e.cell.expanded && !e.cell.isWhiteSpace) {
             let rowKey = e.cell.path.toString();
@@ -2618,6 +2673,30 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 });
             }
         }
+
+
+        if (this.filterBy && this.filterBy.length && e.area === 'row' && e.cell.text && e.cell.isLast) {
+            let filterByLower = this.filterBy.toLocaleLowerCase();
+            let cellText = e.cell.text.toLocaleLowerCase();
+            if (cellText.includes(filterByLower)) {
+                let resultElement = '';
+                let usedPosition = 0;
+                let position = cellText.indexOf(filterByLower);
+                while (position > -1) {
+                    resultElement = resultElement + e.cell.text.substr(usedPosition, position) 
+                        + '<span class="filter-text">' + e.cell.text.substr(usedPosition + position, filterByLower.length) + '</span>';
+                    usedPosition = usedPosition + position + filterByLower.length;
+                    cellText = cellText.substr(position + filterByLower.length);
+                    position = cellText.indexOf(filterByLower);
+                }
+                resultElement = resultElement + e.cell.text.substr(usedPosition);
+
+                $(e.cellElement).find('> span:first-of-type').text('');
+                $(e.cellElement).find('> span:first-of-type').before(resultElement);
+            }
+
+        }
+
     }
 
     /**
@@ -2769,7 +2848,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
     }
-
+    
     moveOrCopyForecasts(forecasts, targetCell, operation: 'copy' | 'move' = 'copy') {
         let targetLowestInterval = this.getLowestIntervalFromPath(targetCell.cell.columnPath, this.getColumnFields());
         let targetCellDate = this.getDateByPath(targetCell.cell.columnPath, this.getColumnFields(), targetLowestInterval);
@@ -4434,7 +4513,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.dialog.closeAll();
 
                 let filterDetails = this.statsDetailFilter;
-                let discardDiscrepancyInput = DiscardDiscrepancyInput.fromJS({
+                let discardDiscrepanciesInput = DiscardDiscrepanciesInput.fromJS({
                     bankIds: filterDetails.bankIds,
                     bankAccountIds: filterDetails.accountIds,
                     currencyId: filterDetails.currencyId,
@@ -4442,9 +4521,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     endDate: filterDetails.endDate
                 });
 
-                this._bankAccountsServiceProxy.discardDiscrepancy(InstanceType[this.instanceType], this.instanceId, discardDiscrepancyInput)
+                this._bankAccountsServiceProxy.discardDiscrepancies(InstanceType[this.instanceType], this.instanceId, discardDiscrepanciesInput)
                     .subscribe((result) => { this.refreshDataGrid(); });
             }
+            document.documentElement.scrollTop = 0;
         });
     }
 

@@ -79,12 +79,23 @@
                     padding: 0px;
                     vertical-align: top;
                 }
-                .add-contact {
-                    color: #00aeef;
+                span {
                     font-size: 32px;
                     font-weight: 100;
                     margin: 0px 15px;
                     cursor: pointer;
+
+                    &.hidden {
+                        display: none;
+                    }
+                    &.add-contact {
+                        color: #00aeef;
+                    }
+                    &.clear-contact {
+                        color: red;
+                        transform: rotate(45deg);
+                        display: inline-block;
+                    }
                 }
                 &.email {
                     background: url("../../../assets/common/icons/email.svg") no-repeat 160px 10px;

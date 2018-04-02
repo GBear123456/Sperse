@@ -33,13 +33,14 @@
                         name="emailType"
                         placeholder="{{l('Type')}}"
                         [dataSource]="emailTypes"
-                        [disabled]="!showEmailAddButton[type]"
+                        [disabled]="!addButtonVisible[type]['emails']"
                         displayExpr="name"
                         valueExpr="id"
                         [value]="emailType[type]"
                         (onValueChanged)="onTypeChanged($event, 'email', type)">
                       </dx-select-box>
-                      <span class="add-contact" (click)="addContact('emails', type)" *ngIf="showEmailAddButton[type]">+</span>
+                      <span [class]="addButtonVisible[type]['emails'] && 'add-contact' || clearButtonVisible[type]['emails'] && 'clear-contact' || 'hidden'" (click)="clearButtonVisible[type]['emails'] ? emptyInput('emails', type): addContact('emails', type)">+</span>
+                      <!-- span class="clear-contact" (click)="emptyInput('emails', type)" *ngIf="clearButtonVisible[type]['emails']">+</span -->
                   </div>
               </dx-validation-group>
               <div class="field" *ngFor="let email of contacts.emails[type]; index as i">
@@ -66,7 +67,7 @@
                   <dx-select-box
                     width="100px"
                     name="phoneType"
-                    [disabled]="!showPhoneAddButton[type]"
+                    [disabled]="!addButtonVisible[type]['phones']"
                     placeholder="{{l('Type')}}"
                     [dataSource]="phoneTypes"
                     displayExpr="name"
@@ -74,7 +75,7 @@
                     [value]="phoneType[type]"
                     (onValueChanged)="onTypeChanged($event, 'phone', type)">
                   </dx-select-box>
-                  <span class="add-contact" (click)="addContact('phones', type)" *ngIf="showPhoneAddButton[type]">+</span>
+                  <span class="add-contact" (click)="addContact('phones', type)" *ngIf="addButtonVisible[type]['phones']">+</span>
               </div>
               <div class="field" *ngFor="let phone of contacts.phones[type]; index as i">
                   <p class="phone {{phone.type}}">{{phone.number | phone}}&nbsp;&nbsp;{{phone.ext ? 'ext: ' + phone.ext: '' }}<span (click)="removeContact('phones', type, i)"></span></p>
