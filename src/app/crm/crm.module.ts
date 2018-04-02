@@ -24,6 +24,7 @@ import { CreateTenantModalComponent } from './tenants/create-tenant-modal.compon
 import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component';
 import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardMenuComponent } from './dashboard/left-menu/left-menu.component';
 import { LeadsStatsComponent } from './dashboard/leads-stats/leads-stats.component';
 
 import { EditionComboComponent } from './shared/edition-combo.component';
@@ -111,6 +112,7 @@ import {
       FeatureTreeComponent,
       EditionComboComponent,
       DashboardComponent,
+      DashboardMenuComponent,
       LeadsStatsComponent
     ],
     entryComponents: [

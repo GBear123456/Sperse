@@ -3,6 +3,7 @@ import { Component, AfterViewInit, Injector, ViewEncapsulation, OnDestroy } from
 import { TenantDashboardServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { AppSalesSummaryDatePeriod } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -26,7 +27,8 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     constructor(
         injector: Injector,
         private _router: Router,
-        private _dashboardService: TenantDashboardServiceProxy
+        private _dashboardService: TenantDashboardServiceProxy,
+        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -41,12 +43,14 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngAfterViewInit(): void {
+        AppComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
         this.startLoading(true);
     }
 
     ngOnDestroy() {
+        AppComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
         this.rootComponent.overflowHidden();
     }
 }
