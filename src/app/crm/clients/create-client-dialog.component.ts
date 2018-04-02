@@ -265,7 +265,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
               componentRef: this
           },
           hasBackdrop: false,
-          position: this.getDialogPossition(event, 170)
+          position: this.getDialogPossition(event, 300)
         });
         event.stopPropagation();
     }

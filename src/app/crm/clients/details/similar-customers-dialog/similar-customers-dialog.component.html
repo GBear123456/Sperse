@@ -1,5 +1,5 @@
 <mat-dialog-content>
-    <div class="close-dialog" (click)="closeSimilarCustomersDialog()">Close</div>
+    <div class="close-dialog-button" (click)="closeSimilarCustomersDialog()">Close</div>
     <div class="contact-persons-container">
         <h5>{{l('RelatedOrSimilarContacts')}}</h5>
         <div class="contact-person-info" *ngFor="let similarCustomer of data.similarCustomers" (click)='selectSimilarCustomer(similarCustomer)'>
@@ -12,6 +12,10 @@
                 </div>
                 <div class="person-title">
                     <h6>{{similarCustomer?.jobTitle}} <span *ngIf="similarCustomer?.companyName">{{similarCustomer?.companyName}}</span></h6>
+                </div>
+                <div class="rating">
+                    <mat-progress-bar ng-reflect-color="#2fb8f0" color="#2fb8f0" value="{{ person.rating * 10}}"></mat-progress-bar>
+                    <span class="rating_int">{{person.rating}}/10</span>
                 </div>
             </div>
         </div>
