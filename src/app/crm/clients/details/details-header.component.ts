@@ -126,7 +126,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     showEditPersonDialog(event) {
         this.dialog.closeAll();
         this.dialog.open(PersonDialogComponent, {
-            data: this.data.primaryContactInfo.person,
+            data: this.data.primaryContactInfo,
             hasBackdrop: false,
             position: this.getDialogPossition(event, 200)
         });
@@ -134,6 +134,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     updatePrimaryContactName(value) {
+        value = value.trim();
+        if (!value)
+            return;
+
         this.data.primaryContactInfo.fullName = value;
         
         var person = this.data.primaryContactInfo.person;
