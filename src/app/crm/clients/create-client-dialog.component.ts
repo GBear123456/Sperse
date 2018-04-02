@@ -195,16 +195,23 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 organizationEmailAddresses: this.getEmailContactInput('business'),
                 organizationPhoneNumbers: this.getPhoneContactInput('business'),
                 organizationAddress: this.getAddressContactInput('business'),
-                photo: ContactPhotoInput.fromJS({
-                    originalImage: this.getBase64(this.photoOriginalData),
-                    thumbnail: this.getBase64(this.photoThumbnailData)
-                })
+                photo: this.getContactPhoto()
             })
         ).finally(() => {  })
             .subscribe(result => {
                 this.redirectToContactInformation(result.id);
             }
         );
+    }
+
+    getContactPhoto() {
+        if (!this.photoOriginalData)
+            return null;
+
+        return ContactPhotoInput.fromJS({
+            originalImage: this.getBase64(this.photoOriginalData),
+            thumbnail: this.getBase64(this.photoThumbnailData)
+        });
     }
 
     getBase64(data) {
@@ -265,7 +272,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
               componentRef: this
           },
           hasBackdrop: false,
-          position: this.getDialogPossition(event, 170)
+          position: this.getDialogPossition(event, 300)
         });
         event.stopPropagation();
     }
