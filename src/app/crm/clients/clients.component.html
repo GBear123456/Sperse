@@ -32,7 +32,6 @@
                                  class="img-circle" />
                         </div>
                         <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
-                        <dxi-column dataField="Status" caption="{{l('Status')}}" [visible]="false" ></dxi-column>
                         <dxi-column caption="{{l('Contact.CityAndState')}}" [calculateCellValue]="calculateAddressColumnValue"></dxi-column>
                         <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
                         <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell"></dxi-column>
@@ -40,6 +39,7 @@
                         <div *dxTemplate="let cellData of 'typeCell'">
                             {{cellData.value ? l('Organization') : l('Person')}}
                         </div>
+                        <dxi-column dataField="Status" caption="{{l('Status')}}"></dxi-column>
                         <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
                         <dxi-column name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="75" [fixed]="true" [fixedPosition]="'right'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
