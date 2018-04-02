@@ -166,9 +166,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (!this.addressValidator.validate().isValid)
             return ;
 
-        if (!this.photoOriginalData)
-            return this.notify.error(this.l('PhotoIsRequired'));
-
         let nameParts = this.data.title && 
             this.data.title.split(' ');
         if (!nameParts || nameParts.length < 2) {
@@ -193,10 +190,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 organizationEmailAddresses: this.getEmailContactInput('business'),
                 organizationPhoneNumbers: this.getPhoneContactInput('business'),
                 organizationAddress: this.getAddressContactInput('business'),
-                photo: ContactPhotoInput.fromJS({
+                photo: this.photoOriginalData ? ContactPhotoInput.fromJS({
                     originalImage: this.getBase64(this.photoOriginalData),
                     thumbnail: this.getBase64(this.photoThumbnailData)
-                })
+                }): null
             })
         ).finally(() => {  })
             .subscribe(result => {
@@ -456,20 +453,18 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     onEmailKeyUp($event, type) {                
         let value = this.getInputElementValue($event);
-        if (this.addButtonVisible[type]['emails'] = this.validateEmailAddress(value)) {
+        if (this.addButtonVisible[type]['emails'] = this.validateEmailAddress(value))
             this.emailAddress[type] = value;
-            this.checkSimilarCustomers();
-        }
+        this.checkSimilarCustomers();
         this.clearButtonVisible[type]['emails'] = value 
             && !this.addButtonVisible[type]['emails'];
     }
 
     onPhoneKeyUp($event, type) {        
         let value = this.getInputElementValue($event);
-        if (this.addButtonVisible[type]['phones'] = this.validatePhoneNumber(value)) {
+        if (this.addButtonVisible[type]['phones'] = this.validatePhoneNumber(value))
             this.phoneNumber[type] = value;
-            this.checkSimilarCustomers();
-        }
+        this.checkSimilarCustomers();
         this.clearButtonVisible[type]['phones'] = value 
             && !this.addButtonVisible[type]['phones'];
     }
