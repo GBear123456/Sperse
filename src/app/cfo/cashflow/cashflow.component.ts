@@ -4445,6 +4445,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this._bankAccountsServiceProxy.discardDiscrepancy(InstanceType[this.instanceType], this.instanceId, discardDiscrepancyInput)
                     .subscribe((result) => { this.refreshDataGrid(); });
             }
+            document.documentElement.scrollTop = 0;
         });
     }
 
