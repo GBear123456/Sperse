@@ -1824,7 +1824,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         $(`.current${_.capitalize(lowestOpenedCurrentInterval)}`).addClass('lowestOpenedCurrent');
 
         let lowestOpenedInterval = this.getLowestOpenedInterval();
-        this.changeHistoricalColspans(lowestOpenedInterval, lowestOpenedCurrentInterval);
+        this.changeHistoricalColspans(lowestOpenedCurrentInterval);
 
         if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
             this.finishLoading();
@@ -1950,12 +1950,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * and historical classes that added in onCellPrepared to the dates that belongs to the current periods like
      * currentYear, currentQuarter, currentMonth or currentDay
      */
-    changeHistoricalColspans(lowestOpenedInterval, lowestOpenedCurrentInterval) {
+    changeHistoricalColspans(lowestOpenedCurrentInterval) {
         /** Get the colspans values for the prev, current and forecast historical td that should be counted to
          * correctly display different historical periods */
-        let colspanAmountForPrevious = this.getIntervalColspansAmount(lowestOpenedInterval, 'prev');
+        let colspanAmountForPrevious = this.getIntervalColspansAmount(lowestOpenedCurrentInterval, 'prev');
         let colspanAmountForCurrent =  this.getIntervalColspansAmountForCurrent(lowestOpenedCurrentInterval);
-        let colspanAmountForForecast = this.getIntervalColspansAmount(lowestOpenedInterval, 'next');
+        let colspanAmountForForecast = this.getIntervalColspansAmount(lowestOpenedCurrentInterval, 'next');
 
         /** Hide current cell if there is no current opened lowest period and change the colspan */
         if (colspanAmountForCurrent === 0) {
@@ -2042,15 +2042,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getIntervalColspansAmount(groupInterval, period) {
-        let currentElement = $('.dx-area-data-cell .current' + _.capitalize(groupInterval)),
-            method = period === 'next' ? 'nextAll' : 'prevAll';
-        if (!currentElement.length) {
-            let elementPosition = period === 'prev' ? 'last' : 'first';
-            return $('.dx-area-data-cell .' + period + _.capitalize(groupInterval))[elementPosition]()[method]().length + 1;
+        let colspansAmount = 0;
+        let dataAreaElement = this.getElementRef().nativeElement.querySelector('.dx-area-data-cell');
+        let currentElement = dataAreaElement.querySelector(`.current${_.capitalize(groupInterval)}`);
+        if (dataAreaElement) {
+            let allCellsAmount = dataAreaElement.querySelector('tr').childElementCount;
+            if (!currentElement) {
+                if (dataAreaElement.querySelector(`[class*=${[period]}]`)) {
+                    colspansAmount = allCellsAmount;
+                }
+            } else {
+                colspansAmount = period === 'prev' ? currentElement.cellIndex : allCellsAmount - currentElement.cellIndex - 1;
+            }
         }
-        let length = currentElement.first()[method]().length;
-        currentElement = null;
-        return length;
+        return colspansAmount;
     }
 
     getPrevColumnField(columnField) {
