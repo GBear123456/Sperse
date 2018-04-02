@@ -176,8 +176,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             return this.notify.error(this.l('FullNameIsRequired'));
         }
 
-        this.checkAddContactByField('email');
-        this.checkAddContactByField('phone');
+        this.checkAddContactByField('emails');
+        this.checkAddContactByField('phones');
 
         if (!this.validateBusinessTab())
             return ;
@@ -209,16 +209,17 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if ((this.contacts.emails.business.length 
             || this.contacts.phones.business.length 
             || this.contacts.addresses.business.streetAddress 
-            || this.contacts.addresses.business.streetNumber) && !this.company
+            || this.contacts.addresses.business.streetNumber
+          ) && !this.company
         )
             return this.notify.error(this.l('CompanyNameIsRequired'));
         return true;            
     }
 
     checkAddContactByField(field) {
-        _.mapObject(this['show' + this.capitalize(field) + 'AddButton'], 
-            (val, type) => {
-                val && this.addContact(field + 's', type);
+        _.mapObject(this.addButtonVisible, 
+            (obj, type) => {
+              obj[field] && this.addContact(field, type);
             }
         );
     }
@@ -465,11 +466,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     onPhoneKeyUp($event, type) {        
         let value = this.getInputElementValue($event);
-        this.clearButtonVisible[type]['phones'] = value;
         if (this.addButtonVisible[type]['phones'] = this.validatePhoneNumber(value)) {
             this.phoneNumber[type] = value;
             this.checkSimilarCustomers();
         }
+        this.clearButtonVisible[type]['phones'] = value 
+            && !this.addButtonVisible[type]['phones'];
     }
 
     showUploadPhoto($event) {
@@ -492,6 +494,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     emptyInput(field, type) {
-        this[field + this.capitalize(type)].reset();
+        let component = this[field + this.capitalize(type)];
+        component.reset();
+        component.option('isValid', true);
+        this.clearButtonVisible[type][field] = false;
     }
 }

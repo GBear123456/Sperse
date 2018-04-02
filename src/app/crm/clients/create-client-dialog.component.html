@@ -11,7 +11,7 @@
                   <dx-text-box #companyComponent
                     name="company"
                     [width]="'360px'"
-                    (onKeyUp)="checkSimilarCustomers('name', type, $event)"
+                    (onKeyUp)="checkSimilarCustomers()"
                     [(value)]="company">
                   </dx-text-box>
               </div>
@@ -40,7 +40,6 @@
                         (onValueChanged)="onTypeChanged($event, 'email', type)">
                       </dx-select-box>
                       <span [class]="addButtonVisible[type]['emails'] && 'add-contact' || clearButtonVisible[type]['emails'] && 'clear-contact' || 'hidden'" (click)="clearButtonVisible[type]['emails'] ? emptyInput('emails', type): addContact('emails', type)">+</span>
-                      <!-- span class="clear-contact" (click)="emptyInput('emails', type)" *ngIf="clearButtonVisible[type]['emails']">+</span -->
                   </div>
               </dx-validation-group>
               <div class="field" *ngFor="let email of contacts.emails[type]; index as i">
@@ -75,7 +74,7 @@
                     [value]="phoneType[type]"
                     (onValueChanged)="onTypeChanged($event, 'phone', type)">
                   </dx-select-box>
-                  <span class="add-contact" (click)="addContact('phones', type)" *ngIf="addButtonVisible[type]['phones']">+</span>
+                  <span [class]="addButtonVisible[type]['phones'] && 'add-contact' || clearButtonVisible[type]['phones'] && 'clear-contact' || 'hidden'" (click)="clearButtonVisible[type]['phones'] ? emptyInput('phones', type): addContact('phones', type)">+</span>
               </div>
               <div class="field" *ngFor="let phone of contacts.phones[type]; index as i">
                   <p class="phone {{phone.type}}">{{phone.number | phone}}&nbsp;&nbsp;{{phone.ext ? 'ext: ' + phone.ext: '' }}<span (click)="removeContact('phones', type, i)"></span></p>
