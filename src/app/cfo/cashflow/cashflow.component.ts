@@ -1869,7 +1869,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     keyDownListener(e) {
-        e.stopPropagation();
+        if (e.target.nodeName == 'INPUT')
+            return;
 
         if (this.selectedCell) {
             let nextElement: HTMLElement;
@@ -1897,6 +1898,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     return;
             }
 
+            e.stopPropagation();
             if (nextElement) {
                 let scrollValue = this.calculateScrollValue(this.selectedCell.cellElement, nextElement, direction);
                 if (scrollValue) {
