@@ -1823,9 +1823,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         $('.lowestOpenedCurrent').removeClass('lowestOpenedCurrent');
         $(`.current${_.capitalize(lowestOpenedCurrentInterval)}`).addClass('lowestOpenedCurrent');
 
-        let lowestOpenedInterval = this.getLowestOpenedInterval();
         this.changeHistoricalColspans(lowestOpenedCurrentInterval);
-
         if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
             this.finishLoading();
         }
@@ -2031,12 +2029,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
             }));
 
-        let lowestOpenedField = this.apiTableFields.find(item => item.area === 'column' && item.areaIndex === lowestIndex);
-        return lowestOpenedField.caption.toLowerCase();
-    }
-
-    getLowestOpenedInterval() {
-        let lowestIndex = Math.max.apply(null, Object.keys(this.pivotGrid.instance.getDataSource().getData().columns._cacheByPath).map(path => path.split('.').length)) - 1;
         let lowestOpenedField = this.apiTableFields.find(item => item.area === 'column' && item.areaIndex === lowestIndex);
         return lowestOpenedField.caption.toLowerCase();
     }
