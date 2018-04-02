@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Injector, Output, EventEmitter, ElementRe
 import { ModalDirective } from 'ngx-bootstrap';
 import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput, 
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactPhotoInput, CreateContactAddressInput, ContactEmailServiceProxy,
-    ContactPhotoInput, ContactPhoneServiceProxy, CountryServiceProxy, CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
+    ContactPhoneServiceProxy, CountryServiceProxy, CountryStateDto, CountryDto, SimilarCustomerOutput, ContactPhotoInput } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
@@ -12,6 +12,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from './details/upload-photo-dialog/upload-photo-dialog.component';
+import { SimilarCustomersDialogComponent } from './details/similar-customers-dialog/similar-customers-dialog.component';
 
 import * as _ from 'underscore';
 
@@ -22,9 +23,9 @@ import * as _ from 'underscore';
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit {
     emailsPersonal: any;
-    emailsBussines: any;
+    emailsBusiness: any;
     phonesPersonal: any;
-    phonesBussines: any;
+    phonesBusiness: any;
 
     masks = AppConsts.masks;
     phoneRegEx = AppConsts.regexPatterns.phone;
@@ -53,20 +54,41 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     showEmailAddButton = false;
     showPhoneAddButton = false;
 
+    contactTypes = ['personal', 'business'];
+
     contacts: any = {
         emails: {
             personal: [],
-            bussines: []  
+            business: []  
         },
         phones: {
             personal: [],
-            bussines: []  
+            business: []  
         },
         addresses: {
             personal: {},
-            bussines: {}
+            business: {}
         }
     };
+
+    similarCustomers: SimilarCustomerOutput[];
+    similarCustomersDialog: any;
+    contactCurrentValue: any = {
+        personal: {
+            email: null,
+            phone: null,
+            name: null,
+            address: {}
+        },
+        business: {
+            email: null,
+            phone: null,
+            name: null,
+            address: {}
+        },
+    };
+    phoneCurrentValue: string;
+    emailCurrentValue: string;
 
     toolbarConfig = [
         {
@@ -170,9 +192,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 phoneNumbers: this.getPhoneContactInput('personal'), 
                 address: this.getAddressContactInput('personal'), 
                 companyName: this.company,
-                organizationEmailAddresses: this.getEmailContactInput('bussines'),
-                organizationPhoneNumbers: this.getPhoneContactInput('bussines'),
-                organizationAddress: this.getAddressContactInput('bussines'),
+                organizationEmailAddresses: this.getEmailContactInput('business'),
+                organizationPhoneNumbers: this.getPhoneContactInput('business'),
+                organizationAddress: this.getAddressContactInput('business'),
                 photo: ContactPhotoInput.fromJS({
                     originalImage: this.getBase64(this.photoOriginalData),
                     thumbnail: this.getBase64(this.photoThumbnailData)
@@ -231,6 +253,78 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     redirectToContactInformation(id: number) {
         this._router.navigate(['app/crm/client/' + id + '/contact-information']);
         this.close();
+    }
+
+    showSimilarCustomers(event) {
+        if (this.similarCustomersDialog)
+            this.similarCustomersDialog.close();
+
+        this.similarCustomersDialog = this.dialog.open(SimilarCustomersDialogComponent, {
+          data: {
+              similarCustomers: this.similarCustomers,
+              componentRef: this
+          },
+          hasBackdrop: false,
+          position: this.getDialogPossition(event, 170)
+        });
+        event.stopPropagation();
+    }
+
+    getDialogPossition(event, shiftX) {
+        return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
+    }
+
+    checkSimilarCustomers (fieldName, type, event) {
+        this.contactCurrentValue[type][fieldName] = this.getInputElementValue(event);
+        this.checkSimilarCustomersInternal();
+    }
+
+    checkSimilarCustomersInternal () {
+        let emails = this.getCurrentEmails();
+        let phones = this.getCurrentPhones();
+        let companyName = this.contactCurrentValue.business.name;
+        this._customersService.getSimilarCustomers(null, null, null, null, null, companyName, emails, phones, null, null, null, null, null)
+        .subscribe(response => {
+            if (response) {
+                this.similarCustomers = response;
+            }
+        });
+    }
+
+    getCurrentEmails() {
+        let emails = [];
+
+        this.contactTypes.forEach(type => {
+            this.contacts.emails[type].forEach(element => {
+                emails.push(element.email);
+            });
+
+            let emailCurrentValue = this.contactCurrentValue[type].email;
+            if (emailCurrentValue)
+                emails.push(emailCurrentValue);
+        });
+
+        return emails;
+    }
+
+    getCurrentPhones() {
+        let phones = [];
+
+        this.contactTypes.forEach(type => {
+            this.contacts.phones[type].forEach(element => {
+                phones.push(element.number);
+            });
+
+            let phoneCurrentValue = this.contactCurrentValue[type].phone;
+            if (phoneCurrentValue)
+                phones.push(phoneCurrentValue);
+        });
+
+        return phones;
+    }
+
+    getInputElementValue(event) {
+        return event.element.getElementsByTagName('input')[0].value;
     }
 
     focusInput(event) {
@@ -305,6 +399,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     removeContact(field, type, index) {
         this.contacts[field][type].splice(index, 1);
+
+        this.checkSimilarCustomersInternal();
     }
 
     getValidateFieldValue(field, type) {
@@ -315,6 +411,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 email: this.emailAddress
             };
             this.showEmailAddButton = false;
+            this.contactCurrentValue[type].email = null;
         } else if (field == 'phones') {
             value = { 
                 type: this.phoneType,
@@ -325,10 +422,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.showPhoneAddButton = false;
             this.resetComponent(
                 this['phones' + (type == 'personal'
-                    ? 'Bussines': 'Personal')]);
+                    ? 'Business': 'Personal')]);
+            this.contactCurrentValue[type].phone = null;
         }
-        this.resetComponent(
-            this[field + this.capitalize(type)]);
+        this.resetComponent(this[field + this.capitalize(type)]);        
 
         return value;
     }
@@ -356,14 +453,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this[validator] = $event.component;
     }
 
-    onEmailKeyUp($event) {        
-        this.showEmailAddButton = this.validateEmailAddress(
-            $event.element.getElementsByTagName('input')[0].value);
+    onEmailKeyUp($event) {
+        this.showEmailAddButton = this.validateEmailAddress(this.getInputElementValue($event));
     }
 
-    onPhoneKeyUp($event) {        
-        this.showPhoneAddButton = this.validatePhoneNumber(
-            $event.element.getElementsByTagName('input')[0].value);
+    onPhoneKeyUp($event) {
+        this.showPhoneAddButton = this.validatePhoneNumber(this.getInputElementValue($event));
     }
 
     showUploadPhoto($event) {

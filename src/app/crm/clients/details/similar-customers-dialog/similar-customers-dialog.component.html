@@ -1,0 +1,19 @@
+<mat-dialog-content>
+    <div class="close-dialog" (click)="closeSimilarCustomersDialog()">Close</div>
+    <div class="contact-persons-container">
+        <h5>{{l('RelatedOrSimilarContacts')}}</h5>
+        <div class="contact-person-info" *ngFor="let similarCustomer of data.similarCustomers" (click)='selectSimilarCustomer(similarCustomer)'>
+            <div class="avatar">
+                <img src="{{ similarCustomer?.photo ? 'data:image/png;base64,' + similarCustomer?.photo : person.person_photo_url }}" alt="Person Photo">
+            </div>
+            <div class="personal-info">
+                <div class="full-name">
+                    <h1 *ngIf="similarCustomer?.name; else loading">{{similarCustomer?.name}}</h1>
+                </div>
+                <div class="person-title">
+                    <h6>{{similarCustomer?.jobTitle}} <span *ngIf="similarCustomer?.companyName">{{similarCustomer?.companyName}}</span></h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>
