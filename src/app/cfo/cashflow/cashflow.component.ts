@@ -3033,7 +3033,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let cellType = this.getCellType(cellObj);
         if (cellType) {
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
-            if (isCellMarked && (cellObj.cell.value > -0.01 && cellObj.cell.value < 0)) {
+            if (isCellMarked && cellObj.cell.value < -0.01) {
                 cellObj.cellElement.classList.add('red');
             }
         }
