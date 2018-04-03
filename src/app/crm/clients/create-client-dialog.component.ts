@@ -100,7 +100,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 }
             },
             {
-                name: 'delete',
+                name: 'discard',
                 action: Function()
             }
         ]
