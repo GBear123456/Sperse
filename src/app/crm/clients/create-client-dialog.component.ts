@@ -38,10 +38,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     emailValidator: any;
     phoneValidator: any;
 
-    emailAddress = {};
+    emails = {};
     emailType = {};
+    phones = {};
     phoneType = {};
-    phoneNumber = {};
     phoneExtension = {};
     phoneTypes: any = [];
     emailTypes: any = [];
@@ -291,7 +291,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
-    checkSimilarCustomers () {
+    checkSimilarCustomers() {
         this._customersService.getSimilarCustomers(null, null, null, null, null, this.company, 
             this.getCurrentEmails(), this.getCurrentPhones(), null, null, null, null, null)
         .subscribe(response => {
@@ -306,7 +306,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             emails = emails.concat(fields.map(obj => obj.email));
         });
 
-        _.mapObject(this.emailAddress, (value, type) => {
+        _.mapObject(this.emails, (value, type) => {
             value && emails.push(value);
         });
         
@@ -319,7 +319,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             phones = phones.concat(fields.map(obj => obj.number));
         });
 
-        _.mapObject(this.phoneNumber, (value, type) => {
+        _.mapObject(this.phones, (value, type) => {
             value && phones.push(value);
         });
         
@@ -411,12 +411,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (field == 'emails')
             value = {
                 type: this.emailType[type],
-                email: this.emailAddress[type]
+                email: this.emails[type]
             };
         else if (field == 'phones') {
             value = { 
                 type: this.phoneType[type],
-                number: this.phoneNumber[type],
+                number: this.phones[type],
                 ext: this.phoneExtension[type]
             };
             this.phoneExtension[type] = undefined;
@@ -451,22 +451,27 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this[validator] = $event.component;
     }
 
-    onEmailKeyUp($event, type) {                
+    onKeyUp($event, field, type, data) {
         let value = this.getInputElementValue($event);
-        if (this.addButtonVisible[type]['emails'] = this.validateEmailAddress(value))
-            this.emailAddress[type] = value;
+        this.addButtonVisible[type][field] = field == 'emails' ?
+            this.validateEmailAddress(value): this.validatePhoneNumber(value);
+
+        data[type] = value;
+        
         this.checkSimilarCustomers();
-        this.clearButtonVisible[type]['emails'] = value 
-            && !this.addButtonVisible[type]['emails'];
+        this.clearButtonVisible[type][field] = value 
+            && !this.addButtonVisible[type][field];
     }
 
-    onPhoneKeyUp($event, type) {        
-        let value = this.getInputElementValue($event);
-        if (this.addButtonVisible[type]['phones'] = this.validatePhoneNumber(value))
-            this.phoneNumber[type] = value;
+    onCompanyKeyUp($event) {
+        this.company = this.getInputElementValue($event);
         this.checkSimilarCustomers();
-        this.clearButtonVisible[type]['phones'] = value 
-            && !this.addButtonVisible[type]['phones'];
+    }
+
+    setComponentToValid(field, type, reset = false) {
+        let component = this[field + this.capitalize(type)];
+        reset && component.reset();
+        setTimeout(() => component.option('isValid', true));
     }
 
     showUploadPhoto($event) {
@@ -486,12 +491,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     onComponentInitialized($event, field, type) {
         this[field + this.capitalize(type)] = $event.component;
+        $event.component.option('value', this[field][type]);
     }
 
     emptyInput(field, type) {
-        let component = this[field + this.capitalize(type)];
-        component.reset();
-        component.option('isValid', true);
+        this.setComponentToValid(field, type, true);
         this.clearButtonVisible[type][field] = false;
+        this.checkSimilarCustomers();
     }
 }
