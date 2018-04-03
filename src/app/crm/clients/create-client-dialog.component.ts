@@ -31,6 +31,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     masks = AppConsts.masks;
     phoneRegEx = AppConsts.regexPatterns.phone;
+    emailRegEx = AppConsts.regexPatterns.email;
 
     company: string;
     notes = {};
@@ -373,21 +374,34 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             });
     }
 
+    setDefaultTypeValue(obj, list, field = null) {
+        if (list.length)
+            ['business', 'personal'].forEach((type) => {
+                if (field)
+                    obj[type][field] = list[0].id;
+                else
+                    obj[type] = list[0].id;
+            });
+    }
+
     addressTypesLoad() {
         this._contactAddressService.getAddressUsageTypes().subscribe(result => {
             this.addressTypes = result.items;
+            this.setDefaultTypeValue(this.contacts.addresses, result.items, 'addressType');
         });
     }
 
     phoneTypesLoad() {
         this._contactPhoneService.getPhoneUsageTypes().subscribe(result => {
             this.phoneTypes = result.items;
+            this.setDefaultTypeValue(this.phoneType, result.items);
         });
     }
 
     emailTypesLoad() {
         this._contactEmailService.getEmailUsageTypes().subscribe(result => {
             this.emailTypes = result.items;
+            this.setDefaultTypeValue(this.emailType, result.items);
         });
     }
 
@@ -442,7 +456,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     validateEmailAddress(value): boolean {
-        return AppConsts.regexPatterns.email.test(value);
+        return this.emailRegEx.test(value);
     }
 
     validatePhoneNumber(value): boolean {
@@ -450,9 +464,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     onTypeChanged($event, field, type) {
-        $event.element.parentNode.classList
-            .replace(this[field + 'Type'][type], $event.value);
-        this[field + 'Type'][type] = $event.value;
+        if (type) {
+            $event.element.parentNode.classList
+                .replace(this[field + 'Type'][type], $event.value);
+            this[field + 'Type'][type] = $event.value;
+        }
     }
 
     initValidationGroup($event, validator) {
