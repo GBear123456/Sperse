@@ -118,7 +118,8 @@
                             [format]="customCurrency"
                             [allowSorting]="false"
                             [allowFiltering]="false"
-                            alignment="right">
+                            alignment="right"
+                            [minWidth]="150">
                     <dxi-validation-rule type="numeric"></dxi-validation-rule>
                 </dxi-column>
                 <dxi-column dataField="credit"
@@ -126,21 +127,24 @@
                             [format]="customCurrency"
                             [allowSorting]="false"
                             [allowFiltering]="false"
-                            alignment="right">
+                            alignment="right"
+                            [minWidth]="150">
                     <dxi-validation-rule type="numeric"></dxi-validation-rule>
                 </dxi-column>
                 <dxi-column [caption]="this.l('DetailsHeaders_Account')"
                             dataField="accountNumber"
                             [allowSorting]="false"
                             [allowFiltering]="false"
-                            [allowEditing]="false">
+                            [allowEditing]="false"
+                            [minWidth]="130">
                 </dxi-column>
                 <dxi-column [caption]="this.l('DetailsHeaders_Type')"
                             dataField="cashflowTypeId"
                             [allowSorting]="false"
                             [allowFiltering]="false"
                             [allowEditing]="false"
-                            cellTemplate="typeCell">
+                            cellTemplate="typeCell"
+                            [minWidth]="130">
                 </dxi-column>
                 <dxi-column [caption]="this.l('DetailsHeaders_Comments')"
                             dataField="comment"
