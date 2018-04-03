@@ -5,30 +5,44 @@
 	/deep/ #gridContainer {
 		.dx-datagrid-rowsview {
 			.dx-column-lines {
-          cursor: pointer; 
-          & > td {
-    				span.link-to-cfo-column {
-    					position: relative;
-    					width: 100%;
-    					&::before {
-    						padding-top: 2px;
-    						content: 'CFO';
-    						border-radius: 14px;
-    						background-image: linear-gradient(41deg, #f76b1c, #fad961);
-    						background-size: cover;
-    						color: #ffffff;
-    						text-align: center;
-    						font-size: 10px;
-    						font-weight: 600;
-    						line-height: 2.4;
-    						letter-spacing: 0.2px;
-    						width: 66px;
-    						height: 28px;
-    						display: inline-block;
-    						cursor: pointer;
-    					}
-    				}
-         }
+          		cursor: pointer; 
+          		& > td {
+					span {
+						text-align: center;
+						display: inherit;
+
+						.link-to-cfo-column {
+							position: relative;
+							width: 100%;
+							&::before {
+								padding-top: 2px;
+								content: 'CFO';
+								border-radius: 14px;
+								background-image: linear-gradient(41deg, #f76b1c, #fad961);
+								background-size: cover;
+								color: #ffffff;
+								font-size: 10px;
+								font-weight: 600;
+								line-height: 2.4;
+								letter-spacing: 0.2px;
+								width: 66px;
+								height: 28px;
+								display: inline-block;
+							}
+						}
+							
+						.link-request-verification{	
+							text-decoration: none;
+							color: #00AEEF;
+							letter-spacing: 0.2px;
+							font-weight: 500;
+
+							&:hover{
+								color: #56d1ff;
+							}
+						}
+					}
+         		}
 			}
 		}
 	}
