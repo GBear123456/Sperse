@@ -10,11 +10,11 @@ import { Component, OnInit } from '@angular/core';
 export class TotalApprovedComponent implements OnInit {
 
     total = {
-        total_approved: '99,999',
-        total_founded: '40,000',
-        invoiced_amount: '4,000',
-        amount_paid: '3,000',
-        amount_due: '1,000'
+        total_approved: '0',
+        total_founded: '0',
+        invoiced_amount: '0',
+        amount_paid: '0',
+        amount_due: '0'
     };
 
     constructor(//private FinancialService: FinancialService
