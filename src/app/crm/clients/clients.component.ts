@@ -136,6 +136,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     createClient() {
         this.dialog.open(CreateClientDialogComponent, {
             panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
             data: {}
         }).afterClosed().subscribe(() => this.refreshDataGrid())
     }
