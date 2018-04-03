@@ -74,8 +74,6 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         this.dialogRef.afterClosed().subscribe(closeData => {
             if (closeData && closeData.saveLocally) {
                 this.userPreferencesService.saveLocally(this.model);
-            } else {
-                this.userPreferencesService.removeLocalModel();
             }
         });
     }

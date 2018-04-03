@@ -31,6 +31,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     masks = AppConsts.masks;
     phoneRegEx = AppConsts.regexPatterns.phone;
+    emailRegEx = AppConsts.regexPatterns.email;
 
     company: string;
     notes = {};
@@ -455,7 +456,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     validateEmailAddress(value): boolean {
-        return AppConsts.regexPatterns.email.test(value);
+        return this.emailRegEx.test(value);
     }
 
     validatePhoneNumber(value): boolean {

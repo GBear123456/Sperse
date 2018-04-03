@@ -24,7 +24,7 @@
                         (onKeyUp)="onKeyUp($event, 'emails', type, emails)"
                         (onInitialized)="onComponentInitialized($event, 'emails', type)">
                         <dx-validator>
-                          <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                          <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
                         </dx-validator>
                       </dx-text-box>
                       <dx-select-box
