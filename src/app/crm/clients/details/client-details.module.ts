@@ -26,6 +26,7 @@ import { ClientScoresComponent } from './client-scores/client-scores.component';
 import { TotalApprovedComponent } from './total-approved/total-approved.component';
 import { CreditLinesComponent } from './credit-lines/credit-lines.component';
 import { RequiredDocumentsComponent } from './required-documents/required-documents.component';
+import { VerificationChecklistComponent } from './verification-checklist/verification-checklist.component';
 import { ContactInformationComponent } from './contact-information/contact-information.component';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
@@ -61,6 +62,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     CreditLinesComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent,
+    VerificationChecklistComponent,
     OperationsWidgetComponent,
     OrganizationDialogComponent,
     PersonDialogComponent,
