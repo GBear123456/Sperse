@@ -4,14 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOService } from './cfo.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
-import { environment } from 'environments/environment';
 
 export abstract class CFOComponentBase extends AppComponentBase implements OnInit, OnDestroy {
-
-    private static isZendeskWebwidgetSetup = false;
-    private static showZendeskWebwidgetTimeout: any;
-
     instanceId: number;
     instanceType: string;
 
@@ -46,42 +40,6 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
         else {
             this.instanceType = this._cfoService.instanceType;
             this.instanceId = this._cfoService.instanceId;
-        }
-    }
-
-    private static zendeskWebwidgetSetup(service: ngxZendeskWebwidgetService) {
-        if (CFOComponentBase.isZendeskWebwidgetSetup) {
-            return;
-        }
-
-        service.setSettings(
-            {
-                webWidget: {
-                    launcher: {
-                        label: {
-                            '*': 'Questions or feedback'
-                        }
-                    }
-                }
-            }
-        );
-
-        CFOComponentBase.isZendeskWebwidgetSetup = true;
-    }
-
-    protected static zendeskWebwidgetShow(service: ngxZendeskWebwidgetService) {
-        if (environment.zenDeskEnabled) {
-            CFOComponentBase.zendeskWebwidgetSetup(service);
-            this.showZendeskWebwidgetTimeout = setTimeout(() => {
-                service.show();
-            }, 2000);
-        }
-    }
-
-    protected static zendeskWebwidgetHide(service: ngxZendeskWebwidgetService) {
-        if (environment.zenDeskEnabled) {
-            clearTimeout(this.showZendeskWebwidgetTimeout);
-            service.hide();
         }
     }
 

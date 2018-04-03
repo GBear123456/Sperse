@@ -14,8 +14,8 @@ import { ScreenHelper } from '@shared/helpers/ScreenHelper';
 import { PrimengDatatableHelper } from 'shared/helpers/PrimengDatatableHelper';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppService } from '@app/app.service';
-
-
+import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+import { environment } from 'environments/environment';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 
@@ -49,6 +49,9 @@ export abstract class AppComponentBase {
     private _applicationRef: ApplicationRef;
     public _exportService: ExportService;
     public capitalize = require('underscore.string/capitalize');
+
+    private static isZendeskWebwidgetSetup = false;
+    private static showZendeskWebwidgetTimeout: any;
 
     public defaultGridPagerConfig = {
         showPageSizeSelector: true,
@@ -272,6 +275,42 @@ export abstract class AppComponentBase {
                 top: event.clientY - shiftY + 'px',
                 left: event.clientX - shiftX + 'px'
             };
+        }
+    }
+
+    private static zendeskWebwidgetSetup(service: ngxZendeskWebwidgetService) {
+        if (AppComponentBase.isZendeskWebwidgetSetup) {
+            return;
+        }
+
+        service.setSettings(
+            {
+                webWidget: {
+                    launcher: {
+                        label: {
+                            '*': 'Questions or feedback'
+                        }
+                    }
+                }
+            }
+        );
+
+        AppComponentBase.isZendeskWebwidgetSetup = true;
+    }
+
+    protected static zendeskWebwidgetShow(service: ngxZendeskWebwidgetService) {
+        if (environment.zenDeskEnabled) {
+            AppComponentBase.zendeskWebwidgetSetup(service);
+            this.showZendeskWebwidgetTimeout = setTimeout(() => {
+                service.show();
+            }, 2000);
+        }
+    }
+
+    protected static zendeskWebwidgetHide(service: ngxZendeskWebwidgetService) {
+        if (environment.zenDeskEnabled) {
+            clearTimeout(this.showZendeskWebwidgetTimeout);
+            service.hide();
         }
     }
 }

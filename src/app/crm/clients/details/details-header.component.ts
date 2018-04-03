@@ -11,12 +11,13 @@ import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, Instanc
 
 import * as _ from 'underscore';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
+import { ClientService } from '@app/crm/clients/clients.service';
 
 @Component({
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [UserServiceProxy, InstanceServiceProxy]
+    providers: [UserServiceProxy, InstanceServiceProxy, ClientService]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @Input()
@@ -43,11 +44,12 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         private userServiceProxy: UserServiceProxy,
         private instanceServiceProxy: InstanceServiceProxy,
         private personContactServiceProxy: PersonContactServiceProxy,
-        private nameParserService: NameParserService
+        private nameParserService: NameParserService,
+        private clientService: ClientService
     ) {
         super(injector);
 
-        this.canSendVerificationRequest = this.feature.isEnabled('CFO.Partner') && this.isGranted('Pages.CRM.ActivateUserForContact') && this.isGranted('Pages.CFO.ClientActivation');
+        this.canSendVerificationRequest = this.clientService.canSendVerificationRequest();
     }
 
     ngOnInit(): void {
@@ -56,22 +58,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     requestVerification() {
-        abp.message.confirm(
-            'Please confirm user activation',
-            (isConfirmed) => {
-                if (isConfirmed) {
-                    let request = new ActivateUserForContactInput();
-                    request.contactId = this.data.primaryContactInfo.id;
-                    request.tenantHostType = <any>TenantHostType.PlatformUi;
-                    this.userServiceProxy.activateUserForContact(request).subscribe(result => {
-                        let setupInput = new SetupInput({ userId: result.userId });
-                        this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(result => {
-                            abp.notify.info('User was activated and email sent successfully');
-                        });
-                    });
-                }
-            }
-        );
+        this.clientService.requestVerification(this.data.primaryContactInfo.id);
     }
 
     getDialogPossition(event, shiftX) {

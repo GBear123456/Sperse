@@ -128,14 +128,21 @@ export class OrganizationDialogComponent extends AppComponentBase {
     getPropData(item) {
         let field = item.name || item,
             value = this.data.organization[field] || '';
+
+        //MB: need to include validation rules into item
+        let validationRules = [];
+        if (field == "ein"  || field == "productServicesSold" || field == 'businessSicCode')
+            validationRules.push({type: 'numeric', message: this.l('ValueShouldBeNumeric')});
+        if (field == "ein")
+            validationRules.push({type: 'stringLength', max: 9, message: this.l('ValueMaxLength', 9)});        
         return {
             id: this.data.id,
             value: value instanceof moment ? 
                 value.format('MMM YYYY'): value,
-            validationRules: [],
+            validationRules: validationRules,
             isEditDialogEnabled: false,
             lEntityName: field,
-            lEditPlaceholder: 'Enter value'
+            lEditPlaceholder: this.l('EditValuePlaceholder')
         };
     }
 

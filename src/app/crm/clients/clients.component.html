@@ -23,16 +23,16 @@
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
-                        <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate" [visible]="false" 
-                                    [width]="65" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                        <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate"
+                                    [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
+                                    [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
-                            <img [src]="getPhoto(data.data.Photo, data.data.Gender)"
+                            <img [src]="getPhoto(data.data.Photo)"
                                  alt="{{l('AltPersonPhoto')}}"
                                  width="38"
                                  class="img-circle" />
                         </div>
                         <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
-                        <dxi-column dataField="Status" caption="{{l('Status')}}" [visible]="false" ></dxi-column>
                         <dxi-column caption="{{l('Contact.CityAndState')}}" [calculateCellValue]="calculateAddressColumnValue"></dxi-column>
                         <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
                         <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell"></dxi-column>
@@ -40,12 +40,19 @@
                         <div *dxTemplate="let cellData of 'typeCell'">
                             {{cellData.value ? l('Organization') : l('Person')}}
                         </div>
+                        <dxi-column dataField="Status" caption="{{l('Status')}}"></dxi-column>
                         <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
-                        <dxi-column name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="75" [fixed]="true" [fixedPosition]="'right'"
+                        <dxi-column name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="170" [fixed]="true" [fixedPosition]="'right'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
-                            <span *ngIf="isClientCFOAvailable(data.data.UserId)" [class]="'link-to-cfo-column'" (click)="redirectToCFO($event, data.data.UserId)">
-                            </span>
+                            <ng-container [ngSwitch]="isClientCFOAvailable(data.data.UserId)">
+                                <span *ngSwitchCase="true">
+                                    <span [class]="'link-to-cfo-column'" (click)="redirectToCFO($event, data.data.UserId)"></span>
+                                </span>
+                                <span *ngSwitchCase="false">
+                                    <a *ngIf="canSendVerificationRequest" class="link link-request-verification" (click)="requestVerification(data.data.PrimaryContactId)">{{l('ClientDetails_RequestVerification')}}</a>
+                                </span>
+                            </ng-container>
                         </div>
                         <div *dxTemplate="let cellData of 'dateCell'">
                             {{cellData.value | date: formatting.dateTime}}

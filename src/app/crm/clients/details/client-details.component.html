@@ -24,7 +24,7 @@
       </div>
       <dx-scroll-view showScrollbar="onHover">
         <nav mat-tab-nav-bar>
-            <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.active && link.route" [routerLinkActive]="link.active && 'active'" [disabled]="!link.active">{{link.label}}</a>
+            <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.active && link.route" [routerLinkActive]="link.active ? 'active': ''" [disabled]="!link.active">{{link.label}}</a>
         </nav>
       </dx-scroll-view>
     </mat-sidenav>
@@ -39,6 +39,7 @@
               <client-scores></client-scores>
               <total-approved></total-approved>
               <credit-lines></credit-lines>
+              <verification-checklist></verification-checklist>
               <required-documents></required-documents>
             </div>
           </dx-scroll-view>

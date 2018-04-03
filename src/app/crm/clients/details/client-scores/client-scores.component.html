@@ -1,4 +1,4 @@
-<h4>Scores</h4>
+<h4>{{l('CreditScores')}}</h4>
 <div class="scors">
     <div class="experian_score">
         <!-- #4edb5d -->
@@ -18,7 +18,8 @@
             [animationDelay]="0">
         </round-progress>
 
-        <span>{{scores.experian_score?.amount}}</span>
+        <!-- <span>{{scores.experian_score?.amount}}</span> -->
+        <span class="zero-value">0</span>
         <h5>{{scores.experian_score?.label}}</h5>
     </div>
     <div class="equifax_score">

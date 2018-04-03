@@ -1,0 +1,11 @@
+<div class="left-menu">
+    <p class="title"><a [routerLink]="headerLink">{{l('CRMDashboardMenu_Header')}}</a></p>
+    <ul class="wrapper">
+        <ng-template ngFor let-item [ngForOf]="items" let-i="index">
+            <li class="item">
+                <div class="img {{'img-' + item.caption}}"></div>
+                <span class="link {{i < 2 ? 'add-button': ''}}" (click)="onClick($event, item)">{{l('CRMDashboardMenu_' + item.caption)}}</span>
+            </li>
+        </ng-template>
+    </ul>
+</div>
