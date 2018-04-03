@@ -40,7 +40,12 @@
                         <div *dxTemplate="let cellData of 'typeCell'">
                             {{cellData.value ? l('Organization') : l('Person')}}
                         </div>
-                        <dxi-column dataField="Status" caption="{{l('Status')}}"></dxi-column>
+                        <dxi-column dataField="Status" caption="{{l('Status')}}" cellTemplate="statusCell"></dxi-column>
+                        <div *dxTemplate="let cellData of 'statusCell'">
+                            <div [class]="'client-status ' + cellData.value | lowercase">
+                                {{cellData.value}}
+                            </div>
+                        </div>
                         <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
                         <dxi-column name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="170" [fixed]="true" [fixedPosition]="'right'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
