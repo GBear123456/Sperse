@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild, Injector, Output, EventEmitter, ElementRe
 import { ModalDirective } from 'ngx-bootstrap';
 import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput, 
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactPhotoInput, CreateContactAddressInput, ContactEmailServiceProxy,
-    ContactPhoneServiceProxy, CountryServiceProxy, CountryStateDto, CountryDto, SimilarCustomerOutput, ContactPhotoInput } from '@shared/service-proxies/service-proxies';
+    ContactPhoneServiceProxy, CountryServiceProxy, CountryStateDto, CountryDto, SimilarCustomerOutput, ContactPhotoInput, 
+    PersonInfoDto } from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
@@ -15,6 +16,7 @@ import { UploadPhotoDialogComponent } from './details/upload-photo-dialog/upload
 import { SimilarCustomersDialogComponent } from './details/similar-customers-dialog/similar-customers-dialog.component';
 
 import * as _ from 'underscore';
+import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
@@ -127,7 +129,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _contactPhoneService: ContactPhoneServiceProxy,
         private _contactEmailService: ContactEmailServiceProxy,
         private _contactAddressService: ContactAddressServiceProxy,
-        private _router: Router
+        private _router: Router,
+        private _nameParser: NameParserService
     ) {
         super(injector);
 
@@ -166,9 +169,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (!this.addressValidator.validate().isValid)
             return ;
 
-        let nameParts = this.data.title && 
-            this.data.title.split(' ');
-        if (!nameParts || nameParts.length < 2) {
+        let person = new PersonInfoDto();
+        this._nameParser.parseIntoPerson(this.data.title, person);
+        
+        if (!person.firstName || !person.lastName) {
             this.data.isTitleValid = false;
             return this.notify.error(this.l('FullNameIsRequired'));
         }
@@ -181,8 +185,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
         this._customersService.createCustomer(
             CreateCustomerInput.fromJS({
-                firstName: nameParts[0],
-                lastName: nameParts.slice(1).join(' '),
+                firstName: person.firstName,
+                middleName: person.middleName,
+                lastName: person.lastName,
+                namePrefix: person.namePrefix,
+                nameSuffix: person.nameSuffix,
+                nickName: person.nickName,
                 emailAddresses: this.getEmailContactInput('personal'),
                 phoneNumbers: this.getPhoneContactInput('personal'), 
                 address: this.getAddressContactInput('personal'), 

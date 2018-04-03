@@ -1,0 +1,13 @@
+<div class="title" (click)="changeCollapseStatus()">
+    <h4>Personal verifications</h4>
+    <img src="assets/common/icons/arrow-{{personal_checklist_collapsed ? 'down': 'up'}}.svg" align="right">
+</div>
+<div class="checklist-data" [hidden]="personal_checklist_collapsed">
+  <ul>
+    <li *ngFor="let item of checklist">
+      <i class="fa fa-{{getCheckStyle(item.status)}}"></i>
+      {{item.name}}
+    </li>
+  </ul>
+</div>
+  

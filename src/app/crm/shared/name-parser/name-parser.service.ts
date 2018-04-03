@@ -8,6 +8,9 @@ export class NameParserService {
     constructor() { }
 
     parseIntoPerson(value: string, person: PersonInfoDto) {
+        if (!value)
+            return
+
         let res = parseFullName.parseFullName(value.trim());
         person.namePrefix = res.title;
         person.firstName = res.first;
