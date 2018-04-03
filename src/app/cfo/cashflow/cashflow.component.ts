@@ -314,7 +314,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             dataType: 'number',
             summaryType: 'sum',
             format: (value) => {
-                return this.formatAsCurrencyWithLocale(value, 'en-EN');
+                return this.formatAsCurrencyWithLocale(value);
             },
             area: 'data',
             showColumnTotals: true,
@@ -733,8 +733,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
         let getCategoryTreeObservalble = this._classificationServiceProxy.getCategoryTree(InstanceType[this.instanceType], this.instanceId, false);
+
+        this.userPreferencesService.removeLocalModel();
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
-        let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD', null, true);
+        let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, this.currencyId, null, true);
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservalble, getCashflowGridSettings, getBankAccountsObservable)
             .subscribe(result => {
                 /** Initial data handling */
@@ -2830,7 +2832,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 infoTooltip.className = 'tootipWrapper';
                 this.infoTooltip = new Tooltip(infoTooltip, {
                     target: targetCell,
-                    contentTemplate: `<div>New account added: ${this.formatAsCurrencyWithLocale(sum, 'en-EN')}</div>`,
+                    contentTemplate: `<div>New account added: ${this.formatAsCurrencyWithLocale(sum)}</div>`,
                 });
                 targetCell.appendChild(infoTooltip);
                 this.infoTooltip.show();
@@ -3007,10 +3009,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (cellType) {
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
             if (!isCellMarked) {
-                cellObj.cellElement.innerText = this.formatAsCurrencyWithLocale(Math.round(cellObj.cell.value), 'en-EN', 0);
+                cellObj.cellElement.innerText = this.formatAsCurrencyWithLocale(Math.round(cellObj.cell.value), 0);
                 /** add title to the cells that has too little value and showen as 0 to show the real value on hover */
                 if (cellObj.cell.value > -1 && cellObj.cell.value < 1 && cellObj.cell.value !== 0 && Math.abs(cellObj.cell.value) >= 0.01) {
-                    cellObj.cellElement.setAttribute('title', this.formatAsCurrencyWithLocale(cellObj.cell.value, 'en-EN', 2));
+                    cellObj.cellElement.setAttribute('title', this.formatAsCurrencyWithLocale(cellObj.cell.value, 2));
                 }
             }
         }
@@ -3080,15 +3082,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     reformatCell(cellObj, preference) {
-        const locale = preference.sourceValue.indexOf('.') <= 3 ? 'en-EN' : 'tr';
         if (!cellObj.cellElement.classList.contains('hideZeroActivity') &&
             !cellObj.cellElement.classList.contains('hideZeroValues') &&
             cellObj.cell.value) {
-            cellObj.cellElement.innerText = this.formatAsCurrencyWithLocale(cellObj.cell.value, locale);
+            cellObj.cellElement.innerText = this.formatAsCurrencyWithLocale(cellObj.cell.value);
         }
     }
 
-    formatAsCurrencyWithLocale(value: number, locale: string, fractionDigits = 2) {
+    formatAsCurrencyWithLocale(value: number, fractionDigits = 2, locale: string = null) {
+        if (!locale)
+            locale = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 3 ? 'tr' : 'en-EN';
         value = value > -0.01 && value <= 0 ? 0 : value;
         return value.toLocaleString(locale, {
             style: 'currency',
