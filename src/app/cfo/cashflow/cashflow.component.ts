@@ -4400,7 +4400,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** If date is lower then the current date - return false */
     validateForecastDate(e) {
-        return e.value.toLocaleDateString() >= new Date().toLocaleDateString();
+        return new Date(e.value.toLocaleDateString()) >= new Date(new Date().toLocaleDateString());
     }
 
     onDetailsRowPrepared(e) {
