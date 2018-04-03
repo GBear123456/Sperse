@@ -4173,17 +4173,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     isCellIsStartingBalanceSummary(summaryCell): boolean {
-        return this.checkCellType(summaryCell, StartedBalance);
+        return summaryCell.field('row') !== null && summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + StartedBalance);
     }
 
     isCellDiscrapencyCell(summaryCell): boolean {
-        return this.checkCellType(summaryCell, Reconciliation);
+        let parentCell = summaryCell.parent('row');
+        return (summaryCell.field('row') !== null && summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + Reconciliation)) ||
+            (parentCell !== null && parentCell.value(parentCell.field('row')) === (CategorizationPrefixes.CashflowType + Reconciliation));
     }
-
-    checkCellType(summaryCell, type): boolean {
-        return summaryCell.field('row') !== null &&
-            summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + type);
-    }
+    
 
     cellRowIsNotEmpty(summaryCell) {
         return summaryCell.field('row') &&
