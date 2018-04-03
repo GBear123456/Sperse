@@ -7683,8 +7683,8 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getProviderUIToken(instanceType: InstanceType64, instanceId: number): Observable<GetProviderUITokenOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetProviderUIToken?";
+    createProviderUIToken(instanceType: InstanceType64, instanceId: number): Observable<GetProviderUITokenOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/CreateProviderUIToken?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -7692,7 +7692,7 @@ export class FinancialInformationServiceProxy {
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
-            method: "get",
+            method: "post",
             headers: new Headers({
                 "Content-Type": "application/json", 
                 "Accept": "application/json"
@@ -7700,11 +7700,11 @@ export class FinancialInformationServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGetProviderUIToken(response_);
+            return this.processCreateProviderUIToken(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processGetProviderUIToken(response_);
+                    return this.processCreateProviderUIToken(response_);
                 } catch (e) {
                     return <Observable<GetProviderUITokenOutput>><any>Observable.throw(e);
                 }
@@ -7713,7 +7713,7 @@ export class FinancialInformationServiceProxy {
         });
     }
 
-    protected processGetProviderUIToken(response: Response): Observable<GetProviderUITokenOutput> {
+    protected processCreateProviderUIToken(response: Response): Observable<GetProviderUITokenOutput> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -7897,7 +7897,63 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType68, instanceId: number): Observable<SyncProgressOutput> {
+    syncAccount(instanceType: InstanceType68, instanceId: number, syncAccountId: number): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAccount?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (syncAccountId === undefined || syncAccountId === null)
+            throw new Error("The parameter 'syncAccountId' must be defined and cannot be null.");
+        else
+            url_ += "syncAccountId=" + encodeURIComponent("" + syncAccountId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processSyncAccount(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSyncAccount(response_);
+                } catch (e) {
+                    return <Observable<boolean>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<boolean>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSyncAccount(response: Response): Observable<boolean> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<boolean>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    getSyncProgress(instanceType: InstanceType69, instanceId: number): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -8693,7 +8749,7 @@ export class InstanceServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType69, instanceId: number): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType70, instanceId: number): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -8743,7 +8799,7 @@ export class InstanceServiceProxy {
     /**
      * @return Success
      */
-    setup(instanceType: InstanceType70): Observable<SetupOutput> {
+    setup(instanceType: InstanceType71): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType === undefined || instanceType === null)
             throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
@@ -15774,7 +15830,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType71, instanceId: number): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType72, instanceId: number): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -15826,7 +15882,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType72, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType73, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -15878,7 +15934,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType73, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType74, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -40797,6 +40853,11 @@ export enum InstanceType68 {
     Main = <any>"Main", 
 }
 
+export enum InstanceType69 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
 export enum IncomeStatisticsDateInterval {
     _1 = 1, 
     _2 = 2, 
@@ -40809,12 +40870,12 @@ export enum IncomeStatisticsDateInterval2 {
     _3 = 3, 
 }
 
-export enum InstanceType69 {
+export enum InstanceType70 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
 
-export enum InstanceType70 {
+export enum InstanceType71 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
@@ -40855,17 +40916,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType71 {
-    User = <any>"User", 
-    Main = <any>"Main", 
-}
-
 export enum InstanceType72 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
 
 export enum InstanceType73 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
+export enum InstanceType74 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
