@@ -23,8 +23,12 @@ export class DashboardMenuComponent extends AppComponentBase {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
-    onClick(elem) {
-        elem.component && this._router.navigate(
-            ['/app/crm' + elem.component]);
+    onClick(event, elem, i) {
+        if (event.clientX < 260)
+            elem.component && this._router.navigate(
+                ['/app/crm' + elem.component]);
+        else if (event.target.classList.contains('add-button'))
+            this._router.navigate(['/app/crm/clients'], 
+                { queryParams: { action: 'addNewClient' } });
     }
 }

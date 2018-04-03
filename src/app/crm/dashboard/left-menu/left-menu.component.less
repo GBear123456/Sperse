@@ -48,7 +48,28 @@
             font-weight: 500;
 
             .link {
+                width: 215px;
+                position: relative;
                 cursor: pointer;
+                display: inline-block;
+
+                &.add-button:hover:before {
+                    content: '+';
+                    display: block;
+                    position: absolute;
+                    border-radius: 50%;
+                    line-height: 25px;
+                    font-weight: 300;
+                    text-align: center;
+                    font-size: 25px;
+                    color: #dfdfdf;
+                    width: 25px;
+                    height: 25px;
+                    right: 0px;
+                    top: -7px;
+                    cursor: pointer;
+                    border: 1px solid #dfdfdf;
+                }
             }
 
             &:not(:last-child) {

@@ -4,7 +4,7 @@
         <ng-template ngFor let-item [ngForOf]="items" let-i="index">
             <li class="item">
                 <div class="img {{'img-' + item.caption}}"></div>
-                <span class="link" (click)="onClick(item)">{{l('CRMDashboardMenu_' + item.caption)}}</span>
+                <span class="link {{i < 2 ? 'add-button': ''}}" (click)="onClick($event, item)">{{l('CRMDashboardMenu_' + item.caption)}}</span>
             </li>
         </ng-template>
     </ul>
