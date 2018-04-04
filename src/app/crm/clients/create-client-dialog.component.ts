@@ -31,6 +31,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     masks = AppConsts.masks;
     phoneRegEx = AppConsts.regexPatterns.phone;
+    emailRegEx = AppConsts.regexPatterns.email;
 
     company: string;
     notes = {};
@@ -40,10 +41,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     emailValidator: any;
     phoneValidator: any;
 
-    emailAddress = {};
+    emails = {};
     emailType = {};
+    phones = {};
     phoneType = {};
-    phoneNumber = {};
     phoneExtension = {};
     phoneTypes: any = [];
     emailTypes: any = [];
@@ -299,7 +300,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
-    checkSimilarCustomers () {
+    checkSimilarCustomers() {
         this._customersService.getSimilarCustomers(null, null, null, null, null, this.company, 
             this.getCurrentEmails(), this.getCurrentPhones(), null, null, null, null, null)
         .subscribe(response => {
@@ -314,7 +315,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             emails = emails.concat(fields.map(obj => obj.email));
         });
 
-        _.mapObject(this.emailAddress, (value, type) => {
+        _.mapObject(this.emails, (value, type) => {
             value && emails.push(value);
         });
         
@@ -327,7 +328,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             phones = phones.concat(fields.map(obj => obj.number));
         });
 
-        _.mapObject(this.phoneNumber, (value, type) => {
+        _.mapObject(this.phones, (value, type) => {
             value && phones.push(value);
         });
         
@@ -373,21 +374,34 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             });
     }
 
+    setDefaultTypeValue(obj, list, field = null) {
+        if (list.length)
+            ['business', 'personal'].forEach((type) => {
+                if (field)
+                    obj[type][field] = list[0].id;
+                else
+                    obj[type] = list[0].id;
+            });
+    }
+
     addressTypesLoad() {
         this._contactAddressService.getAddressUsageTypes().subscribe(result => {
             this.addressTypes = result.items;
+            this.setDefaultTypeValue(this.contacts.addresses, result.items, 'addressType');
         });
     }
 
     phoneTypesLoad() {
         this._contactPhoneService.getPhoneUsageTypes().subscribe(result => {
             this.phoneTypes = result.items;
+            this.setDefaultTypeValue(this.phoneType, result.items);
         });
     }
 
     emailTypesLoad() {
         this._contactEmailService.getEmailUsageTypes().subscribe(result => {
             this.emailTypes = result.items;
+            this.setDefaultTypeValue(this.emailType, result.items);
         });
     }
 
@@ -419,12 +433,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (field == 'emails')
             value = {
                 type: this.emailType[type],
-                email: this.emailAddress[type]
+                email: this.emails[type]
             };
         else if (field == 'phones') {
             value = { 
                 type: this.phoneType[type],
-                number: this.phoneNumber[type],
+                number: this.phones[type],
                 ext: this.phoneExtension[type]
             };
             this.phoneExtension[type] = undefined;
@@ -442,7 +456,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     validateEmailAddress(value): boolean {
-        return AppConsts.regexPatterns.email.test(value);
+        return this.emailRegEx.test(value);
     }
 
     validatePhoneNumber(value): boolean {
@@ -450,31 +464,38 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     onTypeChanged($event, field, type) {
-        $event.element.parentNode.classList
-            .replace(this[field + 'Type'][type], $event.value);
-        this[field + 'Type'][type] = $event.value;
+        if (type) {
+            $event.element.parentNode.classList
+                .replace(this[field + 'Type'][type], $event.value);
+            this[field + 'Type'][type] = $event.value;
+        }
     }
 
     initValidationGroup($event, validator) {
         this[validator] = $event.component;
     }
 
-    onEmailKeyUp($event, type) {                
+    onKeyUp($event, field, type, data) {
         let value = this.getInputElementValue($event);
-        if (this.addButtonVisible[type]['emails'] = this.validateEmailAddress(value))
-            this.emailAddress[type] = value;
+        this.addButtonVisible[type][field] = field == 'emails' ?
+            this.validateEmailAddress(value): this.validatePhoneNumber(value);
+
+        data[type] = value;
+        
         this.checkSimilarCustomers();
-        this.clearButtonVisible[type]['emails'] = value 
-            && !this.addButtonVisible[type]['emails'];
+        this.clearButtonVisible[type][field] = value 
+            && !this.addButtonVisible[type][field];
     }
 
-    onPhoneKeyUp($event, type) {        
-        let value = this.getInputElementValue($event);
-        if (this.addButtonVisible[type]['phones'] = this.validatePhoneNumber(value))
-            this.phoneNumber[type] = value;
+    onCompanyKeyUp($event) {
+        this.company = this.getInputElementValue($event);
         this.checkSimilarCustomers();
-        this.clearButtonVisible[type]['phones'] = value 
-            && !this.addButtonVisible[type]['phones'];
+    }
+
+    setComponentToValid(field, type, reset = false) {
+        let component = this[field + this.capitalize(type)];
+        reset && component.reset();
+        setTimeout(() => component.option('isValid', true));
     }
 
     showUploadPhoto($event) {
@@ -494,12 +515,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     onComponentInitialized($event, field, type) {
         this[field + this.capitalize(type)] = $event.component;
+        $event.component.option('value', this[field][type]);
     }
 
     emptyInput(field, type) {
-        let component = this[field + this.capitalize(type)];
-        component.reset();
-        component.option('isValid', true);
+        this.setComponentToValid(field, type, true);
         this.clearButtonVisible[type][field] = false;
+        this.checkSimilarCustomers();
     }
 }

@@ -434,9 +434,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             }).on('dragleave', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
-
-                e.target.classList.remove('element-drag-hover');                
-                if (e.relatedTarget && (e.relatedTarget.classList.contains('category-drop-add-rule') || e.relatedTarget.classList.contains('category-drop-area')))
+                
+                e.target.classList.remove('element-drag-hover');
+                if (e.relatedTarget && (e.target.parentElement === e.relatedTarget || e.target.firstElementChild === e.relatedTarget))
                     return;
 
                 e.currentTarget.closest('tr').classList.remove('drag-hover');

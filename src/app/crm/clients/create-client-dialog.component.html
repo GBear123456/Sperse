@@ -11,7 +11,7 @@
                   <dx-text-box #companyComponent
                     name="company"
                     [width]="'360px'"
-                    (onKeyUp)="checkSimilarCustomers()"
+                    (onKeyUp)="onCompanyKeyUp($event)"
                     [(value)]="company">
                   </dx-text-box>
               </div>
@@ -21,11 +21,10 @@
                       <dx-text-box #emailComponent
                         name="email"
                         [width]="'260px'"
-                        (onKeyUp)="onEmailKeyUp($event, type)"
-                        [(value)]="emailAddress[type]"
+                        (onKeyUp)="onKeyUp($event, 'emails', type, emails)"
                         (onInitialized)="onComponentInitialized($event, 'emails', type)">
                         <dx-validator>
-                          <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                          <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
                         </dx-validator>
                       </dx-text-box>
                       <dx-select-box
@@ -52,8 +51,7 @@
                     maskInvalidMessage="{{l('PhoneValidationError')}}"
                     [mask]="masks.phone"
                     [width]="'205px'"
-                    [(value)]="phoneNumber[type]"
-                    (onKeyUp)="onPhoneKeyUp($event, type)"
+                    (onKeyUp)="onKeyUp($event, 'phones', type, phones)"
                     (onFocusIn)="focusInput($event)"
                     (onInitialized)="onComponentInitialized($event, 'phones', type)">
                   </dx-text-box>
