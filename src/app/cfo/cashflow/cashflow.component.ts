@@ -654,7 +654,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private columnDefaultExpandedPaths = [
         /** Expand current year */
         [Periods.Current, moment().year()],
-        /** Expand all quarters */
+        /** Expand all quarters of current year */
         [Periods.Current, moment().year(), 1],
         [Periods.Current, moment().year(), 2],
         [Periods.Current, moment().year(), 3],
