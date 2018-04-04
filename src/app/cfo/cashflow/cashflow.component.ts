@@ -1444,6 +1444,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (!this.hasDiscrepancyInData && transactionObj.cashflowTypeId == Reconciliation)
                 this.hasDiscrepancyInData = true;
             transactionObj.categorization = {};
+            transactionObj.date.utc();
             transactionObj.initialDate = moment(transactionObj.date);
             transactionObj.date.add(transactionObj.date.toDate().getTimezoneOffset(), 'minutes');
             let isAccountTransaction = transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation;
