@@ -16,14 +16,15 @@ import * as _ from 'lodash';
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     private rootComponent: any;
-    public dataEmpty;
+
+    public dataEmpty: boolean;
     public headlineConfig = {
       names: [this.l('Dashboard')],
       text: this.l('statistics and reports'),
       icon: 'globe',
       buttons: []
     };
-
+    
     constructor(
         injector: Injector,
         private _router: Router,
@@ -34,12 +35,14 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     checkDataEmpty(data) {      
-        this.dataEmpty = !data.length;
+        if (this.dataEmpty != false)
+            this.dataEmpty = !data.length;
         this.finishLoading(true);
     }
 
     addClient() {
-        this._router.navigate(['app/crm/clients'], { queryParams: { action: 'addNewClient' } });
+        this._router.navigate(['app/crm/clients'], 
+            { queryParams: { action: 'addNewClient' } });
     }
 
     ngAfterViewInit(): void {

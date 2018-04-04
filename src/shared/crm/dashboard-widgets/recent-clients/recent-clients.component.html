@@ -1,0 +1,24 @@
+<div class="wrapper">
+    <header>
+        <h2 class="title">{{l('Recent Clients')}}</h2>
+    </header>
+
+    <div class="wrapper" [hidden]="isDataLoaded && !totalRowCount">
+        <dx-data-grid id="gridContainer"
+                      [dataSource]="dataSource"
+                      (onDataErrorOccurred)="httpConfig.handleError($event.error)"
+                      (onContentReady)="onContentReady($event)">
+            <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
+            <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
+            <div *dxTemplate="let cellData of 'dateCell'">
+                {{cellData.value | date: formatting.dateTime}}
+            </div>
+            <dxo-paging [pageSize]="10"></dxo-paging>
+        </dx-data-grid>
+    </div>
+</div>
+
+<app-no-data
+    [hidden]="!isDataLoaded || totalRowCount"
+    [showLink]="false">
+</app-no-data>

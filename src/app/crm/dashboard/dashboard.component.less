@@ -1,6 +1,6 @@
 :host {
-
     .wrapper {
+        padding: 20px 0px 20px 340px!important;
         max-width: 100%!important;
     }
     .lead-status {
@@ -11,10 +11,35 @@
         padding: 0px 40px;
     }
 
+    .dashboard-widgets {
+        height: calc(~"100vh - 200px");
+        padding-right: 20px;
+        .analytics-wrap {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-top: 20px;
+
+            .right-side {
+                width: 66%;
+            }
+
+            .left-side {
+                width: 32%;
+                min-height: 330px;
+                border: 1px solid #E5E9EC;
+                background-color: #FFFFFF;
+                border-radius: 4px;
+                position: relative;
+                padding: 10px 30px;
+            }
+        }
+    }
+
     .dashboard-stub {
         width: 100%;
         text-align: center;
-        margin-left: 161px;
         border: none;
 
         a {

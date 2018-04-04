@@ -141,6 +141,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         maxDate: moment().utc().add(10, 'year').year()
     };
     showAllVisible = false;
+    showAllDisable = false;
     noRefreshedAfterSync: boolean;
     headlineConfig: any;
     categoryTree: GetCategoryTreeOutput;
@@ -654,8 +655,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private columnDefaultExpandedPaths = [
         /** Expand current year */
         [Periods.Current, moment().year()],
-        /** Expand current quarter */
-        [Periods.Current, moment().year(), moment().quarter()],
+        /** Expand all quarters of current year */
+        [Periods.Current, moment().year(), 1],
+        [Periods.Current, moment().year(), 2],
+        [Periods.Current, moment().year(), 3],
+        [Periods.Current, moment().year(), 4],
         /** Expand current month */
         [Periods.Current, moment().year(), moment().quarter(), moment().month() + 1],
     ];
@@ -1642,7 +1646,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.allYears = [];
         this.yearsAmount = 0;
         let existingPeriods: string[] = [],
-            firstAccountId,
             minDate: moment.Moment,
             maxDate: moment.Moment,
             periodFormat = 'YYYY-MM';
@@ -1658,36 +1661,56 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 minDate = moment(date);
             if (!maxDate || cashflowItem.date > maxDate)
                 maxDate = moment(date);
-            if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
         });
         this.allYears = this.allYears.sort();
+        let stubsInterval = this.getStubsInterval(minDate, maxDate, existingPeriods, periodFormat);
+        this.yearsAmount = stubsInterval.endDate.diff(stubsInterval .startDate, 'years') + 1;
+
+        /** cycle from started date to ended date */
+        /** added fake data for each date that is not already exists in cashflow data */
+        let stubCashflowData = this.createStubsForPeriod(stubsInterval .startDate, stubsInterval.endDate, 'month', existingPeriods);
+        return stubCashflowData;
+    }
+
+    /**
+     * Return stubs intervals
+     * @param {moment.Moment} minDate
+     * @param {moment.Moment} maxDate
+     * @param {string[]} existingPeriods
+     * @param {string} periodFormat
+     * @return {{startDate: Moment.moment; endDate: Moment.moment}}
+     */
+    getStubsInterval(minDate: moment.Moment, maxDate: moment.Moment, existingPeriods: string[], periodFormat: string): { startDate: moment.Moment, endDate: moment.Moment } {
 
         let currentDate = moment.tz( moment().format('YYYY-MM-DD') + 'T00:00:00', 'UTC');
+        let filterStart = this.requestFilter.startDate;
+        let filterEnd = this.requestFilter.endDate;
+
         /** If current date is not in existing - set min or max date as current */
         if (existingPeriods.indexOf(currentDate.format(periodFormat)) === -1) {
             if (currentDate.format(periodFormat) < minDate.format(periodFormat)) {
                 minDate = currentDate;
-            /** if endDate from filter */
+                /** if endDate from filter */
             } else if (currentDate.format(periodFormat) > maxDate.format(periodFormat) &&
-                (!this.requestFilter.endDate ||
-                (this.requestFilter.endDate && currentDate.isBefore(moment(this.requestFilter.endDate).utc())))
+                (!filterEnd || (filterEnd && currentDate.isBefore(moment(filterEnd).utc())))
             ) {
                 maxDate = currentDate;
             }
         }
 
+        /** set max date to the end of year if current maxDate year is current year */
+        if (maxDate.year() === currentDate.year()) {
+            let endOfYear = maxDate.clone().endOf('year');
+            if (!filterEnd || (filterEnd && endOfYear.isBefore(moment(filterEnd).utc()))) {
+                maxDate = endOfYear;
+            }
+        }
+
         /** consider the filter */
-        if (this.requestFilter.startDate && (!minDate || moment(this.requestFilter.startDate).utc().isAfter(minDate))) minDate = this.requestFilter.startDate;
-        if (this.requestFilter.endDate && (!maxDate || moment(this.requestFilter.endDate).utc().isAfter(maxDate))) maxDate = this.requestFilter.endDate;
+        if (filterStart && (!minDate || moment(filterStart).utc().isAfter(minDate))) minDate = filterStart;
+        if (filterEnd && (!maxDate || moment(filterEnd).utc().isAfter(maxDate))) maxDate = filterEnd;
 
-        let startDate = moment.utc(minDate);
-        let endDate = moment.utc(maxDate);
-        this.yearsAmount = endDate.diff(startDate, 'years') + 1;
-
-        /** cycle from started date to ended date */
-        /** added fake data for each date that is not already exists in cashflow data */
-        let stubCashflowData = this.createStubsForPeriod(startDate, endDate, 'month', existingPeriods);
-        return stubCashflowData;
+        return { startDate: moment.utc(minDate), endDate: moment.utc(maxDate) };
     }
 
     createStubsForPeriod(startDate, endDate, period, existingPeriods = []) {
@@ -3430,14 +3453,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                  */
                 let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
                 let columnFields = this.getColumnFields();
-                let cellDate = this.getDateByPath(cellObj.cell.columnPath, columnFields, 'day');
+                let lowestCaption = this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, columnFields);
+                lowestCaption = lowestCaption === 'projected' ? lowestCaption : 'projected';
+                let cellDate = this.getDateByPath(cellObj.cell.columnPath, columnFields, lowestCaption);
                 if (
                     /** disallow adding historical periods */
                     (
-                        /** If column of cell is date column */
-                        columnFields.find(field => field.areaIndex === cellObj.cell.columnPath.length - 1)['caption'] === 'Day' &&
                         /** check the date - if it is mtd date - disallow editing, if projected - welcome on board */
-                        cellDate.format('YYYY.MM.DD') > moment().format('YYYY.MM.DD')
+                        cellDate.format('YYYY.MM.DD') >= moment().format('YYYY.MM.DD')
                     ) &&
                     /** allow adding only for empty cells */
                     result.length === 0 &&
@@ -3488,7 +3511,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             forecastModelId: this.selectedForecastModel ? this.selectedForecastModel.id : undefined
         };
         this.showAllVisible = false;
-
+        this.showAllDisable = false;
         cellObj.cell.rowPath.forEach(item => {
             if (item) {
                 let [ key, prefix ] = [ item.slice(2), item.slice(0, 2) ];
@@ -3598,7 +3621,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let transactionDescriptor = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
             if (this.currentCellOperationType === 'add') {
                 /** @todo fix bug with wrong date */
-                let forecastedDate = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment();
+                let forecastedDate = this.statsDetailFilter.startDate > moment(0, 'HH') ? this.statsDetailFilter.startDate : moment(0, 'HH');
                 forecastModel = new AddForecastInput({
                     forecastModelId: this.selectedForecastModel.id,
                     bankAccountId: this.bankAccounts[0].id,
@@ -3772,6 +3795,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     closeTransactionsDetail() {
         this.statsDetailResult = undefined;
         this.showAllVisible = false;
+        this.showAllDisable = false;
     }
 
     reclassifyTransactions($event) {
@@ -4285,6 +4309,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         if (this.searchValue) {
             this.showAllVisible = true;
+            this.showAllDisable = true;
             let filterParams = {
                 startDate: this.requestFilter.startDate,
                 endDate: this.requestFilter.endDate,

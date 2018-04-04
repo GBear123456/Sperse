@@ -569,6 +569,10 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         return keyAttribute ? keyAttribute.values : [];
     }
 
+    isFirstAttributeElement(key: string): boolean {
+        return this.keyAttributeValues[0] && this.keyAttributeValues[0].key == key;
+    }
+
     onAttributesContentReady($event) {
         if (this.attributeEditData)
             return ;

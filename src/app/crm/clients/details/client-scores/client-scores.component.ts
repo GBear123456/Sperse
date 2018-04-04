@@ -15,11 +15,11 @@ export class ClientScoresComponent extends AppComponentBase implements OnInit {
             'label': 'Experian Score'
         },
         equifax_score: {
-            'amount': 809,
+            'amount': 1000,
             'label': 'Equifax Score'
         },
         transunion_score: {
-            'amount': 799,
+            'amount': 1000,
             'label': 'TransUnion Score'
         }
     };
