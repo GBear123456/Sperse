@@ -654,8 +654,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private columnDefaultExpandedPaths = [
         /** Expand current year */
         [Periods.Current, moment().year()],
-        /** Expand current quarter */
-        [Periods.Current, moment().year(), moment().quarter()],
+        /** Expand all quarters */
+        [Periods.Current, moment().year(), 1],
+        [Periods.Current, moment().year(), 2],
+        [Periods.Current, moment().year(), 3],
+        [Periods.Current, moment().year(), 4],
         /** Expand current month */
         [Periods.Current, moment().year(), moment().quarter(), moment().month() + 1],
     ];
@@ -3454,7 +3457,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let cellDate = this.getDateByPath(cellObj.cell.columnPath, columnFields, lowestCaption);
                 if (
                     /** disallow adding historical periods */
-                    (                      
+                    (
                         /** check the date - if it is mtd date - disallow editing, if projected - welcome on board */
                         cellDate.format('YYYY.MM.DD') >= moment().format('YYYY.MM.DD')
                     ) &&
