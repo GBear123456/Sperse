@@ -43,6 +43,10 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
             let image: any = new Image();
             image.src = this.data.source;
             this.cropper.setImage(image);
+        } else {
+            var ctx = this.cropper.cropcanvas.nativeElement.getContext("2d");
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(0,0,500,300);
         }
     }
 
@@ -63,6 +67,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         setting.minWithRelativeToResolution = true;
         setting.cropperDrawSettings.strokeColor = 'rgba(255,255,255,1)';
         setting.cropperDrawSettings.strokeWidth = 2;
+        setting.cropperClass = "cropper-canvas";
 
         return setting;
     }

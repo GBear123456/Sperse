@@ -3449,14 +3449,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                  */
                 let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
                 let columnFields = this.getColumnFields();
-                let cellDate = this.getDateByPath(cellObj.cell.columnPath, columnFields, 'day');
+                let lowestCaption = this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, columnFields);
+                lowestCaption = lowestCaption === 'projected' ? lowestCaption : 'projected';
+                let cellDate = this.getDateByPath(cellObj.cell.columnPath, columnFields, lowestCaption);
                 if (
                     /** disallow adding historical periods */
-                    (
-                        /** If column of cell is date column */
-                        columnFields.find(field => field.areaIndex === cellObj.cell.columnPath.length - 1)['caption'] === 'Day' &&
+                    (                      
                         /** check the date - if it is mtd date - disallow editing, if projected - welcome on board */
-                        cellDate.format('YYYY.MM.DD') > moment().format('YYYY.MM.DD')
+                        cellDate.format('YYYY.MM.DD') >= moment().format('YYYY.MM.DD')
                     ) &&
                     /** allow adding only for empty cells */
                     result.length === 0 &&
@@ -3617,7 +3617,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let transactionDescriptor = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
             if (this.currentCellOperationType === 'add') {
                 /** @todo fix bug with wrong date */
-                let forecastedDate = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment();
+                let forecastedDate = this.statsDetailFilter.startDate > moment(0, 'HH') ? this.statsDetailFilter.startDate : moment(0, 'HH');
                 forecastModel = new AddForecastInput({
                     forecastModelId: this.selectedForecastModel.id,
                     bankAccountId: this.bankAccounts[0].id,
