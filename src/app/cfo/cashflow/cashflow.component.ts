@@ -1861,8 +1861,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.applyUserPreferencesForAreas();
 
         let pivotDataArea: HTMLElement = this.getElementRef().nativeElement.querySelector('.dx-pivotgrid-area-data');
-        pivotDataArea.removeEventListener("keydown", this.keyDownEventHandler);
-        pivotDataArea.addEventListener("keydown", this.keyDownEventHandler, true);
+        pivotDataArea.removeEventListener('keydown', this.keyDownEventHandler);
+        pivotDataArea.addEventListener('keydown', this.keyDownEventHandler, true);
 
         this.synchronizeHeaderHeightWithCashflow();
         this.handleBottomHorizontalScrollPosition();
@@ -1917,8 +1917,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let scrollValue = this.calculateScrollValue(this.selectedCell.cellElement, nextElement, direction);
                 if (scrollValue) {
                     let scrollable = direction == 'up' || direction == 'down'
-                        ? ScrollView.getInstance(this.getElementRef().nativeElement.querySelector(".cashflow .cashflow-scroll"))
-                        : this.pivotGrid.instance['$element']().find('.dx-scrollable').last().dxScrollable("instance");
+                        ? ScrollView.getInstance(this.getElementRef().nativeElement.querySelector('.cashflow .cashflow-scroll'))
+                        : this.pivotGrid.instance['$element']().find('.dx-scrollable').last().dxScrollable('instance');
 
                     scrollable.scrollBy(scrollValue);
                 }
@@ -1931,16 +1931,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     calculateScrollValue(cell: HTMLElement, nextCell: HTMLElement, direction: string): number {
-        var parentRect: ClientRect;
-        var cellRect: ClientRect = cell.getBoundingClientRect();
+        let parentRect: ClientRect;
+        let cellRect: ClientRect = cell.getBoundingClientRect();
 
         switch (direction) {
             case 'right':
-                parentRect = this.getElementRef().nativeElement.querySelector(".dx-pivotgrid-area-data").getBoundingClientRect();
+                parentRect = this.getElementRef().nativeElement.querySelector('.dx-pivotgrid-area-data').getBoundingClientRect();
                 return cellRect.right + cell.offsetWidth > parentRect.right ? nextCell.offsetWidth : 0;
             case 'left':
-                parentRect = this.getElementRef().nativeElement.querySelector(".dx-pivotgrid-area-data").getBoundingClientRect();
-                return cellRect.left - cell.offsetWidth < parentRect.left ? -nextCell.offsetWidth : 0;;
+                parentRect = this.getElementRef().nativeElement.querySelector('.dx-pivotgrid-area-data').getBoundingClientRect();
+                return cellRect.left - cell.offsetWidth < parentRect.left ? -nextCell.offsetWidth : 0;
             case 'up':
                 parentRect = this.getElementRef().nativeElement.querySelector('.dx-area-column-cell').getBoundingClientRect();
                 return cellRect.top - cell.offsetHeight < parentRect.bottom ? -nextCell.offsetHeight : 0;
@@ -2040,26 +2040,26 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let colspanAmountForCurrent =  this.getIntervalColspansAmountForCurrent(lowestOpenedCurrentInterval);
         let colspanAmountForForecast = this.getIntervalColspansAmount(lowestOpenedCurrentInterval, 'next');
 
-        let currentHasRowspan = $('.historicalRow .current').attr('rowspan');
+        let currentHasRowspan = $('.historicalRow .currentHistorical').attr('rowspan');
         /** Hide current cell if there is no current opened lowest period and change the colspan */
         if (colspanAmountForCurrent === 0 && !currentHasRowspan) {
-            $('.historicalRow .current').hide();
+            $('.historicalRow .currentHistorical').hide();
         }
         /** If historical cell is absent - create it */
-        if (!$('.historicalRow .historical').length && colspanAmountForPrevious) {
-            this.createHistoricalCell('historical');
+        if (!$('.historicalRow .prevHistorical').length && colspanAmountForPrevious) {
+            this.createHistoricalCell('prev');
         }
         /** If forecast cell is absent - create it */
-        if (!$('.historicalRow .forecast').length && colspanAmountForForecast) {
-            this.createHistoricalCell('forecast');
+        if (!$('.historicalRow .nextHistorical').length && colspanAmountForForecast) {
+            this.createHistoricalCell('next');
         }
         /** Change the colspan for the historical period */
-        $('.historicalRow .historical').attr('colspan', (colspanAmountForPrevious));
+        $('.historicalRow .prevHistorical').attr('colspan', (colspanAmountForPrevious));
         if (!currentHasRowspan) {
-            $('.historicalRow .current').attr('colspan', colspanAmountForCurrent);
+            $('.historicalRow .currentHistorical').attr('colspan', colspanAmountForCurrent);
         }
         /** Change colspan for forecast cell */
-        $('.historicalRow .forecast').attr('colspan', (colspanAmountForForecast));
+        $('.historicalRow .nextHistorical').attr('colspan', (colspanAmountForForecast));
     }
 
     /**
@@ -2067,14 +2067,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param period
      */
     createHistoricalCell(period) {
-        let positionMethod = period === 'forecast' ? 'after' : 'before',
-            textKey = period === 'forecast' ? this.historicalTextsKeys[2] : this.historicalTextsKeys[0],
+        let positionMethod = period === 'next' ? 'after' : 'before',
+            textKey = period === 'next' ? this.historicalTextsKeys[2] : this.historicalTextsKeys[0],
             text = this.l(textKey);
-        $('.historicalField.current')
+        $('.historicalRow .currentHistorical')
             [positionMethod](function () {
-            return `<td class="dx-pivotgrid-expanded historicalField ${period}">
-                    ${text.toUpperCase()}</td>`;
-        }).click();
+            return `<td class="dx-pivotgrid-expanded historicalField ${period}Historical">${text.toUpperCase()}</td>`;
+        });
     }
 
     getIntervalColspansAmountForCurrent(lowestColumnCaption) {
@@ -2591,7 +2590,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** added css class to the income and outcomes columns */
         if (this.isIncomeOrExpensesChildCell(e)) {
-            let cssClass = `${PI ? 'income' : 'expenses'}ChildRow`;
+            let cssClass = `${e.cell.path[0] === PI ? 'income' : 'expenses'}ChildRow`;
             e.cellElement.parentElement.classList.add(cssClass);
         }
 
@@ -3160,7 +3159,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     cellObj.cellElement.insertAdjacentHTML('beforeEnd', `<span class="dayName">${cellObj.date.format('ddd').toUpperCase()}</span>`);
                 }
             } else if (fieldGroup === 'historicalField') {
-                fieldName = this.historicalClasses[cellObj.cell.path.slice(-1)[0]];
+                fieldName = 'historical';//this.historicalClasses[cellObj.cell.path.slice(-1)[0]];
             } else if (fieldGroup === 'projectedField') {
                 fieldName = cellObj.cell.value === 1 ? 'projected' : 'mtd';
             }
@@ -3198,6 +3197,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /**
      * Add the classes for the current cells such as currentYear, currentQuarter and currentMonth
+       @todo refactor
      */
     addCurrentPeriodsClasses(cellObj) {
         let path = cellObj.cell.path ? cellObj.cell.path : cellObj.cell.columnPath;
@@ -3234,7 +3234,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 } else if (cellValue === Projected.Forecast || cellValue === Projected.FutureTotal) {
                     className = `next${_.capitalize(fieldCaption)}`;
                 }
+            } else if (fieldCaption === 'historical') {
+                if (cellValue === Periods.Current) {
+                    className = `current${_.capitalize(fieldCaption)}`;
+                } else if (cellValue === Periods.Historical) {
+                    className = `prev${_.capitalize(fieldCaption)}`;
+                } else if (cellValue === Periods.Forecast) {
+                    className = `next${_.capitalize(fieldCaption)}`;
+                }
             }
+
             if (className) {
                 cellObj.cellElement.classList.add(className);
             }
@@ -3302,8 +3311,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             return;
         }
         requestFilter.groupByPeriod = StatsFilterGroupByPeriod.Daily;
-        requestFilter.startDate = this.requestFilter.startDate && this.requestFilter.startDate > datePeriod.startDate ? moment(this.requestFilter.startDate) : datePeriod.startDate;
-        requestFilter.endDate = this.requestFilter.endDate && this.requestFilter.endDate < datePeriod.endDate ? moment(this.requestFilter.endDate) : datePeriod.endDate;
+        requestFilter.startDate = this.requestFilter.startDate && moment(this.requestFilter.startDate).utc().isAfter(datePeriod.startDate) ? moment(this.requestFilter.startDate).utc() : datePeriod.startDate;
+        requestFilter.endDate = this.requestFilter.endDate && moment(this.requestFilter.endDate).utc().isBefore(datePeriod.endDate ) ? moment(this.requestFilter.endDate).utc() : datePeriod.endDate;
         requestFilter.calculateStartingBalance = false;
         return requestFilter;
     }
@@ -4185,7 +4194,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return (summaryCell.field('row') !== null && summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + Reconciliation)) ||
             (parentCell !== null && parentCell.value(parentCell.field('row')) === (CategorizationPrefixes.CashflowType + Reconciliation));
     }
-    
+
 
     cellRowIsNotEmpty(summaryCell) {
         return summaryCell.field('row') &&
