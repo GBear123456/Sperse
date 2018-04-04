@@ -103,12 +103,10 @@
                                            [value]="cell.value">
 
                                 <div *dxTemplate="let item of 'itemTMPL'">
-                                    <ng-container>
-                                        <span class="attribute-name-grid"><a></a>{{ item.name }}</span>
-                                        <div *ngFor="let value of getKeyAttributeValues(item.id)" class="attribute-value-wrapper">
-                                            <a class="attribute-value" (click)="selectedGridAttributeValue($event, value)">{{ value.name }}</a>
-                                        </div>
-                                    </ng-container>
+                                    <span class="attribute-name-grid">{{ item.name }}</span>
+                                    <div *ngFor="let value of getKeyAttributeValues(item.id)" class="attribute-value-wrapper">
+                                        <a class="attribute-value" (click)="selectedGridAttributeValue($event, value)">{{ value.name }}</a>
+                                    </div>
                                 </div>
 
                             </dx-select-box>
@@ -255,12 +253,11 @@
                                    [(value)]="descriptor">
 
                         <div *dxTemplate="let item of 'itemTMPL'">
-                            <ng-container>
-                                <span class="attribute-name"><a></a>{{ item.name }}</span>
+                                <div class="descriptor-select-box-header" *ngIf="isFirstAttributeElement(item.key)">{{ l('RuleDialog_AttributesComboBoxHeader')}}</div>
+                                <span class="attribute-name">{{ item.name }}</span>
                                 <div *ngFor="let value of item.values" class="attribute-value-wrapper">
                                     <a class="attribute-value" (click)="selectedAttributeValue($event, value)">{{ value.name }}</a>
                                 </div>
-                            </ng-container>
                         </div>
 
                     </dx-select-box>
