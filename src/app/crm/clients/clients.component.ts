@@ -107,7 +107,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
         this.initToolbarConfig();
 
-        this.searchColumns = ['FullName', 'CompanyName', 'Email', 'Phone', 'City', 'State', 'StateId'];
+        this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email', 'Phone', 'City', 'State', 'StateId'];
         this.searchValue = '';
 
         this.canSendVerificationRequest =  this._clientService.canSendVerificationRequest();

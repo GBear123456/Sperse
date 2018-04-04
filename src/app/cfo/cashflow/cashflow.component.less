@@ -323,18 +323,18 @@
                                 font-size: 10px;
                                 letter-spacing: 0.6px;
 
-                                &.historical {
+                                &.prevHistorical {
                                     color: @historicalTextColor;
                                     background-color: #f7f9ff;
                                 }
 
-                                &.current {
+                                &.currentHistorical {
                                     background: @currentTextColor;
                                     border: 1px double @currentTextColor;
                                     color: #fff;
                                 }
 
-                                &.forecast {
+                                &.nextHistorical {
                                     color: @forecastTextColor
                                 }
                             }
@@ -678,6 +678,10 @@
 
                             &[class*="next"] {
                                 background: @forecastDataCellBackgroundColor;
+                            }
+
+                            &.dx-row-total {
+                                background: @totalDataCellBackgroundColor;
                             }
 
                             &.red {
@@ -1122,9 +1126,14 @@
 
             .reclassify-btn,
             .showall-btn,
-            .close-btn {
+            .close-btn,
+            .search-value-btn {
                 border: 0;
                 padding: 0;
+
+                /deep/ .dx-button-text {
+                    text-decoration: underline;
+                }
             }
         }
     }

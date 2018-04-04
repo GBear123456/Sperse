@@ -19,11 +19,7 @@ export class StatsService {
         let html = '';
         let pointDataObject = data.find(item => item.date.toDate().toString() == pointInfo.argument);
 
-        moment.tz.setDefault(undefined);
-        let date = moment(pointInfo.argument);
-        moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
-
-        html += `<header class="tooltip-header">${date.format('MMM YYYY')}</header>`;
+        html += `<header class="tooltip-header">${pointInfo.argument.format('MMM YYYY')}</header>`;
         fields.forEach(field => {
             if (pointDataObject[field.name] !== null &&
                 pointDataObject[field.name] !== undefined &&

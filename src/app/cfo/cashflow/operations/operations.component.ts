@@ -95,11 +95,13 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                         adaptive: false,
                         widget: 'dxTextBox',
                         options: {
+                            value: this.searchValue,
                             width: '279',
                             mode: 'search',
                             placeholder: this.l('Search') + ' '
                             + this.l('Transaction').toLowerCase(),
-                            onValueChanged: this.searchValueChange.bind(this)
+                            onValueChanged: this.searchValueChange.bind(this),
+                            onKeyPress: this.searchKeyPress.bind(this)
                         }
                     }
                 ]
@@ -322,7 +324,13 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     }
 
     searchValueChange(event) {
-        this.onSearchValueChange.emit(event);
+        this.searchValue = event['value'];
+        this.onSearchValueChange.emit(this.searchValue);
+    }
+
+    searchKeyPress(event) {
+        if (this.searchValue && event.event.charCode === 13)
+            this.onSearchValueChange.emit(this.searchValue);
     }
 
     refresh() {
