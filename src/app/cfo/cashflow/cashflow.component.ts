@@ -140,7 +140,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         minDate: moment().utc().subtract(10, 'year').year(),
         maxDate: moment().utc().add(10, 'year').year()
     };
-    showAllDisabled = true;
+    showAllVisible = false;
     noRefreshedAfterSync: boolean;
     headlineConfig: any;
     categoryTree: GetCategoryTreeOutput;
@@ -3484,11 +3484,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             bankIds: this.requestFilter.bankIds || [],
             accountIds: accountsIds,
             businessEntityIds: this.requestFilter.businessEntityIds || [],
-            searchTerm: this.searchValue,
+            searchTerm: '',
             forecastModelId: this.selectedForecastModel ? this.selectedForecastModel.id : undefined
         };
-        if (this.searchValue)
-            this.showAllDisabled = false;
+        this.showAllVisible = false;
 
         cellObj.cell.rowPath.forEach(item => {
             if (item) {
@@ -3772,7 +3771,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     closeTransactionsDetail() {
         this.statsDetailResult = undefined;
-        this.showAllDisabled = true;
+        this.showAllVisible = false;
     }
 
     reclassifyTransactions($event) {
@@ -4281,11 +4280,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (pivotGridElement) pivotGridElement.classList.remove('invisible');
     }
 
-    searchValueChange(e) {
-        this.searchValue = e['value'];
+    searchValueChange(value) {
+        this.searchValue = value;
 
         if (this.searchValue) {
-            this.showAllDisabled = true;
+            this.showAllVisible = true;
             let filterParams = {
                 startDate: this.requestFilter.startDate,
                 endDate: this.requestFilter.endDate,
@@ -4312,7 +4311,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     showAll(e) {
-        this.showAllDisabled = true;
+        this.showAllVisible = false;
         this.statsDetailFilter.searchTerm = '';
         this._cashflowServiceProxy
             .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
@@ -4323,6 +4322,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     return detail;
                 });
             });
+    }
+
+    showSearchResult(e) {
+        if (this.searchValue) {
+            this.showAllVisible = true;
+            this.statsDetailFilter.searchTerm = this.searchValue;
+            this._cashflowServiceProxy
+                .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
+                .subscribe(result => {
+                    this.statsDetailResult = result.map(detail => {
+                        this.removeLocalTimezoneOffset(detail.date);
+                        this.removeLocalTimezoneOffset(detail.forecastDate);
+                        return detail;
+                    });
+                });
+        }
     }
 
     detailsCellIsEditable(e) {
