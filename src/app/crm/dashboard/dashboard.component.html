@@ -17,20 +17,28 @@
               <button (click)="addClient()" class="btn btn-layout add-client">{{ l('CRMDashboard_AddClient') }}</button>
           </div>
 
+          <dx-scroll-view showScrollbar="onHover" [ngStyle]="{display: dataEmpty == false ? 'block': 'none'}">
+              <div class="dashboard-widgets">
+                  <counts-and-totals (onDataLoaded)="checkDataEmpty($event)"></counts-and-totals>
+                  <div class="analytics-wrap">
+                      <div class="left-side">
+                          <new-items-totals></new-items-totals>
+                      </div>
+                      <div class="right-side">
+                          <totals-by-period></totals-by-period>
+                      </div>
+                  </div>
 
-          <div class="portlet light" [ngStyle]="{display: dataEmpty == false ? 'block': 'none'}">
-              <div class="portlet-title">
-                  <div class="caption caption-md">
-                      <i class="icon-bar-chart font-green-haze hide"></i>
-                      <span class="caption-subject font-green-haze bold uppercase">Lead Status</span>
-                  </div>
-                  <div class="actions">
+                  <div class="analytics-wrap">
+                      <div class="left-side">
+                          <totals-by-source></totals-by-source>
+                      </div>
+                      <div class="right-side">
+                          <recent-clients (onReady)="checkDataEmpty($event)"></recent-clients>
+                      </div>
                   </div>
               </div>
-              <div class="portlet-body" style="height: 271px;">
-                  <leads-stats (onDataLoaded)="checkDataEmpty($event)">Loading...</leads-stats>
-              </div>
-          </div>
+          </dx-scroll-view>
           <!-- END PORTLET-->
       </div>
   </div>

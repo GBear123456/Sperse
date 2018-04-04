@@ -1,0 +1,15 @@
+<div class="wrapper">
+    <div class="round-progress">
+        <div class="progress-wrap">
+            <dx-pie-chart [dataSource]="totalsData" 
+                [type]="'doughnut'" 
+                [innerRadius]="0.9"
+                [title]="{text: 'Totals by Source', font: {color: '#212c36', size: 18, weight: '700', family: 'Montserrat'}}"
+                [legend]="{verticalAlignment: 'bottom', horizontalAlignment: 'center'}">
+                <dxo-common-series-settings argumentField="type"></dxo-common-series-settings>
+                <dxi-series valueField="yield"></dxi-series>
+            </dx-pie-chart>
+        </div>
+    </div>
+</div>
+
