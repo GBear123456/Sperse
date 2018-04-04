@@ -27618,6 +27618,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     middleName: string;
     lastName: string;
     nameSuffix: string;
+    nickName: string;
     emailAddresses: CreateContactEmailInput[];
     phoneNumbers: CreateContactPhoneInput[];
     address: CreateContactAddressInput;
@@ -27644,6 +27645,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             this.middleName = data["middleName"];
             this.lastName = data["lastName"];
             this.nameSuffix = data["nameSuffix"];
+            this.nickName = data["nickName"];
             if (data["emailAddresses"] && data["emailAddresses"].constructor === Array) {
                 this.emailAddresses = [];
                 for (let item of data["emailAddresses"])
@@ -27685,6 +27687,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
         data["middleName"] = this.middleName;
         data["lastName"] = this.lastName;
         data["nameSuffix"] = this.nameSuffix;
+        data["nickName"] = this.nickName;
         if (this.emailAddresses && this.emailAddresses.constructor === Array) {
             data["emailAddresses"] = [];
             for (let item of this.emailAddresses)
@@ -27720,6 +27723,7 @@ export interface ICreateCustomerInput {
     middleName: string;
     lastName: string;
     nameSuffix: string;
+    nickName: string;
     emailAddresses: CreateContactEmailInput[];
     phoneNumbers: CreateContactPhoneInput[];
     address: CreateContactAddressInput;
