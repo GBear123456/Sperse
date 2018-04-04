@@ -2,7 +2,7 @@ import { Component, Inject, Injector, Input } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { PersonContactInfoDto, PersonContactServiceProxy, UpdatePersonInfoInput } from 'shared/service-proxies/service-proxies';
+import { PersonContactInfoDto, PersonContactServiceProxy, UpdatePersonInfoInput, PersonInfoDto } from 'shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -25,6 +25,11 @@ export class PersonDialogComponent extends AppComponentBase {
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
     }
 
+    private getFullName(person: PersonInfoDto){
+        return `${person.namePrefix} ${person.firstName} ${person.middleName} ${person.lastName} ${person.nameSuffix}` + 
+            (person.nickName ? `(${person.nickName})` : '');
+    }
+
     getPropData(propName){
         return {
             id: this.data.id,
@@ -43,7 +48,7 @@ export class PersonDialogComponent extends AppComponentBase {
             UpdatePersonInfoInput.fromJS(
                 _.extend({id: this.data.id}, person))
         ).subscribe(result => {
-            this.data.fullName = person.firstName + ' ' + person.lastName;
+            this.data.fullName = this.getFullName(person);
         });
     }
 }
