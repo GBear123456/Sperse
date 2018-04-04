@@ -2590,7 +2590,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** added css class to the income and outcomes columns */
         if (this.isIncomeOrExpensesChildCell(e)) {
-            let cssClass = `${PI ? 'income' : 'expenses'}ChildRow`;
+            let cssClass = `${e.cell.path[0] === PI ? 'income' : 'expenses'}ChildRow`;
             e.cellElement.parentElement.classList.add(cssClass);
         }
 
