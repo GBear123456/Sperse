@@ -140,7 +140,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         minDate: moment().utc().subtract(10, 'year').year(),
         maxDate: moment().utc().add(10, 'year').year()
     };
-    showAllDisabled = true;
+    showAllVisible = false;
     noRefreshedAfterSync: boolean;
     headlineConfig: any;
     categoryTree: GetCategoryTreeOutput;
@@ -150,6 +150,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** Years in cashflow */
     allYears: number[] = [];
+
+    /** Amount of years with stubs */
+    yearsAmount: number = 0;
 
     cashflowDataTree = {};
     treePathes = [];
@@ -1444,6 +1447,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (!this.hasDiscrepancyInData && transactionObj.cashflowTypeId == Reconciliation)
                 this.hasDiscrepancyInData = true;
             transactionObj.categorization = {};
+            transactionObj.date.utc();
             transactionObj.initialDate = moment(transactionObj.date);
             transactionObj.date.add(transactionObj.date.toDate().getTimezoneOffset(), 'minutes');
             let isAccountTransaction = transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation;
@@ -1636,6 +1640,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     getStubCashflowDataForAllPeriods(cashflowData: TransactionStatsDtoExtended[]) {
         this.allYears = [];
+        this.yearsAmount = 0;
         let existingPeriods: string[] = [],
             firstAccountId,
             minDate: moment.Moment,
@@ -1657,36 +1662,31 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
         this.allYears = this.allYears.sort();
 
-        /** consider the fitler */
+        let currentDate = moment.tz( moment().format('YYYY-MM-DD') + 'T00:00:00', 'UTC');
+        /** If current date is not in existing - set min or max date as current */
+        if (existingPeriods.indexOf(currentDate.format(periodFormat)) === -1) {
+            if (currentDate.format(periodFormat) < minDate.format(periodFormat)) {
+                minDate = currentDate;
+            /** if endDate from filter */
+            } else if (currentDate.format(periodFormat) > maxDate.format(periodFormat) &&
+                (!this.requestFilter.endDate ||
+                (this.requestFilter.endDate && currentDate.isBefore(moment(this.requestFilter.endDate).utc())))
+            ) {
+                maxDate = currentDate;
+            }
+        }
+
+        /** consider the filter */
         if (this.requestFilter.startDate && (!minDate || moment(this.requestFilter.startDate).utc().isAfter(minDate))) minDate = this.requestFilter.startDate;
         if (this.requestFilter.endDate && (!maxDate || moment(this.requestFilter.endDate).utc().isAfter(maxDate))) maxDate = this.requestFilter.endDate;
 
         let startDate = moment.utc(minDate);
         let endDate = moment.utc(maxDate);
+        this.yearsAmount = endDate.diff(startDate, 'years') + 1;
 
         /** cycle from started date to ended date */
         /** added fake data for each date that is not already exists in cashflow data */
         let stubCashflowData = this.createStubsForPeriod(startDate, endDate, 'month', existingPeriods);
-
-        /** Add stub for current period */
-        /** if we have no current period */
-        if (
-            (!this.requestFilter.startDate || this.requestFilter.startDate < moment()) &&
-            (!this.requestFilter.endDate || this.requestFilter.endDate > moment()) &&
-            !cashflowData.concat(stubCashflowData).some(item => item.initialDate.format(periodFormat) === moment().format(periodFormat))
-        ) {
-            /** then we add current stub day */
-            stubCashflowData.push(
-                /** @todo check dates in debugger */
-                this.createStubTransaction({
-                    'cashflowTypeId': StartedBalance,
-                    'accountId': firstAccountId,
-                    'date': moment(),
-                    'initialDate': moment()
-                })
-            );
-        }
-
         return stubCashflowData;
     }
 
@@ -1828,7 +1828,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.contentReady = true;
 
         /** If amount of years is 1 and it is collapsed - expand it to the month */
-        if (this.allYears && this.allYears.length && this.allYears.length === 1) {
+        if (this.allYears && this.allYears.length && this.allYears.length === 1 && this.yearsAmount === 1) {
             /** Check if the year was expanded, if no - expand to months for better user experience */
             let yearWasExpanded = this.pivotGrid.instance.getDataSource().state().columnExpandedPaths.some(path => {
                 return path.indexOf(this.allYears[0]) !== -1;
@@ -3484,11 +3484,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             bankIds: this.requestFilter.bankIds || [],
             accountIds: accountsIds,
             businessEntityIds: this.requestFilter.businessEntityIds || [],
-            searchTerm: this.searchValue,
+            searchTerm: '',
             forecastModelId: this.selectedForecastModel ? this.selectedForecastModel.id : undefined
         };
-        if (this.searchValue)
-            this.showAllDisabled = false;
+        this.showAllVisible = false;
 
         cellObj.cell.rowPath.forEach(item => {
             if (item) {
@@ -3772,7 +3771,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     closeTransactionsDetail() {
         this.statsDetailResult = undefined;
-        this.showAllDisabled = true;
+        this.showAllVisible = false;
     }
 
     reclassifyTransactions($event) {
@@ -4281,11 +4280,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (pivotGridElement) pivotGridElement.classList.remove('invisible');
     }
 
-    searchValueChange(e) {
-        this.searchValue = e['value'];
+    searchValueChange(value) {
+        this.searchValue = value;
 
         if (this.searchValue) {
-            this.showAllDisabled = true;
+            this.showAllVisible = true;
             let filterParams = {
                 startDate: this.requestFilter.startDate,
                 endDate: this.requestFilter.endDate,
@@ -4312,7 +4311,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     showAll(e) {
-        this.showAllDisabled = true;
+        this.showAllVisible = false;
         this.statsDetailFilter.searchTerm = '';
         this._cashflowServiceProxy
             .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
@@ -4323,6 +4322,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     return detail;
                 });
             });
+    }
+
+    showSearchResult(e) {
+        if (this.searchValue) {
+            this.showAllVisible = true;
+            this.statsDetailFilter.searchTerm = this.searchValue;
+            this._cashflowServiceProxy
+                .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
+                .subscribe(result => {
+                    this.statsDetailResult = result.map(detail => {
+                        this.removeLocalTimezoneOffset(detail.date);
+                        this.removeLocalTimezoneOffset(detail.forecastDate);
+                        return detail;
+                    });
+                });
+        }
     }
 
     detailsCellIsEditable(e) {
