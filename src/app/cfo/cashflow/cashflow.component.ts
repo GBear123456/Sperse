@@ -1642,7 +1642,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.allYears = [];
         this.yearsAmount = 0;
         let existingPeriods: string[] = [],
-            firstAccountId,
             minDate: moment.Moment,
             maxDate: moment.Moment,
             periodFormat = 'YYYY-MM';
@@ -1658,36 +1657,56 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 minDate = moment(date);
             if (!maxDate || cashflowItem.date > maxDate)
                 maxDate = moment(date);
-            if (!firstAccountId && cashflowItem.accountId) firstAccountId = cashflowItem.accountId;
         });
         this.allYears = this.allYears.sort();
+        let stubsInterval = this.getStubsInterval(minDate, maxDate, existingPeriods, periodFormat);
+        this.yearsAmount = stubsInterval.endDate.diff(stubsInterval .startDate, 'years') + 1;
+
+        /** cycle from started date to ended date */
+        /** added fake data for each date that is not already exists in cashflow data */
+        let stubCashflowData = this.createStubsForPeriod(stubsInterval .startDate, stubsInterval.endDate, 'month', existingPeriods);
+        return stubCashflowData;
+    }
+
+    /**
+     * Return stubs intervals
+     * @param {moment.Moment} minDate
+     * @param {moment.Moment} maxDate
+     * @param {string[]} existingPeriods
+     * @param {string} periodFormat
+     * @return {{startDate: Moment.moment; endDate: Moment.moment}}
+     */
+    getStubsInterval(minDate: moment.Moment, maxDate: moment.Moment, existingPeriods: string[], periodFormat: string): { startDate: moment.Moment, endDate: moment.Moment } {
 
         let currentDate = moment.tz( moment().format('YYYY-MM-DD') + 'T00:00:00', 'UTC');
+        let filterStart = this.requestFilter.startDate;
+        let filterEnd = this.requestFilter.endDate;
+
         /** If current date is not in existing - set min or max date as current */
         if (existingPeriods.indexOf(currentDate.format(periodFormat)) === -1) {
             if (currentDate.format(periodFormat) < minDate.format(periodFormat)) {
                 minDate = currentDate;
-            /** if endDate from filter */
+                /** if endDate from filter */
             } else if (currentDate.format(periodFormat) > maxDate.format(periodFormat) &&
-                (!this.requestFilter.endDate ||
-                (this.requestFilter.endDate && currentDate.isBefore(moment(this.requestFilter.endDate).utc())))
+                (!filterEnd || (filterEnd && currentDate.isBefore(moment(filterEnd).utc())))
             ) {
                 maxDate = currentDate;
             }
         }
 
+        /** set max date to the end of year if current maxDate year is current year */
+        if (maxDate.year() === currentDate.year()) {
+            let endOfYear = maxDate.clone().endOf('year');
+            if (!filterEnd || (filterEnd && endOfYear.isBefore(moment(filterEnd).utc()))) {
+                maxDate = endOfYear;
+            }
+        }
+
         /** consider the filter */
-        if (this.requestFilter.startDate && (!minDate || moment(this.requestFilter.startDate).utc().isAfter(minDate))) minDate = this.requestFilter.startDate;
-        if (this.requestFilter.endDate && (!maxDate || moment(this.requestFilter.endDate).utc().isAfter(maxDate))) maxDate = this.requestFilter.endDate;
+        if (filterStart && (!minDate || moment(filterStart).utc().isAfter(minDate))) minDate = filterStart;
+        if (filterEnd && (!maxDate || moment(filterEnd).utc().isAfter(maxDate))) maxDate = filterEnd;
 
-        let startDate = moment.utc(minDate);
-        let endDate = moment.utc(maxDate);
-        this.yearsAmount = endDate.diff(startDate, 'years') + 1;
-
-        /** cycle from started date to ended date */
-        /** added fake data for each date that is not already exists in cashflow data */
-        let stubCashflowData = this.createStubsForPeriod(startDate, endDate, 'month', existingPeriods);
-        return stubCashflowData;
+        return { startDate: moment.utc(minDate), endDate: moment.utc(maxDate) };
     }
 
     createStubsForPeriod(startDate, endDate, period, existingPeriods = []) {
