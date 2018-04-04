@@ -141,6 +141,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         maxDate: moment().utc().add(10, 'year').year()
     };
     showAllVisible = false;
+    showAllDisable = false;
     noRefreshedAfterSync: boolean;
     headlineConfig: any;
     categoryTree: GetCategoryTreeOutput;
@@ -3510,7 +3511,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             forecastModelId: this.selectedForecastModel ? this.selectedForecastModel.id : undefined
         };
         this.showAllVisible = false;
-
+        this.showAllDisable = false;
         cellObj.cell.rowPath.forEach(item => {
             if (item) {
                 let [ key, prefix ] = [ item.slice(2), item.slice(0, 2) ];
@@ -3794,6 +3795,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     closeTransactionsDetail() {
         this.statsDetailResult = undefined;
         this.showAllVisible = false;
+        this.showAllDisable = false;
     }
 
     reclassifyTransactions($event) {
@@ -4307,6 +4309,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         if (this.searchValue) {
             this.showAllVisible = true;
+            this.showAllDisable = true;
             let filterParams = {
                 startDate: this.requestFilter.startDate,
                 endDate: this.requestFilter.endDate,
