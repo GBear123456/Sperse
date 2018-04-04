@@ -62,7 +62,8 @@
                   handles="top">
             <div class="resize-buttons noselect">....</div>
             <div class="detailsButtons">
-                <dx-button class="showall-btn" [text]="l('Show all')" [disabled]="showAllDisabled" (onClick)="showAll($event)"></dx-button>
+                <dx-button  *ngIf="searchValue?.length" class="search-value-btn" [text]="searchValue" [visible]="!showAllVisible" (onClick)="showSearchResult($event)" ></dx-button>
+                <dx-button class="showall-btn" [text]="l('Show all')" [visible]="showAllVisible" (onClick)="showAll($event)"></dx-button>
                 <dx-button class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!cashFlowGrid || !cashFlowGrid.instance.getSelectedRowKeys().length" (onClick)="reclassifyTransactions($event)"></dx-button>
                 <dx-button icon="close" (onClick)="closeTransactionsDetail()" class="close-btn"></dx-button>
             </div>
