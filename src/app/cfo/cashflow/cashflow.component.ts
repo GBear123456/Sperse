@@ -140,10 +140,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         minDate: moment().utc().subtract(10, 'year').year(),
         maxDate: moment().utc().add(10, 'year').year()
     };
+
     showAllVisible = false;
     noRefreshedAfterSync: boolean;
+
+    /** Config of header */
     headlineConfig: any;
-    categoryTree: GetCategoryTreeOutput;
+
+    /** The tree of categories after first data loading */
+    private categoryTree: GetCategoryTreeOutput;
 
     /** The main data for cashflow table */
     cashflowData = [];
@@ -157,10 +162,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     cashflowDataTree = {};
     treePathes = [];
     cashflowTypes: any;
-    bankAccounts: BankAccountDto[];
-    dataSource: any;
-    groupInterval = 'year';
-    momentFormats = {
+
+    /** Bank accounts of user */
+    private bankAccounts: BankAccountDto[];
+
+    /** Source of the cashflow table (data fields descriptions and data) */
+    dataSource;
+
+    /** Moment.js formats string for different periods */
+    private momentFormats = {
         'year':     'Y',
         'quarter':  'Q',
         'month':    'M',
@@ -1875,7 +1885,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         $(`.current${_.capitalize(lowestOpenedCurrentInterval)}`).addClass('lowestOpenedCurrent');
 
         this.changeHistoricalColspans(lowestOpenedCurrentInterval);
-
         this.hideProjectedFields();
 
         /** Clear cache with columns activity */
@@ -2227,8 +2236,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let itemIndex = event.itemData.itemIndex !== undefined ? event.itemData.itemIndex : event.itemIndex,
             value = this.groupbyItems[itemIndex],
             startedGroupInterval = value.groupInterval;
-        this.groupInterval = startedGroupInterval;
-        //this.updateDateFields(startedGroupInterval);
         /** Change historical field for different date intervals */
         let historicalField = this.getHistoricField();
         historicalField['selector'] = value.historicalSelectionFunction();
@@ -2398,10 +2405,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             isMonthHeaderCell = cellObj.area === 'column' && cellObj.cell.path && cellObj.cell.path.length === (monthIndex + 1);
         }
         return isMonthHeaderCell;
-    }
-
-    isTodayProjectedField(cellObj) {
-        return this.isProjectedHeaderCell(cellObj) && cellObj.cell.path.slice(-1)[0] === Projected.Today;
     }
 
     isProjectedHeaderCell(cellObj) {
@@ -3181,9 +3184,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     cellObj.cellElement.insertAdjacentHTML('beforeEnd', `<span class="dayName">${cellObj.date.format('ddd').toUpperCase()}</span>`);
                 }
             } else if (fieldGroup === 'historicalField') {
-                fieldName = 'historical';//this.historicalClasses[cellObj.cell.path.slice(-1)[0]];
+                fieldName = 'historical';
             } else if (fieldGroup === 'projectedField') {
-                fieldName = cellObj.cell.value === 1 ? 'projected' : 'mtd';
+                fieldName = Projected[cellObj.cell.path[columnNumber]];
             }
 
             /** add class to the cell */
@@ -3191,10 +3194,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             /** hide projected field for not current months for mdk and projected */
             if (fieldGroup === 'projectedField') {
-                /** hide the projected fields if the group interval is */
-                if (this.groupInterval === 'day') {
-                    cellObj.cellElement.style.display = 'none';
-                }
                 fieldName = 'projected';
             }
 
@@ -3339,11 +3338,25 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return requestFilter;
     }
 
+    isProjectedCellOfCurrentMonth(cellObj) {
+        let projectedAreaIndex = this.getAreaIndexByCaption('projected');
+        return cellObj.cell.path[projectedAreaIndex] !== Projected.FutureTotal && cellObj.cell.path[projectedAreaIndex] !== Projected.PastTotal;
+    }
+
     onCellClick(cellObj) {
 
-        /** Disallow collapsing of empty projected field and historical fields if it collapse by user */
-        if ((this.isTodayProjectedField(cellObj) || this.isHistoricalCell(cellObj)) && cellObj.event.isTrusted) {
+        let isProjectedHeaderCell = this.isProjectedHeaderCell(cellObj);
+        let isProjectedCellOfCurrentMonth = isProjectedHeaderCell ? this.isProjectedCellOfCurrentMonth(cellObj) : false;
+
+        /** Disallow collapsing of total projected and historical fields */
+        if (((isProjectedHeaderCell && !isProjectedCellOfCurrentMonth) || this.isHistoricalCell(cellObj)) && cellObj.event.isTrusted) {
             cellObj.cancel = true;
+        }
+
+        /** If user clicks on current projected field expand all current projected */
+        if (isProjectedHeaderCell && isProjectedCellOfCurrentMonth && !cellObj.cell.expanded) {
+            cellObj.cancel = true;
+            this.expandCurrentMonthProjectedColumns(cellObj.cell.path.slice(0));
         }
 
         /** If user click to the month header - then sent new getStats request for this month to load data for that month */
@@ -3357,7 +3370,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (!this.monthsDaysLoadedPathes.some(arr => arr.toString() === pathForMonth.toString())) {
                     abp.ui.setBusy();
                     /** Prevent default expanding */
-                    cellObj.cancel = true;
                     this._cashflowServiceProxy
                         .getStats(InstanceType[this.instanceType], this.instanceId, requestFilter)
                         .pluck('transactionStats')
@@ -3372,33 +3384,25 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             /** Mark the month as already expanded to avoid double data loading */
                             this.monthsDaysLoadedPathes.push(pathForMonth);
 
-                            /** Expand month into days */
+                            /** Expand month into projected */
                             this.pivotGrid.instance.getDataSource().expandHeaderItem('column', cellObj.cell.path);
 
-                            /** If month is not current month or the month has only mtd days - then expand it into days instead of projected or mtd */
-                            let todayIsLastDayOfTheMonth = this.isLastDayOfMonth(moment());
-                            let pathCopy = cellObj.cell.path.slice();
-                            if (!monthIsCurrent || todayIsLastDayOfTheMonth) {
-
-                                let projectedValue = monthIsCurrent && todayIsLastDayOfTheMonth ? Projected.Mtd : (requestFilter.startDate.format('YYYY.MM') < moment().format('YYYY.MM') ? Projected.PastTotal : Projected.FutureTotal);
-                                this.fieldPathsToClick.push(pathCopy.concat([projectedValue]));
+                            /** If month is not current month - expand it into days instead of total */
+                            if (!monthIsCurrent) {
+                                this.expandMonthProjectedChilds(cellObj);
                             }
                         });
-                }
-
-                if (monthIsCurrent) {
-                    this.fieldPathsToClick.push(pathCopy.concat([Projected.Today]));
+                } else {
+                    /** If month is not current month - expand it into days instead of total */
+                    if (!monthIsCurrent) {
+                        this.expandMonthProjectedChilds(cellObj);
+                    }
                 }
 
             } else {
-                /** If we collapse month and all projected field is hidden - collapse current projected to show them after next expand of the month */
+                /** If we collapse month - collapse projected columns of current month to show them after next expand of the month */
                 if (monthIsCurrent) {
-                    let projectedRow = cellObj.cellElement.parentElement.nextElementSibling;
-                    if (projectedRow && projectedRow.classList.contains('hidden')) {
-                        /** Collapse projected fields */
-                        this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', pathCopy.concat([Projected.Mtd]));
-                        this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', pathCopy.concat([Projected.Forecast]));
-                    }
+                    this.collapseCurrentMonthProjectedColums(cellObj.cell.path.slice());
                 }
             }
         }
@@ -3422,6 +3426,36 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             this.handleDoubleSingleClick(cellObj, null, this.handleDataCellDoubleClick.bind(this));
         }
+    }
+
+    /**
+     * Expands projected child columns of current month
+     * @param {number[]} path
+     */
+    expandCurrentMonthProjectedColumns(path: number[]) {
+        let projectedFieldIndex = this.getIndexByCaption('projected');
+        let monthPath = path.slice(0, path.length - 1);
+        this.pivotGrid.instance.getDataSource().expandHeaderItem('column', monthPath.concat([Projected.Mtd]));
+        this.pivotGrid.instance.getDataSource().expandHeaderItem('column', monthPath.concat([Projected.Today]));
+        this.pivotGrid.instance.getDataSource().expandHeaderItem('column', monthPath.concat([Projected.Forecast]));
+    }
+
+    /**
+     * Collapse projected child columns of current month
+     * @param {number[]} path
+     */
+    collapseCurrentMonthProjectedColums(path: number[]) {
+        this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', path.concat([Projected.Mtd]));
+        this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', path.concat([Projected.Today]));
+        this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', path.concat([Projected.Forecast]));
+        this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', path);
+    }
+
+    expandMonthProjectedChilds(cellObj) {
+        let pathCopy = cellObj.cell.path.slice();
+        let projectedValue = cellObj.cellElement.className.indexOf('prev') !== -1 ? Projected.PastTotal : Projected.FutureTotal;
+        /** Save expanding of month in state to expand it on content ready  */
+        this.fieldPathsToClick.push(pathCopy.concat([projectedValue]));
     }
 
     onCopy(ev) {
