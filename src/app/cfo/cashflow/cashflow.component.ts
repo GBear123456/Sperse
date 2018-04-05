@@ -1867,12 +1867,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 return path.indexOf(this.allYears[0]) !== -1;
             });
             if (!yearWasExpanded) {
-                let historicalValue = this.getYearHistoricalSelectorWithCurrent()({date: moment.unix(0).tz('UTC').year(this.allYears[0])});
-                this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, this.allYears[0]]);
-                this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, this.allYears[0], 1]);
-                this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, this.allYears[0], 2]);
-                this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, this.allYears[0], 3]);
-                this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, this.allYears[0], 4]);
+                this.expandYear(this.allYears[0]);
                 this.allYears = undefined;
             }
         }
@@ -1962,6 +1957,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.pivotGrid.instance['clickCount'] = 0;
             }
         }
+    }
+
+    expandYear(year: number) {
+        let historicalValue = this.getYearHistoricalSelectorWithCurrent()({date: moment.unix(0).tz('UTC').year(year)});
+        this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, year]);
+        this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, year, 1]);
+        this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, year, 2]);
+        this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, year, 3]);
+        this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, year, 4]);
     }
 
     calculateScrollValue(cell: HTMLElement, nextCell: HTMLElement, direction: string): number {
