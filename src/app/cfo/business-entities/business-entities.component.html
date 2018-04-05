@@ -54,13 +54,9 @@
                 <div (click)="openBankAccountSelectComponent(data.data)">
                     <i id="business-entity-arrow-{{data.data.Id}}" class="arrow"></i>
                     <ng-container *ngIf="data.value && data.value.length">
-                        <span class="count">{{data.value.length | number}}</span>
-                        <ng-container *ngIf="data.value.length === 1">
-                            {{l('Account')}}
-                        </ng-container>
-                        <ng-container *ngIf="data.value.length > 1">
-                            {{l('Accounts')}}
-                        </ng-container>
+                        <span class="count">
+                            {{data.value.length | number}} {{data.value.length ===1 ? l('Account'): l('Accounts')}}
+                        </span>
                     </ng-container>
                 </div>
             </div>
