@@ -302,10 +302,6 @@
                                 }
                             }
 
-                            &.currentProjected {
-                                cursor: default;
-                            }
-
                             &.currentDay.topBorder {
                                 border-top: 4px solid @currentTextColor;
                             }
@@ -359,10 +355,17 @@
                                 background-image: url('../../../assets/common/images/weekend-background.png') !important;
                             }
 
-                            &.projectedField.projectedHidden {
-                                border: none;
-                                cursor: default;
-                                padding: 0;
+                            &.projectedField {
+
+                                &.PastTotal, &.FutureTotal {
+                                    cursor: default;
+                                }
+
+                                &.projectedHidden {
+                                    border: none;
+                                    cursor: default;
+                                    padding: 0;
+                                }
                             }
                         }
 
