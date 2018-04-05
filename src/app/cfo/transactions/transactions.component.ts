@@ -43,7 +43,7 @@ import DataSource from 'devextreme/data/data_source';
 import { CategorizationComponent } from 'app/cfo/transactions/categorization/categorization.component';
 import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rules.component';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
-import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filte.model';
+import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 
 

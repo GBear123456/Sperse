@@ -1,5 +1,5 @@
-import { Component, OnInit, Injector, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { InstanceType, SyncAccountBankDto } from 'shared/service-proxies/service-proxies';
+import { Component, OnInit, Injector, Input, ViewChild } from '@angular/core';
+import { SyncAccountBankDto } from 'shared/service-proxies/service-proxies';
 import { AppComponentBase } from 'shared/common/app-component-base';
 
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -129,18 +129,6 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
         });
     }
 
-    bankAccountsSelecteAll() {
-        this.syncAccountsDataSource.forEach(syncAccount => {
-            syncAccount.bankAccounts.forEach(bankAccount => {
-                bankAccount['selected'] = true;
-            });
-            syncAccount['selected'] = true;
-        });
-
-        if (this.mainDataGrid)
-            this.mainDataGrid.instance.refresh();
-    }
-    
     setSelectedIfNot() {
         this.syncAccountsDataSource.forEach(syncAccount => {
             let selectedBankAccountCount = 0;

@@ -48,9 +48,9 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
         this.model.tenantHostType = <any>TenantHostType.PlatformUi;
 
         this.saving = true;
-        this.startLoading();
+        this.startLoading(true);
         this._tenantRegistrationService.completeTenantRegistration(this.model)
-            .finally(() => { this.saving = false; this.finishLoading(); })
+            .finally(() => { this.saving = false; this.finishLoading(true); })
             .subscribe((result: CompleteTenantRegistrationOutput) => {
                 this.notify.success(this.l('SuccessfullyRegistered'));
                 this.login(result);
@@ -69,7 +69,6 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
     generatePassword(): string {
         let number = Math.random();
         let result = number.toString(36).substring(6);
-        
         return result;
     }
 }
