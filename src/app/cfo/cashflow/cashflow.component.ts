@@ -1343,8 +1343,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let formattedDate = transaction.initialDate.format('YYYY-MM-DD');
             if (existingPeriods.indexOf(formattedDate) === -1) existingPeriods.push(formattedDate);
         });
-
-        let stubCashflowDataForAllDays = this.createStubsForPeriod(startDate, endDate, 'day', existingPeriods);
+        let accountId: number = transactions[0] ? +transactions[0].accountId : this.bankAccounts[0].id;
+        let stubCashflowDataForAllDays = this.createStubsForPeriod(startDate, endDate, 'day', accountId, existingPeriods);
         let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(transactions);
 
         /** concat initial data and stubs from the different hacks */
@@ -1678,7 +1678,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** cycle from started date to ended date */
         /** added fake data for each date that is not already exists in cashflow data */
-        let stubCashflowData = this.createStubsForPeriod(stubsInterval .startDate, stubsInterval.endDate, 'month', existingPeriods);
+        let accountId = cashflowData[0] ? cashflowData[0].accountId : this.bankAccounts[0].id;
+        let stubCashflowData = this.createStubsForPeriod(stubsInterval.startDate, stubsInterval.endDate, 'month', accountId, existingPeriods);
         return stubCashflowData;
     }
 
@@ -1723,7 +1724,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return { startDate: moment.utc(minDate), endDate: moment.utc(maxDate) };
     }
 
-    createStubsForPeriod(startDate, endDate, period, existingPeriods = []) {
+    createStubsForPeriod(startDate, endDate, period, bankAccountId, existingPeriods = []) {
         let stubs = [];
         let startDateCopy = moment(startDate),
             endDateCopy = moment(endDate);
@@ -1733,7 +1734,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 stubs.push(
                     this.createStubTransaction({
                         'cashflowTypeId': StartedBalance,
-                        'accountId': this.bankAccounts[0].id,
+                        'accountId': bankAccountId,
                         'date': moment(date).add(date.toDate().getTimezoneOffset(), 'minutes'),
                         'initialDate': date
                     })
