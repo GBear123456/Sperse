@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Lato');
+
 :host {
     /deep/ .mat-dialog-header {
         padding: 0px 10px 0px 130px!important;
@@ -37,6 +39,7 @@
                     text-overflow: ellipsis;
                     white-space: nowrap;
                     &.phone {
+                        font-family: 'Lato' !important;
                         &.H, &.P {
                             background: url("../../../assets/common/icons/phone.svg") no-repeat 160px 0px;
                         }
@@ -102,17 +105,18 @@
                     background: url("../../../assets/common/icons/email.svg") no-repeat 160px 10px;
                 }
                 &.phone {
-                  &.H, &.P {
-                      background: url("../../../assets/common/icons/phone.svg") no-repeat 160px 10px;
-                  }
+                    font-family: 'Lato' !important;
+                    &.H, &.P {
+                        background: url("../../../assets/common/icons/phone.svg") no-repeat 160px 10px;
+                    }
 
-                  &.W {
-                      background: url("../../../assets/common/icons/phone-work.svg") no-repeat 160px 10px;
-                  }
+                    &.W {
+                        background: url("../../../assets/common/icons/phone-work.svg") no-repeat 160px 10px;
+                    }
 
-                  &.M {
-                      background: url("../../../assets/common/icons/phone-mobile.svg") no-repeat 160px 10px;
-                  }
+                    &.M {
+                        background: url("../../../assets/common/icons/phone-mobile.svg") no-repeat 160px 10px;
+                    }
                 }
                 &.address {
                     &.P {
@@ -145,6 +149,11 @@
                         color: #424c56;
                         padding: 0px;
                     }    
+                }
+                dx-text-box[name="phone"], dx-number-box[name="phoneExtension"]{
+                    input{
+                        font-family: 'Lato' !important;
+                    }
                 }
                 dx-select-box[name="state"] {
                     &[name="state"], &[name="country"] {

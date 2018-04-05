@@ -1,8 +1,15 @@
-﻿:host {
+﻿@import url('https://fonts.googleapis.com/css?family=Lato');
+
+:host {
 	position: relative;
 	top: 74px;
 
 	/deep/ #gridContainer {
+		.dx-datagrid-rowsview tr td.tabular,
+		.dx-datagrid-rowsview tr td.tabular * {
+			font-family: 'Lato' !important;
+		}
+
 		.dx-datagrid-rowsview {
 			.dx-column-lines {
           		cursor: pointer; 
