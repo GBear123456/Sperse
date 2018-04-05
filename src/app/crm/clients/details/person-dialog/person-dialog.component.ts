@@ -25,11 +25,6 @@ export class PersonDialogComponent extends AppComponentBase {
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
     }
 
-    private getFullName(person: PersonInfoDto){
-        return `${person.namePrefix} ${person.firstName} ${person.middleName} ${person.lastName} ${person.nameSuffix}` + 
-            (person.nickName ? `(${person.nickName})` : '');
-    }
-
     getPropData(propName){
         return {
             id: this.data.id,
@@ -48,7 +43,7 @@ export class PersonDialogComponent extends AppComponentBase {
             UpdatePersonInfoInput.fromJS(
                 _.extend({id: this.data.id}, person))
         ).subscribe(result => {
-            this.data.fullName = this.getFullName(person);
+            this.data.fullName = result.fullName;
         });
     }
 }
