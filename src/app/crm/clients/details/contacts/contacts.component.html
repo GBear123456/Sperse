@@ -12,7 +12,7 @@
       </ul>
       <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
         <dx-validation-group>
-          <dx-text-box placeholder="" mask="{{masks.phone}}" maskInvalidMessage="{{l('PhoneValidationError')}}" [(value)]="phone.phoneNumber" (onValueChanged)="itemValueChanged('phoneNumber', phone)">
+          <dx-text-box class="tabular" placeholder="" mask="{{masks.phone}}" maskInvalidMessage="{{l('PhoneValidationError')}}" [(value)]="phone.phoneNumber" (onValueChanged)="itemValueChanged('phoneNumber', phone)">
             <dx-validator>
               <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
             </dx-validator>

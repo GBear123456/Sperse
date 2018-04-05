@@ -47,6 +47,7 @@
               <div class="field phone H">
                   <label>{{l('Phone')}}</label>
                   <dx-text-box
+                    class="tabular"
                     name="phone"
                     maskInvalidMessage="{{l('PhoneValidationError')}}"
                     [mask]="masks.phone"
@@ -56,6 +57,7 @@
                     (onInitialized)="onComponentInitialized($event, 'phones', type)">
                   </dx-text-box>
                   <dx-number-box
+                    class="tabular"
                     name="phoneExtension"
                     [width]="'50px'"
                     [placeholder]="l('Ext')"
