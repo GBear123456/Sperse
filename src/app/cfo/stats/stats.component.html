@@ -49,7 +49,8 @@
                                  zIndex="1"
                                  [customizeTooltip]="customizeBarTooltip">
                     </dxo-tooltip>
-                    <dxi-series pane="topPane"
+                    <dxi-series name="forecastGradient"
+                                pane="topPane"
                                 color="url(#forecast-linear-gradient)"
                                 type="rangeArea"
                                 rangeValue1Field="minRange"
@@ -61,7 +62,8 @@
                                 [color]="forecastEndingBalanceColor"
                                 valueField="forecastEndingBalance">
                     </dxi-series>
-                    <dxi-series pane="topPane"
+                    <dxi-series name="historicalGradient"
+                                pane="topPane"
                                 color="url(#historical-linear-gradient)"
                                 type="rangeArea"
                                 rangeValue1Field="minRange"

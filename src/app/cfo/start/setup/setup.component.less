@@ -5,12 +5,27 @@
     .content {
         display: flex;
     }
+    
+    .video-wrapper {
+        width: 750px;
+        position: relative;
+        margin: 0 auto 30px;
+        @media all and (max-width: 1550px) {
+            width: 585px;
+            margin: 0 auto 20px;
+        }
+    }
 
     .cashflow-setup {
         flex: 1;
+        padding: 50px 0 0;
         text-align: center;
-        height: calc(~"100vh - 150px");
+        width: calc(~"100vw - 322px");
+        height: calc(~"100vh - 151px");
         border: none;
+        @media all and (max-width: 1550px) {
+            padding: 30px 0 0;
+        }
 
         .sperse-cfo {
             color: #f3f6fa;
@@ -46,6 +61,9 @@
             line-height: 22px;
             max-width: 650px;
             margin: 27px auto 38px;
+            @media all and (max-width: 1550px) {
+                margin: 15px auto 20px;
+            }
         }
     }
 

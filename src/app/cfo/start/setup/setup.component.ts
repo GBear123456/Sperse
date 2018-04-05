@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -14,7 +14,8 @@ import { AppService } from 'app/app.service';
     animations: [appModuleAnimation()],
     providers: [InstanceServiceProxy]
 })
-export class SetupComponent extends CFOComponentBase implements OnInit {
+export class SetupComponent extends CFOComponentBase implements OnInit, OnDestroy {
+    private rootComponent: any;
     public headlineConfig;
     isDisabled = false;
 
@@ -24,6 +25,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit {
         private _router: Router
     ) {
         super(injector);
+        this.rootComponent = this.getRootComponent();
     }
 
     private finishSetup() {
@@ -38,6 +40,9 @@ export class SetupComponent extends CFOComponentBase implements OnInit {
             iconSrc: 'assets/common/icons/magic-stick-icon.svg',
             buttons: []
         };
+        this.rootComponent.overflowHidden(true);
+        this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
+        this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
 
     onStart(): void {
@@ -48,5 +53,11 @@ export class SetupComponent extends CFOComponentBase implements OnInit {
             this._instanceServiceProxy.setup(InstanceType[this.instanceType]).subscribe((data) => {
                 this.finishSetup();
             });
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
+        this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
+        this.rootComponent.overflowHidden();
     }
 }
