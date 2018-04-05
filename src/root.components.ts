@@ -44,6 +44,11 @@ export class RootComponent implements AfterViewInit {
         this.document.head.append(script);
     }
 
+    public removeScriptLink(src: String): void {
+        let script = this.document.querySelector('script[src="' + src + '"]');
+        if (script) script.remove();
+    }
+
     public addStyleSheet(id: String, href: String, rel: String = 'stylesheet'): void {
         let link = this.document.createElement('link');
         _.mapObject({id: id, href: href, rel: rel},
