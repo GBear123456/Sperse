@@ -8,30 +8,34 @@
     .dx-popup-content {
         margin-top: 10px;
     }
+
     .dx-item {
         &.dx-state-focused, &.dx-state-active {
-            background-color: transparent!important;
-            color: #333!important;
+            background-color: transparent !important;
+            color: #333 !important;
         }
-        &:first-child .attribute-name{
+
+        &:first-child .attribute-name {
             margin-top: 50px;
-            &:before {
-                position: relative;
-                content: 'Type a descriptive name or select either attribute type or particular values below';
-                font-size: 12px;
-                font-weight: 300;
-                color: #dcdcdc;
-                display: block;
-                top: -6px;
-                letter-spacing: 0.1px;
-            }
         }
+
+        .descriptor-select-box-header {
+            position: relative;
+            font-size: 12px;
+            font-weight: 300;
+            color: #dcdcdc;
+            top: -6px;
+            letter-spacing: 0.1px;
+        }
+
         .attribute-value {
             margin-left: 30px;
+
             &:hover {
                 background-color: #dddddd;
             }
         }
+
         .attribute-value-wrapper {
             float: right;
             width: 270px;

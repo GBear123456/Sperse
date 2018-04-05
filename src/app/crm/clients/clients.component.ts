@@ -133,6 +133,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         this.dataGrid.instance.refresh();
     }
 
+    showCompactRowsHeight() {
+        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
+    }
+
     createClient() {
         this.dialog.open(CreateClientDialogComponent, {
             panelClass: 'slider',
@@ -322,6 +326,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             {
                 location: 'after', items: [
                     { name: 'refresh', action: this.refreshDataGrid.bind(this) },
+                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',
