@@ -7193,6 +7193,62 @@ export class DashboardServiceProxy {
         }
         return Observable.of<GetRecentlyCreatedCustomersOutput[]>(<any>null);
     }
+
+    /**
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @return Success
+     */
+    getCustomersByCompanySize(startDate: moment.Moment, endDate: moment.Moment): Observable<GetCustomersByCompanySizeOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomersByCompanySize?";
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetCustomersByCompanySize(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCustomersByCompanySize(response_);
+                } catch (e) {
+                    return <Observable<GetCustomersByCompanySizeOutput[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetCustomersByCompanySizeOutput[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCustomersByCompanySize(response: Response): Observable<GetCustomersByCompanySizeOutput[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetCustomersByCompanySizeOutput.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<GetCustomersByCompanySizeOutput[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -28313,6 +28369,45 @@ export interface IGetRecentlyCreatedCustomersOutput {
     id: number;
     name: string;
     creationTime: moment.Moment;
+}
+
+export class GetCustomersByCompanySizeOutput implements IGetCustomersByCompanySizeOutput {
+    customerCount: number;
+    companySizeRange: string;
+
+    constructor(data?: IGetCustomersByCompanySizeOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerCount = data["customerCount"];
+            this.companySizeRange = data["companySizeRange"];
+        }
+    }
+
+    static fromJS(data: any): GetCustomersByCompanySizeOutput {
+        let result = new GetCustomersByCompanySizeOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerCount"] = this.customerCount;
+        data["companySizeRange"] = this.companySizeRange;
+        return data; 
+    }
+}
+
+export interface IGetCustomersByCompanySizeOutput {
+    customerCount: number;
+    companySizeRange: string;
 }
 
 export class DateToStringOutput implements IDateToStringOutput {
