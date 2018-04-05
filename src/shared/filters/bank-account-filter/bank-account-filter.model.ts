@@ -1,7 +1,6 @@
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
-import * as _ from 'lodash';
-import * as underscore from 'underscore';
+import * as _ from 'underscore';
 
 export class BankAccountFilterModel extends FilterItemModel {
     dataSource: any;
@@ -31,7 +30,7 @@ export class BankAccountFilterModel extends FilterItemModel {
         this.dataSource.forEach((syncAccount, i) => {
             let selectedBankAccountCount = 0;
             syncAccount.bankAccounts.forEach((bankAccount, i) => {
-                var isSelected = underscore.contains(value, bankAccount.id);
+                let isSelected = _.contains(value, bankAccount.id);
                 bankAccount['selected'] = isSelected;
                 if (isSelected)
                     selectedBankAccountCount++;

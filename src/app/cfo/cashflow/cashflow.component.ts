@@ -70,7 +70,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/buffer';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
-import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filte.model';
+import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
 
 class TransactionStatsDtoExtended extends TransactionStatsDto {
     initialDate: moment.Moment;

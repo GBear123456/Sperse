@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
 import { BankDto, StatsFilter } from '@shared/service-proxies/service-proxies';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import * as moment from 'moment';
 
 export class FilterHelpers {
 
