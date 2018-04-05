@@ -1,40 +1,44 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injector } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'verification-checklist',
     templateUrl: './verification-checklist.component.html',
     styleUrls: ['./verification-checklist.component.less']
 })
-export class VerificationChecklistComponent implements OnInit {
+export class VerificationChecklistComponent extends AppComponentBase implements OnInit {
     checklist = [
         {
-            name: 'Full name verified',
+            name: this.l('Verification_Checklist_FullName'),
             status: 'success'
         },
         {
-            name: 'Email verified',
+            name: this.l('Verification_Checklist_Email'),
             status: 'success'            
         },
         {
-            name: 'Phone verified',
+            name: this.l('Verification_Checklist_Phone'),
             status: 'success'            
         },
         {
-            name: 'Address verified',
+            name: this.l('Verification_Checklist_Address'),
             status: 'unsuccess'            
         },
         {
-            name: 'Employment verification',
+            name: this.l('Verification_Checklist_Employment'),
             status: 'pending'            
         },
         {
-            name: 'Income verification',
+            name: this.l('Verification_Checklist_Income'),
             status: 'unsuccess'            
         }
     ];
     personal_checklist_collapsed: boolean = false;
 
-    constructor() { }
+    constructor(injector: Injector) {
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+     }
 
     ngOnInit() {
     }
