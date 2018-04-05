@@ -1,5 +1,7 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
+import { GetTotalsOutput, DashboardWidgetsService } from '../dashboard-widgets.service'; 
 
 import {
     BankAccountsServiceProxy
@@ -12,23 +14,24 @@ import {
     providers: []
 })
 export class NewItemsTotalsComponent extends AppComponentBase implements OnInit {
-    totalData: any = {
-        startingCount: 999
-    };
+    fields: any;
+    dataAvailable = false;
+    data: GetTotalsOutput = {};
 
     constructor(
-        injector: Injector
+        injector: Injector,
+        _dashboardService: DashboardWidgetsService
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+
+        this.fields = _dashboardService.totalsDataFields;
+        _dashboardService.subscribeTotalsData(result => {            
+            this.dataAvailable = result.totalOrderAmount || 
+                result.totalLeadCount || result.totalClientCount
+            this.data = result;
+        });
     }
 
     ngOnInit() {
-    }
-
-    loadStatsData() {
-    }
-
-    getPercentage(maxValue, currValue) {
-        return maxValue ? Math.round(Math.abs(currValue) / maxValue * 100) : 0;
     }
 }

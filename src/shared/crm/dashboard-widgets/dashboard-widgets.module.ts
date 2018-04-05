@@ -8,6 +8,9 @@ import { NewItemsTotalsComponent } from './new-items-totals/new-items-totals.com
 import { TotalsByPeriodComponent } from './totals-by-period/totals-by-period.component';
 import { TotalsBySourceComponent } from './totals-by-source/totals-by-source.component';
 import { RecentClientsComponent } from './recent-clients/recent-clients.component';
+import { DashboardWidgetsService } from './dashboard-widgets.service'; 
+
+import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 
 import {
     DxSelectBoxModule,
@@ -50,7 +53,10 @@ import { MatDialogModule } from '@angular/material';
         TotalsBySourceComponent,
         RecentClientsComponent
     ],
-    providers: []
+    providers: [
+        DashboardWidgetsService, 
+        DashboardServiceProxy
+    ]
 })
 export class CRMDashboardWidgetsModule {
 }

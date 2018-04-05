@@ -1,50 +1,15 @@
 <div class="totals-list">
-    <div class="total-item sales">
-        <dx-tooltip
-            target="#valueTotal"
-            showEvent="dxhoverstart"
-            hideEvent="dxhoverend">     
-            <div *dxTemplate="let data = data of 'content'">
-                <div class="tooltip-wrap">
-                    <header>{{l('Accounts_BalanceToolTip_Header')}}</header>
-                    <div>{{l('Accounts_BalanceToolTip_WithPendingTransactions')}} <span class="total">{{123}}</span></div>
-                </div>
-            </div>
-        </dx-tooltip>
+    <div *ngFor="let field of fields" class="total-item {{ field.class }}">
         <div class="chart-head">
-            <span>{{l('Total Sales')}}</span>
-            <span [ngStyle]="{'color': '#8484ea'}">
-                {{ '$0' }}
+            <span>{{l('Total') + ' ' + l(field.title)}}</span>
+            <span [ngStyle]="{'color': field.color}" *ngIf="field.type == 'currency'">
+                {{ data[field.name] | currency }}
+            </span>
+            <span [ngStyle]="{'color': field.color}" *ngIf="field.type == 'number'">
+                {{ data[field.name] | number }}
             </span>
         </div>
-        <div class="chart-line"><div [ngStyle]="{width: '89%', 'background-color': '#8484ea'}"></div></div>
-    </div>
-    <div class="total-item leads">
-         <dx-tooltip
-             target="#valueDaily"
-             showEvent="dxhoverstart"
-             hideEvent="dxhoverend">     
-             <div *dxTemplate="let data = data of 'content'">
-                 {{ 856 }}
-             </div>
-         </dx-tooltip>
-        <div class="chart-head">
-            <span>{{l('Total Leads')}}</span>
-            <span [ngStyle]="{'color': '#54e4c9'}">
-                {{ 830 }}
-            </span>
-        </div>
-        <div class="chart-line"><div [ngStyle]="{width: '65%', 'background-color': '#54e4c9'}"></div></div>
-        <div class="chart-progress"><span>{{l('Progress')}}</span><span>65%</span></div>
-    </div>
-    <div class="total-item clients">
-        <div class="chart-head">
-            <span>{{l('Total Clients')}}</span>
-            <span [ngStyle]="{'color': '#5baae0'}">
-                {{ 3333 }}
-            </span>
-        </div>
-        <div class="chart-line"><div [ngStyle]="{width: '45%', 'background-color': '#5baae0'}"></div></div>
-        <div class="chart-progress"><span>{{l('Progress')}}</span><span>45%</span></div>
+        <div class="chart-line"><div [ngStyle]="{width: field.percent, 'background-color': field.color}"></div></div>
+        <div class="chart-progress"><span>{{l('Progress')}}</span><span>{{ field.percent }}</span></div>
     </div>
 </div>
