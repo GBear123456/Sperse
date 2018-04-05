@@ -22,7 +22,7 @@
                         <dxo-editing mode="row" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                        <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
+                        <dxi-column dataField="Id" caption="{{l('Id')}}" cssClass="tabular" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
                         <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate"
                                     [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                                     [allowGrouping]="false" [allowSorting]="false"></dxi-column>
@@ -35,7 +35,7 @@
                         <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
                         <dxi-column dataField="CompanyName" caption="{{l('Customer.CompanyName')}}"></dxi-column>
                         <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
-                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell"></dxi-column>
+                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="City" caption="{{l('Contact.City')}}"></dxi-column>
                         <dxi-column dataField="StateId" caption="{{l('Contact.State')}}"></dxi-column>
                         <dxi-column dataField="Status" caption="{{l('Status')}}" cellTemplate="statusCell"></dxi-column>
@@ -44,7 +44,7 @@
                                 {{cellData.value}}
                             </div>
                         </div>
-                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">

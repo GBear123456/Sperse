@@ -7139,6 +7139,60 @@ export class DashboardServiceProxy {
         }
         return Observable.of<GetTotalsOutput>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getRecentlyCreatedCustomers(topCount: number): Observable<GetRecentlyCreatedCustomersOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetRecentlyCreatedCustomers?";
+        if (topCount === undefined || topCount === null)
+            throw new Error("The parameter 'topCount' must be defined and cannot be null.");
+        else
+            url_ += "topCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetRecentlyCreatedCustomers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetRecentlyCreatedCustomers(response_);
+                } catch (e) {
+                    return <Observable<GetRecentlyCreatedCustomersOutput[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetRecentlyCreatedCustomersOutput[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetRecentlyCreatedCustomers(response: Response): Observable<GetRecentlyCreatedCustomersOutput[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetRecentlyCreatedCustomersOutput.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<GetRecentlyCreatedCustomersOutput[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -11625,7 +11679,7 @@ export class PersonContactServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updatePersonInfo(input: UpdatePersonInfoInput): Observable<void> {
+    updatePersonInfo(input: UpdatePersonInfoInput): Observable<UpdatePersonInfoOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonContact/UpdatePersonInfo";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -11636,6 +11690,7 @@ export class PersonContactServiceProxy {
             method: "put",
             headers: new Headers({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -11646,25 +11701,28 @@ export class PersonContactServiceProxy {
                 try {
                     return this.processUpdatePersonInfo(response_);
                 } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
+                    return <Observable<UpdatePersonInfoOutput>><any>Observable.throw(e);
                 }
             } else
-                return <Observable<void>><any>Observable.throw(response_);
+                return <Observable<UpdatePersonInfoOutput>><any>Observable.throw(response_);
         });
     }
 
-    protected processUpdatePersonInfo(response: Response): Observable<void> {
+    protected processUpdatePersonInfo(response: Response): Observable<UpdatePersonInfoOutput> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
         if (status === 200) {
             const _responseText = response.text();
-            return Observable.of<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? UpdatePersonInfoOutput.fromJS(resultData200) : new UpdatePersonInfoOutput();
+            return Observable.of(result200);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.text();
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Observable.of<void>(<any>null);
+        return Observable.of<UpdatePersonInfoOutput>(<any>null);
     }
 
     /**
@@ -28214,6 +28272,49 @@ export interface IGetTotalsOutput {
     totalClientCount: number;
 }
 
+export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCustomersOutput {
+    id: number;
+    name: string;
+    creationTime: moment.Moment;
+
+    constructor(data?: IGetRecentlyCreatedCustomersOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GetRecentlyCreatedCustomersOutput {
+        let result = new GetRecentlyCreatedCustomersOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGetRecentlyCreatedCustomersOutput {
+    id: number;
+    name: string;
+    creationTime: moment.Moment;
+}
+
 export class DateToStringOutput implements IDateToStringOutput {
     dateString: string;
 
@@ -34863,6 +34964,41 @@ export interface IUpdatePersonInfoInput {
     lastName: string;
     nameSuffix: string;
     nickName: string;
+}
+
+export class UpdatePersonInfoOutput implements IUpdatePersonInfoOutput {
+    fullName: string;
+
+    constructor(data?: IUpdatePersonInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.fullName = data["fullName"];
+        }
+    }
+
+    static fromJS(data: any): UpdatePersonInfoOutput {
+        let result = new UpdatePersonInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fullName"] = this.fullName;
+        return data; 
+    }
+}
+
+export interface IUpdatePersonInfoOutput {
+    fullName: string;
 }
 
 export class PipelineData implements IPipelineData {

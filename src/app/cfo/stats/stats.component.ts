@@ -759,6 +759,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     customizeBarTooltip = (pointInfo) => {
+        console.log(pointInfo);
+        if (pointInfo.seriesName == 'historicalGradient' || pointInfo.seriesName == 'forecastGradient')
+            return {
+                html: ''
+            };
+
         return {
             html: this._statsService.getTooltipInfoHtml(this.statsData, this.barChartTooltipFields, pointInfo)
         };
