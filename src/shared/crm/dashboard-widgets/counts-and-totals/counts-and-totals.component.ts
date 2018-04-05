@@ -16,7 +16,7 @@ import * as moment from 'moment';
 export class CountsAndTotalsComponent extends AppComponentBase implements OnInit {
     @Output() onDataLoaded = new EventEmitter();
 
-    data: GetTotalsOutput = {};
+    data = {};
 
     fields: any;
 

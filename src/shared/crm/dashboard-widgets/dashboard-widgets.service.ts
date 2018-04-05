@@ -36,7 +36,7 @@ export class DashboardWidgetsService  {
         this._totalsData = new Subject<Object>();
     }
 
-    periodChanged(dateFrom, dateTo) {
+    periodChanged(dateFrom = null, dateTo = null) {
         this._dashboardServiceProxy.getTotals(dateFrom, dateTo)
             .subscribe(result => {
                 this._totalsData.next(result);

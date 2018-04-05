@@ -1,7 +1,7 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { GetTotalsOutput, DashboardWidgetsService } from '../dashboard-widgets.service'; 
+import { DashboardWidgetsService } from '../dashboard-widgets.service'; 
 
 import {
     BankAccountsServiceProxy
@@ -16,7 +16,7 @@ import {
 export class NewItemsTotalsComponent extends AppComponentBase implements OnInit {
     fields: any;
     dataAvailable = false;
-    data: GetTotalsOutput = {};
+    data = {};
 
     constructor(
         injector: Injector,
@@ -26,8 +26,8 @@ export class NewItemsTotalsComponent extends AppComponentBase implements OnInit 
 
         this.fields = _dashboardService.totalsDataFields;
         _dashboardService.subscribeTotalsData(result => {            
-            this.dataAvailable = result.totalOrderAmount || 
-                result.totalLeadCount || result.totalClientCount
+            this.dataAvailable = result['totalOrderAmount'] || 
+                result['totalLeadCount'] || result['totalClientCount']
             this.data = result;
         });
     }
